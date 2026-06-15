@@ -24,7 +24,7 @@ piece of that translation:
   shipped over the years, and never raises on malformed input.
 * ``is_success_status`` agrees with the rest of the SDK on what
   counts as a success (the 2xx range, nothing else).
-* The ``_BackendResponseShim`` exposes the same surface customer
+* The ``_ResponseAdapter`` exposes the same surface customer
   code already uses on ``e.response`` (``status_code``, ``headers``,
 
   ``text()``, ``body()``) and never raises on weird body bytes.
@@ -40,7 +40,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.base import BackendResponse
 from azure.cosmos._helpers._exceptions import (
-    _BackendResponseShim,
+    _ResponseAdapter,
     extract_message_from_body,
     is_success_status,
     map_backend_response_to_exception,
@@ -135,7 +135,7 @@ class TestExceptionMetadataIsCopiedAcross(unittest.TestCase):
         )
         self.assertEqual(exc.sub_status, 3200)
 
-    def test_response_shim_exposes_status_code_and_headers(self):
+    def test_response_adapter_exposes_status_code_and_headers(self):
         """``e.response.status_code`` and ``e.response.headers`` mirror the underlying response."""
         exc = map_backend_response_to_exception(
             _make_response(status_code=409, headers={"x-ms-x": "1"})
@@ -143,14 +143,14 @@ class TestExceptionMetadataIsCopiedAcross(unittest.TestCase):
         self.assertEqual(exc.response.status_code, 409)
         self.assertEqual(exc.response.headers["x-ms-x"], "1")
 
-    def test_response_shim_text_decodes_body_as_utf8(self):
+    def test_response_adapter_text_decodes_body_as_utf8(self):
         """``e.response.text()`` returns the body decoded as UTF-8 (the documented surface)."""
         exc = map_backend_response_to_exception(
             _make_response(status_code=400, body=b'{"message":"bad"}')
         )
         self.assertEqual(exc.response.text(), '{"message":"bad"}')
 
-    def test_response_shim_body_returns_raw_bytes(self):
+    def test_response_adapter_body_returns_raw_bytes(self):
         """``e.response.body()`` returns the raw bytes, undecoded."""
         exc = map_backend_response_to_exception(
             _make_response(status_code=400, body=b"raw")
@@ -243,30 +243,30 @@ class TestIsSuccessStatus(unittest.TestCase):
         self.assertFalse(is_success_status(500))
 
 
-class TestBackendResponseShimDirectly(unittest.TestCase):
-    """The shim is what customer ``except`` handlers see as ``e.response``.
+class TestResponseAdapterDirectly(unittest.TestCase):
+    """The adapter is what customer ``except`` handlers see as ``e.response``.
 
     Customer code reaches into ``e.response`` for ``status_code``,
 
-    ``headers``, ``text()`` and ``body()``. The shim must expose all
+    ``headers``, ``text()`` and ``body()``. The adapter must expose all
     of those, must never crash on weird inputs (missing headers,
     invalid UTF-8 body, bogus encoding name), and must always return
     a string from ``text()`` so it cannot mask the original Cosmos
     error inside the customer's handler.
     """
 
-    def test_shim_status_code_matches_inner_response(self):
-        """``shim.status_code`` mirrors the inner ``BackendResponse.status_code``."""
-        shim = _BackendResponseShim(_make_response(status_code=200))
-        self.assertEqual(shim.status_code, 200)
+    def test_adapter_status_code_matches_inner_response(self):
+        """``adapter.status_code`` mirrors the inner ``BackendResponse.status_code``."""
+        adapter = _ResponseAdapter(_make_response(status_code=200))
+        self.assertEqual(adapter.status_code, 200)
 
-    def test_shim_headers_default_to_empty_dict_when_none(self):
+    def test_adapter_headers_default_to_empty_dict_when_none(self):
         """A response with no headers still exposes a usable headers mapping (no ``AttributeError``)."""
         empty = BackendResponse(status_code=409)
-        shim = _BackendResponseShim(empty)
-        self.assertEqual(dict(shim.headers), {})
+        adapter = _ResponseAdapter(empty)
+        self.assertEqual(dict(adapter.headers), {})
 
-    def test_shim_text_falls_back_on_invalid_utf8_bytes(self):
+    def test_adapter_text_falls_back_on_invalid_utf8_bytes(self):
         """``text()`` on invalid UTF-8 bytes returns a string (replacement chars), never raises.
 
         If this method raised inside a customer's
@@ -275,22 +275,22 @@ class TestBackendResponseShimDirectly(unittest.TestCase):
         ``UnicodeDecodeError`` and the handler would crash.
         """
         bad_bytes = b"\xff\xfe\xfd not valid utf-8"
-        shim = _BackendResponseShim(BackendResponse(status_code=500, body=bad_bytes))
-        text = shim.text()
+        adapter = _ResponseAdapter(BackendResponse(status_code=500, body=bad_bytes))
+        text = adapter.text()
         self.assertIsInstance(text, str)
         # The decodable substring round-trips so the body isn't lost entirely.
         self.assertIn("not valid utf-8", text)
 
-    def test_shim_text_falls_back_on_invalid_encoding_name(self):
+    def test_adapter_text_falls_back_on_invalid_encoding_name(self):
         """An unknown ``encoding=`` name still returns a string instead of raising."""
-        shim = _BackendResponseShim(BackendResponse(status_code=500, body=b"hello"))
-        text = shim.text(encoding="not-a-real-encoding")
+        adapter = _ResponseAdapter(BackendResponse(status_code=500, body=b"hello"))
+        text = adapter.text(encoding="not-a-real-encoding")
         self.assertIsInstance(text, str)
 
-    def test_shim_text_returns_empty_string_when_body_is_empty(self):
+    def test_adapter_text_returns_empty_string_when_body_is_empty(self):
         """Empty body → empty string from ``text()``."""
-        shim = _BackendResponseShim(BackendResponse(status_code=204))
-        self.assertEqual(shim.text(), "")
+        adapter = _ResponseAdapter(BackendResponse(status_code=204))
+        self.assertEqual(adapter.text(), "")
 
 
 if __name__ == "__main__":

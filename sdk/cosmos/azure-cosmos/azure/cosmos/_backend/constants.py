@@ -8,7 +8,6 @@
 The backend names, env var, and per-request kwarg keys are imported
 from here by every module that needs them so the strings cannot drift.
 """
-from __future__ import annotations
 
 #: Default backend; routes through the existing azure-core pipeline.
 BACKEND_NAME_CORE_PYTHON = "core-python"

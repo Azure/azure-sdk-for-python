@@ -11,10 +11,14 @@ for 409, ``CosmosResourceNotFoundError`` for 404, etc.) — for example
 idempotency check. This module is the single mapping site so both
 backends raise the same typed class for the same status code.
 
-It also exposes a small ``_BackendResponseShim`` so customer code that
-reads ``e.response.status_code`` / ``e.response.headers`` /
-``e.response.text()`` keeps working even when the response did not
-come from an azure-core ``HttpResponse``.
+It also exposes a small ``_ResponseAdapter``. When a Cosmos call fails, the
+raised exception carries a ``.response`` object, and customer ``except`` blocks
+read ``e.response.status_code`` / ``e.response.headers`` / ``e.response.text()``
+off it. That object is normally an azure-core ``HttpResponse``, but the Rust
+backend hands back a plain ``BackendResponse`` instead. ``_ResponseAdapter``
+wraps that ``BackendResponse`` and re-exposes just those same attributes and
+methods, so existing customer error-handling keeps working unchanged no matter
+which backend produced the response.
 """
 from __future__ import annotations
 
@@ -30,7 +34,7 @@ from ..exceptions import (
 )
 
 
-class _BackendResponseShim:
+class _ResponseAdapter:
     """Minimal ``HttpResponse``-shaped wrapper around a ``BackendResponse``.
 
     Exposes only the attributes customer code is documented to read
@@ -102,7 +106,7 @@ def map_backend_response_to_exception(
     :rtype: CosmosHttpResponseError
     """
     exception_class = _STATUS_TO_EXCEPTION.get(response.status_code, CosmosHttpResponseError)
-    shim = _BackendResponseShim(response)
+    response_adapter = _ResponseAdapter(response)
 
     # Pass sub_status via kwargs only when set, in case the backend
     # surfaces it as a typed field without writing it into headers.
@@ -113,7 +117,7 @@ def map_backend_response_to_exception(
     return exception_class(
         status_code=response.status_code,
         message=message,
-        response=shim,
+        response=response_adapter,
         **sub_status_kwarg,
     )
 

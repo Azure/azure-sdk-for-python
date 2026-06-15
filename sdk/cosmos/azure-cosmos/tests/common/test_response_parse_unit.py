@@ -206,7 +206,7 @@ class TestFailurePath(unittest.TestCase):
     The status-code → exception-class mapping itself is exhaustively
     covered in ``test_exceptions_unit.py``; these tests cover only
     the wiring through ``parse_backend_response`` (the right
-    subclass is raised, the response shim carries the metadata,
+    subclass is raised, the response adapter carries the metadata,
     ``response_hook`` is suppressed, and ``last_response_headers``
     is populated *before* the raise).
     """
@@ -231,7 +231,7 @@ class TestFailurePath(unittest.TestCase):
         with self.assertRaises(CosmosHttpResponseError):
             parse_backend_response(_make_response(status_code=500))
 
-    def test_exception_carries_status_and_response_shim(self):
+    def test_exception_carries_status_and_response_adapter(self):
         """The raised exception's ``response`` exposes ``status_code`` and ``headers`` from the underlying response."""
         try:
             parse_backend_response(

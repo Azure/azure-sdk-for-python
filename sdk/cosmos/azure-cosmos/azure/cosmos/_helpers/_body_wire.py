@@ -5,7 +5,8 @@
 # -------------------------------------------------------------------------
 """Serialize a request body into the exact bytes that go on the wire.
 
-Produces the bytes once, in one place, so both the core-python and Rust
+Produces the bytes once, in one place, so both the core-python (kept for
+testing and comparison only) and Rust (the production path going forward)
 backends ship the identical request body. Accepted inputs:
 
 - ``None`` -> empty bytes (no-body operations).

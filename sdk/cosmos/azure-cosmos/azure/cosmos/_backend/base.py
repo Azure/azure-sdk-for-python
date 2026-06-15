@@ -5,9 +5,11 @@
 # -------------------------------------------------------------------------
 """Abstract backend type and the data classes used to talk to it.
 
-Every concrete backend (today: ``RustBackend``; the "core-python"
-selection is represented by the absence of a backend) implements the
-``CosmosBackend`` ABC defined here.
+``RustBackend`` is the backend going forward and the only one intended for
+production use. The "core-python" selection -- represented by the absence
+of a backend, which falls back to the legacy in-place implementation -- is
+kept only for testing and comparison, not as a long-term alternative. Every
+concrete backend implements the ``CosmosBackend`` ABC defined here.
 
 Backends expose a single dispatch method, ``execute(prepared)``. The
 operation kind (create_item, read_item, …) rides on the
@@ -70,7 +72,8 @@ class PreparedRequest:
 
 @dataclass(frozen=True)
 class BackendResponse:
-    """Normalised shape every backend produces, regardless of transport.
+    """Normalised shape every backend produces, regardless of which
+    backend's HTTP stack sent the request.
 
     Code above the backend never branches on which backend handled the
     call; it just reads these fields.
@@ -99,10 +102,13 @@ class CosmosBackend(abc.ABC):
     it without knowing which concrete backend it has. The operation kind
     is on ``prepared.op``; the backend branches on it.
 
-    Until the helper layer takes over request prep and response parsing
-    for every operation, ``execute`` may return ``None`` to signal
-    "caller should run the legacy in-place implementation." A returned
-    ``BackendResponse`` is consumed by ``parse_backend_response``.
+    The helper already builds the ``PreparedRequest`` before calling ``execute``
+    and parses the returned ``BackendResponse`` with ``parse_backend_response`` --
+    it does this for every operation -- so a backend only has to send the
+    request and report the reply. ``execute`` may still return ``None`` as a
+    fallback hatch, which tells the helper to run the legacy in-place
+    core-python implementation; that path is kept only for testing, not
+    production.
     """
 
     #: Short identifier used in the startup INFO log line. Subclasses
@@ -121,7 +127,7 @@ class CosmosBackend(abc.ABC):
 
 
 # ---------------------------------------------------------------------------
-# Response-header normalisation (Rust binding dict → CaseInsensitiveDict)
+# Response-header normalisation (Rust binding dict -> CaseInsensitiveDict)
 # ---------------------------------------------------------------------------
 #
 # The Rust binding hands back a plain dict keyed by the gateway's wire
@@ -149,4 +155,3 @@ def normalize_response_headers(
     for raw_key, value in headers.items():
         result[raw_key] = value
     return result
-

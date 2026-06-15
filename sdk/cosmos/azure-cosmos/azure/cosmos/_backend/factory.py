@@ -17,7 +17,10 @@ Selection precedence (highest wins):
 An invalid value raises ``ValueError`` at construction time.
 
 When ``rust`` is selected the factory needs the account endpoint and a
-master-key credential; other auth shapes are rejected upfront.
+master-key credential; other auth shapes are rejected upfront for now.
+This is a temporary limitation -- once the Rust driver supports the other
+auth shapes (TokenCredential, AAD, resource token), they will be accepted
+too.
 
 When ``core-python`` is selected the factory returns ``None``; the
 helper layer treats absence-of-backend as the signal to use the legacy
@@ -70,6 +73,8 @@ def _master_key_or_raise(credential: Any) -> str:
         return credential
     if isinstance(credential, dict) and "masterKey" in credential:
         return credential["masterKey"]
+    # TODO: Accept TokenCredential / AAD / resource-token auth here once the
+    # Rust driver's init_client supports them; until then, reject upfront.
     raise ValueError(
         "_backend='rust' requires a master-key credential (a string, or "
         "a dict with a 'masterKey' entry). The Rust backend does not "

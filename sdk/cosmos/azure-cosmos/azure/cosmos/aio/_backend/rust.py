@@ -57,6 +57,19 @@ class AsyncRustBackend(AsyncCosmosBackend):
     def __init__(self, endpoint: str, master_key: str) -> None:
         self._endpoint = endpoint
         self._master_key = master_key
+        # A "handle" is the ID the Rust driver hands back from init_client().
+        # It stands for the real Cosmos client that lives *inside* the Rust
+        # module -- the object that actually owns the HTTPS connection pool,
+        # the signed master-key auth state, and the endpoint/region routing.
+        # Python cannot hold that Rust object directly across the language
+        # boundary, so it keeps this token instead and passes it back into
+        # Rust on every call (read/create/replace/...). It is critical because
+        # every operation must run against that *one* already-built client:
+        # init_client() does the expensive setup (open connections, prepare
+        # auth) once, and handing the same handle back is what lets later calls
+        # skip all of that. None means "not built yet" -- _ensure_handle()
+        # creates it lazily on the first operation, under a lock so two
+        # first-callers don't each build (and then leak) a separate client.
         self._handle: Optional[str] = None
         # An asyncio lock is tied to the event loop it is first used on,
         # so the lock is created later, on the running loop, instead of
@@ -100,6 +113,7 @@ class AsyncRustBackend(AsyncCosmosBackend):
             return self._handle
 
     async def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
+        """Entry point every point operation (read/create/upsert/replace/delete/patch) goes through to reach the Rust driver."""
         if prepared is None:
             return None
         if _rust_module is None:
