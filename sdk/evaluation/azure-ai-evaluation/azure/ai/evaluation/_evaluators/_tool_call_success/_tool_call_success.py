@@ -141,6 +141,32 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         return super().__call__(*args, **kwargs)
 
+    def _return_short_circuit_failure_result(
+        self, failed_tools: List[str]
+    ) -> Dict[str, Union[str, float]]:
+        """Return a deterministic fail result without invoking the LLM judge.
+
+        Used when the runtime explicitly marks one or more tool calls as
+        failed/incomplete via the ``status`` field on a ``tool_call`` or
+        ``tool_result`` content block. The LLM call is skipped because the
+        runtime signal is authoritative.
+        """
+        failed_list = ",".join(failed_tools)
+        reason = (
+            f"Tool call(s) [{failed_list}] reported a non-success runtime status "
+            "(failed or incomplete). Short-circuited without invoking the LLM judge."
+        )
+        return {
+            self._result_key: 0.0,
+            f"{self._result_key}_score": 0.0,
+            f"{self._result_key}_passed": False,
+            f"{self._result_key}_result": "fail",
+            f"{self._result_key}_reason": reason,
+            f"{self._result_key}_status": "completed",
+            f"{self._result_key}_threshold": self._threshold,
+            f"{self._result_key}_properties": {"failed_tools": failed_list},
+        }
+
     @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:  # type: ignore[override]
         """Do Tool Call Success evaluation.
@@ -181,6 +207,16 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         if isinstance(eval_input.get("response"), list):
             eval_input["response"] = _preprocess_messages(eval_input["response"])
+            # Short-circuit: when the runtime explicitly marks any tool_call
+            # or tool_result with a non-success status (e.g. ``failed`` or
+            # ``incomplete``) there is no point asking the LLM judge to
+            # re-derive the failure from the payload -- the runtime signal
+            # is authoritative. Return a deterministic fail result and skip
+            # the LLM call entirely. The prompty rubric is now only
+            # consulted on the success path (status ``completed`` or absent).
+            failed_tools = _collect_failed_tool_calls(eval_input["response"])
+            if failed_tools:
+                return self._return_short_circuit_failure_result(failed_tools)
             eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
         # If response is a string, pass directly without reformatting
         elif isinstance(eval_input["response"], str):
@@ -271,34 +307,87 @@ def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
         return tool_definitions
 
 
-def _format_status_suffix(status):
-    """Build the trailing ``[STATUS] <value>`` annotation for a content block.
+_FAILED_RUNTIME_STATUSES = frozenset({"failed", "incomplete"})
 
-    Returns the empty string when ``status`` is absent or not a non-empty
-    string, so callers can unconditionally concatenate the return value
-    without affecting back-compat output.
 
-    :param status: The raw ``status`` field from a ``tool_call`` or
-        ``tool_result`` content block.
-    :type status: Any
-    :return: ``" [STATUS] <value>"`` when ``status`` is a non-empty string,
-        otherwise ``""``.
-    :rtype: str
+def _collect_failed_tool_calls(messages):
+    """Return ordered, unique tool names whose runtime status indicates failure.
+
+    A tool call is treated as a runtime failure when either its assistant
+    ``tool_call`` content block or its matched tool ``tool_result`` content
+    block carries a ``status`` field in ``{failed, incomplete}``. The check
+    runs in Python so the LLM judge is only invoked on the success path
+    (status ``completed`` or absent); failed/incomplete calls are short-
+    circuited deterministically.
+
+    When the failing block carries no resolvable function name, the
+    ``tool_call_id`` is used as a stable identifier instead so the caller
+    can still surface it in ``properties.failed_tools``.
     """
-    if isinstance(status, str) and status:
-        return f" [STATUS] {status}"
-    return ""
+    if not isinstance(messages, list):
+        return []
+
+    id_to_name = {}
+    failed_ids = []
+    failed_names_without_id = []
+
+    for msg in messages:
+        if not isinstance(msg, dict) or msg.get("role") != "assistant":
+            continue
+        for content in msg.get("content", []) or []:
+            if not isinstance(content, dict) or content.get("type") != "tool_call":
+                continue
+            if "tool_call" in content and "function" in content.get("tool_call", {}):
+                tc = content["tool_call"]
+                name = tc.get("function", {}).get("name", "") or ""
+                tcid = tc.get("id")
+            else:
+                name = content.get("name", "") or ""
+                tcid = content.get("tool_call_id")
+            if tcid is not None:
+                id_to_name[tcid] = name
+            status = content.get("status")
+            if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES:
+                if tcid is not None:
+                    failed_ids.append(tcid)
+                elif name:
+                    failed_names_without_id.append(name)
+
+    for msg in messages:
+        if not isinstance(msg, dict) or msg.get("role") != "tool":
+            continue
+        tcid = msg.get("tool_call_id")
+        for content in msg.get("content", []) or []:
+            if not isinstance(content, dict) or content.get("type") != "tool_result":
+                continue
+            status = content.get("status")
+            if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES and tcid is not None:
+                failed_ids.append(tcid)
+
+    ordered = []
+    seen = set()
+    for tcid in failed_ids:
+        label = id_to_name.get(tcid) or tcid
+        if label and label not in seen:
+            seen.add(label)
+            ordered.append(label)
+    for name in failed_names_without_id:
+        if name and name not in seen:
+            seen.add(name)
+            ordered.append(name)
+    return ordered
 
 
 def _get_tool_calls_results(agent_response_msgs):
     """Extract formatted agent tool calls and results from response.
 
-    Each emitted ``[TOOL_CALL]`` / ``[TOOL_RESULT]`` line is suffixed with
-    ``[STATUS] <value>`` when the source content block carries a ``status``
-    field. The prompty rubric uses this annotation as a strong failure signal
-    (see ``tool_call_success.prompty``). When ``status`` is absent the suffix
-    is omitted and the rubric falls back to payload-only judgment, so the
-    formatted output is byte-identical to the pre-pass-through wire format.
+    The output uses the original ``[TOOL_CALL]`` / ``[TOOL_RESULT]`` line
+    format only; runtime ``status`` is no longer forwarded to the LLM judge.
+    Failed/incomplete tool calls are short-circuited in Python by
+    :func:`_collect_failed_tool_calls` before this formatter runs, so by the
+    time the LLM sees the response every remaining call has either no
+    status or a ``completed`` status -- the rubric judges those by payload
+    alone.
     """
     agent_response_text = []
     tool_results = {}
@@ -310,8 +399,7 @@ def _get_tool_calls_results(agent_response_msgs):
             for content in msg.get("content", []):
                 if content.get("type") == "tool_result":
                     result = content.get("tool_result")
-                    status_suffix = _format_status_suffix(content.get("status"))
-                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}{status_suffix}"
+                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}"
 
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
@@ -330,8 +418,7 @@ def _get_tool_calls_results(agent_response_msgs):
                         func_name = content.get("name", "")
                         args = content.get("arguments", {})
                     args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
-                    status_suffix = _format_status_suffix(content.get("status"))
-                    call_line = f"[TOOL_CALL] {func_name}({args_str}){status_suffix}"
+                    call_line = f"[TOOL_CALL] {func_name}({args_str})"
                     agent_response_text.append(call_line)
                     if tool_call_id in tool_results:
                         agent_response_text.append(tool_results[tool_call_id])

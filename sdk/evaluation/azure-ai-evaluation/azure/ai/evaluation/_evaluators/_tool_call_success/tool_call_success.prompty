@@ -53,7 +53,6 @@ B. Examine tool result and definition for the tool being called to check whether
   1. A tool result is **failed** if **any** of the following ERROR-CASES applies to it:
     ERROR-CASES:
     ===========
-    - The tool call or tool result line is annotated with **`[STATUS] failed`** or **`[STATUS] incomplete`**. These annotations indicate the tool call did not produce a usable result -- either because the runtime explicitly marked the call `failed` (an exception in the tool, the API surface returned an error response) or because the call was interrupted before completion (e.g. host timeout, parent-response cancellation surfaced as `incomplete`). They are strong, authoritative failure signals and override any contradictory appearance of the result payload.
     - The tool call resulted in an error or exception
     - The tool call failed to run or failed to return
     - The tool call returned a result that indicates an error or failure
@@ -61,7 +60,6 @@ B. Examine tool result and definition for the tool being called to check whether
     - The tool timed-out or returned a result that indicate a time-out
     - The tool result does not make sense, from technical perspective, not business perspective, given the definition of that tool, if the definition is present
   2. If none of the error cases apply to the tool result , it is considered **succeeded** even if the tool result itself indicates a business mistake
-  3. The `[STATUS]` annotation is **optional**. When it is absent on a tool call, judge that call by the payload-based rules above (back-compat with runtimes that do not emit a status field). When it is present and indicates success (e.g. `[STATUS] completed`), it does not by itself make a call succeed -- still apply the payload-based rules, because a runtime can report `completed` while the tool itself returned an error payload.
 C. If one or more tool result are **failed** , then you the **evaluation process** has **failed**, otherwise , the **evaluation process** has **succeeded**
 D. You are required to return your **output** in the following format:
   {
@@ -331,61 +329,6 @@ EXPECTED OUTPUT
   "reason": "Although GetWeatherInfo succeeded, BookTicket returned an error. The final result is failure because one of the tool calls has failed",
   "properties": {
     "failed_tools": "BookTicket"
-  },
-  "score": 0,
-  "status": "completed"
-}
-
-
-### Example - Failed (status annotation overrides bland payload)
-
-[TOOL_CALLS]
-[TOOL_CALL] send_email(to:"alice@example.com" , body:"hi") [STATUS] failed
-[TOOL_RESULT] {} [STATUS] failed
-
-EXPECTED OUTPUT
-{
-  "reason": "send_email is annotated with [STATUS] failed on both the call and the result, which is an authoritative failure signal from the runtime even though the result body {} is otherwise inconclusive",
-  "properties": {
-    "failed_tools": "send_email"
-  },
-  "score": 0,
-  "status": "completed"
-}
-
-
-### Example - Failed (status completed but payload still indicates an error)
-
-[TOOL_CALLS]
-[TOOL_CALL] get_current_user_info() [STATUS] completed
-[TOOL_RESULT] {"UserName":"", "UserEmail":"", "Message":"failed to get current user information"} [STATUS] completed
-
-EXPECTED OUTPUT
-{
-  "reason": "The runtime reported [STATUS] completed but the result payload still indicates failure with empty fields and an explicit error message. Payload-based rules still apply when [STATUS] is completed -- this call is failed",
-  "properties": {
-    "failed_tools": "get_current_user_info"
-  },
-  "score": 0,
-  "status": "completed"
-}
-
-
-### Example - Failed (parallel calls in one turn, one annotated failed)
-
-[TOOL_CALLS]
-[TOOL_CALL] fetch_weather(city:"Seattle") [STATUS] completed
-[TOOL_RESULT] {"temp": 62} [STATUS] completed
-[TOOL_CALL] send_email(to:"x@example.com") [STATUS] failed
-[TOOL_RESULT] {} [STATUS] failed
-[TOOL_CALL] lookup_user(id:"u42") [STATUS] completed
-[TOOL_RESULT] {"user_id": "u42"} [STATUS] completed
-
-EXPECTED OUTPUT
-{
-  "reason": "send_email is annotated with [STATUS] failed; the other two parallel calls succeeded but a single failed call is sufficient to fail the overall evaluation",
-  "properties": {
-    "failed_tools": "send_email"
   },
   "score": 0,
   "status": "completed"
