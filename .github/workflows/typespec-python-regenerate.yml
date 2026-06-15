@@ -143,12 +143,21 @@ jobs:
         run: rm -rf "_typespec"
 
       - name: Apply README template to generated test packages
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           TARGET="eng/tools/azure-sdk-tools/emitter/generated"
-          TEMPLATE="$TARGET/template/README.md"
-          if [ ! -f "$TEMPLATE" ]; then
-            echo "::error::Template README not found at $TEMPLATE"
+          # The emitter/generated directory (including the README template) was
+          # removed from main by design (PR #47288); it now lives only on the
+          # typespec-python-generated-tests branch. Fetch the template from there
+          # rather than expecting it in the main checkout.
+          TARGET_BRANCH="typespec-python-generated-tests"
+          TEMPLATE_PATH="$TARGET/template/README.md"
+          TEMPLATE="$(mktemp)"
+          if ! git fetch --no-tags --depth=1 origin "$TARGET_BRANCH" 2>/dev/null \
+            || ! git show "FETCH_HEAD:$TEMPLATE_PATH" > "$TEMPLATE" 2>/dev/null; then
+            echo "::error::Template README not found at $TEMPLATE_PATH on branch $TARGET_BRANCH"
             exit 1
           fi
           # Replace every README.md under generated/ with the template, except:
@@ -159,6 +168,7 @@ jobs:
             ! -path "$TARGET/README.md" \
             ! -path "$TARGET/template/*" \
             -print -exec cp -f "$TEMPLATE" {} \;
+          rm -f "$TEMPLATE"
 
       - name: Create or update tracking issue with PR link
         env:
