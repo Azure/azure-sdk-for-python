@@ -4,13 +4,11 @@
 
 ### Breaking Changes
 
-- **Handler signature is now `async def handler(request, context)`.**
-  Sync handlers and the previous three-argument signature
-  `(request, context, cancellation_signal)` are rejected at
-  decoration time. Cancellation is observed via `context.cancel`
-  (an `asyncio.Event`) instead of the previous third positional
-  parameter. See `docs/handler-implementation-guide.md` for the
-  full cancellation surface and migration shape.
+- **Handlers must be `async def`.** Sync handlers are rejected at
+  decoration time. The handler signature remains
+  `(request, context, cancellation_signal)` (3 positional args). Sync
+  handlers cannot observe the `asyncio.Event` cancellation surface,
+  so they're no longer accepted.
 
 - **Default response store is now file-backed.** Constructing
   `ResponsesAgentServerHost()` with no `store=` argument now
@@ -28,10 +26,16 @@
   flat fields for recovery + steering classifiers
   (`is_recovery: bool`, `is_steered_turn: bool`,
   `pending_input_count: int`,
-  `durable_metadata: DurableMetadataNamespace`) and the composing
-  cancellation surface (`cancel: asyncio.Event`,
-  `shutdown: asyncio.Event`, `client_cancelled: bool`,
-  `async exit_for_recovery() -> ExitForRecoverySignal`).
+  `durable_metadata: DurableMetadataNamespace`), a distinct shutdown
+  signal (`shutdown: asyncio.Event`), a cancellation cause flag
+  (`client_cancelled: bool`), and the
+  `async exit_for_recovery() -> ExitForRecoverySignal` recovery
+  primitive. The per-request cancellation Event is delivered to the
+  handler as its 3rd positional `cancellation_signal` parameter
+  (unchanged from the prior release). Shutdown and the cancellation
+  signal are **independent surfaces** — server shutdown does NOT fire
+  the cancellation signal; handlers that care about both must observe
+  each independently.
 
 - **`DurableMetadataNamespace` Protocol** — public type for
   `context.durable_metadata`. Mirrors `MutableMapping` shape

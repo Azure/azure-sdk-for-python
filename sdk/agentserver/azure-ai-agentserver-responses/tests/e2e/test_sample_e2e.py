@@ -89,7 +89,7 @@ def _base_payload(input_value: Any = "hello", **overrides) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-async def _sample1_handler(request: CreateResponse, context: ResponseContext):
+async def _sample1_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo handler: returns the user's input text using TextResponse."""
 
     async def _create_text():
@@ -144,7 +144,7 @@ def test_sample1_echo_handler_structured_input() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _sample2_handler(request: CreateResponse, context: ResponseContext):
+async def _sample2_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Streaming handler: emits text in token-by-token deltas using TextResponse with configure."""
     user_text = await context.get_input_text()
     tokens = user_text.split() if user_text else ["Hello", "World"]
@@ -189,7 +189,7 @@ def test_sample2_streaming_handler_non_streaming_returns_full_text() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _sample3_handler(request: CreateResponse, context: ResponseContext):
+async def _sample3_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Convenience handler: emits a greeting using output_item_message()."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
 
@@ -242,7 +242,7 @@ def test_sample3_greeting_includes_input() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _sample4_handler(request: CreateResponse, context: ResponseContext):
+async def _sample4_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Function-calling handler: uses convenience generators for both turns."""
     items = await context.get_input_items()
     has_fn_output = any(isinstance(item, FunctionCallOutputItemParam) for item in items)
@@ -313,7 +313,7 @@ def test_sample4_turn2_returns_weather_text() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _sample5_handler(request: CreateResponse, context: ResponseContext):
+async def _sample5_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Study tutor handler using TextResponse: welcome on first turn,
     references previous_response_id on second turn."""
     has_previous = request.previous_response_id is not None and str(request.previous_response_id).strip() != ""
@@ -366,7 +366,7 @@ def test_sample5_second_turn_references_history() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _sample6_handler(request: CreateResponse, context: ResponseContext):
+async def _sample6_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Math solver handler: emits a reasoning item then a message item using convenience generators."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     question = await context.get_input_text() or "What is 6 times 7?"
@@ -417,7 +417,7 @@ def test_sample6_non_streaming_both_output_items() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _sample7_handler(request: CreateResponse, context: ResponseContext):
+async def _sample7_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Handler that reports which model is used, via TextResponse."""
     return TextResponse(
         context,
@@ -463,7 +463,9 @@ def test_sample7_explicit_model_overrides_default() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _sample8_response_handler(request: CreateResponse, context: ResponseContext):
+async def _sample8_response_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
     """Responses handler for the mixin test, via TextResponse."""
 
     async def _create_text():
@@ -539,7 +541,7 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
 
     responses_app = ResponsesAgentServerHost()
 
-    async def _handler(request: CreateResponse, context: ResponseContext):
+    async def _handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
 
         async def _create_text():
             return f"Self-hosted: {await context.get_input_text()}"
@@ -576,7 +578,7 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _sample10_handler(request: CreateResponse, context: ResponseContext):
+async def _sample10_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Streaming upstream handler: yields raw event dicts."""
 
     async def _mock_upstream_events(prompt: str):
@@ -708,7 +710,7 @@ def test_sample10_streaming_upstream_non_streaming_returns_full_text() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _sample11_handler(request: CreateResponse, context: ResponseContext):
+async def _sample11_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Non-streaming upstream handler: iterates upstream output items via builders."""
 
     def _mock_upstream_call(prompt: str) -> list[dict[str, Any]]:
@@ -778,7 +780,7 @@ def test_sample11_non_streaming_upstream_streaming_events() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _item_ref_echo_handler(request: CreateResponse, context: ResponseContext):
+async def _item_ref_echo_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Handler that echoes resolved input items as JSON in the response text.
 
     For each input item, emits its type and (for messages) its text content.
@@ -845,7 +847,7 @@ def test_item_reference_get_input_text_includes_resolved() -> None:
     _post_json(client, _base_payload("Alpha"))
 
     # Turn 2: handler uses get_input_text which should include resolved text
-    async def _text_handler(request: CreateResponse, context: ResponseContext):
+    async def _text_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         text = await context.get_input_text()
         return TextResponse(context, request, text=lambda: f"GOT: {text}")
 
@@ -944,7 +946,9 @@ def test_item_reference_three_turn_chain() -> None:
 def test_item_reference_resolve_references_false() -> None:
     """When resolve_references=False, item_references are passed through as-is."""
 
-    async def _unresolved_handler(request: CreateResponse, context: ResponseContext):
+    async def _unresolved_handler(
+        request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+    ):
         items = await context.get_input_items(resolve_references=False)
         summaries = []
         for item in items:
@@ -1042,7 +1046,9 @@ def test_item_reference_input_items_endpoint() -> None:
 TINY_IMAGE_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8BQDwAEgAF/pooBPQAAAABJRU5ErkJggg=="
 
 
-async def _image_gen_convenience_handler(request: CreateResponse, context: ResponseContext):
+async def _image_gen_convenience_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
@@ -1051,7 +1057,9 @@ async def _image_gen_convenience_handler(request: CreateResponse, context: Respo
     yield stream.emit_completed()
 
 
-async def _image_gen_streaming_handler(request: CreateResponse, context: ResponseContext):
+async def _image_gen_streaming_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
@@ -1105,7 +1113,7 @@ def test_sample12_image_gen_non_streaming_returns_result() -> None:
 # ===========================================================================
 
 
-async def _image_url_handler(request: CreateResponse, context: ResponseContext):
+async def _image_url_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses._data_url import is_data_url
     from azure.ai.agentserver.responses.models import MessageContentInputImageContent
 
@@ -1121,7 +1129,7 @@ async def _image_url_handler(request: CreateResponse, context: ResponseContext):
     return TextResponse(context, request, text=f"URLs: {', '.join(urls)}")
 
 
-async def _image_base64_handler(request: CreateResponse, context: ResponseContext):
+async def _image_base64_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
     from azure.ai.agentserver.responses.models import MessageContentInputImageContent
 
@@ -1142,7 +1150,7 @@ async def _image_base64_handler(request: CreateResponse, context: ResponseContex
     return TextResponse(context, request, text=f"Decoded: {'; '.join(results)}")
 
 
-async def _image_file_id_handler(request: CreateResponse, context: ResponseContext):
+async def _image_file_id_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses.models import MessageContentInputImageContent
 
     items = await context.get_input_items()
@@ -1202,7 +1210,7 @@ def test_sample13_image_input_file_id_handler() -> None:
 # ===========================================================================
 
 
-async def _file_base64_handler(request: CreateResponse, context: ResponseContext):
+async def _file_base64_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
     from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
 
@@ -1223,7 +1231,7 @@ async def _file_base64_handler(request: CreateResponse, context: ResponseContext
     return TextResponse(context, request, text=f"Decoded: {'; '.join(results)}")
 
 
-async def _file_url_handler(request: CreateResponse, context: ResponseContext):
+async def _file_url_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
 
     items = await context.get_input_items()
@@ -1238,7 +1246,7 @@ async def _file_url_handler(request: CreateResponse, context: ResponseContext):
     return TextResponse(context, request, text=f"URLs: {', '.join(urls)}")
 
 
-async def _file_id_handler(request: CreateResponse, context: ResponseContext):
+async def _file_id_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
 
     items = await context.get_input_items()
@@ -1296,7 +1304,7 @@ def test_sample14_file_input_file_id_handler() -> None:
 # ===========================================================================
 
 
-async def _annotations_handler(request: CreateResponse, context: ResponseContext):
+async def _annotations_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses.models import FileCitationBody, FilePath, UrlCitationBody
 
     stream = ResponseEventStream(response_id=context.response_id, request=request)
@@ -1342,7 +1350,9 @@ def test_sample15_non_streaming_annotations_in_output() -> None:
 # ===========================================================================
 
 
-async def _structured_convenience_handler(request: CreateResponse, context: ResponseContext):
+async def _structured_convenience_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
@@ -1351,7 +1361,9 @@ async def _structured_convenience_handler(request: CreateResponse, context: Resp
     yield stream.emit_completed()
 
 
-async def _structured_full_control_handler(request: CreateResponse, context: ResponseContext):
+async def _structured_full_control_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()

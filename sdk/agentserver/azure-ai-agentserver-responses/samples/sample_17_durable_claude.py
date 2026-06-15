@@ -204,6 +204,7 @@ def _build_resumption_response(context: ResponseContext, request: CreateResponse
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Steerable Claude Agent SDK conversation."""
     # ── Recovery branch ─────────────────────────────────────────────
@@ -223,8 +224,8 @@ async def handler(
     # the newer turn that superseded us would lose context for what the
     # user said. For other cancellation reasons (client cancel, shutdown)
     # we just return; no input preservation is appropriate.
-    if context.cancel.is_set():
-        if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+    if cancellation_signal.is_set():
+        if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
             sdk_options = _claude_options_for(context)
             session_id = context.durable_metadata["claude_session_id"]
             async with ClaudeSDKClient(options=sdk_options) as client:
@@ -253,13 +254,13 @@ async def handler(
         await _send_input_if_not_in_session(client, session_id, context)
 
         async def _watch_cancel() -> None:
-            await context.cancel.wait()
+            await cancellation_signal.wait()
             await client.interrupt()
 
         cancel_watcher = asyncio.create_task(_watch_cancel())
         try:
             async for msg in client.receive_response():
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     break
                 if isinstance(msg, AssistantMessage):
                     for block in msg.content:
@@ -294,9 +295,7 @@ async def handler(
 async def _simulate_shutdown(context: ResponseContext) -> None:
     """Fire a SHUTTING_DOWN signal after a delay (local testing only)."""
     await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not context.cancel.is_set():
-        context.shutdown.set()
-        context.cancel.set()
+    context.shutdown.set()
 
 
 def main() -> None:

@@ -11,7 +11,7 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 
-async def _noop_response_handler(request: Any, context: Any):
+async def _noop_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler used to wire the hosting surface in contract tests."""
 
     async def _events():
@@ -373,7 +373,7 @@ def test_input_items_in_flight_fallback_to_runtime() -> None:
     """
     from typing import Any as _Any
 
-    async def _fast_handler(request: _Any, context: _Any):
+    async def _fast_handler(request: _Any, context: _Any, cancellation_signal: asyncio.Event):
         async def _events():
             yield {"type": "response.created", "response": {"status": "in_progress", "output": []}}
 

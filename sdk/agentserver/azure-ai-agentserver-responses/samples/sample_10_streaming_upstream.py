@@ -61,7 +61,9 @@ upstream = openai.AsyncOpenAI(
 )
 
 
-def _build_response_snapshot(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
+def _build_response_snapshot(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+) -> dict[str, Any]:
     """Construct a response snapshot dict from request + context."""
     snapshot: dict[str, Any] = {
         "id": context.response_id,
@@ -93,6 +95,7 @@ def my_function_tool(x: int) -> int:
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Forward to upstream with streaming, translate content events back."""
 

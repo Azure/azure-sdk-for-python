@@ -62,7 +62,7 @@ class TestNonSteerableParallelForks:
     def test_parallel_forks_all_200(self) -> None:
         """3 POSTs with same previous_response_id, steerable=False → all 200."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             return TextResponse(context, request, text="Fork result")
 
         client = _make_app(handler, durable=True, steerable=False)
@@ -83,7 +83,7 @@ class TestNonSteerableParallelForks:
     def test_distinct_response_ids_on_forks(self) -> None:
         """Each fork gets a unique response ID."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             return TextResponse(context, request, text="Fork")
 
         client = _make_app(handler, durable=True, steerable=False)
@@ -113,7 +113,7 @@ class TestDurableOptOut:
     def test_non_durable_still_completes(self) -> None:
         """With durable_background=False, responses still complete normally."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             return TextResponse(context, request, text="Non-durable result")
 
         client = _make_app(handler, durable=False, steerable=False)
@@ -127,7 +127,7 @@ class TestDurableOptOut:
         flat-defaulted on the context (spec 024 Phase 5 Proposal #10)."""
         captured: dict[str, Any] = {}
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             captured["is_recovery"] = context.is_recovery
             captured["is_steered_turn"] = context.is_steered_turn
             captured["pending_input_count"] = context.pending_input_count
@@ -147,7 +147,7 @@ class TestDurableOptOut:
     def test_non_durable_store_false_still_works(self) -> None:
         """store=false + background=false → non-durable foreground path."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             return TextResponse(context, request, text="Ephemeral")
 
         client = _make_app(handler, durable=True)
@@ -167,7 +167,7 @@ class TestLockingEdgeCases:
     def test_no_previous_response_id_each_standalone(self) -> None:
         """Without previous_response_id, each request is independent."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             return TextResponse(context, request, text="Standalone")
 
         client = _make_app(handler, durable=True, steerable=True)

@@ -31,12 +31,12 @@ def _make_streaming_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         yield stream.emit_created()
         yield stream.emit_in_progress()
         for i in range(5):
-            if context.cancel.is_set():
+            if cancellation_signal.is_set():
                 break
             for event in stream.output_item_message(f"chunk{i} "):
                 yield event

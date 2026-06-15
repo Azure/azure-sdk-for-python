@@ -61,7 +61,7 @@ async def test_steerable_chain_extends_across_turns_with_durable_bg_off() -> Non
     host = ResponsesAgentServerHost(options=options)
 
     @host.response_handler
-    async def _handler(request, context):  # pylint: disable=unused-argument
+    async def _handler(request, context, cancellation_signal):  # pylint: disable=unused-argument
         async def _events():
             from azure.ai.agentserver.responses.streaming._event_stream import (
                 ResponseEventStream,

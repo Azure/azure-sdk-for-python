@@ -62,7 +62,7 @@ class TestSteerableChainValidationWireFormat:
     def test_stale_predecessor_returns_409_with_documented_body(self) -> None:
         """When framework raises LastInputIdPreconditionFailed, endpoint returns 409 with the documented body."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             return TextResponse(context, request, text="OK")
 
         client = _make_steerable_app(handler)

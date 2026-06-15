@@ -58,7 +58,7 @@ def _make_context(
     context.is_steered_turn = False
     context.pending_input_count = 0
     context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
-    context.cancel = asyncio.Event()
+    context._cancellation_signal = asyncio.Event()
     context.shutdown = asyncio.Event()
     context.client_cancelled = False
 
@@ -81,7 +81,7 @@ def _make_request() -> CreateResponse:
 
 async def _drive(handler_coro_fn, request, context) -> list[Any]:
     events = []
-    async for event in handler_coro_fn(request, context):
+    async for event in handler_coro_fn(request, context, context._cancellation_signal):
         events.append(event)
     return events
 
@@ -269,7 +269,7 @@ class TestSample17PreEntrySteeredPreservesInput:
         with patch.object(mod, "ClaudeSDKClient", stub_class):
             with patch.object(mod, "get_session_messages", return_value=[]):
                 ctx = _make_context(response_id=IdGenerator.new_response_id())
-                ctx.cancel.set()
+                ctx._cancellation_signal.set()
                 signal = asyncio.Event()
                 signal.set()
 
@@ -290,7 +290,7 @@ class TestSample17PreEntryNonSteeredCancelDoesNotTouchSDK:
             ctx = _make_context(response_id=IdGenerator.new_response_id())
             ctx.client_cancelled = True
 
-            ctx.cancel.set()
+            ctx._cancellation_signal.set()
             signal = asyncio.Event()
             signal.set()
 
@@ -307,7 +307,7 @@ class TestSample17PreEntryNonSteeredCancelDoesNotTouchSDK:
             ctx = _make_context(response_id=IdGenerator.new_response_id())
             ctx.shutdown.set()
 
-            ctx.cancel.set()
+            ctx._cancellation_signal.set()
             signal = asyncio.Event()
             signal.set()
 

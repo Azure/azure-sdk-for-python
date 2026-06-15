@@ -278,7 +278,7 @@ class _AsyncAsgiClient:
 # ── Handlers ─────────────────────────────────────────────────────────────────
 
 
-async def _simple_completed_handler(request: Any, context: Any):
+async def _simple_completed_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits created + output + completed."""
 
     async def _events():

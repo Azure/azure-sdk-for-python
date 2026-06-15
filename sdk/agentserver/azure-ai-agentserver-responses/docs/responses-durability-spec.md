@@ -628,37 +628,35 @@ process it identically.
 ## §10 — Cancellation
 
 A handler running inside the durable task body observes cancellation
-via a **composing-cause** surface — separate Events and Booleans for
-each independent cancel cause:
+via two **distinct** surfaces and a cause-flag boolean:
 
-- **`context.cancel: Event`** — set whenever ANY cancel cause fires.
-  This is the wake-up signal the handler awaits.
+- **`cancellation_signal`** (3rd positional handler arg,
+  `asyncio.Event`) — set when the request itself is being cancelled
+  (`POST /v1/responses/{id}/cancel`, non-bg POST disconnect, or
+  steering pressure). This is the wake-up signal handlers await /
+  poll on inside their work loop.
 - **`context.shutdown: Event`** — set when the server is shutting
-  down (e.g. SIGTERM). Independent of `cancel` — when shutdown fires,
-  `cancel` is also set so handlers awaiting either Event wake.
-- **`context.client_cancelled: Bool`** — set when the cancellation
-  cause is explicit client cancellation. Two paths converge here:
-  the `POST /v1/responses/{id}/cancel` HTTP endpoint AND non-background
-  POST disconnect (a non-bg POST whose client drops the connection
-  mid-stream is treated as cancellation).
-- **Steering pressure has no cause flag.** When a new turn arrives
-  for a steerable chain while the current handler is running, only
-  `context.cancel` is set — neither `client_cancelled` nor
-  `shutdown` flips. Handlers that need to distinguish steering
-  specifically infer it by elimination
-  (`cancel.is_set() and not client_cancelled and not shutdown.is_set()`).
-  Most handlers do not need this distinction and just wind down
-  on any cancel.
+  down (e.g. SIGTERM). This is a **separate** surface — shutdown
+  does NOT fire the cancellation signal. Handler expectations differ:
+  shutdown demands `await context.exit_for_recovery()` (durable+bg)
+  or a quick failed/incomplete terminal (others), while cancellation
+  demands a graceful finish or status-aware terminal. Handlers that
+  care about both surfaces MUST inspect each independently.
+- **`context.client_cancelled: Bool`** — cause flag stamped at the
+  HTTP boundary when the cancellation cause was explicit client
+  cancellation (the `/cancel` endpoint OR a non-bg POST disconnect).
+  When `cancellation_signal` fires but `client_cancelled` is False
+  and `context.shutdown` is not set, the cause is steering pressure.
 
 Cause matrix:
 
-| Trigger | `context.cancel` | `context.shutdown` | `context.client_cancelled` |
+| Trigger | `cancellation_signal` (3rd positional handler arg) | `context.shutdown` | `context.client_cancelled` |
 |---|---|---|---|
 | Steering (new turn queued) | set | not set | False |
 | Client `POST /responses/{id}/cancel` | set | not set | True |
 | Non-bg POST disconnect | set | not set | True |
-| Graceful shutdown (`SIGTERM`) | set | set | False |
-| Composing: client cancel + concurrent shutdown | set | set | True |
+| Graceful shutdown (`SIGTERM`) | not set | set | False |
+| Race: client cancel + concurrent shutdown | set | set | True |
 | No cancellation has occurred | not set | not set | False |
 
 **Recovery exit primitive.** Handlers MAY call
@@ -676,13 +674,13 @@ marked completed instead.
 
 The cancellation contract for the handler:
 
-- **Default pattern** (90% of handlers) — break out of the handler's
-  loop on `cancel.is_set()`, emit `response.completed` with the
-  current partial output. The framework overrides this to
-  `cancelled` when `context.client_cancelled` is True (terminal
-  cancel) and to "leave `in_progress` for re-entry" when
-  `context.shutdown` is set on a `durable_background=True` Row 1
-  response (cooperative cancel). For steering pressure (no cause
+- **Default pattern** (most handlers) — observe BOTH surfaces in the
+  work loop. On `cancellation_signal.is_set()`, break and emit
+  `response.completed` with the current partial output (the framework
+  overrides this to `cancelled` when `context.client_cancelled` is
+  True). On `context.shutdown.is_set()`, `return await
+  context.exit_for_recovery()` (durable+bg Row 1) or emit a quick
+  terminal (others). For steering pressure (cancel set but no cause
   flag), the handler's `completed` terminal is correct — the
   steered-out turn really did complete with whatever output it
   managed to emit before the steer.
@@ -710,8 +708,8 @@ Recovery composes with cancellation as follows:
 
 | Pre-crash trigger | Recovery behaviour |
 |---|---|
-| Steering pressure (during recovery) | Recovered entry sees `context.cancel.is_set()` with no cause flag. Handler honours the signal as in the fresh case. |
-| Client cancel (during recovery) | Recovered entry sees `context.cancel.is_set()` and `context.client_cancelled=True`. Handler honours the signal; framework finalises with `cancelled` terminal. |
+| Steering pressure (during recovery) | Recovered entry sees `cancellation_signal.is_set()` with no cause flag. Handler honours the signal as in the fresh case. |
+| Client cancel (during recovery) | Recovered entry sees `cancellation_signal.is_set()` and `context.client_cancelled=True`. Handler honours the signal; framework finalises with `cancelled` terminal. |
 | Shutdown (during recovery) | If the handler returns without emitting a terminal AND `context.shutdown.is_set()`, the framework leaves the task `in_progress` for the next lifetime. Equivalent to a handler that explicitly does `return await context.exit_for_recovery()`. |
 
 The cancellation surface is unchanged across fresh and recovered
@@ -733,8 +731,8 @@ Rows 1, 2, or 3 (i.e. any `store=true` row). With steering enabled:
   response (status `"queued"`) produced by the acceptance hook
   (§11.3).
 - When the queued turn moves to the front of the queue, the
-  framework signals the running handler via ``context.cancel` Event`
-  with `steering pressure (context.cancel set, no cause flag)`. Once the running handler
+  framework signals the running handler via ``cancellation_signal` (3rd positional handler arg) Event`
+  with `steering pressure (cancellation_signal set, no cause flag)`. Once the running handler
   reaches terminal, the framework drains the queue and the queued
   turn's handler is invoked with `is_steered_turn=True`.
 
@@ -849,7 +847,7 @@ If the process crashes mid-steering-drain, the recovered entry is
 given the mid-drain input as its `context.input` (or equivalent —
 the primitive's race-recovery contract supplies the in-flight input).
 Handler honours it as a normal turn invocation. The cancellation
-signal is set with `steering pressure (context.cancel set, no cause flag)` if the prior turn's
+signal is set with `steering pressure (cancellation_signal set, no cause flag)` if the prior turn's
 handler was already cancelled at crash time.
 
 ---
@@ -1103,7 +1101,7 @@ its internal counter past the highest pre-existing index per §9.6.
 
 ### C-CANCEL — Cancellation surface
 
-`context.cancel` and `context cancellation cause (composing — see §10)` MUST
+`cancellation_signal` (3rd positional handler arg) and `context cancellation cause (composing — see §10)` MUST
 be populated per §10. The cancellation policy (no `cancelled` from
 steering or shutdown; framework forces `failed` for missing terminal;
 cooperation model) MUST be enforced per §10.

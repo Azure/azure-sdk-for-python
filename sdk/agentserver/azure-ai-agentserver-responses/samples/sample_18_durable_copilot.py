@@ -302,6 +302,7 @@ def _build_resumption_response(context: ResponseContext, request: CreateResponse
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Steerable Copilot SDK conversation."""
     # ── Recovery branch ─────────────────────────────────────────────
@@ -319,8 +320,8 @@ async def handler(
     # On a STEERED pre-entry we still send the user's input to Copilot so
     # it is preserved in conversation history. For other cancellation
     # reasons we just return without touching the SDK.
-    if context.cancel.is_set():
-        if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+    if cancellation_signal.is_set():
+        if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
             session_id = context.conversation_chain_id
             async with CopilotClient() as client:
                 async with await _open_session(client, session_id, context) as session:
@@ -408,7 +409,7 @@ async def handler(
             # poll with a short bounded timeout, then exit cleanly.
             wait_timeout = None if sent_this_attempt else 2.0
             while True:
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     await session.abort()
                     break
                 try:
@@ -444,9 +445,7 @@ async def handler(
 async def _simulate_shutdown(context: ResponseContext) -> None:
     """Fire SHUTTING_DOWN after a delay (local testing only)."""
     await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not context.cancel.is_set():
-        context.shutdown.set()
-        context.cancel.set()
+    context.shutdown.set()
 
 
 def main() -> None:

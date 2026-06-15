@@ -457,12 +457,12 @@ class DurableResponseOrchestrator:
         """Execute the response pipeline inside the task body.
 
         This is the re-entrant function. On each entry:
-        1. Flattens recovery + steering classifiers onto the response
-           context (spec 024 Phase 5 — Proposal #10/#13).
+        1. Flattens recovery + steering classifiers onto the response context.
         2. Bridges task primitive cancellation surface
-           (``ctx.cancel`` / ``ctx.shutdown``) onto the
-           response context's composing-cancellation surface
-           (``context.cancel`` / ``context.shutdown`` / no client_cancelled).
+           (``ctx.cancel`` / ``ctx.shutdown``) onto the per-request
+           handler-facing ``cancellation_signal`` Event and the
+           ``context.shutdown`` Event respectively. The two surfaces
+           are independent — shutdown does not fire the cancel signal.
         3. Delegates to _run_background_non_stream (existing pipeline).
         4. Persists last_sequence_number to metadata.
         5. Suspends (task stays alive for next turn).
@@ -613,19 +613,21 @@ class DurableResponseOrchestrator:
             context._task_context = ctx  # pylint: disable=protected-access
 
         # Bridge task cancellation → response cancellation surface.
-        # We bridge BOTH ``ctx.cancel`` (steering / explicit cancel) and
-        # ``ctx.shutdown`` (graceful TaskManager shutdown) so handlers
-        # listening on either ``context.cancel`` or ``context.shutdown``
-        # are notified appropriately. Cause mapping:
+        # ``ctx.cancel`` (steering / explicit cancel) and ``ctx.shutdown``
+        # (graceful TaskManager shutdown) are mapped to DISTINCT
+        # surfaces on the handler-facing ``ResponseContext``:
         #
-        # - ``ctx.shutdown`` fires → ``context.shutdown.set()`` (no
-        #   client_cancelled flip; framework-driven shutdown).
+        # - ``ctx.shutdown`` fires → ``context.shutdown.set()`` ONLY.
+        #   The cancellation signal is NOT fired; shutdown demands a
+        #   different handler response (``exit_for_recovery()`` or
+        #   terminal emit), so it must be observed via
+        #   ``context.shutdown`` independently.
         # - ``ctx.cancel`` fires from steering pressure →
-        #   ``context.cancel.set()`` with NO cause boolean
+        #   ``cancellation_signal.set()`` with NO cause boolean
         #   (handlers see only the wake-up; matches task primitive
         #   contract where steering pressure has no named cause).
         # - ``ctx.cancel`` fires from an explicit /cancel API call or
-        #   from non-bg POST disconnect — those mutate
+        #   from non-bg POST disconnect → those mutate
         #   ``context.client_cancelled`` at the HTTP boundary, BEFORE
         #   propagating through ``ctx.cancel`` here. The bridge below
         #   does NOT clobber an existing ``client_cancelled=True``.
@@ -634,11 +636,7 @@ class DurableResponseOrchestrator:
         if ctx.shutdown.is_set():
             if context is not None:
                 context.shutdown.set()
-                context.cancel.set()
-            cancellation_signal.set()
         elif ctx.cancel.is_set():
-            if context is not None:
-                context.cancel.set()
             cancellation_signal.set()
         else:
 
@@ -656,11 +654,8 @@ class DurableResponseOrchestrator:
                     if shutdown_task in done and cancel_task not in done:
                         if context is not None:
                             context.shutdown.set()
-                            context.cancel.set()
                     else:
-                        if context is not None:
-                            context.cancel.set()
-                    cancellation_signal.set()
+                        cancellation_signal.set()
                 except asyncio.CancelledError:
                     cancel_task.cancel()
                     shutdown_task.cancel()

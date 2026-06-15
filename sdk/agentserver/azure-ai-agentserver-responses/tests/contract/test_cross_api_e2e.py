@@ -89,7 +89,7 @@ def _wait_for_terminal(
 # ════════════════════════════════════════════════════════════
 
 
-async def _noop_handler(request: Any, context: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler — emits no events (framework auto-completes)."""
 
     async def _events():
@@ -99,7 +99,7 @@ async def _noop_handler(request: Any, context: Any):
     return _events()
 
 
-async def _simple_text_handler(request: Any, context: Any):
+async def _simple_text_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits created + completed with no output items."""
 
     async def _events():
@@ -110,7 +110,7 @@ async def _simple_text_handler(request: Any, context: Any):
     return _events()
 
 
-async def _output_producing_handler(request: Any, context: Any):
+async def _output_producing_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that produces a single message output item with text 'hello'."""
 
     async def _events():
@@ -130,7 +130,7 @@ async def _output_producing_handler(request: Any, context: Any):
     return _events()
 
 
-async def _throwing_handler(request: Any, context: Any):
+async def _throwing_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that raises after emitting created."""
 
     async def _events():
@@ -141,7 +141,7 @@ async def _throwing_handler(request: Any, context: Any):
     return _events()
 
 
-async def _incomplete_handler(request: Any, context: Any):
+async def _incomplete_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits an incomplete terminal event."""
 
     async def _events():
@@ -152,14 +152,14 @@ async def _incomplete_handler(request: Any, context: Any):
     return _events()
 
 
-async def _delayed_handler(request: Any, context: Any):
+async def _delayed_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that sleeps briefly, checking for cancellation."""
 
     async def _events():
-        if context.cancel.is_set():
+        if context._cancellation_signal.is_set():
             return
         await asyncio.sleep(0.25)
-        if context.cancel.is_set():
+        if context._cancellation_signal.is_set():
             return
         if False:  # pragma: no cover
             yield None
@@ -167,7 +167,7 @@ async def _delayed_handler(request: Any, context: Any):
     return _events()
 
 
-async def _cancellable_bg_handler(request: Any, context: Any):
+async def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits response.created then blocks until cancelled.
 
     Suitable for Phase 3 cancel tests: response_created_signal is set on the
@@ -182,7 +182,7 @@ async def _cancellable_bg_handler(request: Any, context: Any):
         )
         yield stream.emit_created()  # unblocks run_background
         # Block until cancelled
-        while not context.cancel.is_set():
+        while not context._cancellation_signal.is_set():
             await asyncio.sleep(0.01)
 
     return _events()
@@ -191,11 +191,11 @@ async def _cancellable_bg_handler(request: Any, context: Any):
 def _make_blocking_sync_handler(started_gate: EventGate, release_gate: threading.Event):
     """Factory for a handler that blocks on a gate, for testing concurrent GET/Cancel on in-flight sync requests."""
 
-    async def handler(request: Any, context: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             started_gate.signal(True)
             while not release_gate.is_set():
-                if context.cancel.is_set():
+                if context._cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
             if False:  # pragma: no cover
@@ -214,7 +214,7 @@ def _make_two_item_gated_handler(
 ):
     """Factory for a handler that emits two message output items with gates between them."""
 
-    async def handler(request: Any, context: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()
@@ -232,7 +232,7 @@ def _make_two_item_gated_handler(
 
             item1_emitted.signal()
             while not item1_gate.is_set():
-                if context.cancel.is_set():
+                if context._cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 
@@ -248,7 +248,7 @@ def _make_two_item_gated_handler(
 
             item2_emitted.signal()
             while not item2_gate.is_set():
-                if context.cancel.is_set():
+                if context._cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 
@@ -532,12 +532,12 @@ class TestC1SyncStored:
         app = ResponsesAgentServerHost()
 
         @app.response_handler
-        async def _handler(request: Any, context: Any):
+        async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
             async def _events():
                 handler_started.set()
                 # Block long enough for the client to disconnect
                 for _ in range(200):
-                    if context.cancel.is_set():
+                    if cancellation_signal.is_set():
                         return
                     await asyncio.sleep(0.05)
                 stream = ResponseEventStream(
@@ -585,13 +585,13 @@ class TestC1SyncStored:
                 f"per B17, got {get_resp.status_code}: {get_resp.text}"
             )
             body = get_resp.json()
-            assert body.get("status") == "cancelled", (
-                f"Expected status=cancelled per B17/B11, got {body.get('status')}: {body}"
-            )
+            assert (
+                body.get("status") == "cancelled"
+            ), f"Expected status=cancelled per B17/B11, got {body.get('status')}: {body}"
             # B11 point 2: cancelled response has empty output[].
-            assert body.get("output") == [], (
-                f"Expected empty output[] per B11 cancellation rules, got {body.get('output')}: {body}"
-            )
+            assert (
+                body.get("output") == []
+            ), f"Expected empty output[] per B11 cancellation rules, got {body.get('output')}: {body}"
 
 
 # ════════════════════════════════════════════════════════════
@@ -656,7 +656,7 @@ class TestC2StreamStored:
         app = ResponsesAgentServerHost()
 
         @app.response_handler
-        async def _handler(request: Any, context: Any):
+        async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
             async def _events():
                 stream = ResponseEventStream(
                     response_id=context.response_id,
@@ -670,7 +670,7 @@ class TestC2StreamStored:
                 tc = msg.add_text_content()
                 yield tc.emit_added()
                 for i in range(500):
-                    if context.cancel.is_set():
+                    if cancellation_signal.is_set():
                         break
                     yield tc.emit_delta(f"chunk{i} ")
                     await asyncio.sleep(0.02)

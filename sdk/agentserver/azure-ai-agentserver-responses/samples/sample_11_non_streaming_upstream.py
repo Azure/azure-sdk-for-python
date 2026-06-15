@@ -61,6 +61,7 @@ app = ResponsesAgentServerHost()
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Call upstream (non-streaming), emit every output item."""
     upstream = openai.AsyncOpenAI(

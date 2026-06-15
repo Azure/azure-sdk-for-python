@@ -352,14 +352,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         or when the server is shutting down.
 
         Client disconnect on a foreground request is treated as an explicit
-        client cancellation — stamps ``context.client_cancelled = True``
-        (spec 024 Phase 5 — Proposal #11).
+        client cancellation — stamps ``context.client_cancelled = True``.
 
         :param request: The Starlette request to monitor.
         :type request: Request
         :param cancellation_signal: Event to set when disconnect is detected
-            (aliased to ``context.cancel`` so handlers observing the
-            ``context.cancel`` event see the same wake-up).
+            (also delivered to the handler as its 3rd positional
+            ``cancellation_signal`` parameter, so handlers awaiting that
+            Event see the same wake-up).
         :type cancellation_signal: asyncio.Event
         :param context: Optional response context to stamp cancellation cause.
         :type context: ResponseContext | None
@@ -523,16 +523,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             prefetched_history_ids=ctx.prefetched_history_ids,
             steerable=self._runtime_options.steerable_conversations,
         )
-        # (Spec 024 Phase 5 — Proposal #11) Alias the execution-context
-        # cancellation_signal with the handler-facing ``context.cancel``
-        # so any framework component that observes either Event sees the
-        # same wake-up. The disconnect monitor still sets the alias via
-        # ``cancellation_signal.set()``; that propagates to handlers
-        # awaiting ``context.cancel``.
-        context.cancel = ctx.cancellation_signal
+        # Alias the execution-context cancellation_signal with the
+        # handler-facing private ``context._cancellation_signal`` so the
+        # disconnect monitor and the framework ``/cancel`` endpoint set
+        # the SAME Event the handler observes via its 3rd positional
+        # ``cancellation_signal`` parameter. ``context.shutdown`` is an
+        # independent Event — shutdown does NOT fire the cancel signal;
+        # handlers that care about both must observe each separately.
+        context._cancellation_signal = ctx.cancellation_signal  # pylint: disable=protected-access
         if self._shutdown_requested.is_set():
             context.shutdown.set()
-            context.cancel.set()
         return context
 
     async def _prefetch_history_ids(
@@ -1488,12 +1488,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # B11: initiate cancellation winddown
         record.cancel_requested = True
         if record.response_context is not None:
-            # (Spec 024 Phase 5 — Proposal #11) Stamp client_cancelled
-            # and set the cancel event; the handler observes the cause
-            # via ``context.client_cancelled`` after waking on
-            # ``context.cancel``.
+            # Stamp ``client_cancelled`` cause flag and set the private
+            # cancellation signal; the handler observes the wake-up via
+            # its 3rd positional ``cancellation_signal`` parameter and
+            # inspects ``context.client_cancelled`` to learn the cause.
             record.response_context.client_cancelled = True
-            record.response_context.cancel.set()
+            record.response_context._cancellation_signal.set()  # pylint: disable=protected-access
         record.cancel_signal.set()
 
         # Wait for handler task to finish (up to 10s grace period).
@@ -1716,11 +1716,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         records = await self._runtime_state.list_records()
         for record in records:
             if record.response_context is not None:
-                # (Spec 024 Phase 5 — Proposal #11) Set the composing
-                # shutdown surface (sets both ``shutdown`` cause flag and
-                # the ``cancel`` event so handlers awaiting either wake up).
+                # Fire ``context.shutdown`` so handlers awaiting it (or
+                # checking ``is_set()``) can route to
+                # ``exit_for_recovery()`` or terminal-emit. The cancel
+                # signal is NOT fired here — shutdown and cancel are
+                # semantically distinct surfaces and handlers expect
+                # different responses to each.
                 record.response_context.shutdown.set()
-                record.response_context.cancel.set()
 
             record.cancel_signal.set()
 

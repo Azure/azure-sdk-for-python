@@ -9,7 +9,7 @@ steering, client cancel, and shutdown interleave with crash recovery.
 Differences from ``sample_19``:
 
 - ``steerable_conversations=True`` — each new turn supersedes the prior
-  one; the prior turn's handler observes ``context.cancel.is_set()``
+  one; the prior turn's handler observes ``context._cancellation_signal.is_set()``
   with no cause flag (steering pressure — neither ``client_cancelled``
   nor ``shutdown.is_set()`` is set).
 - A single message item per turn (no phases). Recovery within a turn
@@ -110,6 +110,7 @@ def _build_resumption_response(context: ResponseContext, request: CreateResponse
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Steerable durable handler with cancellation × recovery composition."""
     # ── Recovery branch ─────────────────────────────────────────────
@@ -126,8 +127,8 @@ async def handler(
     # ── Pre-entry cancellation check ────────
     # Signal pre-set on entry — this happens when a newer turn was
     # already queued before we even started.
-    if context.cancel.is_set():
-        if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+    if cancellation_signal.is_set():
+        if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
             yield stream.emit_completed()
         return
 
@@ -153,7 +154,7 @@ async def handler(
 
     # ── Mid-stream cancellation check ──────
     async for token in _simulate_llm_stream(input_text):
-        if context.cancel.is_set():
+        if cancellation_signal.is_set():
             break
         accumulated += token
         yield text.emit_delta(token)
@@ -183,9 +184,7 @@ async def handler(
 async def _simulate_shutdown(context: ResponseContext) -> None:
     """Fire SHUTTING_DOWN after a delay (local testing only)."""
     await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not context.cancel.is_set():
-        context.shutdown.set()
-        context.cancel.set()
+    context.shutdown.set()
 
 
 def main() -> None:

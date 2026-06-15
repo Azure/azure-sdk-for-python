@@ -219,7 +219,7 @@ def _make_gated_stream_handler():
     started = asyncio.Event()
     release = asyncio.Event()
 
-    async def handler(request: Any, context: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -229,7 +229,7 @@ def _make_gated_stream_handler():
             yield stream.emit_in_progress()
             started.set()
             while not release.is_set():
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
             yield stream.emit_completed()
@@ -246,7 +246,7 @@ def _make_gated_stream_handler_with_output():
     started = asyncio.Event()
     release = asyncio.Event()
 
-    async def handler(request: Any, context: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -263,7 +263,7 @@ def _make_gated_stream_handler_with_output():
 
             started.set()
             while not release.is_set():
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 
@@ -297,7 +297,7 @@ def _make_item_lifecycle_gated_handler():
     item2_done = asyncio.Event()
     item2_done_checked = asyncio.Event()
 
-    async def handler(request: Any, context: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -312,7 +312,7 @@ def _make_item_lifecycle_gated_handler():
 
             item_added.set()
             while not item_added_checked.is_set():
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 
@@ -326,7 +326,7 @@ def _make_item_lifecycle_gated_handler():
 
             item_done.set()
             while not item_done_checked.is_set():
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 
@@ -342,7 +342,7 @@ def _make_item_lifecycle_gated_handler():
 
             item2_done.set()
             while not item2_done_checked.is_set():
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 
@@ -373,7 +373,7 @@ def _make_two_item_gated_bg_handler():
     item2_emitted = asyncio.Event()
     item2_checked = asyncio.Event()
 
-    async def handler(request: Any, context: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -394,7 +394,7 @@ def _make_two_item_gated_bg_handler():
 
             item1_emitted.set()
             while not item1_checked.is_set():
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 
@@ -410,7 +410,7 @@ def _make_two_item_gated_bg_handler():
 
             item2_emitted.set()
             while not item2_checked.is_set():
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     return
                 await asyncio.sleep(0.01)
 

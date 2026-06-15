@@ -32,7 +32,7 @@ def _make_graph_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         completed = context.durable_metadata.get("completed_nodes", [])
         start_node = len(completed)
@@ -41,7 +41,7 @@ def _make_graph_app() -> TestClient:
         yield stream.emit_in_progress()
 
         for i in range(start_node, len(GRAPH_NODES)):
-            if context.cancel.is_set():
+            if cancellation_signal.is_set():
                 break
             for event in stream.output_item_message(f"[{GRAPH_NODES[i]}] done. "):
                 yield event

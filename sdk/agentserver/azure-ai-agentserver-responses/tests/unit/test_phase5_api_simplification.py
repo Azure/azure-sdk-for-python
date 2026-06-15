@@ -184,18 +184,31 @@ def test_durability_context_class_removed() -> None:
 # ─────────────────────────────────────────────────────────────────────
 
 
-def test_context_has_cancel_event() -> None:
-    """`context.cancel` is an asyncio.Event."""
+def test_context_cancel_field_is_private() -> None:
+    """`context._cancellation_signal` is the framework-private cancel Event.
+
+    The public ``cancel`` field was removed — the cancel surface for
+    handlers is delivered via the third positional ``cancellation_signal``
+    parameter, not via a context attribute. The private attribute exists
+    so framework internals (the /cancel endpoint, the disconnect monitor)
+    can fire it without going through the handler dispatch path.
+    """
     ctx = _make_response_context()
-    assert hasattr(ctx, "cancel")
-    assert isinstance(ctx.cancel, asyncio.Event)
+    assert not hasattr(ctx, "cancel"), "public 'cancel' field removed — use the handler's 3rd positional arg"
+    assert isinstance(ctx._cancellation_signal, asyncio.Event)
 
 
 def test_context_has_shutdown_event() -> None:
-    """`context.shutdown` is an asyncio.Event."""
+    """`context.shutdown` is an asyncio.Event distinct from the cancel signal.
+
+    Shutdown and cancel are decoupled surfaces — server shutdown does
+    NOT fire the cancellation signal. Handlers must observe each
+    independently.
+    """
     ctx = _make_response_context()
     assert hasattr(ctx, "shutdown")
     assert isinstance(ctx.shutdown, asyncio.Event)
+    assert ctx.shutdown is not ctx._cancellation_signal
 
 
 def test_context_has_client_cancelled_bool() -> None:

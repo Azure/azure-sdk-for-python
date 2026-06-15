@@ -174,7 +174,6 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
     is_steered_turn: bool
     pending_input_count: int
     durable_metadata: DurableMetadataNamespace
-    cancel: asyncio.Event
     shutdown: asyncio.Event
     client_cancelled: bool
 
@@ -238,15 +237,18 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         # when the response runs inside a durable task body.
         self.durable_metadata: DurableMetadataNamespace = _DeveloperMetadataFacade({})
 
-        # (Spec 024 Phase 5 — Proposal #11) Composing cancellation surface.
-        # Events are lazy-initialised here so the same instance is shared
-        # across the orchestrator's cancel-bridge and the handler. The
-        # orchestrator sets ``shutdown`` via the task primitive bridge
-        # and stamps ``client_cancelled`` from the /cancel endpoint OR
-        # the disconnect monitor. Steering pressure manifests as
-        # ``cancel.is_set()`` with NO cause boolean (matches the task
-        # primitive contract).
-        self.cancel: asyncio.Event = asyncio.Event()
+        # Composing cancellation surface. ``_cancellation_signal`` is
+        # the per-request cancel Event delivered to the handler as the
+        # 3rd positional argument; it fires on /cancel API calls, client
+        # disconnect on non-bg create, or steering pressure. It is
+        # framework-internal — handlers should observe their 3rd
+        # positional ``cancellation_signal`` parameter, not the private
+        # attribute. ``shutdown`` is a DISTINCT Event — server shutdown
+        # does NOT fire the cancel signal; handlers that care about
+        # both must observe each independently.
+        # ``client_cancelled`` is a cause flag stamped by the /cancel
+        # endpoint and the disconnect monitor.
+        self._cancellation_signal: asyncio.Event = asyncio.Event()
         self.shutdown: asyncio.Event = asyncio.Event()
         self.client_cancelled: bool = False
 

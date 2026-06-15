@@ -26,7 +26,7 @@ from azure.ai.agentserver.responses.streaming import ResponseEventStream
 # ─── Helpers / handlers ──────────────────────────────────────
 
 
-async def _simple_handler(request: Any, context: Any) -> Any:
+async def _simple_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that always succeeds, no history access."""
 
     async def _events():
@@ -40,7 +40,7 @@ async def _simple_handler(request: Any, context: Any) -> Any:
     return _events()
 
 
-async def _history_reading_handler(request: Any, context: Any) -> Any:
+async def _history_reading_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that awaits ``context.get_history()`` before emitting events."""
 
     async def _events():

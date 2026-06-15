@@ -16,7 +16,7 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 
-async def _noop_response_handler(request: Any, context: Any):
+async def _noop_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler used to wire contract matrix tests."""
 
     async def _events():

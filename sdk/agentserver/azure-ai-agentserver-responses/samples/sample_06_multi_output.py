@@ -59,6 +59,7 @@ app = ResponsesAgentServerHost()
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Emit reasoning and answer using convenience generators."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
@@ -93,6 +94,7 @@ async def handler(
 async def handler_builder(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Emit reasoning and answer using the builder API."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)

@@ -54,7 +54,7 @@ def _make_context(
     context.is_steered_turn = False
     context.pending_input_count = 0
     context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
-    context.cancel = asyncio.Event()
+    context._cancellation_signal = asyncio.Event()
     context.shutdown = asyncio.Event()
     context.client_cancelled = False
 
@@ -73,7 +73,7 @@ def _make_request(model: str = "test-model") -> CreateResponse:
 async def _drive(handler_coro_fn, request, context) -> list[Any]:
     """Run the handler async generator and return emitted events."""
     events = []
-    async for event in handler_coro_fn(request, context):
+    async for event in handler_coro_fn(request, context, context._cancellation_signal):
         events.append(event)
     return events
 

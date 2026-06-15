@@ -50,12 +50,12 @@ def test_no_cancellation_baseline_shape() -> None:
     app = ResponsesAgentServerHost()
 
     @app.response_handler
-    async def _handler(request: Any, context: ResponseContext):
+    async def _handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, request=request)
             yield stream.emit_created()
             yield stream.emit_in_progress()
-            captured["cancel_at_start"] = context.cancel.is_set()
+            captured["cancel_at_start"] = cancellation_signal.is_set()
             captured["shutdown_at_start"] = context.shutdown.is_set()
             captured["client_cancelled_at_start"] = context.client_cancelled
             msg = stream.add_output_item_message()
@@ -106,8 +106,8 @@ def test_client_cancel_endpoint_sets_client_cancelled() -> None:
     # Simulate the cancel-bridge mutation that
     # ``_endpoint_handler.cancel_response`` performs:
     ctx.client_cancelled = True
-    ctx.cancel.set()
-    assert ctx.cancel.is_set() is True
+    ctx._cancellation_signal.set()
+    assert ctx._cancellation_signal.is_set() is True
     assert ctx.client_cancelled is True
     assert ctx.shutdown.is_set() is False
 
@@ -130,12 +130,12 @@ def test_context_composes_multiple_causes_simultaneously() -> None:
     )
     ctx.client_cancelled = True
     ctx.shutdown.set()
-    ctx.cancel.set()
+    ctx._cancellation_signal.set()
     # Both causes observable simultaneously — proves the boolean shape
     # solves the pre-spec-024 single-enum limitation.
     assert ctx.client_cancelled is True
     assert ctx.shutdown.is_set() is True
-    assert ctx.cancel.is_set() is True
+    assert ctx._cancellation_signal.is_set() is True
 
 
 def test_steering_pressure_has_no_cause_flag() -> None:
@@ -154,8 +154,8 @@ def test_steering_pressure_has_no_cause_flag() -> None:
         isolation=IsolationContext(),
     )
     # Simulate steering bridge: only cancel.set() — no cause flag.
-    ctx.cancel.set()
-    assert ctx.cancel.is_set() is True
+    ctx._cancellation_signal.set()
+    assert ctx._cancellation_signal.is_set() is True
     assert ctx.client_cancelled is False
     assert ctx.shutdown.is_set() is False
 
@@ -165,40 +165,40 @@ def test_steering_pressure_has_no_cause_flag() -> None:
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_two_arg_async_handler_accepted() -> None:
+def test_three_arg_async_handler_accepted() -> None:
     app = ResponsesAgentServerHost()
 
-    async def h(request, context):  # 2-arg async — must accept
+    async def h(request, context, cancellation_signal):  # 3-arg async — must accept
         yield None
 
     # Don't actually register; just verify the validator doesn't raise.
     app.response_handler(h)
 
 
-def test_two_arg_sync_handler_hard_rejected() -> None:
+def test_three_arg_sync_handler_hard_rejected() -> None:
     app = ResponsesAgentServerHost()
 
-    def h(request, context):  # sync 2-arg — must be rejected
+    def h(request, context, cancellation_signal):  # sync 3-arg — must be rejected
         return None
 
     with pytest.raises(TypeError, match="async function"):
         app.response_handler(h)  # type: ignore[arg-type]
 
 
-def test_three_arg_handler_hard_rejected() -> None:
+def test_two_arg_async_handler_hard_rejected() -> None:
     app = ResponsesAgentServerHost()
 
-    async def h(request, context, cancellation_signal):  # 3-arg async — must be rejected
+    async def h(request, context):  # 2-arg async — must be rejected (missing cancel signal)
         yield None
 
-    with pytest.raises(TypeError, match="two positional"):
+    with pytest.raises(TypeError, match="three positional"):
         app.response_handler(h)  # type: ignore[arg-type]
 
 
-def test_three_arg_sync_handler_hard_rejected() -> None:
+def test_two_arg_sync_handler_hard_rejected() -> None:
     app = ResponsesAgentServerHost()
 
-    def h(request, context, cancellation_signal):  # 3-arg sync — must be rejected
+    def h(request, context):  # 2-arg sync — must be rejected (sync rejected first)
         return None
 
     with pytest.raises(TypeError):

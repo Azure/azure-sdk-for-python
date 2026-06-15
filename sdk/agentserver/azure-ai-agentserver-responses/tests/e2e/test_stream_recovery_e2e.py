@@ -103,7 +103,7 @@ class TestStreamRecoveryBaseline:
     def test_stream_completes_with_all_events(self) -> None:
         """Full stream delivers created → in_progress → content → completed."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             stream = ResponseEventStream(response_id=context.response_id, request=request)
             yield stream.emit_created()
             yield stream.emit_in_progress()
@@ -124,7 +124,7 @@ class TestStreamRecoveryBaseline:
     def test_stream_events_have_sequence_numbers(self) -> None:
         """Each SSE event has a monotonically increasing sequence_number."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             stream = ResponseEventStream(response_id=context.response_id, request=request)
             yield stream.emit_created()
             yield stream.emit_in_progress()
@@ -149,7 +149,7 @@ class TestStreamRecoveryResume:
     def test_get_stored_response_with_stream(self) -> None:
         """After POST completes, GET with stream=true replays stored events."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             stream = ResponseEventStream(response_id=context.response_id, request=request)
             yield stream.emit_created()
             yield stream.emit_in_progress()

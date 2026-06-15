@@ -112,6 +112,7 @@ app = ResponsesAgentServerHost(options=options)
 async def handle_create(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Deterministic per-lifetime tagged handler.
 
@@ -155,7 +156,7 @@ async def handle_create(
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
 
-    if context.cancel.is_set():
+    if cancellation_signal.is_set():
         return
 
     # First in_progress is normal; on recovery we emit a second one
@@ -196,13 +197,13 @@ async def handle_create(
     # client-cancel sets the signal.
     try:
         await asyncio.wait_for(
-            context.cancel.wait(),
+            cancellation_signal.wait(),
             timeout=_SLEEP_MS / 1000.0,
         )
     except asyncio.TimeoutError:
         pass
 
-    if context.cancel.is_set():
+    if cancellation_signal.is_set():
         # Shutting down: return without terminal so the framework's
         # per-row Path-B / Path-C contract takes over.
         return

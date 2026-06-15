@@ -266,6 +266,7 @@ def _build_resumption_response(
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """LangGraph with SqliteSaver checkpoints + recovery contract."""
     input_text = await context.get_input_text()
@@ -291,11 +292,11 @@ async def handler(
     # ── Phase 1: Pre-entry cancel ───────────────────────────────────
     # Still inject the message into graph state so next turn has context.
     # Only emit completed for steering. Others: just return.
-    if context.cancel.is_set():
+    if cancellation_signal.is_set():
         stable_cp = context.durable_metadata.get("stable_checkpoint_id")
         if stable_cp:
             await asyncio.to_thread(_fork_from_checkpoint, _graph, thread_config, stable_cp, input_text)
-        if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+        if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
             yield resp_stream.emit_completed()
         return
 
@@ -315,14 +316,16 @@ async def handler(
     if not context.is_recovery and stable_cp and context.is_steered_turn:
         forked = await asyncio.to_thread(_fork_from_checkpoint, _graph, thread_config, stable_cp, input_text)
         if forked:
-            completed, nodes = await asyncio.to_thread(_invoke_cancellable, _graph, None, thread_config, context.cancel)
+            completed, nodes = await asyncio.to_thread(
+                _invoke_cancellable, _graph, None, thread_config, cancellation_signal
+            )
             # Emit node progress as function call outputs
             for node in nodes:
                 fn_call = resp_stream.add_output_item_function_call(name=node, call_id=f"node_{node}", arguments="{}")
                 yield fn_call.emit_added()
                 yield fn_call.emit_done()
 
-            if not completed or context.cancel.is_set():
+            if not completed or cancellation_signal.is_set():
                 if shutdown_timer and not shutdown_timer.done():
                     shutdown_timer.cancel()
                 # Shutdown: return without terminal → re-entered on restart.
@@ -350,7 +353,9 @@ async def handler(
     else:
         graph_input = {"messages": [HumanMessage(content=input_text)], "is_complete": False}
 
-    completed, nodes = await asyncio.to_thread(_invoke_cancellable, _graph, graph_input, thread_config, context.cancel)
+    completed, nodes = await asyncio.to_thread(
+        _invoke_cancellable, _graph, graph_input, thread_config, cancellation_signal
+    )
 
     for node in nodes:
         fn_call = resp_stream.add_output_item_function_call(name=node, call_id=f"node_{node}", arguments="{}")
@@ -361,7 +366,7 @@ async def handler(
         shutdown_timer.cancel()
 
     # ── Phase 3: Post-completion handling ───────────────────────────
-    if not completed or context.cancel.is_set():
+    if not completed or cancellation_signal.is_set():
         # Shutdown: return without terminal → re-entered on restart.
         if context.shutdown.is_set():
             return
@@ -399,9 +404,7 @@ def _build_reply_events(resp_stream: ResponseEventStream, state: Any) -> list[An
 async def _simulate_shutdown(context: ResponseContext) -> None:
     """Fire SHUTTING_DOWN after a delay (local testing only)."""
     await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not context.cancel.is_set():
-        context.shutdown.set()
-        context.cancel.set()
+    context.shutdown.set()
 
 
 def main() -> None:

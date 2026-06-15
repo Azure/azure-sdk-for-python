@@ -24,16 +24,19 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 
 ```python
 @app.response_handler
-async def my_handler(request: CreateResponse, context: ResponseContext):
+async def my_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     ...
 ```
 
-Handlers MUST be `async def` and take exactly two positional parameters
-(`request`, `context`). Sync handlers and the legacy three-argument
-signature `(request, context, cancellation_signal)` are hard-rejected
-at decoration time. Cancellation is observed via `context.cancel`
-(an `asyncio.Event`); see the handler implementation guide for the
-full composing-cause surface.
+Handlers MUST be `async def` and take exactly three positional parameters
+(`request`, `context`, `cancellation_signal`). Sync handlers and the 2-arg
+signature `(request, context)` are hard-rejected at decoration time.
+Cancellation is observed via the `cancellation_signal` event (set on
+client cancel, `/cancel` API, or steering pressure). Server shutdown is
+a **distinct** signal observed via `context.shutdown` — shutdown does
+NOT fire the cancellation signal; handlers that care about both must
+inspect each independently. See the handler implementation guide for
+the full surface.
 
 ### Protocol endpoints
 
@@ -99,8 +102,7 @@ The `ResponseContext` provides request-scoped state:
 | `isolation` | `IsolationContext` with `user_key` and `chat_key` for multi-tenant state partitioning |
 | `client_headers` | Dictionary of `x-client-*` headers forwarded from the platform (keys normalized to lowercase) |
 | `query_parameters` | Dictionary of query string parameters |
-| `cancel` | `asyncio.Event` set when any cancel cause fires |
-| `shutdown` | `asyncio.Event` set on graceful server shutdown |
+| `shutdown` | `asyncio.Event` set on graceful server shutdown — distinct from the per-request cancellation signal |
 | `client_cancelled` | `bool` set when the cancel cause is `/cancel` endpoint or non-bg POST disconnect |
 | `is_recovery` | `bool` set on a crash-recovered re-entry |
 | `is_steered_turn` | `bool` set on the drain re-entry that follows a steering input |
@@ -110,6 +112,13 @@ The `ResponseContext` provides request-scoped state:
 | `get_input_items()` | Load resolved input items as `Item` subtypes |
 | `get_input_text()` | Extract all text content from input items as a single string |
 | `get_history()` | Load conversation history items |
+
+The per-request cancellation signal is delivered as the **3rd
+positional handler argument** (`cancellation_signal: asyncio.Event`),
+not via a `ResponseContext` attribute. It fires on client cancel
+(`/cancel` API or non-bg POST disconnect) or steering pressure; it
+does NOT fire on server shutdown — `context.shutdown` is the
+independent surface for that case.
 
 ### Streaming and background modes
 
@@ -146,7 +155,7 @@ app = ResponsesAgentServerHost()
 
 
 @app.response_handler
-async def handler(request: CreateResponse, context: ResponseContext):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {text}")
 

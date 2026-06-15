@@ -28,7 +28,7 @@ Gaps closed by this file:
 
 4. ``test_handler_signature_rejects_var_positional`` — spec 024
    audit Blocker 5: ``response_handler`` MUST reject ``*args``
-   handlers (the contract requires exactly two positional parameters
+   handlers (the contract requires exactly three positional parameters
    so the dispatch shape is statically reasonable).
 """
 
@@ -60,14 +60,12 @@ def test_default_store_is_file_backed(tmp_path, monkeypatch) -> None:
     provider = app._endpoint._orchestrator._provider  # pylint: disable=protected-access
 
     assert isinstance(provider, FileResponseStore), (
-        f"Default response store MUST be FileResponseStore; got "
-        f"{type(provider).__name__}"
+        f"Default response store MUST be FileResponseStore; got " f"{type(provider).__name__}"
     )
     # Storage root resolves under the AGENTSERVER_DURABLE_ROOT/responses subpath.
     root = str(provider._root)  # pylint: disable=protected-access
     assert "responses" in root and str(tmp_path) in root, (
-        f"FileResponseStore root must resolve under the responses subdir "
-        f"of the durable root; got {root}"
+        f"FileResponseStore root must resolve under the responses subdir " f"of the durable root; got {root}"
     )
 
 
@@ -84,8 +82,7 @@ def test_default_store_uses_default_durable_root_when_env_unset(
     assert isinstance(provider, FileResponseStore)
     root = str(provider._root)  # pylint: disable=protected-access
     assert ".durable" in root and "responses" in root, (
-        f"Fallback storage root must be under ~/.durable/responses/; "
-        f"got {root}"
+        f"Fallback storage root must be under ~/.durable/responses/; " f"got {root}"
     )
 
 
@@ -94,9 +91,7 @@ def test_default_store_uses_default_durable_root_when_env_unset(
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_client_cancelled_observed_by_handler_after_cancel_endpoint(
-    tmp_path, monkeypatch
-) -> None:
+def test_client_cancelled_observed_by_handler_after_cancel_endpoint(tmp_path, monkeypatch) -> None:
     """End-to-end: POST a background response, drive /cancel, and assert
     the handler observed ``context.client_cancelled is True``.
 
@@ -117,7 +112,7 @@ def test_client_cancelled_observed_by_handler_after_cancel_endpoint(
     app = ResponsesAgentServerHost()
 
     @app.response_handler
-    async def _handler(request: Any, context: ResponseContext):
+    async def _handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
         context_ref.append(context)
 
         async def _events():
@@ -128,7 +123,7 @@ def test_client_cancelled_observed_by_handler_after_cancel_endpoint(
                 "response": {"status": "in_progress", "output": []},
             }
             for _ in range(500):
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     captured["client_cancelled"] = context.client_cancelled
                     captured["shutdown"] = context.shutdown.is_set()
                     return
@@ -171,14 +166,11 @@ def test_client_cancelled_observed_by_handler_after_cancel_endpoint(
     # Verify the cause-boolean shape directly off the live context.
     assert context_ref, "Handler must have been invoked"
     ctx = context_ref[0]
-    assert ctx.cancel.is_set() is True, "context.cancel MUST be set after /cancel"
+    assert ctx._cancellation_signal.is_set() is True, "context._cancellation_signal MUST be set after /cancel"
     assert ctx.client_cancelled is True, (
-        "context.client_cancelled MUST be True after /cancel endpoint "
-        "(per spec 024 §10 cause matrix)"
+        "context.client_cancelled MUST be True after /cancel endpoint " "(per spec 024 §10 cause matrix)"
     )
-    assert ctx.shutdown.is_set() is False, (
-        "Cancel endpoint MUST NOT set context.shutdown"
-    )
+    assert ctx.shutdown.is_set() is False, "Cancel endpoint MUST NOT set context.shutdown"
 
 
 # ──────────────────────────────────────────────────────────────────────
@@ -208,15 +200,21 @@ def test_durable_metadata_protocol_includes_mutable_mapping_methods() -> None:
         "__call__",
         "flush",
     }
-    actual = {name for name in dir(DurableMetadataNamespace) if not name.startswith("_") or name in {
-        "__getitem__",
-        "__setitem__",
-        "__delitem__",
-        "__contains__",
-        "__iter__",
-        "__len__",
-        "__call__",
-    }}
+    actual = {
+        name
+        for name in dir(DurableMetadataNamespace)
+        if not name.startswith("_")
+        or name
+        in {
+            "__getitem__",
+            "__setitem__",
+            "__delitem__",
+            "__contains__",
+            "__iter__",
+            "__len__",
+            "__call__",
+        }
+    }
     missing = required - actual
     assert not missing, (
         f"DurableMetadataNamespace Protocol is missing MutableMapping "
@@ -270,14 +268,14 @@ def test_handler_signature_rejects_var_positional() -> None:
 
 def test_handler_signature_rejects_kwargs_only() -> None:
     """A handler with only keyword-only parameters does not satisfy the
-    2-arg positional contract and MUST be rejected."""
+    3-arg positional contract and MUST be rejected."""
     app = ResponsesAgentServerHost()
 
-    async def kwargs_only_handler(*, request, context):  # noqa: D401
+    async def kwargs_only_handler(*, request, context, cancellation_signal):  # noqa: D401
         if False:  # pragma: no cover
             yield None
 
-    with pytest.raises(TypeError, match="two positional"):
+    with pytest.raises(TypeError, match="three positional"):
         app.response_handler(kwargs_only_handler)  # type: ignore[arg-type]
 
 
@@ -286,9 +284,7 @@ def test_handler_signature_rejects_kwargs_only() -> None:
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_exit_for_recovery_sentinel_propagates_through_dispatch(
-    tmp_path, monkeypatch
-) -> None:
+def test_exit_for_recovery_sentinel_propagates_through_dispatch(tmp_path, monkeypatch) -> None:
     """End-to-end: a durable handler that does
     ``return await context.exit_for_recovery()`` MUST leave the
     response retrievable (not marked completed prematurely) — proving
@@ -308,7 +304,7 @@ def test_exit_for_recovery_sentinel_propagates_through_dispatch(
     app = ResponsesAgentServerHost()
 
     @app.response_handler
-    async def _handler(request: Any, context: ResponseContext):
+    async def _handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
         async def _events():
             yield {
                 "type": "response.created",
@@ -347,8 +343,7 @@ def test_exit_for_recovery_sentinel_propagates_through_dispatch(
     # Verify the handler observed the runtime error (proves the
     # sentinel-bearing call was dispatched).
     assert "durable response handler" in captured.get("exit_runtime_error", ""), (
-        f"Handler MUST hit the RuntimeError guard for non-durable contexts; "
-        f"captured={captured}"
+        f"Handler MUST hit the RuntimeError guard for non-durable contexts; " f"captured={captured}"
     )
 
 
@@ -411,7 +406,7 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
     ctx.is_steered_turn = True  # framework signals the drain re-entry
     ctx.pending_input_count = 0
     ctx.metadata = _FakeTaskMetadata()
-    ctx.cancel = asyncio.Event()
+    ctx._cancellation_signal = asyncio.Event()
     ctx.shutdown = asyncio.Event()
     ctx.task_id = "task-drain"
     ctx.input = {
@@ -435,13 +430,11 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
     # Spec 024 Phase 5: framework MUST surface is_steered_turn through
     # to the handler via context.is_steered_turn flat field.
     assert real_context.is_steered_turn is True, (
-        "Drain re-entry MUST set context.is_steered_turn=True per spec "
-        "024 §11 + Proposal #10 flat-field surface"
+        "Drain re-entry MUST set context.is_steered_turn=True per spec " "024 §11 + Proposal #10 flat-field surface"
     )
     # is_recovery MUST be False on a 'resumed' entry (not crash recovery).
     assert real_context.is_recovery is False, (
-        "'resumed' entry mode MUST NOT flip is_recovery; that flag is "
-        "exclusively set on 'recovered' entries"
+        "'resumed' entry mode MUST NOT flip is_recovery; that flag is " "exclusively set on 'recovered' entries"
     )
 
 
@@ -463,9 +456,7 @@ def test_proposal_9_steerable_durable_off_does_not_raise() -> None:
     assert opts.durable_background is False
 
 
-def test_proposal_9_steerable_durable_off_host_constructs_cleanly(
-    tmp_path, monkeypatch
-) -> None:
+def test_proposal_9_steerable_durable_off_host_constructs_cleanly(tmp_path, monkeypatch) -> None:
     """``ResponsesAgentServerHost`` MUST construct successfully with
     ``steerable_conversations=True`` + ``durable_background=False`` —
     the composition guard is gone, so the host wires up both the

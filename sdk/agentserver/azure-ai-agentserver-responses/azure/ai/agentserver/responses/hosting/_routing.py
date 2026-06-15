@@ -32,7 +32,7 @@ from ._orchestrator import _ResponseOrchestrator
 from ._runtime_state import _RuntimeState
 
 CreateHandlerFn = Callable[
-    [CreateResponse, ResponseContext],
+    [CreateResponse, ResponseContext, asyncio.Event],
     Union[
         AsyncIterable[Union[ResponseStreamEvent, dict[str, Any]]],
         Awaitable[AsyncIterable[Union[ResponseStreamEvent, dict[str, Any]]]],
@@ -40,15 +40,20 @@ CreateHandlerFn = Callable[
 ]
 """Type alias for the user-registered create-response handler function.
 
-(Spec 024 Phase 5 — Proposal #4) Handlers MUST be ``async def`` and
-take exactly two positional parameters:
+Handlers MUST be ``async def`` and take exactly three positional parameters:
 
 - ``request``: The parsed :class:`CreateResponse` model.
 - ``context``: The :class:`ResponseContext` for the current request
-  (exposes ``context.cancel`` / ``context.shutdown`` events,
-  ``context.client_cancelled`` bool, ``context.is_recovery`` /
-  ``context.is_steered_turn`` / ``context.pending_input_count`` /
-  ``context.durable_metadata``).
+  (exposes ``context.shutdown`` event, ``context.client_cancelled``
+  bool, ``context.is_recovery`` / ``context.is_steered_turn`` /
+  ``context.pending_input_count`` / ``context.durable_metadata`` /
+  ``context.exit_for_recovery()``).
+- ``cancellation_signal``: An :class:`asyncio.Event` set when the
+  request is cancelled (client disconnect on non-background create,
+  explicit ``/cancel`` API call, or steering pressure). The cancel
+  signal and ``context.shutdown`` are **distinct surfaces** — server
+  shutdown does NOT fire the cancellation signal. Handlers that care
+  about both must observe each independently.
 
 It must return one of:
 
@@ -152,18 +157,18 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
 
 
 def _validate_handler_signature(fn: Any) -> None:
-    """Reject sync handlers and the legacy 3-arg ``(request, context, cancellation_signal)``.
+    """Reject sync handlers and 2-arg signatures.
 
-    (Spec 024 Phase 5 — Proposal #4) The post-Phase-5 handler contract
-    is async-only with a 2-arg signature. Sync handlers cannot honour
-    the composing-cancellation surface (asyncio events) and the
-    third-arg cancellation signal is replaced by ``context.cancel``.
-    Both legacy shapes are hard-rejected at decoration time so
-    developers see the error at import / startup rather than at the
-    first request.
+    The handler contract is the shipped 1.0.0b6 signature
+    ``async def handler(request, context, cancellation_signal)`` —
+    async-only, exactly three positional parameters. Sync handlers
+    cannot observe the asyncio cancellation surface; 2-arg signatures
+    miss the third positional cancel Event. Both shapes are
+    hard-rejected at decoration time so developers see the error at
+    import / startup rather than at the first request.
 
     :raises TypeError: If the handler is not async or does not take
-        exactly two positional parameters.
+        exactly three positional parameters.
     """
     import inspect  # pylint: disable=import-outside-toplevel
 
@@ -173,8 +178,8 @@ def _validate_handler_signature(fn: Any) -> None:
         raise TypeError(
             f"response_handler {getattr(fn, '__name__', repr(fn))!r} must be an "
             f"async function (declared with 'async def'). Sync handlers cannot "
-            f"observe the composing-cancellation surface — use 'async def' and "
-            f"check 'context.cancel.is_set()' instead."
+            f"observe the asyncio cancellation surface — use 'async def' and "
+            f"check 'cancellation_signal.is_set()' / 'await cancellation_signal.wait()' instead."
         )
     try:
         sig = inspect.signature(fn)
@@ -190,16 +195,17 @@ def _validate_handler_signature(fn: Any) -> None:
         raise TypeError(
             f"response_handler {getattr(fn, '__name__', repr(fn))!r} uses a "
             f"variadic (*args) signature. The handler contract requires exactly "
-            f"two positional parameters (request, context) so the framework can "
-            f"reason about its dispatch shape statically. Replace the *args with "
-            f"explicit '(request, context)' positional parameters."
+            f"three positional parameters (request, context, cancellation_signal) "
+            f"so the framework can reason about its dispatch shape statically. "
+            f"Replace the *args with explicit '(request, context, cancellation_signal)' "
+            f"positional parameters."
         )
-    if len(positional) != 2:
+    if len(positional) != 3:
         raise TypeError(
             f"response_handler {getattr(fn, '__name__', repr(fn))!r} must take "
-            f"exactly two positional parameters (request, context). The legacy "
-            f"three-argument signature '(request, context, cancellation_signal)' "
-            f"is no longer supported — observe cancellation via 'context.cancel'."
+            f"exactly three positional parameters (request, context, cancellation_signal). "
+            f"The 2-arg signature '(request, context)' is not supported — the "
+            f"cancellation signal is delivered as the third positional argument."
         )
 
 
@@ -222,7 +228,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         app = ResponsesAgentServerHost()
 
         @app.response_handler
-        async def my_handler(request, context):
+        async def my_handler(request, context, cancellation_signal):
             yield event
 
         app.run()
@@ -492,31 +498,37 @@ class ResponsesAgentServerHost(AgentServerHost):
     def response_handler(self, fn: CreateHandlerFn) -> CreateHandlerFn:
         """Register a function as the create-response handler.
 
-        (Spec 024 Phase 5 — Proposal #4) Handler MUST be ``async def``
-        and accept exactly two positional parameters:
-        ``(request, context)``. Sync handlers and the legacy 3-argument
-        signature ``(request, context, cancellation_signal)`` are
-        rejected at decoration time with :class:`TypeError`.
+        Handler MUST be ``async def`` and accept exactly three
+        positional parameters: ``(request, context, cancellation_signal)``.
+        Sync handlers and 2-arg signatures are rejected at decoration
+        time with :class:`TypeError`.
 
-        Cancellation is observed via ``context.cancel`` (an
-        :class:`asyncio.Event`); the cause is inspected via
-        ``context.client_cancelled``, ``context.shutdown.is_set()``,
-        or — for steering pressure — neither flag set (the cancel event
-        is set with no cause boolean).
+        Cancellation is observed via the ``cancellation_signal`` (an
+        :class:`asyncio.Event` set on client cancel, ``/cancel`` API,
+        or steering pressure). Server shutdown is a **distinct** signal
+        observed via ``context.shutdown`` — shutdown does NOT fire the
+        cancellation signal; handlers that care about both must inspect
+        each independently. The cancellation cause is inspected via
+        ``context.client_cancelled`` (explicit cancel or non-bg
+        disconnect) or — for steering pressure — neither
+        ``client_cancelled`` nor ``shutdown.is_set()`` (the signal
+        fires with no cause flag).
 
         Usage::
 
             @app.response_handler
-            async def my_handler(request, context):
-                while not context.cancel.is_set():
+            async def my_handler(request, context, cancellation_signal):
+                while not cancellation_signal.is_set():
+                    if context.shutdown.is_set():
+                        return await context.exit_for_recovery()
                     yield event
 
-        :param fn: A callable accepting (request, context).
+        :param fn: A callable accepting (request, context, cancellation_signal).
         :type fn: CreateHandlerFn
         :return: The original function (unmodified).
         :rtype: CreateHandlerFn
         :raises TypeError: If ``fn`` is not ``async def`` or does not
-            take exactly two positional parameters.
+            take exactly three positional parameters.
         """
         _validate_handler_signature(fn)
         self._create_fn = fn
@@ -551,11 +563,12 @@ class ResponsesAgentServerHost(AgentServerHost):
         self,
         request: CreateResponse,
         context: ResponseContext,
+        cancellation_signal: asyncio.Event,
     ) -> AsyncIterator[ResponseStreamEvent]:
         """Dispatch to the registered create handler.
 
         Called by the orchestrator when processing a create request.
-        Handles the post-Phase-5 handler return shapes:
+        Handles the supported handler return shapes:
 
         - AsyncIterable (e.g. ``TextResponse``) → converted to ``AsyncIterator``.
         - Coroutine (``async def`` that ``return`` s a value) → awaited, then the
@@ -566,12 +579,15 @@ class ResponsesAgentServerHost(AgentServerHost):
         :type request: CreateResponse
         :param context: The response context for the request.
         :type context: ResponseContext
+        :param cancellation_signal: The per-request cancellation event
+            passed to the handler as the 3rd positional argument.
+        :type cancellation_signal: asyncio.Event
         :returns: The result from the registered create handler callable.
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if self._create_fn is None:
             raise NotImplementedError("No create handler registered. Use the @app.response_handler decorator.")
-        result = self._create_fn(request, context)
+        result = self._create_fn(request, context, cancellation_signal)
         return self._normalize_handler_result(result)
 
     def _normalize_handler_result(self, result: Any) -> AsyncIterator[ResponseStreamEvent]:

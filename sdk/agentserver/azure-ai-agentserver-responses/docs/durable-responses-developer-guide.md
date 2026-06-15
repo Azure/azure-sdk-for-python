@@ -59,7 +59,7 @@ metadata pointer is what lets the recovered handler find that data.
 
 ```python
 @app.response_handler
-async def handler(request, context):
+async def handler(request, context, cancellation_signal):
     # Small watermark: which workflow step is next?
     step = int(context.durable_metadata.get("workflow_step", 0))
 
@@ -222,7 +222,7 @@ read regardless of `is_recovery`:
 
 ```python
 @app.response_handler
-async def handler(request, context):
+async def handler(request, context, cancellation_signal):
     # True if this invocation is a re-entry after a crash.
     if context.is_recovery:
         # Recovery code path — build a resumption response, emit a
@@ -429,13 +429,15 @@ that compose to give you durable response handlers:
   `is_recovery`, `is_steered_turn`, `pending_input_count`,
   `durable_metadata` — task store wiring, steerable conversation
   orchestration).
-- **The cancellation contract** provides the composing-cause surface
-  (`context.cancel: Event`, `context.shutdown: Event`,
-  `context.client_cancelled: bool`,
-  `await context.exit_for_recovery()`) and the pre-entry / mid-stream
-  / post-stream rules (no `cancelled` from steering or shutdown, no
-  `incomplete` from framework, framework-set `failed` for
-  naive-not-handled cancellation).
+- **The cancellation contract** provides two distinct surfaces — the
+  3rd positional handler arg `cancellation_signal: asyncio.Event`
+  (set on client cancel, `/cancel` API, or steering pressure) and
+  `context.shutdown: asyncio.Event` (set on server shutdown), plus
+  the cause flag `context.client_cancelled: bool` and the recovery
+  primitive `await context.exit_for_recovery()`. Pre-entry /
+  mid-stream / post-stream rules: no `cancelled` from steering or
+  shutdown, no `incomplete` from framework, framework-set `failed`
+  for naive-not-handled cancellation.
 - **The recovery contract** provides the multi-attempt
   reconciliation pattern: resumption response, snapshot reset on
   `response.in_progress`, watermark-guarded side effects, naive

@@ -164,7 +164,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
-        ctx.cancel = asyncio.Event()
+        ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
@@ -225,7 +225,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.is_steered_turn = True
         ctx.pending_input_count = 2
         ctx.metadata = _FakeTaskMetadata()
-        ctx.cancel = asyncio.Event()
+        ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
@@ -272,7 +272,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
-        ctx.cancel = asyncio.Event()
+        ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
@@ -312,7 +312,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
-        ctx.cancel = asyncio.Event()
+        ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
@@ -352,7 +352,7 @@ class TestDurableOrchestratorCancellationBridge:
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
-        ctx.cancel = asyncio.Event()
+        ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
@@ -365,7 +365,7 @@ class TestDurableOrchestratorCancellationBridge:
         }
 
         # Set cancel before execution starts
-        ctx.cancel.set()
+        ctx._cancellation_signal.set()
 
         with patch(
             "azure.ai.agentserver.responses.hosting._orchestrator._run_background_non_stream",

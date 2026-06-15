@@ -144,7 +144,7 @@ class TestNonBackgroundRecovery:
         ctx.retry_attempt = 1
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
-        ctx.cancel = asyncio.Event()
+        ctx._cancellation_signal = asyncio.Event()
         ctx.task_id = "non-bg-task-1"
         # Mark as non-background in the responses framework namespace.
         ctx.metadata = _FakeTaskMetadata()

@@ -29,7 +29,7 @@ def _make_session_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         input_text = await context.get_input_text()
         session_id = context.durable_metadata.get("session_id", "new-session")
         context.durable_metadata["session_id"] = session_id

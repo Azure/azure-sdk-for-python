@@ -315,7 +315,9 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
 
     try:
         try:
-            async for handler_event in _iter_with_winddown(create_fn(parsed, context), cancellation_signal):
+            async for handler_event in _iter_with_winddown(
+                create_fn(parsed, context, cancellation_signal), cancellation_signal
+            ):
                 # Client-initiated cancel (POST /cancel) → discard and force cancelled.
                 # Steering cancel (new turn queued) → let handler wind down and
                 # emit its own terminal status with output items preserved.
@@ -696,6 +698,7 @@ class _HandlerError(Exception):
     def __init__(self, original: BaseException) -> None:
         self.original = original
         super().__init__(str(original))
+
 
 def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") -> "ResponseExecution":
     """Create a transient ResponseExecution for non-bg streams needing persistence.
@@ -1757,10 +1760,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             ):
                 # Stamp the shutdown cause so the durable body's
                 # FR-005a check (which also looks at ctx.shutdown)
-                # routes consistently.
+                # routes consistently. Shutdown does NOT fire the
+                # cancellation signal — handlers observe shutdown via
+                # ``context.shutdown`` and respond with
+                # ``exit_for_recovery()`` or a terminal emit.
                 if ctx.context is not None and not ctx.context.shutdown.is_set():
                     ctx.context.shutdown.set()
-                    ctx.context.cancel.set()
                 # Signal the durable-stream-body finally to SKIP the
                 # finalize+close step. Closing the wire stream now would
                 # flush a terminal marker, putting the rehydrated stream
@@ -2051,7 +2056,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             else "mark-failed"
         )
 
-        handler_iterator = self._create_fn(ctx.parsed, ctx.context)
+        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
 
         # Helper: route to the right finalize method based on the request semantics
         # (bg+store → bg_stream path; everything else → non_bg_stream path).
@@ -2589,7 +2594,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :param state: Pipeline state (populated by handler events).
         :return: Response snapshot dictionary.
         """
-        handler_iterator = self._create_fn(ctx.parsed, ctx.context)
+        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
         # _process_handler_events handles all error paths (B8, S-035, S-015, B11).
         # run_sync only needs to exhaust the generator for state.handler_events side-effects.
         async for _ in self._process_handler_events(ctx, state, handler_iterator):
@@ -2936,7 +2941,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 exc_info=True,
             )
             state.next_seq = 0
-        handler_iterator = self._create_fn(parsed, context)
+        handler_iterator = self._create_fn(parsed, context, cancellation_signal)
 
         # Drive the streaming pipeline. Events flow to the per-response
         # stream — the wire iterator on _live_stream's side consumes from

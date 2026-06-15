@@ -67,7 +67,7 @@ def _make_sample17_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         input_text = await context.get_input_text()
 
@@ -75,7 +75,7 @@ def _make_sample17_app() -> TestClient:
 
         # Pre-entry: steered away → return without terminal
         # (In real sample, sends message to Claude SDK first to preserve context)
-        if context.cancel.is_set():
+        if cancellation_signal.is_set():
             return
 
         yield stream.emit_in_progress()
@@ -87,7 +87,7 @@ def _make_sample17_app() -> TestClient:
 
         # Simulates ClaudeSDKClient streaming
         for word in f"Claude says: {input_text}".split():
-            if context.cancel.is_set():
+            if cancellation_signal.is_set():
                 break
             yield text.emit_delta(word + " ")
             await asyncio.sleep(0.01)
@@ -142,7 +142,7 @@ def _make_sample18_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         input_text = await context.get_input_text()
 
@@ -150,7 +150,7 @@ def _make_sample18_app() -> TestClient:
 
         # Pre-entry: steered away → return without terminal
         # (In real sample, sends message to Copilot SDK then aborts)
-        if context.cancel.is_set():
+        if cancellation_signal.is_set():
             return
 
         yield stream.emit_in_progress()
@@ -162,7 +162,7 @@ def _make_sample18_app() -> TestClient:
 
         # Simulates CopilotClient event-driven streaming
         for word in f"Copilot response to: {input_text}".split():
-            if context.cancel.is_set():
+            if cancellation_signal.is_set():
                 break
             yield text.emit_delta(word + " ")
             await asyncio.sleep(0.01)
@@ -214,12 +214,12 @@ def _make_sample19_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         yield stream.emit_created()
 
         # Pre-entry: return without terminal
-        if context.cancel.is_set():
+        if cancellation_signal.is_set():
             return
 
         yield stream.emit_in_progress()
@@ -231,7 +231,7 @@ def _make_sample19_app() -> TestClient:
 
         input_text = await context.get_input_text()
         for word in f"Response to: {input_text}".split():
-            if context.cancel.is_set():
+            if cancellation_signal.is_set():
                 break
             yield text.emit_delta(word + " ")
             await asyncio.sleep(0.01)
@@ -283,13 +283,13 @@ def _make_sample20_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         input_text = await context.get_input_text()
 
         yield stream.emit_created()
 
-        if context.cancel.is_set():
+        if cancellation_signal.is_set():
             return
 
         yield stream.emit_in_progress()
@@ -300,7 +300,7 @@ def _make_sample20_app() -> TestClient:
         yield text.emit_added()
 
         for word in f"Explaining {input_text} in detail".split():
-            if context.cancel.is_set():
+            if cancellation_signal.is_set():
                 break
             yield text.emit_delta(word + " ")
             await asyncio.sleep(0.05)
@@ -368,13 +368,15 @@ class TestSample20DurableSteering:
         app_local = ResponsesAgentServerHost(options=options)
 
         @app_local.response_handler
-        async def shutdown_handler(request: CreateResponse, context: ResponseContext):
+        async def shutdown_handler(
+            request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+        ):
             stream = ResponseEventStream(response_id=context.response_id, request=request)
             input_text = await context.get_input_text()
 
             yield stream.emit_created()
 
-            if context.cancel.is_set():
+            if cancellation_signal.is_set():
                 return
 
             yield stream.emit_in_progress()
@@ -384,8 +386,8 @@ class TestSample20DurableSteering:
                 await asyncio.sleep(0.02)
                 context.shutdown.set()
 
-                context.cancel.set()
-                context.cancel.set()
+                cancellation_signal.set()
+                cancellation_signal.set()
 
             asyncio.create_task(fire_shutdown())
 
@@ -395,7 +397,7 @@ class TestSample20DurableSteering:
             yield text.emit_added()
 
             for word in f"Explaining {input_text} in great detail with many words".split():
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     break
                 yield text.emit_delta(word + " ")
                 await asyncio.sleep(0.05)
@@ -433,7 +435,7 @@ def _make_sample22_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         input_text = await context.get_input_text()
         turn_count = context.durable_metadata.get("turn_count", 0) + 1
         if input_text.strip().lower() == "done":

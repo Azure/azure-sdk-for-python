@@ -130,6 +130,7 @@ def _build_resumption_response(context: ResponseContext, request: CreateResponse
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Three-phase durable streaming handler with crash recovery."""
     # ── Recovery branch ─────────────────────────────────────────────
@@ -152,7 +153,7 @@ async def handler(
     # cannot occur. The only pre-entry cancellation reasons here are
     # CLIENT_CANCELLED and SHUTTING_DOWN, both of which call for
     # returning without a terminal event.
-    if context.cancel.is_set():
+    if cancellation_signal.is_set():
         return
 
     yield stream.emit_in_progress()
@@ -175,7 +176,7 @@ async def handler(
 
         accumulated = ""
         async for token in _phase_tokens(phase, input_text):
-            if context.cancel.is_set():
+            if cancellation_signal.is_set():
                 break
             accumulated += token
             yield text.emit_delta(token)
@@ -192,7 +193,7 @@ async def handler(
         # If we were cancelled mid-phase, do NOT advance the watermark —
         # the phase output is not durably committed from a recovery
         # standpoint, and a recovered attempt should re-run this phase.
-        if context.cancel.is_set():
+        if cancellation_signal.is_set():
             break
 
         # Phase finished cleanly — advance the watermark so a recovery
@@ -218,9 +219,7 @@ async def handler(
 async def _simulate_shutdown(context: ResponseContext) -> None:
     """Fire SHUTTING_DOWN after a delay (local testing only)."""
     await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not context.cancel.is_set():
-        context.shutdown.set()
-        context.cancel.set()
+    context.shutdown.set()
 
 
 def main() -> None:

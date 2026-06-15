@@ -13,7 +13,7 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 
-async def _noop_response_handler(request: Any, context: Any):
+async def _noop_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler used to wire the hosting surface in contract tests."""
 
     async def _events():
@@ -419,12 +419,12 @@ def test_bg_stream_cancelled_subject_completed() -> None:
 
     gate_started: list[bool] = []
 
-    async def _blocking_bg_stream_handler(request: Any, context: Any):
+    async def _blocking_bg_stream_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             yield {"type": "response.created", "response": {"status": "in_progress", "output": []}}
             gate_started.append(True)
             # Block until cancelled
-            while not context.cancel.is_set():
+            while not cancellation_signal.is_set():
                 import asyncio as _asyncio
 
                 await _asyncio.sleep(0.01)
@@ -492,7 +492,7 @@ def test_bg_stream_cancelled_subject_completed() -> None:
 # ---------------------------------------------------------------------------
 
 
-async def _cancellable_bg_handler(request: Any, context: Any):
+async def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that blocks until cancelled — keeps bg response in_progress."""
 
     async def _events():
@@ -500,7 +500,7 @@ async def _cancellable_bg_handler(request: Any, context: Any):
             "type": "response.created",
             "response": {"status": "in_progress", "output": []},
         }
-        while not context.cancel.is_set():
+        while not cancellation_signal.is_set():
             await asyncio.sleep(0.01)
 
     return _events()

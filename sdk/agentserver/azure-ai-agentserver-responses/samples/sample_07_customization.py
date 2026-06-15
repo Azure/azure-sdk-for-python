@@ -53,6 +53,7 @@ app = ResponsesAgentServerHost(options=options, log_level="DEBUG")
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Echo handler that reports which model is being used."""
     input_text = await context.get_input_text()

@@ -180,7 +180,7 @@ class TestFreshEntryBaseline:
 
     @pytest.mark.asyncio
     async def test_fresh_entry_produces_well_formed_response(self) -> None:
-        async def handler(request: Any, context: ResponseContext):
+        async def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, request=request)
                 yield stream.emit_created()
@@ -402,7 +402,7 @@ class TestRecoveryAwareHandlerProducesCleanFinalResponse:
         # we "crash" by raising. Second invocation runs the recovery path.
         attempts: list[int] = [0]
 
-        async def handler(request: Any, context: ResponseContext):
+        async def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
                 # On second attempt, pretend entry_mode=="recovered" by simulating
                 # the recovery code path: build a resumption response that
@@ -498,7 +498,7 @@ class TestNaiveHandlerFallback:
     @pytest.mark.asyncio
     async def test_naive_handler_still_produces_terminal(self) -> None:
         # Naive handler — always runs from scratch.
-        async def handler(request: Any, context: ResponseContext):
+        async def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, request=request)
                 yield stream.emit_created()
@@ -548,17 +548,17 @@ class TestRecoveryWithClientCancelled:
         # without a terminal event and the framework forces "cancelled".
         events_emitted: list[str] = []
 
-        async def handler(request: Any, context: ResponseContext):
+        async def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, request=request)
                 yield stream.emit_created()
                 events_emitted.append("created")
                 # Simulate CLIENT_CANCELLED pre-set on this recovered entry.
                 context.client_cancelled = True
-                context.cancel.set()
+                cancellation_signal.set()
                 # Recovery-aware handler: signal pre-set + CLIENT_CANCELLED → return.
-                if context.cancel.is_set():
-                    if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+                if cancellation_signal.is_set():
+                    if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
                         yield stream.emit_completed()
                         events_emitted.append("completed")
                     return
@@ -594,15 +594,15 @@ class TestRecoveryWithSteered:
     async def test_recovered_handler_with_steered_emits_completed(self) -> None:
         events_emitted: list[str] = []
 
-        async def handler(request: Any, context: ResponseContext):
+        async def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, request=request)
                 yield stream.emit_created()
                 events_emitted.append("created")
                 # Spec 024 Phase 5: steering pressure → no cause flag, cancel event only.
-                context.cancel.set()
-                if context.cancel.is_set():
-                    if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+                cancellation_signal.set()
+                if cancellation_signal.is_set():
+                    if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
                         yield stream.emit_completed()
                         events_emitted.append("completed")
                     return
@@ -636,7 +636,7 @@ class TestRecoveryWithShutdown:
     async def test_recovered_handler_with_shutdown_returns_no_terminal(self) -> None:
         events_emitted: list[str] = []
 
-        async def handler(request: Any, context: ResponseContext):
+        async def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, request=request)
                 yield stream.emit_created()
@@ -646,8 +646,8 @@ class TestRecoveryWithShutdown:
                 # Mid-stream shutdown.
                 context.shutdown.set()
 
-                context.cancel.set()
-                context.cancel.set()
+                cancellation_signal.set()
+                cancellation_signal.set()
                 # Phase 3 of cancellation policy on shutdown: return without terminal.
                 if context.shutdown.is_set():
                     return

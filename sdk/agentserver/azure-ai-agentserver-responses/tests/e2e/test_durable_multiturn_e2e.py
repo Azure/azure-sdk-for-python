@@ -43,6 +43,7 @@ def _make_multiturn_app() -> TestClient:
     async def handler(
         request: CreateResponse,
         context: ResponseContext,
+        cancellation_signal: asyncio.Event,
     ):
         input_text = await context.get_input_text()
         turn_count = context.durable_metadata.get("turn_count", 0) + 1
@@ -137,6 +138,7 @@ class TestDurableMultiturnNonDurable:
         async def handler(
             request: CreateResponse,
             context: ResponseContext,
+            cancellation_signal: asyncio.Event,
         ):
             input_text = await context.get_input_text()
             return TextResponse(context, request, text=f"Non-durable: {input_text}")
@@ -193,6 +195,7 @@ def _make_conv_id_non_steerable_app() -> tuple[Any, dict[str, Any]]:
     async def handler(
         request: CreateResponse,
         context: ResponseContext,
+        cancellation_signal: asyncio.Event,
     ):
         input_text = await context.get_input_text()
         chain_id = context.conversation_chain_id
@@ -337,7 +340,7 @@ class TestRow5ConversationIdNonSteerableE2E:
         app = ResponsesAgentServerHost(options=options)
 
         @app.response_handler
-        async def handler(request, context):
+        async def handler(request, context, cancellation_signal):
             # Emit response.created IMMEDIATELY (releases the POST's
             # response_created_signal so the POST returns 200), then sleep so
             # the handler stays in_progress while the second POST races.

@@ -158,7 +158,7 @@ async def test_bg_non_streaming_post_returns_handler_continues() -> None:
     """T069 — bg non-streaming: POST returns immediately with in_progress, handler continues."""
     handler_completed = asyncio.Event()
 
-    async def handler(request: Any, context: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -228,7 +228,7 @@ async def test_non_bg_streaming_disconnect_results_in_cancelled() -> None:
     test_app = ResponsesAgentServerHost()
 
     @test_app.response_handler
-    async def _handler(request, context):
+    async def _handler(request, context, cancellation_signal):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -243,7 +243,7 @@ async def test_non_bg_streaming_disconnect_results_in_cancelled() -> None:
             tc = msg.add_text_content()
             yield tc.emit_added()
             for i in range(500):
-                if context.cancel.is_set():
+                if cancellation_signal.is_set():
                     handler_cancelled.set()
                     break
                 yield tc.emit_delta(f"chunk{i} ")

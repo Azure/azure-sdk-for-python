@@ -93,7 +93,7 @@ class TestDurableOrchestrationBaseline:
     def test_post_store_true_background_returns_200(self) -> None:
         """POST store=true background → 200 with response."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             return TextResponse(context, request, text="Hello, world!")
 
         client = _make_durable_app(handler)
@@ -105,7 +105,7 @@ class TestDurableOrchestrationBaseline:
     def test_post_store_true_background_stream_completes(self) -> None:
         """POST store=true background stream → SSE stream completes normally."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             stream = ResponseEventStream(response_id=context.response_id, request=request)
             yield stream.emit_created()
             yield stream.emit_in_progress()
@@ -127,7 +127,7 @@ class TestDurableOrchestrationBaseline:
         """Handler can access context.durability on durable path."""
         captured: dict[str, Any] = {}
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             captured["durability"] = context.durability
             return TextResponse(context, request, text="Done")
 
@@ -148,7 +148,7 @@ class TestDurableOrchestrationFailure:
     def test_handler_raises_response_failed(self) -> None:
         """Handler raises → response becomes 'failed'."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             raise RuntimeError("Intentional failure")
 
         client = _make_durable_app(handler)
@@ -165,7 +165,7 @@ class TestDurableOrchestrationParallelForks:
     def test_parallel_forks_all_succeed(self) -> None:
         """3 POSTs with same previous_response_id, steerable=False → all 200."""
 
-        async def handler(request: CreateResponse, context: ResponseContext):
+        async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
             return TextResponse(context, request, text="Fork response")
 
         client = _make_durable_app(handler, steerable=False)

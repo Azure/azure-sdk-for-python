@@ -56,6 +56,7 @@ app = ResponsesAgentServerHost(options=options)
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Multi-turn handler with perpetual task lifecycle."""
     input_text = await context.get_input_text()
