@@ -33,6 +33,15 @@ test("artifactsDiffer is true when either file differs", () => {
   assert.equal(artifactsDiffer(workingRoot, reviewRoot, "sdk/service/azure-example"), true);
 });
 
+test("artifactsDiffer fails when working artifacts are missing", () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "api-md-sync-"));
+  const workingRoot = path.join(root, "working");
+  const reviewRoot = path.join(root, "review");
+  writeArtifacts(reviewRoot, "sdk/service/azure-example", "api", "metadata");
+
+  assert.throws(() => artifactsDiffer(workingRoot, reviewRoot, "sdk/service/azure-example"), /required API artifact is missing/);
+});
+
 test("copyApiArtifacts copies only API files", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "api-md-sync-"));
   const workingRoot = path.join(root, "working");

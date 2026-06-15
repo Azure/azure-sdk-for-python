@@ -26,13 +26,20 @@ function readFileOrUndefined(filePath) {
   return fs.existsSync(filePath) ? fs.readFileSync(filePath) : undefined;
 }
 
+function readRequiredFile(filePath) {
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`ERROR: required API artifact is missing from working branch checkout: ${filePath}`);
+  }
+  return fs.readFileSync(filePath);
+}
+
 function artifactsDiffer(workingRoot, reviewRoot, packageDir) {
   const workingPaths = artifactPaths(workingRoot, packageDir);
   const reviewPaths = artifactPaths(reviewRoot, packageDir);
 
   return workingPaths.some((workingPath, index) => {
     const reviewPath = reviewPaths[index];
-    return !Buffer.from(readFileOrUndefined(workingPath) || "").equals(Buffer.from(readFileOrUndefined(reviewPath) || ""));
+    return !readRequiredFile(workingPath).equals(Buffer.from(readFileOrUndefined(reviewPath) || ""));
   });
 }
 
@@ -41,9 +48,6 @@ function copyApiArtifacts(workingRoot, reviewRoot, packageDir) {
   const reviewPaths = artifactPaths(reviewRoot, packageDir);
 
   for (const [index, workingPath] of workingPaths.entries()) {
-    if (!fs.existsSync(workingPath)) {
-      throw new Error(`ERROR: required API artifact is missing from working branch checkout: ${workingPath}`);
-    }
     fs.mkdirSync(path.dirname(reviewPaths[index]), { recursive: true });
     fs.copyFileSync(workingPath, reviewPaths[index]);
   }

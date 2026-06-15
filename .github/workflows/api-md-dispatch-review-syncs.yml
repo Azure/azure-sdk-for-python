@@ -59,7 +59,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh run download "${{ steps.gate.outputs.consistency_run_id }}" --name api-md-affected-packages --dir .artifacts || true
+          gh run download "${{ steps.gate.outputs.consistency_run_id }}" --name api-md-affected-packages --dir .artifacts
 
       - name: Dispatch matching review branch syncs
         if: ${{ steps.gate.outputs.should_dispatch == 'true' && hashFiles('.artifacts/affected_package_dirs.txt') != '' }}

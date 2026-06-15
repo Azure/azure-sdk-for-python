@@ -104,7 +104,7 @@ async function githubRequest(method, apiPath, { token = process.env.GITHUB_TOKEN
     body: body === undefined ? undefined : JSON.stringify(body),
   });
 
-  if (allow404 && (response.status === 403 || response.status === 404)) {
+  if (allow404 && response.status === 404) {
     return undefined;
   }
 
@@ -280,6 +280,9 @@ async function evaluateFinalCiGate({
   const pullRequest = selectWorkingPullRequest(await getCommitPullRequestsFn(workingSha), workingSha);
   if (!pullRequest) {
     return { ready: false, reason: `No open pull request found for ${workingSha}.` };
+  }
+  if (pullRequest.head.ref.startsWith("apireview/")) {
+    return { ready: false, reason: `Skipping API review branch ${pullRequest.head.repo.owner.login}:${pullRequest.head.ref}.` };
   }
 
   const consistencyRun = findSuccessfulConsistencyRun(
@@ -482,6 +485,7 @@ export {
   evaluateFinalCiGate,
   findMatchingReviewPrs,
   findSuccessfulConsistencyRun,
+  githubRequest,
   metadataMatches,
   normalizePackageDir,
   packageRecordFromDir,

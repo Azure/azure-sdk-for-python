@@ -12,6 +12,7 @@ import {
   dispatchForPackages,
   evaluateFinalCiGate,
   findMatchingReviewPrs,
+  githubRequest,
   parseSyncMetadata,
   requiredChecksGate,
 } from "./dispatch_review_branch_syncs.js";
@@ -126,6 +127,17 @@ test("requiredChecksGate accepts required check runs that completed successfully
   assert.equal(result.ready, true);
 });
 
+test("githubRequest does not suppress forbidden required-check reads", async () => {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async () => new Response("forbidden", { status: 403 });
+
+  try {
+    await assert.rejects(githubRequest("GET", "/repos/Azure/azure-sdk-for-python/branches/main/protection/required_status_checks", { allow404: true }), /403/);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("evaluateFinalCiGate exits when consistency has not passed", async () => {
   const result = await evaluateFinalCiGate({
     workingSha: "abc123",
@@ -141,6 +153,28 @@ test("evaluateFinalCiGate exits when consistency has not passed", async () => {
 
   assert.equal(result.ready, false);
   assert.match(result.reason, /consistency has not passed/);
+});
+
+test("evaluateFinalCiGate skips API review working branches before CI checks", async () => {
+  let checkedConsistency = false;
+  const result = await evaluateFinalCiGate({
+    workingSha: "abc123",
+    getCommitPullRequestsFn: async () => [
+      {
+        state: "open",
+        head: { sha: "abc123", ref: "apireview/review_azure-example_1.1.0", repo: { owner: { login: "Azure" } } },
+        base: { ref: "main" },
+      },
+    ],
+    getWorkflowRunsForShaFn: async () => {
+      checkedConsistency = true;
+      return [{ id: 42, status: "completed", conclusion: "success" }];
+    },
+  });
+
+  assert.equal(result.ready, false);
+  assert.match(result.reason, /Skipping API review branch/);
+  assert.equal(checkedConsistency, false);
 });
 
 test("evaluateFinalCiGate resolves working branch when full CI is green", async () => {
