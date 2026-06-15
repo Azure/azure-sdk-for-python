@@ -19,23 +19,26 @@ If the current branch differs from the inventories in many places, consider rege
 
 ## CHANGELOG conventions
 
-Use `azsdk_package_update_changelog_content` to draft entries, then review and adjust.
+### Drafting changelog entries
 
-The generated SDK code is the source of truth for CHANGELOG content. If something exists in generated code, treat it as present. Fall back to the TypeSpec config in the spec PR only when the generated code is ambiguous.
+1. Start from the spec PR's `CHANGELOG.md`. Map its sections to ours and use it as the candidate list of what changed.
+2. Treat generated SDK code as the source of truth. Confirm each candidate entry exists in the current generated code with `venv python -c "from ... import X; print(X)"`.
+3. Group entries by symbol kind and feature theme when meaningful. Kinds are `clients`, `enum members`, `models`, `operations`, `parameters`, `properties`; combine kinds inline when a group includes more than one kind.
+4. Write each group as a lead-in bullet with an indented sublist. Use one of these patterns:
+   - `Below <kinds> are added [or changed] [for <theme>]`
+   - `Below <kinds> are renamed`
+   - `Below <kinds> do not exist in this release`
+5. Sort entries within each sublist alphabetically by fully qualified name.
 
-After drafting the CHANGELOG, verify both directions:
+### Checking whether a symbol exists in a release
 
-1. Code to CHANGELOG: for every changed item in generated code, verify it is reflected in `CHANGELOG.md`.
-2. CHANGELOG to code: for every item in `CHANGELOG.md`, verify it matches actual code.
-
-Use the import checks in `SKILL.md` plus targeted `venv python -c "from ... import X; print(X)"` checks for individual symbols.
-
-Sort lists within each CHANGELOG section alphabetically by fully qualified name.
+- Spot-check: `git show azure-search-documents_<prev-version>:sdk/search/azure-search-documents/<path>`.
+- Full dump: `pip install azure-search-documents==<prev-version>` into a temp venv, dump via `dir()` / `inspect.signature`, diff against current. Run from outside the package root or local source shadows the wheel.
 
 ### Preview releases
 
 - `Features Added`: list changes since the previous preview release.
-- `Breaking Changes`: list breaking changes since the previous preview release. Put this beta-only disclaimer before the list:
+- `Breaking Changes`: list breaking changes since the previous preview release. Prepend this beta-only disclaimer:
 
 ```markdown
 > These changes do not impact the API of stable versions such as <latest GA version>.
@@ -46,8 +49,8 @@ Sort lists within each CHANGELOG section alphabetically by fully qualified name.
 
 - `Features Added`: list changes since the previous GA release. Do not compare against the latest preview.
 - `Breaking Changes`: when both categories apply, group them in this order:
-  1. GA-to-GA breaking changes, with no disclaimer.
-  2. Preview-to-GA breaking changes, after this beta-only disclaimer:
+  1. Breaking changes since the previous GA release, with no disclaimer.
+  2. Breaking changes since the latest preview in this GA's minor, prepended with this beta-only disclaimer:
 
 ```markdown
 > These changes do not impact the API of stable versions such as <previous GA version>.

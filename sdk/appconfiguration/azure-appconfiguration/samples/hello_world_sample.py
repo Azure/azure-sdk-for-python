@@ -17,6 +17,7 @@ USAGE: python hello_world_sample.py
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
 """
+
 from azure.appconfiguration import ConfigurationSetting
 
 

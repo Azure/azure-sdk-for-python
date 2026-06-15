@@ -1,5 +1,18 @@
 # Release History
 
+## 2.0.0b6 (2026-06-12)
+
+### Bugs Fixed
+
+- Populated agent metadata when operation IDs are zeroed so agent metadata remains available for telemetry and downstream processing.
+- Suppressed noisy observability/exporter INFO logs by default in tracing setup while preserving DEBUG visibility when explicitly enabled.
+
+## 2.0.0b5 (2026-05-25)
+
+### Bugs Fixed
+
+- Fixed the blueprint telemetry attribute key name from `gen_ai.agent.blueprint.id` to `microsoft.a365.agent.blueprint.id` to align with A365 schema and cross-SDK behavior.
+
 ## 2.0.0b4 (2026-05-21)
 
 ### Features Added
