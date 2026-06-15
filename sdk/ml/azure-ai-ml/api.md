@@ -292,10 +292,16 @@ namespace azure.ai.ml
         def __init__(
                 self, 
                 *, 
+                datastore: str = ..., 
+                default: Union[str, int, float, bool] = ..., 
                 description: Optional[str] = ..., 
+                intellectual_property: IntellectualProperty = ..., 
+                max: Union[int, float] = ..., 
+                min: Union[int, float] = ..., 
                 mode: Optional[str] = ..., 
                 optional: Optional[bool] = ..., 
                 path: Optional[str] = ..., 
+                path_on_compute: Optional[str] = ..., 
                 type: str, 
                 **kwargs: Any
             ) -> None: ...
@@ -304,11 +310,16 @@ namespace azure.ai.ml
         def __init__(
                 self, 
                 *, 
+                datastore: str = ..., 
                 default: Optional[float] = ..., 
                 description: Optional[str] = ..., 
+                intellectual_property: IntellectualProperty = ..., 
                 max: Optional[float] = ..., 
                 min: Optional[float] = ..., 
+                mode: Optional[str] = ..., 
                 optional: Optional[bool] = ..., 
+                path: Optional[str] = ..., 
+                path_on_compute: Optional[str] = ..., 
                 type: Literal["number"] = "number", 
                 **kwargs: Any
             ) -> None: ...
@@ -317,11 +328,16 @@ namespace azure.ai.ml
         def __init__(
                 self, 
                 *, 
+                datastore: str = ..., 
                 default: Optional[int] = ..., 
                 description: Optional[str] = ..., 
+                intellectual_property: IntellectualProperty = ..., 
                 max: Optional[int] = ..., 
                 min: Optional[int] = ..., 
+                mode: Optional[str] = ..., 
                 optional: Optional[bool] = ..., 
+                path: Optional[str] = ..., 
+                path_on_compute: Optional[str] = ..., 
                 type: Literal["integer"] = "integer", 
                 **kwargs: Any
             ) -> None: ...
@@ -330,10 +346,16 @@ namespace azure.ai.ml
         def __init__(
                 self, 
                 *, 
+                datastore: str = ..., 
                 default: Optional[str] = ..., 
                 description: Optional[str] = ..., 
+                intellectual_property: IntellectualProperty = ..., 
+                max: Union[int, float] = ..., 
+                min: Union[int, float] = ..., 
+                mode: Optional[str] = ..., 
                 optional: Optional[bool] = ..., 
                 path: Optional[str] = ..., 
+                path_on_compute: Optional[str] = ..., 
                 type: Literal["string"] = "string", 
                 **kwargs: Any
             ) -> None: ...
@@ -342,9 +364,16 @@ namespace azure.ai.ml
         def __init__(
                 self, 
                 *, 
+                datastore: str = ..., 
                 default: Optional[bool] = ..., 
                 description: Optional[str] = ..., 
+                intellectual_property: IntellectualProperty = ..., 
+                max: Union[int, float] = ..., 
+                min: Union[int, float] = ..., 
+                mode: Optional[str] = ..., 
                 optional: Optional[bool] = ..., 
+                path: Optional[str] = ..., 
+                path_on_compute: Optional[str] = ..., 
                 type: Literal["boolean"] = "boolean", 
                 **kwargs: Any
             ) -> None: ...
