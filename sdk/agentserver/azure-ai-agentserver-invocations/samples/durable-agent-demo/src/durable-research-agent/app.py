@@ -239,7 +239,11 @@ async def handle_cancel(request: Request) -> Response:
     task_id = session_id  # one task per session — match POST handler
     logger.info("CANCEL handler: invocation_id=%r task_id=%r", invocation_id, task_id)
 
-    run = await deep_research.get_active_run(task_id)
+    # ``input_id == invocation_id`` per the POST handler's start() call.
+    # MultiTurnTask.get_active_run requires the input_id of the current
+    # turn so the framework can verify the caller is targeting the
+    # in-flight turn and not a stale one.
+    run = await deep_research.get_active_run(task_id, invocation_id)
     if run is None:
         return JSONResponse({"status": "not_found", "message": "No active task to cancel."})
 
