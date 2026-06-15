@@ -130,6 +130,16 @@ jobs:
         run: |
           npm run regenerate
 
+      - name: Stage regenerated tests
+        run: |
+          set -euo pipefail
+          GENERATED_STAGE_DIR="${RUNNER_TEMP}/typespec-python-generated"
+          rm -rf "$GENERATED_STAGE_DIR"
+          mkdir -p "$GENERATED_STAGE_DIR"
+          cp -r "_typespec/packages/http-client-python/tests/generated/azure" "$GENERATED_STAGE_DIR/azure"
+          cp -r "_typespec/packages/http-client-python/tests/generated/unbranded" "$GENERATED_STAGE_DIR/unbranded"
+          echo "GENERATED_STAGE_DIR=$GENERATED_STAGE_DIR" >> "$GITHUB_ENV"
+
       - name: Checkout generated tests source branch
         run: |
           set -euo pipefail
@@ -152,11 +162,11 @@ jobs:
           TARGET="eng/tools/azure-sdk-tools/emitter/generated"
           rm -rf "$TARGET/azure" "$TARGET/unbranded"
           mkdir -p "$TARGET"
-          cp -r "_typespec/packages/http-client-python/tests/generated/azure" "$TARGET/azure"
-          cp -r "_typespec/packages/http-client-python/tests/generated/unbranded" "$TARGET/unbranded"
+          cp -r "$GENERATED_STAGE_DIR/azure" "$TARGET/azure"
+          cp -r "$GENERATED_STAGE_DIR/unbranded" "$TARGET/unbranded"
 
       - name: Clean up typespec checkout
-        run: rm -rf "_typespec"
+        run: rm -rf "_typespec" "$GENERATED_STAGE_DIR"
 
       - name: Apply README template to generated test packages
         run: |
