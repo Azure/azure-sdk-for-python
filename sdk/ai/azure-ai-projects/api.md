@@ -1,7 +1,4 @@
 ```py
-# Package is parsed using apiview-stub-generator(version:0.3.28), Python version: 3.14.3
-
-
 namespace azure.ai.projects
 
     class azure.ai.projects.AIProjectClient(AIProjectClientGenerated): implements ContextManager 
