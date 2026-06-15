@@ -13618,7 +13618,7 @@ class TimerRoutineTrigger(RoutineTrigger, discriminator="timer"):
     type: Literal[RoutineTriggerType.TIMER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The trigger type. Required. A one-shot timer trigger."""
     at: Optional[datetime.datetime] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
     )
     """The UTC date and time at which the timer fires."""
 
