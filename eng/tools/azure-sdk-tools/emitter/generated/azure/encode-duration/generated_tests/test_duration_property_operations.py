@@ -39,7 +39,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_int32_seconds(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.int32_seconds(
-            body={"value": 0},
+            body={"value": "1 day, 0:00:00"},
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_float_seconds(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.float_seconds(
-            body={"value": 0.0},
+            body={"value": "1 day, 0:00:00"},
         )
 
         # please add some check logic here by yourself
@@ -61,7 +61,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_float64_seconds(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.float64_seconds(
-            body={"value": 0.0},
+            body={"value": "1 day, 0:00:00"},
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_int32_milliseconds(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.int32_milliseconds(
-            body={"value": 0},
+            body={"value": "1 day, 0:00:00"},
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_float_milliseconds(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.float_milliseconds(
-            body={"value": 0.0},
+            body={"value": "1 day, 0:00:00"},
         )
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_float64_milliseconds(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.float64_milliseconds(
-            body={"value": 0.0},
+            body={"value": "1 day, 0:00:00"},
         )
 
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_float_seconds_array(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.float_seconds_array(
-            body={"value": [0.0]},
+            body={"value": ["1 day, 0:00:00"]},
         )
 
         # please add some check logic here by yourself
@@ -116,7 +116,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_float_milliseconds_array(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.float_milliseconds_array(
-            body={"value": [0.0]},
+            body={"value": ["1 day, 0:00:00"]},
         )
 
         # please add some check logic here by yourself
@@ -127,7 +127,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_int32_seconds_larger_unit(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.int32_seconds_larger_unit(
-            body={"value": 0},
+            body={"value": "1 day, 0:00:00"},
         )
 
         # please add some check logic here by yourself
@@ -138,7 +138,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_float_seconds_larger_unit(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.float_seconds_larger_unit(
-            body={"value": 0.0},
+            body={"value": "1 day, 0:00:00"},
         )
 
         # please add some check logic here by yourself
@@ -149,7 +149,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_int32_milliseconds_larger_unit(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.int32_milliseconds_larger_unit(
-            body={"value": 0},
+            body={"value": "1 day, 0:00:00"},
         )
 
         # please add some check logic here by yourself
@@ -160,7 +160,7 @@ class TestDurationPropertyOperations(DurationClientTestBase):
     def test_property_float_milliseconds_larger_unit(self, duration_endpoint):
         client = self.create_client(endpoint=duration_endpoint)
         response = client.property.float_milliseconds_larger_unit(
-            body={"value": 0.0},
+            body={"value": "1 day, 0:00:00"},
         )
 
         # please add some check logic here by yourself

@@ -42,7 +42,7 @@ def build_special_char_dollar_sign_request(*, filter: str, **kwargs: Any) -> Htt
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     # Construct URL
-    _url = "/parameters/query/special-char/dollarSign"
+    _url = "/parameters/query/special-char/dollar-sign"
 
     # Construct parameters
     _params["$filter"] = _SERIALIZER.query("filter", filter, "str")

@@ -50,20 +50,20 @@ def build_query_iso8601_request(*, input: datetime.timedelta, **kwargs: Any) -> 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-def build_query_int32_seconds_request(*, input: int, **kwargs: Any) -> HttpRequest:
+def build_query_int32_seconds_request(*, input: datetime.timedelta, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     # Construct URL
     _url = "/encode/duration/query/int32-seconds"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "int")
+    _params["input"] = _SERIALIZER.query("input", input, "duration-seconds-int")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
 def build_query_int32_seconds_larger_unit_request(  # pylint: disable=name-too-long
-    *, input: int, **kwargs: Any
+    *, input: datetime.timedelta, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -71,25 +71,25 @@ def build_query_int32_seconds_larger_unit_request(  # pylint: disable=name-too-l
     _url = "/encode/duration/query/int32-seconds-larger-unit"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "int")
+    _params["input"] = _SERIALIZER.query("input", input, "duration-seconds-int")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-def build_query_float_seconds_request(*, input: float, **kwargs: Any) -> HttpRequest:
+def build_query_float_seconds_request(*, input: datetime.timedelta, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     # Construct URL
     _url = "/encode/duration/query/float-seconds"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "float")
+    _params["input"] = _SERIALIZER.query("input", input, "duration-seconds-float")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
 def build_query_float_seconds_larger_unit_request(  # pylint: disable=name-too-long
-    *, input: float, **kwargs: Any
+    *, input: datetime.timedelta, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -97,37 +97,37 @@ def build_query_float_seconds_larger_unit_request(  # pylint: disable=name-too-l
     _url = "/encode/duration/query/float-seconds-larger-unit"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "float")
+    _params["input"] = _SERIALIZER.query("input", input, "duration-seconds-float")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-def build_query_float64_seconds_request(*, input: float, **kwargs: Any) -> HttpRequest:
+def build_query_float64_seconds_request(*, input: datetime.timedelta, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     # Construct URL
     _url = "/encode/duration/query/float64-seconds"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "float")
+    _params["input"] = _SERIALIZER.query("input", input, "duration-seconds-float")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-def build_query_int32_milliseconds_request(*, input: int, **kwargs: Any) -> HttpRequest:
+def build_query_int32_milliseconds_request(*, input: datetime.timedelta, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     # Construct URL
     _url = "/encode/duration/query/int32-milliseconds"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "int")
+    _params["input"] = _SERIALIZER.query("input", input, "duration-milliseconds-int")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
 def build_query_int32_milliseconds_larger_unit_request(  # pylint: disable=name-too-long
-    *, input: int, **kwargs: Any
+    *, input: datetime.timedelta, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -135,25 +135,25 @@ def build_query_int32_milliseconds_larger_unit_request(  # pylint: disable=name-
     _url = "/encode/duration/query/int32-milliseconds-larger-unit"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "int")
+    _params["input"] = _SERIALIZER.query("input", input, "duration-milliseconds-int")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-def build_query_float_milliseconds_request(*, input: float, **kwargs: Any) -> HttpRequest:
+def build_query_float_milliseconds_request(*, input: datetime.timedelta, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     # Construct URL
     _url = "/encode/duration/query/float-milliseconds"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "float")
+    _params["input"] = _SERIALIZER.query("input", input, "duration-milliseconds-float")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
 def build_query_float_milliseconds_larger_unit_request(  # pylint: disable=name-too-long
-    *, input: float, **kwargs: Any
+    *, input: datetime.timedelta, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -161,37 +161,37 @@ def build_query_float_milliseconds_larger_unit_request(  # pylint: disable=name-
     _url = "/encode/duration/query/float-milliseconds-larger-unit"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "float")
+    _params["input"] = _SERIALIZER.query("input", input, "duration-milliseconds-float")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-def build_query_float64_milliseconds_request(*, input: float, **kwargs: Any) -> HttpRequest:
+def build_query_float64_milliseconds_request(*, input: datetime.timedelta, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     # Construct URL
     _url = "/encode/duration/query/float64-milliseconds"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "float")
+    _params["input"] = _SERIALIZER.query("input", input, "duration-milliseconds-float")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-def build_query_int32_seconds_array_request(*, input: list[int], **kwargs: Any) -> HttpRequest:
+def build_query_int32_seconds_array_request(*, input: list[datetime.timedelta], **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     # Construct URL
     _url = "/encode/duration/query/int32-seconds-array"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "[int]", div=",")
+    _params["input"] = _SERIALIZER.query("input", input, "[duration-seconds-int]", div=",")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
 def build_query_int32_milliseconds_array_request(  # pylint: disable=name-too-long
-    *, input: list[int], **kwargs: Any
+    *, input: list[datetime.timedelta], **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -199,7 +199,7 @@ def build_query_int32_milliseconds_array_request(  # pylint: disable=name-too-lo
     _url = "/encode/duration/query/int32-milliseconds-array"
 
     # Construct parameters
-    _params["input"] = _SERIALIZER.query("input", input, "[int]", div=",")
+    _params["input"] = _SERIALIZER.query("input", input, "[duration-milliseconds-int]", div=",")
 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
@@ -313,11 +313,13 @@ class QueryOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    def int32_seconds(self, *, input: int, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def int32_seconds(  # pylint: disable=inconsistent-return-statements
+        self, *, input: datetime.timedelta, **kwargs: Any
+    ) -> None:
         """int32_seconds.
 
         :keyword input: Required.
-        :paramtype input: int
+        :paramtype input: ~datetime.timedelta
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -358,12 +360,12 @@ class QueryOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def int32_seconds_larger_unit(  # pylint: disable=inconsistent-return-statements
-        self, *, input: int, **kwargs: Any
+        self, *, input: datetime.timedelta, **kwargs: Any
     ) -> None:
         """int32_seconds_larger_unit.
 
         :keyword input: Required.
-        :paramtype input: int
+        :paramtype input: ~datetime.timedelta
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -403,11 +405,13 @@ class QueryOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    def float_seconds(self, *, input: float, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def float_seconds(  # pylint: disable=inconsistent-return-statements
+        self, *, input: datetime.timedelta, **kwargs: Any
+    ) -> None:
         """float_seconds.
 
         :keyword input: Required.
-        :paramtype input: float
+        :paramtype input: ~datetime.timedelta
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -448,12 +452,12 @@ class QueryOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def float_seconds_larger_unit(  # pylint: disable=inconsistent-return-statements
-        self, *, input: float, **kwargs: Any
+        self, *, input: datetime.timedelta, **kwargs: Any
     ) -> None:
         """float_seconds_larger_unit.
 
         :keyword input: Required.
-        :paramtype input: float
+        :paramtype input: ~datetime.timedelta
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -493,11 +497,13 @@ class QueryOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    def float64_seconds(self, *, input: float, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def float64_seconds(  # pylint: disable=inconsistent-return-statements
+        self, *, input: datetime.timedelta, **kwargs: Any
+    ) -> None:
         """float64_seconds.
 
         :keyword input: Required.
-        :paramtype input: float
+        :paramtype input: ~datetime.timedelta
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -538,12 +544,12 @@ class QueryOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def int32_milliseconds(  # pylint: disable=inconsistent-return-statements
-        self, *, input: int, **kwargs: Any
+        self, *, input: datetime.timedelta, **kwargs: Any
     ) -> None:
         """int32_milliseconds.
 
         :keyword input: Required.
-        :paramtype input: int
+        :paramtype input: ~datetime.timedelta
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -584,12 +590,12 @@ class QueryOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def int32_milliseconds_larger_unit(  # pylint: disable=inconsistent-return-statements
-        self, *, input: int, **kwargs: Any
+        self, *, input: datetime.timedelta, **kwargs: Any
     ) -> None:
         """int32_milliseconds_larger_unit.
 
         :keyword input: Required.
-        :paramtype input: int
+        :paramtype input: ~datetime.timedelta
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -630,12 +636,12 @@ class QueryOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def float_milliseconds(  # pylint: disable=inconsistent-return-statements
-        self, *, input: float, **kwargs: Any
+        self, *, input: datetime.timedelta, **kwargs: Any
     ) -> None:
         """float_milliseconds.
 
         :keyword input: Required.
-        :paramtype input: float
+        :paramtype input: ~datetime.timedelta
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -676,12 +682,12 @@ class QueryOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def float_milliseconds_larger_unit(  # pylint: disable=inconsistent-return-statements
-        self, *, input: float, **kwargs: Any
+        self, *, input: datetime.timedelta, **kwargs: Any
     ) -> None:
         """float_milliseconds_larger_unit.
 
         :keyword input: Required.
-        :paramtype input: float
+        :paramtype input: ~datetime.timedelta
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -722,12 +728,12 @@ class QueryOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def float64_milliseconds(  # pylint: disable=inconsistent-return-statements
-        self, *, input: float, **kwargs: Any
+        self, *, input: datetime.timedelta, **kwargs: Any
     ) -> None:
         """float64_milliseconds.
 
         :keyword input: Required.
-        :paramtype input: float
+        :paramtype input: ~datetime.timedelta
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -768,12 +774,12 @@ class QueryOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def int32_seconds_array(  # pylint: disable=inconsistent-return-statements
-        self, *, input: list[int], **kwargs: Any
+        self, *, input: list[datetime.timedelta], **kwargs: Any
     ) -> None:
         """int32_seconds_array.
 
         :keyword input: Required.
-        :paramtype input: list[int]
+        :paramtype input: list[~datetime.timedelta]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -814,12 +820,12 @@ class QueryOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     def int32_milliseconds_array(  # pylint: disable=inconsistent-return-statements
-        self, *, input: list[int], **kwargs: Any
+        self, *, input: list[datetime.timedelta], **kwargs: Any
     ) -> None:
         """int32_milliseconds_array.
 
         :keyword input: Required.
-        :paramtype input: list[int]
+        :paramtype input: list[~datetime.timedelta]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
