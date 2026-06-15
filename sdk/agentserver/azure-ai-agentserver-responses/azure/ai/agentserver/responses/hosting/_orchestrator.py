@@ -1131,6 +1131,33 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "completed"
         )
 
+        # B11 + B17: client_cancelled overrides the handler's terminal to
+        # ``cancelled`` regardless of what the handler ultimately emitted.
+        # Applies to both the ``/cancel`` API endpoint (sets client_cancelled
+        # via the cancel handler) and non-bg POST client disconnect (sets
+        # client_cancelled via the disconnect monitor). Without this
+        # override a handler that emits its own ``completed`` AFTER seeing
+        # the cancellation signal would have its terminal honored even
+        # though the framework promised ``cancelled`` to the client.
+        _client_cancelled = bool(ctx.context.client_cancelled) if ctx.context else False
+        if _client_cancelled and status != "cancelled":
+            cancelled_response = _build_cancelled_response(
+                ctx.response_id,
+                ctx.agent_reference,
+                ctx.model,
+                created_at=ctx.context.created_at if ctx.context else None,
+            )
+            response_payload = cancelled_response.as_dict()
+            response_payload["background"] = ctx.background
+            status = "cancelled"
+            # Replace state.pending_terminal with the cancel-terminal event so
+            # the SSE wire and persistence see the overridden status.
+            override_event: dict[str, Any] = {
+                "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+                "response": response_payload,
+            }
+            state.pending_terminal = await self._normalize_and_append(ctx, state, override_event)
+
         # Guard: if the cancel endpoint already transitioned this record to a
         # terminal state (race between cancel endpoint and B11), skip the
         # transition. We still emit the pending terminal to the per-response
@@ -1343,6 +1370,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 )
                 execution.persistence_failed = True
                 execution.persistence_exception = persist_exc
+                # Stamp ``failed`` terminal status on the in-memory record so
+                # GET / DELETE find a publicly visible terminal record even
+                # when the underlying store rejected the create. Without this
+                # ``visible_via_get`` stays False (status=in_progress), and
+                # the persistence-failure resilience contract regresses:
+                # subsequent GETs would return 404 instead of the documented
+                # ``200 status=failed error.code=storage_error`` envelope.
+                execution.status = "failed"  # type: ignore[assignment]
         # Emit the first event AFTER persistence has been attempted. This
         # ensures replay subscribers (and the live wire iterator on the
         # durable streaming path) never observe ``response.created`` when
@@ -1625,6 +1660,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     state.next_seq += 1
                     await self._safe_emit(_wire_stream, failed_normalized)
                     yield failed_normalized
+                    # Record the terminal event in state.handler_events so
+                    # the post-iteration finalize sees a terminal in the
+                    # event list. Without this, ``_finalize_stream`` Path B
+                    # rebuilds a snapshot from only ``response.created``
+                    # (status=in_progress) and overwrites the in-memory
+                    # record we just stamped as ``failed`` — re-introducing
+                    # the persistence-failure visibility regression.
+                    state.handler_events.append(failed_normalized)
                     # Keep the in-memory record so GET can serve the
                     # storage_error snapshot (the underlying durable
                     # store rejected the create, but the in-memory

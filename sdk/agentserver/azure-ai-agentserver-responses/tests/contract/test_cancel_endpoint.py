@@ -345,12 +345,13 @@ async def test_cancel__stream_disconnect_sets_handler_cancellation_signal() -> N
         await asyncio.sleep(1.5)
 
         assert handler_started.is_set(), "Handler should have started"
-        # The generator should have been cancelled by Hypercorn's
-        # CancelledError propagation. The handler either saw cancellation_signal
-        # or was killed by CancelledError before reaching the check.
-        assert (
-            not handler_completed.is_set()
-        ), "Handler should NOT have completed all 500 chunks — disconnect should stop it"
+        # The handler should have observed cancellation_signal via the
+        # disconnect monitor and broken out of its emit loop. The
+        # post-loop close events may still run, but the handler MUST
+        # have seen the cancellation signal — that's the contract this
+        # test exercises (B17 propagates client disconnect through the
+        # asyncio Event to the handler's work loop).
+        assert handler_cancelled.is_set(), "Handler did not observe cancellation_signal after client disconnect (B17)"
 
 
 @pytest.mark.asyncio
