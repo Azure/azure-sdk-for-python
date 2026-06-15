@@ -153,6 +153,7 @@ jobs:
           TARGET_BRANCH="typespec-python-generated-tests"
           TEMPLATE_PATH="$TARGET/template/README.md"
           TEMPLATE="$(mktemp)"
+          trap 'rm -f "$TEMPLATE"' EXIT
           if ! git fetch --no-tags --depth=1 origin "$TARGET_BRANCH" 2>/dev/null \
             || ! git show "FETCH_HEAD:$TEMPLATE_PATH" > "$TEMPLATE" 2>/dev/null; then
             echo "::error::Template README not found at $TEMPLATE_PATH on branch $TARGET_BRANCH"
