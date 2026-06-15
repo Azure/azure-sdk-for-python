@@ -33,8 +33,8 @@ class _StreamWrapper:
 
     def __init__(self, stream):
         self._stream = stream
-        self.properties = None
-        self.response = None
+        self.properties: Optional[FileProperties] = None
+        self.response: Optional[Any] = None
 
     def __iter__(self):
         return iter(self._stream)
@@ -64,18 +64,18 @@ def deserialize_file_stream(
     response: "PipelineResponse", obj: Any, headers: Dict[str, Any]
 ) -> Tuple["LocationMode", Any]:
     file_properties = deserialize_file_properties(response, obj, headers)
-    # The new TypeSpec-generated download returns an iterator (from iter_bytes/iter_raw)
-    # instead of a response object with settable attributes. Wrap it.
-    if not hasattr(obj, "properties") or isinstance(obj, type(iter(b""))):
-        wrapped = _StreamWrapper(obj)
-        wrapped.properties = file_properties
-        try:
-            wrapped.response = response.http_response
-        except AttributeError:
-            pass
-        return response.http_response.location_mode, wrapped
-    obj.properties = file_properties
-    return response.http_response.location_mode, obj
+    http_response = response.http_response
+    # The TypeSpec-generated download returns a raw bytes iterator (from iter_bytes/iter_raw)
+    # that doesn't allow attaching attributes. If properties can't be set on the stream
+    # directly, wrap it so callers can still reach .properties and .response.
+    try:
+        obj.properties = file_properties
+    except AttributeError:
+        stream = _StreamWrapper(obj)
+        stream.properties = file_properties
+        stream.response = http_response
+        return http_response.location_mode, stream
+    return http_response.location_mode, obj
 
 
 # Extracts out file permission
