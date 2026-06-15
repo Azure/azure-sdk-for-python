@@ -31,7 +31,9 @@ Use `ResponsesAgentServerHost` when **any** of these apply:
 - You want background responses with SSE replay — POST returns
   immediately, the handler runs in the background, and a subsequent
   GET with `?stream=true` replays / live-streams the per-response
-  event log including a `Last-Event-ID` reconnect cursor.
+  event log including a `?starting_after=N` reconnect cursor (the
+  Responses API's cursor convention — `N` is the
+  `sequence_number` of the last event the client received).
 - You need crash-recoverable agents (opt-in via
   `ResponsesServerOptions(durable_background=True)`) — backed by the
   `@task` primitive under the covers, but you write a normal
