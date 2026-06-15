@@ -250,6 +250,9 @@ def main() -> int:
             f"release={release_date}, pr=#{pr_number}"
         )
 
+    # Sort from newest to oldest release date (rows without a date sort last).
+    kept.sort(key=lambda row: row.get("release_date") or "", reverse=True)
+
     report = build_report(kept)
     output_path = Path(args.output)
     output_path.write_text(report, encoding="utf-8")
