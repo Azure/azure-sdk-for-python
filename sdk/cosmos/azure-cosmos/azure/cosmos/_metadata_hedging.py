@@ -35,7 +35,6 @@ import os
 import time
 from concurrent.futures import CancelledError, Future, ThreadPoolExecutor, as_completed
 from threading import Event, Semaphore
-from types import SimpleNamespace
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError  # pylint: disable=no-legacy-azure-core-http-response-import
@@ -142,9 +141,13 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
     """
 
     def __init__(self, concurrency_budget: int = DEFAULT_METADATA_HEDGING_CONCURRENCY_BUDGET) -> None:
-        self._budget = Semaphore(max(1, concurrency_budget))
-        # Long-lived executor shared across this client's metadata hedges.
-        self._executor = ThreadPoolExecutor(max_workers=os.cpu_count())  # pylint: disable=consider-using-with
+        budget = max(1, concurrency_budget)
+        self._budget = Semaphore(budget)
+        # Long-lived executor shared across this client's metadata hedges. Every in-flight
+        # hedge needs two worker threads (primary + hedge), so size the pool to at least
+        # 2 * budget; otherwise hedge tasks can starve behind primaries on low-core hosts.
+        max_workers = max(os.cpu_count() or 1, 2 * budget)
+        self._executor = ThreadPoolExecutor(max_workers=max_workers)  # pylint: disable=consider-using-with
 
     def is_acceptable_winner(  # pylint: disable=unused-argument
         self,
@@ -192,7 +195,6 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         location_index: int,
         available_locations: List[str],
         complete_status: Event,
-        first_request_params_holder: SimpleNamespace,
     ) -> ResponseType:
         strategy = request_params.availability_strategy
         if strategy is None:
@@ -212,8 +214,6 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         )
 
         req = copy.deepcopy(request)
-        if location_index == 0:
-            first_request_params_holder.request_params = params
 
         if complete_status.is_set():
             raise CancelledError("The request has been cancelled")
@@ -252,14 +252,13 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
             return execute_request_fn(request_params, request)
 
         completion_status = Event()
-        first_request_params_holder: SimpleNamespace = SimpleNamespace(request_params=None)
         try:
             primary_future = self._executor.submit(
                 self._send_with_delay, request_params, request, execute_request_fn,
-                0, available_locations, completion_status, first_request_params_holder)
+                0, available_locations, completion_status)
             hedge_future = self._executor.submit(
                 self._send_with_delay, request_params, request, execute_request_fn,
-                1, available_locations, completion_status, first_request_params_holder)
+                1, available_locations, completion_status)
             futures: List[Future] = [primary_future, hedge_future]
 
             for completed_future in as_completed(futures):
@@ -269,10 +268,11 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
 
                 if self.is_acceptable_winner(result, exception, is_hedge=not is_primary):
                     completion_status.set()
-                    if not is_primary:
-                        # Hedge won; record a failure for the primary region so health
-                        # tracking can react to the slow/failed primary.
-                        self._record_cancel_for_first_request(first_request_params_holder, global_endpoint_manager)
+                    # Note: no per-region failure is recorded for the primary when the
+                    # hedge wins. Metadata cache reads are account-global, not
+                    # per-partition, so the circuit-breaker health tracker (keyed on
+                    # partition-key ranges) does not apply here; a slow primary is not
+                    # necessarily an unhealthy one.
                     if exception is not None:
                         raise exception
                     return result  # type: ignore[return-value]
@@ -287,14 +287,6 @@ class MetadataCrossRegionHedgingHandler(AvailabilityStrategyHandlerMixin):
         finally:
             completion_status.set()
             self._budget.release()
-
-    def _record_cancel_for_first_request(
-        self,
-        request_params_holder: SimpleNamespace,
-        global_endpoint_manager: Any,
-    ) -> None:
-        if request_params_holder.request_params is not None:
-            global_endpoint_manager.record_failure(request_params_holder.request_params)
 
 
 def execute_metadata_hedging(

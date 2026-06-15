@@ -28,6 +28,7 @@ import threading
 from typing import Dict, Any, Optional, List, TYPE_CHECKING
 from azure.core.utils import CaseInsensitiveDict
 from ... import _base, http_constants
+from ..._request_object import METADATA_CACHE_POPULATION_OPTION
 from ..collection_routing_map import CollectionRoutingMap
 from ...exceptions import CosmosHttpResponseError
 from .._routing_map_provider_common import (
@@ -406,6 +407,10 @@ class PartitionKeyRangeCache(object):
             change_feed_options = prepare_fetch_options_and_headers(
                 current_previous_map, feed_options, base_kwargs_for_headers
             )
+            # Mark these reads as cold-start metadata-cache population so the request
+            # layer can hedge them cross-region; other PartitionKeyRange readers
+            # (e.g. hybrid search) are not flagged and so are not hedged.
+            change_feed_options[METADATA_CACHE_POPULATION_OPTION] = True
             base_headers: Dict[str, Any] = base_kwargs_for_headers['headers']
 
             while True:

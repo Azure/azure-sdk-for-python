@@ -91,7 +91,6 @@ class TestMetadataHedgingHandlerAsync(unittest.TestCase):
             result, _ = await self.handler.execute_request(
                 _metadata_request(), self.gem, _http_request(), execute_fn)
             self.assertEqual(result["source"], "hedge")
-            self.assertEqual(len(self.gem.recorded_failures), 1)
 
         asyncio.run(run())
 

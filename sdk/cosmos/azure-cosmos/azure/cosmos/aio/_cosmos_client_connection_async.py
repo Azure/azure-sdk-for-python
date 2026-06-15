@@ -1312,6 +1312,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                        headers,
                                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_metadata_cache_population_from_options(options)
         await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
@@ -3116,6 +3117,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options.get("partitionKey", None),
             )
             request_params.set_excluded_location_from_options(options)
+            request_params.set_metadata_cache_population_from_options(options)
             request_params.set_availability_strategy(options, self.availability_strategy)
             request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, resource_type,
@@ -3819,7 +3821,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     async def _refresh_container_properties_cache(self, container_link: str):
         # If container properties cache is stale, refresh it by reading the container.
-        container = await self.ReadContainer(container_link, options=None)
+        container = await self.ReadContainer(
+            container_link, options={_request_object.METADATA_CACHE_POPULATION_OPTION: True})
         # Only cache Container Properties that will not change in the lifetime of the container
         self._set_container_properties_cache(container_link, _build_properties_cache(container, container_link))
 
@@ -3916,7 +3919,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition = cached_container.get("partitionKey")
         # Else read the collection from backend and add it to the cache
         else:
-            container = await self.ReadContainer(collection_link, options)
+            read_options = {**options} if options else {}
+            read_options[_request_object.METADATA_CACHE_POPULATION_OPTION] = True
+            container = await self.ReadContainer(collection_link, read_options)
             partition_key_definition = container.get("partitionKey")
             self._set_container_properties_cache(collection_link, _build_properties_cache(container, collection_link))
         return partition_key_definition

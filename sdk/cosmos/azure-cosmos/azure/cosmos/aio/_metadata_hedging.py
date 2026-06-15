@@ -30,7 +30,6 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import copy
 import logging
 from asyncio import CancelledError, Event, Task
-from types import SimpleNamespace
 from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple
 
 from azure.core.pipeline.transport import HttpRequest  # pylint: disable=no-legacy-azure-core-http-response-import
@@ -106,7 +105,6 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         location_index: int,
         available_locations: List[str],
         complete_status: Event,
-        first_request_params_holder: SimpleNamespace,
     ) -> ResponseType:
         strategy = request_params.availability_strategy
         if strategy is None:
@@ -126,8 +124,6 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         )
 
         req = copy.deepcopy(request)
-        if location_index == 0:
-            first_request_params_holder.request_params = params
 
         if complete_status.is_set():
             raise CancelledError("The request has been cancelled")
@@ -160,21 +156,24 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             logger.debug("Metadata hedge skipped: SingleRegion")
             return await execute_request_fn(request_params, request)
 
+        # Non-blocking budget check: locked() is True only when the budget is fully
+        # exhausted (value == 0). There is no await between this check and acquire(),
+        # so in single-threaded asyncio no other coroutine can consume the slot in
+        # between and acquire() completes immediately without blocking.
         if self._budget.locked():
             logger.debug("Metadata hedge skipped: BudgetExhausted")
             return await execute_request_fn(request_params, request)
 
         await self._budget.acquire()
         completion_status = Event()
-        first_request_params_holder: SimpleNamespace = SimpleNamespace(request_params=None)
         active_tasks: List[Task] = []
         try:
             primary_task = asyncio.create_task(self._send_with_delay(
                 request_params, request, execute_request_fn,
-                0, available_locations, completion_status, first_request_params_holder))
+                0, available_locations, completion_status))
             hedge_task = asyncio.create_task(self._send_with_delay(
                 request_params, request, execute_request_fn,
-                1, available_locations, completion_status, first_request_params_holder))
+                1, available_locations, completion_status))
             active_tasks = [primary_task, hedge_task]
 
             pending = set(active_tasks)
@@ -187,9 +186,10 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
 
                     if self.is_acceptable_winner(result, exception, is_hedge=not is_primary):
                         completion_status.set()
-                        if not is_primary:
-                            await self._record_cancel_for_first_request(
-                                first_request_params_holder, global_endpoint_manager)
+                        # Note: no per-region failure is recorded for the primary when the
+                        # hedge wins. Metadata cache reads are account-global, not
+                        # per-partition, so the circuit-breaker health tracker (keyed on
+                        # partition-key ranges) does not apply here.
                         if exception is not None:
                             raise exception
                         return result  # type: ignore[return-value]
@@ -207,14 +207,6 @@ class MetadataCrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
                     task.cancel()
             await asyncio.gather(*active_tasks, return_exceptions=True)
             self._budget.release()
-
-    async def _record_cancel_for_first_request(
-        self,
-        request_params_holder: SimpleNamespace,
-        global_endpoint_manager: Any,
-    ) -> None:
-        if request_params_holder.request_params is not None:
-            await global_endpoint_manager.record_failure(request_params_holder.request_params)
 
 
 async def execute_metadata_hedging(

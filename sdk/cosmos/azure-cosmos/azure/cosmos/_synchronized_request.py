@@ -264,6 +264,8 @@ def _is_metadata_hedging_applicable(client, request_params: RequestObject, globa
         return False
     if request_params.is_hedging_request or request_params.availability_strategy is not None:
         return False
+    if not request_params.is_metadata_cache_population:
+        return False
     if not is_supported_metadata_request(request_params):
         return False
     opt_in = getattr(client, "_metadata_hedging_opt_in", None)

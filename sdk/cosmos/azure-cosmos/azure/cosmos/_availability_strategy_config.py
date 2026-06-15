@@ -28,9 +28,11 @@ DEFAULT_THRESHOLD_MS = 500
 DEFAULT_THRESHOLD_STEPS_MS = 100
 
 # Defaults for cold-start metadata cache hedging. These are SDK-derived and not
-# customer-configurable. The threshold mirrors the .NET design (first-attempt
-# control-plane timeout ~1s + a 500ms step => 1500ms). The concurrency budget
-# caps the number of in-flight metadata hedges per client.
+# customer-configurable. The threshold is an aggressive tail-latency trigger: metadata
+# (control-plane) reads use a short read timeout (DBAReadTimeout, 3s by default), so the
+# 1.5s hedge fires well before the primary's own timeout, giving a slow region a chance
+# to be raced by a second region while the primary attempt is still outstanding. The
+# concurrency budget caps the number of in-flight metadata hedges per client.
 DEFAULT_METADATA_HEDGING_THRESHOLD_MS = 1500
 DEFAULT_METADATA_HEDGING_THRESHOLD_STEPS_MS = 500
 DEFAULT_METADATA_HEDGING_CONCURRENCY_BUDGET = 8

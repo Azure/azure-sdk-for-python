@@ -72,7 +72,7 @@ from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
 from ._range_partition_resolver import RangePartitionResolver
 from ._read_items_helper import ReadItemsHelperSync
-from ._request_object import RequestObject
+from ._request_object import RequestObject, METADATA_CACHE_POPULATION_OPTION
 from ._retry_utility import ConnectionRetryPolicy
 from ._routing import routing_map_provider
 from ._query_advisor import get_query_advice_info
@@ -2983,6 +2983,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                        headers,
                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
+        request_params.set_metadata_cache_population_from_options(options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.availability_strategy_executor = self.availability_strategy_executor
         base.set_session_token_header(self, headers, path, request_params, options)
@@ -3318,6 +3319,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 options.get("partitionKey", None)
             )
             request_params.set_excluded_location_from_options(options)
+            request_params.set_metadata_cache_population_from_options(options)
             request_params.set_availability_strategy(options, self.availability_strategy)
             request_params.availability_strategy_executor = self.availability_strategy_executor
 
@@ -3956,7 +3958,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     def _refresh_container_properties_cache(self, container_link: str):
         # If container properties cache is stale, refresh it by reading the container.
-        container = self.ReadContainer(container_link, options=None)
+        container = self.ReadContainer(
+            container_link, options={METADATA_CACHE_POPULATION_OPTION: True})
         # Only cache Container Properties that will not change in the lifetime of the container
         self._set_container_properties_cache(container_link, _build_properties_cache(container, container_link))
 
@@ -4003,7 +4006,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             partition_key_definition = cached_container.get("partitionKey")
         # Else read the collection from backend and add it to the cache
         else:
-            container = self.ReadContainer(collection_link, options)
+            read_options = {**options} if options else {}
+            read_options[METADATA_CACHE_POPULATION_OPTION] = True
+            container = self.ReadContainer(collection_link, read_options)
             partition_key_definition = container.get("partitionKey")
             self._set_container_properties_cache(collection_link, _build_properties_cache(container, collection_link))
         return partition_key_definition

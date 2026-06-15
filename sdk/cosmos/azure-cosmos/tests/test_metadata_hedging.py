@@ -97,6 +97,19 @@ class TestMetadataHedgingHelpers(unittest.TestCase):
         self.assertFalse(is_supported_metadata_request(
             RequestObject(ResourceType.Collection, _OperationType.Create, {})))
 
+    def test_set_metadata_cache_population_from_options(self):
+        from azure.cosmos._request_object import METADATA_CACHE_POPULATION_OPTION
+        req = RequestObject(ResourceType.Collection, _OperationType.Read, {})
+        self.assertFalse(req.is_metadata_cache_population)
+        req.set_metadata_cache_population_from_options({METADATA_CACHE_POPULATION_OPTION: True})
+        self.assertTrue(req.is_metadata_cache_population)
+        # Absent / falsey flag leaves it unset.
+        req2 = RequestObject(ResourceType.Collection, _OperationType.Read, {})
+        req2.set_metadata_cache_population_from_options({})
+        self.assertFalse(req2.is_metadata_cache_population)
+        req2.set_metadata_cache_population_from_options(None)
+        self.assertFalse(req2.is_metadata_cache_population)
+
 
 class TestMetadataHedgingHandler(unittest.TestCase):
     def setUp(self):
@@ -129,8 +142,6 @@ class TestMetadataHedgingHandler(unittest.TestCase):
         result, _ = self.handler.execute_request(
             _metadata_request(), self.gem, _http_request(), execute_fn)
         self.assertEqual(result["source"], "hedge")
-        # Primary failure should be recorded when the hedge wins.
-        self.assertEqual(len(self.gem.recorded_failures), 1)
 
     def test_hedge_auth_reject_not_accepted(self):
         def execute_fn(params, _req):
@@ -224,13 +235,23 @@ class TestMetadataHedgingApplicability(unittest.TestCase):
         self._is_applicable = _is_metadata_hedging_applicable
         self.handler = MetadataCrossRegionHedgingHandler()
 
-    def _request(self, resource_type=ResourceType.Collection, operation=_OperationType.Read):
-        return RequestObject(resource_type, operation, {})
+    def _request(self, resource_type=ResourceType.Collection, operation=_OperationType.Read,
+                 cache_population=True):
+        req = RequestObject(resource_type, operation, {})
+        req.is_metadata_cache_population = cache_population
+        return req
 
     def test_applicable_when_opt_in_true(self):
         client = _FakeClient(self.handler, True)
         gem = _FakeGlobalEndpointManager(["r1", "r2"], ppaf=False)
         self.assertTrue(self._is_applicable(client, self._request(), gem))
+
+    def test_not_applicable_without_cache_population_flag(self):
+        client = _FakeClient(self.handler, True)
+        gem = _FakeGlobalEndpointManager(["r1", "r2"], ppaf=True)
+        # A supported metadata read that is NOT a cache-population read (e.g. a public
+        # container.read()) must not be hedged.
+        self.assertFalse(self._is_applicable(client, self._request(cache_population=False), gem))
 
     def test_follows_ppaf_when_opt_in_none(self):
         client = _FakeClient(self.handler, None)
