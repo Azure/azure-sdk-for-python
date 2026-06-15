@@ -19,7 +19,7 @@ STAGING_DIR="$SCRIPT_DIR/src/durable-research-agent/wheels"
 
 if [[ ! -d "$CENTRAL_WHEELS" ]] || ! ls "$CENTRAL_WHEELS"/*.whl >/dev/null 2>&1; then
     echo "ERROR: no checked-in wheels found at $CENTRAL_WHEELS" >&2
-    echo "       Did you pull the latest from feature/agentserver-durable-tasks?" >&2
+    echo "       Did you pull the latest from feature/agentserver-durable-agent-demo?" >&2
     exit 1
 fi
 
