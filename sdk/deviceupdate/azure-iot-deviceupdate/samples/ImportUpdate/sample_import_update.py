@@ -27,8 +27,10 @@ try:
     manifest_file = os.environ["DEVICEUPDATE_MANIFEST_FILE"]
     manifest_url = os.environ["DEVICEUPDATE_MANIFEST_URL"]
 except KeyError:
-    print("Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, "
-          "DEVICEUPDATE_PAYLOAD_FILE, DEVICEUPDATE_PAYLOAD_URL, DEVICEUPDATE_MANIFEST_FILE, DEVICEUPDATE_MANIFEST_URL")
+    print(
+        "Missing one of environment variables: DEVICEUPDATE_ENDPOINT, DEVICEUPDATE_INSTANCE_ID, "
+        "DEVICEUPDATE_PAYLOAD_FILE, DEVICEUPDATE_PAYLOAD_URL, DEVICEUPDATE_MANIFEST_FILE, DEVICEUPDATE_MANIFEST_URL"
+    )
     exit()
 
 
@@ -46,25 +48,20 @@ def get_file_hash(file_path):
 client = DeviceUpdateClient(credential=DefaultAzureCredential(), endpoint=endpoint, instance_id=instance)
 
 try:
-    content = [{
-        "importManifest": {
-            "url": manifest_url,
-            "sizeInBytes": get_file_size(manifest_file),
-            "hashes": {
-                "sha256": get_file_hash(manifest_file)
-            }
-        },
-        "files": [{
-            "fileName": os.path.basename(payload_file),
-            "url": payload_url
-        }]
-    }]
+    content = [
+        {
+            "importManifest": {
+                "url": manifest_url,
+                "sizeInBytes": get_file_size(manifest_file),
+                "hashes": {"sha256": get_file_hash(manifest_file)},
+            },
+            "files": [{"fileName": os.path.basename(payload_file), "url": payload_url}],
+        }
+    ]
 
     response = client.device_update.begin_import_update(content)
     response.wait
     print(response.result())
 
 except HttpResponseError as e:
-    print('Failed to import update: {}'.format(e))
-
-
+    print("Failed to import update: {}".format(e))

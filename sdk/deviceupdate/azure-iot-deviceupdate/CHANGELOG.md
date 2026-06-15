@@ -1,5 +1,9 @@
 # Release History
 
+## 1.1.0 (2026-06-15)
+
+skip changelog generation for data-plane package and please add changelog manually.
+
 ## 1.0.1 (Unreleased)
 
 ### Features Added
