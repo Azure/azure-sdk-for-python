@@ -23,7 +23,7 @@ class ResponsesServerOptions:
         sse_keep_alive_interval_seconds: int | None = None,
         shutdown_grace_period_seconds: int = 10,
         create_span_hook: "CreateSpanHook | None" = None,
-        durable_background: bool = True,
+        durable_background: bool = False,
         steerable_conversations: bool = False,
         store_disabled: bool = False,
         max_pending: int = 10,
@@ -58,10 +58,14 @@ class ResponsesServerOptions:
             raise ValueError(
                 "steerable_conversations=True requires store to be enabled " "(store_disabled must be False)"
             )
-        if steerable_conversations and not durable_background:
-            raise ValueError(
-                "steerable_conversations=True requires durable_background=True " "for background responses"
-            )
+        # (Spec 024 Phase 4 — Proposal #9) Composition guard relaxed:
+        # steerable_conversations and durable_background are independent
+        # options. Pre-Phase-4 the framework rejected
+        # `steerable=True + durable_bg=False`, assuming steering required
+        # durability for background responses. That assumption was wrong:
+        # the chain extends across turns regardless of durability, and
+        # the lock/queue semantics are independent of the recovery
+        # disposition. The guard is deleted.
         if max_pending <= 0:
             raise ValueError("max_pending must be > 0")
 

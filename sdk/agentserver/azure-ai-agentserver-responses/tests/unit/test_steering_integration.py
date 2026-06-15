@@ -105,13 +105,19 @@ class TestAcceptanceHookDispatch:
 class TestSteeringConfiguration:
     """Steering options validation."""
 
-    def test_steerable_requires_durable(self) -> None:
-        """steerable_conversations requires durable_background."""
-        with pytest.raises(ValueError, match="steerable_conversations=True requires durable_background"):
-            ResponsesServerOptions(
-                steerable_conversations=True,
-                durable_background=False,
-            )
+    def test_steerable_with_durable_background_off_does_not_raise(self) -> None:
+        """(Spec 024 Phase 4 — Proposal #9 relaxed composition)
+
+        steerable_conversations=True + durable_background=False is now
+        a VALID combination. Pre-Phase-4 this raised ValueError; the
+        guard is removed because the two options are independent.
+        """
+        options = ResponsesServerOptions(
+            steerable_conversations=True,
+            durable_background=False,
+        )
+        assert options.steerable_conversations is True
+        assert options.durable_background is False
 
     def test_steerable_requires_store(self) -> None:
         """steerable_conversations requires store to be enabled."""
