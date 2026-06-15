@@ -438,17 +438,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         In non-hosted environments (local dev, tests), the
         ``LocalFileTaskProvider`` is used — file-backed under
-        ``~/.durable-tasks/`` (or ``AGENTSERVER_DURABLE_TASKS_PATH`` if
-        set). This keeps the local development loop self-contained with
-        no external dependencies.
+        ``${AGENTSERVER_DURABLE_ROOT:-~/.durable}/tasks/`` (spec 024
+        Phase 3a). This keeps the local development loop self-contained
+        with no external dependencies.
 
         :param config: The agent configuration.
         :type config: AgentConfig
         :return: The storage provider instance.
         :rtype: TaskProvider
         """
-        import os  # pylint: disable=import-outside-toplevel
-
         if config.is_hosted:
             from ._client import (  # pylint: disable=import-outside-toplevel
                 HostedTaskProvider,
@@ -473,15 +471,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         from ._local_provider import (  # pylint: disable=import-outside-toplevel
             LocalFileTaskProvider,
         )
+        from ..storage_paths import (  # pylint: disable=import-outside-toplevel
+            resolve_durable_subdir,
+        )
 
-        # ((c)) Operator/test override: when
-        # ``AGENTSERVER_DURABLE_TASKS_PATH`` is set, root the local provider
-        # at that directory instead of the user's home. Enables the crash
-        # harness to point durable state at a per-test tmp_path.
-        base_dir_env = os.environ.get("AGENTSERVER_DURABLE_TASKS_PATH")
-        if base_dir_env:
-            return LocalFileTaskProvider(base_dir=Path(base_dir_env))
-        return LocalFileTaskProvider(base_dir=Path.home() / ".durable-tasks")
+        # (Spec 024 Phase 3a) Resolve the tasks subdirectory via the
+        # unified storage-paths helper. ``AGENTSERVER_DURABLE_ROOT`` is
+        # the single env-var operator knob covering tasks / streams /
+        # responses. The legacy ``AGENTSERVER_DURABLE_TASKS_PATH`` env
+        # var is deleted (was: per-subsystem override).
+        return LocalFileTaskProvider(base_dir=resolve_durable_subdir("tasks"))
 
     @property
     def provider(self) -> TaskProvider:

@@ -1040,6 +1040,33 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if isinstance(parsed_cursor, Response):
                 return parsed_cursor
 
+            # (Spec 024 Phase 2 + B2) For non-background responses,
+            # SSE replay is always rejected per Rule B2 — even if events
+            # happen to be persisted via the unified Row 3 stream wire.
+            # Check the persisted response's background flag BEFORE
+            # attempting replay so non-bg streams get the standardised
+            # 400 instead of accidentally serving a stream.
+            try:
+                _persisted = await self._provider.get_response(response_id, isolation=_isolation)
+                _persisted_dict = _persisted.as_dict()
+                if _persisted_dict.get("background") is not True:
+                    return _invalid_mode(
+                        "This response cannot be streamed because it was not created with background=true.",
+                        _hdrs,
+                        param="stream",
+                    )
+            except FoundryResourceNotFoundError:
+                # Response doesn't exist — fall through to the no-stream
+                # branches below which handle 404 cleanly.
+                pass
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Background pre-check failed for SSE replay (response_id=%s); "
+                    "proceeding to stream lookup",
+                    response_id,
+                    exc_info=True,
+                )
+
             # Stream provider fallback: replay persisted SSE events when runtime state is gone.
             replay_response = await self._try_replay_persisted_stream(
                 request,
@@ -1508,9 +1535,18 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             response_obj = await self._provider.get_response(response_id, isolation=_isolation)
             persisted = response_obj.as_dict()
 
-            # B1: background check comes first — non-bg responses always
-            # get the "synchronous" message regardless of terminal status.
+            # B1 + B16/B17: background check comes first. For non-bg responses:
+            #   - If still in_progress / queued (in-flight): return 404 (not
+            #     yet publicly visible — matches pre-Phase-2 behaviour where
+            #     non-bg in-flight responses were never persisted).
+            #   - If terminal: return 400 "synchronous" per B1.
+            # (Spec 024 Phase 2) The unified Row 3 stream path persists the
+            # response on first event, so the provider returns it mid-flight;
+            # the status filter preserves B16 visibility semantics.
             if persisted.get("background") is not True:
+                stored_status = persisted.get("status")
+                if stored_status in ("in_progress", "queued"):
+                    return _not_found(response_id, _hdrs)
                 return _invalid_request(
                     "Cannot cancel a synchronous response.",
                     _hdrs,

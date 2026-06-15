@@ -59,8 +59,12 @@ def _isolate_streams_registry() -> Iterator[None]:
 @pytest.mark.asyncio
 async def test_host_construction_configures_file_backed_replay(tmp_path: Path) -> None:
     """``durable_background=True`` selects the file-backed backing and
-    points it at the operator-supplied storage directory."""
-    os.environ["AGENTSERVER_STREAM_STORE_PATH"] = str(tmp_path)
+    points it at the operator-supplied storage directory.
+
+    (Spec 024 Phase 3a) ``AGENTSERVER_DURABLE_ROOT`` is the single env
+    var; streams live at ``<root>/streams/``.
+    """
+    os.environ["AGENTSERVER_DURABLE_ROOT"] = str(tmp_path)
     try:
         ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=True))
 
@@ -68,15 +72,16 @@ async def test_host_construction_configures_file_backed_replay(tmp_path: Path) -
         assert isinstance(stream, EventStream)
         # File-backed backing materialises the on-disk log eagerly so that
         # rehydration on restart sees the same file. The file is named
-        # ``<id>.jsonl`` per the SDK's file-backed contract.
-        assert (tmp_path / "resp-bootstrap-1.jsonl").exists()
+        # ``<id>.jsonl`` per the SDK's file-backed contract and lives
+        # under ``<root>/streams/``.
+        assert (tmp_path / "streams" / "resp-bootstrap-1.jsonl").exists()
     finally:
-        os.environ.pop("AGENTSERVER_STREAM_STORE_PATH", None)
+        os.environ.pop("AGENTSERVER_DURABLE_ROOT", None)
 
 
 @pytest.mark.asyncio
 async def test_get_or_create_is_idempotent(tmp_path: Path) -> None:
-    os.environ["AGENTSERVER_STREAM_STORE_PATH"] = str(tmp_path)
+    os.environ["AGENTSERVER_DURABLE_ROOT"] = str(tmp_path)
     try:
         ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=True))
 
@@ -84,24 +89,24 @@ async def test_get_or_create_is_idempotent(tmp_path: Path) -> None:
         s2 = await streams.get_or_create("resp-abc")
         assert s1 is s2
     finally:
-        os.environ.pop("AGENTSERVER_STREAM_STORE_PATH", None)
+        os.environ.pop("AGENTSERVER_DURABLE_ROOT", None)
 
 
 @pytest.mark.asyncio
 async def test_delete_removes_registry_entry_and_on_disk_file(tmp_path: Path) -> None:
-    os.environ["AGENTSERVER_STREAM_STORE_PATH"] = str(tmp_path)
+    os.environ["AGENTSERVER_DURABLE_ROOT"] = str(tmp_path)
     try:
         ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=True))
 
         await streams.get_or_create("resp-abc")
-        assert (tmp_path / "resp-abc.jsonl").exists()
+        assert (tmp_path / "streams" / "resp-abc.jsonl").exists()
 
         await streams.delete("resp-abc")
-        assert not (tmp_path / "resp-abc.jsonl").exists()
+        assert not (tmp_path / "streams" / "resp-abc.jsonl").exists()
         with pytest.raises(EventStreamNotFoundError):
             await streams.get("resp-abc")
     finally:
-        os.environ.pop("AGENTSERVER_STREAM_STORE_PATH", None)
+        os.environ.pop("AGENTSERVER_DURABLE_ROOT", None)
 
 
 @pytest.mark.asyncio
@@ -109,13 +114,13 @@ async def test_non_durable_host_uses_in_memory_replay(tmp_path: Path) -> None:
     """``durable_background=False`` selects the in-memory replay
     backing — verified by minting a stream and confirming no on-disk
     log is created (file-backed would create one eagerly)."""
-    os.environ["AGENTSERVER_STREAM_STORE_PATH"] = str(tmp_path)
+    os.environ["AGENTSERVER_DURABLE_ROOT"] = str(tmp_path)
     try:
         ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=False))
 
         stream = await streams.get_or_create("resp-mem")
         assert isinstance(stream, EventStream)
         # In-memory backing must not touch the storage dir.
-        assert not (tmp_path / "resp-mem.jsonl").exists()
+        assert not (tmp_path / "streams" / "resp-mem.jsonl").exists()
     finally:
-        os.environ.pop("AGENTSERVER_STREAM_STORE_PATH", None)
+        os.environ.pop("AGENTSERVER_DURABLE_ROOT", None)

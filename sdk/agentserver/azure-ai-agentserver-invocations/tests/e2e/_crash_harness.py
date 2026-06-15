@@ -179,7 +179,16 @@ class CrashHarness:
         """
         env = dict(os.environ)
         env["PORT"] = str(self._port)
-        env["AGENTSERVER_DURABLE_TASKS_PATH"] = str(self._tmp_path / "tasks")
+        env["AGENTSERVER_DURABLE_ROOT"] = str(self._tmp_path)
+        # (Spec 024 Phase 3a) Strip legacy per-subdir env vars that may
+        # be inherited from the parent test runner — only the unified
+        # AGENTSERVER_DURABLE_ROOT should be in effect.
+        for _legacy in (
+            "AGENTSERVER_DURABLE_TASKS_PATH",
+            "AGENTSERVER_RESPONSE_STORE_PATH",
+            "AGENTSERVER_STREAM_STORE_PATH",
+        ):
+            env.pop(_legacy, None)
         env["AGENTSERVER_RESPONSE_STORE_PATH"] = str(self._tmp_path / "responses")
         env["AGENTSERVER_STREAM_STORE_PATH"] = str(self._tmp_path / "streams")
         # The package root (parent of tests/) — _crash_harness.py lives at

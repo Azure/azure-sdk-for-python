@@ -29,11 +29,18 @@ from azure.ai.agentserver.responses.store._memory import (
 
 @pytest.fixture(autouse=True)
 def _clear_env_overrides() -> Iterator[None]:
+    """Strip env-var overrides for the duration of each test.
+
+    (Spec 024 Phase 3a) Single ``AGENTSERVER_DURABLE_ROOT`` env var
+    covers tasks/streams/responses subdirs.
+    """
     saved = {
         key: os.environ.pop(key, None)
         for key in (
+            "AGENTSERVER_DURABLE_ROOT",
             "AGENTSERVER_RESPONSE_STORE_PATH",
             "AGENTSERVER_STREAM_STORE_PATH",
+            "AGENTSERVER_DURABLE_TASKS_PATH",
         )
     }
     try:

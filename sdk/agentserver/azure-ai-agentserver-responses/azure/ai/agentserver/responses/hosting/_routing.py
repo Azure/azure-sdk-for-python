@@ -103,9 +103,9 @@ def _stream_cursor(event: Any) -> int:
 def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None:
     """Pick the registry backing for SSE event streams at compose time.
 
-    - ``durable_background=True`` → file-backed replay, with the on-disk
-      directory taken from ``AGENTSERVER_STREAM_STORE_PATH`` when set,
-      otherwise a per-process temp directory.
+    - ``durable_background=True`` → file-backed replay under
+      ``${AGENTSERVER_DURABLE_ROOT:-~/.durable}/streams/`` (spec 024
+      Phase 3a unified storage layout).
     - ``durable_background=False`` → in-memory replay (events live in
       process; replay survives eager eviction within the TTL window).
 
@@ -113,18 +113,18 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
     streams created after it. In tests with multiple hosts per process,
     the per-test fixtures snapshot/restore the registry's private state.
     """
-    import os  # pylint: disable=import-outside-toplevel
-    import tempfile  # pylint: disable=import-outside-toplevel
-    from pathlib import Path  # pylint: disable=import-outside-toplevel
-
+    from azure.ai.agentserver.core.storage_paths import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
+        resolve_durable_subdir,
+    )
     from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
         streams,
     )
 
     if runtime_options.durable_background:
-        stream_dir = Path(
-            os.environ.get("AGENTSERVER_STREAM_STORE_PATH") or str(Path(tempfile.gettempdir()) / "agentserver_streams")
-        )
+        # (Spec 024 Phase 3a) Stream store path resolves via the unified
+        # storage-paths helper; legacy ``AGENTSERVER_STREAM_STORE_PATH``
+        # env var + per-temp-dir default are deleted.
+        stream_dir = resolve_durable_subdir("streams")
         streams.use_file_backed_replay(
             storage_dir=stream_dir,
             cursor_fn=_stream_cursor,
@@ -243,23 +243,26 @@ class ResponsesAgentServerHost(AgentServerHost):
                         get_server_version=self._build_server_version,
                     )
 
-        # (Spec 013 US1(c)) Operator/test override: when
-        # ``AGENTSERVER_RESPONSE_STORE_PATH`` is set and no explicit store was
-        # passed, use a file-backed store rooted at that directory. Enables
-        # cross-process recovery in local-dev / crash-harness tests without
-        # standing up Foundry.
+        # (Spec 024 Phase 3a) When no explicit store is supplied, default
+        # to a file-backed store under ``${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/``.
+        # The legacy ``AGENTSERVER_RESPONSE_STORE_PATH`` env var is
+        # deleted — operators control the location via the unified
+        # ``AGENTSERVER_DURABLE_ROOT``. This enables cross-process
+        # recovery in local-dev / crash-harness tests without standing
+        # up Foundry. Note: this implements Phase 3b's "file-backed
+        # response default" together with Phase 3a's rename because the
+        # two are inseparable (the default path depends on the unified
+        # root resolution).
         if store is None:
-            import os as _os  # pylint: disable=import-outside-toplevel
+            from azure.ai.agentserver.core.storage_paths import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
+                resolve_durable_subdir,
+            )
 
-            _resp_store_path = _os.environ.get("AGENTSERVER_RESPONSE_STORE_PATH")
-            if _resp_store_path:
-                from pathlib import Path as _Path  # pylint: disable=import-outside-toplevel
+            from ..store._file import (
+                FileResponseStore,
+            )  # pylint: disable=import-outside-toplevel
 
-                from ..store._file import (
-                    FileResponseStore,
-                )  # pylint: disable=import-outside-toplevel
-
-                store = FileResponseStore(storage_dir=_Path(_resp_store_path))
+            store = FileResponseStore(storage_dir=resolve_durable_subdir("responses"))
 
         resolved_provider: ResponseProviderProtocol = store if store is not None else InMemoryResponseProvider()
 
@@ -268,11 +271,12 @@ class ResponsesAgentServerHost(AgentServerHost):
         # refuse to start. The operator chose a store that contradicts
         # their durable_background opt-in and we won't silently degrade.
         #
-        # The default path (``store=None`` → ``InMemoryResponseProvider``)
-        # is NOT considered an explicit operator choice. It satisfies
-        # in-process tests and local development that don't need cross-
-        # process recovery. The streams registry configuration below
-        # provides crash-recoverable replay storage independently.
+        # The default path (``store=None`` → ``FileResponseStore`` under
+        # ``${AGENTSERVER_DURABLE_ROOT}/responses/``) is now persistent
+        # and never triggers this guard. Pre-Phase-3a the default was
+        # ``InMemoryResponseProvider`` and operators had to set
+        # ``AGENTSERVER_RESPONSE_STORE_PATH`` to upgrade — that env var
+        # is now deleted in favour of the unified default.
         if runtime_options.durable_background and store is not None and isinstance(store, InMemoryResponseProvider):
             raise ValueError(
                 "ResponsesAgentServerHost refused to start: "
@@ -282,8 +286,8 @@ class ResponsesAgentServerHost(AgentServerHost):
                 "process crashes — durable_background cannot honour its "
                 "recovery promise. Either (a) supply a persistent store "
                 "(FileResponseStore, FoundryStorageProvider, etc.), "
-                "(b) set ``AGENTSERVER_RESPONSE_STORE_PATH`` so the "
-                "framework selects FileResponseStore automatically, or "
+                "(b) omit ``store=`` to use the default file-backed store "
+                "under ``${AGENTSERVER_DURABLE_ROOT}/responses/``, or "
                 "(c) set ``durable_background=False`` to opt out of "
                 "crash recovery."
             )

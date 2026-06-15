@@ -25,9 +25,10 @@ formatter without pulling this whole subprocess module.
 Env vars consumed:
 
 - ``PORT`` — bound by ``_crash_harness``.
-- ``AGENTSERVER_DURABLE_TASKS_PATH`` / ``AGENTSERVER_RESPONSE_STORE_PATH`` /
-  ``AGENTSERVER_STREAM_STORE_PATH`` — wired by ``_crash_harness``,
-  auto-detected by the responses package.
+- ``AGENTSERVER_DURABLE_ROOT`` — wired by ``_crash_harness``, auto-detected
+  by both core (durable tasks) and responses (response store + stream
+  store) packages via :func:`azure.ai.agentserver.core.storage_paths.resolve_durable_subdir`.
+  (Spec 024 Phase 3a unified storage layout.)
 - ``CONFORMANCE_DURABLE_BACKGROUND`` — ``"true"`` or ``"false"`` to select
   the server's ``durable_background`` option. Default ``"true"``.
 - ``CONFORMANCE_STORE_DISABLED`` — ``"true"`` to set ``store_disabled=True``

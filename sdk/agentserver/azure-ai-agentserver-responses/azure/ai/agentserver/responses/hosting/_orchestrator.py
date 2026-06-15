@@ -1416,16 +1416,20 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 event["sequence_number"] = state.next_seq
                 state.handler_events.append(event)
                 state.next_seq += 1
-                # For bg+store paths the canonical record (and its
-                # ``subject``) hasn't been registered yet — the synthesised
-                # lifecycle bypasses ``_register_bg_execution``. Bind the
-                # per-response stream directly so the live wire iterator
-                # (subscribed via ``streams.get_or_create(response_id)``)
-                # sees the fallback events. Skip terminal here — the caller
-                # emits the resolved terminal via _persist_and_resolve_terminal
-                # so on persistence failure the storage_error replacement
-                # lands instead of the original terminal.
-                if ctx.background and ctx.store and event.get("type") not in self._TERMINAL_SSE_TYPES:
+                # For bg+store paths AND unified Row 3 stream (fg+store+stream=T),
+                # the canonical record (and its ``subject``) hasn't been
+                # registered yet — the synthesised lifecycle bypasses
+                # ``_register_bg_execution``. Bind the per-response stream
+                # directly so the live wire iterator (subscribed via
+                # ``streams.get_or_create(response_id)``) sees the fallback
+                # events. Skip terminal here — the caller emits the resolved
+                # terminal via _persist_and_resolve_terminal so on persistence
+                # failure the storage_error replacement lands instead of the
+                # original terminal.
+                # (Spec 024 Phase 2) Condition broadened from
+                # `ctx.background and ctx.store` to `ctx.store and ctx.stream`
+                # so Row 3 stream gets fallback events on wire_stream too.
+                if ctx.store and (ctx.background or ctx.stream) and event.get("type") not in self._TERMINAL_SSE_TYPES:
                     _fallback_stream = await streams.get_or_create(ctx.response_id)
                     await self._safe_emit(_fallback_stream, event)
                 if event.get("type") in self._TERMINAL_SSE_TYPES:
@@ -1458,7 +1462,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 exc_info=exc,
             )
             state.captured_error = exc
-            yield construct_event_model(
+            _b8_event = construct_event_model(
                 {
                     "type": "error",
                     "message": "An internal server error occurred.",
@@ -1467,6 +1471,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     "sequence_number": 0,
                 }
             )
+            # (Spec 024 Phase 2) For unified store-stream paths the live
+            # wire iterator subscribes to wire_stream, not to the yielded
+            # events from this method — also emit the error to wire_stream
+            # so the wire iterator sees it.
+            if ctx.store and ctx.stream:
+                _err_stream = await streams.get_or_create(ctx.response_id)
+                await self._safe_emit(_err_stream, _b8_event)
+            yield _b8_event
             return
 
         # Normalise the first event manually (before _normalize_and_append so we
@@ -1482,7 +1494,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 b30_violation,
             )
             state.captured_error = ValueError(b30_violation)
-            yield construct_event_model(
+            _b30_event = construct_event_model(
                 {
                     "type": "error",
                     "message": "An internal server error occurred.",
@@ -1491,6 +1503,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     "sequence_number": 0,
                 }
             )
+            if ctx.store and ctx.stream:
+                _err_stream = await streams.get_or_create(ctx.response_id)
+                await self._safe_emit(_err_stream, _b30_event)
+            yield _b30_event
             return
 
         first_normalized = _apply_stream_event_defaults(
@@ -1515,7 +1531,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 violation,
             )
             state.captured_error = RuntimeError(violation)
-            yield construct_event_model(
+            _fec_event = construct_event_model(
                 {
                     "type": "error",
                     "message": "An internal server error occurred.",
@@ -1524,6 +1540,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     "sequence_number": 0,
                 }
             )
+            if ctx.store and ctx.stream:
+                _err_stream = await streams.get_or_create(ctx.response_id)
+                await self._safe_emit(_err_stream, _fec_event)
+            yield _fec_event
             return
 
         state.handler_events.append(first_normalized)

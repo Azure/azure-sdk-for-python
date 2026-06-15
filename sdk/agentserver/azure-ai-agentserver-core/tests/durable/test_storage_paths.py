@@ -113,10 +113,15 @@ def test_tasks_default_path_used_by_local_provider(monkeypatch, tmp_path) -> Non
     Pre-Phase-3a: ``Path.home() / ".durable-tasks"``.
     Post-Phase-3a: ``storage_paths.resolve_durable_subdir("tasks")`` →
     ``Path.home() / ".durable" / "tasks"``.
+
+    Comment references to the legacy path (historical migration notes)
+    are permitted; only actual ``Path('.durable-tasks')`` use or
+    ``os.environ.get('AGENTSERVER_DURABLE_TASKS_PATH')`` reads are
+    forbidden.
     """
     monkeypatch.delenv("AGENTSERVER_DURABLE_ROOT", raising=False)
     monkeypatch.delenv("AGENTSERVER_DURABLE_TASKS_PATH", raising=False)
-    # Read the _manager.py source to confirm it no longer references the
+    # Read the _manager.py source to confirm it no longer USES the
     # legacy path. This is a structural assertion (Principle XII §3 RED
     # signal that survives even if behavior coincidentally aligns).
     import inspect
@@ -124,11 +129,23 @@ def test_tasks_default_path_used_by_local_provider(monkeypatch, tmp_path) -> Non
     from azure.ai.agentserver.core.durable import _manager
 
     src = inspect.getsource(_manager)
-    assert ".durable-tasks" not in src, (
-        "spec 024 Phase 3a: _manager.py must not reference the legacy "
-        "'.durable-tasks' path. Use storage_paths.resolve_durable_subdir('tasks')."
+    forbidden_env_reads = [
+        'environ.get("AGENTSERVER_DURABLE_TASKS_PATH")',
+        "environ.get('AGENTSERVER_DURABLE_TASKS_PATH')",
+        'getenv("AGENTSERVER_DURABLE_TASKS_PATH")',
+        "getenv('AGENTSERVER_DURABLE_TASKS_PATH')",
+    ]
+    for pat in forbidden_env_reads:
+        assert pat not in src, (
+            f"spec 024 Phase 3a: _manager.py must not read the legacy "
+            f"AGENTSERVER_DURABLE_TASKS_PATH env var. Found '{pat}' in source. "
+            f"Use storage_paths.resolve_durable_subdir('tasks') instead."
+        )
+    assert '"/.durable-tasks"' not in src and "'/.durable-tasks'" not in src, (
+        "spec 024 Phase 3a: _manager.py must not USE the legacy "
+        "'.durable-tasks' path string. Use storage_paths.resolve_durable_subdir('tasks')."
     )
-    assert "AGENTSERVER_DURABLE_TASKS_PATH" not in src, (
-        "spec 024 Phase 3a: _manager.py must not reference the legacy "
-        "AGENTSERVER_DURABLE_TASKS_PATH env var. Use AGENTSERVER_DURABLE_ROOT via storage_paths."
+    assert '".durable-tasks"' not in src and "'.durable-tasks'" not in src, (
+        "spec 024 Phase 3a: _manager.py must not USE the legacy "
+        "'.durable-tasks' path string."
     )

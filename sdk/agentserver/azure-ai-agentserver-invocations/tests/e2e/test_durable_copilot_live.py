@@ -56,7 +56,7 @@ def _harness(tmp_path: Path) -> CrashHarness:
     """Build a harness wired to the durable_copilot sample.
 
     Spawns ``python -m durable_copilot.app`` with the samples directory
-    on PYTHONPATH and ``AGENTSERVER_DURABLE_TASKS_PATH`` rooted at
+    on PYTHONPATH and ``AGENTSERVER_DURABLE_ROOT`` rooted at
     ``tmp_path / "tasks"`` so the durable provider is isolated per
     test.
     """

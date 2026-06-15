@@ -139,7 +139,7 @@ def _get_client() -> Any:
 
 # --- File-backed checkpoint store (heavy artifacts live here) --------------
 
-_CHECKPOINT_DIR = Path.home() / ".durable-tasks" / "_checkpoints"
+_CHECKPOINT_DIR = Path.home() / ".durable" / "_checkpoints"
 _checkpoint_store = CheckpointStore(_CHECKPOINT_DIR)
 
 

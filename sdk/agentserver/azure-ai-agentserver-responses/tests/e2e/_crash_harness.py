@@ -179,9 +179,21 @@ class CrashHarness:
         """
         env = dict(os.environ)
         env["PORT"] = str(self._port)
-        env["AGENTSERVER_DURABLE_TASKS_PATH"] = str(self._tmp_path / "tasks")
-        env["AGENTSERVER_RESPONSE_STORE_PATH"] = str(self._tmp_path / "responses")
-        env["AGENTSERVER_STREAM_STORE_PATH"] = str(self._tmp_path / "streams")
+        # (Spec 024 Phase 3a) Single AGENTSERVER_DURABLE_ROOT env var
+        # covers tasks / responses / streams subdirs. Legacy per-subdir
+        # env vars (AGENTSERVER_DURABLE_TASKS_PATH /
+        # AGENTSERVER_RESPONSE_STORE_PATH / AGENTSERVER_STREAM_STORE_PATH)
+        # are deleted.
+        env["AGENTSERVER_DURABLE_ROOT"] = str(self._tmp_path)
+        # Make sure the legacy vars (if set by the outer test process)
+        # don't leak into the subprocess and confuse anything that
+        # somehow still reads them.
+        for _legacy in (
+            "AGENTSERVER_DURABLE_TASKS_PATH",
+            "AGENTSERVER_RESPONSE_STORE_PATH",
+            "AGENTSERVER_STREAM_STORE_PATH",
+        ):
+            env.pop(_legacy, None)
         # The package root (parent of tests/) — _crash_harness.py lives at
         # tests/e2e/_crash_harness.py so two parents up is the package
         # root that contains the importable ``tests`` package.

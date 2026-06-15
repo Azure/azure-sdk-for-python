@@ -38,18 +38,21 @@ def _isolated_durable_tasks_root(tmp_path):
 
     Per-test scope (autouse) so every test starts with a clean durable
     task store.
+
+    (Spec 024 Phase 3a) Uses ``AGENTSERVER_DURABLE_ROOT`` — the unified
+    env var that controls tasks/responses/streams subdirs together.
     """
     root = tmp_path / "durable-tasks-isolated"
     root.mkdir(parents=True, exist_ok=True)
-    prior = os.environ.get("AGENTSERVER_DURABLE_TASKS_PATH")
-    os.environ["AGENTSERVER_DURABLE_TASKS_PATH"] = str(root)
+    prior = os.environ.get("AGENTSERVER_DURABLE_ROOT")
+    os.environ["AGENTSERVER_DURABLE_ROOT"] = str(root)
     try:
         yield
     finally:
         if prior is None:
-            os.environ.pop("AGENTSERVER_DURABLE_TASKS_PATH", None)
+            os.environ.pop("AGENTSERVER_DURABLE_ROOT", None)
         else:
-            os.environ["AGENTSERVER_DURABLE_TASKS_PATH"] = prior
+            os.environ["AGENTSERVER_DURABLE_ROOT"] = prior
 
 
 @pytest.fixture(autouse=True, scope="session")

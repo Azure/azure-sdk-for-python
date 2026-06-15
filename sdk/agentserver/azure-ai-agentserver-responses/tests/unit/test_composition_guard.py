@@ -9,13 +9,11 @@ descriptive error naming the offending store — NOT start up and silently
 degrade.
 
 The guard intentionally does NOT fire for the default-only path
-(``store=None`` → ``InMemoryResponseProvider``). That path satisfies
-in-process tests and local development that don't need cross-process
-recovery; production deployments must supply an explicit persistent
-store either via the ``store=`` constructor argument or the
-``AGENTSERVER_RESPONSE_STORE_PATH`` env var. Streaming durability is
-provided independently by the process-wide streams registry, configured
-by the host at startup against ``AGENTSERVER_STREAM_STORE_PATH``.
+(``store=None`` → ``FileResponseStore`` under
+``${AGENTSERVER_DURABLE_ROOT}/responses/`` per spec 024 Phase 3a). That
+path is persistent and safe for ``durable_background=True``. Streaming
+durability is provided independently by the process-wide streams
+registry, configured by the host at startup against the same root.
 """
 
 from __future__ import annotations
@@ -33,14 +31,18 @@ from azure.ai.agentserver.responses import (
 
 @pytest.fixture(autouse=True)
 def _clear_env_overrides() -> Iterator[None]:
-    """Strip ``AGENTSERVER_RESPONSE_STORE_PATH`` and ``AGENTSERVER_STREAM_STORE_PATH``
-    for the duration of each test so the explicit-provider path is exercised.
+    """Strip ``AGENTSERVER_DURABLE_ROOT`` for the duration of each test
+    so the explicit-provider path is exercised against the home default.
+
+    (Spec 024 Phase 3a) Single env var covers tasks/streams/responses.
     """
     saved = {
         key: os.environ.pop(key, None)
         for key in (
+            "AGENTSERVER_DURABLE_ROOT",
             "AGENTSERVER_RESPONSE_STORE_PATH",
             "AGENTSERVER_STREAM_STORE_PATH",
+            "AGENTSERVER_DURABLE_TASKS_PATH",
         )
     }
     try:
@@ -122,18 +124,16 @@ def test_durable_background_true_with_default_inmemory_does_not_raise() -> None:
 def test_durable_background_true_with_env_store_paths_does_not_raise(
     tmp_path: object,
 ) -> None:
-    """The ``AGENTSERVER_RESPONSE_STORE_PATH`` + ``AGENTSERVER_STREAM_STORE_PATH``
-    operator overrides together satisfy the composition guard:
-    ``FileResponseStore`` for the response provider + the registry's
-    file-backed replay backing for streams (configured by the host at
-    startup against ``AGENTSERVER_STREAM_STORE_PATH``).
+    """The ``AGENTSERVER_DURABLE_ROOT`` operator override satisfies the
+    composition guard: ``FileResponseStore`` at ``<root>/responses/`` for
+    the response provider + the registry's file-backed replay backing
+    for streams at ``<root>/streams/`` (configured by the host at startup
+    via the unified storage-paths helper, spec 024 Phase 3a).
     """
-    os.environ["AGENTSERVER_RESPONSE_STORE_PATH"] = str(tmp_path / "responses")
-    os.environ["AGENTSERVER_STREAM_STORE_PATH"] = str(tmp_path / "streams")
+    os.environ["AGENTSERVER_DURABLE_ROOT"] = str(tmp_path)
     try:
         options = ResponsesServerOptions(durable_background=True)
         host = ResponsesAgentServerHost(options=options)
         assert host is not None
     finally:
-        os.environ.pop("AGENTSERVER_RESPONSE_STORE_PATH", None)
-        os.environ.pop("AGENTSERVER_STREAM_STORE_PATH", None)
+        os.environ.pop("AGENTSERVER_DURABLE_ROOT", None)
