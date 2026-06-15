@@ -134,23 +134,32 @@ async def test_cancel_invocation_error_returns_500():
 
 
 # ---------------------------------------------------------------------------
-# Regression: ``agent_session_id`` query param propagates to
-# ``request.state.session_id`` on cancel + get endpoints (parity with
-# the invoke endpoint).
+# Regression: ``request.state.session_id`` is populated on cancel + get
+# endpoints.
+#
+# Per the invocation protocol spec
+# (`invocation-protocol-spec.md` §1.2 GET, §1.3 cancel), neither GET nor
+# cancel has a platform-defined ``agent_session_id`` query parameter.
+# The session is implicit and sourced from the
+# ``FOUNDRY_AGENT_SESSION_ID`` environment variable the platform sets
+# on the container (surfaced via ``self.config.session_id``).
+#
+# These tests pin the contract that the framework surfaces that
+# resolved session id on ``request.state.session_id`` for custom
+# cancel / get handlers, with the same source-precedence as the
+# invoke endpoint (caller-provided query param wins, env var falls
+# back, empty string if both absent).
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
-async def test_cancel_propagates_agent_session_id_to_request_state():
-    """``POST /invocations/{id}/cancel?agent_session_id=X`` must expose ``X``
-    as ``request.state.session_id`` so custom cancel handlers can look up
-    their per-session state.
-
-    Without this, custom ``@app.cancel_invocation_handler`` implementations
-    that do ``request.state.session_id`` (the documented pattern, used by
-    the ``durable-research-agent`` demo's cancel handler) get an empty
-    string and silently fail to find their per-session durable task.
-    """
+async def test_cancel_propagates_session_id_from_env_var(monkeypatch):
+    """``POST /invocations/{id}/cancel`` exposes
+    ``request.state.session_id`` populated from the
+    ``FOUNDRY_AGENT_SESSION_ID`` env var when no query param is
+    present (the hosted-platform default per the invocation protocol
+    spec)."""
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "platform-session-hosted")
     app = InvocationAgentServerHost()
 
     captured: dict[str, str] = {}
@@ -167,17 +176,18 @@ async def test_cancel_propagates_agent_session_id_to_request_state():
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        resp = await client.post("/invocations/some-id/cancel?agent_session_id=my-session-42")
+        resp = await client.post("/invocations/some-id/cancel")
     assert resp.status_code == 200
-    assert captured["session_id"] == "my-session-42"
+    assert captured["session_id"] == "platform-session-hosted"
     assert captured["invocation_id"] == "some-id"
 
 
 @pytest.mark.asyncio
-async def test_get_propagates_agent_session_id_to_request_state():
-    """``GET /invocations/{id}?agent_session_id=X`` mirrors the cancel
-    behaviour: ``request.state.session_id`` must be populated for custom
-    get handlers (e.g. those gating per-session ownership / isolation)."""
+async def test_get_propagates_session_id_from_env_var(monkeypatch):
+    """``GET /invocations/{id}`` mirrors the cancel behaviour:
+    ``request.state.session_id`` resolves from
+    ``FOUNDRY_AGENT_SESSION_ID`` when no query param is present."""
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "platform-session-get")
     app = InvocationAgentServerHost()
 
     captured: dict[str, str] = {}
@@ -194,16 +204,46 @@ async def test_get_propagates_agent_session_id_to_request_state():
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        resp = await client.get("/invocations/some-id?agent_session_id=my-session-99")
+        resp = await client.get("/invocations/some-id")
     assert resp.status_code == 200
-    assert captured["session_id"] == "my-session-99"
+    assert captured["session_id"] == "platform-session-get"
     assert captured["invocation_id"] == "some-id"
 
 
 @pytest.mark.asyncio
-async def test_cancel_without_agent_session_id_leaves_request_state_session_id_empty():
-    """Absence of the query param should resolve to an empty string on
-    ``request.state.session_id`` (not raise, not propagate stale state)."""
+async def test_cancel_caller_query_param_overrides_env_var(monkeypatch):
+    """A caller-provided ``agent_session_id`` query param wins over the
+    env var (matches the invoke endpoint's precedence). The spec does
+    not require callers to pass it on cancel/get, but if they do, the
+    framework forwards it transparently — and the framework's
+    ``request.state.session_id`` reflects the override."""
+    monkeypatch.setenv("FOUNDRY_AGENT_SESSION_ID", "env-session")
+    app = InvocationAgentServerHost()
+
+    captured: dict[str, str] = {}
+
+    @app.invoke_handler
+    async def handle(request: Request) -> Response:
+        return Response(content=b"ok")
+
+    @app.cancel_invocation_handler
+    async def cancel_handler(request: Request) -> Response:
+        captured["session_id"] = request.state.session_id
+        return JSONResponse({"status": "cancelled"})
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post("/invocations/some-id/cancel?agent_session_id=caller-override")
+    assert resp.status_code == 200
+    assert captured["session_id"] == "caller-override"
+
+
+@pytest.mark.asyncio
+async def test_cancel_without_env_var_or_query_param_yields_empty_session_id(monkeypatch):
+    """When neither the env var nor a caller-supplied query param is
+    present, ``request.state.session_id`` is the empty string —
+    handlers can branch on falsy without an AttributeError."""
+    monkeypatch.delenv("FOUNDRY_AGENT_SESSION_ID", raising=False)
     app = InvocationAgentServerHost()
 
     captured: dict[str, str] = {}
