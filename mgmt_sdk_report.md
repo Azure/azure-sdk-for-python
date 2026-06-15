@@ -1,7 +1,5 @@
 # Stable Management SDK Report
 
-Total kept SDKs: 36
-
 | id | sdk name | api version | sdk version | pr link | release date |
 | --- | --- | --- | --- | --- | --- |
 | 1 | azure-mgmt-resource | 2025-04-01 | 26.0.0b1 | [#47386](https://github.com/Azure/azure-sdk-for-python/pull/47386) | 2026-06-08 |
@@ -34,9 +32,3 @@ Total kept SDKs: 36
 | 28 | azure-mgmt-kubernetesconfiguration-fluxconfigurations | 2025-04-01 | 1.0.0b2 | [#45714](https://github.com/Azure/azure-sdk-for-python/pull/45714) | 2026-03-18 |
 | 29 | azure-mgmt-networkfunction | 2022-11-01 | 1.0.0b2 | [#45641](https://github.com/Azure/azure-sdk-for-python/pull/45641) | 2026-03-16 |
 | 30 | azure-mgmt-communication | 2025-09-01 | 3.0.0b1 | [#45767](https://github.com/Azure/azure-sdk-for-python/pull/45767) | 2026-03-10 |
-| 31 | azure-mgmt-computerecommender | 2025-06-05 | 1.0.0b1 | [#42783](https://github.com/Azure/azure-sdk-for-python/pull/42783) | 2025-09-04 |
-| 32 | azure-mgmt-workloadorchestration | 2025-06-01 | 1.0.0b1 | [#42629](https://github.com/Azure/azure-sdk-for-python/pull/42629) | 2025-08-18 |
-| 33 | azure-mgmt-resource-bicep | 2023-11-01 | 1.0.0b1 | [#42629](https://github.com/Azure/azure-sdk-for-python/pull/42629) | 2025-06-25 |
-| 34 | azure-mgmt-hybridconnectivity | 2024-12-01 | 2.0.0b1 | [#44943](https://github.com/Azure/azure-sdk-for-python/pull/44943) | 2025-04-01 |
-| 35 | azure-mgmt-databasewatcher | 2025-01-02 | 1.0.0b1 | [#44943](https://github.com/Azure/azure-sdk-for-python/pull/44943) | 2025-02-28 |
-| 36 | azure-mgmt-containerorchestratorruntime | 2024-03-01 | 1.0.0b1 | [#44943](https://github.com/Azure/azure-sdk-for-python/pull/44943) | 2024-10-20 |
