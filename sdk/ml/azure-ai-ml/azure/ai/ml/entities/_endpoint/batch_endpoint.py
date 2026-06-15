@@ -85,7 +85,8 @@ class BatchEndpoint(Endpoint):
         if isinstance(self.defaults, RestBatchEndpointDefaults):
             defaults = self.defaults
         elif isinstance(self.defaults, dict) and self.defaults:
-            defaults = RestBatchEndpointDefaults(**self.defaults)
+            normalized_defaults = {camel_to_snake(k) or k: v for k, v in self.defaults.items()}
+            defaults = RestBatchEndpointDefaults(**normalized_defaults)
         batch_endpoint = RestBatchEndpoint(
             description=self.description,
             auth_mode=snake_to_camel(self.auth_mode),
