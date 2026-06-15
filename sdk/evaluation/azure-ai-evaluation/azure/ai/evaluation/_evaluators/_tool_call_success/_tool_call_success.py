@@ -340,34 +340,34 @@ def _collect_failed_tool_calls(messages):
             if "tool_call" in content and "function" in content.get("tool_call", {}):
                 tc = content["tool_call"]
                 name = tc.get("function", {}).get("name", "") or ""
-                tcid = tc.get("id")
+                call_id = tc.get("id")
             else:
                 name = content.get("name", "") or ""
-                tcid = content.get("tool_call_id")
-            if tcid is not None:
-                id_to_name[tcid] = name
+                call_id = content.get("tool_call_id")
+            if call_id is not None:
+                id_to_name[call_id] = name
             status = content.get("status")
             if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES:
-                if tcid is not None:
-                    failed_ids.append(tcid)
+                if call_id is not None:
+                    failed_ids.append(call_id)
                 elif name:
                     failed_names_without_id.append(name)
 
     for msg in messages:
         if not isinstance(msg, dict) or msg.get("role") != "tool":
             continue
-        tcid = msg.get("tool_call_id")
+        call_id = msg.get("tool_call_id")
         for content in msg.get("content", []) or []:
             if not isinstance(content, dict) or content.get("type") != "tool_result":
                 continue
             status = content.get("status")
-            if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES and tcid is not None:
-                failed_ids.append(tcid)
+            if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES and call_id is not None:
+                failed_ids.append(call_id)
 
     ordered = []
     seen = set()
-    for tcid in failed_ids:
-        label = id_to_name.get(tcid) or tcid
+    for call_id in failed_ids:
+        label = id_to_name.get(call_id) or call_id
         if label and label not in seen:
             seen.add(label)
             ordered.append(label)
