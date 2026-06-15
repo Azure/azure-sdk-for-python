@@ -127,12 +127,17 @@ test("requiredChecksGate accepts required check runs that completed successfully
   assert.equal(result.ready, true);
 });
 
-test("githubRequest does not suppress forbidden required-check reads", async () => {
+test("githubRequest can suppress forbidden required-check reads", async () => {
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async () => new Response("forbidden", { status: 403 });
 
   try {
-    await assert.rejects(githubRequest("GET", "/repos/Azure/azure-sdk-for-python/branches/main/protection/required_status_checks", { allow404: true }), /403/);
+    const result = await githubRequest("GET", "/repos/Azure/azure-sdk-for-python/branches/main/protection/required_status_checks", {
+      allow403: true,
+      allow404: true,
+    });
+
+    assert.equal(result, undefined);
   } finally {
     globalThis.fetch = originalFetch;
   }

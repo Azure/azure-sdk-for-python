@@ -22,14 +22,93 @@ function artifactPaths(root, packageDir) {
   return API_ARTIFACTS.map((artifact) => path.join(root, normalized, artifact));
 }
 
-function readFileOrUndefined(filePath) {
-  return fs.existsSync(filePath) ? fs.readFileSync(filePath) : undefined;
+function isPathInside(parent, child) {
+  const relative = path.relative(parent, child);
+  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
 }
 
-function readRequiredFile(filePath) {
-  if (!fs.existsSync(filePath)) {
+function relativePathUnderRoot(root, filePath) {
+  const absoluteRoot = path.resolve(root);
+  const absoluteFilePath = path.resolve(filePath);
+  const relativePath = path.relative(absoluteRoot, absoluteFilePath);
+
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+    throw new Error(`ERROR: API artifact path escapes checkout root: ${filePath}`);
+  }
+
+  return { absoluteRoot, absoluteFilePath, relativePath };
+}
+
+function requirePlainFileUnderRoot(root, filePath) {
+  const { absoluteRoot, absoluteFilePath, relativePath } = relativePathUnderRoot(root, filePath);
+
+  let currentPath = absoluteRoot;
+  for (const part of relativePath.split(path.sep).filter(Boolean)) {
+    currentPath = path.join(currentPath, part);
+    const stat = fs.lstatSync(currentPath);
+    if (stat.isSymbolicLink()) {
+      throw new Error(`ERROR: API artifact path must not contain symlinks: ${filePath}`);
+    }
+  }
+
+  const stat = fs.statSync(absoluteFilePath);
+  if (!stat.isFile()) {
+    throw new Error(`ERROR: API artifact must be a regular file: ${filePath}`);
+  }
+
+  const realRoot = fs.realpathSync(absoluteRoot);
+  const realFilePath = fs.realpathSync(absoluteFilePath);
+  if (!isPathInside(realRoot, realFilePath)) {
+    throw new Error(`ERROR: API artifact real path escapes checkout root: ${filePath}`);
+  }
+}
+
+function lstatOrUndefined(filePath) {
+  try {
+    return fs.lstatSync(filePath);
+  } catch (error) {
+    if (error?.code === "ENOENT") {
+      return undefined;
+    }
+    throw error;
+  }
+}
+
+function requireWritableArtifactPath(root, filePath) {
+  if (lstatOrUndefined(filePath)) {
+    requirePlainFileUnderRoot(root, filePath);
+    return;
+  }
+
+  const parentDir = path.dirname(filePath);
+  const { absoluteRoot, relativePath } = relativePathUnderRoot(root, parentDir);
+
+  let currentPath = absoluteRoot;
+  for (const part of relativePath.split(path.sep).filter(Boolean)) {
+    currentPath = path.join(currentPath, part);
+    const stat = fs.lstatSync(currentPath);
+    if (stat.isSymbolicLink()) {
+      throw new Error(`ERROR: API artifact path must not contain symlinks: ${filePath}`);
+    }
+    if (!stat.isDirectory()) {
+      throw new Error(`ERROR: API artifact parent path must be a directory: ${filePath}`);
+    }
+  }
+}
+
+function readFileOrUndefined(root, filePath) {
+  if (!lstatOrUndefined(filePath)) {
+    return undefined;
+  }
+  requirePlainFileUnderRoot(root, filePath);
+  return fs.readFileSync(filePath);
+}
+
+function readRequiredFile(root, filePath) {
+  if (!lstatOrUndefined(filePath)) {
     throw new Error(`ERROR: required API artifact is missing from working branch checkout: ${filePath}`);
   }
+  requirePlainFileUnderRoot(root, filePath);
   return fs.readFileSync(filePath);
 }
 
@@ -39,7 +118,7 @@ function artifactsDiffer(workingRoot, reviewRoot, packageDir) {
 
   return workingPaths.some((workingPath, index) => {
     const reviewPath = reviewPaths[index];
-    return !readRequiredFile(workingPath).equals(Buffer.from(readFileOrUndefined(reviewPath) || ""));
+    return !readRequiredFile(workingRoot, workingPath).equals(Buffer.from(readFileOrUndefined(reviewRoot, reviewPath) || ""));
   });
 }
 
@@ -48,7 +127,9 @@ function copyApiArtifacts(workingRoot, reviewRoot, packageDir) {
   const reviewPaths = artifactPaths(reviewRoot, packageDir);
 
   for (const [index, workingPath] of workingPaths.entries()) {
+    requirePlainFileUnderRoot(workingRoot, workingPath);
     fs.mkdirSync(path.dirname(reviewPaths[index]), { recursive: true });
+    requireWritableArtifactPath(reviewRoot, reviewPaths[index]);
     fs.copyFileSync(workingPath, reviewPaths[index]);
   }
 }

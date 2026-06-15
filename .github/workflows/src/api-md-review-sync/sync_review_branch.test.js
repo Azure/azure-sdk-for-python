@@ -13,6 +13,19 @@ function writeArtifacts(root, packageDir, apiText, metadataText) {
   fs.writeFileSync(path.join(packagePath, "api.metadata.yml"), metadataText, "utf-8");
 }
 
+function createSymlinkOrSkip(t, target, linkPath) {
+  try {
+    fs.symlinkSync(target, linkPath);
+    return true;
+  } catch (error) {
+    if (["EACCES", "EPERM"].includes(error?.code)) {
+      t.skip("symlink creation requires elevated permissions on this platform");
+      return false;
+    }
+    throw error;
+  }
+}
+
 test("artifactsDiffer is false when both files match", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "api-md-sync-"));
   const workingRoot = path.join(root, "working");
@@ -42,6 +55,24 @@ test("artifactsDiffer fails when working artifacts are missing", () => {
   assert.throws(() => artifactsDiffer(workingRoot, reviewRoot, "sdk/service/azure-example"), /required API artifact is missing/);
 });
 
+test("artifactsDiffer rejects symlinked working artifacts", (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "api-md-sync-"));
+  const workingRoot = path.join(root, "working");
+  const reviewRoot = path.join(root, "review");
+  const packageDir = "sdk/service/azure-example";
+  const workingPackagePath = path.join(workingRoot, packageDir);
+  const outsideFile = path.join(root, "outside-api.md");
+  fs.mkdirSync(workingPackagePath, { recursive: true });
+  fs.writeFileSync(outsideFile, "outside", "utf-8");
+  if (!createSymlinkOrSkip(t, outsideFile, path.join(workingPackagePath, "api.md"))) {
+    return;
+  }
+  fs.writeFileSync(path.join(workingPackagePath, "api.metadata.yml"), "metadata", "utf-8");
+  writeArtifacts(reviewRoot, packageDir, "api", "metadata");
+
+  assert.throws(() => artifactsDiffer(workingRoot, reviewRoot, packageDir), /must not contain symlinks/);
+});
+
 test("copyApiArtifacts copies only API files", () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "api-md-sync-"));
   const workingRoot = path.join(root, "working");
@@ -56,6 +87,24 @@ test("copyApiArtifacts copies only API files", () => {
   assert.equal(fs.readFileSync(path.join(reviewRoot, "sdk/service/azure-example/api.md"), "utf-8"), "new api");
   assert.equal(fs.readFileSync(path.join(reviewRoot, "sdk/service/azure-example/api.metadata.yml"), "utf-8"), "new metadata");
   assert.equal(fs.readFileSync(extraFile, "utf-8"), "keep");
+});
+
+test("copyApiArtifacts rejects symlinked review artifacts", (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "api-md-sync-"));
+  const workingRoot = path.join(root, "working");
+  const reviewRoot = path.join(root, "review");
+  const packageDir = "sdk/service/azure-example";
+  const reviewPackagePath = path.join(reviewRoot, packageDir);
+  const outsideFile = path.join(root, "outside-review-api.md");
+  writeArtifacts(workingRoot, packageDir, "new api", "new metadata");
+  fs.mkdirSync(reviewPackagePath, { recursive: true });
+  fs.writeFileSync(outsideFile, "outside", "utf-8");
+  if (!createSymlinkOrSkip(t, outsideFile, path.join(reviewPackagePath, "api.md"))) {
+    return;
+  }
+
+  assert.throws(() => copyApiArtifacts(workingRoot, reviewRoot, packageDir), /must not contain symlinks/);
+  assert.equal(fs.readFileSync(outsideFile, "utf-8"), "outside");
 });
 
 test("syncReviewBranch skips stale working SHA", async () => {

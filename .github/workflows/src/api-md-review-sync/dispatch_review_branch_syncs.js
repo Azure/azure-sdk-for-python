@@ -91,7 +91,11 @@ function metadataMatches(metadata, packageRecord, workingBranch) {
   );
 }
 
-async function githubRequest(method, apiPath, { token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN, body, allow404 = false } = {}) {
+async function githubRequest(
+  method,
+  apiPath,
+  { token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN, body, allow403 = false, allow404 = false } = {},
+) {
   const response = await fetch(`https://api.github.com${apiPath}`, {
     method,
     headers: {
@@ -104,7 +108,7 @@ async function githubRequest(method, apiPath, { token = process.env.GITHUB_TOKEN
     body: body === undefined ? undefined : JSON.stringify(body),
   });
 
-  if (allow404 && response.status === 404) {
+  if ((allow403 && response.status === 403) || (allow404 && response.status === 404)) {
     return undefined;
   }
 
@@ -169,6 +173,7 @@ async function getCheckRunsForSha(sha) {
 
 async function getRequiredStatusChecksForBranch(branch) {
   return await githubRequest("GET", `/repos/${REPO_SLUG}/branches/${encodeURIComponent(branch)}/protection/required_status_checks`, {
+    allow403: true,
     allow404: true,
   });
 }
