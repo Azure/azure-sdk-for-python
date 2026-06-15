@@ -15,6 +15,7 @@ for Foundry hosted agents. Each sample is based on a corresponding sample from t
 | [`semantic_kernel_activity_agent`](#semantic_kernel_activity_agent) | [semantic-kernel-multiturn](https://github.com/microsoft/Agents/tree/main/samples/python/semantic-kernel-multiturn) | Semantic Kernel agent with tools, multi-turn, streaming | Zero-config decorator |
 | [`suggested_actions_activity_agent`](#suggested_actions_activity_agent) | [suggested-actions](https://github.com/microsoft/BotBuilder-Samples/tree/main/samples/python/08.suggested-actions) | Quick-reply buttons that disappear after tap | Zero-config decorator |
 | [`foundry_storage_state_agent`](#foundry_storage_state_agent) | N/A | Durable conversation and user state with `FoundryStorage()` | Zero-config decorator |
+| [`foundry_storage_history_agent`](#foundry_storage_history_agent) | N/A | Persist the full conversation transcript with `FoundryStorage()` | Zero-config decorator |
 | [`foundry_storage_proactive_agent`](#foundry_storage_proactive_agent) | N/A | Durable proactive conversation references with `FoundryStorage()` | Handler + proactive |
 
 ### Usage patterns
@@ -124,6 +125,15 @@ Shows durable Activity Protocol state using platform-managed storage:
 - `storage = FoundryStorage()` — bearer-authenticated Foundry storage backend
 - `ActivityAgentServerHost(storage=storage)` — the M365 bridge uses it for conversation/user state
 - `state.conversation` and `state.user` counters survive restarts and scale-out
+
+## foundry_storage_history_agent
+
+The simplest durable-storage sample — persists the whole conversation transcript:
+
+- `storage = FoundryStorage()` — platform-managed backend, no Cosmos to configure
+- `@app.activity("message")` appends each turn to a `history` list in `state.conversation`
+- `/history` shows the stored transcript; `/clear` forgets it
+- The transcript survives restarts and scale-out because it lives in FoundryStorage
 
 ## foundry_storage_proactive_agent
 
