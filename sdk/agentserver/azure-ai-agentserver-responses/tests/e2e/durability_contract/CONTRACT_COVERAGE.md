@@ -92,6 +92,7 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 |---|---|---|
 | Every (row × applicable path) cell has a paired conformance test | `test_contract_completeness.py::test_every_row_path_combination_has_test` | meta |
 | Conformance tests use real signals (no synthetic-crash shortcuts) | `test_contract_completeness.py` (filename + handler-import audit) | meta |
+| **NEW (Spec 024 Phase 1 step 7):** No race window on fast-handler completion (Rows 2/3 unified durable-task path) | `test_no_fast_handler_race.py::test_no_fast_handler_race_row_2`, `::test_no_fast_handler_race_row_3` | race-guard |
 | **NEW (T-174):** Per-cell tests verify the row's full contract surface — events + content + response.output as applicable, not just terminal status | `test_contract_completeness.py::test_per_cell_tests_assert_contract_surface` (TO BE ADDED, T-174) | meta |
 | **NEW (T-174):** Every contract clause in `durability-contract.md` has an entry in CONTRACT_COVERAGE.md | `test_contract_completeness.py::test_contract_coverage_matrix_complete` (TO BE ADDED, T-174) | meta |
 

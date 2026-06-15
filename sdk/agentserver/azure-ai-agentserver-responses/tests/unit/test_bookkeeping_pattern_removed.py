@@ -68,30 +68,36 @@ def test_complete_bookkeeping_task_method_removed() -> None:
 
 
 def test_orchestrator_complete_bookkeeping_task_method_removed() -> None:
-    """``ResponseOrchestrator._complete_bookkeeping_task`` must be gone."""
-    from azure.ai.agentserver.responses.hosting._orchestrator import ResponseOrchestrator
+    """``_ResponseOrchestrator._complete_bookkeeping_task`` must be gone."""
+    from azure.ai.agentserver.responses.hosting._orchestrator import _ResponseOrchestrator
 
-    assert not hasattr(ResponseOrchestrator, "_complete_bookkeeping_task"), (
-        "spec 024 Phase 2 deletes ResponseOrchestrator._complete_bookkeeping_task. "
+    assert not hasattr(_ResponseOrchestrator, "_complete_bookkeeping_task"), (
+        "spec 024 Phase 2 deletes _ResponseOrchestrator._complete_bookkeeping_task. "
         "Callsites are removed because the bookkeeping signal pattern is gone."
     )
 
 
 def test_run_background_no_shielded_runner_path() -> None:
-    """``ResponseOrchestrator.run_background`` must not use ``asyncio.create_task(_shielded_runner)``.
+    """``_ResponseOrchestrator.run_background`` must not use ``asyncio.create_task(_shielded_runner)`` for store=True.
 
     Under spec 024 Phase 2 all ``store=true`` background responses go
     through ``_start_durable_background`` which runs the handler inside
-    the task body. The asyncio.create_task + shielded runner path is gone.
+    the task body. The asyncio.create_task + shielded runner path for
+    store=True is gone (only Row 4 — no store — still uses asyncio.create_task).
     """
     import inspect
 
-    from azure.ai.agentserver.responses.hosting._orchestrator import ResponseOrchestrator
+    from azure.ai.agentserver.responses.hosting._orchestrator import _ResponseOrchestrator
 
-    src = inspect.getsource(ResponseOrchestrator.run_background)
-    assert "_shielded_runner" not in src, (
-        "spec 024 Phase 2 deletes the asyncio.create_task(_shielded_runner) "
-        "branch in run_background. The handler runs inside the durable task body."
+    src = inspect.getsource(_ResponseOrchestrator.run_background)
+    # The post-Phase-2 code should NOT contain the legacy pattern of
+    # "asyncio.create_task(_shielded_runner())" followed by a separate
+    # _start_durable_background call with disposition="mark-failed". The
+    # unified path uses _start_durable_background for all store=True rows.
+    assert 'disposition="mark-failed"' not in src, (
+        "spec 024 Phase 2 deletes the Row 2 bookkeeping path in run_background. "
+        "All store=True paths use the unified _start_durable_background with "
+        "a disposition argument computed inline."
     )
 
 

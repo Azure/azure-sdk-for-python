@@ -259,14 +259,11 @@ _RESP_DISPOSITION = "disposition"
 DISPOSITION_REINVOKE = "re-invoke"
 DISPOSITION_MARK_FAILED = "mark-failed"
 
-# Per-process registry of pending bookkeeping-task completion events.
-# Keyed by response_id. Set by ``DurableResponseOrchestrator.complete_bookkeeping_task``
-# from the orchestrator's terminal-persist hook so the bookkeeping task body
-# (which is awaiting this event) exits cleanly and the task is marked completed.
-# In-memory only — survives only for the current process. On crash before the
-# event fires, the task stays in_progress and the next-lifetime recovery
-# scanner reclaims it (mark-failed disposition then runs).
-_BOOKKEEPING_EVENTS: dict[str, asyncio.Event] = {}
+
+# (Spec 024 Phase 2) `_BOOKKEEPING_EVENTS` module-level registry deleted —
+# the bookkeeping pattern is gone. Handlers run inside the task body for
+# all rows (Row 1 + Row 2 + Row 3); see SOT §6.4 unified handler-execution
+# model.
 
 
 def _read_disposition(responses_ns: Any) -> str:
@@ -555,17 +552,18 @@ class DurableResponseOrchestrator:
             # Spec 023: implicit-suspend via bare ``return None`` (see above).
             return None
 
-        # (Spec 014 FR-003 / FR-004) Fresh-entry bookkeeping mode. The
-        # handler is running externally (Row 2: asyncio.create_task in
-        # run_background; Row 3: synchronously in run_sync / _live_stream).
-        # This task body just keeps the task in_progress until the
-        # orchestrator signals completion via complete_bookkeeping_task.
-        # On crash / shutdown before signal, the task stays in_progress and
-        # the next-lifetime recovery scanner reclaims it (mark-failed branch
-        # above runs).
-        if not is_recovery and disposition == DISPOSITION_MARK_FAILED:
-            await self._run_bookkeeping_body(ctx, response_id)
-            return
+        # (Spec 024 Phase 2 — bookkeeping unification) On fresh entry, the
+        # handler ALWAYS runs inside the task body, regardless of disposition.
+        # The disposition only affects RECOVERY behaviour:
+        #   - re-invoke: recovery re-runs the handler (already returned above
+        #     via the fresh-entry path, but with is_recovery=True).
+        #   - mark-failed: recovery persists server_error + returns (handled
+        #     above at the `if is_recovery and disposition == DISPOSITION_MARK_FAILED`
+        #     branch).
+        # The legacy `if not is_recovery and disposition == DISPOSITION_MARK_FAILED:`
+        # branch that ran `_run_bookkeeping_body` is deleted — the handler
+        # now executes inside the task body for all rows. SOT §6.5 (the
+        # bookkeeping pre-registration pattern) is gone.
 
         # Build DurabilityContext for the handler.
         # Note: `last_snapshot` was intentionally removed — the response object is
@@ -678,6 +676,7 @@ class DurableResponseOrchestrator:
                     store=bool(params.get("store", True)),
                     agent_session_id=params.get("agent_session_id"),
                     conversation_id=params.get("conversation_id"),
+                    background=bool(params.get("background", True)),
                 )
             else:
                 await _run_background_non_stream(
@@ -832,103 +831,6 @@ class DurableResponseOrchestrator:
         # adds a public ``is_queued`` property, switch to that.
         is_queued = getattr(task_run, "_queued_cancel_callback", None) is not None
         return not is_queued  # True = freshly started, False = queued
-
-    async def _run_bookkeeping_body(
-        self,
-        ctx: "TaskContext[dict[str, Any]]",
-        response_id: str,
-    ) -> None:
-        """Run the fresh-entry bookkeeping body for Row 2 / Row 3 tasks.
-
-        The handler is running externally (Row 2: ``asyncio.create_task`` in
-        ``run_background``; Row 3: synchronously inside ``run_sync`` /
-        ``_live_stream``). This body just keeps the durable task in the
-        ``in_progress`` state until one of:
-
-        - ``complete_bookkeeping_task(response_id)`` is called after the
-          handler emits its terminal and the response store write
-          completes — the task body returns cleanly and the task is
-          marked ``completed``.
-        - ``ctx.shutdown`` fires (graceful shutdown) — the body proactively
-          calls ``_persist_crash_failed`` (idempotent — skips overwrite if
-          terminal already persisted) then returns, marking the task
-          ``completed`` so it doesn't block shutdown.
-        - The process is SIGKILL'd — no chance to clean up. Task stays
-          ``in_progress`` and the next-lifetime recovery scanner reclaims
-          it (the ``mark-failed`` branch of ``_execute_in_task`` runs).
-
-        :param ctx: The durable task context (provides ``cancel`` /
-            ``shutdown`` events).
-        :param response_id: The response identifier (key into the
-            module-level completion event registry).
-        """
-        completion_event = self.ensure_bookkeeping_event(response_id)
-        try:
-            completion_task = asyncio.create_task(completion_event.wait())
-            cancel_task = asyncio.create_task(ctx.cancel.wait())
-            shutdown_task = asyncio.create_task(ctx.shutdown.wait())
-            try:
-                done, pending = await asyncio.wait(
-                    {completion_task, cancel_task, shutdown_task},
-                    return_when=asyncio.FIRST_COMPLETED,
-                )
-                for task in pending:
-                    task.cancel()
-            except asyncio.CancelledError:
-                completion_task.cancel()
-                cancel_task.cancel()
-                shutdown_task.cancel()
-                raise
-
-            if completion_task in done:
-                # Handler emitted terminal + store write completed.
-                # Return cleanly; task marked completed.
-                return
-
-            # ctx.cancel or ctx.shutdown fired before completion. Proactively
-            # mark the response failed via the idempotent
-            # _persist_crash_failed helper.
-            await self._persist_crash_failed(response_id, ctx.input)
-            return
-        finally:
-            _BOOKKEEPING_EVENTS.pop(response_id, None)
-
-    def ensure_bookkeeping_event(self, response_id: str) -> asyncio.Event:
-        """Idempotently register the bookkeeping completion event.
-
-        Returns the existing :class:`asyncio.Event` for ``response_id``
-        from ``_BOOKKEEPING_EVENTS`` or creates one if absent. Callers
-        invoke this BEFORE starting a ``mark-failed`` disposition
-        durable task so that a fast handler which completes its
-        terminal before the task body's first await still observes a
-        registered event when it calls
-        :meth:`complete_bookkeeping_task` — the signal is never
-        dropped.
-
-        :param response_id: The response identifier (key into the
-            module-level completion event registry).
-        :returns: The (possibly newly created) completion event.
-        """
-        event = _BOOKKEEPING_EVENTS.get(response_id)
-        if event is None:
-            event = asyncio.Event()
-            _BOOKKEEPING_EVENTS[response_id] = event
-        return event
-
-    def complete_bookkeeping_task(self, response_id: str) -> None:
-        """Signal the bookkeeping task body for ``response_id`` to complete.
-
-        Called by the orchestrator from the handler's terminal-persist hook
-        once the response is durably written to the response store. If no
-        bookkeeping task is registered for this response_id (e.g. Row 1
-        which uses the re-invoke disposition, or any non-store path), this
-        is a no-op.
-
-        :param response_id: The response identifier.
-        """
-        event = _BOOKKEEPING_EVENTS.get(response_id)
-        if event is not None:
-            event.set()
 
     async def _persist_crash_failed(
         self,

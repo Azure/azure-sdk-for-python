@@ -1276,6 +1276,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         _refresh_background_status(record)
 
+        # (Spec 024 Phase 2) Non-bg non-stream responses in-flight are not
+        # publicly visible (Rule B16) — delete returns 404 to match the
+        # pre-Phase-2 behaviour where the record was not in runtime_state
+        # during inline execution.
+        if not record.visible_via_get and not record.mode_flags.background:
+            return _not_found(response_id, _hdrs)
+
         if record.mode_flags.background and record.status in {"queued", "in_progress"}:
             return _invalid_request(
                 "Cannot delete an in-flight response.",
@@ -1413,6 +1420,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return _not_found(response_id, _hdrs)
 
         _refresh_background_status(record)
+
+        # (Spec 024 Phase 2) Non-bg non-stream responses in-flight are not
+        # publicly visible (Rule B16) — cancel returns 404 to match the
+        # pre-Phase-2 behaviour where the record was not in runtime_state
+        # during inline execution. With the unified handler-in-task-body
+        # path, the record IS in runtime_state mid-flight so cancel/GET/
+        # DELETE need explicit gating to preserve the contract.
+        if not record.visible_via_get and not record.mode_flags.background:
+            return await self._handle_cancel_fallback(response_id, _isolation, _hdrs)
 
         if not record.mode_flags.background:
             return _invalid_request(

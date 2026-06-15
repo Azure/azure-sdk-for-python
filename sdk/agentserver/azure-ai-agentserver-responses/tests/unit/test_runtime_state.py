@@ -101,6 +101,7 @@ async def test_get_input_items_single() -> None:
         "caresp_ccc0000000000000000000000000000",
         input_items=items,
         previous_response_id=None,
+        status="completed",
     )
     await state.add(execution)
 
@@ -119,8 +120,8 @@ async def test_get_input_items_chain_walk() -> None:
     parent_id = "caresp_parent000000000000000000000000"
     child_id = "caresp_child0000000000000000000000000"
 
-    parent = _make_execution(parent_id, input_items=[{"id": "a"}])
-    child = _make_execution(child_id, input_items=[{"id": "b"}], previous_response_id=parent_id)
+    parent = _make_execution(parent_id, input_items=[{"id": "a"}], status="completed")
+    child = _make_execution(child_id, input_items=[{"id": "b"}], previous_response_id=parent_id, status="completed")
 
     await state.add(parent)
     await state.add(child)

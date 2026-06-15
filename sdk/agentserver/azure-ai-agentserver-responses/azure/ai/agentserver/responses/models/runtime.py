@@ -214,6 +214,13 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         ``response.created`` is processed (: response not accessible
         before the handler emits ``response.created``).
 
+        For non-background non-stream responses (Row 3), visibility is
+        deferred until the handler reaches a terminal status — per B16,
+        non-bg in-flight responses are not retrievable. (Spec 024 Phase 2
+        bookkeeping unification places the record in runtime_state at
+        accept-time so cancellation / shutdown / recovery can find it;
+        this property gates GET to preserve B16 semantics.)
+
         :returns: True if this execution can be retrieved via GET.
         :rtype: bool
         """
@@ -222,6 +229,9 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         #: bg non-stream responses are not visible until response.created.
         if self.mode_flags.background and not self.mode_flags.stream:
             return self.response_created_signal.is_set()
+        # B16: non-bg non-stream responses are visible only after terminal.
+        if not self.mode_flags.background and not self.mode_flags.stream:
+            return self.status in ("completed", "failed", "cancelled", "incomplete")
         return True
 
     def apply_event(self, normalized: ResponseStreamEvent, all_events: list[ResponseStreamEvent]) -> None:
