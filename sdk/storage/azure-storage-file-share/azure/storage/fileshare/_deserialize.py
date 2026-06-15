@@ -65,16 +65,15 @@ def deserialize_file_stream(
 ) -> Tuple["LocationMode", Any]:
     file_properties = deserialize_file_properties(response, obj, headers)
     http_response = response.http_response
-    # The TypeSpec-generated download returns a raw bytes iterator (from iter_bytes/iter_raw)
-    # that doesn't allow attaching attributes. If properties can't be set on the stream
-    # directly, wrap it so callers can still reach .properties and .response.
-    try:
-        obj.properties = file_properties
-    except AttributeError:
+    # The TypeSpec-generated download returns a raw bytes iterator or a structured-message
+    # decoder rather than a response object that exposes .properties. When the stream can't
+    # carry our metadata, wrap it so callers can still reach .properties and .response.
+    if not hasattr(obj, "properties"):
         stream = _StreamWrapper(obj)
         stream.properties = file_properties
         stream.response = http_response
         return http_response.location_mode, stream
+    obj.properties = file_properties
     return http_response.location_mode, obj
 
 
