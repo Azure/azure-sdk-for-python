@@ -62,6 +62,7 @@ from . import documents
 from . import http_constants, exceptions
 from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._availability_strategy_config import validate_client_hedging_strategy, CrossRegionHedgingStrategy
+from ._metadata_hedging import MetadataCrossRegionHedgingHandler
 from ._base import _build_properties_cache
 from ._change_feed.change_feed_iterable import ChangeFeedIterable
 from ._change_feed.change_feed_state import ChangeFeedState
@@ -143,6 +144,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         consistency_level: Optional[str] = None,
         availability_strategy: Union[bool, dict[str, Any]] = False,
         availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
+        enable_metadata_hedging_for_cold_start: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -170,6 +172,12 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.availability_strategy: Union[CrossRegionHedgingStrategy, None] =\
             validate_client_hedging_strategy(availability_strategy)
         self.availability_strategy_executor: Optional[ThreadPoolExecutor] = availability_strategy_executor
+        # Tri-state opt-in for cold-start metadata cache cross-region hedging. None follows the
+        # account's PPAF state, True forces it on, False disables it (no handler is created).
+        self._metadata_hedging_opt_in: Optional[bool] = enable_metadata_hedging_for_cold_start
+        self._metadata_hedging_handler: Optional[MetadataCrossRegionHedgingHandler] = (
+            None if enable_metadata_hedging_for_cold_start is False else MetadataCrossRegionHedgingHandler()
+        )
         self.master_key: Optional[str] = None
 
         self.resource_tokens: Optional[Mapping[str, Any]] = None
