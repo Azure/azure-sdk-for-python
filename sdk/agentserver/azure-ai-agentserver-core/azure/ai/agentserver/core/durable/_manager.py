@@ -459,9 +459,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         backend_override = os.environ.get("AGENTSERVER_TASKS_BACKEND", "").strip().lower()
         if backend_override and backend_override not in ("local", "hosted"):
-            raise ValueError(
-                f"AGENTSERVER_TASKS_BACKEND must be 'local' or 'hosted' (got {backend_override!r})"
-            )
+            raise ValueError(f"AGENTSERVER_TASKS_BACKEND must be 'local' or 'hosted' (got {backend_override!r})")
 
         use_hosted = config.is_hosted if not backend_override else (backend_override == "hosted")
 
@@ -494,10 +492,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         )
 
         if backend_override == "local" and config.is_hosted:
-            logger.info(
-                "AGENTSERVER_TASKS_BACKEND=local overrides hosted detection; "
-                "using LocalFileTaskProvider"
-            )
+            logger.info("AGENTSERVER_TASKS_BACKEND=local overrides hosted detection; " "using LocalFileTaskProvider")
 
         # Resolve the tasks subdirectory via the
         # unified storage-paths helper. ``AGENTSERVER_DURABLE_ROOT`` is

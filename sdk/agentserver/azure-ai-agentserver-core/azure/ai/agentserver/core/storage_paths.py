@@ -77,10 +77,7 @@ def resolve_durable_subdir(kind: DurableSubdir) -> Path:
     :raises ValueError: If ``kind`` is not one of the valid subdir kinds.
     """
     if kind not in _VALID_SUBDIRS:
-        raise ValueError(
-            f"Unknown durable subdir kind: {kind!r}. "
-            f"Valid kinds: {sorted(_VALID_SUBDIRS)}"
-        )
+        raise ValueError(f"Unknown durable subdir kind: {kind!r}. " f"Valid kinds: {sorted(_VALID_SUBDIRS)}")
     return resolve_durable_root() / kind
 
 

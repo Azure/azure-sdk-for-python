@@ -26,9 +26,7 @@ def test_storage_paths_module_is_public(monkeypatch) -> None:
     from azure.ai.agentserver.core import storage_paths  # noqa: F401
 
     # Module must be importable without leading underscore.
-    assert hasattr(storage_paths, "resolve_durable_subdir"), (
-        "storage_paths.resolve_durable_subdir must be exported"
-    )
+    assert hasattr(storage_paths, "resolve_durable_subdir"), "storage_paths.resolve_durable_subdir must be exported"
 
 
 def test_resolve_durable_subdir_defaults_to_home_durable(monkeypatch, tmp_path) -> None:
@@ -73,9 +71,7 @@ def test_resolve_durable_subdir_rejects_unknown_kind() -> None:
         storage_paths.resolve_durable_subdir("garbage")  # type: ignore[arg-type]
     except (ValueError, TypeError):
         return
-    raise AssertionError(
-        "resolve_durable_subdir must reject unknown subdir kinds"
-    )
+    raise AssertionError("resolve_durable_subdir must reject unknown subdir kinds")
 
 
 def test_legacy_env_vars_no_longer_consulted(monkeypatch, tmp_path) -> None:
@@ -91,12 +87,12 @@ def test_legacy_env_vars_no_longer_consulted(monkeypatch, tmp_path) -> None:
     tasks_path = storage_paths.resolve_durable_subdir("tasks")
     streams_path = storage_paths.resolve_durable_subdir("streams")
     home_durable = Path.home() / ".durable"
-    assert tasks_path == home_durable / "tasks", (
-        f"legacy AGENTSERVER_DURABLE_TASKS_PATH leaked into new resolver — got {tasks_path}"
-    )
-    assert streams_path == home_durable / "streams", (
-        f"legacy AGENTSERVER_STREAM_STORE_PATH leaked into new resolver — got {streams_path}"
-    )
+    assert (
+        tasks_path == home_durable / "tasks"
+    ), f"legacy AGENTSERVER_DURABLE_TASKS_PATH leaked into new resolver — got {tasks_path}"
+    assert (
+        streams_path == home_durable / "streams"
+    ), f"legacy AGENTSERVER_STREAM_STORE_PATH leaked into new resolver — got {streams_path}"
 
 
 def test_tasks_default_path_used_by_local_provider(monkeypatch, tmp_path) -> None:
@@ -138,9 +134,9 @@ def test_tasks_default_path_used_by_local_provider(monkeypatch, tmp_path) -> Non
         "'.durable-tasks' path string. Use storage_paths.resolve_durable_subdir('tasks')."
     )
     assert '".durable-tasks"' not in src and "'.durable-tasks'" not in src, (
-        "_manager.py must not USE the legacy "
-        "'.durable-tasks' path string."
+        "_manager.py must not USE the legacy " "'.durable-tasks' path string."
     )
+
 
 # ────────────────────────────────────────────────────────────────────
 # AGENTSERVER_TASKS_BACKEND operator override
@@ -168,9 +164,9 @@ def test_tasks_backend_local_forces_local_provider_in_hosted(monkeypatch, tmp_pa
     config.project_endpoint = "https://fake.example/projects/fake"
 
     provider = TaskManager._create_provider(config)
-    assert isinstance(provider, LocalFileTaskProvider), (
-        f"Expected LocalFileTaskProvider with backend override, got {type(provider).__name__}"
-    )
+    assert isinstance(
+        provider, LocalFileTaskProvider
+    ), f"Expected LocalFileTaskProvider with backend override, got {type(provider).__name__}"
 
 
 def test_tasks_backend_hosted_forces_hosted_provider_in_local(monkeypatch, tmp_path) -> None:
@@ -193,9 +189,9 @@ def test_tasks_backend_hosted_forces_hosted_provider_in_local(monkeypatch, tmp_p
     config.project_endpoint = "https://fake.example/projects/fake"
 
     provider = TaskManager._create_provider(config)
-    assert isinstance(provider, HostedTaskProvider), (
-        f"Expected HostedTaskProvider with backend override, got {type(provider).__name__}"
-    )
+    assert isinstance(
+        provider, HostedTaskProvider
+    ), f"Expected HostedTaskProvider with backend override, got {type(provider).__name__}"
 
 
 def test_tasks_backend_invalid_value_raises(monkeypatch, tmp_path) -> None:
