@@ -14,6 +14,8 @@ for Foundry hosted agents. Each sample is based on a corresponding sample from t
 | [`auto_signin_activity_agent`](#auto_signin_activity_agent) | [auto-signin](https://github.com/microsoft/Agents/tree/main/samples/python/auto-signin) | OAuth auto sign-in with Graph and GitHub providers | Handler (for `auth_handlers`) |
 | [`semantic_kernel_activity_agent`](#semantic_kernel_activity_agent) | [semantic-kernel-multiturn](https://github.com/microsoft/Agents/tree/main/samples/python/semantic-kernel-multiturn) | Semantic Kernel agent with tools, multi-turn, streaming | Zero-config decorator |
 | [`suggested_actions_activity_agent`](#suggested_actions_activity_agent) | [suggested-actions](https://github.com/microsoft/BotBuilder-Samples/tree/main/samples/python/08.suggested-actions) | Quick-reply buttons that disappear after tap | Zero-config decorator |
+| [`foundry_storage_state_agent`](#foundry_storage_state_agent) | N/A | Durable conversation and user state with `FoundryStorage()` | Zero-config decorator |
+| [`foundry_storage_proactive_agent`](#foundry_storage_proactive_agent) | N/A | Durable proactive conversation references with `FoundryStorage()` | Handler + proactive |
 
 ### Usage patterns
 
@@ -114,6 +116,22 @@ the BotBuilder `08.suggested-actions` sample.
 - Buttons disappear after selection (unlike card buttons which persist)
 - Re-prompts with new suggestions after each response
 - Great for guided menus, confirmations, and quick choices
+
+## foundry_storage_state_agent
+
+Shows durable Activity Protocol state using platform-managed storage:
+
+- `storage = FoundryStorage()` — bearer-authenticated Foundry storage backend
+- `ActivityAgentServerHost(storage=storage)` — the M365 bridge uses it for conversation/user state
+- `state.conversation` and `state.user` counters survive restarts and scale-out
+
+## foundry_storage_proactive_agent
+
+Shows durable proactive references with the M365 handler pattern:
+
+- `FoundryStorage()` is shared by `AgentApplication`, `Authorization`, and `ProactiveOptions`
+- `/subscribe` stores the current conversation reference
+- `POST /notify/{conversation_id}` resumes the stored reference and sends a proactive message
 
 ## Running
 

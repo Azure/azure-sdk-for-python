@@ -33,8 +33,9 @@ Custom handler usage::
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._activity import ActivityAgentServerHost
+from ._foundry_storage import FoundryStorage
 from ._m365_bridge import _apply_msal_patches as apply_msal_patches
 from ._version import VERSION
 
-__all__ = ["ActivityAgentServerHost", "apply_msal_patches"]
+__all__ = ["ActivityAgentServerHost", "FoundryStorage", "apply_msal_patches"]
 __version__ = VERSION

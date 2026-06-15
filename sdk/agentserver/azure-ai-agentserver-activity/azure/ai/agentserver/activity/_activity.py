@@ -147,6 +147,10 @@ class ActivityAgentServerHost(AgentServerHost):
         ``Request`` with ``request.state.activity`` set to the parsed
         activity dict.
     :type handler: Optional[Callable[[Request], Awaitable[Response]]]
+    :param storage: Optional M365 Agents SDK storage implementation used by
+        the built-in bridge. When omitted, the bridge falls back to
+        ``MemoryStorage``.
+    :type storage: Optional[Any]
     """
 
     _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.Activity"
@@ -155,6 +159,7 @@ class ActivityAgentServerHost(AgentServerHost):
         self,
         *,
         handler: Optional[Callable[[Request], Awaitable[Response]]] = None,
+        storage: Optional[Any] = None,
         **kwargs: Any,
     ) -> None:
         if handler is not None and not inspect.iscoroutinefunction(handler):
@@ -184,6 +189,7 @@ class ActivityAgentServerHost(AgentServerHost):
 
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + activity_routes, **kwargs)
+        self.state.activity_storage = storage
 
     # ------------------------------------------------------------------
     # Handler decorators

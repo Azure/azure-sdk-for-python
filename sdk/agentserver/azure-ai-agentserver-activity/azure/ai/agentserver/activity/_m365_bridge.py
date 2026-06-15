@@ -90,10 +90,16 @@ def _apply_msal_patches() -> None:
     logger.info("Patched MsalAuth.get_agentic_application_token → DefaultAzureCredential")
 
 
-def _ensure_m365_initialized():
+def _ensure_m365_initialized(storage: Any = None):
     """Lazily initialize the M365 Agents SDK from environment variables.
 
     Called on first request when decorators are used. Idempotent.
+
+    :param storage: Optional M365 storage implementation. Falls back to
+        ``MemoryStorage`` when omitted.
+    :type storage: Any
+    :return: The initialized AgentApplication and adapter.
+    :rtype: tuple[Any, Any]
     """
     global _m365_initialized, _adapter, _agent_app, _connection_manager
 
@@ -123,7 +129,7 @@ def _ensure_m365_initialized():
 
     logger.info("Initializing M365 Agents SDK...")
     config = load_configuration_from_env(os.environ)
-    storage = MemoryStorage()
+    storage = storage or MemoryStorage()
     _connection_manager = MsalConnectionManager(**config)
     client_factory = RestChannelServiceClientFactory(_connection_manager)
     _adapter = HttpAdapterBase(channel_service_client_factory=client_factory)
@@ -153,7 +159,8 @@ async def create_bridge_handler(request: Request) -> Response:
     from microsoft_agents.hosting.core import ClaimsIdentity
 
     global _lazy_agent_app
-    agent_app, adapter = _ensure_m365_initialized()
+    storage = getattr(request.app.state, "activity_storage", None)
+    agent_app, adapter = _ensure_m365_initialized(storage)
 
     # Replay pending decorator registrations onto the real AgentApplication
     if _lazy_agent_app is not None and not _lazy_agent_app._replayed:

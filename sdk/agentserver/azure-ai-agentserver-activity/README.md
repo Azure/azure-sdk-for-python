@@ -42,6 +42,15 @@ async def on_error(context, error):
 app.run()
 ```
 
+**Foundry durable storage** — drop-in durable state for the M365 bridge:
+
+```python
+from azure.ai.agentserver.activity import ActivityAgentServerHost, FoundryStorage
+
+storage = FoundryStorage()
+app = ActivityAgentServerHost(storage=storage)
+```
+
 **Custom handler** — full control over the M365 SDK pipeline:
 
 ```python
@@ -68,6 +77,7 @@ app.run()
 ### Public API
 
 - `ActivityAgentServerHost` — the host class
+- `FoundryStorage` — platform-managed durable storage for M365 conversation, user, and proactive state
 - `apply_msal_patches()` — patches M365 SDK MSAL auth for Foundry containers (UserManagedIdentity with fmi_path)
 
 ## Samples
@@ -80,3 +90,5 @@ See [samples/README.md](samples/README.md) for runnable scenarios:
 - `auto_signin_activity_agent` — OAuth auto sign-in with Graph and GitHub
 - `semantic_kernel_activity_agent` — Semantic Kernel agent with tools and multi-turn
 - `suggested_actions_activity_agent` — quick-reply buttons
+- `foundry_storage_state_agent` — durable conversation and user state with `FoundryStorage`
+- `foundry_storage_proactive_agent` — durable proactive conversation references with `FoundryStorage`
