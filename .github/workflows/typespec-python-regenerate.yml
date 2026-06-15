@@ -130,6 +130,22 @@ jobs:
         run: |
           npm run regenerate
 
+      - name: Checkout generated tests source branch
+        run: |
+          set -euo pipefail
+          TARGET_BRANCH="typespec-python-generated-tests"
+          PR_NUMBER="${{ steps.typespec-info.outputs.typespec_pr_number }}"
+          if [ -n "$PR_NUMBER" ]; then
+            SOURCE_BRANCH="regen/typespec-python-pr-${PR_NUMBER}"
+          else
+            SOURCE_BRANCH="regen/typespec-python-main"
+          fi
+          if ! git fetch --no-tags --depth=1 origin "$TARGET_BRANCH" 2>/dev/null; then
+            echo "::error::Branch $TARGET_BRANCH not found. It must exist because it contains eng/tools/azure-sdk-tools/emitter/generated/template/README.md."
+            exit 1
+          fi
+          git checkout -B "$SOURCE_BRANCH" "origin/$TARGET_BRANCH"
+
       - name: Copy regenerated tests
         run: |
           set -euo pipefail
@@ -146,17 +162,9 @@ jobs:
         run: |
           set -euo pipefail
           TARGET="eng/tools/azure-sdk-tools/emitter/generated"
-          # The emitter/generated directory (including the README template) was
-          # removed from main by design (PR #47288); it now lives only on the
-          # typespec-python-generated-tests branch. Fetch the template from there
-          # rather than expecting it in the main checkout.
-          TARGET_BRANCH="typespec-python-generated-tests"
-          TEMPLATE_PATH="$TARGET/template/README.md"
-          TEMPLATE="$(mktemp)"
-          trap 'rm -f "$TEMPLATE"' EXIT
-          if ! git fetch --no-tags --depth=1 origin "$TARGET_BRANCH" 2>/dev/null \
-            || ! git show "FETCH_HEAD:$TEMPLATE_PATH" > "$TEMPLATE" 2>/dev/null; then
-            echo "::error::Template README not found at $TEMPLATE_PATH on branch $TARGET_BRANCH"
+          TEMPLATE="$TARGET/template/README.md"
+          if [ ! -f "$TEMPLATE" ]; then
+            echo "::error::Template README not found at $TEMPLATE"
             exit 1
           fi
           # Replace every README.md under generated/ with the template, except:
@@ -167,7 +175,6 @@ jobs:
             ! -path "$TARGET/README.md" \
             ! -path "$TARGET/template/*" \
             -print -exec cp -f "$TEMPLATE" {} \;
-          rm -f "$TEMPLATE"
 
       - name: Create or update tracking issue with PR link
         env:
@@ -196,32 +203,6 @@ jobs:
             SOURCE_LABEL="microsoft/typespec@main"
             SOURCE_BRANCH="regen/typespec-python-main"
           fi
-
-          # Save regenerated files to a temp dir before switching branches,
-          # since they are untracked and would be lost on checkout.
-          TMPDIR=$(mktemp -d)
-          cp -r "$GENERATED_DIR"/. "$TMPDIR"
-
-          # Ensure the target branch exists; create from origin/main if not.
-          git fetch --no-tags --depth=1 origin main
-          if ! git fetch --no-tags --depth=1 origin "$TARGET_BRANCH" 2>/dev/null; then
-            git push origin "origin/main:refs/heads/$TARGET_BRANCH"
-            git fetch --no-tags --depth=1 origin "$TARGET_BRANCH"
-          fi
-
-          # Clean up untracked generated files so checkout doesn't conflict.
-          rm -rf "$GENERATED_DIR"
-
-          # Create source branch based on the target branch.
-          git checkout -B "$SOURCE_BRANCH" "origin/$TARGET_BRANCH"
-
-          # Restore regenerated files from the temp dir.
-          mkdir -p "$GENERATED_DIR"
-          # Use ${var:?} so that if GENERATED_DIR is empty, the command aborts
-          # instead of expanding to "rm -rf /*" and deleting the filesystem.
-          rm -rf "${GENERATED_DIR:?}"/*
-          cp -r "$TMPDIR"/. "$GENERATED_DIR"
-          rm -rf "$TMPDIR"
           git add -f "$GENERATED_DIR"/
 
           if git diff --cached --quiet; then
