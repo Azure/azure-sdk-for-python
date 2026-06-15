@@ -131,3 +131,94 @@ async def test_cancel_invocation_error_returns_500():
         resp = await client.post("/invocations/some-id/cancel")
     assert resp.status_code == 500
     assert resp.json()["error"]["code"] == "internal_error"
+
+
+# ---------------------------------------------------------------------------
+# Regression: ``agent_session_id`` query param propagates to
+# ``request.state.session_id`` on cancel + get endpoints (parity with
+# the invoke endpoint).
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_cancel_propagates_agent_session_id_to_request_state():
+    """``POST /invocations/{id}/cancel?agent_session_id=X`` must expose ``X``
+    as ``request.state.session_id`` so custom cancel handlers can look up
+    their per-session state.
+
+    Without this, custom ``@app.cancel_invocation_handler`` implementations
+    that do ``request.state.session_id`` (the documented pattern, used by
+    the ``durable-research-agent`` demo's cancel handler) get an empty
+    string and silently fail to find their per-session durable task.
+    """
+    app = InvocationAgentServerHost()
+
+    captured: dict[str, str] = {}
+
+    @app.invoke_handler
+    async def handle(request: Request) -> Response:
+        return Response(content=b"ok")
+
+    @app.cancel_invocation_handler
+    async def cancel_handler(request: Request) -> Response:
+        captured["session_id"] = request.state.session_id
+        captured["invocation_id"] = request.state.invocation_id
+        return JSONResponse({"status": "cancelled"})
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post("/invocations/some-id/cancel?agent_session_id=my-session-42")
+    assert resp.status_code == 200
+    assert captured["session_id"] == "my-session-42"
+    assert captured["invocation_id"] == "some-id"
+
+
+@pytest.mark.asyncio
+async def test_get_propagates_agent_session_id_to_request_state():
+    """``GET /invocations/{id}?agent_session_id=X`` mirrors the cancel
+    behaviour: ``request.state.session_id`` must be populated for custom
+    get handlers (e.g. those gating per-session ownership / isolation)."""
+    app = InvocationAgentServerHost()
+
+    captured: dict[str, str] = {}
+
+    @app.invoke_handler
+    async def handle(request: Request) -> Response:
+        return Response(content=b"ok")
+
+    @app.get_invocation_handler
+    async def get_handler(request: Request) -> Response:
+        captured["session_id"] = request.state.session_id
+        captured["invocation_id"] = request.state.invocation_id
+        return JSONResponse({"status": "ok"})
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.get("/invocations/some-id?agent_session_id=my-session-99")
+    assert resp.status_code == 200
+    assert captured["session_id"] == "my-session-99"
+    assert captured["invocation_id"] == "some-id"
+
+
+@pytest.mark.asyncio
+async def test_cancel_without_agent_session_id_leaves_request_state_session_id_empty():
+    """Absence of the query param should resolve to an empty string on
+    ``request.state.session_id`` (not raise, not propagate stale state)."""
+    app = InvocationAgentServerHost()
+
+    captured: dict[str, str] = {}
+
+    @app.invoke_handler
+    async def handle(request: Request) -> Response:
+        return Response(content=b"ok")
+
+    @app.cancel_invocation_handler
+    async def cancel_handler(request: Request) -> Response:
+        captured["session_id"] = request.state.session_id
+        return JSONResponse({"status": "cancelled"})
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post("/invocations/some-id/cancel")
+    assert resp.status_code == 200
+    assert captured["session_id"] == ""
