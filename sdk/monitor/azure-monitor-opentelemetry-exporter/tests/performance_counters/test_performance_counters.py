@@ -79,7 +79,7 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         self.assertFalse(module_globals["_IO_AVAILABLE"])
         self.assertEqual(module_globals["_IO_LAST_COUNT"], 0)
         mock_logger.exception.assert_called_once_with(
-            "Performance counter %s is unavailable due to an error while " "initializing process I/O counters: %s",
+            "Performance counter %s is unavailable due to an error while initializing process I/O counters: %s",
             "azuremonitor.performancecounter.processiobytessec",
             mock_process.io_counters.side_effect,
         )
