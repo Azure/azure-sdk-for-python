@@ -3,10 +3,10 @@ import os
 import sys
 import pytest
 
+from subprocess import CalledProcessError
 from unittest.mock import patch, MagicMock
 
 from azpysdk.apistub import apistub, get_package_wheel_path, get_cross_language_mapping_path
-
 
 # ── get_package_wheel_path() ─────────────────────────────────────────────
 
@@ -128,7 +128,7 @@ class TestRunOutputDirectory:
     def test_install_deps_installs_dependencies(
         self, _env, install_into_venv, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
     ):
-        """When --install-deps is passed, apistub should install dependencies."""
+        """When --install-deps is passed, apistub should install target package dependencies."""
         monkeypatch.chdir(os.getcwd())
         stub = apistub()
         staging = str(tmp_path / "staging")
@@ -148,13 +148,48 @@ class TestRunOutputDirectory:
             stub.run(args)
 
         install_dev_reqs.assert_called_once_with(sys.executable, args, str(tmp_path))
-        install_into_venv.assert_called_once()
+        install_into_venv.assert_not_called()
+        pip_freeze.assert_called_once_with(sys.executable)
+
+    @patch(
+        "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    )
+    @patch("azpysdk.apistub.install_into_venv")
+    def test_apistub_dependencies_are_skipped_when_installed(self, install_into_venv, tmp_path):
+        """When apistub is already importable, APIView requirements should not be reinstalled."""
+        stub = apistub()
+
+        with patch.object(stub, "run_venv_command") as run_venv_command:
+            stub.ensure_apistub_dependencies(sys.executable, str(tmp_path), str(tmp_path))
+
+        run_venv_command.assert_called_once_with(
+            sys.executable, ["-c", "import apistub"], cwd=str(tmp_path), check=True
+        )
+        install_into_venv.assert_not_called()
+
+    @patch(
+        "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    )
+    @patch("azpysdk.apistub.install_into_venv")
+    def test_missing_apistub_installs_apiview_requirements(self, install_into_venv, tmp_path):
+        """When apistub is missing, APIView requirements should be installed once."""
+        stub = apistub()
         repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+
+        with patch.object(
+            stub,
+            "run_venv_command",
+            side_effect=CalledProcessError(1, [sys.executable, "-c", "import apistub"]),
+        ):
+            stub.ensure_apistub_dependencies(sys.executable, str(tmp_path), str(tmp_path))
+
+        install_into_venv.assert_called_once()
+        assert install_into_venv.call_args.args[0] == sys.executable
         assert install_into_venv.call_args.args[1][0:2] == [
             "-r",
             os.path.join(repo_root, "eng", "apiview_reqs.txt"),
         ]
-        pip_freeze.assert_called_once_with(sys.executable)
+        assert install_into_venv.call_args.args[2] == str(tmp_path)
 
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
@@ -196,6 +231,8 @@ class TestRunOutputDirectory:
         with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
             stub, "get_executable", return_value=(sys.executable, staging)
         ), patch.object(stub, "install_dev_reqs"), patch.object(stub, "pip_freeze"), patch.object(
+            stub, "ensure_apistub_dependencies"
+        ), patch.object(
             stub, "run_venv_command", side_effect=fake_apistub_run
         ), patch(
             "azpysdk.apistub.run", side_effect=fake_pwsh
@@ -244,6 +281,8 @@ class TestRunOutputDirectory:
         with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
             stub, "get_executable", return_value=(sys.executable, staging)
         ), patch.object(stub, "install_dev_reqs"), patch.object(stub, "pip_freeze"), patch.object(
+            stub, "ensure_apistub_dependencies"
+        ), patch.object(
             stub, "run_venv_command", side_effect=fake_apistub_run
         ), patch(
             "azpysdk.apistub.run", side_effect=fake_pwsh
@@ -293,6 +332,8 @@ class TestRunOutputDirectory:
         with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
             stub, "get_executable", return_value=(sys.executable, staging)
         ), patch.object(stub, "install_dev_reqs"), patch.object(stub, "pip_freeze"), patch.object(
+            stub, "ensure_apistub_dependencies"
+        ), patch.object(
             stub, "run_venv_command", side_effect=fake_apistub_run
         ), patch(
             "azpysdk.apistub.run", side_effect=fake_pwsh
@@ -330,6 +371,8 @@ class TestRunOutputDirectory:
         with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
             stub, "get_executable", return_value=(sys.executable, staging)
         ), patch.object(stub, "install_dev_reqs"), patch.object(stub, "pip_freeze"), patch.object(
+            stub, "ensure_apistub_dependencies"
+        ), patch.object(
             stub, "run_venv_command", side_effect=fake_apistub_run
         ):
             stub.run(self._make_args(generate_md=False))
