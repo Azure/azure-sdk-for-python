@@ -431,16 +431,24 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         """Auto-select provider based on hosting environment.
 
         In hosted environments (``FOUNDRY_HOSTING_ENVIRONMENT`` is set),
-        the HTTP-backed ``HostedTaskProvider`` is used unconditionally —
-        the hosted task-storage API is what makes durable recovery,
+        the HTTP-backed ``HostedTaskProvider`` is used by default — the
+        hosted task-storage API is what makes durable recovery,
         cross-instance lease handoff, and the platform's lease/readiness
         keep-alive path work.
 
         In non-hosted environments (local dev, tests), the
         ``LocalFileTaskProvider`` is used — file-backed under
-        ``~/.durable-tasks/`` (or ``AGENTSERVER_DURABLE_TASKS_PATH`` if
-        set). This keeps the local development loop self-contained with
-        no external dependencies.
+        ``${AGENTSERVER_DURABLE_ROOT:-~/.durable}/tasks/``. This keeps
+        the local development loop self-contained with no external
+        dependencies.
+
+        **Operator override** — set ``AGENTSERVER_TASKS_BACKEND=local``
+        to force the file-backed provider even in hosted environments.
+        This is useful for repro / debugging hosted-only scenarios on a
+        local workstation without standing up the hosted task API, and
+        for hosted environments where operators want to opt out of the
+        task-storage API (e.g. running the hosted runtime with disk
+        persistence only).
 
         :param config: The agent configuration.
         :type config: AgentConfig
@@ -449,7 +457,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         """
         import os  # pylint: disable=import-outside-toplevel
 
-        if config.is_hosted:
+        backend_override = os.environ.get("AGENTSERVER_TASKS_BACKEND", "").strip().lower()
+        if backend_override and backend_override not in ("local", "hosted"):
+            raise ValueError(
+                f"AGENTSERVER_TASKS_BACKEND must be 'local' or 'hosted' (got {backend_override!r})"
+            )
+
+        use_hosted = config.is_hosted if not backend_override else (backend_override == "hosted")
+
+        if use_hosted:
             from ._client import (  # pylint: disable=import-outside-toplevel
                 HostedTaskProvider,
             )
@@ -473,15 +489,22 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         from ._local_provider import (  # pylint: disable=import-outside-toplevel
             LocalFileTaskProvider,
         )
+        from ..storage_paths import (  # pylint: disable=import-outside-toplevel
+            resolve_durable_subdir,
+        )
 
-        # ((c)) Operator/test override: when
-        # ``AGENTSERVER_DURABLE_TASKS_PATH`` is set, root the local provider
-        # at that directory instead of the user's home. Enables the crash
-        # harness to point durable state at a per-test tmp_path.
-        base_dir_env = os.environ.get("AGENTSERVER_DURABLE_TASKS_PATH")
-        if base_dir_env:
-            return LocalFileTaskProvider(base_dir=Path(base_dir_env))
-        return LocalFileTaskProvider(base_dir=Path.home() / ".durable-tasks")
+        if backend_override == "local" and config.is_hosted:
+            logger.info(
+                "AGENTSERVER_TASKS_BACKEND=local overrides hosted detection; "
+                "using LocalFileTaskProvider"
+            )
+
+        # Resolve the tasks subdirectory via the
+        # unified storage-paths helper. ``AGENTSERVER_DURABLE_ROOT`` is
+        # the single env-var operator knob covering tasks / streams /
+        # responses. The legacy ``AGENTSERVER_DURABLE_TASKS_PATH`` env
+        # var is deleted (was: per-subsystem override).
+        return LocalFileTaskProvider(base_dir=resolve_durable_subdir("tasks"))
 
     @property
     def provider(self) -> TaskProvider:
