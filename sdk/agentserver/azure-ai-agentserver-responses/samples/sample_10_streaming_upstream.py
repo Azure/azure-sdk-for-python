@@ -95,7 +95,6 @@ def my_function_tool(x: int) -> int:
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Forward to upstream with streaming, translate content events back."""
 

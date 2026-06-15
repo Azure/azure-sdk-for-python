@@ -3,14 +3,14 @@
 """Sample 19 — Durable streaming with handler-managed phase checkpoints.
 
 A durable response handler with NO upstream framework — checkpoints are
-managed entirely via ``durability.metadata``. This is the teaching shape
+managed entirely via ``context.durable_metadata``. This is the teaching shape
 of the recovery contract; samples that wrap real upstream frameworks
 (Claude, Copilot, LangGraph) layer additional reconciliation on top of
 the same pattern.
 
 The handler runs three phases (``analyze`` → ``generate`` → ``refine``)
 and emits one output item per phase. After each phase finishes it stamps
-``durability.metadata["phase_complete"]``. On a recovered entry, the
+``context.durable_metadata["phase_complete"]``. On a recovered entry, the
 handler reads the watermark, builds a resumption response containing the
 items for the completed phases, emits ``response.in_progress`` carrying
 the resumption response (the client-visible reset point), and resumes at
@@ -50,7 +50,6 @@ import os
 from typing import Any
 
 from azure.ai.agentserver.responses import (
-    CancellationReason,
     CreateResponse,
     ResponseContext,
     ResponseEventStream,
@@ -95,16 +94,16 @@ def _phase_message_payload(phase: str, text: str) -> dict[str, Any]:
     }
 
 
-def _completed_phase_index(durability) -> int:
+def _completed_phase_index(context) -> int:
     """Return the index of the next phase to run; 0 if nothing done yet."""
-    done = durability.metadata.get("phase_complete")
+    done = context.durable_metadata.get("phase_complete")
     if not done or done not in _PHASE_ORDER:
         return 0
     return _PHASE_ORDER.index(done) + 1
 
 
 def _build_resumption_response(
-    context: ResponseContext, request: CreateResponse, durability
+    context: ResponseContext, request: CreateResponse
 ) -> ResponseObject:
     """Build the resumption response from completed phases recorded in metadata.
 
@@ -112,8 +111,8 @@ def _build_resumption_response(
     a prior attempt. In-flight items from a crashed phase are excluded —
     that phase will be re-run from scratch on this attempt.
     """
-    next_phase = _completed_phase_index(durability)
-    completed_texts = durability.metadata.get("phase_texts", {}) or {}
+    next_phase = _completed_phase_index(context)
+    completed_texts = context.durable_metadata.get("phase_texts", {}) or {}
     output: list[dict[str, Any]] = []
     for phase in _PHASE_ORDER[:next_phase]:
         text = completed_texts.get(phase, "")
@@ -133,20 +132,17 @@ def _build_resumption_response(
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Three-phase durable streaming handler with crash recovery."""
-    durability = context.durability
-
     # ── Recovery branch ─────────────────────────────────────────────
     # On recovery, seed the stream with a resumption response derived from
     # metadata watermarks. The library treats this run's ``response.in_progress``
     # as the client-visible snapshot reset (see the handler guide's
     # Durability section).
-    if durability.is_recovery:
+    if context.is_recovery:
         stream = ResponseEventStream(
             response_id=context.response_id,
-            response=_build_resumption_response(context, request, durability),
+            response=_build_resumption_response(context, request),
         )
     else:
         stream = ResponseEventStream(response_id=context.response_id, request=request)
@@ -158,7 +154,7 @@ async def handler(
     # cannot occur. The only pre-entry cancellation reasons here are
     # CLIENT_CANCELLED and SHUTTING_DOWN, both of which call for
     # returning without a terminal event.
-    if cancellation_signal.is_set():
+    if context.cancel.is_set():
         return
 
     yield stream.emit_in_progress()
@@ -166,13 +162,13 @@ async def handler(
     # Optional local shutdown simulation.
     shutdown_timer: asyncio.Task | None = None
     if _SIMULATE_SHUTDOWN_MS > 0:
-        shutdown_timer = asyncio.create_task(_simulate_shutdown(cancellation_signal, context))
+        shutdown_timer = asyncio.create_task(_simulate_shutdown(context))
 
     input_text = await context.get_input_text()
-    phase_texts: dict[str, str] = dict(durability.metadata.get("phase_texts", {}) or {})
+    phase_texts: dict[str, str] = dict(context.durable_metadata.get("phase_texts", {}) or {})
 
     # Run phases starting at the first one not yet completed.
-    start = _completed_phase_index(durability)
+    start = _completed_phase_index(context)
     for phase in _PHASE_ORDER[start:]:
         message = stream.add_output_item_message()
         yield message.emit_added()
@@ -181,7 +177,7 @@ async def handler(
 
         accumulated = ""
         async for token in _phase_tokens(phase, input_text):
-            if cancellation_signal.is_set():
+            if context.cancel.is_set():
                 break
             accumulated += token
             yield text.emit_delta(token)
@@ -198,15 +194,15 @@ async def handler(
         # If we were cancelled mid-phase, do NOT advance the watermark —
         # the phase output is not durably committed from a recovery
         # standpoint, and a recovered attempt should re-run this phase.
-        if cancellation_signal.is_set():
+        if context.cancel.is_set():
             break
 
         # Phase finished cleanly — advance the watermark so a recovery
         # attempt skips this phase. Stamp BEFORE moving on so a crash
         # before the next phase's add still finds this phase complete.
         phase_texts[phase] = accumulated.strip()
-        durability.metadata["phase_texts"] = phase_texts
-        durability.metadata["phase_complete"] = phase
+        context.durable_metadata["phase_texts"] = phase_texts
+        context.durable_metadata["phase_complete"] = phase
 
     if shutdown_timer and not shutdown_timer.done():
         shutdown_timer.cancel()
@@ -215,18 +211,18 @@ async def handler(
     # Shutdown mid-stream: return without terminal so the framework
     # re-invokes us; recovery branch above picks up from the last
     # completed phase.
-    if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:
+    if context.shutdown.is_set():
         return
 
     yield stream.emit_completed()
 
 
-async def _simulate_shutdown(cancellation_signal: asyncio.Event, context: ResponseContext) -> None:
+async def _simulate_shutdown(context: ResponseContext) -> None:
     """Fire SHUTTING_DOWN after a delay (local testing only)."""
     await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not cancellation_signal.is_set():
-        context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-        cancellation_signal.set()
+    if not context.cancel.is_set():
+        context.shutdown.set()
+        context.cancel.set()
 
 
 def main() -> None:

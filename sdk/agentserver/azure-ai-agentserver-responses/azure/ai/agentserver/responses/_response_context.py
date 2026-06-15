@@ -1,15 +1,23 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""ResponseContext for user-defined response execution."""
+"""ResponseContext for user-defined response execution.
+
+(Spec 024 Phase 5) Flat handler-facing surface — the pre-Phase-5
+``DurabilityContext`` indirection is collapsed; recovery + steering
+fields live directly on :class:`ResponseContext`. The cancellation
+surface mirrors the task primitive's composing-cause shape (separate
+``cancel`` + ``shutdown`` events, independent cause booleans).
+"""
 
 from __future__ import annotations
 
+import asyncio
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Sequence
+from typing import TYPE_CHECKING, Any, Optional, Protocol, Sequence
 
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 
-from ._durability_context import DurabilityContext
+from ._durability_context import _DeveloperMetadataFacade
 from .models._generated import (
     CreateResponse,
     Item,
@@ -19,10 +27,59 @@ from .models._generated import (
     OutputItem,
 )
 from .models._helpers import get_input_expanded, to_item, to_output_item
-from .models.runtime import CancellationReason, ResponseModeFlags
+from .models.runtime import ResponseModeFlags
 
 if TYPE_CHECKING:
+    from azure.ai.agentserver.core.durable._context import _ExitForRecovery as _CoreExitForRecovery
+    from azure.ai.agentserver.core.durable._context import TaskContext as _CoreTaskContext
+
     from .store._base import ResponseProviderProtocol
+
+
+# (Spec 024 Phase 5 — Proposal #11) Public type alias for the sentinel
+# returned by :meth:`ResponseContext.exit_for_recovery`. Handlers must
+# propagate this value via ``return await context.exit_for_recovery()``
+# for the framework to leave the response in_progress for recovery.
+# Falls back to ``Any`` when the core module is unavailable at import
+# time (e.g. for type-stub generation).
+try:
+    from azure.ai.agentserver.core.durable._context import _ExitForRecovery as _ExitForRecoverySentinel
+except ImportError:  # pragma: no cover - defensive
+    _ExitForRecoverySentinel = Any  # type: ignore[assignment,misc]
+
+ExitForRecoverySignal = _ExitForRecoverySentinel
+"""Sentinel type returned by :meth:`ResponseContext.exit_for_recovery`.
+
+Handlers MUST propagate the return value via
+``return await context.exit_for_recovery()`` so the framework can
+recognise the recovery-exit intent and leave the response
+``in_progress`` for the next-lifetime recovery scanner to pick up.
+Returning ``None`` (e.g. by discarding the sentinel) would cause the
+task to be marked completed and the recovery scanner would not fire.
+"""
+
+
+class DurableMetadataNamespace(Protocol):
+    """Public Protocol describing the shape of ``context.durable_metadata``.
+
+    Handlers type-annotate their interactions with the metadata namespace
+    using this Protocol. The concrete implementation
+    (``_DeveloperMetadataFacade``) is internal — handlers never need to
+    know about it directly.
+
+    Use ``context.durable_metadata["key"] = value`` for the default
+    namespace, or ``context.durable_metadata("my_namespace")["key"] = value``
+    for a named namespace. Keys (and namespace names) starting with ``_``
+    are rejected — those are reserved for framework-internal layers.
+    """
+
+    def __getitem__(self, key: str) -> Any: ...
+    def __setitem__(self, key: str, value: Any) -> None: ...
+    def __delitem__(self, key: str) -> None: ...
+    def __contains__(self, key: object) -> bool: ...
+    def get(self, key: str, default: Any = None) -> Any: ...
+    def __call__(self, name: Optional[str] = None) -> "DurableMetadataNamespace": ...
+    async def flush(self) -> None: ...
 
 
 class IsolationContext:
@@ -54,12 +111,57 @@ class IsolationContext:
 class ResponseContext:  # pylint: disable=too-many-instance-attributes
     """Runtime context exposed to response handlers and used by hosting orchestration.
 
-    - response identifier
-    - shutdown signal flag
-    - async input/history resolution
+    Public surface (post-spec-024 Phase 5):
+
+    Identity / request shape:
+        - :attr:`response_id` — stable id for this response.
+        - :attr:`mode_flags` — bg/stream/store flags.
+        - :attr:`request` — parsed CreateResponse.
+        - :attr:`created_at` — UTC timestamp.
+        - :attr:`client_headers` / :attr:`query_parameters` — request metadata.
+        - :attr:`isolation` — tenant partition keys.
+        - :attr:`conversation_id` / :attr:`previous_response_id`.
+        - :attr:`conversation_chain_id` — derived chain identifier.
+
+    Recovery + steering classifiers (Proposal #6/#10/#13):
+        - :attr:`is_recovery` — True on a crash-recovered re-entry.
+        - :attr:`is_steered_turn` — True on a steering-drain re-entry.
+        - :attr:`pending_input_count` — queued steering inputs (live count).
+        - :attr:`durable_metadata` — :class:`DurableMetadataNamespace`-typed
+          checkpoint store.
+
+    Cancellation surface (Proposal #11):
+        - :attr:`cancel` — asyncio.Event set when any cancel cause fires.
+        - :attr:`shutdown` — asyncio.Event set when the server is shutting down.
+        - :attr:`client_cancelled` — bool, True for explicit /cancel
+          endpoint OR non-background POST disconnect.
+        - :meth:`exit_for_recovery` — opt-in graceful-shutdown primitive
+          (must be propagated via ``return await context.exit_for_recovery()``).
+
+    Async helpers:
+        - :meth:`get_input_items` / :meth:`get_input_text` / :meth:`get_history`.
     """
 
-    def __init__(
+    # Class-level type annotations for the public surface (Spec 024
+    # Phase 5 — Proposal #10/#11/#13). Listed here so `get_type_hints`
+    # and IDEs surface the precise types without scanning ``__init__``.
+    response_id: str
+    mode_flags: ResponseModeFlags
+    request: "CreateResponse | None"
+    created_at: datetime
+    client_headers: dict[str, str]
+    query_parameters: dict[str, str]
+    isolation: IsolationContext
+    conversation_id: "str | None"
+    is_recovery: bool
+    is_steered_turn: bool
+    pending_input_count: int
+    durable_metadata: DurableMetadataNamespace
+    cancel: asyncio.Event
+    shutdown: asyncio.Event
+    client_cancelled: bool
+
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         *,
         response_id: str,
@@ -80,7 +182,6 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self.mode_flags = mode_flags
         self.request = request
         self.created_at = created_at if created_at is not None else datetime.now(timezone.utc)
-        self.cancellation_reason: CancellationReason | None = None
         self.client_headers: dict[str, str] = client_headers or {}
         self.query_parameters: dict[str, str] = query_parameters or {}
         self.isolation: IsolationContext = isolation if isolation is not None else IsolationContext()
@@ -98,32 +199,35 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._input_items_unresolved_cache: Sequence[Item] | None = None
         self._history_cache: Sequence[OutputItem] | None = None
         self._prefetched_history_ids: list[str] | None = prefetched_history_ids
-        # Always provide a DurabilityContext — for non-durable paths this is a
-        # transient in-memory instance (metadata writes silently lost on restart).
-        self._durability: DurabilityContext = DurabilityContext(
-            entry_mode="fresh",
-            retry_attempt=0,
-            was_steered=False,
-            pending_inputs=0,
-            metadata={},
-        )
 
-    @property
-    def durability(self) -> DurabilityContext:
-        """Recovery-awareness context for checkpoint and steering state.
+        # (Spec 024 Phase 5 — Proposal #6/#10/#13) Flattened recovery +
+        # steering classifiers. Defaults represent a fresh non-recovered
+        # handler invocation; the orchestrator overrides them when
+        # constructing the context for a recovery / steering-drain entry.
+        self.is_recovery: bool = False
+        self.is_steered_turn: bool = False
+        self.pending_input_count: int = 0
+        # Default-namespace metadata facade; framework code (in the
+        # orchestrator) swaps the backing to the TaskContext.metadata
+        # when the response runs inside a durable task body.
+        self.durable_metadata: DurableMetadataNamespace = _DeveloperMetadataFacade({})
 
-        Always present.  For ``store=true`` (durable) responses the context is
-        backed by persistent task metadata that survives crashes and restarts.
-        For ``store=false`` responses a transient in-memory instance is used —
-        metadata writes succeed at runtime but are silently lost on restart.
+        # (Spec 024 Phase 5 — Proposal #11) Composing cancellation surface.
+        # Events are lazy-initialised here so the same instance is shared
+        # across the orchestrator's cancel-bridge and the handler. The
+        # orchestrator sets ``shutdown`` via the task primitive bridge
+        # and stamps ``client_cancelled`` from the /cancel endpoint OR
+        # the disconnect monitor. Steering pressure manifests as
+        # ``cancel.is_set()`` with NO cause boolean (matches the task
+        # primitive contract).
+        self.cancel: asyncio.Event = asyncio.Event()
+        self.shutdown: asyncio.Event = asyncio.Event()
+        self.client_cancelled: bool = False
 
-        :rtype: DurabilityContext
-        """
-        return self._durability
-
-    @durability.setter
-    def durability(self, value: DurabilityContext) -> None:
-        self._durability = value
+        # Private link to the underlying TaskContext (set by the
+        # orchestrator on durable paths) — enables exit_for_recovery to
+        # delegate to the framework's recovery sentinel.
+        self._task_context: "_CoreTaskContext[Any] | None" = None
 
     @property
     def conversation_chain_id(self) -> str:
@@ -161,25 +265,38 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
             steerable=True,
         )
 
-    @property
-    def is_shutdown_requested(self) -> bool:
-        """Backward-compatible flag: True when cancellation is due to server shutdown.
+    async def exit_for_recovery(self) -> "_CoreExitForRecovery":
+        """Opt-in graceful-shutdown primitive — leave response in_progress for recovery.
 
-        Prefer checking ``cancellation_reason`` directly for new code.
+        (Spec 024 Phase 5 — Proposal #11) Handlers that want explicit
+        control over shutdown teardown call this and propagate its
+        return value via::
 
-        :rtype: bool
+            return await context.exit_for_recovery()
+
+        The framework's task primitive recognises the returned sentinel
+        as "leave the task in_progress so the next-lifetime recovery
+        scanner can reclaim it". For ``durable_background=True``
+        responses the handler will be re-invoked on the next process
+        startup; for ``durable_background=False`` responses the
+        next-lifetime mark-failed disposition persists a failed
+        response (matches the no-explicit-exit_for_recovery default).
+
+        :raises RuntimeError: When called outside a durable task body
+            (e.g. on a Row 4 ``store=False`` request where there is no
+            task to defer).
+        :returns: The sentinel value handlers must ``return`` for the
+            framework to honour the recovery exit.
+        :rtype: ExitForRecoverySignal
         """
-        return self.cancellation_reason == CancellationReason.SHUTTING_DOWN
+        if self._task_context is None:
+            raise RuntimeError(
+                "context.exit_for_recovery() can only be called inside a durable "
+                "response handler (store=true). For store=false responses there is "
+                "no task to defer for recovery."
+            )
+        return await self._task_context.exit_for_recovery()  # type: ignore[no-any-return]
 
-    @is_shutdown_requested.setter
-    def is_shutdown_requested(self, value: bool) -> None:
-        """Backward-compat setter — sets cancellation_reason to SHUTTING_DOWN when True."""
-        if value:
-            if self.cancellation_reason is None:
-                self.cancellation_reason = CancellationReason.SHUTTING_DOWN
-        else:
-            if self.cancellation_reason == CancellationReason.SHUTTING_DOWN:
-                self.cancellation_reason = None
 
     async def get_input_items(self, *, resolve_references: bool = True) -> Sequence[Item]:
         """Return the caller's input items as :class:`Item` subtypes.

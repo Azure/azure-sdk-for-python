@@ -8,7 +8,7 @@ that owns conversational durability — this handler is the bridge.
 
 Recovery model:
 
-- The Claude session UUID is stamped into ``durability.metadata`` as
+- The Claude session UUID is stamped into ``context.durable_metadata`` as
   ``claude_session_id`` so each turn (and each recovered attempt within
   a turn) resumes the same session.
 - Before sending the user's input, the handler reads the session's
@@ -94,7 +94,6 @@ from claude_agent_sdk import (  # type: ignore[import-untyped]
 )
 
 from azure.ai.agentserver.responses import (
-    CancellationReason,
     CreateResponse,
     ResponseContext,
     ResponseEventStream,
@@ -112,13 +111,13 @@ app = ResponsesAgentServerHost(options=options)
 _SIMULATE_SHUTDOWN_MS = int(os.environ.get("SIMULATE_SHUTDOWN_MS", "0"))
 
 
-def _claude_options_for(durability) -> ClaudeAgentOptions:
+def _claude_options_for(context) -> ClaudeAgentOptions:
     """Build SDK options that resume the existing session or open a new one."""
-    existing = durability.metadata.get("claude_session_id")
+    existing = context.durable_metadata.get("claude_session_id")
     if existing:
         return ClaudeAgentOptions(resume=existing)
     new_id = str(uuid.uuid4())
-    durability.metadata["claude_session_id"] = new_id
+    context.durable_metadata["claude_session_id"] = new_id
     return ClaudeAgentOptions(session_id=new_id)
 
 
@@ -207,13 +206,10 @@ def _build_resumption_response(
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Steerable Claude Agent SDK conversation."""
-    durability = context.durability
-
     # ── Recovery branch ─────────────────────────────────────────────
-    if durability.is_recovery:
+    if context.is_recovery:
         stream = ResponseEventStream(
             response_id=context.response_id,
             response=_build_resumption_response(context, request),
@@ -229,10 +225,10 @@ async def handler(
     # the newer turn that superseded us would lose context for what the
     # user said. For other cancellation reasons (client cancel, shutdown)
     # we just return; no input preservation is appropriate.
-    if cancellation_signal.is_set():
-        if context.cancellation_reason == CancellationReason.STEERED:
-            sdk_options = _claude_options_for(durability)
-            session_id = durability.metadata["claude_session_id"]
+    if context.cancel.is_set():
+        if (context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set()):
+            sdk_options = _claude_options_for(context)
+            session_id = context.durable_metadata["claude_session_id"]
             async with ClaudeSDKClient(options=sdk_options) as client:
                 await _send_input_if_not_in_session(client, session_id, context)
             yield stream.emit_completed()
@@ -242,15 +238,15 @@ async def handler(
 
     shutdown_timer: asyncio.Task | None = None
     if _SIMULATE_SHUTDOWN_MS > 0:
-        shutdown_timer = asyncio.create_task(_simulate_shutdown(cancellation_signal, context))
+        shutdown_timer = asyncio.create_task(_simulate_shutdown(context))
 
     message = stream.add_output_item_message()
     yield message.emit_added()
     text = message.add_text_content()
     yield text.emit_added()
 
-    sdk_options = _claude_options_for(durability)
-    session_id = durability.metadata["claude_session_id"]
+    sdk_options = _claude_options_for(context)
+    session_id = context.durable_metadata["claude_session_id"]
     accumulated = ""
 
     async with ClaudeSDKClient(options=sdk_options) as client:
@@ -259,13 +255,13 @@ async def handler(
         await _send_input_if_not_in_session(client, session_id, context)
 
         async def _watch_cancel() -> None:
-            await cancellation_signal.wait()
+            await context.cancel.wait()
             await client.interrupt()
 
         cancel_watcher = asyncio.create_task(_watch_cancel())
         try:
             async for msg in client.receive_response():
-                if cancellation_signal.is_set():
+                if context.cancel.is_set():
                     break
                 if isinstance(msg, AssistantMessage):
                     for block in msg.content:
@@ -275,7 +271,7 @@ async def handler(
                 elif isinstance(msg, ResultMessage):
                     sdk_session_id = getattr(msg, "session_id", None)
                     if isinstance(sdk_session_id, str) and sdk_session_id:
-                        durability.metadata["claude_session_id"] = sdk_session_id
+                        context.durable_metadata["claude_session_id"] = sdk_session_id
         finally:
             if not cancel_watcher.done():
                 cancel_watcher.cancel()
@@ -291,18 +287,18 @@ async def handler(
     # Mid-stream shutdown: return without terminal so the framework
     # re-invokes us; the recovery branch above resumes the same session
     # and skips re-sending the input via the watermark.
-    if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:
+    if context.shutdown.is_set():
         return
 
     yield stream.emit_completed()
 
 
-async def _simulate_shutdown(cancellation_signal: asyncio.Event, context: ResponseContext) -> None:
+async def _simulate_shutdown(context: ResponseContext) -> None:
     """Fire a SHUTTING_DOWN signal after a delay (local testing only)."""
     await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not cancellation_signal.is_set():
-        context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-        cancellation_signal.set()
+    if not context.cancel.is_set():
+        context.shutdown.set()
+        context.cancel.set()
 
 
 def main() -> None:

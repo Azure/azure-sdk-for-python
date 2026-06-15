@@ -18,7 +18,7 @@ Pins:
 6. Pre-entry CLIENT_CANCELLED / SHUTTING_DOWN return without touching
    the SDK.
 7. The sample uses no ``last_processed_input_item_id`` watermark and
-   never calls ``durability.metadata.flush()``.
+   never calls ``context.durable_metadata.flush()``.
 """
 
 from __future__ import annotations
@@ -30,14 +30,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from azure.ai.agentserver.responses import (
-    CancellationReason,
     CreateResponse,
     ResponseContext,
 )
-from azure.ai.agentserver.responses._durability_context import (
-    DurabilityContext,
-)
 from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
 
 try:
     import copilot  # type: ignore[import-untyped]  # noqa: F401
@@ -57,20 +54,18 @@ def _make_context(
     metadata: dict[str, Any] | None = None,
     input_text: str = "test prompt",
 ) -> ResponseContext:
-    durability = DurabilityContext(
-        entry_mode=entry_mode,  # type: ignore[arg-type]
-        retry_attempt=0 if entry_mode == "fresh" else 1,
-        was_steered=False,
-        pending_inputs=0,
-        metadata=metadata or {},
-    )
     context = MagicMock(spec=ResponseContext)
     context.response_id = response_id
     # (Spec 013 US3) Stable chain id derived from the request. For mocked
     # fresh-entry tests this is just the response_id (no prev / no conv).
     context.conversation_chain_id = response_id
-    context.durability = durability
-    context.cancellation_reason = None
+    context.is_recovery = entry_mode == "recovered"
+    context.is_steered_turn = False
+    context.pending_input_count = 0
+    context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.cancel = asyncio.Event()
+    context.shutdown = asyncio.Event()
+    context.client_cancelled = False
 
     async def _get_input_text() -> str:
         return input_text
@@ -89,9 +84,9 @@ def _make_request() -> CreateResponse:
     return CreateResponse(model="copilot", input="test prompt")  # type: ignore[call-arg]
 
 
-async def _drive(handler_coro_fn, request, context, cancellation_signal) -> list[Any]:
+async def _drive(handler_coro_fn, request, context) -> list[Any]:
     events = []
-    async for event in handler_coro_fn(request, context, cancellation_signal):
+    async for event in handler_coro_fn(request, context):
         events.append(event)
     return events
 
@@ -204,7 +199,7 @@ class TestSample18FreshEntry:
         with patch.object(mod, "CopilotClient", stub_client):
             response_id = IdGenerator.new_response_id()
             ctx = _make_context(response_id=response_id)
-            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+            events = await _drive(mod.handler, _make_request(), ctx)
 
         assert len(create_calls) == 1
         # (Spec 013 US3) Sample 18 now uses ``context.conversation_chain_id``
@@ -230,7 +225,7 @@ class TestSample18RecoveryUsesResumeSession:
                 response_id=response_id,
                 entry_mode="recovered",
             )
-            await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+            await _drive(mod.handler, _make_request(), ctx)
 
         # Recovery used resume_session, not create_session.
         assert create_calls == []
@@ -258,7 +253,7 @@ class TestSample18RecoveryWithMissingInput:
                 response_id=IdGenerator.new_response_id(),
                 entry_mode="recovered",
             )
-            await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+            await _drive(mod.handler, _make_request(), ctx)
 
         assert create_calls == []
         assert len(resume_calls) == 1
@@ -278,7 +273,7 @@ class TestSample18LiveDeltas:
         stub_client, send_calls, _create_calls, _resume_calls = _make_session_stub_classes(reply_text="hello world")
         with patch.object(mod, "CopilotClient", stub_client):
             ctx = _make_context(response_id=IdGenerator.new_response_id())
-            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+            events = await _drive(mod.handler, _make_request(), ctx)
 
         assert send_calls == ["test prompt"]
         # The delta event carries the reply text exactly once.
@@ -309,7 +304,7 @@ class TestSample18LiveDeltas:
                 response_id=IdGenerator.new_response_id(),
                 entry_mode="recovered",
             )
-            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+            events = await _drive(mod.handler, _make_request(), ctx)
 
         # No fresh session, only resume — matches existing recovery contract.
         assert create_calls == []
@@ -341,7 +336,7 @@ class TestSample18LiveDeltas:
                 response_id=IdGenerator.new_response_id(),
                 entry_mode="recovered",
             )
-            events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+            events = await _drive(mod.handler, _make_request(), ctx)
 
         assert len(resume_calls) == 1
         assert send_calls == []
@@ -410,11 +405,11 @@ class TestSample18PreEntrySteeredPreservesInput:
         stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
             ctx = _make_context(response_id=IdGenerator.new_response_id())
-            ctx.cancellation_reason = CancellationReason.STEERED
+            ctx.cancel.set()
             signal = asyncio.Event()
             signal.set()
 
-            events = await _drive(mod.handler, _make_request(), ctx, signal)
+            events = await _drive(mod.handler, _make_request(), ctx)
 
         assert send_calls == ["test prompt"]
         assert "response.completed" in [_event_type(e) for e in events]
@@ -428,11 +423,13 @@ class TestSample18PreEntryOtherCancellationDoesNotTouchSDK:
         stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
             ctx = _make_context(response_id=IdGenerator.new_response_id())
-            ctx.cancellation_reason = CancellationReason.CLIENT_CANCELLED
+            ctx.client_cancelled = True
+
+            ctx.cancel.set()
             signal = asyncio.Event()
             signal.set()
 
-            events = await _drive(mod.handler, _make_request(), ctx, signal)
+            events = await _drive(mod.handler, _make_request(), ctx)
 
         assert create_calls == []
         assert resume_calls == []
@@ -445,11 +442,13 @@ class TestSample18PreEntryOtherCancellationDoesNotTouchSDK:
         stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
             ctx = _make_context(response_id=IdGenerator.new_response_id())
-            ctx.cancellation_reason = CancellationReason.SHUTTING_DOWN
+            ctx.shutdown.set()
+
+            ctx.cancel.set()
             signal = asyncio.Event()
             signal.set()
 
-            events = await _drive(mod.handler, _make_request(), ctx, signal)
+            events = await _drive(mod.handler, _make_request(), ctx)
 
         assert create_calls == []
         assert resume_calls == []

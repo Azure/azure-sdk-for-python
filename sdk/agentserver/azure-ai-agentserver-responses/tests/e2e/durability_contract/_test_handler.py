@@ -16,7 +16,7 @@ for the terminal text). Tests rely on these tags to verify:
 - Sequence numbers across recovery attempts are strictly monotonic.
 - The recovered handler's output_item slot reuse follows reset semantics.
 - ``context.conversation_chain_id`` is stable across attempts.
-- ``durability.metadata`` writes from prior lifetimes are visible to the
+- ``context.durable_metadata`` writes from prior lifetimes are visible to the
   recovered handler (when the watermark knob is enabled).
 
 The tags live in :mod:`_test_handler_markers` so tests can import the
@@ -31,7 +31,8 @@ Env vars consumed:
   (Spec 024 Phase 3a unified storage layout.)
 - ``CONFORMANCE_DURABLE_BACKGROUND`` — ``"true"`` or ``"false"`` to select
   the server's ``durable_background`` option. Default ``"true"``.
-- ``CONFORMANCE_STORE_DISABLED`` — ``"true"`` to set ``store_disabled=True``
+- ``CONFORMANCE_DURABLE_BACKGROUND`` — ``"true"`` to set
+  ``ResponsesServerOptions(durable_background=True)``.
   (forces row 4 ephemeral regardless of per-request ``store`` flag).
   Default ``"false"``.
 - ``CONFORMANCE_HANDLER_SLEEP_MS`` — milliseconds the handler sleeps
@@ -48,7 +49,7 @@ Env vars consumed:
   ``"ok"``-delta behaviour at the structural level (count and ordering
   match; only the content tags changed).
 - ``CONFORMANCE_EMIT_METADATA_WATERMARK`` — when ``"true"``, the handler
-  appends ``context.durability.retry_attempt`` to a metadata-stored
+  appends ``context.0`` to a metadata-stored
   watermark list and ``flush()``es before emitting deltas. The final
   text includes ``visited=[…]`` so tests can verify the watermark
   survives crash + recovery. Default ``"false"``.
@@ -94,7 +95,6 @@ def _env_int(name: str, default: int) -> int:
 
 
 _DURABLE_BG = _env_bool("CONFORMANCE_DURABLE_BACKGROUND", True)
-_STORE_DISABLED = _env_bool("CONFORMANCE_STORE_DISABLED", False)
 _SLEEP_MS = _env_int("CONFORMANCE_HANDLER_SLEEP_MS", 50)
 _SHUTDOWN_GRACE_S = max(1, _env_int("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", 10))
 _PRE_SLEEP_DELTAS = max(0, _env_int("CONFORMANCE_PRE_SLEEP_DELTAS", 0))
@@ -103,7 +103,6 @@ _EMIT_WATERMARK = _env_bool("CONFORMANCE_EMIT_METADATA_WATERMARK", False)
 
 options = ResponsesServerOptions(
     durable_background=_DURABLE_BG,
-    store_disabled=_STORE_DISABLED,
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
 app = ResponsesAgentServerHost(options=options)
@@ -113,7 +112,6 @@ app = ResponsesAgentServerHost(options=options)
 async def handle_create(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Deterministic per-lifetime tagged handler.
 
@@ -145,42 +143,38 @@ async def handle_create(
         ``|visited=[…]`` when the watermark knob is enabled).
     11. ``content_part.done`` / ``output_item.done`` / ``response.completed``.
     """
-    durability = context.durability
     # Lifetime tag: 0 for fresh entry, 1 for any recovered / resumed entry.
-    # ``durability.retry_attempt`` is an in-process counter that resets to 0
-    # on a new process lifetime (i.e. after crash + restart), so it's not
-    # a reliable cross-lifetime marker for conformance tests. ``entry_mode``
-    # IS preserved across lifetimes — the framework computes it from the
-    # task primitive's recovered/resumed signal. Multi-recovery sequences
-    # all tag as lifetime=1, which is sufficient for the assertions in
-    # this suite (we only need to distinguish "before any crash" from
-    # "after at least one crash").
-    lifetime = 0 if durability.entry_mode == "fresh" else 1
+    # ``context.is_recovery`` IS preserved across lifetimes — the framework
+    # computes it from the task primitive's recovered signal. Multi-recovery
+    # sequences all tag as lifetime=1, which is sufficient for the
+    # assertions in this suite (we only need to distinguish "before any
+    # crash" from "after at least one crash").
+    lifetime = 1 if context.is_recovery else 0
     chain_id = context.conversation_chain_id or ""
 
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
 
-    if cancellation_signal.is_set():
+    if context.cancel.is_set():
         return
 
     # First in_progress is normal; on recovery we emit a second one
     # below as the client-visible reset point per the streaming sub-contract.
     yield stream.emit_in_progress()
 
-    if durability.is_recovery:
+    if context.is_recovery:
         yield stream.emit_in_progress()
 
-    # Optional metadata watermark — append this lifetime's retry_attempt
+    # Optional metadata watermark — append this lifetime's lifetime tag
     # to the visited list and flush so the marker survives crash. Tests
     # that enable this knob assert the final text's visited list
     # contains every lifetime that contributed to the response.
     if _EMIT_WATERMARK:
-        visited = list(durability.metadata.get(WATERMARK_METADATA_KEY, []))
+        visited = list(context.durable_metadata.get(WATERMARK_METADATA_KEY, []))
         if lifetime not in visited:
             visited.append(lifetime)
-            durability.metadata[WATERMARK_METADATA_KEY] = visited
-            await durability.metadata.flush()
+            context.durable_metadata[WATERMARK_METADATA_KEY] = visited
+            await context.durable_metadata.flush()
 
     # Output item + content part — always at index 0 so the recovered
     # handler's repeat add at the same index exercises the slot-
@@ -202,13 +196,13 @@ async def handle_create(
     # client-cancel sets the signal.
     try:
         await asyncio.wait_for(
-            cancellation_signal.wait(),
+            context.cancel.wait(),
             timeout=_SLEEP_MS / 1000.0,
         )
     except asyncio.TimeoutError:
         pass
 
-    if cancellation_signal.is_set():
+    if context.cancel.is_set():
         # Shutting down: return without terminal so the framework's
         # per-row Path-B / Path-C contract takes over.
         return
@@ -218,7 +212,7 @@ async def handle_create(
     # (the framework's snapshot extraction uses delta accumulation, not
     # the emit_text_done payload), then emit text_done with the same
     # value so the wire's done event also carries the composite.
-    visited_now = list(durability.metadata.get(WATERMARK_METADATA_KEY, [])) if _EMIT_WATERMARK else None
+    visited_now = list(context.durable_metadata.get(WATERMARK_METADATA_KEY, [])) if _EMIT_WATERMARK else None
     final = final_text(
         lifetime=lifetime,
         pre_count=_PRE_SLEEP_DELTAS,

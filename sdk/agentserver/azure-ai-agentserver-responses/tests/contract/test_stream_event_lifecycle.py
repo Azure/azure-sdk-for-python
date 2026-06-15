@@ -114,7 +114,7 @@ def _build_client_hosted(handler: Any) -> TestClient:
     return TestClient(app)
 
 
-def _handler(request: Any, context: Any, cancel: Any) -> Any:
+async def _handler(request: Any, context: Any) -> Any:
     """Minimal handler: created → completed."""
 
     async def _events():
@@ -128,7 +128,7 @@ def _handler(request: Any, context: Any, cancel: Any) -> Any:
     return _events()
 
 
-def _handler_with_output(request: Any, context: Any, cancel: Any) -> Any:
+async def _handler_with_output(request: Any, context: Any) -> Any:
     """Realistic handler: created → in_progress → message with text → completed."""
 
     async def _events():

@@ -75,7 +75,7 @@ async def test_shutdown_durable_background_not_marked_failed() -> None:
     handler_started = asyncio.Event()
     handler_exited = asyncio.Event()
 
-    def _stuck_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _stuck_handler(request: Any, context: Any):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -177,7 +177,7 @@ async def test_shutdown_non_durable_server_marks_stored_background_failed() -> N
     """
     handler_started = asyncio.Event()
 
-    def _stuck_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _stuck_handler(request: Any, context: Any):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -264,7 +264,7 @@ async def test_shutdown_grace_period_allows_completion() -> None:
     """
     handler_started = asyncio.Event()
 
-    def _responsive_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _responsive_handler(request: Any, context: Any):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -275,7 +275,7 @@ async def test_shutdown_grace_period_allows_completion() -> None:
             handler_started.set()
 
             # Responds to cancellation signal → completes gracefully
-            while not cancellation_signal.is_set():
+            while not context.cancel.is_set():
                 await asyncio.sleep(0.01)
             yield stream.emit_completed()
 
@@ -353,7 +353,7 @@ async def test_shutdown_durable_responsive_handler_stays_in_progress() -> None:
     handler_started = asyncio.Event()
     handler_exited = asyncio.Event()
 
-    def _checkpoint_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _checkpoint_handler(request: Any, context: Any):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -364,7 +364,7 @@ async def test_shutdown_durable_responsive_handler_stays_in_progress() -> None:
             handler_started.set()
 
             # Wait for signal, then return WITHOUT terminal event
-            while not cancellation_signal.is_set():
+            while not context.cancel.is_set():
                 await asyncio.sleep(0.01)
 
             # Checkpoint work done (e.g., save metadata) — return without
@@ -456,12 +456,10 @@ async def test_client_cancel_marks_cancelled() -> None:
     Uses background mode with explicit cancel to test the same B11 path
     that B17 disconnect triggers.
     """
-    from azure.ai.agentserver.responses.models.runtime import CancellationReason
-
     handler_started = asyncio.Event()
     response_id_holder: list[str] = []
 
-    def _handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _handler(request: Any, context: Any):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -473,7 +471,7 @@ async def test_client_cancel_marks_cancelled() -> None:
             handler_started.set()
 
             # Wait for cancellation
-            await cancellation_signal.wait()
+            await context.cancel.wait()
             # Return without terminal — B11 should see CLIENT_CANCELLED
             # and force status to 'cancelled'.
 
@@ -551,7 +549,7 @@ async def test_shutdown_store_false_sync_returns_failed() -> None:
     """
     handler_started = asyncio.Event()
 
-    def _handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _handler(request: Any, context: Any):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -562,7 +560,7 @@ async def test_shutdown_store_false_sync_returns_failed() -> None:
             handler_started.set()
 
             # Wait for cancellation signal (simulates work interrupted by shutdown)
-            await cancellation_signal.wait()
+            await context.cancel.wait()
             # Exit without terminal event — framework should return failed
 
         return _events()
@@ -637,7 +635,7 @@ async def test_shutdown_store_false_stream_returns_failed_event() -> None:
     """
     handler_started = asyncio.Event()
 
-    def _handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _handler(request: Any, context: Any):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -648,7 +646,7 @@ async def test_shutdown_store_false_stream_returns_failed_event() -> None:
             handler_started.set()
 
             # Wait for cancellation signal (simulates work interrupted by shutdown)
-            await cancellation_signal.wait()
+            await context.cancel.wait()
             # Exit without terminal event — framework should emit response.failed
 
         return _events()

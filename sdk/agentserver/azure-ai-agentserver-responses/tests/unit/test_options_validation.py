@@ -31,14 +31,6 @@ class TestDurabilityOptionsDefaults:
 class TestDurabilityOptionsValidation:
     """Verify fail-fast validation at construction time."""
 
-    def test_steerable_requires_store_not_disabled(self) -> None:
-        """steerable_conversations=True with store explicitly disabled → error."""
-        with pytest.raises(ValueError, match="steerable_conversations"):
-            ResponsesServerOptions(
-                steerable_conversations=True,
-                store_disabled=True,
-            )
-
     def test_steerable_without_store_disabled_succeeds(self) -> None:
         """steerable_conversations=True with default store → OK."""
         options = ResponsesServerOptions(steerable_conversations=True)
@@ -64,23 +56,7 @@ class TestDurabilityOptionsValidation:
         assert options.steerable_conversations is True
         assert options.durable_background is False
 
-    def test_max_pending_default(self) -> None:
-        """max_pending defaults to 10 (matching task primitive)."""
-        options = ResponsesServerOptions(steerable_conversations=True)
-        assert options.max_pending == 10
-
-    def test_max_pending_custom(self) -> None:
-        """max_pending can be set by developer."""
-        options = ResponsesServerOptions(
-            steerable_conversations=True,
-            max_pending=5,
-        )
-        assert options.max_pending == 5
-
-    def test_max_pending_must_be_positive(self) -> None:
-        """max_pending must be > 0."""
-        with pytest.raises(ValueError):
-            ResponsesServerOptions(
-                steerable_conversations=True,
-                max_pending=0,
-            )
+    # (Spec 024 Phase 5 — Proposal #5) ``store_disabled`` and
+    # ``max_pending`` options were DELETED. The pre-Phase-5 validation
+    # tests for those keyword arguments are obsolete — their absence is
+    # asserted in ``test_phase5_api_simplification.py``.

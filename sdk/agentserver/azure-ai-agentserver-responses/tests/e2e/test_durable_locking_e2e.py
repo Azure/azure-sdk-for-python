@@ -62,7 +62,7 @@ class TestNonSteerableParallelForks:
     def test_parallel_forks_all_200(self) -> None:
         """3 POSTs with same previous_response_id, steerable=False → all 200."""
 
-        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
+        async def handler(request: CreateResponse, context: ResponseContext):
             return TextResponse(context, request, text="Fork result")
 
         client = _make_app(handler, durable=True, steerable=False)
@@ -83,7 +83,7 @@ class TestNonSteerableParallelForks:
     def test_distinct_response_ids_on_forks(self) -> None:
         """Each fork gets a unique response ID."""
 
-        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
+        async def handler(request: CreateResponse, context: ResponseContext):
             return TextResponse(context, request, text="Fork")
 
         client = _make_app(handler, durable=True, steerable=False)
@@ -113,7 +113,7 @@ class TestDurableOptOut:
     def test_non_durable_still_completes(self) -> None:
         """With durable_background=False, responses still complete normally."""
 
-        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
+        async def handler(request: CreateResponse, context: ResponseContext):
             return TextResponse(context, request, text="Non-durable result")
 
         client = _make_app(handler, durable=False, steerable=False)
@@ -123,26 +123,31 @@ class TestDurableOptOut:
         assert data["status"] in ("in_progress", "completed")
 
     def test_non_durable_has_transient_durability_context(self) -> None:
-        """With durable_background=False, durability context is a transient instance."""
+        """With durable_background=False, recovery + steering fields are
+        flat-defaulted on the context (spec 024 Phase 5 Proposal #10)."""
         captured: dict[str, Any] = {}
 
-        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
-            captured["durability"] = context.durability
+        async def handler(request: CreateResponse, context: ResponseContext):
+            captured["is_recovery"] = context.is_recovery
+            captured["is_steered_turn"] = context.is_steered_turn
+            captured["pending_input_count"] = context.pending_input_count
+            captured["has_durable_metadata"] = hasattr(context, "durable_metadata")
             return TextResponse(context, request, text="Done")
 
         client = _make_app(handler, durable=False)
         resp = client.post("/responses", json=_base_payload())
         assert resp.status_code == 200
-        # Non-durable path still provides a transient DurabilityContext
-        dur = captured.get("durability")
-        assert dur is not None
-        assert dur.entry_mode == "fresh"
-        assert dur.retry_attempt == 0
+        # Non-durable path defaults to a non-recovered fresh entry; flat
+        # fields are populated by ResponseContext.__init__.
+        assert captured["is_recovery"] is False
+        assert captured["is_steered_turn"] is False
+        assert captured["pending_input_count"] == 0
+        assert captured["has_durable_metadata"] is True
 
     def test_non_durable_store_false_still_works(self) -> None:
         """store=false + background=false → non-durable foreground path."""
 
-        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
+        async def handler(request: CreateResponse, context: ResponseContext):
             return TextResponse(context, request, text="Ephemeral")
 
         client = _make_app(handler, durable=True)
@@ -162,7 +167,7 @@ class TestLockingEdgeCases:
     def test_no_previous_response_id_each_standalone(self) -> None:
         """Without previous_response_id, each request is independent."""
 
-        def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
+        async def handler(request: CreateResponse, context: ResponseContext):
             return TextResponse(context, request, text="Standalone")
 
         client = _make_app(handler, durable=True, steerable=True)

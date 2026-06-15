@@ -33,7 +33,7 @@ from tests._helpers import poll_until
 # ─── Handler ──────────────────────────────────────────────
 
 
-def _simple_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+async def _simple_handler(request: Any, context: Any) -> Any:
     """Handler that emits created → completed."""
 
     async def _events():

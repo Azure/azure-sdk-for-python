@@ -12,7 +12,7 @@ Fixtures:
 
 - ``conformance_handler_module`` — the importable path to ``_test_handler``.
 - ``make_harness`` — factory for constructing ``CrashHarness`` with the
-  per-row configuration (durable_background, store_disabled, handler
+  per-row configuration (durable_background, handler
   sleep, grace).
 - ``LONG_TIME_SECS`` / ``SHORT_GRACE_S`` constants — exposed as module
   attributes so cell tests can reference them directly.
@@ -70,7 +70,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     Returns a callable that takes:
 
     - ``durable_background`` (bool, default True) — server option.
-    - ``store_disabled`` (bool, default False) — server option.
+    - ```` (bool, default False) — server option.
     - ``handler_sleep_ms`` (int, default 50) — handler sleep before
       emitting completion.
     - ``shutdown_grace_seconds`` (int, default LONG_GRACE_S) — server's
@@ -86,7 +86,6 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     def _factory(
         *,
         durable_background: bool = True,
-        store_disabled: bool = False,
         handler_sleep_ms: int = 50,
         pre_sleep_deltas: int = 0,
         emit_metadata_watermark: bool = False,
@@ -95,14 +94,13 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     ) -> CrashHarness:
         env = {
             "CONFORMANCE_DURABLE_BACKGROUND": "true" if durable_background else "false",
-            "CONFORMANCE_STORE_DISABLED": "true" if store_disabled else "false",
             "CONFORMANCE_HANDLER_SLEEP_MS": str(handler_sleep_ms),
             "CONFORMANCE_PRE_SLEEP_DELTAS": str(pre_sleep_deltas),
             "CONFORMANCE_EMIT_METADATA_WATERMARK": ("true" if emit_metadata_watermark else "false"),
             "AGENTSERVER_SHUTDOWN_GRACE_SECONDS": str(shutdown_grace_seconds),
             # Force Hypercorn to cancel in-flight connections after the
             # responses-layer grace so foreground responses (Row 3) get
-            # their cancellation_signal set BEFORE Hypercorn waits its
+            # their cancel event set BEFORE Hypercorn waits its
             # default 30s for handler completion. Without this, a
             # SIGTERM-short-grace test would always see the foreground
             # handler complete naturally and ``GET`` returns

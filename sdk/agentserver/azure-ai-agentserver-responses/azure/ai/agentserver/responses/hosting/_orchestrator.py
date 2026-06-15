@@ -36,7 +36,6 @@ from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-erro
 from .._options import ResponsesServerOptions
 from ..models import _generated as generated_models
 from ..models.runtime import (
-    CancellationReason,
     ResponseExecution,
     ResponseModeFlags,
     ResponseStatus,
@@ -317,7 +316,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
     try:
         try:
             async for handler_event in _iter_with_winddown(
-                create_fn(parsed, context, cancellation_signal), cancellation_signal
+                create_fn(parsed, context), cancellation_signal
             ):
                 # Client-initiated cancel (POST /cancel) → discard and force cancelled.
                 # Steering cancel (new turn queued) → let handler wind down and
@@ -449,18 +448,21 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                             )
         except asyncio.CancelledError:
             # S-024: Distinguish known cancellation (cancel_signal set) from
-            # unknown.  Known cancellation → check reason to determine status.
+            # unknown.  Known cancellation → inspect the new
+            # composing-cause flags on ``context`` (spec 024 Phase 5
+            # Proposal #11) to determine status.
             if cancellation_signal.is_set():
-                _ctx_reason = context.cancellation_reason if context else None
+                _client_cancelled = bool(context.client_cancelled) if context else False
+                _shutdown = bool(context.shutdown.is_set()) if context else False
                 if record.status not in (
                     "cancelled",
                     "completed",
                     "failed",
                     "incomplete",
                 ):
-                    if _ctx_reason == CancellationReason.CLIENT_CANCELLED or record.cancel_requested:
+                    if _client_cancelled or record.cancel_requested:
                         record.transition_to("cancelled")
-                    elif _ctx_reason == CancellationReason.SHUTTING_DOWN:
+                    elif _shutdown:
                         # Durable+bg: leave in_progress for re-entry.
                         # Non-durable: mark failed.
                         _is_durable_bg = (
@@ -472,7 +474,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                         if not _is_durable_bg:
                             record.transition_to("failed")
                     else:
-                        # STEERED or unknown — mark failed.
+                        # Steering or unknown — mark failed.
                         record.transition_to("failed")
                 if not first_event_processed:
                     record.response_failed_before_events = True
@@ -1663,8 +1665,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             #   response.cancelled (B11+B17: cancellation cannot become
             #   "failed" or "completed").
             if ctx.cancellation_signal.is_set():
-                _reason = ctx.context.cancellation_reason if ctx.context else None
-                if _reason == CancellationReason.SHUTTING_DOWN:
+                _shutdown = bool(ctx.context.shutdown.is_set()) if ctx.context else False
+                if _shutdown:
                     if ctx.background and ctx.store and self._runtime_options.durable_background:
                         return
                     if not self._has_terminal_event(state.handler_events):
@@ -1694,27 +1696,31 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # prevent the response from making forward progress on a retry.
             #
             # "Mid-shutdown" detection prefers the durable task's
-            # cancellation_reason (set by the _durable_orchestrator's
-            # bridge once ctx.shutdown fires), but ALSO checks the
-            # server-level shutdown_event (set as Hypercorn's pre-shutdown
-            # callback — fires as soon as the process receives SIGTERM,
-            # before TaskManager.shutdown() propagates ctx.shutdown). The
-            # server-level signal closes a race where the handler raises
-            # in the gap between SIGTERM reaching the process group (which
-            # also kills any upstream client subprocesses) and the
-            # durable framework's cooperative-shutdown propagation.
-            _reason = ctx.context.cancellation_reason if ctx.context else None
+            # composing-cancellation surface (``ctx.context.shutdown``
+            # set by the _durable_orchestrator's bridge once
+            # ctx.shutdown fires), but ALSO checks the server-level
+            # shutdown_event (set as Hypercorn's pre-shutdown callback
+            # — fires as soon as the process receives SIGTERM, before
+            # TaskManager.shutdown() propagates ctx.shutdown). The
+            # server-level signal closes a race where the handler
+            # raises in the gap between SIGTERM reaching the process
+            # group (which also kills any upstream client subprocesses)
+            # and the durable framework's cooperative-shutdown
+            # propagation.
+            _shutdown = bool(ctx.context.shutdown.is_set()) if ctx.context else False
             _server_shutting_down = self._shutdown_event is not None and self._shutdown_event.is_set()
             if (
-                (_reason == CancellationReason.SHUTTING_DOWN or _server_shutting_down)
+                (_shutdown or _server_shutting_down)
                 and ctx.background
                 and ctx.store
                 and self._runtime_options.durable_background
             ):
-                # Stamp the reason so the durable body's FR-005a check
-                # (which also looks at ctx.shutdown) routes consistently.
-                if ctx.context is not None and ctx.context.cancellation_reason is None:
-                    ctx.context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                # Stamp the shutdown cause so the durable body's
+                # FR-005a check (which also looks at ctx.shutdown)
+                # routes consistently.
+                if ctx.context is not None and not ctx.context.shutdown.is_set():
+                    ctx.context.shutdown.set()
+                    ctx.context.cancel.set()
                 # Signal the durable-stream-body finally to SKIP the
                 # finalize+close step. Closing the wire stream now would
                 # flush a terminal marker, putting the rehydrated stream
@@ -1738,30 +1744,33 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             return
 
         # B11: Handler returned without a terminal event while cancellation
-        # signal is set. The terminal status depends on the cancellation reason:
+        # signal is set. The terminal status depends on the cancellation cause
+        # (spec 024 Phase 5 Proposal #11):
         #
-        # - SHUTTING_DOWN + durable+background: leave in_progress for re-entry
+        # - shutdown=True + durable+background: leave in_progress for re-entry
         #   on restart — do NOT emit a terminal event.
-        # - SHUTTING_DOWN + other: emit response.failed.
-        # - STEERED: emit response.failed (developer should have emitted
-        #   terminal but didn't — framework prevents orphan responses).
-        # - CLIENT_CANCELLED: emit response.cancelled (explicit cancel).
-        # - None / client disconnect: emit response.failed.
+        # - shutdown=True + other: emit response.failed.
+        # - client_cancelled=True: emit response.cancelled (explicit cancel
+        #   or non-bg POST disconnect).
+        # - Neither set (steering pressure): emit response.failed (developer
+        #   should have emitted terminal but didn't — framework prevents
+        #   orphan responses).
         #
         # "cancelled" status is reserved exclusively for explicit /cancel API
         # calls or client disconnect on non-background create calls.
         if ctx.cancellation_signal.is_set() and not self._has_terminal_event(state.handler_events):
-            _reason = ctx.context.cancellation_reason if ctx.context else None
-            if _reason == CancellationReason.SHUTTING_DOWN:
+            _shutdown = bool(ctx.context.shutdown.is_set()) if ctx.context else False
+            _client_cancelled = bool(ctx.context.client_cancelled) if ctx.context else False
+            if _shutdown:
                 # For durable+background, leave response in_progress for
                 # re-entry. Don't emit terminal — just return.
                 if ctx.background and ctx.store and self._runtime_options.durable_background:
                     return
                 state.pending_terminal = await self._make_failed_event(ctx, state)
-            elif _reason == CancellationReason.CLIENT_CANCELLED:
+            elif _client_cancelled:
                 state.pending_terminal = await self._cancel_terminal_sse_dict(ctx, state)
             else:
-                # STEERED, client disconnect, or unknown — mark failed.
+                # Steering pressure or unknown — mark failed.
                 state.pending_terminal = await self._make_failed_event(ctx, state)
             return
 
@@ -1827,15 +1836,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # contract violations).
 
         # Non-bg streaming interrupted mid-stream. The interrupt is either a
-        # client disconnect (`CLIENT_CANCELLED`, treated as a cancellation —
-        # we persist a cancelled terminal so a later GET sees `cancelled`,
-        # NOT a 404), or a server shutdown (`SHUTTING_DOWN`, deferred to the
-        # next-lifetime recovery scanner via the bookkeeping task — we leave
-        # the response un-persisted in THIS lifetime so the scanner's
-        # `_persist_crash_failed` writes the canonical terminal).
+        # client disconnect (``client_cancelled=True``, treated as a
+        # cancellation — we persist a cancelled terminal so a later GET
+        # sees ``cancelled``, NOT a 404), or a server shutdown
+        # (``shutdown.set()``, deferred to the next-lifetime recovery
+        # scanner via the bookkeeping task — we leave the response
+        # un-persisted in THIS lifetime so the scanner's
+        # ``_persist_crash_failed`` writes the canonical terminal).
         if not ctx.background and state.stream_interrupted:
-            _reason = ctx.context.cancellation_reason if ctx.context else None
-            if _reason == CancellationReason.SHUTTING_DOWN:
+            _shutdown = bool(ctx.context.shutdown.is_set()) if ctx.context else False
+            if _shutdown:
                 # Defer to bookkeeping-task recovery in the next lifetime.
                 ctx.span.end(state.captured_error)
                 return
@@ -2001,7 +2011,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             else "mark-failed"
         )
 
-        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
+        handler_iterator = self._create_fn(ctx.parsed, ctx.context)
 
         # Helper: route to the right finalize method based on the request semantics
         # (bg+store → bg_stream path; everything else → non_bg_stream path).
@@ -2429,11 +2439,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # leaves the durable task in_progress so the next-lifetime recovery
         # scanner can mark the response failed. If we discarded here on
         # shutdown the recovery path would have nothing to find. The
-        # ``cancellation_reason`` distinguishes the two: SHUTTING_DOWN means
-        # server shutdown (preserve for recovery); absent / CLIENT_CANCELLED
-        # means client disconnect (discard per B17).
-        _ctx_reason = ctx.context.cancellation_reason if ctx.context else None
-        _is_shutdown = _ctx_reason == CancellationReason.SHUTTING_DOWN
+        # ``context.shutdown`` event distinguishes the two: set means
+        # server shutdown (preserve for recovery); not set means client
+        # disconnect / explicit cancel (discard per B17).
+        _is_shutdown = bool(ctx.context.shutdown.is_set()) if ctx.context else False
         if (
             ctx.cancellation_signal.is_set()
             and not record.cancel_requested
@@ -2513,7 +2522,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :param state: Pipeline state (populated by handler events).
         :return: Response snapshot dictionary.
         """
-        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
+        handler_iterator = self._create_fn(ctx.parsed, ctx.context)
         # _process_handler_events handles all error paths (B8, S-035, S-015, B11).
         # run_sync only needs to exhaust the generator for state.handler_events side-effects.
         async for _ in self._process_handler_events(ctx, state, handler_iterator):
@@ -2860,7 +2869,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 exc_info=True,
             )
             state.next_seq = 0
-        handler_iterator = self._create_fn(parsed, context, cancellation_signal)
+        handler_iterator = self._create_fn(parsed, context)
 
         # Drive the streaming pipeline. Events flow to the per-response
         # stream — the wire iterator on _live_stream's side consumes from

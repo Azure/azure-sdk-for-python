@@ -120,7 +120,7 @@ def _build_client(handler: Any) -> TestClient:
     return TestClient(app)
 
 
-def _handler(request: Any, context: Any, cancel: Any) -> Any:
+async def _handler(request: Any, context: Any) -> Any:
     """Handler that emits created + completed."""
 
     async def _events():

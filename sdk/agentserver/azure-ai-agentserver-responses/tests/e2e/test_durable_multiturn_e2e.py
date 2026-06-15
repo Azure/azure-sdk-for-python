@@ -43,16 +43,13 @@ def _make_multiturn_app() -> TestClient:
     async def handler(
         request: CreateResponse,
         context: ResponseContext,
-        cancellation_signal: asyncio.Event,
     ):
         input_text = await context.get_input_text()
-        durability = context.durability
-
-        turn_count = durability.metadata.get("turn_count", 0) + 1
-        context_list = durability.metadata.get("conversation_context", [])
+        turn_count = context.durable_metadata.get("turn_count", 0) + 1
+        context_list = context.durable_metadata.get("conversation_context", [])
         context_list.append({"turn": turn_count, "input": input_text})
-        durability.metadata["turn_count"] = turn_count
-        durability.metadata["conversation_context"] = context_list
+        context.durable_metadata["turn_count"] = turn_count
+        context.durable_metadata["conversation_context"] = context_list
         text = f"Turn {turn_count}: {input_text}"
 
         return TextResponse(context, request, text=text)
@@ -140,7 +137,6 @@ class TestDurableMultiturnNonDurable:
         async def handler(
             request: CreateResponse,
             context: ResponseContext,
-            cancellation_signal: asyncio.Event,
         ):
             input_text = await context.get_input_text()
             return TextResponse(context, request, text=f"Non-durable: {input_text}")
@@ -197,18 +193,17 @@ def _make_conv_id_non_steerable_app() -> tuple[Any, dict[str, Any]]:
     async def handler(
         request: CreateResponse,
         context: ResponseContext,
-        cancellation_signal: asyncio.Event,
     ):
         input_text = await context.get_input_text()
         chain_id = context.conversation_chain_id
-        turn_count = context.durability.metadata.get("turn_count", 0) + 1
-        context.durability.metadata["turn_count"] = turn_count
+        turn_count = context.durable_metadata.get("turn_count", 0) + 1
+        context.durable_metadata["turn_count"] = turn_count
         handler_state["invocations"].append(
             {
                 "input": input_text,
                 "turn": turn_count,
                 "chain_id": chain_id,
-                "entry_mode": context.durability.entry_mode,
+                "entry_mode": "recovered" if context.is_recovery else "fresh",
             }
         )
         return TextResponse(
@@ -355,7 +350,7 @@ class TestRow5ConversationIdNonSteerableE2E:
         app = ResponsesAgentServerHost(options=options)
 
         @app.response_handler
-        async def handler(request, context, cancellation_signal):
+        async def handler(request, context):
             # Emit response.created IMMEDIATELY (releases the POST's
             # response_created_signal so the POST returns 200), then sleep so
             # the handler stays in_progress while the second POST races.

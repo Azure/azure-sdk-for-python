@@ -64,7 +64,6 @@ app = ResponsesAgentServerHost()
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Emit a greeting using the convenience generator."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
@@ -93,7 +92,6 @@ async def handler(
 async def handler_streaming(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Stream tokens using the async convenience generator."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
@@ -127,7 +125,6 @@ async def _generate_tokens(input_text: str):
 async def handler_builder(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Demonstrate all builder events step by step."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)

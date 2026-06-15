@@ -28,14 +28,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from azure.ai.agentserver.responses import (
-    CancellationReason,
     CreateResponse,
     ResponseContext,
 )
-from azure.ai.agentserver.responses._durability_context import (
-    DurabilityContext,
-)
 from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
 
 try:
     import claude_agent_sdk  # type: ignore[import-untyped]  # noqa: F401
@@ -55,17 +52,15 @@ def _make_context(
     metadata: dict[str, Any] | None = None,
     input_text: str = "test prompt",
 ) -> ResponseContext:
-    durability = DurabilityContext(
-        entry_mode=entry_mode,  # type: ignore[arg-type]
-        retry_attempt=0 if entry_mode == "fresh" else 1,
-        was_steered=False,
-        pending_inputs=0,
-        metadata=metadata or {},
-    )
     context = MagicMock(spec=ResponseContext)
     context.response_id = response_id
-    context.durability = durability
-    context.cancellation_reason = None
+    context.is_recovery = entry_mode == "recovered"
+    context.is_steered_turn = False
+    context.pending_input_count = 0
+    context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.cancel = asyncio.Event()
+    context.shutdown = asyncio.Event()
+    context.client_cancelled = False
 
     async def _get_input_text() -> str:
         return input_text
@@ -84,9 +79,9 @@ def _make_request() -> CreateResponse:
     return CreateResponse(model="claude", input="test prompt")  # type: ignore[call-arg]
 
 
-async def _drive(handler_coro_fn, request, context, cancellation_signal) -> list[Any]:
+async def _drive(handler_coro_fn, request, context) -> list[Any]:
     events = []
-    async for event in handler_coro_fn(request, context, cancellation_signal):
+    async for event in handler_coro_fn(request, context):
         events.append(event)
     return events
 
@@ -164,7 +159,7 @@ class TestSample17FreshEntry:
             # Fresh session → get_session_messages returns nothing.
             with patch.object(mod, "get_session_messages", return_value=[]):
                 ctx = _make_context(response_id=IdGenerator.new_response_id())
-                events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+                events = await _drive(mod.handler, _make_request(), ctx)
 
         assert len(query_calls) == 1
         assert query_calls[0]["prompt"] == "test prompt"
@@ -191,7 +186,7 @@ class TestSample17RecoverySkipsWhenSessionHasOurInput:
                     entry_mode="recovered",
                     metadata={"claude_session_id": "original-session"},
                 )
-                await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+                await _drive(mod.handler, _make_request(), ctx)
 
         # No query — Claude already has our message.
         assert query_calls == []
@@ -216,7 +211,7 @@ class TestSample17RecoveryQueriesWhenSessionMissesOurInput:
                     entry_mode="recovered",
                     metadata={"claude_session_id": "original-session"},
                 )
-                await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+                await _drive(mod.handler, _make_request(), ctx)
 
         assert len(query_calls) == 1
         opts = query_calls[0]["options"]
@@ -240,7 +235,7 @@ class TestSample17NeverForks:
 @pytest.mark.asyncio
 class TestSample17NoWatermarkOrFlush:
     """Regression guard: the sample MUST NOT use a handler-managed watermark
-    or call durability.metadata.flush(). The upstream session is the source
+    or call context.durable_metadata.flush(). The upstream session is the source
     of truth; relying on metadata persistence ordering reintroduces the
     crash-window inconsistency.
     """
@@ -274,11 +269,11 @@ class TestSample17PreEntrySteeredPreservesInput:
         with patch.object(mod, "ClaudeSDKClient", stub_class):
             with patch.object(mod, "get_session_messages", return_value=[]):
                 ctx = _make_context(response_id=IdGenerator.new_response_id())
-                ctx.cancellation_reason = CancellationReason.STEERED
+                ctx.cancel.set()
                 signal = asyncio.Event()
                 signal.set()
 
-                events = await _drive(mod.handler, _make_request(), ctx, signal)
+                events = await _drive(mod.handler, _make_request(), ctx)
 
         assert len(query_calls) == 1
         assert query_calls[0]["prompt"] == "test prompt"
@@ -293,11 +288,13 @@ class TestSample17PreEntryNonSteeredCancelDoesNotTouchSDK:
         stub_class, query_calls = _make_claude_client_stub()
         with patch.object(mod, "ClaudeSDKClient", stub_class):
             ctx = _make_context(response_id=IdGenerator.new_response_id())
-            ctx.cancellation_reason = CancellationReason.CLIENT_CANCELLED
+            ctx.client_cancelled = True
+
+            ctx.cancel.set()
             signal = asyncio.Event()
             signal.set()
 
-            events = await _drive(mod.handler, _make_request(), ctx, signal)
+            events = await _drive(mod.handler, _make_request(), ctx)
 
         assert query_calls == []
         assert "response.completed" not in [_event_type(e) for e in events]
@@ -308,11 +305,13 @@ class TestSample17PreEntryNonSteeredCancelDoesNotTouchSDK:
         stub_class, query_calls = _make_claude_client_stub()
         with patch.object(mod, "ClaudeSDKClient", stub_class):
             ctx = _make_context(response_id=IdGenerator.new_response_id())
-            ctx.cancellation_reason = CancellationReason.SHUTTING_DOWN
+            ctx.shutdown.set()
+
+            ctx.cancel.set()
             signal = asyncio.Event()
             signal.set()
 
-            events = await _drive(mod.handler, _make_request(), ctx, signal)
+            events = await _drive(mod.handler, _make_request(), ctx)
 
         assert query_calls == []
         assert "response.completed" not in [_event_type(e) for e in events]

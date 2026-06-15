@@ -109,7 +109,6 @@ from copilot.generated.session_events import (  # type: ignore[import-untyped]
 from copilot.session import PermissionHandler  # type: ignore[import-untyped]
 
 from azure.ai.agentserver.responses import (
-    CancellationReason,
     CreateResponse,
     ResponseContext,
     ResponseEventStream,
@@ -135,15 +134,15 @@ _COPILOT_MODEL = os.environ.get("COPILOT_MODEL", "gpt-5-mini")
 async def _open_session(
     client: Any,
     session_id: str,
-    durability,
+    context: ResponseContext,
 ) -> Any:
     """Open the Copilot session — ``resume_session`` if it pre-existed.
 
     On a fresh turn we use ``create_session``; on crash recovery and on every
     subsequent steerable turn we use ``resume_session``, the SDK's explicit
-    reattach API. ``durability.is_recovery`` is True only when we are being
-    re-entered after a crash; ``durability.entry_mode == "resumed"`` is True
-    for steerable follow-up turns. Both routes attempt to reattach.
+    reattach API. ``context.is_recovery`` is True only when we are being
+    re-entered after a crash; ``context.is_steered_turn`` is True for
+    steerable follow-up turns. Both routes attempt to reattach.
 
     If ``resume_session`` raises "Session not found" (the upstream Copilot
     CLI was not given enough time to persist the session before the
@@ -162,7 +161,7 @@ async def _open_session(
     the SSE client sees the whole answer in a single delta dump instead of
     live characters.
     """
-    if durability.is_recovery or durability.entry_mode == "resumed":
+    if context.is_recovery or context.is_steered_turn:
         try:
             return await client.resume_session(
                 session_id,
@@ -306,13 +305,10 @@ def _build_resumption_response(
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Steerable Copilot SDK conversation."""
-    durability = context.durability
-
     # ── Recovery branch ─────────────────────────────────────────────
-    if durability.is_recovery:
+    if context.is_recovery:
         stream = ResponseEventStream(
             response_id=context.response_id,
             response=_build_resumption_response(context, request),
@@ -326,11 +322,11 @@ async def handler(
     # On a STEERED pre-entry we still send the user's input to Copilot so
     # it is preserved in conversation history. For other cancellation
     # reasons we just return without touching the SDK.
-    if cancellation_signal.is_set():
-        if context.cancellation_reason == CancellationReason.STEERED:
+    if context.cancel.is_set():
+        if (context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set()):
             session_id = context.conversation_chain_id
             async with CopilotClient() as client:
-                async with await _open_session(client, session_id, durability) as session:
+                async with await _open_session(client, session_id, context) as session:
                     await _send_input_if_not_in_session(session, context)
             yield stream.emit_completed()
         return
@@ -339,7 +335,7 @@ async def handler(
 
     shutdown_timer: asyncio.Task | None = None
     if _SIMULATE_SHUTDOWN_MS > 0:
-        shutdown_timer = asyncio.create_task(_simulate_shutdown(cancellation_signal, context))
+        shutdown_timer = asyncio.create_task(_simulate_shutdown(context))
 
     message = stream.add_output_item_message()
     yield message.emit_added()
@@ -386,7 +382,7 @@ async def handler(
 
     async with CopilotClient() as client:
         # Reattach on recovery (resume_session), create on fresh (create_session).
-        async with await _open_session(client, session_id, durability) as session:
+        async with await _open_session(client, session_id, context) as session:
             session.on(on_event)
 
             # ── Recovery replay ─────────────────────────────────────
@@ -396,7 +392,7 @@ async def handler(
             # response). Emit it as a single delta so the recovered
             # client sees the work that was already done before the
             # crash. Live deltas continue from here.
-            if durability.entry_mode in ("recovered", "resumed"):
+            if context.is_recovery or context.is_steered_turn:
                 user_input_text = await context.get_input_text()
                 replay = await _gather_accumulated_assistant_text(
                     session, user_input_text
@@ -417,7 +413,7 @@ async def handler(
             # poll with a short bounded timeout, then exit cleanly.
             wait_timeout = None if sent_this_attempt else 2.0
             while True:
-                if cancellation_signal.is_set():
+                if context.cancel.is_set():
                     await session.abort()
                     break
                 try:
@@ -444,18 +440,18 @@ async def handler(
     # Mid-stream shutdown: return without terminal so the framework
     # re-invokes us; the recovery branch reattaches the same session via
     # resume_session and the upstream-history check prevents re-sending.
-    if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:
+    if context.shutdown.is_set():
         return
 
     yield stream.emit_completed()
 
 
-async def _simulate_shutdown(cancellation_signal: asyncio.Event, context: ResponseContext) -> None:
+async def _simulate_shutdown(context: ResponseContext) -> None:
     """Fire SHUTTING_DOWN after a delay (local testing only)."""
     await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not cancellation_signal.is_set():
-        context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-        cancellation_signal.set()
+    if not context.cancel.is_set():
+        context.shutdown.set()
+        context.cancel.set()
 
 
 def main() -> None:

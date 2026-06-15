@@ -44,7 +44,6 @@ async def test_row_4_path_a(
     """
     harness = make_harness(
         durable_background=False,
-        store_disabled=False,
         handler_sleep_ms=50,
         shutdown_grace_seconds=LONG_GRACE_S,
     )

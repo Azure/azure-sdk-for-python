@@ -30,12 +30,7 @@ from azure.ai.agentserver.core.durable import (
     task,
 )
 
-from .._durability_context import (
-    DurabilityContext,
-    DurabilityEntryMode,
-)
 from .._options import ResponsesServerOptions
-from ..models.runtime import CancellationReason
 from ._task_id import derive_task_id
 
 if TYPE_CHECKING:
@@ -283,15 +278,16 @@ def _read_disposition(responses_ns: Any) -> str:
     return DISPOSITION_REINVOKE
 
 
-def _map_entry_mode(task_entry_mode: str) -> DurabilityEntryMode:
-    """Map task primitive entry_mode to DurabilityContext entry_mode.
+def _is_recovered_entry(task_entry_mode: str) -> bool:
+    """Return True when the task primitive is re-entering after a crash.
 
-    Task 'resumed' (new turn arriving) maps to 'fresh' for the handler —
-    from the handler developer's perspective, a resume is just a new turn.
+    (Spec 024 Phase 5 — Proposal #10) Task ``resumed`` (new turn
+    arriving) is NOT a recovery entry — from the handler developer's
+    perspective, a resume is just a new turn. Only ``recovered`` (the
+    task body re-entering after the previous lifetime crashed mid-run)
+    flips ``context.is_recovery``.
     """
-    if task_entry_mode == "recovered":
-        return "recovered"
-    return "fresh"  # "fresh" and "resumed" both → "fresh"
+    return task_entry_mode == "recovered"
 
 
 class DurableResponseOrchestrator:
@@ -303,7 +299,8 @@ class DurableResponseOrchestrator:
     non-durable path uses. This ensures:
     - Zero handler code changes (same create_fn, same ResponseContext)
     - Crash recovery via task primitive lease + re-entry
-    - DurabilityContext populated before handler invocation
+    - Recovery + steering classifiers flattened directly onto
+      :class:`ResponseContext` (spec 024 Phase 5 — Proposal #10/#13)
 
     :param create_fn: The handler factory (bound ``create_fn`` method).
     :param options: Server options (steerable, etc.).
@@ -461,11 +458,15 @@ class DurableResponseOrchestrator:
         """Execute the response pipeline inside the task body.
 
         This is the re-entrant function. On each entry:
-        1. Builds DurabilityContext from TaskContext
-        2. Attaches it to the ResponseContext
-        3. Delegates to _run_background_non_stream (existing pipeline)
-        4. Persists last_sequence_number to metadata
-        5. Suspends (task stays alive for next turn)
+        1. Flattens recovery + steering classifiers onto the response
+           context (spec 024 Phase 5 — Proposal #10/#13).
+        2. Bridges task primitive cancellation surface
+           (``ctx.cancel`` / ``ctx.shutdown``) onto the
+           response context's composing-cancellation surface
+           (``context.cancel`` / ``context.shutdown`` / no client_cancelled).
+        3. Delegates to _run_background_non_stream (existing pipeline).
+        4. Persists last_sequence_number to metadata.
+        5. Suspends (task stays alive for next turn).
         """
         # Import here to avoid circular imports
         from ._orchestrator import (
@@ -473,16 +474,15 @@ class DurableResponseOrchestrator:
         )  # pylint: disable=import-outside-toplevel
 
         params = ctx.input
-        entry_mode = _map_entry_mode(ctx.entry_mode)
-        is_recovery = entry_mode == "recovered"
+        is_recovery = _is_recovered_entry(ctx.entry_mode)
 
         # The _responses namespace holds all framework-internal state for
         # this conversation (response_id, background, disposition, etc.).
         # Per spec 015 FR-005, this namespace is reserved (the `_` prefix
-        # indicates framework-only). The handler-facing DurabilityContext
-        # rejects access to it; framework code (this orchestrator) uses
-        # the underlying TaskContext.metadata directly which has no such
-        # restriction.
+        # indicates framework-only). The handler-facing
+        # ``durable_metadata`` facade rejects access to it; framework
+        # code (this orchestrator) uses the underlying
+        # ``TaskContext.metadata`` directly which has no such restriction.
         responses_ns = ctx.metadata(_RESPONSES_NS)
 
         # Track response_id in framework metadata
@@ -565,29 +565,11 @@ class DurableResponseOrchestrator:
         # now executes inside the task body for all rows. SOT §6.5 (the
         # bookkeeping pre-registration pattern) is gone.
 
-        # Build DurabilityContext for the handler.
-        # Note: `last_snapshot` was intentionally removed — the response object is
-        # only persisted at `response.created` and at terminal events, so
-        # a between-states snapshot is never useful. Handlers build their
-        # resumption response from upstream framework state.
-        # Spec 016 FR-019 / FR-020 (US6): ctx.pending_inputs renamed to
-        # ctx.pending_input_count (already an int — no len() needed);
-        # ctx.was_steered renamed to ctx.is_steered_turn.
-        durability_ctx = DurabilityContext(
-            entry_mode=entry_mode,
-            retry_attempt=ctx.retry_attempt,
-            was_steered=ctx.is_steered_turn,
-            pending_inputs=ctx.pending_input_count,
-            metadata=ctx.metadata,
-        )
-
-        # The execution params contain everything _run_background_non_stream needs.
-        # The record and context are reconstructed from serialized state.
-        # For Phase 1, we pass the durability_ctx through the response_context
-        # which is already attached to the record.
+        # (Spec 024 Phase 5 — Proposal #10/#13) Flatten recovery +
+        # steering classifiers onto the handler-facing response context.
+        # The pre-Phase-5 ``DurabilityContext`` indirection is deleted;
+        # handlers read these fields directly off ``context``.
         context: ResponseContext | None = _ref("_context_ref")
-        if context is not None:
-            context._durability = durability_ctx  # pylint: disable=protected-access
 
         record: ResponseExecution | None = _ref("_record_ref")
         if record is None:
@@ -602,25 +584,53 @@ class DurableResponseOrchestrator:
                 runtime_options=self._options,
             )
             await self._runtime_state.add(record)
-            if context is not None:
-                context._durability = durability_ctx  # pylint: disable=protected-access
 
-        # Bridge task cancellation → response cancellation signal.
-        # We bridge BOTH ctx.cancel (steering / explicit cancel) and
-        # ctx.shutdown (graceful TaskManager shutdown) so handlers that
-        # listen on the response context's cancellation_signal are notified
-        # in either case. The bridge stamps the appropriate
-        # cancellation_reason so downstream policy (e.g., "leave in_progress
-        # for re-entry on shutdown") can route correctly.
+        if context is not None:
+            context.is_recovery = is_recovery
+            context.is_steered_turn = ctx.is_steered_turn
+            context.pending_input_count = ctx.pending_input_count
+            # Swap in the handler-facing metadata facade backed by the
+            # task primitive's metadata wrapper. The facade rejects keys
+            # starting with ``_`` so handlers cannot collide with the
+            # framework-reserved ``_responses`` namespace; framework
+            # code reaches that namespace via ``ctx.metadata`` directly.
+            from .._durability_context import (  # pylint: disable=import-outside-toplevel
+                _DeveloperMetadataFacade,
+            )
+
+            context.durable_metadata = _DeveloperMetadataFacade(ctx.metadata)
+            # (Spec 024 Phase 5 — Proposal #11) Expose the task context
+            # so ``context.exit_for_recovery()`` can delegate to the
+            # framework's recovery sentinel.
+            context._task_context = ctx  # pylint: disable=protected-access
+
+        # Bridge task cancellation → response cancellation surface.
+        # We bridge BOTH ``ctx.cancel`` (steering / explicit cancel) and
+        # ``ctx.shutdown`` (graceful TaskManager shutdown) so handlers
+        # listening on either ``context.cancel`` or ``context.shutdown``
+        # are notified appropriately. Cause mapping:
+        #
+        # - ``ctx.shutdown`` fires → ``context.shutdown.set()`` (no
+        #   client_cancelled flip; framework-driven shutdown).
+        # - ``ctx.cancel`` fires from steering pressure →
+        #   ``context.cancel.set()`` with NO cause boolean
+        #   (handlers see only the wake-up; matches task primitive
+        #   contract where steering pressure has no named cause).
+        # - ``ctx.cancel`` fires from an explicit /cancel API call or
+        #   from non-bg POST disconnect — those mutate
+        #   ``context.client_cancelled`` at the HTTP boundary, BEFORE
+        #   propagating through ``ctx.cancel`` here. The bridge below
+        #   does NOT clobber an existing ``client_cancelled=True``.
         cancellation_signal: asyncio.Event = _ref("_cancel_ref") or asyncio.Event()
         cancel_bridge: asyncio.Task[None] | None = None
-        if ctx.cancel.is_set():
-            if context is not None and context.cancellation_reason is None:
-                context.cancellation_reason = CancellationReason.STEERED
+        if ctx.shutdown.is_set():
+            if context is not None:
+                context.shutdown.set()
+                context.cancel.set()
             cancellation_signal.set()
-        elif ctx.shutdown.is_set():
-            if context is not None and context.cancellation_reason is None:
-                context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+        elif ctx.cancel.is_set():
+            if context is not None:
+                context.cancel.set()
             cancellation_signal.set()
         else:
 
@@ -633,14 +643,15 @@ class DurableResponseOrchestrator:
                         {cancel_task, shutdown_task},
                         return_when=asyncio.FIRST_COMPLETED,
                     )
-                    for task in pending:
-                        task.cancel()
+                    for t in pending:
+                        t.cancel()
                     if shutdown_task in done and cancel_task not in done:
-                        reason = CancellationReason.SHUTTING_DOWN
+                        if context is not None:
+                            context.shutdown.set()
+                            context.cancel.set()
                     else:
-                        reason = CancellationReason.STEERED
-                    if context is not None and context.cancellation_reason is None:
-                        context.cancellation_reason = reason
+                        if context is not None:
+                            context.cancel.set()
                     cancellation_signal.set()
                 except asyncio.CancelledError:
                     cancel_task.cancel()

@@ -9,7 +9,9 @@ steering, client cancel, and shutdown interleave with crash recovery.
 Differences from ``sample_19``:
 
 - ``steerable_conversations=True`` — each new turn supersedes the prior
-  one; the prior turn's handler observes ``cancellation_reason=STEERED``.
+  one; the prior turn's handler observes ``context.cancel.is_set()``
+  with no cause flag (steering pressure — neither ``client_cancelled``
+  nor ``shutdown.is_set()`` is set).
 - A single message item per turn (no phases). Recovery within a turn
   doesn't try to checkpoint partial token output — the resumption
   response is empty and the recovered attempt re-streams from scratch.
@@ -25,7 +27,7 @@ What this sample demonstrates:
   ``emit_completed`` with partial content).
 - Mid-stream shutdown returns without terminal — recovery re-runs the
   turn from scratch.
-- ``durability.is_recovery`` branch produces an empty resumption response
+- ``context.is_recovery`` branch produces an empty resumption response
   that signals the client to reset.
 - Cross-turn state via ``turn_count`` survives crashes.
 
@@ -58,7 +60,6 @@ import asyncio
 import os
 
 from azure.ai.agentserver.responses import (
-    CancellationReason,
     CreateResponse,
     ResponseContext,
     ResponseEventStream,
@@ -111,13 +112,10 @@ def _build_resumption_response(
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Steerable durable handler with cancellation × recovery composition."""
-    durability = context.durability
-
     # ── Recovery branch ─────────────────────────────────────────────
-    if durability.is_recovery:
+    if context.is_recovery:
         stream = ResponseEventStream(
             response_id=context.response_id,
             response=_build_resumption_response(context, request),
@@ -130,22 +128,22 @@ async def handler(
     # ── Pre-entry cancellation check ────────
     # Signal pre-set on entry — this happens when a newer turn was
     # already queued before we even started.
-    if cancellation_signal.is_set():
-        if context.cancellation_reason == CancellationReason.STEERED:
+    if context.cancel.is_set():
+        if (context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set()):
             yield stream.emit_completed()
         return
 
     yield stream.emit_in_progress()
 
     # Cross-turn state: bump the turn counter. This survives crashes
-    # and turn boundaries since it lives in `durability.metadata`.
-    turn_count = int(durability.metadata.get("turn_count", 0)) + 1
-    durability.metadata["turn_count"] = turn_count
+    # and turn boundaries since it lives in `context.durable_metadata`.
+    turn_count = int(context.durable_metadata.get("turn_count", 0)) + 1
+    context.durable_metadata["turn_count"] = turn_count
 
     # Optional local shutdown simulation.
     shutdown_timer: asyncio.Task | None = None
     if _SIMULATE_SHUTDOWN_MS > 0:
-        shutdown_timer = asyncio.create_task(_simulate_shutdown(cancellation_signal, context))
+        shutdown_timer = asyncio.create_task(_simulate_shutdown(context))
 
     message = stream.add_output_item_message()
     yield message.emit_added()
@@ -157,7 +155,7 @@ async def handler(
 
     # ── Mid-stream cancellation check ──────
     async for token in _simulate_llm_stream(input_text):
-        if cancellation_signal.is_set():
+        if context.cancel.is_set():
             break
         accumulated += token
         yield text.emit_delta(token)
@@ -175,7 +173,7 @@ async def handler(
     # ── Post-stream cancellation check ────────────
     # Shutdown mid-stream: return without terminal so the framework
     # re-invokes us; recovery branch above re-streams from scratch.
-    if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:
+    if context.shutdown.is_set():
         return
 
     # All other cases (steered, client-cancelled, normal completion):
@@ -184,12 +182,12 @@ async def handler(
     yield stream.emit_completed()
 
 
-async def _simulate_shutdown(cancellation_signal: asyncio.Event, context: ResponseContext) -> None:
+async def _simulate_shutdown(context: ResponseContext) -> None:
     """Fire SHUTTING_DOWN after a delay (local testing only)."""
     await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not cancellation_signal.is_set():
-        context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-        cancellation_signal.set()
+    if not context.cancel.is_set():
+        context.shutdown.set()
+        context.cancel.set()
 
 
 def main() -> None:

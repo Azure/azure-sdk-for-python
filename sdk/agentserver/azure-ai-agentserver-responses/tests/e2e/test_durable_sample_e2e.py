@@ -24,7 +24,6 @@ import pytest
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import (
-    CancellationReason,
     CreateResponse,
     ResponseContext,
     ResponseEventStream,
@@ -68,7 +67,7 @@ def _make_sample17_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    async def handler(request: CreateResponse, context: ResponseContext):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         input_text = await context.get_input_text()
 
@@ -76,7 +75,7 @@ def _make_sample17_app() -> TestClient:
 
         # Pre-entry: steered away → return without terminal
         # (In real sample, sends message to Claude SDK first to preserve context)
-        if cancellation_signal.is_set():
+        if context.cancel.is_set():
             return
 
         yield stream.emit_in_progress()
@@ -88,7 +87,7 @@ def _make_sample17_app() -> TestClient:
 
         # Simulates ClaudeSDKClient streaming
         for word in f"Claude says: {input_text}".split():
-            if cancellation_signal.is_set():
+            if context.cancel.is_set():
                 break
             yield text.emit_delta(word + " ")
             await asyncio.sleep(0.01)
@@ -97,10 +96,9 @@ def _make_sample17_app() -> TestClient:
         yield text.emit_done()
         yield message.emit_done()
 
-        match context.cancellation_reason:
-            case CancellationReason.SHUTTING_DOWN:
-                return
-            case _:
+        if context.shutdown.is_set():
+            return
+        else:
                 yield stream.emit_completed()
 
     return TestClient(app)
@@ -144,7 +142,7 @@ def _make_sample18_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    async def handler(request: CreateResponse, context: ResponseContext):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         input_text = await context.get_input_text()
 
@@ -152,7 +150,7 @@ def _make_sample18_app() -> TestClient:
 
         # Pre-entry: steered away → return without terminal
         # (In real sample, sends message to Copilot SDK then aborts)
-        if cancellation_signal.is_set():
+        if context.cancel.is_set():
             return
 
         yield stream.emit_in_progress()
@@ -164,7 +162,7 @@ def _make_sample18_app() -> TestClient:
 
         # Simulates CopilotClient event-driven streaming
         for word in f"Copilot response to: {input_text}".split():
-            if cancellation_signal.is_set():
+            if context.cancel.is_set():
                 break
             yield text.emit_delta(word + " ")
             await asyncio.sleep(0.01)
@@ -173,10 +171,9 @@ def _make_sample18_app() -> TestClient:
         yield text.emit_done()
         yield message.emit_done()
 
-        match context.cancellation_reason:
-            case CancellationReason.SHUTTING_DOWN:
-                return
-            case _:
+        if context.shutdown.is_set():
+            return
+        else:
                 yield stream.emit_completed()
 
     return TestClient(app)
@@ -217,12 +214,12 @@ def _make_sample19_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    async def handler(request: CreateResponse, context: ResponseContext):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         yield stream.emit_created()
 
         # Pre-entry: return without terminal
-        if cancellation_signal.is_set():
+        if context.cancel.is_set():
             return
 
         yield stream.emit_in_progress()
@@ -234,7 +231,7 @@ def _make_sample19_app() -> TestClient:
 
         input_text = await context.get_input_text()
         for word in f"Response to: {input_text}".split():
-            if cancellation_signal.is_set():
+            if context.cancel.is_set():
                 break
             yield text.emit_delta(word + " ")
             await asyncio.sleep(0.01)
@@ -243,10 +240,9 @@ def _make_sample19_app() -> TestClient:
         yield text.emit_done()
         yield message.emit_done()
 
-        match context.cancellation_reason:
-            case CancellationReason.SHUTTING_DOWN:
-                return
-            case _:
+        if context.shutdown.is_set():
+            return
+        else:
                 yield stream.emit_completed()
 
     return TestClient(app)
@@ -287,13 +283,13 @@ def _make_sample20_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    async def handler(request: CreateResponse, context: ResponseContext):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         input_text = await context.get_input_text()
 
         yield stream.emit_created()
 
-        if cancellation_signal.is_set():
+        if context.cancel.is_set():
             return
 
         yield stream.emit_in_progress()
@@ -304,7 +300,7 @@ def _make_sample20_app() -> TestClient:
         yield text.emit_added()
 
         for word in f"Explaining {input_text} in detail".split():
-            if cancellation_signal.is_set():
+            if context.cancel.is_set():
                 break
             yield text.emit_delta(word + " ")
             await asyncio.sleep(0.05)
@@ -313,10 +309,9 @@ def _make_sample20_app() -> TestClient:
         yield text.emit_done()
         yield message.emit_done()
 
-        match context.cancellation_reason:
-            case CancellationReason.SHUTTING_DOWN:
-                return
-            case _:
+        if context.shutdown.is_set():
+            return
+        else:
                 yield stream.emit_completed()
 
     return TestClient(app)
@@ -374,14 +369,13 @@ class TestSample20DurableSteering:
 
         @app_local.response_handler
         async def shutdown_handler(
-            request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
-        ):
+            request: CreateResponse, context: ResponseContext):
             stream = ResponseEventStream(response_id=context.response_id, request=request)
             input_text = await context.get_input_text()
 
             yield stream.emit_created()
 
-            if cancellation_signal.is_set():
+            if context.cancel.is_set():
                 return
 
             yield stream.emit_in_progress()
@@ -389,8 +383,10 @@ class TestSample20DurableSteering:
             # Schedule simulated shutdown after very short delay
             async def fire_shutdown():
                 await asyncio.sleep(0.02)
-                context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-                cancellation_signal.set()
+                context.shutdown.set()
+
+                context.cancel.set()
+                context.cancel.set()
 
             asyncio.create_task(fire_shutdown())
 
@@ -400,7 +396,7 @@ class TestSample20DurableSteering:
             yield text.emit_added()
 
             for word in f"Explaining {input_text} in great detail with many words".split():
-                if cancellation_signal.is_set():
+                if context.cancel.is_set():
                     break
                 yield text.emit_delta(word + " ")
                 await asyncio.sleep(0.05)
@@ -409,12 +405,11 @@ class TestSample20DurableSteering:
             yield text.emit_done()
             yield message.emit_done()
 
-            match context.cancellation_reason:
-                case CancellationReason.SHUTTING_DOWN:
-                    shutdown_detected["fired"] = True
-                    return
-                case _:
-                    yield stream.emit_completed()
+            if context.shutdown.is_set():
+                shutdown_detected["fired"] = True
+                return
+            else:
+                yield stream.emit_completed()
 
         client = TestClient(app_local)
         payload = {"model": "m", "input": "quantum", "stream": True, "store": True, "background": True}
@@ -439,16 +434,15 @@ def _make_sample22_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    async def handler(request: CreateResponse, context: ResponseContext):
         input_text = await context.get_input_text()
-        durability = context.durability
-        turn_count = durability.metadata.get("turn_count", 0) + 1
+        turn_count = context.durable_metadata.get("turn_count", 0) + 1
         if input_text.strip().lower() == "done":
-            durability.metadata.clear()
+            context.durable_metadata.clear()
             return TextResponse(context, request, text=f"Done! Session complete after {turn_count - 1} turns.")
         history_items = await context.get_history()
         reply = f"Turn {turn_count}: '{input_text}', context={len(history_items)} items"
-        durability.metadata["turn_count"] = turn_count
+        context.durable_metadata["turn_count"] = turn_count
         return TextResponse(context, request, text=reply)
 
     return TestClient(app)

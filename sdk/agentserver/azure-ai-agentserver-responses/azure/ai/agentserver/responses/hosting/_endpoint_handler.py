@@ -51,7 +51,6 @@ from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
 from ..models.runtime import (
-    CancellationReason,
     ResponseExecution,
     ResponseModeFlags,
     build_cancelled_response,
@@ -353,13 +352,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         or when the server is shutting down.
 
         Client disconnect on a foreground request is treated as an explicit
-        cancellation (CLIENT_CANCELLED) since the client abandoned the request.
+        client cancellation — stamps ``context.client_cancelled = True``
+        (spec 024 Phase 5 — Proposal #11).
 
         :param request: The Starlette request to monitor.
         :type request: Request
-        :param cancellation_signal: Event to set when disconnect is detected.
+        :param cancellation_signal: Event to set when disconnect is detected
+            (aliased to ``context.cancel`` so handlers observing the
+            ``context.cancel`` event see the same wake-up).
         :type cancellation_signal: asyncio.Event
-        :param context: Optional response context to stamp cancellation reason.
+        :param context: Optional response context to stamp cancellation cause.
         :type context: ResponseContext | None
         """
         # Create a task that resolves when _shutdown_requested fires.
@@ -368,21 +370,22 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         try:
             while not cancellation_signal.is_set():
                 if self._shutdown_requested.is_set():
-                    if context is not None and context.cancellation_reason is None:
-                        context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                    if context is not None:
+                        context.shutdown.set()
                     cancellation_signal.set()
                     return
                 if await request.is_disconnected():
                     # Client disconnect on foreground. If shutdown is also
-                    # in progress, prefer SHUTTING_DOWN — the disconnect
-                    # is a side effect of server shutdown (Hypercorn
-                    # closing connections during graceful drain), not an
-                    # independent client action. (Spec 014 Row 3 Path B.)
-                    if context is not None and context.cancellation_reason is None:
+                    # in progress, prefer SHUTTING_DOWN cause — the
+                    # disconnect is a side effect of server shutdown
+                    # (Hypercorn closing connections during graceful
+                    # drain), not an independent client action. (Spec 014
+                    # Row 3 Path B / spec 024 Proposal #11.)
+                    if context is not None:
                         if self._shutdown_requested.is_set():
-                            context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                            context.shutdown.set()
                         else:
-                            context.cancellation_reason = CancellationReason.CLIENT_CANCELLED
+                            context.client_cancelled = True
                     cancellation_signal.set()
                     return
                 # Race: either shutdown fires or we poll again for disconnect
@@ -394,8 +397,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 if poll_task not in done:
                     poll_task.cancel()
                 if shutdown_waiter in done:
-                    if context is not None and context.cancellation_reason is None:
-                        context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                    if context is not None:
+                        context.shutdown.set()
                     cancellation_signal.set()
                     return
         finally:
@@ -519,8 +522,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             ),
             prefetched_history_ids=ctx.prefetched_history_ids,
         )
+        # (Spec 024 Phase 5 — Proposal #11) Alias the execution-context
+        # cancellation_signal with the handler-facing ``context.cancel``
+        # so any framework component that observes either Event sees the
+        # same wake-up. The disconnect monitor still sets the alias via
+        # ``cancellation_signal.set()``; that propagates to handlers
+        # awaiting ``context.cancel``.
+        context.cancel = ctx.cancellation_signal
         if self._shutdown_requested.is_set():
-            context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+            context.shutdown.set()
+            context.cancel.set()
         return context
 
     async def _prefetch_history_ids(
@@ -729,18 +740,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                                 yield chunk
                         except (asyncio.CancelledError, GeneratorExit):
                             # B17: Hypercorn cancels the generator when client
-                            # disconnects. Stamp CLIENT_CANCELLED and signal
+                            # disconnects. Stamp client_cancelled and signal
                             # the handler to exit gracefully — UNLESS the
                             # server is shutting down, in which case the
                             # cancellation is a side effect of server
-                            # shutdown and SHUTTING_DOWN is the correct
-                            # reason (Spec 014 Row 3 Path B).
+                            # shutdown and ``shutdown.set()`` is the correct
+                            # cause (Spec 014 Row 3 Path B / spec 024
+                            # Proposal #11).
                             if not ctx.cancellation_signal.is_set():
-                                if ctx.context and ctx.context.cancellation_reason is None:
+                                if ctx.context is not None:
                                     if self._shutdown_requested.is_set():
-                                        ctx.context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                                        ctx.context.shutdown.set()
                                     else:
-                                        ctx.context.cancellation_reason = CancellationReason.CLIENT_CANCELLED
+                                        ctx.context.client_cancelled = True
                                 ctx.cancellation_signal.set()
                             raise
                         finally:
@@ -1475,8 +1487,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # B11: initiate cancellation winddown
         record.cancel_requested = True
-        if record.response_context is not None and record.response_context.cancellation_reason is None:
-            record.response_context.cancellation_reason = CancellationReason.CLIENT_CANCELLED
+        if record.response_context is not None:
+            # (Spec 024 Phase 5 — Proposal #11) Stamp client_cancelled
+            # and set the cancel event; the handler observes the cause
+            # via ``context.client_cancelled`` after waking on
+            # ``context.cancel``.
+            record.response_context.client_cancelled = True
+            record.response_context.cancel.set()
         record.cancel_signal.set()
 
         # Wait for handler task to finish (up to 10s grace period).
@@ -1699,8 +1716,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         records = await self._runtime_state.list_records()
         for record in records:
             if record.response_context is not None:
-                if record.response_context.cancellation_reason is None:
-                    record.response_context.cancellation_reason = CancellationReason.SHUTTING_DOWN
+                # (Spec 024 Phase 5 — Proposal #11) Set the composing
+                # shutdown surface (sets both ``shutdown`` cause flag and
+                # the ``cancel`` event so handlers awaiting either wake up).
+                record.response_context.shutdown.set()
+                record.response_context.cancel.set()
 
             record.cancel_signal.set()
 

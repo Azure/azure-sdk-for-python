@@ -1,21 +1,34 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""DurabilityContext — recovery-awareness state exposed to response handlers.
+"""Internal metadata facade for response handler context.
 
-Per spec 015 FR-040 / FR-005, the handler-facing metadata wrapper rejects
-any key (or named-namespace name) starting with ``_`` so that response
-handlers cannot accidentally collide with framework-reserved namespaces
-(e.g. ``_responses``). The framework layer reaches those namespaces via
-the underlying :class:`~azure.ai.agentserver.core.durable.TaskContext`
-directly — the primitive itself does not enforce the convention.
+(Spec 024 Phase 5 — Proposal #10 + #13) The pre-Phase-5
+``DurabilityContext`` class is DELETED. Its fields are flattened into
+top-level :class:`ResponseContext` attributes (``is_recovery``,
+``is_steered_turn``, ``pending_input_count``, ``durable_metadata``).
+The ``DurabilityEntryMode`` Literal alias and the ``retry_attempt``
+field are also deleted (Proposal #12 / #13).
+
+What survives in this module:
+
+- :class:`_DeveloperMetadataFacade` — the internal wrapper that rejects
+  keys / namespaces starting with ``_`` (framework-internal).
+  Implements the public :class:`DurableMetadataNamespace` Protocol
+  exported from :mod:`azure.ai.agentserver.responses._response_context`.
+
+Per spec 015 FR-040 / FR-005, the handler-facing metadata wrapper
+rejects any key (or named-namespace name) starting with ``_`` so that
+response handlers cannot accidentally collide with framework-reserved
+namespaces (e.g. ``_responses``). The framework layer reaches those
+namespaces via the underlying
+:class:`~azure.ai.agentserver.core.durable.TaskContext` directly — the
+primitive itself does not enforce the convention.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterator, MutableMapping
-from typing import Any, Literal, Optional
-
-DurabilityEntryMode = Literal["fresh", "recovered"]
+from typing import Any, Optional
 
 
 class _DeveloperMetadataFacade(MutableMapping[str, Any]):
@@ -27,6 +40,8 @@ class _DeveloperMetadataFacade(MutableMapping[str, Any]):
     that need to write into reserved namespaces (e.g. ``_responses``)
     must use the underlying ``TaskContext.metadata`` directly — they do
     NOT go through this wrapper.
+
+    Satisfies the public :class:`DurableMetadataNamespace` Protocol.
     """
 
     def __init__(self, raw: Any, _namespaces: Optional[dict[str, Any]] = None) -> None:
@@ -78,8 +93,8 @@ class _DeveloperMetadataFacade(MutableMapping[str, Any]):
     def __call__(self, name: Optional[str] = None) -> "_DeveloperMetadataFacade":
         """Return a sibling namespace facade.
 
-        ``ctx.metadata`` accesses the default (unnamed) namespace.
-        ``ctx.metadata(name)`` accesses a named namespace.
+        ``ctx.durable_metadata`` accesses the default (unnamed) namespace.
+        ``ctx.durable_metadata(name)`` accesses a named namespace.
 
         :raises ValueError: If ``name`` starts with ``_`` (reserved).
         """
@@ -116,97 +131,3 @@ class _DeveloperMetadataFacade(MutableMapping[str, Any]):
             result = flush()
             if asyncio.iscoroutine(result):
                 await result
-
-
-class DurabilityContext:
-    """Recovery-awareness context exposed to response handlers.
-
-    All properties are read-only except :attr:`metadata`, which is a
-    mutable mapping (also callable for named namespaces) for
-    developer-controlled checkpointing.
-
-    :param entry_mode: How the handler was entered — ``"fresh"`` for
-        normal invocation or ``"recovered"`` after a crash.
-    :param retry_attempt: Retry attempt counter — durable across crash
-        recovery. Resets to 0 on a successful invocation chain; increments
-        only on retryable failures.
-    :param was_steered: Whether this invocation resulted from steering.
-    :param pending_inputs: Number of queued steering inputs after this one.
-    :param metadata: Developer-accessible checkpoint store. Use
-        ``ctx.metadata`` for the default namespace or
-        ``ctx.metadata(name)`` for a named namespace.
-    """
-
-    __slots__ = (
-        "_entry_mode",
-        "_retry_attempt",
-        "_was_steered",
-        "_pending_inputs",
-        "_metadata",
-    )
-
-    def __init__(
-        self,
-        *,
-        entry_mode: DurabilityEntryMode,
-        retry_attempt: int,
-        was_steered: bool,
-        pending_inputs: int,
-        metadata: Any,
-    ) -> None:
-        self._entry_mode = entry_mode
-        self._retry_attempt = retry_attempt
-        self._was_steered = was_steered
-        self._pending_inputs = pending_inputs
-        self._metadata = (
-            metadata if isinstance(metadata, _DeveloperMetadataFacade) else _DeveloperMetadataFacade(metadata)
-        )
-
-    @property
-    def entry_mode(self) -> DurabilityEntryMode:
-        """How the handler was entered: ``'fresh'`` or ``'recovered'``."""
-        return self._entry_mode
-
-    @property
-    def is_recovery(self) -> bool:
-        """Convenience: True when this is a recovered re-invocation after a crash.
-
-        Equivalent to ``entry_mode == "recovered"``.
-        """
-        return self._entry_mode == "recovered"
-
-    @property
-    def retry_attempt(self) -> int:
-        """Retry attempt counter — durable across crash recovery.
-
-        Resets to 0 on a successful invocation; increments only when the
-        handler is re-invoked due to a retryable failure. The value is
-        persisted to the task store at lifecycle boundaries, so it is
-        stable across both in-process retries and post-crash recovery.
-
-        Per spec 015 FR-001/FR-002, this counter unifies the previous
-        ``run_attempt`` (per-process) and the cross-lifetime intent: the
-        framework now tracks a single durable retry count.
-        """
-        return self._retry_attempt
-
-    @property
-    def was_steered(self) -> bool:
-        """Whether this invocation was triggered by a steering input."""
-        return self._was_steered
-
-    @property
-    def pending_inputs(self) -> int:
-        """Number of queued steering inputs remaining after this one."""
-        return self._pending_inputs
-
-    @property
-    def metadata(self) -> _DeveloperMetadataFacade:
-        """Developer-accessible checkpoint store.
-
-        Use ``ctx.metadata["key"] = value`` for the default namespace, or
-        ``ctx.metadata("my_namespace")["key"] = value`` for a named
-        namespace. Keys (and namespace names) starting with ``_`` are
-        rejected — those are reserved for framework-internal layers.
-        """
-        return self._metadata

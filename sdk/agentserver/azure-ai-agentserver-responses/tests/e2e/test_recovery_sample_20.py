@@ -24,14 +24,11 @@ from unittest.mock import MagicMock
 import pytest
 
 from azure.ai.agentserver.responses import (
-    CancellationReason,
     CreateResponse,
     ResponseContext,
 )
-from azure.ai.agentserver.responses._durability_context import (
-    DurabilityContext,
-)
 from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
 
 
 def _make_context(
@@ -40,17 +37,15 @@ def _make_context(
     entry_mode: str = "fresh",
     metadata: dict[str, Any] | None = None,
 ) -> ResponseContext:
-    durability = DurabilityContext(
-        entry_mode=entry_mode,  # type: ignore[arg-type]
-        retry_attempt=0 if entry_mode == "fresh" else 1,
-        was_steered=False,
-        pending_inputs=0,
-        metadata=metadata or {},
-    )
     context = MagicMock(spec=ResponseContext)
     context.response_id = response_id
-    context.durability = durability
-    context.cancellation_reason = None
+    context.is_recovery = entry_mode == "recovered"
+    context.is_steered_turn = False
+    context.pending_input_count = 0
+    context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.cancel = asyncio.Event()
+    context.shutdown = asyncio.Event()
+    context.client_cancelled = False
 
     async def _get_input_text() -> str:
         return "test prompt"
@@ -63,9 +58,9 @@ def _make_request() -> CreateResponse:
     return CreateResponse(model="test-model", input="test prompt")  # type: ignore[call-arg]
 
 
-async def _drive(handler_coro_fn, request, context, cancellation_signal) -> list[Any]:
+async def _drive(handler_coro_fn, request, context) -> list[Any]:
     events = []
-    async for event in handler_coro_fn(request, context, cancellation_signal):
+    async for event in handler_coro_fn(request, context):
         events.append(event)
     return events
 
@@ -80,7 +75,7 @@ class TestSample20FreshEntry:
         from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
-        events = await _drive(handler, _make_request(), ctx, asyncio.Event())
+        events = await _drive(handler, _make_request(), ctx)
         types = [_event_type(e) for e in events]
 
         assert "response.created" in types
@@ -88,7 +83,7 @@ class TestSample20FreshEntry:
         assert "response.completed" in types
         assert types.count("response.output_item.added") == 1
         assert types.count("response.output_item.done") == 1
-        assert ctx.durability.metadata.get("turn_count") == 1
+        assert ctx.durable_metadata.get("turn_count") == 1
 
 
 @pytest.mark.asyncio
@@ -104,7 +99,7 @@ class TestSample20Recovery:
             entry_mode="recovered",
             metadata={"turn_count": 1},
         )
-        events = await _drive(handler, _make_request(), ctx, asyncio.Event())
+        events = await _drive(handler, _make_request(), ctx)
 
         # in_progress carries an empty resumption response (single-turn
         # handler can't safely carry partial token output forward).
@@ -116,7 +111,7 @@ class TestSample20Recovery:
         # The recovered attempt re-streams a single message item fresh.
         assert sum(1 for e in events if _event_type(e) == "response.output_item.added") == 1
         # turn_count incremented from carry-over watermark.
-        assert ctx.durability.metadata.get("turn_count") == 2
+        assert ctx.durable_metadata.get("turn_count") == 2
 
 
 @pytest.mark.asyncio
@@ -125,11 +120,11 @@ class TestSample20PreEntryCancellation:
         from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
-        ctx.cancellation_reason = CancellationReason.STEERED
+        ctx.cancel.set()
         signal = asyncio.Event()
         signal.set()
 
-        events = await _drive(handler, _make_request(), ctx, signal)
+        events = await _drive(handler, _make_request(), ctx)
         types = [_event_type(e) for e in events]
         assert "response.created" in types
         assert "response.completed" in types
@@ -139,11 +134,13 @@ class TestSample20PreEntryCancellation:
         from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
-        ctx.cancellation_reason = CancellationReason.CLIENT_CANCELLED
+        ctx.client_cancelled = True
+
+        ctx.cancel.set()
         signal = asyncio.Event()
         signal.set()
 
-        events = await _drive(handler, _make_request(), ctx, signal)
+        events = await _drive(handler, _make_request(), ctx)
         types = [_event_type(e) for e in events]
         # Only `created` is emitted; no terminal — framework forces cancelled.
         assert types == ["response.created"]
@@ -155,11 +152,13 @@ class TestSample20Shutdown:
         from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
-        ctx.cancellation_reason = CancellationReason.SHUTTING_DOWN
+        ctx.shutdown.set()
+
+        ctx.cancel.set()
         signal = asyncio.Event()
         signal.set()
 
-        events = await _drive(handler, _make_request(), ctx, signal)
+        events = await _drive(handler, _make_request(), ctx)
         types = [_event_type(e) for e in events]
         # Only `created` — handler returns silently to allow re-invocation.
         assert types == ["response.created"]

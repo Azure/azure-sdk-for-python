@@ -32,23 +32,22 @@ def _make_graph_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
+    async def handler(request: CreateResponse, context: ResponseContext):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
-        durability = context.durability
-        completed = durability.metadata.get("completed_nodes", [])
+        completed = context.durable_metadata.get("completed_nodes", [])
         start_node = len(completed)
 
         yield stream.emit_created()
         yield stream.emit_in_progress()
 
         for i in range(start_node, len(GRAPH_NODES)):
-            if cancel.is_set():
+            if context.cancel.is_set():
                 break
             for event in stream.output_item_message(f"[{GRAPH_NODES[i]}] done. "):
                 yield event
-            completed = durability.metadata.get("completed_nodes", [])
+            completed = context.durable_metadata.get("completed_nodes", [])
             completed.append(GRAPH_NODES[i])
-            durability.metadata["completed_nodes"] = completed
+            context.durable_metadata["completed_nodes"] = completed
 
         yield stream.emit_completed()
 

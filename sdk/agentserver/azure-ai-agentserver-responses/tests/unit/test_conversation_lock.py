@@ -22,7 +22,7 @@ from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
     DurableResponseOrchestrator,
     _RESPONSES_NS,
     _RESP_BACKGROUND,
-    _map_entry_mode,
+    _is_recovered_entry,
 )
 
 

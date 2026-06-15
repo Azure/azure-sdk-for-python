@@ -9,7 +9,7 @@ lifting; the response handler is just the bridge.
 
 This sample implements the recovery contract:
 
-- ``durability.metadata`` only stores a small ``stable_checkpoint_id``
+- ``context.durable_metadata`` only stores a small ``stable_checkpoint_id``
   watermark — the last graph checkpoint where the handler successfully
   emitted an AI reply.
 - On recovered entry, the handler queries the graph's current state,
@@ -68,7 +68,6 @@ from langgraph.graph import END, START, StateGraph, add_messages
 from langgraph.types import Command, interrupt
 
 from azure.ai.agentserver.responses import (
-    CancellationReason,
     CreateResponse,
     ResponseContext,
     ResponseEventStream,
@@ -271,10 +270,8 @@ def _build_resumption_response(
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """LangGraph with SqliteSaver checkpoints + recovery contract."""
-    durability = context.durability
     input_text = await context.get_input_text()
 
     thread_id = context.conversation_id or context.response_id
@@ -285,7 +282,7 @@ async def handler(
     # built from the graph's current state (the upstream framework's
     # source of truth). The recovery `response.in_progress` emitted
     # below is the client-visible reset point.
-    if durability.is_recovery:
+    if context.is_recovery:
         resp_stream = ResponseEventStream(
             response_id=context.response_id,
             response=_build_resumption_response(context, request, thread_config),
@@ -300,13 +297,13 @@ async def handler(
     # ── Phase 1: Pre-entry cancel ───────────────────────────────────
     # Still inject the message into graph state so next turn has context.
     # Only emit completed for steering. Others: just return.
-    if cancellation_signal.is_set():
-        stable_cp = durability.metadata.get("stable_checkpoint_id")
+    if context.cancel.is_set():
+        stable_cp = context.durable_metadata.get("stable_checkpoint_id")
         if stable_cp:
             await asyncio.to_thread(
                 _fork_from_checkpoint, _graph, thread_config, stable_cp, input_text
             )
-        if context.cancellation_reason == CancellationReason.STEERED:
+        if (context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set()):
             yield resp_stream.emit_completed()
         return
 
@@ -315,21 +312,21 @@ async def handler(
     # Shutdown simulation
     shutdown_timer: asyncio.Task | None = None
     if _SIMULATE_SHUTDOWN_MS > 0:
-        shutdown_timer = asyncio.create_task(_simulate_shutdown(cancellation_signal, context))
+        shutdown_timer = asyncio.create_task(_simulate_shutdown(context))
 
     # ── Fork-on-steer (fresh-entry only) ────────────────────────────
     # If this turn is the *successor* of a steered turn AND there is a
     # stable checkpoint to fork from, branch the graph to that point
     # with the new message. Skip on a recovered entry — we never want to
     # re-fork on recovery; the SqliteSaver state IS the source of truth.
-    stable_cp = durability.metadata.get("stable_checkpoint_id")
-    if not durability.is_recovery and stable_cp and durability.was_steered:
+    stable_cp = context.durable_metadata.get("stable_checkpoint_id")
+    if not context.is_recovery and stable_cp and context.is_steered_turn:
         forked = await asyncio.to_thread(
             _fork_from_checkpoint, _graph, thread_config, stable_cp, input_text
         )
         if forked:
             completed, nodes = await asyncio.to_thread(
-                _invoke_cancellable, _graph, None, thread_config, cancellation_signal
+                _invoke_cancellable, _graph, None, thread_config, context.cancel
             )
             # Emit node progress as function call outputs
             for node in nodes:
@@ -339,18 +336,18 @@ async def handler(
                 yield fn_call.emit_added()
                 yield fn_call.emit_done()
 
-            if not completed or cancellation_signal.is_set():
+            if not completed or context.cancel.is_set():
                 if shutdown_timer and not shutdown_timer.done():
                     shutdown_timer.cancel()
                 # Shutdown: return without terminal → re-entered on restart.
-                if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:
+                if context.shutdown.is_set():
                     return
                 yield resp_stream.emit_completed()
                 return
 
             # Save new stable checkpoint
             state = await asyncio.to_thread(_graph.get_state, thread_config)
-            durability.metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
+            context.durable_metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
             # Emit the AI reply
             for event in _build_reply_events(resp_stream, state):
                 yield event
@@ -368,7 +365,7 @@ async def handler(
         graph_input = {"messages": [HumanMessage(content=input_text)], "is_complete": False}
 
     completed, nodes = await asyncio.to_thread(
-        _invoke_cancellable, _graph, graph_input, thread_config, cancellation_signal
+        _invoke_cancellable, _graph, graph_input, thread_config, context.cancel
     )
 
     for node in nodes:
@@ -382,16 +379,16 @@ async def handler(
         shutdown_timer.cancel()
 
     # ── Phase 3: Post-completion handling ───────────────────────────
-    if not completed or cancellation_signal.is_set():
+    if not completed or context.cancel.is_set():
         # Shutdown: return without terminal → re-entered on restart.
-        if context.cancellation_reason == CancellationReason.SHUTTING_DOWN:
+        if context.shutdown.is_set():
             return
         yield resp_stream.emit_completed()
         return
 
     # Save stable checkpoint reference
     state = await asyncio.to_thread(_graph.get_state, thread_config)
-    durability.metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
+    context.durable_metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
 
     for event in _build_reply_events(resp_stream, state):
         yield event
@@ -417,12 +414,12 @@ def _build_reply_events(resp_stream: ResponseEventStream, state: Any) -> list[An
     ]
 
 
-async def _simulate_shutdown(cancellation_signal: asyncio.Event, context: ResponseContext) -> None:
+async def _simulate_shutdown(context: ResponseContext) -> None:
     """Fire SHUTTING_DOWN after a delay (local testing only)."""
     await asyncio.sleep(_SIMULATE_SHUTDOWN_MS / 1000.0)
-    if not cancellation_signal.is_set():
-        context.cancellation_reason = CancellationReason.SHUTTING_DOWN
-        cancellation_signal.set()
+    if not context.cancel.is_set():
+        context.shutdown.set()
+        context.cancel.set()
 
 
 def main() -> None:

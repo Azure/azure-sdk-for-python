@@ -5,7 +5,7 @@
 Pins the contract clause from ``durability-contract.md`` § Per-row
 contracts → Row 1 → Recovery handler entry contract:
 
-> ``context.durability.metadata`` is a persistent ``MutableMapping[str, Any]``
+> ``context.durable_metadata`` is a persistent ``MutableMapping[str, Any]``
 > whose contents from prior invocations survive the crash. The framework
 > guarantees keys written via ``metadata[key] = value`` plus a subsequent
 > ``await metadata.flush()`` are visible to the recovered invocation.

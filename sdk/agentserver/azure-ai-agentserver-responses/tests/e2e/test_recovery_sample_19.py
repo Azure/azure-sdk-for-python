@@ -31,10 +31,8 @@ from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
 )
-from azure.ai.agentserver.responses._durability_context import (
-    DurabilityContext,
-)
 from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
 
 # ---------------------------------------------------------------------------
 # Test scaffolding
@@ -48,19 +46,17 @@ def _make_context(
     metadata: dict[str, Any] | None = None,
 ) -> ResponseContext:
     """Build a synthetic ResponseContext for driving the handler directly."""
-    durability = DurabilityContext(
-        entry_mode=entry_mode,  # type: ignore[arg-type]
-        retry_attempt=0 if entry_mode == "fresh" else 1,
-        was_steered=False,
-        pending_inputs=0,
-        metadata=metadata or {},
-    )
-
+    
     # Build a minimal ResponseContext mock with the attrs the sample uses.
     context = MagicMock(spec=ResponseContext)
     context.response_id = response_id
-    context.durability = durability
-    context.cancellation_reason = None
+    context.is_recovery = entry_mode == "recovered"
+    context.is_steered_turn = False
+    context.pending_input_count = 0
+    context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.cancel = asyncio.Event()
+    context.shutdown = asyncio.Event()
+    context.client_cancelled = False
 
     async def _get_input_text() -> str:
         return "test prompt"
@@ -74,10 +70,10 @@ def _make_request(model: str = "test-model") -> CreateResponse:
     return CreateResponse(model=model, input="test prompt")  # type: ignore[call-arg]
 
 
-async def _drive(handler_coro_fn, request, context, cancellation_signal) -> list[Any]:
+async def _drive(handler_coro_fn, request, context) -> list[Any]:
     """Run the handler async generator and return emitted events."""
     events = []
-    async for event in handler_coro_fn(request, context, cancellation_signal):
+    async for event in handler_coro_fn(request, context):
         events.append(event)
     return events
 
@@ -96,7 +92,7 @@ class TestSample19FreshEntry:
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
         signal = asyncio.Event()
-        events = await _drive(handler, _make_request(), ctx, signal)
+        events = await _drive(handler, _make_request(), ctx)
 
         event_types = [getattr(e, "type", None) or e.get("type") for e in events]
 
@@ -112,7 +108,7 @@ class TestSample19FreshEntry:
         assert done_count == 3, f"expected 3 phase items done, got {done_count}"
 
         # Phase watermark advanced to the last phase.
-        assert ctx.durability.metadata.get("phase_complete") == "refine"
+        assert ctx.durable_metadata.get("phase_complete") == "refine"
 
 
 @pytest.mark.asyncio
@@ -131,7 +127,7 @@ class TestSample19RecoveryAfterAnalyze:
             },
         )
         signal = asyncio.Event()
-        events = await _drive(handler, _make_request(), ctx, signal)
+        events = await _drive(handler, _make_request(), ctx)
 
         # The in_progress emitted on this run carries the resumption response,
         # which must already contain the analyze item.
@@ -158,7 +154,7 @@ class TestSample19RecoveryAfterAnalyze:
         assert added_count == 2, f"expected 2 new items on recovery; got {added_count}"
 
         # Final watermark: all phases done.
-        assert ctx.durability.metadata.get("phase_complete") == "refine"
+        assert ctx.durable_metadata.get("phase_complete") == "refine"
 
 
 @pytest.mark.asyncio
@@ -180,7 +176,7 @@ class TestSample19RecoveryAfterGenerate:
             },
         )
         signal = asyncio.Event()
-        events = await _drive(handler, _make_request(), ctx, signal)
+        events = await _drive(handler, _make_request(), ctx)
 
         # Resumption response carries 2 prior items.
         first_in_progress = next(
@@ -197,4 +193,4 @@ class TestSample19RecoveryAfterGenerate:
         assert added_count == 1
 
         # All three phases complete by end.
-        assert ctx.durability.metadata.get("phase_complete") == "refine"
+        assert ctx.durable_metadata.get("phase_complete") == "refine"

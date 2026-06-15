@@ -27,20 +27,10 @@ from azure.ai.agentserver.responses.hosting._acceptance import (
 class TestSteeringQueueFull:
     """SteeringQueueFull from task start → HTTP 429."""
 
-    def test_options_max_pending_default(self) -> None:
-        """Default max_pending is 10."""
-        opts = ResponsesServerOptions()
-        assert opts.max_pending == 10
-
-    def test_options_max_pending_custom(self) -> None:
-        """Custom max_pending is respected."""
-        opts = ResponsesServerOptions(max_pending=5)
-        assert opts.max_pending == 5
-
-    def test_options_max_pending_must_be_positive(self) -> None:
-        """max_pending <= 0 raises ValueError."""
-        with pytest.raises(ValueError, match="max_pending must be > 0"):
-            ResponsesServerOptions(max_pending=0)
+    # (Spec 024 Phase 5 — Proposal #5) ``max_pending`` option DELETED.
+    # The pre-Phase-5 cap validation tests are obsolete — see the
+    # Phase 5 test file ``test_phase5_api_simplification.py`` which
+    # asserts the option is rejected at construction time.
 
 
 class TestAcceptanceHookDispatch:
@@ -119,13 +109,11 @@ class TestSteeringConfiguration:
         assert options.steerable_conversations is True
         assert options.durable_background is False
 
-    def test_steerable_requires_store(self) -> None:
-        """steerable_conversations requires store to be enabled."""
-        with pytest.raises(ValueError, match="steerable_conversations=True requires store"):
-            ResponsesServerOptions(
-                steerable_conversations=True,
-                store_disabled=True,
-            )
+    # (Spec 024 Phase 5 — Proposal #5 / Phase 4 — Proposal #9)
+    # ``store_disabled`` option DELETED and the
+    # ``steerable + store_disabled`` composition guard is gone (the
+    # rejected combination is no longer expressible). See the Phase 5
+    # test file for the absence-of-keyword assertion.
 
     def test_steerable_with_durable_is_valid(self) -> None:
         """Valid configuration: steerable + durable + store."""

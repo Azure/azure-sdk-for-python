@@ -42,7 +42,6 @@ responses_app = ResponsesAgentServerHost()
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Echo handler mounted under /api."""
     input_text = await context.get_input_text()

@@ -76,7 +76,6 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Study tutor that reads and references conversation history."""
     history = await context.get_history()

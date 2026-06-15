@@ -29,13 +29,12 @@ def _make_session_app() -> TestClient:
     app = ResponsesAgentServerHost(options=options)
 
     @app.response_handler
-    async def handler(request: CreateResponse, context: ResponseContext, cancel: asyncio.Event):
+    async def handler(request: CreateResponse, context: ResponseContext):
         input_text = await context.get_input_text()
-        durability = context.durability
-        session_id = durability.metadata.get("session_id", "new-session")
-        durability.metadata["session_id"] = session_id
-        msg_count = durability.metadata.get("msg_count", 0) + 1
-        durability.metadata["msg_count"] = msg_count
+        session_id = context.durable_metadata.get("session_id", "new-session")
+        context.durable_metadata["session_id"] = session_id
+        msg_count = context.durable_metadata.get("msg_count", 0) + 1
+        context.durable_metadata["msg_count"] = msg_count
         text = f"Session {session_id}, msg #{msg_count}: {input_text}"
         return TextResponse(context, request, text=text)
 

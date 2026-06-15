@@ -27,14 +27,11 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from azure.ai.agentserver.responses import (
-    CancellationReason,
     CreateResponse,
     ResponseContext,
 )
-from azure.ai.agentserver.responses._durability_context import (
-    DurabilityContext,
-)
 from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
 
 try:
     from langchain_core.messages import AIMessage, HumanMessage
@@ -50,17 +47,15 @@ def _make_context(
     metadata: dict[str, Any] | None = None,
     conversation_id: str | None = None,
 ) -> ResponseContext:
-    durability = DurabilityContext(
-        entry_mode=entry_mode,  # type: ignore[arg-type]
-        retry_attempt=0 if entry_mode == "fresh" else 1,
-        was_steered=was_steered,
-        pending_inputs=0,
-        metadata=metadata or {},
-    )
     context = MagicMock(spec=ResponseContext)
     context.response_id = response_id
-    context.durability = durability
-    context.cancellation_reason = None
+    context.is_recovery = entry_mode == "recovered"
+    context.is_steered_turn = False
+    context.pending_input_count = 0
+    context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.cancel = asyncio.Event()
+    context.shutdown = asyncio.Event()
+    context.client_cancelled = False
     context.conversation_id = conversation_id
 
     async def _get_input_text() -> str:
@@ -74,9 +69,9 @@ def _make_request() -> CreateResponse:
     return CreateResponse(model="langgraph", input="test prompt")  # type: ignore[call-arg]
 
 
-async def _drive(handler_coro_fn, request, context, cancellation_signal) -> list[Any]:
+async def _drive(handler_coro_fn, request, context) -> list[Any]:
     events = []
-    async for event in handler_coro_fn(request, context, cancellation_signal):
+    async for event in handler_coro_fn(request, context):
         events.append(event)
     return events
 
@@ -119,7 +114,7 @@ class TestSample21Recovery:
                     metadata={"stable_checkpoint_id": "cp_test"},
                     conversation_id="thr_test",
                 )
-                events = await _drive(mod.handler, _make_request(), ctx, asyncio.Event())
+                events = await _drive(mod.handler, _make_request(), ctx)
 
         # Verify the recovery in_progress carried the prior AI message.
         in_progress = next(e for e in events if _event_type(e) == "response.in_progress")
@@ -142,11 +137,11 @@ class TestSample21PreEntryCancellation:
                 response_id=IdGenerator.new_response_id(),
                 conversation_id="thr_test_2",
             )
-            ctx.cancellation_reason = CancellationReason.STEERED
+            ctx.cancel.set()
             signal = asyncio.Event()
             signal.set()
 
-            events = await _drive(mod.handler, _make_request(), ctx, signal)
+            events = await _drive(mod.handler, _make_request(), ctx)
             types = [_event_type(e) for e in events]
             assert "response.completed" in types
 
@@ -158,11 +153,13 @@ class TestSample21PreEntryCancellation:
                 response_id=IdGenerator.new_response_id(),
                 conversation_id="thr_test_3",
             )
-            ctx.cancellation_reason = CancellationReason.SHUTTING_DOWN
+            ctx.shutdown.set()
+
+            ctx.cancel.set()
             signal = asyncio.Event()
             signal.set()
 
-            events = await _drive(mod.handler, _make_request(), ctx, signal)
+            events = await _drive(mod.handler, _make_request(), ctx)
             types = [_event_type(e) for e in events]
             # No terminal — handler returns silently.
             assert "response.completed" not in types

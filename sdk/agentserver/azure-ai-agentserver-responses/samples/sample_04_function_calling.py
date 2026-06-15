@@ -70,7 +70,6 @@ async def _find_function_call_output(context: ResponseContext) -> str | None:
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Two-turn function-calling handler using convenience generators."""
     tool_output = await _find_function_call_output(context)
@@ -105,7 +104,6 @@ async def handler(
 async def handler_builder(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: asyncio.Event,
 ):
     """Two-turn function-calling handler using the builder API."""
     tool_output = await _find_function_call_output(context)

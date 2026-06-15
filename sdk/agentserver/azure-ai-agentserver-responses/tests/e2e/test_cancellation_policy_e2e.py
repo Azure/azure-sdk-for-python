@@ -172,11 +172,10 @@ class TestSteeringCancellation:
         Simulates steering by having the handler stamp STEERED reason
         and fire the cancellation signal (same as durable orchestrator does).
         """
-        from azure.ai.agentserver.responses.models.runtime import CancellationReason
 
         started = asyncio.Event()
 
-        def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
+        async def handler(request: Any, context: ResponseContext):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
@@ -184,8 +183,8 @@ class TestSteeringCancellation:
                 started.set()
                 # Simulate steering: stamp reason then fire signal
                 # (in production, DurableResponseOrchestrator does this)
-                context.cancellation_reason = CancellationReason.STEERED
-                cancellation_signal.set()
+                # Spec 024 Phase 5: steering pressure → no cause flag, cancel event only.
+                context.cancel.set()
                 # Give framework a tick to notice
                 await asyncio.sleep(0.01)
                 # Return without emitting terminal — framework should emit failed
@@ -233,19 +232,18 @@ class TestSteeringCancellation:
         This is the recommended pattern: handler detects steering, emits
         terminal (completed/failed/incomplete) for the old turn, then returns.
         """
-        from azure.ai.agentserver.responses.models.runtime import CancellationReason
 
         started = asyncio.Event()
 
-        def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
+        async def handler(request: Any, context: ResponseContext):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 yield stream.emit_in_progress()
                 started.set()
                 # Simulate steering signal
-                context.cancellation_reason = CancellationReason.STEERED
-                cancellation_signal.set()
+                # Spec 024 Phase 5: steering pressure → no cause flag, cancel event only.
+                context.cancel.set()
                 await asyncio.sleep(0.01)
                 # Handler chooses to emit completed (recommended pattern)
                 yield stream.emit_completed()
@@ -296,14 +294,14 @@ class TestShutdownNeverCancelled:
         """Rule 2: Non-durable bg shutdown → failed (never cancelled)."""
         started = asyncio.Event()
 
-        def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
+        async def handler(request: Any, context: ResponseContext):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 yield stream.emit_in_progress()
                 started.set()
                 # Wait for signal without emitting terminal
-                while not cancellation_signal.is_set():
+                while not context.cancel.is_set():
                     await asyncio.sleep(0.01)
                 return
 
@@ -359,13 +357,13 @@ class TestClientExplicitCancellation:
         """Rule 3: /cancel → status='cancelled', output cleared."""
         started = asyncio.Event()
 
-        def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
+        async def handler(request: Any, context: ResponseContext):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 yield stream.emit_in_progress()
                 started.set()
-                while not cancellation_signal.is_set():
+                while not context.cancel.is_set():
                     await asyncio.sleep(0.01)
                 # Return without terminal — framework forces cancelled
                 return
@@ -413,13 +411,13 @@ class TestClientExplicitCancellation:
         """
         started = asyncio.Event()
 
-        def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
+        async def handler(request: Any, context: ResponseContext):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()
                 yield stream.emit_in_progress()
                 started.set()
-                while not cancellation_signal.is_set():
+                while not context.cancel.is_set():
                     await asyncio.sleep(0.01)
                 # Handler attempts to emit completed after cancel signal
                 yield stream.emit_completed()
@@ -470,7 +468,7 @@ class TestIncompleteNeverFramework:
     async def test_handler_incomplete_honoured(self) -> None:
         """Developer emitting incomplete is passed through."""
 
-        def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
+        async def handler(request: Any, context: ResponseContext):
             async def _gen():
                 stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
                 yield stream.emit_created()

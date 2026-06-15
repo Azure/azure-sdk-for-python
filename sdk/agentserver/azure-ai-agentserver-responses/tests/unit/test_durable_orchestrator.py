@@ -12,7 +12,7 @@ import pytest
 
 from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
     DurableResponseOrchestrator,
-    _map_entry_mode,
+    _is_recovered_entry,
 )
 
 
@@ -44,17 +44,24 @@ class _FakeTaskMetadata(dict):
 
 
 class TestEntryModeMapping:
-    """Tests for entry mode mapping logic."""
+    """Tests for recovery-entry classification (spec 024 Phase 5 Proposal #10/#13).
 
-    def test_fresh_maps_to_fresh(self) -> None:
-        assert _map_entry_mode("fresh") == "fresh"
+    The pre-Phase-5 ``_map_entry_mode`` helper is deleted. Its
+    replacement, ``_is_recovered_entry``, returns a plain bool that the
+    orchestrator stores on ``context.is_recovery``. The ``resumed``
+    task entry mode is NOT a recovery entry — from the handler dev's
+    perspective, a resume is just a new turn.
+    """
 
-    def test_resumed_maps_to_fresh(self) -> None:
-        """Task primitive 'resumed' maps to durability 'fresh' (new turn ≠ crash)."""
-        assert _map_entry_mode("resumed") == "fresh"
+    def test_fresh_is_not_recovery(self) -> None:
+        assert _is_recovered_entry("fresh") is False
 
-    def test_recovered_maps_to_recovered(self) -> None:
-        assert _map_entry_mode("recovered") == "recovered"
+    def test_resumed_is_not_recovery(self) -> None:
+        """Task primitive 'resumed' is NOT a recovery entry (new turn ≠ crash)."""
+        assert _is_recovered_entry("resumed") is False
+
+    def test_recovered_is_recovery(self) -> None:
+        assert _is_recovered_entry("recovered") is True
 
 
 class TestDurableOrchestratorTaskCreation:
@@ -158,6 +165,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
+        ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_123",
@@ -187,27 +195,43 @@ class TestDurableOrchestratorExecuteInTask:
         assert kwargs["model"] == "gpt-4o"
 
     @pytest.mark.asyncio
-    async def test_durability_context_attached_to_response_context(self) -> None:
-        """DurabilityContext is set on the response context."""
+    async def test_recovery_and_steering_fields_flattened_on_response_context(self) -> None:
+        """(Spec 024 Phase 5 — Proposal #10/#13) Recovery + steering
+        classifiers land directly on ``ResponseContext`` flat fields.
+        The pre-Phase-5 ``DurabilityContext`` indirection is deleted —
+        this test asserts the post-Phase-5 contract: ``is_recovery``,
+        ``is_steered_turn``, ``pending_input_count`` and a swapped-in
+        ``durable_metadata`` namespace facade are set on the context
+        BEFORE the handler runs.
+        """
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
-            options=MagicMock(steerable_conversations=False, max_pending=10),
+            options=MagicMock(steerable_conversations=False),
         )
 
-        mock_context = MagicMock()
+        from azure.ai.agentserver.responses._response_context import IsolationContext, ResponseContext
+        from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
+
+        real_context = ResponseContext(
+            response_id="resp_456",
+            mode_flags=ResponseModeFlags(stream=False, store=True, background=True),
+            request=None,
+            isolation=IsolationContext(),
+        )
+
         ctx = MagicMock()
         ctx.entry_mode = "fresh"
-        ctx.retry_attempt = 1
-        ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
-        ctx.pending_input_count = 2  # Spec 016 FR-019: pending_inputs Sequence renamed
+        ctx.is_steered_turn = True
+        ctx.pending_input_count = 2
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
+        ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_456",
             "_record_ref": MagicMock(),
-            "_context_ref": mock_context,
+            "_context_ref": real_context,
             "_parsed_ref": MagicMock(),
             "_cancel_ref": asyncio.Event(),
             "_runtime_state_ref": MagicMock(),
@@ -219,12 +243,16 @@ class TestDurableOrchestratorExecuteInTask:
         ):
             await orch._execute_in_task(ctx)
 
-        # Verify durability context was attached
-        mock_context._durability = mock_context._durability  # was set
-        dc = mock_context._durability
-        assert dc.entry_mode == "fresh"
-        assert dc.retry_attempt == 1
-        assert dc.pending_inputs == 2
+        # Spec 024 Phase 5: flat fields populated, no ``durability``
+        # property, no ``DurabilityContext`` indirection.
+        assert real_context.is_recovery is False
+        assert real_context.is_steered_turn is True
+        assert real_context.pending_input_count == 2
+        assert not hasattr(real_context, "durability")
+        # The metadata facade was swapped in to back the task metadata.
+        from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
+
+        assert isinstance(real_context.durable_metadata, _DeveloperMetadataFacade)
 
     @pytest.mark.asyncio
     async def test_steerable_returns_none_for_implicit_suspend(self) -> None:
@@ -245,6 +273,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
+        ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_789",
@@ -284,6 +313,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
+        ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_000",
@@ -323,6 +353,7 @@ class TestDurableOrchestratorCancellationBridge:
         ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx.cancel = asyncio.Event()
+        ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_cancel",

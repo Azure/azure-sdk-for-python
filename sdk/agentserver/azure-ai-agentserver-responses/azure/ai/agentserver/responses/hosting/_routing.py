@@ -32,24 +32,28 @@ from ._orchestrator import _ResponseOrchestrator
 from ._runtime_state import _RuntimeState
 
 CreateHandlerFn = Callable[
-    [CreateResponse, ResponseContext, asyncio.Event],
+    [CreateResponse, ResponseContext],
     Union[
         AsyncIterable[Union[ResponseStreamEvent, dict[str, Any]]],
-        Generator[Union[ResponseStreamEvent, dict[str, Any]], Any, None],
         Awaitable[AsyncIterable[Union[ResponseStreamEvent, dict[str, Any]]]],
     ],
 ]
 """Type alias for the user-registered create-response handler function.
 
-The handler receives:
+(Spec 024 Phase 5 — Proposal #4) Handlers MUST be ``async def`` and
+take exactly two positional parameters:
+
 - ``request``: The parsed :class:`CreateResponse` model.
-- ``context``: The :class:`ResponseContext` for the current request.
-- ``cancellation_signal``: An :class:`asyncio.Event` set when cancellation is requested.
+- ``context``: The :class:`ResponseContext` for the current request
+  (exposes ``context.cancel`` / ``context.shutdown`` events,
+  ``context.client_cancelled`` bool, ``context.is_recovery`` /
+  ``context.is_steered_turn`` / ``context.pending_input_count`` /
+  ``context.durable_metadata``).
 
 It must return one of:
+
 - A ``TextResponse`` for text-only responses (it implements ``AsyncIterable``).
 - An ``AsyncIterable`` (async generator) of :class:`ResponseStreamEvent` instances.
-- A synchronous ``Generator`` of :class:`ResponseStreamEvent` instances.
 """
 
 logger = logging.getLogger("azure.ai.agentserver")
@@ -100,6 +104,14 @@ def _stream_cursor(event: Any) -> int:
     return int(event["sequence_number"])
 
 
+# (Spec 024 Phase 5 — Proposal #5) Stream-replay TTL is a
+# framework-internal concern; the developer-facing options surface no
+# longer exposes ``replay_event_ttl_seconds``. 10 minutes covers the
+# late-subscribe window for resumable streams without unbounded
+# in-memory / on-disk growth.
+_REPLAY_EVENT_TTL_SECONDS = 600.0
+
+
 def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None:
     """Pick the registry backing for SSE event streams at compose time.
 
@@ -128,14 +140,60 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
         streams.use_file_backed_replay(
             storage_dir=stream_dir,
             cursor_fn=_stream_cursor,
-            ttl_seconds=runtime_options.replay_event_ttl_seconds,
+            ttl_seconds=_REPLAY_EVENT_TTL_SECONDS,
             serializer=_serialize_event_payload,
             deserializer=_deserialize_event_payload,
         )
     else:
         streams.use_in_memory_replay(
             cursor_fn=_stream_cursor,
-            ttl_seconds=runtime_options.replay_event_ttl_seconds,
+            ttl_seconds=_REPLAY_EVENT_TTL_SECONDS,
+        )
+
+
+def _validate_handler_signature(fn: Any) -> None:
+    """Reject sync handlers and the legacy 3-arg ``(request, context, cancellation_signal)``.
+
+    (Spec 024 Phase 5 — Proposal #4) The post-Phase-5 handler contract
+    is async-only with a 2-arg signature. Sync handlers cannot honour
+    the composing-cancellation surface (asyncio events) and the
+    third-arg cancellation signal is replaced by ``context.cancel``.
+    Both legacy shapes are hard-rejected at decoration time so
+    developers see the error at import / startup rather than at the
+    first request.
+
+    :raises TypeError: If the handler is not async or does not take
+        exactly two positional parameters.
+    """
+    import inspect  # pylint: disable=import-outside-toplevel
+
+    if not callable(fn):
+        raise TypeError(f"response_handler expects a callable, got {type(fn).__name__}")
+    if not (asyncio.iscoroutinefunction(fn) or inspect.isasyncgenfunction(fn)):
+        raise TypeError(
+            f"response_handler {getattr(fn, '__name__', repr(fn))!r} must be an "
+            f"async function (declared with 'async def'). Sync handlers cannot "
+            f"observe the composing-cancellation surface — use 'async def' and "
+            f"check 'context.cancel.is_set()' instead."
+        )
+    try:
+        sig = inspect.signature(fn)
+    except (TypeError, ValueError):
+        return
+    positional = [
+        p
+        for p in sig.parameters.values()
+        if p.kind in (inspect.Parameter.POSITIONAL_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD)
+    ]
+    has_var_positional = any(p.kind is inspect.Parameter.VAR_POSITIONAL for p in sig.parameters.values())
+    if has_var_positional:
+        return  # accept (*args)-style handlers — they trivially accept 2 args
+    if len(positional) != 2:
+        raise TypeError(
+            f"response_handler {getattr(fn, '__name__', repr(fn))!r} must take "
+            f"exactly two positional parameters (request, context). The legacy "
+            f"three-argument signature '(request, context, cancellation_signal)' "
+            f"is no longer supported — observe cancellation via 'context.cancel'."
         )
 
 
@@ -428,21 +486,33 @@ class ResponsesAgentServerHost(AgentServerHost):
     def response_handler(self, fn: CreateHandlerFn) -> CreateHandlerFn:
         """Register a function as the create-response handler.
 
-        The handler function must accept exactly three positional parameters:
-        ``(request, context, cancellation_signal)`` and return an
-        ``AsyncIterable`` of response stream events.
+        (Spec 024 Phase 5 — Proposal #4) Handler MUST be ``async def``
+        and accept exactly two positional parameters:
+        ``(request, context)``. Sync handlers and the legacy 3-argument
+        signature ``(request, context, cancellation_signal)`` are
+        rejected at decoration time with :class:`TypeError`.
+
+        Cancellation is observed via ``context.cancel`` (an
+        :class:`asyncio.Event`); the cause is inspected via
+        ``context.client_cancelled``, ``context.shutdown.is_set()``,
+        or — for steering pressure — neither flag set (the cancel event
+        is set with no cause boolean).
 
         Usage::
 
             @app.response_handler
-            def my_handler(request, context, cancellation_signal):
-                yield event
+            async def my_handler(request, context):
+                while not context.cancel.is_set():
+                    yield event
 
-        :param fn: A callable accepting (request, context, cancellation_signal).
+        :param fn: A callable accepting (request, context).
         :type fn: CreateHandlerFn
         :return: The original function (unmodified).
         :rtype: CreateHandlerFn
+        :raises TypeError: If ``fn`` is not ``async def`` or does not
+            take exactly two positional parameters.
         """
+        _validate_handler_signature(fn)
         self._create_fn = fn
         return fn
 
@@ -475,14 +545,12 @@ class ResponsesAgentServerHost(AgentServerHost):
         self,
         request: CreateResponse,
         context: ResponseContext,
-        cancellation_signal: asyncio.Event,
     ) -> AsyncIterator[ResponseStreamEvent]:
         """Dispatch to the registered create handler.
 
         Called by the orchestrator when processing a create request.
-        Handles all handler return signatures:
+        Handles the post-Phase-5 handler return shapes:
 
-        - Sync generator → wrapped into async generator.
         - AsyncIterable (e.g. ``TextResponse``) → converted to ``AsyncIterator``.
         - Coroutine (``async def`` that ``return`` s a value) → awaited, then the
           result is recursively normalised.
@@ -492,14 +560,12 @@ class ResponsesAgentServerHost(AgentServerHost):
         :type request: CreateResponse
         :param context: The response context for the request.
         :type context: ResponseContext
-        :param cancellation_signal: The cancellation signal for the request.
-        :type cancellation_signal: asyncio.Event
         :returns: The result from the registered create handler callable.
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if self._create_fn is None:
             raise NotImplementedError("No create handler registered. Use the @app.response_handler decorator.")
-        result = self._create_fn(request, context, cancellation_signal)
+        result = self._create_fn(request, context)
         return self._normalize_handler_result(result)
 
     def _normalize_handler_result(self, result: Any) -> AsyncIterator[ResponseStreamEvent]:
