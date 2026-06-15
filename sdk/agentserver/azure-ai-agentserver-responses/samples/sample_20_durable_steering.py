@@ -124,12 +124,19 @@ async def handler(
 
     yield stream.emit_created()
 
-    # ── Pre-entry cancellation check ────────
-    # Signal pre-set on entry — this happens when a newer turn was
-    # already queued before we even started.
-    if cancellation_signal.is_set():
-        if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+    # ── Pre-entry cancellation/shutdown check ────────
+    # Either a cancel cause fired before we even started, or the server
+    # is shutting down. Shutdown does NOT fire cancellation_signal —
+    # the two surfaces are observed independently.
+    if cancellation_signal.is_set() or context.shutdown.is_set():
+        if cancellation_signal.is_set() and context.pending_input_count > 0:
+            # Steering pre-entry: emit completed so the partial output
+            # (none in this case) becomes valid context for the drain
+            # turn that follows.
             yield stream.emit_completed()
+        # Otherwise: client-cancelled (framework forces ``cancelled``)
+        # or shutdown (framework re-invokes us). Either way: return
+        # silently without a terminal.
         return
 
     yield stream.emit_in_progress()
@@ -152,9 +159,9 @@ async def handler(
     input_text = await context.get_input_text()
     accumulated = ""
 
-    # ── Mid-stream cancellation check ──────
+    # ── Mid-stream cancellation/shutdown check ──────
     async for token in _simulate_llm_stream(input_text):
-        if cancellation_signal.is_set():
+        if cancellation_signal.is_set() or context.shutdown.is_set():
             break
         accumulated += token
         yield text.emit_delta(token)

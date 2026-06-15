@@ -45,7 +45,7 @@ checkpoint data.
 
 Use it for things like:
 
-- An upstream session UUID (Claude `session_id`, Copilot session id, a
+- An upstream session UUID (Copilot session id, a
   LangGraph thread id).
 - A small pointer to your most recently processed input or output (e.g.
   `last_processed_input_item_id`).
@@ -190,21 +190,28 @@ restarts. The framework defaults provide this automatically; the
 sections below describe what they do and how to override them for
 specific scenarios.
 
-- **Durable task store**: the framework auto-selects a file-backed
-  task store under `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/tasks/`
-  for local development. Tasks survive process restarts so a recovered
-  handler re-enters its prior task body.
-- **Response store**: the default is `FileResponseStore` under
-  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/`; no explicit
-  construction needed. `InMemoryResponseProvider` is still importable
-  for in-memory-specific unit tests but is no longer the default
-  store. To target a different directory, pass
+- **Durable task store**: in a hosted environment the framework uses
+  the Foundry task storage API; in local development it auto-selects
+  a file-backed task store under
+  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/tasks/`. Either way, tasks
+  survive process restarts so a recovered handler re-enters its prior
+  task body. Operators can override the auto-selection by setting
+  `AGENTSERVER_TASKS_BACKEND=local` (to force file-backed in hosted)
+  or `AGENTSERVER_TASKS_BACKEND=hosted` (to force the hosted API in
+  local).
+- **Response store**: in a hosted environment the framework uses the
+  Foundry hosted responses storage API; in local development the
+  default is `FileResponseStore` under
+  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/`. No explicit
+  construction needed in either case. `InMemoryResponseProvider`
+  remains importable for in-memory-specific unit tests. To target a
+  different directory in local development, pass
   `store=FileResponseStore(storage_dir=…)` to `ResponsesAgentServerHost`.
 - **Stream event store**: configured automatically — file-backed when
   `durable_background=True`, in-memory otherwise. Files land under
   `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/streams/`. No per-store env
   var to set; the unified `AGENTSERVER_DURABLE_ROOT` covers all three
-  subdirs (`tasks/`, `streams/`, `responses/`).
+  local subdirs (`tasks/`, `streams/`, `responses/`).
 
 For production, your deployment hosts the response store externally —
 typically via the Foundry response provider, which is auto-configured
@@ -259,7 +266,7 @@ mapping that evaporates on restart).
 conversation chain identifier — the stable id every turn in a multi-turn
 conversation shares (and the same value the framework uses internally to
 partition durable tasks). Handlers that wrap a stateful upstream framework
-(Claude SDK, Copilot SDK, LangGraph, …) can use this as their upstream session
+(Copilot SDK, LangGraph, …) can use this as their upstream session
 id without allocating their own UUIDs:
 
 ```python
@@ -313,8 +320,8 @@ The resumption response is a `ResponseObject` you build on a recovered entry,
 reflecting only what is durably committed at your resumption point. It's
 constructed from:
 
-- The upstream framework's persisted state (Claude session JSONL, Copilot
-  session events, LangGraph SqliteSaver checkpoints, etc.).
+- The upstream framework's persisted state (Copilot session events,
+  LangGraph SqliteSaver checkpoints, your own custom store, etc.).
 - Your own metadata watermarks that disambiguate "we did this" from "we
   didn't".
 
@@ -454,10 +461,10 @@ output.
    from a fresh handler at this branch — keep the divergence at the top of
    the function so the two paths are easy to read in isolation.
 
-2. **Use upstream framework's resume facility.** Claude SDK has `resume=` and
-   `fork_session=True`; Copilot SDK has `create_session(session_id=...)`;
-   LangGraph has `SqliteSaver` checkpoints. Use them. Don't try to recreate
-   upstream state from your own metadata.
+2. **Use upstream framework's resume facility.** Copilot SDK has
+   `create_session(session_id=...)` / `resume_session(session_id=...)`;
+   LangGraph has `SqliteSaver` checkpoints. Use them. Don't try to
+   recreate upstream state from your own metadata.
 
 3. **Watermark before side effects.** Stamp `context.durable_metadata`
    with a "this side effect is in flight" flag (and
@@ -480,8 +487,6 @@ output.
 
 See the `samples/` directory for canonical durable handler shapes:
 
-- `sample_17_durable_claude.py` — Stateful Claude Agent SDK conversation
-  (session resume + `fork_session` on recovery).
 - `sample_18_durable_copilot.py` — Stateful GitHub Copilot SDK conversation
   (session resume on recovery).
 - `sample_19_durable_streaming.py` — Handler-managed checkpointing
@@ -490,3 +495,5 @@ See the `samples/` directory for canonical durable handler shapes:
   cancellation × recovery composition.
 - `sample_21_durable_langgraph.py` — LangGraph with `SqliteSaver`
   checkpointer (upstream-framework-owned durability).
+- `sample_22_durable_multiturn.py` — Multi-turn conversation with
+  `durable_background=True, steerable_conversations=False`.

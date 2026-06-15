@@ -2,116 +2,76 @@
 
 ## 1.0.0b8 (Unreleased)
 
-### Breaking Changes
+### Features Added
 
-- **Handlers must be `async def`.** Sync handlers are rejected at
-  decoration time. The handler signature remains
-  `(request, context, cancellation_signal)` (3 positional args). Sync
-  handlers cannot observe the `asyncio.Event` cancellation surface,
-  so they're no longer accepted.
+- **Durable + steerable conversations.** New
+  `ResponsesServerOptions(durable_background=False, steerable_conversations=False)`
+  knobs opt handlers into:
 
-- **Default response store is now file-backed.** Constructing
-  `ResponsesAgentServerHost()` with no `store=` argument now
-  registers a `FileResponseStore` under
-  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/` instead of
-  the previous in-memory provider. Single-process deployments that
-  used the implicit in-memory store will now persist response
-  envelopes to disk by default. To retain the old in-memory
-  behaviour, pass `store=InMemoryResponseProvider()` explicitly.
-  `InMemoryResponseProvider` remains importable.
+  - **`durable_background=True`** — background responses survive
+    process crashes. The framework persists handler state per turn,
+    re-invokes the registered handler on the next process startup if
+    the previous attempt didn't reach a terminal event, and resumes
+    the SSE stream where the prior attempt left off.
 
-### New Public API Surface
+  - **`steerable_conversations=True`** — clients can post a new turn
+    on an in-flight conversation while the current turn is still
+    running. The framework wakes the running handler (via the
+    cancellation signal — see `pending_input_count > 0` to
+    distinguish steering from other cancel causes), drains the
+    pending input on a fresh handler invocation, and links the turns
+    in a stable conversation chain.
 
-- **`ResponseContext` — request-scoped state for handlers**, with
-  flat fields for recovery + steering classifiers
-  (`is_recovery: bool`, `is_steered_turn: bool`,
-  `pending_input_count: int`,
-  `durable_metadata: DurableMetadataNamespace`), a distinct shutdown
-  signal (`shutdown: asyncio.Event`), a cancellation cause flag
-  (`client_cancelled: bool`), and the
-  `async exit_for_recovery() -> ExitForRecoverySignal` recovery
-  primitive. The per-request cancellation Event is delivered to the
-  handler as its 3rd positional `cancellation_signal` parameter
-  (unchanged from the prior release). Shutdown and the cancellation
-  signal are **independent surfaces** — server shutdown does NOT fire
-  the cancellation signal; handlers that care about both must observe
-  each independently.
+  Both options default to `False` — existing handlers that don't opt
+  in are unaffected.
+
+- **`ResponseContext` surface for durable + steerable handlers.**
+  Flat fields the framework stamps on each invocation:
+  `context.is_recovery: bool` (`True` when the framework is resuming
+  a crashed prior attempt), `context.is_steered_turn: bool` (`True` on
+  the drain re-entry that follows a steering input),
+  `context.pending_input_count: int` (live count of queued steering
+  inputs), `context.durable_metadata: DurableMetadataNamespace`
+  (persistent per-response checkpoint store the handler can use to
+  watermark its own progress and resume cleanly after a crash), and
+  `await context.exit_for_recovery()` (opt-in graceful-shutdown
+  recovery primitive — return its result via
+  `return await context.exit_for_recovery()` to leave the response
+  `in_progress` for the next-lifetime recovery scanner).
 
 - **`DurableMetadataNamespace` Protocol** — public type for
-  `context.durable_metadata`. Mirrors `MutableMapping` shape
+  `context.durable_metadata`. `MutableMapping` shape
   (`__getitem__`/`__setitem__`/`get`/`clear`/`pop`/`setdefault`/
   `update`/etc.) plus `__call__(name)` for named namespaces and
   `await flush()` for explicit at-most-once side-effect fencing.
 
 - **`ExitForRecoverySignal` type alias** — return type of
-  `context.exit_for_recovery()`. Handlers propagate the sentinel
-  via `return await context.exit_for_recovery()` to leave the
-  response `in_progress` for the next-lifetime recovery scanner.
+  `context.exit_for_recovery()`.
 
 - **`FileResponseStore`** is now exported from
-  `azure.ai.agentserver.responses` (previously importable only
-  from the private `_file` module).
+  `azure.ai.agentserver.responses`.
 
-- **`ResponsesServerOptions(durable_background, steerable_conversations)`**
-  developer-controlled server options. `durable_background=True`
-  opts into crash-recoverable background responses (handler is
-  re-invoked on restart). `steerable_conversations=True` enables
-  mid-turn steering for multi-turn conversations. Both default to
-  `False`.
+- **Local-development default response store changed from in-memory to
+  file-backed.** When `ResponsesAgentServerHost()` is constructed
+  without a `store=` argument in a non-hosted environment, the framework
+  now registers a `FileResponseStore` under
+  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/`. In a hosted
+  environment, the default remains the Foundry hosted responses
+  storage API — this change does not affect production hosted
+  deployments. To explicitly retain the previous in-memory behaviour
+  for local development, pass `store=InMemoryResponseProvider()`.
 
-- **`AGENTSERVER_DURABLE_ROOT` environment variable** — unified
-  storage root for the responses package. The package derives the
-  `responses/` and `streams/` subdirectories from this single root.
+- **`AGENTSERVER_DURABLE_ROOT` environment variable** — single
+  storage root for the local-development durable layout. The package
+  derives `responses/` and `streams/` subdirectories from this root.
 
-### Bugs Fixed
+### Breaking Changes
 
-- Sequential turns of a `conversation_id` + `steerable_conversations=False`
-  conversation now succeed and extend the chain (matches the
-  `conversation_id` semantics documented in
-  `docs/durable-responses-developer-guide.md` and
-  `docs/responses-durability-spec.md` §11.1); previously every turn
-  after the first incorrectly returned `409 conversation_locked`
-  because the underlying task was `status="completed"` not
-  `suspended`. Concurrent overlap continues to return
-  `409 conversation_locked` as documented.
-
-- `context.conversation_chain_id` now correctly returns the
-  per-request `response_id` for non-steerable deployments instead
-  of always treating the chain as steerable. The framework now
-  reads `ResponsesServerOptions.steerable_conversations` and
-  threads it through the context.
-
-- Non-bg streaming Phase-1 persistence failure (storage layer
-  rejects the response envelope at start) now emits the standard
-  `response.created → response.failed` SSE sequence with
-  `error_code=storage_error`. Previously the framework emitted a
-  standalone `error` event that violated the first-event invariant.
-
-- Non-background disconnect with `store=true` now persists a
-  `cancelled` snapshot so a follow-up GET returns
-  `200 status=cancelled` instead of `404`. Previously the
-  in-flight record was deleted on disconnect.
-
-### Other Changes
-
-- Bumped the `azure-ai-agentserver-core` dependency to `>=2.0.0b7`
-  to pick up the narrow durable-task primitive surface. Internal
-  orchestrator surface changes only.
-- Internal: `DurableResponseOrchestrator` now registers two task
-  primitives per deployment (one-shot for single-turn requests; chain
-  primitive for multi-turn requests) and dispatches per request based
-  on `(store, conversation_id, previous_response_id,
-  steerable_conversations)`. This is observable only as the bug fix
-  above; the perpetual-task lifecycle described in
-  `docs/responses-durability-spec.md` is unchanged from the handler /
-  client perspective.
-- Internal: `ephemeral=False` storage overhead eliminated for
-  single-turn requests. One-shot records are now auto-deleted on
-  terminal exit; only multi-turn chains persist between turns.
-- Internal: the shutdown-mid-handler "leave in_progress for recovery"
-  branch now calls `ctx.exit_for_recovery()` instead of raising
-  `CancelledError`. The previous shape would have deleted the
-  one-shot record on cancel.
+- **Sync handlers are no longer accepted.** `response_handler` now
+  requires `async def`. The shipped 3-arg signature
+  `(request, context, cancellation_signal)` is unchanged. Sync
+  handlers cannot observe the `asyncio.Event` cancellation signal,
+  so they're rejected at decoration time with a clear `TypeError`.
 
 ## 1.0.0b6 (Unreleased)
 

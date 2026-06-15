@@ -289,14 +289,15 @@ async def handler(
 
     yield resp_stream.emit_created()
 
-    # ── Phase 1: Pre-entry cancel ───────────────────────────────────
+    # ── Phase 1: Pre-entry cancel / shutdown ───────────────────────
     # Still inject the message into graph state so next turn has context.
-    # Only emit completed for steering. Others: just return.
-    if cancellation_signal.is_set():
+    # Only emit completed for steering. Others (client-cancel, shutdown):
+    # just return.
+    if cancellation_signal.is_set() or context.shutdown.is_set():
         stable_cp = context.durable_metadata.get("stable_checkpoint_id")
         if stable_cp:
             await asyncio.to_thread(_fork_from_checkpoint, _graph, thread_config, stable_cp, input_text)
-        if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+        if cancellation_signal.is_set() and context.pending_input_count > 0:
             yield resp_stream.emit_completed()
         return
 

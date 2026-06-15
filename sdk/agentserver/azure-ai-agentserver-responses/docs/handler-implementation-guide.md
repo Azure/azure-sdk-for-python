@@ -1043,7 +1043,7 @@ references for framework-native stores (e.g., a SqliteSaver checkpoint ID).
 
 **Not acceptable**: full conversation history, LLM outputs, or framework
 checkpoint data. These belong in framework-native stores (SqliteSaver for
-LangGraph, Copilot SDK sessions, external stores for Claude, etc.).
+LangGraph, Copilot SDK sessions, or your own backing store).
 
 ### TextResponse Handlers
 
@@ -1289,7 +1289,7 @@ Three layers, each owning a specific slice of state:
 |---|---|---|
 | **Library** (this SDK) | Persisted SSE event stream (every event you emitted, in order) — used for client replay via `starting_after=`. The library writes the persisted response *object* exactly twice per response across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts emit `response.created` again but the framework dedups the write (idempotent persistence keyed on `response_id`). It does NOT keep a running snapshot of in-flight state. | Re-invokes the handler. Surfaces `context.is_recovery == True`, `context.is_steered_turn`, `context.pending_input_count`, and `context.durable_metadata`. Replays persisted events to reconnecting clients. Rebuilds your `ResponseContext` transparently — the handler sees the same `response_id` it had on the first attempt. |
 | **Handler** (your code) | The "what was safely committed" decision, plus side-effect watermarks in `context.durable_metadata`. | Decides the resumption point. Constructs the **resumption response**. Emits a fresh `response.in_progress` carrying it. Continues producing new output items. |
-| **Upstream framework** (Claude SDK, Copilot SDK, LangGraph, your own LLM client) | The conversational / graph / agent state that has to outlive a process death. | Has its own resume facility (session ID, checkpoint store) that you call from the handler. |
+| **Upstream framework** (Copilot SDK, LangGraph, your own LLM client) | The conversational / graph / agent state that has to outlive a process death. | Has its own resume facility (session ID, checkpoint store) that you call from the handler. |
 
 You do NOT own response event durability — that's the library. The library
 does NOT own conversational durability — that's upstream. You glue them
@@ -1336,7 +1336,7 @@ is the naive fallback (see below).
 - Emits `response.in_progress` early in the recovered path (this is the reset).
 - Uses upstream framework's native resume facility (e.g. session resume, checkpoint replay) — never re-runs a side-effecting upstream call without checking a watermark first.
 - Watermarks any upstream side-effecting call by writing a small marker to `context.durable_metadata` **before** the call and clearing it **after** the call has been durably committed upstream. Call `await context.durable_metadata.flush()` between the watermark write and the side effect to ensure the marker survives a crash.
-- For upstream-session-id needs: reads `context.conversation_chain_id` — the framework-computed stable identifier for the current conversation chain. Use this as the session id passed to upstream frameworks (Claude `session_id`, Copilot `session_id`, LangGraph `thread_id`) instead of allocating your own UUID. The value is derived from `conversation_id` if present, else `previous_response_id` in steerable mode, else `response_id` — stable across all attempts of a given task.
+- For upstream-session-id needs: reads `context.conversation_chain_id` — the framework-computed stable identifier for the current conversation chain. Use this as the session id passed to upstream frameworks (Copilot `session_id`, LangGraph `thread_id`) instead of allocating your own UUID. The value is derived from `conversation_id` if present, else `previous_response_id` in steerable mode, else `response_id` — stable across all attempts of a given task.
 
 ### Default Pattern (recovery-aware)
 

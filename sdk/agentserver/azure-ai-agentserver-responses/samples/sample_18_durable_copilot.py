@@ -316,12 +316,14 @@ async def handler(
 
     yield stream.emit_created()
 
-    # ── Pre-entry cancellation check ───────────────────────────────
+    # ── Pre-entry cancellation / shutdown check ────────────────────
     # On a STEERED pre-entry we still send the user's input to Copilot so
     # it is preserved in conversation history. For other cancellation
-    # reasons we just return without touching the SDK.
-    if cancellation_signal.is_set():
-        if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+    # reasons (client-cancel) or shutdown we just return without touching
+    # the SDK — the framework forces ``cancelled`` for client-cancel and
+    # re-invokes the handler on the next restart for shutdown.
+    if cancellation_signal.is_set() or context.shutdown.is_set():
+        if cancellation_signal.is_set() and context.pending_input_count > 0:
             session_id = context.conversation_chain_id
             async with CopilotClient() as client:
                 async with await _open_session(client, session_id, context) as session:
@@ -409,7 +411,7 @@ async def handler(
             # poll with a short bounded timeout, then exit cleanly.
             wait_timeout = None if sent_this_attempt else 2.0
             while True:
-                if cancellation_signal.is_set():
+                if cancellation_signal.is_set() or context.shutdown.is_set():
                     await session.abort()
                     break
                 try:

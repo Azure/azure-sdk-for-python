@@ -405,7 +405,9 @@ class TestSample18PreEntrySteeredPreservesInput:
         stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
             ctx = _make_context(response_id=IdGenerator.new_response_id())
+            # Steering: cancellation_signal fires AND pending_input_count > 0.
             ctx._cancellation_signal.set()
+            ctx.pending_input_count = 1
             signal = asyncio.Event()
             signal.set()
 
@@ -442,11 +444,9 @@ class TestSample18PreEntryOtherCancellationDoesNotTouchSDK:
         stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
             ctx = _make_context(response_id=IdGenerator.new_response_id())
+            # Shutdown does NOT fire cancellation_signal — distinct surfaces.
             ctx.shutdown.set()
-
-            ctx._cancellation_signal.set()
             signal = asyncio.Event()
-            signal.set()
 
             events = await _drive(mod.handler, _make_request(), ctx)
 

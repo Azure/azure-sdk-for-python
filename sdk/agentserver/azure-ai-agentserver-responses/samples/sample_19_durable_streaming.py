@@ -148,12 +148,14 @@ async def handler(
 
     yield stream.emit_created()  # library tolerates duplicate on recovery
 
-    # ── Pre-entry cancellation check ───────────────────────────────
+    # ── Pre-entry cancellation/shutdown check ──────────────────────
     # This sample does NOT enable steerable_conversations, so STEERED
-    # cannot occur. The only pre-entry cancellation reasons here are
-    # CLIENT_CANCELLED and SHUTTING_DOWN, both of which call for
-    # returning without a terminal event.
-    if cancellation_signal.is_set():
+    # cannot occur. The only pre-entry reasons here are
+    # CLIENT_CANCELLED (cancellation_signal) and shutdown
+    # (context.shutdown). Both call for returning without a terminal
+    # event — the framework forces ``cancelled`` for the former and
+    # re-invokes the handler on restart for the latter.
+    if cancellation_signal.is_set() or context.shutdown.is_set():
         return
 
     yield stream.emit_in_progress()
@@ -176,7 +178,7 @@ async def handler(
 
         accumulated = ""
         async for token in _phase_tokens(phase, input_text):
-            if cancellation_signal.is_set():
+            if cancellation_signal.is_set() or context.shutdown.is_set():
                 break
             accumulated += token
             yield text.emit_delta(token)
@@ -189,11 +191,11 @@ async def handler(
         yield text.emit_done()
         yield message.emit_done()
 
-        # ── Mid-stream cancellation check ──────────────────────────
-        # If we were cancelled mid-phase, do NOT advance the watermark —
+        # ── Mid-stream cancellation/shutdown check ─────────────────
+        # If cancelled or shutdown mid-phase, do NOT advance the watermark —
         # the phase output is not durably committed from a recovery
         # standpoint, and a recovered attempt should re-run this phase.
-        if cancellation_signal.is_set():
+        if cancellation_signal.is_set() or context.shutdown.is_set():
             break
 
         # Phase finished cleanly — advance the watermark so a recovery

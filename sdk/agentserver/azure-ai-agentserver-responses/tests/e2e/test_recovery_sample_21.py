@@ -137,7 +137,9 @@ class TestSample21PreEntryCancellation:
                 response_id=IdGenerator.new_response_id(),
                 conversation_id="thr_test_2",
             )
+            # Steering: cancellation_signal fires AND pending_input_count > 0.
             ctx._cancellation_signal.set()
+            ctx.pending_input_count = 1
             signal = asyncio.Event()
             signal.set()
 
@@ -153,11 +155,9 @@ class TestSample21PreEntryCancellation:
                 response_id=IdGenerator.new_response_id(),
                 conversation_id="thr_test_3",
             )
+            # Shutdown does NOT fire cancellation_signal — distinct surfaces.
             ctx.shutdown.set()
-
-            ctx._cancellation_signal.set()
             signal = asyncio.Event()
-            signal.set()
 
             events = await _drive(mod.handler, _make_request(), ctx)
             types = [_event_type(e) for e in events]

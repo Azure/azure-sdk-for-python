@@ -212,7 +212,7 @@ app = ResponsesAgentServerHost(options=options)
 ### Common errors
 
 - **400 Bad Request**: The request body failed validation. Check that optional fields such as `model` (when provided) are valid and that `input` items are well-formed.
-- **404 Not Found**: The response ID does not exist. Persisted responses live under `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/` by default; a missing record may indicate the response was never persisted or was deleted via `DELETE /responses/{id}`.
+- **404 Not Found**: The response ID does not exist. In hosted deployments persisted responses live in the Foundry hosted responses store; in local development they live under `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/` by default. A missing record may indicate the response was never persisted or was deleted via `DELETE /responses/{id}`.
 - **400 Bad Request** (cancel): The response was not created with `background=true`, or it has already reached a terminal state.
 
 ### Reporting issues
@@ -238,7 +238,6 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 | [File Inputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_14_file_inputs.py) | Receive files via base64 data URL, URL, or file ID |
 | [Annotations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | Attach file_path, file_citation, and url_citation annotations |
 | [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | Return structured JSON as a `structured_outputs` item |
-| [Durable Claude](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_17_durable_claude.py) | Claude Agent SDK with `durable_background=True, steerable_conversations=True` |
 | [Durable Copilot](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_durable_copilot.py) | GitHub Copilot SDK with `durable_background=True, steerable_conversations=True` |
 | [Durable Streaming](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_durable_streaming.py) | Three-phase streaming handler with `durable_background=True` and `context.durable_metadata` watermarks |
 | [Durable Steering](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_durable_steering.py) | `context.is_steered_turn` on the drain re-entry with `durable_background=True, steerable_conversations=True` |

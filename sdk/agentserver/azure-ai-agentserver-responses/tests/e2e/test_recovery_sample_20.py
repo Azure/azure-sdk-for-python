@@ -120,7 +120,9 @@ class TestSample20PreEntryCancellation:
         from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
+        # Steering: cancellation_signal fires AND pending_input_count > 0.
         ctx._cancellation_signal.set()
+        ctx.pending_input_count = 1
         signal = asyncio.Event()
         signal.set()
 
@@ -152,11 +154,9 @@ class TestSample20Shutdown:
         from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
+        # Shutdown does NOT fire cancellation_signal — they are distinct surfaces.
         ctx.shutdown.set()
-
-        ctx._cancellation_signal.set()
         signal = asyncio.Event()
-        signal.set()
 
         events = await _drive(handler, _make_request(), ctx)
         types = [_event_type(e) for e in events]

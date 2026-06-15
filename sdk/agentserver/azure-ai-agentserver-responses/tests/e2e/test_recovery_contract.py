@@ -558,7 +558,7 @@ class TestRecoveryWithClientCancelled:
                 cancellation_signal.set()
                 # Recovery-aware handler: signal pre-set + CLIENT_CANCELLED → return.
                 if cancellation_signal.is_set():
-                    if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+                    if cancellation_signal.is_set() and context.pending_input_count > 0:
                         yield stream.emit_completed()
                         events_emitted.append("completed")
                     return
@@ -599,10 +599,11 @@ class TestRecoveryWithSteered:
                 stream = ResponseEventStream(response_id=context.response_id, request=request)
                 yield stream.emit_created()
                 events_emitted.append("created")
-                # Spec 024 Phase 5: steering pressure → no cause flag, cancel event only.
+                # Simulate steering: fire the cancel signal AND stamp a queued input.
                 cancellation_signal.set()
+                context.pending_input_count = 1
                 if cancellation_signal.is_set():
-                    if cancellation_signal.is_set() and not context.client_cancelled and not context.shutdown.is_set():
+                    if cancellation_signal.is_set() and context.pending_input_count > 0:
                         yield stream.emit_completed()
                         events_emitted.append("completed")
                     return
