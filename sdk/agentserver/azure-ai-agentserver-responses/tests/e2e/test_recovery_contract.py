@@ -558,7 +558,7 @@ class TestRecoveryWithClientCancelled:
                 context.cancel.set()
                 # Recovery-aware handler: signal pre-set + CLIENT_CANCELLED → return.
                 if context.cancel.is_set():
-                    if (context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set()):
+                    if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
                         yield stream.emit_completed()
                         events_emitted.append("completed")
                     return
@@ -602,7 +602,7 @@ class TestRecoveryWithSteered:
                 # Spec 024 Phase 5: steering pressure → no cause flag, cancel event only.
                 context.cancel.set()
                 if context.cancel.is_set():
-                    if (context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set()):
+                    if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
                         yield stream.emit_completed()
                         events_emitted.append("completed")
                     return

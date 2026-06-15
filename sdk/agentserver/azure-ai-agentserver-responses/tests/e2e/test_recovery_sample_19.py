@@ -46,7 +46,7 @@ def _make_context(
     metadata: dict[str, Any] | None = None,
 ) -> ResponseContext:
     """Build a synthetic ResponseContext for driving the handler directly."""
-    
+
     # Build a minimal ResponseContext mock with the attrs the sample uses.
     context = MagicMock(spec=ResponseContext)
     context.response_id = response_id

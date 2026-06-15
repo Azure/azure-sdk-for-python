@@ -85,9 +85,7 @@ async def _simulate_llm_stream(prompt: str):
         yield word + " "
 
 
-def _build_resumption_response(
-    context: ResponseContext, request: CreateResponse
-) -> ResponseObject:
+def _build_resumption_response(context: ResponseContext, request: CreateResponse) -> ResponseObject:
     """Build an empty resumption response.
 
     For a single-turn handler with a non-deterministic upstream there is
@@ -129,7 +127,7 @@ async def handler(
     # Signal pre-set on entry — this happens when a newer turn was
     # already queued before we even started.
     if context.cancel.is_set():
-        if (context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set()):
+        if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
             yield stream.emit_completed()
         return
 

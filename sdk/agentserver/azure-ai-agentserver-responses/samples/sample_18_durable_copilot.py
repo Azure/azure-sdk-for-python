@@ -178,6 +178,7 @@ async def _open_session(
             if "Session not found" not in msg and "not found" not in msg.lower():
                 raise
             import logging  # pylint: disable=import-outside-toplevel
+
             logging.getLogger(__name__).warning(
                 "Copilot session %s not found on resume (%s); creating fresh "
                 "session — pre-crash conversation context for this turn is lost.",
@@ -236,9 +237,7 @@ async def _send_input_if_not_in_session(
     return True
 
 
-async def _gather_accumulated_assistant_text(
-    session: Any, user_input_text: str
-) -> str:
+async def _gather_accumulated_assistant_text(session: Any, user_input_text: str) -> str:
     """Return the upstream assistant content already emitted for this turn.
 
     Used on crash recovery to surface whatever Copilot had already sent
@@ -286,9 +285,7 @@ async def _gather_accumulated_assistant_text(
     return "".join(parts)
 
 
-def _build_resumption_response(
-    context: ResponseContext, request: CreateResponse
-) -> ResponseObject:
+def _build_resumption_response(context: ResponseContext, request: CreateResponse) -> ResponseObject:
     """Empty resumption response — see ``sample_17`` for full rationale."""
     return ResponseObject(
         {
@@ -323,7 +320,7 @@ async def handler(
     # it is preserved in conversation history. For other cancellation
     # reasons we just return without touching the SDK.
     if context.cancel.is_set():
-        if (context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set()):
+        if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
             session_id = context.conversation_chain_id
             async with CopilotClient() as client:
                 async with await _open_session(client, session_id, context) as session:
@@ -394,9 +391,7 @@ async def handler(
             # crash. Live deltas continue from here.
             if context.is_recovery or context.is_steered_turn:
                 user_input_text = await context.get_input_text()
-                replay = await _gather_accumulated_assistant_text(
-                    session, user_input_text
-                )
+                replay = await _gather_accumulated_assistant_text(session, user_input_text)
                 if replay:
                     accumulated += replay
                     yield text.emit_delta(replay)

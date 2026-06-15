@@ -71,8 +71,7 @@ async def handler(
 
     # Generate reply (replace with your LLM of choice)
     reply = (
-        f"Turn {turn_count}: You said '{input_text}'. "
-        f"I have {len(history_items)} items of conversation context."
+        f"Turn {turn_count}: You said '{input_text}'. " f"I have {len(history_items)} items of conversation context."
     )
 
     context.durable_metadata["turn_count"] = turn_count

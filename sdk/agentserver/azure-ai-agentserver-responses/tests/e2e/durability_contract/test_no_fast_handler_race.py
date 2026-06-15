@@ -85,19 +85,16 @@ async def test_no_fast_handler_race_row_2(
 
         # Now poll each to terminal in parallel.
         terminals = await asyncio.gather(
-            *(
-                poll_until_terminal(
-                    harness.client, rid, timeout_seconds=POLL_TIMEOUT_SECONDS
-                )
-                for rid in response_ids
-            )
+            *(poll_until_terminal(harness.client, rid, timeout_seconds=POLL_TIMEOUT_SECONDS) for rid in response_ids)
         )
 
         # Every one must have reached a terminal status.
         for rid, t in zip(response_ids, terminals):
-            assert t["status"] in ("completed", "failed", "cancelled"), (
-                f"response {rid} did not reach terminal; got status={t.get('status')}"
-            )
+            assert t["status"] in (
+                "completed",
+                "failed",
+                "cancelled",
+            ), f"response {rid} did not reach terminal; got status={t.get('status')}"
         # And for fast happy-path handlers, all should be completed.
         completed = sum(1 for t in terminals if t["status"] == "completed")
         assert completed == FAN_OUT, (
@@ -140,8 +137,7 @@ async def test_no_fast_handler_race_row_3(
         # one must be completed.
         for r in results:
             assert r["status"] == "completed", (
-                f"row 3 foreground response did not complete; got status={r.get('status')}, "
-                f"id={r.get('id')}"
+                f"row 3 foreground response did not complete; got status={r.get('status')}, " f"id={r.get('id')}"
             )
     finally:
         await harness.close()

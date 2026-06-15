@@ -89,9 +89,7 @@ async def base64_handler(request: CreateResponse, context: ResponseContext):
             media = get_media_type(f.file_data)
             size = len(raw) if raw else 0
             results.append(f"{media or 'unknown'} ({size} bytes)")
-    return TextResponse(
-        context, request, text=f"Decoded {len(results)} file(s): {'; '.join(results)}"
-    )
+    return TextResponse(context, request, text=f"Decoded {len(results)} file(s): {'; '.join(results)}")
 
 
 # ── Handler 2: File URL ─────────────────────────────────────────────────
@@ -102,9 +100,7 @@ async def url_handler(request: CreateResponse, context: ResponseContext):
     files = _extract_files(items)
 
     urls = [f.file_url for f in files if f.file_url]
-    return TextResponse(
-        context, request, text=f"Received {len(urls)} file URL(s): {', '.join(urls)}"
-    )
+    return TextResponse(context, request, text=f"Received {len(urls)} file URL(s): {', '.join(urls)}")
 
 
 # ── Handler 3: File ID ──────────────────────────────────────────────────

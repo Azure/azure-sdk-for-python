@@ -944,8 +944,7 @@ def test_item_reference_three_turn_chain() -> None:
 def test_item_reference_resolve_references_false() -> None:
     """When resolve_references=False, item_references are passed through as-is."""
 
-    async def _unresolved_handler(
-        request: CreateResponse, context: ResponseContext):
+    async def _unresolved_handler(request: CreateResponse, context: ResponseContext):
         items = await context.get_input_items(resolve_references=False)
         summaries = []
         for item in items:
@@ -1043,8 +1042,7 @@ def test_item_reference_input_items_endpoint() -> None:
 TINY_IMAGE_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8BQDwAEgAF/pooBPQAAAABJRU5ErkJggg=="
 
 
-async def _image_gen_convenience_handler(
-    request: CreateResponse, context: ResponseContext):
+async def _image_gen_convenience_handler(request: CreateResponse, context: ResponseContext):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
@@ -1344,8 +1342,7 @@ def test_sample15_non_streaming_annotations_in_output() -> None:
 # ===========================================================================
 
 
-async def _structured_convenience_handler(
-    request: CreateResponse, context: ResponseContext):
+async def _structured_convenience_handler(request: CreateResponse, context: ResponseContext):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
@@ -1354,8 +1351,7 @@ async def _structured_convenience_handler(
     yield stream.emit_completed()
 
 
-async def _structured_full_control_handler(
-    request: CreateResponse, context: ResponseContext):
+async def _structured_full_control_handler(request: CreateResponse, context: ResponseContext):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()

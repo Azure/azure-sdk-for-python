@@ -102,9 +102,7 @@ def _completed_phase_index(context) -> int:
     return _PHASE_ORDER.index(done) + 1
 
 
-def _build_resumption_response(
-    context: ResponseContext, request: CreateResponse
-) -> ResponseObject:
+def _build_resumption_response(context: ResponseContext, request: CreateResponse) -> ResponseObject:
     """Build the resumption response from completed phases recorded in metadata.
 
     Only includes items for phases whose `output_item.done` was emitted in

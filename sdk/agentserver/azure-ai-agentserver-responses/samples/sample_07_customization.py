@@ -56,9 +56,7 @@ async def handler(
 ):
     """Echo handler that reports which model is being used."""
     input_text = await context.get_input_text()
-    return TextResponse(
-        context, request, text=f"[model={request.model}] Echo: {input_text}"
-    )
+    return TextResponse(context, request, text=f"[model={request.model}] Echo: {input_text}")
 
 
 def main() -> None:

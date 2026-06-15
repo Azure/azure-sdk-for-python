@@ -61,9 +61,7 @@ upstream = openai.AsyncOpenAI(
 )
 
 
-def _build_response_snapshot(
-    request: CreateResponse, context: ResponseContext
-) -> dict[str, Any]:
+def _build_response_snapshot(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
     """Construct a response snapshot dict from request + context."""
     snapshot: dict[str, Any] = {
         "id": context.response_id,
@@ -125,9 +123,7 @@ async def handler(
         stream=True,
     ) as upstream_stream:
         upstream_stream = cast(
-            openai.AsyncStream[
-                openai.types.responses.response_stream_event.ResponseStreamEvent
-            ],
+            openai.AsyncStream[openai.types.responses.response_stream_event.ResponseStreamEvent],
             upstream_stream,
         )
         async for event in upstream_stream:

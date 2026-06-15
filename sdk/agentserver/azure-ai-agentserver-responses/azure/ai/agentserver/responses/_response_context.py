@@ -297,7 +297,6 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
             )
         return await self._task_context.exit_for_recovery()  # type: ignore[no-any-return]
 
-
     async def get_input_items(self, *, resolve_references: bool = True) -> Sequence[Item]:
         """Return the caller's input items as :class:`Item` subtypes.
 

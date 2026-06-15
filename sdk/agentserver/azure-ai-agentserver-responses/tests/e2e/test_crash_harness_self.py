@@ -22,7 +22,8 @@ import pytest
 
 from tests.e2e._crash_harness import CrashHarness
 
-_ECHO_SERVER_SOURCE = textwrap.dedent("""
+_ECHO_SERVER_SOURCE = textwrap.dedent(
+    """
     \"\"\"Minimal echo HTTP server used by crash-harness self-tests.\"\"\"
     import os
     import sys
@@ -52,7 +53,8 @@ _ECHO_SERVER_SOURCE = textwrap.dedent("""
 
     if __name__ == "__main__":
         main()
-    """).lstrip()
+    """
+).lstrip()
 
 
 @pytest.fixture()

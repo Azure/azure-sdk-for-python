@@ -182,9 +182,7 @@ async def _send_input_if_not_in_session(
     await client.query(input_text)
 
 
-def _build_resumption_response(
-    context: ResponseContext, request: CreateResponse
-) -> ResponseObject:
+def _build_resumption_response(context: ResponseContext, request: CreateResponse) -> ResponseObject:
     """Empty resumption response.
 
     Partial token output from a crashed mid-stream attempt cannot be
@@ -226,7 +224,7 @@ async def handler(
     # user said. For other cancellation reasons (client cancel, shutdown)
     # we just return; no input preservation is appropriate.
     if context.cancel.is_set():
-        if (context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set()):
+        if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
             sdk_options = _claude_options_for(context)
             session_id = context.durable_metadata["claude_session_id"]
             async with ClaudeSDKClient(options=sdk_options) as client:

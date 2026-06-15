@@ -155,9 +155,7 @@ def _build_graph() -> Any:
     builder.add_edge("analyze_input", "generate_response")
     builder.add_edge("generate_response", "refine_response")
     builder.add_edge("refine_response", "wait_for_user")
-    builder.add_conditional_edges(
-        "wait_for_user", _should_continue, {"continue": "analyze_input", "end": END}
-    )
+    builder.add_conditional_edges("wait_for_user", _should_continue, {"continue": "analyze_input", "end": END})
     return builder.compile(checkpointer=_checkpointer)
 
 
@@ -202,9 +200,7 @@ def _fork_from_checkpoint(
     new_message: str,
 ) -> bool:
     """Fork graph state from a stable checkpoint with a new message."""
-    target_config = {
-        "configurable": {**config["configurable"], "checkpoint_id": target_checkpoint_id}
-    }
+    target_config = {"configurable": {**config["configurable"], "checkpoint_id": target_checkpoint_id}}
     target = graph.get_state(target_config)
     if not target or not target.config:
         return False
@@ -288,9 +284,7 @@ async def handler(
             response=_build_resumption_response(context, request, thread_config),
         )
     else:
-        resp_stream = ResponseEventStream(
-            response_id=context.response_id, request=request
-        )
+        resp_stream = ResponseEventStream(response_id=context.response_id, request=request)
 
     yield resp_stream.emit_created()
 
@@ -300,10 +294,8 @@ async def handler(
     if context.cancel.is_set():
         stable_cp = context.durable_metadata.get("stable_checkpoint_id")
         if stable_cp:
-            await asyncio.to_thread(
-                _fork_from_checkpoint, _graph, thread_config, stable_cp, input_text
-            )
-        if (context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set()):
+            await asyncio.to_thread(_fork_from_checkpoint, _graph, thread_config, stable_cp, input_text)
+        if context.cancel.is_set() and not context.client_cancelled and not context.shutdown.is_set():
             yield resp_stream.emit_completed()
         return
 
@@ -321,18 +313,12 @@ async def handler(
     # re-fork on recovery; the SqliteSaver state IS the source of truth.
     stable_cp = context.durable_metadata.get("stable_checkpoint_id")
     if not context.is_recovery and stable_cp and context.is_steered_turn:
-        forked = await asyncio.to_thread(
-            _fork_from_checkpoint, _graph, thread_config, stable_cp, input_text
-        )
+        forked = await asyncio.to_thread(_fork_from_checkpoint, _graph, thread_config, stable_cp, input_text)
         if forked:
-            completed, nodes = await asyncio.to_thread(
-                _invoke_cancellable, _graph, None, thread_config, context.cancel
-            )
+            completed, nodes = await asyncio.to_thread(_invoke_cancellable, _graph, None, thread_config, context.cancel)
             # Emit node progress as function call outputs
             for node in nodes:
-                fn_call = resp_stream.add_output_item_function_call(
-                    name=node, call_id=f"node_{node}", arguments="{}"
-                )
+                fn_call = resp_stream.add_output_item_function_call(name=node, call_id=f"node_{node}", arguments="{}")
                 yield fn_call.emit_added()
                 yield fn_call.emit_done()
 
@@ -364,14 +350,10 @@ async def handler(
     else:
         graph_input = {"messages": [HumanMessage(content=input_text)], "is_complete": False}
 
-    completed, nodes = await asyncio.to_thread(
-        _invoke_cancellable, _graph, graph_input, thread_config, context.cancel
-    )
+    completed, nodes = await asyncio.to_thread(_invoke_cancellable, _graph, graph_input, thread_config, context.cancel)
 
     for node in nodes:
-        fn_call = resp_stream.add_output_item_function_call(
-            name=node, call_id=f"node_{node}", arguments="{}"
-        )
+        fn_call = resp_stream.add_output_item_function_call(name=node, call_id=f"node_{node}", arguments="{}")
         yield fn_call.emit_added()
         yield fn_call.emit_done()
 

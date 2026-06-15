@@ -315,9 +315,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
 
     try:
         try:
-            async for handler_event in _iter_with_winddown(
-                create_fn(parsed, context), cancellation_signal
-            ):
+            async for handler_event in _iter_with_winddown(create_fn(parsed, context), cancellation_signal):
                 # Client-initiated cancel (POST /cancel) → discard and force cancelled.
                 # Steering cancel (new turn queued) → let handler wind down and
                 # emit its own terminal status with output items preserved.
@@ -627,7 +625,9 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                             else None
                         )
                         _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
-                        await provider.create_response(record.response, _resolved_items, _history_ids, isolation=_isolation)
+                        await provider.create_response(
+                            record.response, _resolved_items, _history_ids, isolation=_isolation
+                        )
                 except Exception as persist_exc:  # pylint: disable=broad-exception-caught
                     setattr(persist_exc, PLATFORM_ERROR_TAG, True)
                     logger.error(
@@ -696,7 +696,6 @@ class _HandlerError(Exception):
     def __init__(self, original: BaseException) -> None:
         self.original = original
         super().__init__(str(original))
-
 
     # (Spec 024 Phase 2) `_bookkeeping_noop_runner` deleted with the
     # bookkeeping pattern. The handler now runs inside the durable task
@@ -2489,11 +2488,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # server shutdown (preserve for recovery); not set means client
         # disconnect / explicit cancel (discard per B17).
         _is_shutdown = bool(ctx.context.shutdown.is_set()) if ctx.context else False
-        if (
-            ctx.cancellation_signal.is_set()
-            and not record.cancel_requested
-            and not _is_shutdown
-        ):
+        if ctx.cancellation_signal.is_set() and not record.cancel_requested and not _is_shutdown:
             logger.info(
                 "Non-bg sync response %s discarded due to client disconnect (B17)",
                 ctx.response_id,

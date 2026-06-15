@@ -99,7 +99,7 @@ def _make_sample17_app() -> TestClient:
         if context.shutdown.is_set():
             return
         else:
-                yield stream.emit_completed()
+            yield stream.emit_completed()
 
     return TestClient(app)
 
@@ -174,7 +174,7 @@ def _make_sample18_app() -> TestClient:
         if context.shutdown.is_set():
             return
         else:
-                yield stream.emit_completed()
+            yield stream.emit_completed()
 
     return TestClient(app)
 
@@ -243,7 +243,7 @@ def _make_sample19_app() -> TestClient:
         if context.shutdown.is_set():
             return
         else:
-                yield stream.emit_completed()
+            yield stream.emit_completed()
 
     return TestClient(app)
 
@@ -312,7 +312,7 @@ def _make_sample20_app() -> TestClient:
         if context.shutdown.is_set():
             return
         else:
-                yield stream.emit_completed()
+            yield stream.emit_completed()
 
     return TestClient(app)
 
@@ -368,8 +368,7 @@ class TestSample20DurableSteering:
         app_local = ResponsesAgentServerHost(options=options)
 
         @app_local.response_handler
-        async def shutdown_handler(
-            request: CreateResponse, context: ResponseContext):
+        async def shutdown_handler(request: CreateResponse, context: ResponseContext):
             stream = ResponseEventStream(response_id=context.response_id, request=request)
             input_text = await context.get_input_text()
 

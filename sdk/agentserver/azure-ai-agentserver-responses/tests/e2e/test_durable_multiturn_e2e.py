@@ -206,9 +206,7 @@ def _make_conv_id_non_steerable_app() -> tuple[Any, dict[str, Any]]:
                 "entry_mode": "recovered" if context.is_recovery else "fresh",
             }
         )
-        return TextResponse(
-            context, request, text=f"chain={chain_id}|turn={turn_count}|input={input_text}"
-        )
+        return TextResponse(context, request, text=f"chain={chain_id}|turn={turn_count}|input={input_text}")
 
     return app, handler_state
 
@@ -224,9 +222,7 @@ async def _poll_until_terminal(client: Any, response_id: str, timeout: float = 1
             if last.get("status") in ("completed", "failed", "cancelled"):
                 return last
         await asyncio.sleep(0.05)
-    raise TimeoutError(
-        f"Response {response_id} did not reach terminal within {timeout}s. Last: {last}"
-    )
+    raise TimeoutError(f"Response {response_id} did not reach terminal within {timeout}s. Last: {last}")
 
 
 class TestRow5ConversationIdNonSteerableE2E:
@@ -256,9 +252,7 @@ class TestRow5ConversationIdNonSteerableE2E:
 
         async with hypercorn_server(app) as client:
             # Turn 1
-            r1 = await client.post(
-                "/responses", json=_base_payload("first turn", conversation=conv_id)
-            )
+            r1 = await client.post("/responses", json=_base_payload("first turn", conversation=conv_id))
             assert r1.status_code == 200, r1.text
             resp1_id = r1.json()["id"]
             terminal1 = await _poll_until_terminal(client, resp1_id)
@@ -266,9 +260,7 @@ class TestRow5ConversationIdNonSteerableE2E:
 
             # Turn 2 — same conv_id, AFTER turn 1 reached terminal.
             # Under the BUG (pre-spec-023) this returned 409 conversation_locked.
-            r2 = await client.post(
-                "/responses", json=_base_payload("second turn", conversation=conv_id)
-            )
+            r2 = await client.post("/responses", json=_base_payload("second turn", conversation=conv_id))
             assert r2.status_code == 200, (
                 f"Spec 023 row-5 fix: sequential turns of the same conv_id MUST "
                 f"succeed (was 409 pre-fix); got {r2.status_code}: {r2.text}"
@@ -286,9 +278,9 @@ class TestRow5ConversationIdNonSteerableE2E:
         assert invocations[0]["turn"] == 1, invocations[0]
         assert invocations[1]["turn"] == 2, invocations[1]
         # Both turns share the same conversation_chain_id.
-        assert invocations[0]["chain_id"] == invocations[1]["chain_id"], (
-            f"Both turns of same conv_id MUST share chain_id; got {invocations}"
-        )
+        assert (
+            invocations[0]["chain_id"] == invocations[1]["chain_id"]
+        ), f"Both turns of same conv_id MUST share chain_id; got {invocations}"
         # Each turn's persisted output text contains that turn's input + count
         # (proves the response.output is the actual handler output, not stale).
         out1_text = _extract_text(terminal1)
@@ -310,12 +302,9 @@ class TestRow5ConversationIdNonSteerableE2E:
         async with hypercorn_server(app) as client:
             ids: list[str] = []
             for prompt in ("alpha", "beta", "gamma"):
-                r = await client.post(
-                    "/responses", json=_base_payload(prompt, conversation=conv_id)
-                )
+                r = await client.post("/responses", json=_base_payload(prompt, conversation=conv_id))
                 assert r.status_code == 200, (
-                    f"Sequential turn MUST succeed for conv_id chain; got "
-                    f"{r.status_code}: {r.text}"
+                    f"Sequential turn MUST succeed for conv_id chain; got " f"{r.status_code}: {r.text}"
                 )
                 rid = r.json()["id"]
                 ids.append(rid)
@@ -326,9 +315,7 @@ class TestRow5ConversationIdNonSteerableE2E:
         assert len(set(ids)) == 3, ids
         # Handler saw monotonically-increasing turn counts: 1, 2, 3
         turn_seq = [inv["turn"] for inv in state["invocations"]]
-        assert turn_seq == [1, 2, 3], (
-            f"chain metadata must accumulate monotonically; got {turn_seq}"
-        )
+        assert turn_seq == [1, 2, 3], f"chain metadata must accumulate monotonically; got {turn_seq}"
 
     @pytest.mark.asyncio
     async def test_concurrent_overlap_still_returns_409(self) -> None:
@@ -376,21 +363,16 @@ class TestRow5ConversationIdNonSteerableE2E:
         async with hypercorn_server(app) as client:
             # Turn 1 — POST returns 200 ~immediately (response.created emitted
             # right away), handler then sleeps 1s.
-            r1 = await client.post(
-                "/responses", json=_base_payload("hold the chain", conversation=conv_id)
-            )
+            r1 = await client.post("/responses", json=_base_payload("hold the chain", conversation=conv_id))
             assert r1.status_code == 200, r1.text
             # Wait for the handler to enter its sleep.
             await asyncio.sleep(0.2)
             # Turn 2 — fired while turn 1's handler is still sleeping.
-            r2 = await client.post(
-                "/responses", json=_base_payload("overlap turn", conversation=conv_id)
-            )
+            r2 = await client.post("/responses", json=_base_payload("overlap turn", conversation=conv_id))
 
         # Turn 2 hit the in-progress lock → 409 conversation_locked.
         assert r2.status_code == 409, (
-            f"Concurrent overlap on conv_id MUST return 409 conversation_locked; "
-            f"got {r2.status_code}: {r2.text}"
+            f"Concurrent overlap on conv_id MUST return 409 conversation_locked; " f"got {r2.status_code}: {r2.text}"
         )
         err = r2.json().get("error", r2.json())
         assert err.get("code") == "conversation_locked", err

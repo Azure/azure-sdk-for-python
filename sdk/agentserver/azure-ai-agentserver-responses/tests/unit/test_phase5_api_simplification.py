@@ -90,7 +90,7 @@ def test_options_does_not_have_replay_event_ttl_attr() -> None:
     assert not hasattr(options, "replay_event_ttl_seconds")
 
 
-def test_replay_event_ttl_hardcoded_at_least_600 () -> None:
+def test_replay_event_ttl_hardcoded_at_least_600() -> None:
     """The hardcoded ttl_seconds in _routing.py must be ≥ 600 (B35 compliance)."""
     import inspect
 
@@ -105,9 +105,7 @@ def test_replay_event_ttl_hardcoded_at_least_600 () -> None:
         matches = re.findall(r"ttl_seconds\s*=\s*(\d+(?:\.\d+)?)", src)
     assert matches, "spec 024 Phase 5 / B35: _routing.py must hardcode ttl_seconds=N"
     for m in matches:
-        assert float(m) >= 600, (
-            f"spec 024 / B35: ttl_seconds must be ≥ 600 (≥ 10 min replay), got {m}"
-        )
+        assert float(m) >= 600, f"spec 024 / B35: ttl_seconds must be ≥ 600 (≥ 10 min replay), got {m}"
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -177,8 +175,7 @@ def test_durability_context_class_removed() -> None:
     from azure.ai.agentserver.responses import _durability_context
 
     assert not hasattr(_durability_context, "DurabilityContext"), (
-        "spec 024 Proposal #10: DurabilityContext class must be deleted; "
-        "fields are flattened onto ResponseContext"
+        "spec 024 Proposal #10: DurabilityContext class must be deleted; " "fields are flattened onto ResponseContext"
     )
 
 
@@ -238,9 +235,9 @@ def test_cancellation_reason_enum_not_in_runtime_module() -> None:
     """`CancellationReason` enum removed from models.runtime too."""
     from azure.ai.agentserver.responses.models import runtime as _runtime
 
-    assert not hasattr(_runtime, "CancellationReason"), (
-        "spec 024 Proposal #11: CancellationReason enum must be deleted entirely"
-    )
+    assert not hasattr(
+        _runtime, "CancellationReason"
+    ), "spec 024 Proposal #11: CancellationReason enum must be deleted entirely"
 
 
 # ─────────────────────────────────────────────────────────────────────
