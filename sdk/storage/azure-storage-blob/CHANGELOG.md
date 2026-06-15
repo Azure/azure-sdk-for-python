@@ -2,6 +2,9 @@
 
 ## 12.31.0b1 (Unreleased)
 
+## Other Changes
+Access Policy was leaking generated model type
+
 ### Features Added
 
 ## 12.30.0 (2026-06-08)
