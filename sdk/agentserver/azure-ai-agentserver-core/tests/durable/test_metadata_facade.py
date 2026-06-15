@@ -108,10 +108,24 @@ class TestTaskMetadataNamespace:
         assert ns["k"] == "namespaced"
         assert meta("my_ns")["k"] == "namespaced"
 
-    def test_reserved_underscore_prefix_raises(self) -> None:
+    def test_reserved_underscore_prefix_accessible_at_primitive_level(self) -> None:
+        """The CORE primitive does NOT enforce the underscore-namespace
+        reservation — that's a wrapper-layer (DurabilityContext) concern.
+
+        Framework-layered code (the responses orchestrator) reaches its
+        reserved namespaces such as ``_responses`` through this primitive
+        API directly; if the primitive rejected the prefix, that
+        framework-internal access would break.
+
+        See ``test_metadata.py::test_underscore_namespace_not_enforced_by_primitive``
+        for the authoritative version of this contract clause.
+        """
         meta = TaskMetadata()
-        with pytest.raises(ValueError):
-            meta("_framework")
+        # No ValueError — primitive accepts the name.
+        ns = meta("_framework")
+        ns["state"] = "ok"
+        assert ns["state"] == "ok"
+        assert meta("_framework") is ns
 
 
 class TestAutoFlushLifecycle:

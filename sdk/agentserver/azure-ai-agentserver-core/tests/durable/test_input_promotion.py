@@ -53,7 +53,11 @@ def _config_stub(session_id: str = "s018-test-session"):
 @pytest_asyncio.fixture
 async def manager_local(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     """Real TaskManager backed by LocalFileTaskProvider at tmp_path."""
-    monkeypatch.setenv("AGENTSERVER_DURABLE_TASKS_PATH", str(tmp_path / "tasks"))
+    # (Spec 024 Phase 3a) Use AGENTSERVER_DURABLE_ROOT so any code that
+    # uses the new storage_paths.resolve_durable_subdir resolver gets
+    # isolated to tmp_path. The explicit base_dir below still wins for
+    # the LocalFileTaskProvider directly.
+    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
     monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
 
     config = _config_stub()

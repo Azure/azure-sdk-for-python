@@ -3,8 +3,10 @@
 # ---------------------------------------------------------
 """Local filesystem-backed durable task provider.
 
-Stores tasks as JSON files under ``$HOME/.durable-tasks/{agent_name}/{session_id}/``
-for local development with full lifecycle parity.
+Stores tasks as JSON files under
+``${AGENTSERVER_DURABLE_ROOT:-~/.durable}/tasks/{agent_name}/{session_id}/``
+(unified storage layout) for local development with
+full lifecycle parity.
 """
 
 from __future__ import annotations
@@ -92,12 +94,19 @@ class LocalFileTaskProvider:
     by checking timestamps on read.
 
     :param base_dir: Root directory for task storage.
-        Defaults to ``$HOME/.durable-tasks``.
+        Defaults to ``${AGENTSERVER_DURABLE_ROOT:-~/.durable}/tasks``
+        via :func:`azure.ai.agentserver.core.storage_paths.resolve_durable_subdir`.
     :type base_dir: Path | None
     """
 
     def __init__(self, base_dir: Path | None = None) -> None:
-        self._base_dir = base_dir or Path.home() / ".durable-tasks"
+        if base_dir is None:
+            from ..storage_paths import (  # pylint: disable=import-outside-toplevel
+                resolve_durable_subdir,
+            )
+
+            base_dir = resolve_durable_subdir("tasks")
+        self._base_dir = base_dir
 
     def _task_dir(self, agent_name: str, session_id: str) -> Path:
         return self._base_dir / agent_name / session_id
