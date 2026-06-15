@@ -13,9 +13,26 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._client import FineTuningSessionClient  # type: ignore
+from ._exceptions import (
+    BatchTooLargeError,
+    ContentionError,
+    EngineDeadError,
+    MalformedDatumError,
+    TrainingEngineError,
+    FineTuningSessionsError,
+    RequestValidationError,
+    NoCapacityError,
+)
+from ._logging_setup import install_default_logging as _install_default_logging
 from ._version import VERSION
 
 __version__ = VERSION
+
+# Prepend a UTC timestamp to SDK warnings when no logging handler is
+# configured to render one (i.e. records would fall through to
+# logging.lastResort). No-op in any environment with a real handler.
+# Idempotent; installs no handler.
+_install_default_logging()
 
 try:
     from ._patch import __all__ as _patch_all
@@ -27,6 +44,14 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "FineTuningSessionClient",
     "FineTuningSession",
+    "FineTuningSessionsError",
+    "BatchTooLargeError",
+    "NoCapacityError",
+    "TrainingEngineError",
+    "EngineDeadError",
+    "ContentionError",
+    "RequestValidationError",
+    "MalformedDatumError",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 

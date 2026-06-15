@@ -78,16 +78,21 @@ class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Lifecycle status of a fine-tuning session."""
+    """Lifecycle status of a fine-tuning session.
 
-    CREATED = "created"
+    Uses the canonical fine-tuning job vocabulary for consistency
+    across all API surfaces.
+    """
+
+    QUEUED = "queued"
     """Session has been created and is waiting for the GPU engine."""
-    READY = "ready"
-    """Session is loaded and ready to receive training or sampling requests."""
-    UNLOADED = "unloaded"
-    """Session has been unloaded from the GPU engine."""
+    RUNNING = "running"
+    """Session is loaded and actively processing requests."""
+    SUCCEEDED = "succeeded"
+    """Session completed successfully."""
     FAILED = "failed"
-    """The engine hosting this session has died; weights are lost."""
+    """Session ended in a non-success terminal state (engine death, expiry,
+    or unrecoverable failure). Any in-memory weights are lost."""
 
 
 class SessionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

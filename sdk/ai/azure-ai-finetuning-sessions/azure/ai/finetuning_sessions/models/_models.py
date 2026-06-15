@@ -256,6 +256,8 @@ class CreateSessionRequest(_Model):
     lora_config: Optional["_models.LoRAConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """LoRA adapter config. Rank is fixed server-side for v1; omit to use the server default."""
     user_metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    ejectable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Opt the session into idle hibernation. Default False."""
 
     @overload
     def __init__(
@@ -265,6 +267,7 @@ class CreateSessionRequest(_Model):
         base_model: str,
         lora_config: Optional["_models.LoRAConfig"] = None,
         user_metadata: Optional[dict[str, str]] = None,
+        ejectable: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -511,6 +514,45 @@ class ForwardBackwardRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ForwardInput(ForwardBackwardInput):
+    """Forward-only payload.
+
+    Currently identical to ForwardBackwardInput. Exists as a named alias so
+    that the forward endpoint has its own type in the SDK, allowing the
+    contract to diverge later (e.g. making loss_fn optional for forward).
+    """
+
+
+class ForwardRequest(_Model):
+    """Request body for POST /fine_tuning/sessions/{sessionId}/forward.
+
+    :ivar forward_input: Required.
+    :vartype forward_input: ~azure.ai.finetuning_sessions.models.ForwardInput
+    """
+
+    forward_input: "_models.ForwardInput" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        forward_input: "_models.ForwardInput",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class HeartbeatResponse(_Model):
     """Response from POST /fine_tuning/sessions/{sessionId}/heartbeat.
 
@@ -545,6 +587,8 @@ class LoRAConfig(_Model):
 
     :ivar rank: Number of LoRA rank dimensions.
     :vartype rank: int
+    :ivar alpha: LoRA scaling factor (effective scale = alpha / rank). Defaults to 32.0 server-side.
+    :vartype alpha: float
     :ivar seed: Seed for LoRA weight initialisation. If omitted, the server picks a random seed and
      echoes it back.
     :vartype seed: int
@@ -552,6 +596,8 @@ class LoRAConfig(_Model):
 
     rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of LoRA rank dimensions."""
+    alpha: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """LoRA scaling factor (effective scale = alpha / rank). Defaults to 32.0 server-side."""
     seed: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Seed for LoRA weight initialisation. If omitted, the server picks a random seed and echoes it
      back."""
@@ -561,6 +607,7 @@ class LoRAConfig(_Model):
         self,
         *,
         rank: Optional[int] = None,
+        alpha: Optional[float] = None,
         seed: Optional[int] = None,
     ) -> None: ...
 
@@ -807,6 +854,8 @@ class SampledSequence(_Model):
 
     :ivar tokens: Required.
     :vartype tokens: list[int]
+    :ivar text: Decoded text of the generated sequence.
+    :vartype text: str
     :ivar logprobs:
     :vartype logprobs: list[float]
     :ivar prompt_logprobs:
@@ -815,6 +864,8 @@ class SampledSequence(_Model):
 
     tokens: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
+    text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Decoded text of the generated sequence."""
     logprobs: Optional[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prompt_logprobs: Optional[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
@@ -823,6 +874,7 @@ class SampledSequence(_Model):
         self,
         *,
         tokens: list[int],
+        text: Optional[str] = None,
         logprobs: Optional[list[float]] = None,
         prompt_logprobs: Optional[list[float]] = None,
     ) -> None: ...
@@ -1039,17 +1091,29 @@ class SaveCheckpointRequest(_Model):
     :ivar path: User-supplied checkpoint identifier. Alphanumeric plus underscores and hyphens; max
      255 characters. Required.
     :vartype path: str
+    :ivar step_number: Training iteration this checkpoint corresponds to. Optional.
+    :vartype step_number: int
+    :ivar metrics: Per-step evaluation metrics at checkpoint time. Optional.
+    :vartype metrics: dict[str, any]
     """
 
     path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """User-supplied checkpoint identifier. Alphanumeric plus underscores and hyphens; max 255
      characters. Required."""
 
+    step_number: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Training iteration this checkpoint corresponds to. Optional."""
+
+    metrics: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Per-step evaluation metrics at checkpoint time. Optional."""
+
     @overload
     def __init__(
         self,
         *,
         path: str,
+        step_number: Optional[int] = None,
+        metrics: Optional[dict[str, Any]] = None,
     ) -> None: ...
 
     @overload
@@ -1150,8 +1214,8 @@ class Session(_Model):
     :vartype session_id: str
     :ivar type: The session type. Required. "training"
     :vartype type: str or ~azure.ai.finetuning_sessions.models.SessionType
-    :ivar status: Current lifecycle status of the session. Required. Known values are: "created",
-     "ready", "unloaded", and "failed".
+    :ivar status: Current lifecycle status of the session. Required. Known values are: "queued",
+     "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuning_sessions.models.SessionStatus
     :ivar model_data: Model and adapter configuration associated with this session. Required.
     :vartype model_data: ~azure.ai.finetuning_sessions.models.SessionModelData
@@ -1162,8 +1226,8 @@ class Session(_Model):
     type: Union[str, "_models.SessionType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The session type. Required. \"training\""""
     status: Union[str, "_models.SessionStatus"] = rest_field(visibility=["read"])
-    """Current lifecycle status of the session. Required. Known values are: \"created\", \"ready\",
-     \"unloaded\", and \"failed\"."""
+    """Current lifecycle status of the session. Required. Known values are: \"queued\", \"running\",
+     \"succeeded\", and \"failed\"."""
     model_data: "_models.SessionModelData" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Model and adapter configuration associated with this session. Required."""
 
@@ -1262,8 +1326,8 @@ class SessionSummary(_Model):
     :vartype session_id: str
     :ivar base_model: Base model used for this fine-tuning session. Required.
     :vartype base_model: str
-    :ivar status: Current lifecycle status of the session. Required. Known values are: "created",
-     "ready", "unloaded", and "failed".
+    :ivar status: Current lifecycle status of the session. Required. Known values are: "queued",
+     "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuning_sessions.models.SessionStatus
     :ivar is_lora: Whether the session uses a LoRA adapter. Required.
     :vartype is_lora: bool
@@ -1282,8 +1346,8 @@ class SessionSummary(_Model):
     base_model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Base model used for this fine-tuning session. Required."""
     status: Union[str, "_models.SessionStatus"] = rest_field(visibility=["read"])
-    """Current lifecycle status of the session. Required. Known values are: \"created\", \"ready\",
-     \"unloaded\", and \"failed\"."""
+    """Current lifecycle status of the session. Required. Known values are: \"queued\", \"running\",
+     \"succeeded\", and \"failed\"."""
     is_lora: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether the session uses a LoRA adapter. Required."""
     lora_rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])

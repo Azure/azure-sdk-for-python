@@ -8,7 +8,9 @@
 
 from typing import Any, TYPE_CHECKING
 
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 
 from .._version import VERSION
 
@@ -56,6 +58,12 @@ class FineTuningSessionClientConfiguration:  # pylint: disable=too-many-instance
         self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
-                self.credential, *self.credential_scopes, **kwargs
-            )
+            if isinstance(self.credential, AzureKeyCredential):
+                # API key auth: sends "api-key: <key>" header on every request.
+                self.authentication_policy = AzureKeyCredentialPolicy(
+                    self.credential, name="api-key"
+                )
+            else:
+                self.authentication_policy = policies.AsyncBearerTokenCredentialPolicy(
+                    self.credential, *self.credential_scopes, **kwargs
+                )
