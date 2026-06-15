@@ -24,16 +24,24 @@ def test_lifecycle_state_machine__requires_response_created_as_first_event() -> 
         )
 
 
-def test_lifecycle_state_machine__rejects_multiple_terminal_events() -> None:
-    with pytest.raises(ValueError):
-        _normalize_lifecycle_events(
-            response_id="resp_123",
-            events=[
-                {"type": "response.created", "response": {"status": "queued"}},
-                {"type": "response.completed", "response": {"status": "completed"}},
-                {"type": "response.failed", "response": {"status": "failed"}},
-            ],
-        )
+def test_lifecycle_state_machine__second_terminal_is_silently_ignored() -> None:
+    """Spec 012 FR-006: duplicate terminal events are no-ops.
+
+    Validates handler idempotency against "crashed after emit_completed
+    but before persistence". The first terminal wins; later ones are
+    silently ignored rather than raising.
+    """
+    normalized = _normalize_lifecycle_events(
+        response_id="resp_123",
+        events=[
+            {"type": "response.created", "response": {"status": "queued"}},
+            {"type": "response.completed", "response": {"status": "completed"}},
+            {"type": "response.failed", "response": {"status": "failed"}},
+        ],
+    )
+    # First terminal wins; subsequent terminal events were silently dropped.
+    terminal_types = [e.get("type") for e in normalized if e.get("type") in {"response.completed", "response.failed"}]
+    assert terminal_types == ["response.completed"]
 
 
 def test_lifecycle_state_machine__auto_appends_failed_when_terminal_missing() -> None:

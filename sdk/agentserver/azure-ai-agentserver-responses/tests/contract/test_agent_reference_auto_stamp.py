@@ -45,7 +45,7 @@ def _collect_sse_events(response: Any) -> list[dict[str, Any]]:
     return events
 
 
-def _handler_with_output(request: Any, context: Any, cancellation_signal: Any):
+async def _handler_with_output(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits a single message output item using the builder."""
 
     async def _events():
@@ -66,7 +66,7 @@ def _handler_with_output(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _handler_with_handler_set_agent_ref(request: Any, context: Any, cancellation_signal: Any):
+async def _handler_with_handler_set_agent_ref(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that sets a custom agent_reference on the output item directly."""
 
     async def _events():
@@ -96,7 +96,7 @@ def _handler_with_handler_set_agent_ref(request: Any, context: Any, cancellation
     return _events()
 
 
-def _direct_yield_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _direct_yield_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that directly yields events without using builder.
 
     Does NOT set agent_reference on output items. Layer 2 must stamp it.

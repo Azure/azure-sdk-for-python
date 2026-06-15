@@ -89,7 +89,7 @@ def _base_payload(input_value: Any = "hello", **overrides) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-def _sample1_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _sample1_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo handler: returns the user's input text using TextResponse."""
 
     async def _create_text():
@@ -417,7 +417,7 @@ def test_sample6_non_streaming_both_output_items() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample7_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _sample7_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Handler that reports which model is used, via TextResponse."""
     return TextResponse(
         context,
@@ -463,7 +463,9 @@ def test_sample7_explicit_model_overrides_default() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample8_response_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _sample8_response_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
     """Responses handler for the mixin test, via TextResponse."""
 
     async def _create_text():
@@ -539,7 +541,7 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
 
     responses_app = ResponsesAgentServerHost()
 
-    def _handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    async def _handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
 
         async def _create_text():
             return f"Self-hosted: {await context.get_input_text()}"
@@ -576,7 +578,7 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample10_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _sample10_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Streaming upstream handler: yields raw event dicts."""
 
     async def _mock_upstream_events(prompt: str):
@@ -708,7 +710,7 @@ def test_sample10_streaming_upstream_non_streaming_returns_full_text() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample11_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _sample11_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Non-streaming upstream handler: iterates upstream output items via builders."""
 
     def _mock_upstream_call(prompt: str) -> list[dict[str, Any]]:
@@ -1055,7 +1057,9 @@ async def _image_gen_convenience_handler(
     yield stream.emit_completed()
 
 
-def _image_gen_streaming_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _image_gen_streaming_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
@@ -1357,7 +1361,7 @@ async def _structured_convenience_handler(
     yield stream.emit_completed()
 
 
-def _structured_full_control_handler(
+async def _structured_full_control_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
     stream = ResponseEventStream(response_id=context.response_id, request=request)

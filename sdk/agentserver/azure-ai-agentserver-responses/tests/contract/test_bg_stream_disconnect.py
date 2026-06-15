@@ -196,7 +196,7 @@ def _make_multi_output_handler(total_outputs: int, signal_after: int):
     ready_for_disconnect = asyncio.Event()
     handler_completed = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -235,7 +235,7 @@ def _make_cancellation_tracking_handler():
     handler_cancelled = asyncio.Event()
     handler_completed = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -266,7 +266,7 @@ def _make_slow_completing_handler():
     """Handler that takes a moment to complete (for bg+nostream regression test)."""
     handler_completed = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,

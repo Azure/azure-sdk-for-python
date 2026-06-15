@@ -158,7 +158,7 @@ async def _ensure_task_done(task: asyncio.Task[Any], handler: Any, timeout: floa
 def _make_multi_output_handler():
     """Handler that emits 2 output items sequentially for snapshot isolation testing."""
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()
@@ -192,7 +192,7 @@ def _make_replay_gated_handler():
     """Handler for replay snapshot test — waits for gate before completing."""
     done = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()

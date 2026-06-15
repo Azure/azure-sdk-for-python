@@ -26,11 +26,10 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 
-
 # ─── Handlers ─────────────────────────────────────────────
 
 
-def _fast_sync_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+async def _fast_sync_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that completes instantly with NO awaits between yields.
 
     This is the typical pattern when using ResponseEventStream — all
@@ -60,7 +59,7 @@ def _fast_sync_handler(request: Any, context: Any, cancellation_signal: Any) -> 
     return _events()
 
 
-def _minimal_sync_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+async def _minimal_sync_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Minimal handler: just created → completed, zero awaits."""
 
     async def _events():

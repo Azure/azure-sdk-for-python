@@ -35,7 +35,7 @@ def _make_app(handler=None):
     app = ResponsesAgentServerHost(configure_observability=None)
 
     @app.response_handler
-    def _default_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _default_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             if False:  # pragma: no cover
                 yield None

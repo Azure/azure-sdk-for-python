@@ -41,7 +41,7 @@ async def task_manager(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
     tasks_dir = tmp_path / "tasks"
     tasks_dir.mkdir(parents=True, exist_ok=True)
-    monkeypatch.setenv("AGENTSERVER_DURABLE_TASKS_PATH", str(tasks_dir))
+    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
     monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
 
     from azure.ai.agentserver.core.durable._manager import (  # noqa: WPS433

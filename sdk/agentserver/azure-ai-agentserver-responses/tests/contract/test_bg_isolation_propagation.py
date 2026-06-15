@@ -26,7 +26,6 @@ from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvide
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 from tests._helpers import poll_until
 
-
 # ─── Recording provider ───────────────────────────────────
 
 
@@ -93,7 +92,7 @@ class _RecordingProvider:
 # ─── Handler ──────────────────────────────────────────────
 
 
-def _simple_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+async def _simple_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that emits created → completed."""
 
     async def _events():

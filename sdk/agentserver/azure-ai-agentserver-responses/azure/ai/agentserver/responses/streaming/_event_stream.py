@@ -63,7 +63,7 @@ def _resolve_conversation_param(raw: Any) -> str | None:
 
 
 def _as_dict(
-    obj: _Model | dict[str, Any]
+    obj: _Model | dict[str, Any],
 ) -> dict[str, Any]:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Convert a model or dict-like object to a plain dictionary."""
     if isinstance(obj, _Model):
@@ -155,7 +155,13 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._agent_reference, self._model = _internals.extract_response_fields(self._response)
         self._events: list[generated_models.ResponseStreamEvent] = []
         self._validator = EventStreamValidator()
-        self._output_index = 0
+
+        # Recovery contract: when seeded with a `response=` payload that
+        # already carries output items (e.g. on a recovered entry), the
+        # output_index allocator must continue past those items so the
+        # next `add_output_item_*` doesn't collide with an existing slot.
+        seeded_output = self._response.get("output") if self._response is not None else None
+        self._output_index = len(seeded_output) if isinstance(seeded_output, list) else 0
 
     @property
     def response(self) -> generated_models.ResponseObject:
@@ -445,38 +451,23 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         item_id = IdGenerator.new_image_gen_call_item_id(self._response_id)
         return OutputItemImageGenCallBuilder(self, output_index=output_index, item_id=item_id)
 
-    def add_output_item_mcp_call(
-        self,
-        server_label: str,
-        name: str,
-        *,
-        item_id: str | None = None,
-    ) -> OutputItemMcpCallBuilder:
+    def add_output_item_mcp_call(self, server_label: str, name: str) -> OutputItemMcpCallBuilder:
         """Add an MCP tool call output item and return its scoped builder.
 
         :param server_label: Label identifying the MCP server.
         :type server_label: str
         :param name: Name of the MCP tool being called.
         :type name: str
-        :keyword item_id: Optional caller-supplied output item identifier.
-        :keyword type item_id: str | None
         :returns: A builder for emitting MCP call argument deltas and lifecycle events.
         :rtype: OutputItemMcpCallBuilder
         """
         output_index = self._output_index
         self._output_index += 1
-        if item_id is None:
-            resolved_item_id = IdGenerator.new_mcp_call_item_id(self._response_id)
-        else:
-            if not isinstance(item_id, str):
-                raise TypeError("item_id must be a string")
-            resolved_item_id = item_id.strip()
-            if not resolved_item_id:
-                raise ValueError("item_id must be a non-empty string")
+        item_id = IdGenerator.new_mcp_call_item_id(self._response_id)
         return OutputItemMcpCallBuilder(
             self,
             output_index=output_index,
-            item_id=resolved_item_id,
+            item_id=item_id,
             server_label=server_label,
             name=name,
         )

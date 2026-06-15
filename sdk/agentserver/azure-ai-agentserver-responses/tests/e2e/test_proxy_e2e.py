@@ -94,7 +94,7 @@ def _base_payload(input_text: str = "hello", **overrides: Any) -> dict[str, Any]
 def _emit_text_only_handler(text: str):
     """Return a handler that emits a single text message."""
 
-    def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=request.model)
             yield stream.emit_created()
@@ -115,7 +115,9 @@ def _emit_text_only_handler(text: str):
     return handler
 
 
-def _emit_multi_output_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+async def _emit_multi_output_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
     """Emit 3 output items: reasoning + function_call + text message."""
 
     async def _events():
@@ -158,7 +160,7 @@ def _emit_multi_output_handler(request: CreateResponse, context: ResponseContext
     return _events()
 
 
-def _emit_failed_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+async def _emit_failed_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Emit created, in_progress, then failed."""
 
     async def _events():
@@ -178,7 +180,7 @@ def _emit_failed_handler(request: CreateResponse, context: ResponseContext, canc
 def _make_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
     """Create a streaming proxy handler that forwards to upstream via openai SDK."""
 
-    def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=request.model)
             yield stream.emit_created()
@@ -216,7 +218,7 @@ def _make_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
 def _make_non_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
     """Create a non-streaming proxy handler that forwards to upstream via openai SDK."""
 
-    def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         async def _events():
             user_text = await context.get_input_text() or "hello"
 
@@ -255,7 +257,7 @@ def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
     (created, in_progress) and handles completed/failed from upstream.
     """
 
-    def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+    async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=request.model)
             yield stream.emit_created()

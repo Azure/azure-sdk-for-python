@@ -21,7 +21,7 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     async def _events():
         if False:  # pragma: no cover
             yield None

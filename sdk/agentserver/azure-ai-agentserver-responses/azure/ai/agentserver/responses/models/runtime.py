@@ -13,11 +13,20 @@ from ._generated import AgentReference, OutputItem, ResponseObject, ResponseStre
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from ..hosting._event_subject import _ResponseEventSubject
+    from azure.ai.agentserver.core.streaming import EventStream  # pylint: disable=import-error,no-name-in-module
 
 
 ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancelled", "incomplete"]
 TerminalResponseStatus = Literal["completed", "failed", "cancelled", "incomplete"]
+
+
+# (Spec 024 Phase 5 — Proposal #6/#11) CancellationReason enum DELETED.
+# Cancel causes are now surfaced as independent booleans / events on
+# :class:`ResponseContext` (``client_cancelled`` bool, ``shutdown``
+# asyncio.Event). Steering pressure manifests as ``cancel.is_set()``
+# without any cause boolean — handlers that want to distinguish
+# steering from explicit cancel inspect ``client_cancelled`` and
+# ``shutdown.is_set()`` after observing ``cancel.is_set()``.
 
 
 class ResponseModeFlags:
@@ -92,7 +101,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         cancel_requested: bool = False,
         client_disconnected: bool = False,
         response_created_seen: bool = False,
-        subject: _ResponseEventSubject | None = None,
+        subject: "EventStream | None" = None,
         cancel_signal: asyncio.Event | None = None,
         input_items: list[OutputItem] | None = None,
         previous_response_id: str | None = None,
@@ -196,6 +205,13 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         ``response.created`` is processed (: response not accessible
         before the handler emits ``response.created``).
 
+        For non-background responses (Row 3, both stream=F and stream=T),
+        visibility is deferred until the handler reaches a terminal status
+        — per B16, non-bg in-flight responses are not retrievable. (Spec
+        024 Phase 2 bookkeeping unification places the record in
+        runtime_state at accept-time so cancellation / shutdown / recovery
+        can find it; this property gates GET to preserve B16 semantics.)
+
         :returns: True if this execution can be retrieved via GET.
         :rtype: bool
         """
@@ -204,6 +220,9 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         #: bg non-stream responses are not visible until response.created.
         if self.mode_flags.background and not self.mode_flags.stream:
             return self.response_created_signal.is_set()
+        # B16: non-bg responses (stream OR non-stream) are visible only after terminal.
+        if not self.mode_flags.background:
+            return self.status in ("completed", "failed", "cancelled", "incomplete")
         return True
 
     def apply_event(self, normalized: ResponseStreamEvent, all_events: list[ResponseStreamEvent]) -> None:

@@ -21,7 +21,8 @@ from azure.core.rest import HttpRequest
 
 from .._version import VERSION
 from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
-from ._foundry_errors import raise_for_storage_error
+from ._base import ResponseAlreadyExistsError
+from ._foundry_errors import FoundryBadRequestError, raise_for_storage_error
 from ._foundry_logging_policy import FoundryStorageLoggingPolicy
 from ._foundry_serializer import (
     deserialize_history_ids,
@@ -39,6 +40,29 @@ if TYPE_CHECKING:
 
 _FOUNDRY_TOKEN_SCOPE = "https://ai.azure.com/.default"
 _JSON_CONTENT_TYPE = "application/json; charset=utf-8"
+
+
+def _is_conflict(exc: "FoundryBadRequestError") -> bool:
+    """Return True if the exception's response body looks like a 409 conflict.
+
+    Foundry's storage API surfaces both HTTP 400 and 409 through
+    :class:`FoundryBadRequestError`; the distinguishing signal is the body's
+    ``error.code`` or message text. This helper applies the common heuristic
+    so the create-side translation can return :class:`ResponseAlreadyExistsError`
+    only for the duplicate-create case.
+
+    :param exc: The Foundry transport exception.
+    :type exc: FoundryBadRequestError
+    :returns: True if the exception body indicates a duplicate-create conflict.
+    :rtype: bool
+    """
+    body = exc.response_body or {}
+    error = body.get("error") if isinstance(body, dict) else None
+    if isinstance(error, dict):
+        code = str(error.get("code") or "").lower()
+        if code in {"conflict", "already_exists", "duplicate"}:
+            return True
+    return False
 
 
 class _ServerVersionUserAgentPolicy(SansIOHTTPPolicy):  # type: ignore[type-arg]
@@ -218,13 +242,23 @@ class FoundryStorageProvider:
         :type history_item_ids: Iterable[str] | None
         :keyword isolation: Isolation context for multi-tenant partitioning.
         :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
-        :raises FoundryApiError: On non-success HTTP response.
+        :raises ResponseAlreadyExistsError: When the Foundry storage returns HTTP 409 (duplicate ``response_id``).
+        :raises FoundryApiError: On other non-success HTTP responses.
         """
         body = serialize_create_request(response, input_items, history_item_ids)
         url = self._settings.build_url("responses")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
         _apply_isolation_headers(request, isolation)
-        await self._send_storage_request(request)
+        try:
+            await self._send_storage_request(request)
+        except FoundryBadRequestError as exc:
+            # Translate the 409 specifically — callers swallow it as the
+            # idempotent-create signal during recovery. Other 4xx flavours
+            # (400 bad-request) propagate as-is.
+            if "already exists" in (exc.message or "").lower() or _is_conflict(exc):
+                response_id = str(getattr(response, "id"))
+                raise ResponseAlreadyExistsError(response_id) from exc
+            raise
 
     async def get_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> ResponseObject:
         """Retrieve a stored response by its ID.

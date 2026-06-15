@@ -45,7 +45,7 @@ def _collect_sse_events(response: Any) -> list[dict[str, Any]]:
     return events
 
 
-def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _simple_text_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits created + completed."""
 
     async def _events():
@@ -56,7 +56,7 @@ def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     async def _events():
         if False:
             yield None
@@ -274,7 +274,7 @@ def test_streaming_conversation_stamped_on_completed_event() -> None:
     assert conv_id == "conv_roundtrip"
 
 
-def _lifecycle_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _lifecycle_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits created → in_progress → completed lifecycle events."""
 
     async def _events():

@@ -38,7 +38,7 @@ from azure.ai.agentserver.responses.models import (
 _captured: dict[str, Any] = {}
 
 
-def _capture_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+async def _capture_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Handler that captures the parsed request, then emits a minimal response."""
     _captured["request"] = request
 

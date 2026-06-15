@@ -31,7 +31,7 @@ from tests._helpers import poll_until
 # ── Helpers ───────────────────────────────────────────────
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     async def _events():
         if False:  # pragma: no cover
             yield None
@@ -231,7 +231,7 @@ def _make_cancellable_bg_handler() -> Any:
     """Handler that emits created + completed after a brief delay."""
     started = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,

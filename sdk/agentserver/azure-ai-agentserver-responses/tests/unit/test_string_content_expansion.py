@@ -23,7 +23,6 @@ from azure.ai.agentserver.responses.models._helpers import (
     get_input_expanded,
 )
 
-
 # ---------------------------------------------------------------------------
 # get_content_expanded — string content
 # ---------------------------------------------------------------------------

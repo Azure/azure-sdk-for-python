@@ -73,12 +73,15 @@ def test_create__stores_response_envelope() -> None:
     assert str(getattr(result, "id")) == "resp_1"
 
 
-def test_create__duplicate_raises_value_error() -> None:
+def test_create__duplicate_raises_response_already_exists() -> None:
+    from azure.ai.agentserver.responses.store import ResponseAlreadyExistsError
+
     provider = InMemoryResponseProvider()
     asyncio.run(provider.create_response(_response("resp_dup"), None, None))
 
-    with pytest.raises(ValueError, match="already exists"):
+    with pytest.raises(ResponseAlreadyExistsError) as exc_info:
         asyncio.run(provider.create_response(_response("resp_dup"), None, None))
+    assert exc_info.value.response_id == "resp_dup"
 
 
 def test_create__stores_input_items_in_item_store() -> None:
