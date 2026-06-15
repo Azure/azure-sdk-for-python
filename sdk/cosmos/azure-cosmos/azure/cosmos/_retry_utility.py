@@ -39,6 +39,7 @@ from . import _service_request_retry_policy, _service_response_retry_policy
 from . import _session_retry_policy
 from . import _timeout_failover_retry_policy
 from . import exceptions
+from . import _metadata_failover_grace
 from ._constants import _Constants
 from ._cosmos_http_logging_policy import _log_diagnostics_error
 from ._global_partition_endpoint_manager_per_partition_automatic_failover import \
@@ -297,6 +298,47 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs): # pylin
                 if args:
                     _record_failure_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
                 _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
+
+        except BaseException as e:  # pylint: disable=broad-except
+            # A caller request-level timeout / cancellation can fire mid-flight during a
+            # cold control-plane metadata (collection) read and preempt the retry loop
+            # before the cross-region failover policy is consulted, surfacing the
+            # cancellation instead of a successful failover to the next preferred region
+            # (see azure-sdk-for-python#46471 / azure-cosmos-dotnet-v3#5805). For metadata
+            # reads only, give the failover policy one bounded, cancellation-shielded
+            # attempt against the next region. Process-control signals and the SDK's own
+            # timeout error are never intercepted.
+            if isinstance(e, (KeyboardInterrupt, SystemExit, GeneratorExit,
+                              exceptions.CosmosClientTimeoutError)):
+                raise
+            if not _metadata_failover_grace.is_metadata_failover_candidate(args):
+                raise
+            grace_seconds = _metadata_failover_grace.get_grace_seconds()
+            if grace_seconds <= 0:
+                raise
+            if not timeout_failover_retry_policy.ShouldRetry(e):
+                raise
+            last_error = e
+
+            def _grace_attempt():
+                return ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
+
+            succeeded, grace_result, _grace_exc = _metadata_failover_grace.run_grace_attempt_sync(
+                _grace_attempt, grace_seconds)
+            if not succeeded:
+                # Surface the original caller cancellation; the detached attempt (if any)
+                # keeps running in the background to warm caches for subsequent callers.
+                raise
+
+            if not client.last_response_headers:
+                client.last_response_headers = {}
+            client.last_response_headers[
+                HttpHeaders.ThrottleRetryCount
+            ] = resourceThrottle_retry_policy.current_retry_attempt_count
+            client.last_response_headers[
+                HttpHeaders.ThrottleRetryWaitTimeInMs
+            ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
+            return grace_result
 
 def _record_success_if_request_not_cancelled(
         request_params: RequestObject,

@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed a bug where a caller request-level timeout or cancellation that fired mid-flight during a cold control-plane metadata (container/collection) read could preempt the cross-region failover retry before the retry policy was consulted, surfacing a cancellation instead of failing over to the next preferred region. The SDK now grants one bounded, cancellation-shielded cross-region attempt for such metadata reads (configurable via `AZURE_COSMOS_METADATA_FAILOVER_GRACE_SECONDS`, default 10s; set to `0` to disable). See [issue 46471](https://github.com/Azure/azure-sdk-for-python/issues/46471).
 
 #### Other Changes
 

@@ -41,6 +41,7 @@ from .. import _service_response_retry_policy, _service_request_retry_policy
 from .. import _session_retry_policy
 from .. import _timeout_failover_retry_policy
 from .. import exceptions
+from .. import _metadata_failover_grace
 from .._constants import _Constants
 from .._container_recreate_retry_policy import ContainerRecreateRetryPolicy
 from .._request_object import RequestObject
@@ -313,6 +314,44 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                             global_endpoint_manager,
                             pk_range_wrapper)
                     _handle_service_response_retries(request, client, service_response_retry_policy, e, *args)
+
+        except asyncio.CancelledError as e:
+            # A caller request-level timeout / cancellation can fire mid-flight during a
+            # cold control-plane metadata (collection) read and preempt the retry loop
+            # before the cross-region failover policy is consulted, surfacing the
+            # cancellation instead of a successful failover to the next preferred region
+            # (see azure-sdk-for-python#46471 / azure-cosmos-dotnet-v3#5805). For metadata
+            # reads only, give the failover policy one bounded, cancellation-shielded
+            # attempt against the next region. The attempt runs on a shielded task so the
+            # caller's cancellation cannot preempt the failover decision.
+            if not _metadata_failover_grace.is_metadata_failover_candidate(args):
+                raise
+            grace_seconds = _metadata_failover_grace.get_grace_seconds()
+            if grace_seconds <= 0:
+                raise
+            if not timeout_failover_retry_policy.ShouldRetry(e):
+                raise
+            last_error = e
+            try:
+                grace_result = await asyncio.wait_for(
+                    asyncio.shield(
+                        ExecuteFunctionAsync(function, global_endpoint_manager, *args, **kwargs)),
+                    timeout=grace_seconds)
+            except BaseException:  # pylint: disable=broad-except
+                # Grace window expired or the cross-region attempt failed. Surface the
+                # original caller cancellation; the shielded attempt (if still running)
+                # continues in the background to warm caches for subsequent callers.
+                raise e from None
+
+            if not client.last_response_headers:
+                client.last_response_headers = {}
+            client.last_response_headers[
+                HttpHeaders.ThrottleRetryCount
+            ] = resourceThrottle_retry_policy.current_retry_attempt_count
+            client.last_response_headers[
+                HttpHeaders.ThrottleRetryWaitTimeInMs
+            ] = resourceThrottle_retry_policy.cumulative_wait_time_in_milliseconds
+            return grace_result
 
 async def _record_success_if_request_not_cancelled(
         request_params: RequestObject,

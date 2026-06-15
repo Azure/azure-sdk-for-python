@@ -90,6 +90,17 @@ class _Constants:
     TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT: int = 10
     # -------------------------------------------------------------------------
 
+    # Bounded grace window (in seconds) granted to a cold control-plane metadata
+    # (collection) read so that a cross-region failover attempt can run even when
+    # the caller's request-level timeout/cancellation fires mid-flight. See
+    # azure-sdk-for-python#46471 / azure-cosmos-dotnet-v3#5805. A value <= 0
+    # disables the grace window and restores the prior (preempted) behavior. The
+    # value is clamped to MetadataFailoverGraceSecondsMax.
+    METADATA_FAILOVER_GRACE_SECONDS = "AZURE_COSMOS_METADATA_FAILOVER_GRACE_SECONDS"
+    METADATA_FAILOVER_GRACE_SECONDS_DEFAULT: float = 10.0
+    METADATA_FAILOVER_GRACE_SECONDS_MAX: float = 86400.0
+    # -------------------------------------------------------------------------
+
     # Controls how the SDK handles invalid UTF-8 bytes in HTTP response bodies.
     # Accepted values: "REPLACE", "IGNORE". Anything else (including unset)
     # leaves strict decoding in effect, which is the historical default.
