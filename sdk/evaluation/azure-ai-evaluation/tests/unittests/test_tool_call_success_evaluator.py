@@ -141,11 +141,13 @@ class TestCollectFailedToolCalls:
 
     def test_parallel_calls_one_failed_returns_only_the_failed_name(self):
         msgs = [
-            _assistant_parallel_tool_calls([
-                ("c1", "fetch_weather", {"city": "Seattle"}, "completed"),
-                ("c2", "send_email", {"to": "x@example.com"}, "failed"),
-                ("c3", "lookup_user", {"id": "u42"}, "completed"),
-            ]),
+            _assistant_parallel_tool_calls(
+                [
+                    ("c1", "fetch_weather", {"city": "Seattle"}, "completed"),
+                    ("c2", "send_email", {"to": "x@example.com"}, "failed"),
+                    ("c3", "lookup_user", {"id": "u42"}, "completed"),
+                ]
+            ),
             _tool_result("c1", "Sunny, 72F.", status="completed"),
             _tool_result("c2", "", status="failed"),
             _tool_result("c3", {"user_id": "u42"}, status="completed"),
@@ -154,11 +156,13 @@ class TestCollectFailedToolCalls:
 
     def test_multiple_distinct_failures_dedupe_across_passes(self):
         msgs = [
-            _assistant_parallel_tool_calls([
-                ("c1", "send_email", {"to": "x"}, "failed"),
-                ("c2", "fetch_weather", {"city": "Seattle"}, None),
-                ("c3", "lookup_user", {"id": "u42"}, "incomplete"),
-            ]),
+            _assistant_parallel_tool_calls(
+                [
+                    ("c1", "send_email", {"to": "x"}, "failed"),
+                    ("c2", "fetch_weather", {"city": "Seattle"}, None),
+                    ("c3", "lookup_user", {"id": "u42"}, "incomplete"),
+                ]
+            ),
             _tool_result("c2", "Sunny", status="failed"),
             # c1's tool_result also fails -- must not double-list send_email.
             _tool_result("c1", "", status="failed"),
@@ -284,11 +288,13 @@ class TestGetToolCallsResultsNoStatusForward:
 
     def test_parallel_tool_calls_in_one_message_no_status_in_output(self):
         msgs = [
-            _assistant_parallel_tool_calls([
-                ("c1", "fetch_weather", {"city": "Seattle"}, "completed"),
-                ("c2", "send_email", {"to": "x@example.com"}, "completed"),
-                ("c3", "lookup_user", {"id": "u42"}, "completed"),
-            ]),
+            _assistant_parallel_tool_calls(
+                [
+                    ("c1", "fetch_weather", {"city": "Seattle"}, "completed"),
+                    ("c2", "send_email", {"to": "x@example.com"}, "completed"),
+                    ("c3", "lookup_user", {"id": "u42"}, "completed"),
+                ]
+            ),
             _tool_result("c1", "Sunny, 72F.", status="completed"),
             _tool_result("c2", "ok", status="completed"),
             _tool_result("c3", {"user_id": "u42"}, status="completed"),

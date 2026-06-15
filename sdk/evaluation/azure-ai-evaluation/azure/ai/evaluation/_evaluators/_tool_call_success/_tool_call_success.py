@@ -141,9 +141,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         return super().__call__(*args, **kwargs)
 
-    def _return_short_circuit_failure_result(
-        self, failed_tools: List[str]
-    ) -> Dict[str, Union[str, float]]:
+    def _return_short_circuit_failure_result(self, failed_tools: List[str]) -> Dict[str, Union[str, float]]:
         """Return a deterministic fail result without invoking the LLM judge.
 
         Used when the runtime explicitly marks one or more tool calls as
