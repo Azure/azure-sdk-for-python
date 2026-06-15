@@ -55,8 +55,11 @@ Each line is a single JSON object of the form
 a terminator record `{"emit_time": <float>, "__terminal__": true}` once
 the stream is closed. The directory is created on first use.
 
-Operators select the directory via `AGENTSERVER_STREAM_STORE_PATH`; the
-host falls back to a per-process temp directory when unset.
+Operators select the durable root directory via
+`AGENTSERVER_DURABLE_ROOT` (defaults to `~/.durable`); the responses
+host derives the streams subdirectory as
+`${AGENTSERVER_DURABLE_ROOT:-~/.durable}/streams/`. The pre-spec-024
+`AGENTSERVER_STREAM_STORE_PATH` env var is no longer consulted.
 
 ## Recovery on restart
 

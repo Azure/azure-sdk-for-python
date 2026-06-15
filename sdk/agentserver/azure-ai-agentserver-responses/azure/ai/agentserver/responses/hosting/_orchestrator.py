@@ -2372,7 +2372,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             await _run_background_non_stream(
                 create_fn=self._create_fn,
                 parsed=ctx.parsed,
-                context=ctx.context,
+                context=ctx.context,  # type: ignore[arg-type]
                 cancellation_signal=ctx.cancellation_signal,
                 record=record,
                 response_id=ctx.response_id,
@@ -2784,7 +2784,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             queued_response = dispatch_acceptance_hook(
                 hook=acceptance_hook,
                 request=ctx.parsed,
-                context=ctx.context,
+                context=ctx.context,  # type: ignore[arg-type]
                 model=ctx.model,
             )
             ctx.span.end(None)

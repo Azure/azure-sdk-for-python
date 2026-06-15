@@ -583,7 +583,16 @@ class DurableResponseOrchestrator:
                 runtime_state=self._runtime_state,
                 runtime_options=self._options,
             )
+            assert record is not None, "_reconstruct_from_params guarantees non-None record"
+            assert self._runtime_state is not None, "runtime_state always wired at orchestrator init"
             await self._runtime_state.add(record)
+
+        # After the reconstruction block, context and record are both
+        # guaranteed non-None (either set from refs in the same-process
+        # case, or built from serialized params in the cross-process
+        # recovery case). Narrow for the type checker.
+        assert context is not None, "context is non-None after reconstruction"
+        assert record is not None, "record is non-None after reconstruction"
 
         if context is not None:
             context.is_recovery = is_recovery
