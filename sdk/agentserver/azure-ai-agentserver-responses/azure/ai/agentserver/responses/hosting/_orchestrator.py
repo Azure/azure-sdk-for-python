@@ -1370,13 +1370,26 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 )
                 execution.persistence_failed = True
                 execution.persistence_exception = persist_exc
-                # Stamp ``failed`` terminal status on the in-memory record so
-                # GET / DELETE find a publicly visible terminal record even
-                # when the underlying store rejected the create. Without this
-                # ``visible_via_get`` stays False (status=in_progress), and
-                # the persistence-failure resilience contract regresses:
-                # subsequent GETs would return 404 instead of the documented
-                # ``200 status=failed error.code=storage_error`` envelope.
+                # Stamp the full storage-error response snapshot AND the
+                # ``failed`` terminal status on the in-memory record so a
+                # concurrent GET sees a consistent
+                # ``status=failed error.code=storage_error`` envelope (not a
+                # half-stamped record with status=failed and an in_progress
+                # snapshot body). The downstream
+                # ``_process_handler_events`` non-bg-stream branch re-stamps
+                # the same snapshot — the early stamp here closes the
+                # async window where GET could observe a
+                # status/snapshot mismatch.
+                execution.set_response_snapshot(
+                    _build_failed_response(
+                        ctx.response_id,
+                        ctx.agent_reference,
+                        ctx.model,
+                        created_at=ctx.context.created_at if ctx.context else None,
+                        error_code="storage_error",
+                        error_message=_STORAGE_ERROR_MESSAGE,
+                    )
+                )
                 execution.status = "failed"  # type: ignore[assignment]
         # Emit the first event AFTER persistence has been attempted. This
         # ensures replay subscribers (and the live wire iterator on the
@@ -1643,39 +1656,28 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     _wire_stream = await streams.get_or_create(ctx.response_id)
                     await self._safe_emit(_wire_stream, first_normalized)
                     yield first_normalized
+                    # Build, validate, and APPEND the terminal to
+                    # ``state.handler_events`` BEFORE emitting/yielding it.
+                    # This closes the window where a generator close after
+                    # yield-but-before-append would leave the event list
+                    # holding only ``response.created`` —
+                    # ``_finalize_stream`` Path B rebuilds the snapshot
+                    # from the event list, and would regress
+                    # ``status="failed"`` back to ``status="in_progress"``.
                     failed_event = {
                         "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
                         "response": storage_error_response.as_dict(),
                     }
-                    failed_coerced = _coerce_handler_event(failed_event)
-                    failed_normalized = _apply_stream_event_defaults(
-                        failed_coerced,
-                        response_id=ctx.response_id,
-                        agent_reference=ctx.agent_reference,
-                        model=ctx.model,
-                        sequence_number=state.next_seq,
-                        agent_session_id=ctx.agent_session_id,
-                        conversation_id=ctx.conversation_id,
-                    )
-                    state.next_seq += 1
-                    await self._safe_emit(_wire_stream, failed_normalized)
-                    yield failed_normalized
-                    # Record the terminal event in state.handler_events so
-                    # the post-iteration finalize sees a terminal in the
-                    # event list. Without this, ``_finalize_stream`` Path B
-                    # rebuilds a snapshot from only ``response.created``
-                    # (status=in_progress) and overwrites the in-memory
-                    # record we just stamped as ``failed`` — re-introducing
-                    # the persistence-failure visibility regression.
-                    state.handler_events.append(failed_normalized)
-                    # Keep the in-memory record so GET can serve the
-                    # storage_error snapshot (the underlying durable
-                    # store rejected the create, but the in-memory
-                    # runtime state preserves the failed envelope so
-                    # subsequent GETs return 200 + status=failed).
+                    failed_normalized = await self._normalize_and_append(ctx, state, failed_event)
+                    # Stamp the in-memory record with the terminal snapshot
+                    # + status BEFORE emitting the wire/yield, so a GET that
+                    # races the post-yield finalize observes a consistent
+                    # ``status=failed error.code=storage_error`` envelope.
                     if state.bg_record is not None:
                         state.bg_record.set_response_snapshot(storage_error_response)
                         state.bg_record.status = "failed"  # type: ignore[assignment]
+                    await self._safe_emit(_wire_stream, failed_normalized)
+                    yield failed_normalized
                     return
                 # Bg+stream: standalone error event (no response.created).
                 await self._runtime_state.try_evict(ctx.response_id)
