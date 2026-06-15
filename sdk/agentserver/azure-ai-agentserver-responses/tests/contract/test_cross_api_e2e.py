@@ -510,12 +510,20 @@ class TestC1SyncStored:
         t.join(timeout=5.0)
 
     @pytest.mark.asyncio
-    async def test_e6_disconnect_then_get_returns_not_found(self) -> None:
-        """B17 — connection termination cancels non-bg; not persisted → GET 404.
+    async def test_e6_disconnect_then_get_returns_cancelled(self) -> None:
+        """B17 — non-bg disconnect with store=true → cancelled, retrievable.
 
-        Uses a real Hypercorn server so that TCP disconnect propagates correctly.
-        A sync (non-streaming) POST with a blocking handler is aborted mid-flight,
-        then GET /responses/{id} must return 404.
+        Per the foundry Responses behaviour contract (Rule B17):
+          - Non-bg disconnect transitions the response to ``status: cancelled``.
+          - With ``store=true``, the cancelled response becomes retrievable
+            (GET 200 + status=cancelled).
+          - With ``store=false`` (covered separately), GET returns 404.
+
+        Uses a real Hypercorn server so that TCP disconnect propagates
+        correctly. A sync (non-streaming) POST with a blocking handler
+        is aborted mid-flight; the persisted snapshot must surface as
+        cancelled via subsequent GET. Pre-spec-024 this test asserted
+        the inverse (404) — the prior behaviour violated B17.
         """
         from tests._helpers import hypercorn_server
 
@@ -570,11 +578,20 @@ class TestC1SyncStored:
 
             await asyncio.sleep(1.0)
 
-            # Non-bg in-flight responses are not persisted → GET returns 404
+            # Non-bg disconnect with store=true → cancelled, retrievable (B17).
             get_resp = await client.get(f"/responses/{response_id}")
-            assert (
-                get_resp.status_code == 404
-            ), f"Expected 404 for disconnected non-bg sync response, got {get_resp.status_code}"
+            assert get_resp.status_code == 200, (
+                f"Expected 200 for cancelled non-bg sync response (store=true) "
+                f"per B17, got {get_resp.status_code}: {get_resp.text}"
+            )
+            body = get_resp.json()
+            assert body.get("status") == "cancelled", (
+                f"Expected status=cancelled per B17/B11, got {body.get('status')}: {body}"
+            )
+            # B11 point 2: cancelled response has empty output[].
+            assert body.get("output") == [], (
+                f"Expected empty output[] per B11 cancellation rules, got {body.get('output')}: {body}"
+            )
 
 
 # ════════════════════════════════════════════════════════════

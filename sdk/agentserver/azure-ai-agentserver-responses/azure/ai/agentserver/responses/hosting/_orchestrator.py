@@ -697,12 +697,6 @@ class _HandlerError(Exception):
         self.original = original
         super().__init__(str(original))
 
-    # (Spec 024 Phase 2) `_bookkeeping_noop_runner` deleted with the
-    # bookkeeping pattern. The handler now runs inside the durable task
-    # body for all store=True paths; no separate fallback runner is
-    # required for the bookkeeping primitive.
-
-
 def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") -> "ResponseExecution":
     """Create a transient ResponseExecution for non-bg streams needing persistence.
 
@@ -1236,8 +1230,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # (Spec 024 Phase 2) Bookkeeping-task signal removed. The handler
         # now runs inside the durable task body for all store=True rows
         # (Row 1/2/3) — the task body returns when the handler emits its
-        # terminal, marking the task ``completed`` naturally. No separate
-        # signal is needed because there is no separate bookkeeping task.
+        # terminal, marking the task ``completed`` naturally. The
+        # handler-in-task-body architecture removes the need for a
+        # separate completion signal.
 
         return state.pending_terminal
 
@@ -1885,13 +1880,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # cancellation — we persist a cancelled terminal so a later GET
         # sees ``cancelled``, NOT a 404), or a server shutdown
         # (``shutdown.set()``, deferred to the next-lifetime recovery
-        # scanner via the bookkeeping task — we leave the response
-        # un-persisted in THIS lifetime so the scanner's
-        # ``_persist_crash_failed`` writes the canonical terminal).
+        # scanner — we leave the response un-persisted in THIS lifetime
+        # so the recovery scanner's ``_persist_crash_failed`` writes the
+        # canonical terminal).
         if not ctx.background and state.stream_interrupted:
             _shutdown = bool(ctx.context.shutdown.is_set()) if ctx.context else False
             if _shutdown:
-                # Defer to bookkeeping-task recovery in the next lifetime.
+                # Defer to next-lifetime recovery scanner.
                 ctx.span.end(state.captured_error)
                 return
             # Client disconnect (or unknown cancellation): make sure we have
@@ -2473,38 +2468,69 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             ctx.span.end(persistence_exc)
             raise _HandlerError(persistence_exc) from persistence_exc
 
-        # B17: After the task body completes, check if the client disconnected
-        # (cancellation_signal set without an explicit /cancel call). For non-bg
-        # sync responses, disconnect means the response is discarded — GET
-        # should return 404. We discard the record (best-effort eviction) and
-        # skip the rest of the snapshot/return path.
+        # B17 (per foundry behaviour-contract): non-bg + disconnect →
+        # status="cancelled". If store=true, the cancelled response is
+        # retrievable (GET 200 + status=cancelled). If store=false,
+        # the cancelled response is not retrievable (GET 404 per Rule B14).
         #
         # IMPORTANT: distinguish "client disconnect" from "server shutdown".
         # During graceful shutdown the task body's ``exit_for_recovery``
         # leaves the durable task in_progress so the next-lifetime recovery
-        # scanner can mark the response failed. If we discarded here on
-        # shutdown the recovery path would have nothing to find. The
-        # ``context.shutdown`` event distinguishes the two: set means
+        # scanner can mark the response failed. If we persisted/discarded
+        # here on shutdown the recovery path would have nothing to find.
+        # The ``context.shutdown`` event distinguishes the two: set means
         # server shutdown (preserve for recovery); not set means client
-        # disconnect / explicit cancel (discard per B17).
+        # disconnect / explicit cancel (handled per B17 + B11).
         _is_shutdown = bool(ctx.context.shutdown.is_set()) if ctx.context else False
         if ctx.cancellation_signal.is_set() and not record.cancel_requested and not _is_shutdown:
+            if ctx.store:
+                # B17 + B11: persist cancelled terminal so GET 200 + cancelled.
+                logger.info(
+                    "Non-bg sync response %s cancelled on client disconnect (B17, store=true → cancelled retrievable)",
+                    ctx.response_id,
+                )
+                cancelled_response = _build_cancelled_response(
+                    ctx.response_id,
+                    ctx.agent_reference,
+                    ctx.model,
+                    created_at=ctx.context.created_at if ctx.context else None,
+                )
+                record.set_response_snapshot(cancelled_response)
+                # Force terminal status — record may already be in a
+                # non-terminal state that doesn't allow normal transitions.
+                record.status = "cancelled"  # type: ignore[assignment]
+                # Persist to the response store so the in-memory record
+                # can be evicted later without losing the cancelled
+                # snapshot.
+                try:
+                    await self._provider.update_response(
+                        cancelled_response,
+                        isolation=ctx.context.isolation if ctx.context else None,
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.debug(
+                        "Provider cancelled-update failed on B17 disconnect "
+                        "(response_id=%s) — leaving in-memory record as "
+                        "authoritative source",
+                        ctx.response_id,
+                        exc_info=True,
+                    )
+                ctx.span.end(None)
+                # Raise CancelledError so the endpoint stops emitting a
+                # snapshot to the (already-gone) client; the persisted
+                # cancelled terminal is the GET-visible source of truth.
+                raise asyncio.CancelledError()
+            # B14 + B17 store=false: discard the in-flight record so
+            # GET returns 404 (no persistence to honour).
             logger.info(
-                "Non-bg sync response %s discarded due to client disconnect (B17)",
+                "Non-bg sync response %s discarded on client disconnect (B17, store=false → GET 404)",
                 ctx.response_id,
             )
             try:
                 await self._runtime_state.try_evict(ctx.response_id)
             except Exception:  # pylint: disable=broad-exception-caught
                 pass
-            # Also delete from provider store best-effort so GET returns 404.
-            try:
-                await self._provider.delete_response(ctx.response_id)
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
             ctx.span.end(None)
-            # Raise CancelledError so the endpoint maps to a client-cancelled
-            # request (no body returned; client already disconnected anyway).
             raise asyncio.CancelledError()
 
         # On graceful shutdown: leave the response in_progress so next-lifetime

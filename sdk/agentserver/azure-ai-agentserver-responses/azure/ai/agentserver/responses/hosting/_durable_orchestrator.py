@@ -7,12 +7,12 @@ a ``@task``-decorated function whose body calls ``_run_background_non_stream``
 (the existing pipeline). The developer's handler is unchanged — the task wrapping
 is a transparent infrastructure concern.
 
-Architecture:
+Architecture (post-spec-024 unification):
   POST /responses → _ResponseOrchestrator.run_background()
-    → (durable=True)  → DurableResponseOrchestrator.start_durable(...)
-        → task_fn.start(task_id=derived_id, input=execution_params)
-          → task body → _run_background_non_stream(...)  [existing pipeline]
-    → (durable=False) → asyncio.create_task(_shielded_runner())  [unchanged]
+    → durable task body → _run_background_non_stream(...)
+       (handler runs INSIDE the task body for every store=true row;
+        disposition selects re-invoke vs mark-failed recovery).
+    → (store=false) → asyncio.create_task(...) fallback for Row 4.
 """
 
 from __future__ import annotations
@@ -381,10 +381,9 @@ class DurableResponseOrchestrator:
         # ── One-shot primitive ──────────────────────────────────────────
         # Used for rows where the request has neither a conversation_id
         # nor a steerable previous_response_id (SOT §6.6 rows 1-2 / 3).
-        # Also used for the Row 2/3 bookkeeping pattern, where the
-        # bookkeeping body's only job is to hold the lease while the
-        # external handler runs; on terminal exit the record is deleted
-        # (eliminating the prior ephemeral=False storage overhead).
+        # On terminal exit the durable record is auto-deleted (one-shot
+        # primitives are always ephemeral). Recovery branches that need
+        # to mark the response failed do so via the response store.
         @task(name="responses_durable_one_shot")
         async def _one_shot_response_task(
             ctx: TaskContext[dict[str, Any]],
@@ -871,11 +870,11 @@ class DurableResponseOrchestrator:
         Idempotent against a completed-response race (T-066): if the
         response already exists in the store with a terminal status, the
         crash happened AFTER terminal persistence and BEFORE the
-        bookkeeping task could be marked complete. In that case the
+        durable task body could return. In that case the
         ``server_error`` marker would corrupt a valid completed response,
         so we skip the overwrite and return cleanly. The next-lifetime
-        recovery scanner still marks the bookkeeping task as completed
-        when the body returns, removing it from future recovery scans.
+        recovery scanner still marks the task as completed when the body
+        returns, removing it from future recovery scans.
 
         Handles both create (response was never persisted — handler
         crashed before terminal) and update (response was persisted at

@@ -187,7 +187,13 @@ def _validate_handler_signature(fn: Any) -> None:
     ]
     has_var_positional = any(p.kind is inspect.Parameter.VAR_POSITIONAL for p in sig.parameters.values())
     if has_var_positional:
-        return  # accept (*args)-style handlers — they trivially accept 2 args
+        raise TypeError(
+            f"response_handler {getattr(fn, '__name__', repr(fn))!r} uses a "
+            f"variadic (*args) signature. The handler contract requires exactly "
+            f"two positional parameters (request, context) so the framework can "
+            f"reason about its dispatch shape statically. Replace the *args with "
+            f"explicit '(request, context)' positional parameters."
+        )
     if len(positional) != 2:
         raise TypeError(
             f"response_handler {getattr(fn, '__name__', repr(fn))!r} must take "

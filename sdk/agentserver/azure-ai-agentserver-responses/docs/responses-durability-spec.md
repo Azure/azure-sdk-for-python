@@ -930,7 +930,7 @@ HTTP   ──► POST /v1/responses { stream: true, store, background } ──�
        primitive: task lease expired → re-fire task body
        framework: task body entered with context.is_recovery=True
        framework: read _responses.disposition → "re-invoke"
-       framework: build recovery + steering context (flat fields on the response context)(context.is_recovery=True, retry_attempt=1, ...)
+       framework: assign flat fields on response context (is_recovery=True, is_steered_turn=False, pending_input_count=0, durable_metadata=<rehydrated>)
        framework: reconstruct ResponseExecution, ResponseContext from serialized params
        framework: re-invoke handler with flat-field assignment on context
        handler:   is_recovery == True
@@ -1197,13 +1197,12 @@ T=5   process restarts; lease scanner sees "durable-resp-AB12..."
       with status="in_progress" and expired lease
 
 T=6   primitive: re-fire task body with ctx.context.is_recovery=True
-                                       # context.is_recovery=True (retry_attempt removed)
       framework: read _responses.disposition → "re-invoke"
-      framework: build recovery + steering context (flat fields on the response context)(context.is_recovery=True,
-                                         # (retry_attempt deleted per Proposal #12)
-                                         is_steered_turn=False,
-                                         pending_input_count=0,
-                                         metadata=ctx.metadata)
+      framework: assign flat fields on response context
+                 (is_recovery=True,
+                  is_steered_turn=False,
+                  pending_input_count=0,
+                  durable_metadata=<rehydrated namespace facade>)
       framework: reconstruct (ResponseExecution, ResponseContext)
                  from serialized params
       framework: re-invoke handler
@@ -1412,13 +1411,13 @@ This spec is the source of truth for the responses durability layer.
 Implementation MUST NOT diverge silently. Every change here is
 mirrored by:
 
-1. The relevant `_durable_orchestrator.py` / `_orchestrator.py`
-   change.
+1. The corresponding implementation change in the chosen host
+   language (orchestrator + dispatch + endpoint layer).
 2. The two developer guides above.
-3. A conformance test under `tests/e2e/durability_contract/` that
-   exercises the new or changed behaviour end-to-end through
-   `_endpoint_handler.handle_create`, on the real file-based providers,
-   with a real `_crash_harness` for any recovery-relevant change.
+3. A conformance test under the durability-contract suite that
+   exercises the new or changed behaviour end-to-end through the
+   create-response endpoint, on the real file-based providers, with
+   a real crash harness for any recovery-relevant change.
 
 If a future change has to break this contract (rather than extend it),
 this document MUST be updated first, the change MUST be reviewed as a
