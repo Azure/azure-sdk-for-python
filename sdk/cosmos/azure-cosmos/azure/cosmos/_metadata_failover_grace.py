@@ -50,10 +50,8 @@ def get_grace_seconds() -> float:
             value = float(raw)
         except (TypeError, ValueError):
             value = _Constants.METADATA_FAILOVER_GRACE_SECONDS_DEFAULT
-    if value < 0:
-        value = 0.0
-    if value > _Constants.METADATA_FAILOVER_GRACE_SECONDS_MAX:
-        value = _Constants.METADATA_FAILOVER_GRACE_SECONDS_MAX
+    value = max(value, 0.0)
+    value = min(value, _Constants.METADATA_FAILOVER_GRACE_SECONDS_MAX)
     return value
 
 

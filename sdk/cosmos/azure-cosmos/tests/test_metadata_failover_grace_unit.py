@@ -8,6 +8,7 @@ fires mid-flight during a cold control-plane metadata (collection) read preempts
 cross-region failover decision (azure-sdk-for-python#46471 /
 azure-cosmos-dotnet-v3#5805).
 """
+# cspell:ignore ppaf
 
 import asyncio
 import time
