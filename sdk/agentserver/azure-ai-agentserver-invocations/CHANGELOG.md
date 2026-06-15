@@ -14,6 +14,17 @@
   [core developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md)
   for the underlying `@task` API.
 
+### Bugs Fixed
+
+- Cancel-invocation and get-invocation endpoints (`POST /invocations/{id}/cancel`,
+  `GET /invocations/{id}`) now propagate `agent_session_id` from the
+  request to `request.state.session_id`, mirroring what the
+  invoke endpoint already does. Without this, custom
+  `@app.cancel_invocation_handler` / `@app.get_invocation_handler`
+  implementations that look up the per-session durable task via
+  `request.state.session_id` would get an empty string and fail to
+  find their task.
+
 ### Other Changes
 
 - Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b7`
