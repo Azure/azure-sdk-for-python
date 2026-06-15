@@ -24,11 +24,16 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 
 ```python
 @app.response_handler
-def my_handler(
-    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
-):
+async def my_handler(request: CreateResponse, context: ResponseContext):
     ...
 ```
+
+Handlers MUST be `async def` and take exactly two positional parameters
+(`request`, `context`). Sync handlers and the legacy three-argument
+signature `(request, context, cancellation_signal)` are hard-rejected
+at decoration time. Cancellation is observed via `context.cancel`
+(an `asyncio.Event`); see the handler implementation guide for the
+full composing-cause surface.
 
 ### Protocol endpoints
 
@@ -90,10 +95,18 @@ The `ResponseContext` provides request-scoped state:
 | Property / Method | Description |
 |---|---|
 | `response_id` | Unique ID for this response |
-| `is_shutdown_requested` | Whether the server is draining |
+| `conversation_id` / `conversation_chain_id` | Conversation identifiers; `conversation_chain_id` is the framework-computed stable id shared by every turn in a chain |
 | `isolation` | `IsolationContext` with `user_key` and `chat_key` for multi-tenant state partitioning |
 | `client_headers` | Dictionary of `x-client-*` headers forwarded from the platform (keys normalized to lowercase) |
 | `query_parameters` | Dictionary of query string parameters |
+| `cancel` | `asyncio.Event` set when any cancel cause fires |
+| `shutdown` | `asyncio.Event` set on graceful server shutdown |
+| `client_cancelled` | `bool` set when the cancel cause is `/cancel` endpoint or non-bg POST disconnect |
+| `is_recovery` | `bool` set on a crash-recovered re-entry |
+| `is_steered_turn` | `bool` set on the drain re-entry that follows a steering input |
+| `pending_input_count` | `int` count of queued steering inputs |
+| `durable_metadata` | `DurableMetadataNamespace` for handler-managed checkpoint state |
+| `exit_for_recovery()` | `await` to opt into the graceful-shutdown recovery path |
 | `get_input_items()` | Load resolved input items as `Item` subtypes |
 | `get_input_text()` | Extract all text content from input items as a single string |
 | `get_history()` | Load conversation history items |
@@ -115,15 +128,13 @@ For detailed handler implementation guidance, see [docs/handler-implementation-g
 
 ### Durability
 
-Background responses with `store=True` are automatically crash-recoverable. If the server crashes mid-response, the handler is re-invoked on restart — no code changes needed. Stream events are persisted incrementally so clients can reconnect and resume from where they left off. For advanced scenarios (metadata checkpointing, multi-turn steering), see the [Durable Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/durable-responses-developer-guide.md).
+Crash recovery is **opt-in** via `ResponsesServerOptions(durable_background=True)`. When opted in, background responses with `store=True` are crash-recoverable: the handler is re-invoked on restart and the recovered context exposes `context.is_recovery == True`. Stream events are persisted incrementally so clients can reconnect and resume from where they left off. Without the opt-in (the default), a crash mid-handler marks the response `failed` instead of re-invoking the handler. For advanced scenarios (metadata checkpointing, multi-turn steering), see the [Durable Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/durable-responses-developer-guide.md).
 
 ## Examples
 
 ### Echo handler
 
 ```python
-import asyncio
-
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -135,7 +146,7 @@ app = ResponsesAgentServerHost()
 
 
 @app.response_handler
-async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext):
     text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {text}")
 
@@ -192,7 +203,7 @@ app = ResponsesAgentServerHost(options=options)
 ### Common errors
 
 - **400 Bad Request**: The request body failed validation. Check that optional fields such as `model` (when provided) are valid and that `input` items are well-formed.
-- **404 Not Found**: The response ID does not exist or has expired past the configured TTL.
+- **404 Not Found**: The response ID does not exist. Persisted responses live under `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/` by default; a missing record may indicate the response was never persisted or was deleted via `DELETE /responses/{id}`.
 - **400 Bad Request** (cancel): The response was not created with `background=true`, or it has already reached a terminal state.
 
 ### Reporting issues
@@ -218,10 +229,12 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 | [File Inputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_14_file_inputs.py) | Receive files via base64 data URL, URL, or file ID |
 | [Annotations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | Attach file_path, file_citation, and url_citation annotations |
 | [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | Return structured JSON as a `structured_outputs` item |
-| [Durable Claude](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/durable_claude/agent.py) | Claude Agent SDK with stateful sessions and three-phase cancel |
-| [Durable Copilot](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/durable_copilot/agent.py) | Copilot SDK with session lifecycle and steering |
-| [Durable LangGraph](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/durable_langgraph/agent.py) | LangGraph multi-step graph with per-node checkpointing |
-| [Durable Multi-turn](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/durable_multiturn/agent.py) | Multi-turn conversation with bounded metadata |
+| [Durable Claude](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_17_durable_claude.py) | Claude Agent SDK with `durable_background=True, steerable_conversations=True` |
+| [Durable Copilot](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_durable_copilot.py) | GitHub Copilot SDK with `durable_background=True, steerable_conversations=True` |
+| [Durable Streaming](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_durable_streaming.py) | Three-phase streaming handler with `durable_background=True` and `context.durable_metadata` watermarks |
+| [Durable Steering](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_durable_steering.py) | `context.is_steered_turn` on the drain re-entry with `durable_background=True, steerable_conversations=True` |
+| [Durable LangGraph](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_21_durable_langgraph.py) | LangGraph integration with `durable_background=True, steerable_conversations=True` |
+| [Durable Multi-turn](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_22_durable_multiturn.py) | Multi-turn conversation with `durable_background=True, steerable_conversations=False` |
 
 - [Handler implementation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) — Detailed reference for building handlers
 

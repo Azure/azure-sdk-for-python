@@ -4,127 +4,60 @@
 
 ### Breaking Changes
 
-#### spec 024 — responses re-design (durable + cancellation + storage)
+- **Handler signature is now `async def handler(request, context)`.**
+  Sync handlers and the previous three-argument signature
+  `(request, context, cancellation_signal)` are rejected at
+  decoration time. Cancellation is observed via `context.cancel`
+  (an `asyncio.Event`) instead of the previous third positional
+  parameter. See `docs/handler-implementation-guide.md` for the
+  full cancellation surface and migration shape.
 
-- **Default `durable_background` flipped to `False`.** The framework
-  no longer opts handlers into crash-recovery re-invocation by default
-  — developers must explicitly set
-  `ResponsesServerOptions(durable_background=True)` to opt in.
-  Background-on-crash responses with `durable_background=False` (the
-  new default) are marked `failed` on next-lifetime recovery rather
-  than re-invoked. This affects Rule B18 (Background Connection
-  Resilience) behaviour: with the new default, background responses
-  whose handler crashed mid-flight surface as `failed`; with
-  `durable_background=True` the prior re-invocation behaviour is
-  preserved.
+- **Default response store is now file-backed.** Constructing
+  `ResponsesAgentServerHost()` with no `store=` argument now
+  registers a `FileResponseStore` under
+  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/` instead of
+  the previous in-memory provider. Single-process deployments that
+  used the implicit in-memory store will now persist response
+  envelopes to disk by default. To retain the old in-memory
+  behaviour, pass `store=InMemoryResponseProvider()` explicitly.
+  `InMemoryResponseProvider` remains importable.
 
-- **File-backed response store is the new default.** New deployments
-  with no explicit `store=` argument now use `FileResponseStore` under
-  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/` instead of the
-  pre-spec-024 `InMemoryResponseProvider`. Cross-process behaviour
-  matches in-memory for single-process deployments; on restart the
-  file-backed store preserves response envelopes that were not yet
-  evicted. `InMemoryResponseProvider` remains importable for
-  in-memory-specific testing scenarios.
+### New Public API Surface
 
-- **Unified storage root**: tasks, streams, and responses all now live
-  under a single `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/` root with
-  per-kind subdirectories (`tasks/`, `streams/`, `responses/`). The
-  pre-spec-024 environment variables `AGENTSERVER_DURABLE_TASKS_PATH`
-  and `AGENTSERVER_STREAM_STORE_PATH` are deleted; deployments setting
-  either should migrate to `AGENTSERVER_DURABLE_ROOT`. The default
-  directory name changed from `~/.durable-tasks/` to `~/.durable/`.
+- **`ResponseContext` — request-scoped state for handlers**, with
+  flat fields for recovery + steering classifiers
+  (`is_recovery: bool`, `is_steered_turn: bool`,
+  `pending_input_count: int`,
+  `durable_metadata: DurableMetadataNamespace`) and the composing
+  cancellation surface (`cancel: asyncio.Event`,
+  `shutdown: asyncio.Event`, `client_cancelled: bool`,
+  `async exit_for_recovery() -> ExitForRecoverySignal`).
 
-- **Handler signature simplified to 2-argument async.** Response
-  handlers MUST now be declared with `async def handler(request,
-  context)` — sync handlers and the legacy 3-argument
-  `(request, context, cancellation_signal)` shape are hard-rejected
-  at decoration time with `TypeError`. Cancellation is observed via
-  the context's composing-cause surface (see below).
+- **`DurableMetadataNamespace` Protocol** — public type for
+  `context.durable_metadata`. Mirrors `MutableMapping` shape
+  (`__getitem__`/`__setitem__`/`get`/`clear`/`pop`/`setdefault`/
+  `update`/etc.) plus `__call__(name)` for named namespaces and
+  `await flush()` for explicit at-most-once side-effect fencing.
 
-- **Cancellation surface re-shaped to composing-cause Booleans + Events**:
-  - **Added**: `context.cancel: asyncio.Event` (wake-up signal —
-    set whenever any cancel cause fires); `context.shutdown: asyncio.Event`
-    (set on graceful server shutdown); `context.client_cancelled: bool`
-    (True for explicit `POST /v1/responses/{id}/cancel` OR non-bg POST
-    disconnect); `async context.exit_for_recovery() -> ExitForRecoverySignal`
-    (handlers MUST `return await context.exit_for_recovery()` to opt
-    into "leave in_progress for recovery" disposition).
-  - **Removed**: `context.cancellation_reason`, `context.is_shutdown_requested`,
-    and the `CancellationReason` enum. Replace
-    `context.cancellation_reason == CancellationReason.SHUTTING_DOWN`
-    with `context.shutdown.is_set()`; replace
-    `context.cancellation_reason == CancellationReason.CLIENT_CANCELLED`
-    with `context.client_cancelled`. Steering pressure (a new turn
-    queued mid-handler) now manifests as `context.cancel.is_set()`
-    with NO cause flag — handlers infer it by elimination.
-  - **Behaviour-contract impact**: Rule B17 (Connection Termination
-    Cancellation) — the non-bg POST disconnect path now maps to
-    `context.client_cancelled=True` instead of `CancellationReason.CLIENT_CANCELLED`.
-    The wire-level cancellation behaviour is unchanged; only the
-    handler-observable surface differs.
+- **`ExitForRecoverySignal` type alias** — return type of
+  `context.exit_for_recovery()`. Handlers propagate the sentinel
+  via `return await context.exit_for_recovery()` to leave the
+  response `in_progress` for the next-lifetime recovery scanner.
 
-- **Recovery + steering classifiers flattened onto `ResponseContext`**:
-  - **Added**: `context.is_recovery: bool` (True on crash-recovered
-    re-entry), `context.is_steered_turn: bool` (True on the drain
-    turn following a steering input), `context.pending_input_count: int`
-    (live count of queued steering inputs),
-    `context.durable_metadata: DurableMetadataNamespace` (the
-    Mapping+Callable namespace facade — see new public Protocol).
-  - **Removed**: `context.durability` nested object, the
-    `DurabilityContext` class, the `DurabilityEntryMode` Literal alias,
-    `context.durability.entry_mode`, `context.durability.retry_attempt`,
-    `context.durability.was_steered`, `context.durability.pending_inputs`,
-    `context.durability.metadata`. Migration:
-    `context.durability.metadata` → `context.durable_metadata`;
-    `context.durability.is_recovery` → `context.is_recovery`;
-    `context.durability.was_steered` → `context.is_steered_turn`;
-    `context.durability.pending_inputs` → `context.pending_input_count`.
+- **`FileResponseStore`** is now exported from
+  `azure.ai.agentserver.responses` (previously importable only
+  from the private `_file` module).
 
-- **`ResponsesServerOptions` simplified**:
-  - **Removed**: `max_pending`, `store_disabled`,
-    `replay_event_ttl_seconds`. The first two were redundant with
-    per-request `store=` and the task primitive's built-in queue
-    semantics; the third is now a framework-internal constant
-    (`_REPLAY_EVENT_TTL_SECONDS = 600.0`, satisfying Rule B35
-    ≥ 10 min replay availability).
-  - **Composition guard relaxed**: `steerable_conversations=True` +
-    `durable_background=False` is now a valid combination
-    (previously raised `ValueError`). Steering and durability are
-    independent concerns; both compose as expected.
+- **`ResponsesServerOptions(durable_background, steerable_conversations)`**
+  developer-controlled server options. `durable_background=True`
+  opts into crash-recoverable background responses (handler is
+  re-invoked on restart). `steerable_conversations=True` enables
+  mid-turn steering for multi-turn conversations. Both default to
+  `False`.
 
-#### Public-API additions
-
-- **`DurableMetadataNamespace` Protocol** (`azure.ai.agentserver.responses.DurableMetadataNamespace`):
-  the public type for `context.durable_metadata`. Defines the
-  Mapping + Callable shape handlers use to read/write durable
-  checkpoint state and to access named namespaces.
-
-- **`ExitForRecoverySignal` type alias** (`azure.ai.agentserver.responses.ExitForRecoverySignal`):
-  the narrow type returned by `context.exit_for_recovery()`.
-  Handlers type-annotate their handler's return as this type when
-  propagating the sentinel via `return`.
-
-- **`FileResponseStore` exported** (`azure.ai.agentserver.responses.FileResponseStore`):
-  previously module-private; now the canonical default response store
-  is publicly importable for explicit `store=FileResponseStore(...)`
-  construction.
-
-#### Other architectural simplifications
-
-- The pre-spec-024 "bookkeeping pattern" (handler runs outside the
-  durable task body for Rows 2/3, with a separate bookkeeping task
-  tracking completion) is **DELETED**. The handler now always runs
-  inside the durable task body for every `store=true` row. Recovery
-  behaviour is selected by the `disposition` written into framework
-  metadata on first entry: `re-invoke` (Row 1) or `mark-failed`
-  (Rows 2/3). This eliminates the bookkeeping completion-event
-  registry and the associated pre-registration race window.
-
-- The SOT spec at `docs/responses-durability-spec.md` has been
-  rewritten to reflect the unified architecture; the
-  "two equivalent architectures" framing and Model A / Model B
-  description are deleted.
+- **`AGENTSERVER_DURABLE_ROOT` environment variable** — unified
+  storage root for the responses package. The package derives the
+  `responses/` and `streams/` subdirectories from this single root.
 
 ### Bugs Fixed
 
@@ -139,26 +72,27 @@
   `409 conversation_locked` as documented.
 
 - `context.conversation_chain_id` now correctly returns the
-  per-request `response_id` for non-steerable deployments (per SOT
-  §4.1) instead of always passing `steerable=True` to the
-  underlying `derive_chain_id` helper. The framework now reads
-  `ResponsesServerOptions.steerable_conversations` and threads it
-  through the context.
+  per-request `response_id` for non-steerable deployments instead
+  of always treating the chain as steerable. The framework now
+  reads `ResponsesServerOptions.steerable_conversations` and
+  threads it through the context.
 
-- Non-bg streaming Phase-1 persistence failure (storage layer rejects
-  the response envelope at start) now emits the standard
+- Non-bg streaming Phase-1 persistence failure (storage layer
+  rejects the response envelope at start) now emits the standard
   `response.created → response.failed` SSE sequence with
-  `error_code=storage_error`, satisfying Rule B27 (first-event
-  invariant). Previously the framework emitted a standalone `error`
-  event that violated B27.
+  `error_code=storage_error`. Previously the framework emitted a
+  standalone `error` event that violated the first-event invariant.
 
-- Bumped the `azure-ai-agentserver-core` dependency to `>=2.0.0b7` to
-  pick up the narrow durable-task primitive surface. Internal
-  orchestrator surface changes only; no responses-package public API
-  change.
+- Non-background disconnect with `store=true` now persists a
+  `cancelled` snapshot so a follow-up GET returns
+  `200 status=cancelled` instead of `404`. Previously the
+  in-flight record was deleted on disconnect.
 
 ### Other Changes
 
+- Bumped the `azure-ai-agentserver-core` dependency to `>=2.0.0b7`
+  to pick up the narrow durable-task primitive surface. Internal
+  orchestrator surface changes only.
 - Internal: `DurableResponseOrchestrator` now registers two task
   primitives per deployment (one-shot for single-turn requests; chain
   primitive for multi-turn requests) and dispatches per request based
@@ -172,10 +106,8 @@
   terminal exit; only multi-turn chains persist between turns.
 - Internal: the shutdown-mid-handler "leave in_progress for recovery"
   branch now calls `ctx.exit_for_recovery()` instead of raising
-  `CancelledError`. The previous shape worked for `ephemeral=False`
-  tasks but would have deleted the one-shot `ephemeral=True` record
-  on cancel under the new model — breaking Row 1 Path B (graceful
-  shutdown mid-handler) recovery.
+  `CancelledError`. The previous shape would have deleted the
+  one-shot record on cancel.
 
 ## 1.0.0b6 (Unreleased)
 

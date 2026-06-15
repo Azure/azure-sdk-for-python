@@ -6,31 +6,42 @@ automatically, what developers need to implement, and best practices.
 
 ## Overview
 
-When `durable_background=True` (the default), the framework automatically wraps
-your response handler in a **durable task**. If the server crashes mid-response:
+When `durable_background=True` (opt-in — the default is `False`), the
+framework automatically wraps your response handler in a **durable
+task**. If the server crashes mid-response:
+
 - Background responses are automatically re-invoked on restart
 - Stream events are preserved for client reconnection
 - Conversation state is maintained across crashes
 
-**You get crash recovery with zero code changes to your handler.**
+**You get crash recovery with zero code changes to your handler** once
+you opt in by passing `durable_background=True` to
+`ResponsesServerOptions`.
+
+> **Default**: `durable_background` defaults to `False`. Without the
+> opt-in, a crash mid-handler leaves the response in the
+> "crash-failed" state: the next-lifetime recovery scanner marks it
+> `failed` (`server_error` / `shutdown_reason=crash_recovery`) instead
+> of re-invoking the handler. Set `durable_background=True` on
+> `ResponsesServerOptions` to engage the re-invoke recovery path.
 
 ## What the Framework Provides (Zero Code)
 
 | Feature | Behavior |
 |---------|----------|
-| Crash recovery | Handler re-invoked on server restart |
+| Crash recovery | Handler re-invoked on server restart (requires `durable_background=True`) |
 | Stream replay | Events persisted incrementally; clients reconnect seamlessly |
 | Conversation lock | Prevents conflicting concurrent writes |
 | Non-bg cleanup | Foreground responses marked `failed` on crash (no ghost re-invocation) |
-| TTL-based cleanup | Stream events auto-expire after configurable window |
+| TTL-based cleanup | Stream events auto-expire after 10 minutes (framework-internal) |
 
 ## Decision Tree
 
-### What is `durability.metadata` for?
+### What is `context.durable_metadata` for?
 
-`durability.metadata` is a **small key-value store of references and
-watermarks** — it is NOT a place to keep your application's checkpoint
-data.
+`context.durable_metadata` is a **small key-value store of references
+and watermarks** — it is NOT a place to keep your application's
+checkpoint data.
 
 Use it for things like:
 
@@ -48,17 +59,20 @@ metadata pointer is what lets the recovered handler find that data.
 
 ```python
 @app.response_handler
-async def handler(request, context, cancel):
-    durability = context.durability
-
+async def handler(request, context):
     # Small watermark: which workflow step is next?
-    step = int(durability.metadata.get("workflow_step", 0))
+    step = int(context.durable_metadata.get("workflow_step", 0))
 
     for i in range(step, total_steps):
         # Do work — write any bulk data to your upstream store directly,
-        # NOT to durability.metadata.
+        # NOT to context.durable_metadata.
         await upstream_store.write_step_result(i, result)
-        durability.metadata["workflow_step"] = i + 1  # auto-flushed
+        # Advance the watermark, then explicitly flush so the next
+        # process lifetime (after a crash) skips the already-committed
+        # step. Persistence is not implicit — flush before any side
+        # effect whose effect must survive a crash.
+        context.durable_metadata["workflow_step"] = i + 1
+        await context.durable_metadata.flush()
 ```
 
 Why this distinction matters: metadata is persisted alongside the
@@ -81,7 +95,7 @@ options = ResponsesServerOptions(
 With steering enabled:
 - Each turn shares the same durable task (conversation continuity)
 - New turns can cancel the current in-progress turn
-- The `pending_inputs` count tells you how many turns are queued
+- The `pending_input_count` field tells you how many turns are queued
 
 ### Do you need a custom acceptance hook?
 
@@ -102,10 +116,8 @@ def my_acceptor(request, context):
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `durable_background` | `True` | Enable crash-recoverable background responses |
+| `durable_background` | `False` | Opt INTO crash-recoverable background responses |
 | `steerable_conversations` | `False` | Enable multi-turn steering with cooperative cancel |
-| `store_disabled` | `False` | Disable response persistence |
-| `replay_event_ttl_seconds` | `600` | How long stream events remain replayable (seconds) |
 
 ## Configuration Matrix
 
@@ -118,8 +130,8 @@ is the source of truth; this section summarises it for developer ergonomics.
 
 | `store` | `background` | `durable_background` | Summary |
 |---|---|---|---|
-| `true` | `true` | `True` | **Full recovery.** Handler is re-invoked with `entry_mode="recovered"`. Persisted events replay to reconnecting clients. See [Crash Recovery](#crash-recovery). |
-| `true` | `true` | `False` | **Failed marker.** Response is marked `failed` on restart. Handler is NOT re-invoked. Pre-crash persisted events remain replayable until TTL expires. |
+| `true` | `true` | `True` | **Full recovery.** Handler is re-invoked with `context.is_recovery == True`. Persisted events replay to reconnecting clients. See [Crash Recovery](#crash-recovery). |
+| `true` | `true` | `False` (default) | **Failed marker.** Response is marked `failed` on restart. Handler is NOT re-invoked. Pre-crash persisted events remain replayable until TTL expires. |
 | `true` | `false` (foreground) | any | **Failed marker.** Response is marked `failed` with `code=server_error`. Handler is NOT re-invoked (the client's HTTP connection is already dead). Persisted events remain queryable. |
 | `false` | any | any | **Best-effort failed marker** during shutdown grace period only. No persistence. Recovery does not apply. |
 
@@ -174,54 +186,72 @@ the latest `response_id` you have seen for this conversation.
 ### Provider configuration for local-dev recovery testing
 
 Real cross-process recovery requires durable storage that survives subprocess
-restarts. For local development:
+restarts. The framework defaults provide this automatically; the
+sections below describe what they do and how to override them for
+specific scenarios.
 
-- **Durable task store**: use `LocalDurableProvider` (writes JSON under a chosen
-  filesystem path). The default in-memory provider does not survive a restart.
-- **Response store**: use `FileResponseStore(storage_dir=…)`. The default
-  in-memory provider does not survive a restart, so a recovered handler would
-  always see an empty store and false-positive on the "fresh attempt" path.
-  Use the file store when you want to exercise the idempotent
-  `response.created` swallow on recovery.
-- **Stream event store**: use `FileStreamProvider`. Same rationale.
+- **Durable task store**: the framework auto-selects a file-backed
+  task store under `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/tasks/`
+  for local development. Tasks survive process restarts so a recovered
+  handler re-enters its prior task body.
+- **Response store**: the default is `FileResponseStore` under
+  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/`; no explicit
+  construction needed. `InMemoryResponseProvider` is still importable
+  for in-memory-specific unit tests but is no longer the default
+  store. To target a different directory, pass
+  `store=FileResponseStore(storage_dir=…)` to `ResponsesAgentServerHost`.
+- **Stream event store**: configured automatically — file-backed when
+  `durable_background=True`, in-memory otherwise. Files land under
+  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/streams/`. No per-store env
+  var to set; the unified `AGENTSERVER_DURABLE_ROOT` covers all three
+  subdirs (`tasks/`, `streams/`, `responses/`).
 
-All three providers accept a directory path. Wire them against the same root
-for a consistent local crash-recovery setup. For production, your deployment
-hosts these stores externally — typically via the Foundry providers, which are
-auto-configured when `FOUNDRY_PROJECT_ENDPOINT` is set.
+For production, your deployment hosts the response store externally —
+typically via the Foundry response provider, which is auto-configured
+when `FOUNDRY_PROJECT_ENDPOINT` is set. The stream event store
+continues to use the framework's file-backed registry under
+`${AGENTSERVER_DURABLE_ROOT}/streams/` (the durable-task primitive
+owns the equivalent migration for its task store).
 
-## DurabilityContext API
+## Recovery + steering surface on `ResponseContext`
 
-When `durable_background=True`, `context.durability` provides:
+When `durable_background=True`, the framework populates flat fields
+on the response context for every handler invocation. The fields
+mirror the underlying task primitive's classifiers and are safe to
+read regardless of `is_recovery`:
 
 ```python
-durability = context.durability
+@app.response_handler
+async def handler(request, context):
+    # True if this invocation is a re-entry after a crash.
+    if context.is_recovery:
+        # Recovery code path — build a resumption response, emit a
+        # reset response.in_progress event, continue from the last
+        # checkpoint your handler's metadata watermark recorded.
+        ...
 
-# Convenience: True if this is a re-invocation after crash.
-if durability.is_recovery:
-    # Recovery code path — build a resumption response, emit reset in_progress.
-    ...
+    # True only on the drain re-entry that follows a steering input
+    # (steerable_conversations=True). NOT set on the cancelled
+    # current turn that produced the steering pressure.
+    if context.is_steered_turn:
+        ...
 
-# Raw entry mode literal: "fresh" or "recovered". Use is_recovery for the
-# common case; use entry_mode for the rare "I need to distinguish from a
-# resumed steerable turn" case.
-print(durability.entry_mode)
+    # Number of additional steering inputs queued behind this turn.
+    # Live count — decreases as the framework drains the queue.
+    print(f"{context.pending_input_count} turns waiting")
 
-# Metadata: small JSON-serializable dict, persisted across crashes and turns.
-# Use namespaces to keep distinct concerns isolated:
-#   durability.metadata["key"]            -- default namespace
-#   durability.metadata("name")["key"]    -- named (sibling) namespace
-# Call await durability.metadata.flush() before any side effect that depends
-# on the write surviving a crash. Snapshots also happen at lifecycle
-# boundaries automatically.
-durability.metadata["my_checkpoint_id"] = "abc-123"
-
-# Run attempt counter: 0 on first invocation, 1 on first recovery, etc.
-print(f"Attempt #{durability.retry_attempt}")
-
-# Pending inputs (steerable mode only): how many newer turns are queued.
-print(f"{durability.pending_inputs} turns waiting")
+    # Persistent metadata namespace. Safe across crashes and turns.
+    # The default namespace is `context.durable_metadata["key"]`;
+    # named namespaces are `context.durable_metadata("name")["key"]`.
+    # Call `await context.durable_metadata.flush()` before any side
+    # effect that depends on the write surviving a crash. Snapshots
+    # also happen at lifecycle boundaries automatically.
+    context.durable_metadata["my_checkpoint_id"] = "abc-123"
 ```
+
+These fields are always present on the context (even for `store=false`
+Row 4 responses, where the metadata facade is backed by an in-memory
+mapping that evaporates on restart).
 
 ### Conversation chain identity
 
@@ -256,10 +286,22 @@ running `ResponseObject`. So there is no useful "what did the prior attempt
 look like" snapshot for the library to hand you. The resumption response is
 your responsibility to compose from upstream state.
 
-### Notes on Metadata
+### Notes on `context.durable_metadata`
 
-- The metadata API is a **callable namespace facade**. Use `durability.metadata["key"] = value` for the default namespace; use `durability.metadata("name")["key"] = value` for a sibling namespace (each namespace tracks dirty state independently and can be `await durability.metadata("name").flush()`-ed in isolation).
-- Persistence is **explicit**, not auto-flushed. Call `await durability.metadata.flush()` (or `await durability.metadata("name").flush()`) before any side effect that depends on a metadata write surviving a crash. The framework also snapshots all touched namespaces at lifecycle boundaries (start/suspend/complete/fail/cancel/terminate), so values written and forgotten will still be visible on a clean recovery — but the fence for at-most-once side-effect patterns is your explicit `flush()`.
+- The metadata API is a **callable namespace facade**. Use
+  `context.durable_metadata["key"] = value` for the default namespace;
+  use `context.durable_metadata("name")["key"] = value` for a sibling
+  namespace (each namespace tracks dirty state independently and can be
+  `await context.durable_metadata("name").flush()`-ed in isolation).
+- Persistence is **explicit**, not auto-flushed. Call
+  `await context.durable_metadata.flush()` (or
+  `await context.durable_metadata("name").flush()`) before any side
+  effect that depends on a metadata write surviving a crash. The
+  framework also snapshots all touched namespaces at lifecycle
+  boundaries (start/suspend/complete/fail/cancel/terminate), so values
+  written and forgotten will still be visible on a clean recovery — but
+  the fence for at-most-once side-effect patterns is your explicit
+  `flush()`.
 - Keys and namespace names **starting with `_` are rejected** (raise `ValueError`). Those prefixes are reserved for framework-internal namespaces (e.g. `_responses` for the responses orchestrator) — pick your own prefix-free names.
 - Metadata survives crashes — use it for small watermarks (session IDs, checkpoint references, "side effect issued" flags).
 - Keep values JSON-serializable (strings, numbers, lists, dicts).
@@ -294,10 +336,9 @@ This section adds the configuration / API context.
 
 ### What you get on recovered entry
 
-- `context.durability.is_recovery == True`
-- `context.durability.retry_attempt > 0`
-- `context.durability.metadata` carrying whatever watermarks you stamped
-- The cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the signal is pre-set with the appropriate `cancellation_reason` on re-entry.
+- `context.is_recovery == True`
+- `context.durable_metadata` carrying whatever watermarks you stamped
+- The cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the cancel event is pre-set with the appropriate cause-boolean (`context.client_cancelled` for explicit cancel / non-bg disconnect; `context.shutdown.is_set()` for graceful shutdown; neither set for steering pressure) on re-entry.
 - The framework guarantees the response object is persisted **exactly once** at the first attempt's `response.created` and **exactly once** at the first attempt that reaches a terminal event. Subsequent attempts' `response.created` and terminal events are deduplicated by the framework keyed on `response_id`; you don't need to do anything special. The SSE event stream is persisted as you emit it (no dedup).
 
 ### What you owe on recovered entry
@@ -384,12 +425,17 @@ This guide and the handler guide together describe three layered concerns
 that compose to give you durable response handlers:
 
 - **The durable background runtime** provides the runtime primitives
-  (`DurabilityContext`, task store wiring, `entry_mode`, steerable
-  conversation orchestration).
-- **The cancellation contract** provides the `CancellationReason`
-  enum and the pre-entry / mid-stream / post-stream rules
-  (no `cancelled` from steering or shutdown, no `incomplete` from
-  framework, framework-set `failed` for naive-not-handled cancellation).
+  (flat recovery + steering fields on `ResponseContext` —
+  `is_recovery`, `is_steered_turn`, `pending_input_count`,
+  `durable_metadata` — task store wiring, steerable conversation
+  orchestration).
+- **The cancellation contract** provides the composing-cause surface
+  (`context.cancel: Event`, `context.shutdown: Event`,
+  `context.client_cancelled: bool`,
+  `await context.exit_for_recovery()`) and the pre-entry / mid-stream
+  / post-stream rules (no `cancelled` from steering or shutdown, no
+  `incomplete` from framework, framework-set `failed` for
+  naive-not-handled cancellation).
 - **The recovery contract** provides the multi-attempt
   reconciliation pattern: resumption response, snapshot reset on
   `response.in_progress`, watermark-guarded side effects, naive
@@ -411,10 +457,12 @@ output.
    LangGraph has `SqliteSaver` checkpoints. Use them. Don't try to recreate
    upstream state from your own metadata.
 
-3. **Watermark before side effects.** Stamp `durability.metadata` with a
-   "this side effect is in flight" flag BEFORE calling an upstream API that
-   has observable side effects (sending a user message, writing a checkpoint).
-   Clear it AFTER the upstream durably committed the result.
+3. **Watermark before side effects.** Stamp `context.durable_metadata`
+   with a "this side effect is in flight" flag (and
+   `await context.durable_metadata.flush()`) BEFORE calling an
+   upstream API that has observable side effects (sending a user
+   message, writing a checkpoint). Clear it AFTER the upstream
+   durably committed the result.
 
 4. **Keep metadata small.** Watermarks, session IDs, checkpoint references.
    Never bulk data.

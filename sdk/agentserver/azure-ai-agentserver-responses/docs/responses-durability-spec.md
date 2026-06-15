@@ -84,9 +84,11 @@ three flags:
 - `store` — request-controlled, defaults to `true`.
 - `background` — request-controlled, defaults to `false`.
 - `durable_background` — developer-controlled server option, defaults
-  to `true`.
-
-The end-user (HTTP caller) sets `store`, `background`, and `stream`.
+  to `false`. Developers opt INTO crash-recovery re-invocation by
+  setting it to `true`; the default lands the response in
+  "crash-failed" mode (Row 2 disposition), where a crash mid-handler
+  surfaces as a `failed` terminal in the next lifetime rather than
+  re-invoking the handler.The end-user (HTTP caller) sets `store`, `background`, and `stream`.
 The developer sets `durable_background` and `steerable_conversations`
 on `ResponsesServerOptions`. End-users CANNOT override developer
 decisions; developers CANNOT override end-user request flags. This
@@ -267,7 +269,7 @@ chain's execution loop, not a single response.
 
 **One architecture — unified handler-in-task-body.** The handler
 ALWAYS runs inside the durable task body, for every `store=true`
-row. The pre-spec-024 "bookkeeping pattern" (where the handler ran
+row. The"bookkeeping pattern" (where the handler ran
 outside the body for Rows 2/3 and a separate task waited for a
 completion signal) has been deleted. Recovery behaviour is selected
 by the `disposition` written into framework metadata on the first
@@ -638,8 +640,7 @@ each independent cancel cause:
   cause is explicit client cancellation. Two paths converge here:
   the `POST /v1/responses/{id}/cancel` HTTP endpoint AND non-background
   POST disconnect (a non-bg POST whose client drops the connection
-  mid-stream is treated as cancellation; see behaviour-contract Rule
-  B17).
+  mid-stream is treated as cancellation).
 - **Steering pressure has no cause flag.** When a new turn arrives
   for a steerable chain while the current handler is running, only
   `context.cancel` is set — neither `client_cancelled` nor
@@ -1340,8 +1341,7 @@ combination at startup or document the no-op fall-through clearly.
 
 ### §17.3 — `steerable_conversations=true` × `durable_background=false`
 
-This combination is supported (composition guard relaxed in spec 024
-Phase 4). The Row 2 task still provides the conversation lock and the
+This combination is supported (composition guard relaxed in). The Row 2 task still provides the conversation lock and the
 acceptance hook; the handler runs inside the task body just like
 Row 1. The only difference from Row 1 is the recovery disposition —
 `mark-failed` instead of `re-invoke`. The crash-recovery branch
@@ -1419,7 +1419,7 @@ mirrored by:
    create-response endpoint, on the real file-based providers, with
    a real crash harness for any recovery-relevant change.
 
-If a future change has to break this contract (rather than extend it),
+If a future change has to alter this contract (rather than extend it),
 this document MUST be updated first, the change MUST be reviewed as a
-breaking change, and the implementation MUST land in a single
+contract change, and the implementation MUST land in a single
 coordinated commit alongside the contract update.

@@ -15,9 +15,7 @@ knowing how the wiring works.
 ```python
 from azure.ai.agentserver.core.streaming import streams
 
-# Inside the host (spec 024 Phase 5 — Proposal #12: ttl_seconds is now
-# a framework-internal constant; the developer-facing options surface no
-# longer exposes ``replay_event_ttl_seconds``):
+# Inside the host:
 streams.use_file_backed_replay(           # if durable_background=True
     storage_dir=stream_dir,
     cursor_fn=lambda event: int(event["sequence_number"]),
@@ -37,7 +35,7 @@ Why these choices:
 | Setting | Value | Why |
 |---|---|---|
 | `cursor_fn` | `lambda e: e["sequence_number"]` | Every SSE event already carries a monotonically-increasing `sequence_number`. Reusing it as the registry cursor means clients reconnecting with `Last-Event-ID: N` (or the `?starting_after=N` query alias) can resume exactly where they left off without any extra bookkeeping. |
-| `ttl_seconds` | `_REPLAY_EVENT_TTL_SECONDS = 600.0` (hardcoded framework constant) | Caps both memory and on-disk footprint. Each emit becomes evictable 10 minutes after its emit time, regardless of whether the stream is still active; the SDK's auto-transition rules then destroy the stream once it has closed AND its last retained event has expired. 600s satisfies behaviour-contract Rule B35 (event-stream replay availability ≥ 10 min). |
+| `ttl_seconds` | `_REPLAY_EVENT_TTL_SECONDS = 600.0` (hardcoded framework constant) | Caps both memory and on-disk footprint. Each emit becomes evictable 10 minutes after its emit time, regardless of whether the stream is still active; the SDK's auto-transition rules then destroy the stream once it has closed AND its last retained event has expired. 600s gives clients a 10-minute reconnection window before persisted events are eligible for cleanup. |
 | `serializer` / `deserializer` (file-backed only) | JSON via `as_dict()` | `ResponseStreamEvent` is a generated model — not directly JSON-serializable. The serializer converts via `.as_dict()`, so the on-disk records are plain JSON dicts that any reader (including a future shell script or recovery scanner) can parse. |
 
 ## Persistence file layout
@@ -58,8 +56,10 @@ the stream is closed. The directory is created on first use.
 Operators select the durable root directory via
 `AGENTSERVER_DURABLE_ROOT` (defaults to `~/.durable`); the responses
 host derives the streams subdirectory as
-`${AGENTSERVER_DURABLE_ROOT:-~/.durable}/streams/`. The pre-spec-024
-`AGENTSERVER_STREAM_STORE_PATH` env var is no longer consulted.
+`${AGENTSERVER_DURABLE_ROOT:-~/.durable}/streams/`. There is no
+per-stream directory override — the unified `AGENTSERVER_DURABLE_ROOT`
+is the single environment variable that controls all durable
+subdirectories (`tasks/`, `streams/`, `responses/`).
 
 ## Recovery on restart
 
