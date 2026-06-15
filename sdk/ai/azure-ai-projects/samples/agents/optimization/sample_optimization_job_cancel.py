@@ -19,7 +19,7 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry portal.
-    2) AGENT_NAME              - Required. The name of the agent to optimize.
+    2) FOUNDRY_AGENT_NAME              - Required. The name of the agent to optimize.
     3) DATASET_NAME            - Required. The name of the registered training dataset.
     4) EVALUATOR_NAME          - Required. The name of a registered project evaluator.
     5) DATASET_VERSION         - Optional. Version of the training dataset. Defaults to "1".
@@ -46,7 +46,7 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ["AGENT_NAME"]
+agent_name = os.environ["FOUNDRY_AGENT_NAME"]
 dataset_name = os.environ["DATASET_NAME"]
 evaluator_name = os.environ["EVALUATOR_NAME"]
 dataset_version = os.environ.get("DATASET_VERSION", "1")
