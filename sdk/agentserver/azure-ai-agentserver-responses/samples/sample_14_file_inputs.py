@@ -50,8 +50,15 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     TextResponse,
 )
-from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
-from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
+from azure.ai.agentserver.responses._data_url import (
+    get_media_type,
+    is_data_url,
+    try_decode_bytes,
+)
+from azure.ai.agentserver.responses.models import (
+    ItemMessage,
+    MessageContentInputFileContent,
+)
 
 app = ResponsesAgentServerHost()
 
@@ -104,7 +111,11 @@ async def file_id_handler(request: CreateResponse, context: ResponseContext):
     files = _extract_files(items)
 
     file_ids = [f.file_id for f in files if f.file_id]
-    return TextResponse(context, request, text=f"Received {len(file_ids)} file ID(s): {', '.join(file_ids)}")
+    return TextResponse(
+        context,
+        request,
+        text=f"Received {len(file_ids)} file ID(s): {', '.join(file_ids)}",
+    )
 
 
 if __name__ == "__main__":

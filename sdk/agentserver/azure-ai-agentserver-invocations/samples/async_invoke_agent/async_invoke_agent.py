@@ -38,6 +38,7 @@ Usage::
     curl -X POST http://localhost:8088/invocations/abc-123/cancel
     # -> {"invocation_id": "abc-123", "status": "cancelled"}
 """
+
 import asyncio
 import json
 
@@ -45,7 +46,6 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
-
 
 # In-memory state for demo purposes (see module docstring for production caveats)
 _tasks: dict[str, asyncio.Task] = {}
@@ -65,11 +65,13 @@ async def _do_work(invocation_id: str, data: dict) -> bytes:
     :rtype: bytes
     """
     await asyncio.sleep(5)
-    result = json.dumps({
-        "invocation_id": invocation_id,
-        "status": "completed",
-        "output": f"Processed: {data}",
-    }).encode()
+    result = json.dumps(
+        {
+            "invocation_id": invocation_id,
+            "status": "completed",
+            "output": f"Processed: {data}",
+        }
+    ).encode()
     _results[invocation_id] = result
     return result
 
@@ -89,10 +91,12 @@ async def handle_invoke(request: Request) -> Response:
     task = asyncio.create_task(_do_work(invocation_id, data))
     _tasks[invocation_id] = task
 
-    return JSONResponse({
-        "invocation_id": invocation_id,
-        "status": "running",
-    })
+    return JSONResponse(
+        {
+            "invocation_id": invocation_id,
+            "status": "running",
+        }
+    )
 
 
 @app.get_invocation_handler
@@ -112,10 +116,12 @@ async def handle_get_invocation(request: Request) -> Response:
     if invocation_id in _tasks:
         task = _tasks[invocation_id]
         if not task.done():
-            return JSONResponse({
-                "invocation_id": invocation_id,
-                "status": "running",
-            })
+            return JSONResponse(
+                {
+                    "invocation_id": invocation_id,
+                    "status": "running",
+                }
+            )
         result = task.result()
         _results[invocation_id] = result
         del _tasks[invocation_id]
@@ -137,11 +143,13 @@ async def handle_cancel_invocation(request: Request) -> Response:
 
     # Already completed — cannot cancel
     if invocation_id in _results:
-        return JSONResponse({
-            "invocation_id": invocation_id,
-            "status": "completed",
-            "error": "invocation already completed",
-        })
+        return JSONResponse(
+            {
+                "invocation_id": invocation_id,
+                "status": "completed",
+                "error": "invocation already completed",
+            }
+        )
 
     if invocation_id in _tasks:
         task = _tasks[invocation_id]
@@ -149,17 +157,21 @@ async def handle_cancel_invocation(request: Request) -> Response:
             # Task finished between check — treat as completed
             _results[invocation_id] = task.result()
             del _tasks[invocation_id]
-            return JSONResponse({
-                "invocation_id": invocation_id,
-                "status": "completed",
-                "error": "invocation already completed",
-            })
+            return JSONResponse(
+                {
+                    "invocation_id": invocation_id,
+                    "status": "completed",
+                    "error": "invocation already completed",
+                }
+            )
         task.cancel()
         del _tasks[invocation_id]
-        return JSONResponse({
-            "invocation_id": invocation_id,
-            "status": "cancelled",
-        })
+        return JSONResponse(
+            {
+                "invocation_id": invocation_id,
+                "status": "cancelled",
+            }
+        )
 
     return JSONResponse({"error": "not found"}, status_code=404)
 

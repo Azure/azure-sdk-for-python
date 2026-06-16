@@ -1,0 +1,5 @@
+azure-ai-agentserver-core
+azure-ai-agentserver-invocations
+azure-ai-projects
+azure-identity
+openai

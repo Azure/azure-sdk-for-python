@@ -34,6 +34,14 @@
 - [Configuration](#configuration)
   - [Distributed Tracing](#distributed-tracing)
   - [SSE Keep-Alive](#sse-keep-alive)
+- [Durability](#durability)
+  - [Mental Model](#mental-model)
+  - [The Recovery Loop](#the-recovery-loop)
+  - [Default Pattern (recovery-aware)](#default-pattern-recovery-aware)
+  - [Fallback Pattern (no opt-in)](#fallback-pattern-no-opt-in)
+  - [Upstream History Pattern](#upstream-history-pattern)
+  - [Watermark Pattern](#watermark-pattern)
+  - [Resumption Response Construction](#resumption-response-construction)
 - [Best Practices](#best-practices)
 - [Common Mistakes](#common-mistakes)
 
@@ -82,7 +90,7 @@ app = ResponsesAgentServerHost()
 
 
 @app.response_handler
-async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {text}")
 ```
@@ -117,7 +125,7 @@ When you have the full text available at once:
 
 ```python
 @app.response_handler
-async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {text}")
 ```
@@ -126,7 +134,7 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
 
 ```python
 @app.response_handler
-async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     async def _build():
         text = await context.get_input_text()
         answer = await model.generate(text)
@@ -144,7 +152,7 @@ When an LLM produces tokens incrementally, pass an `AsyncIterable[str]` to
 import asyncio
 
 @app.response_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     async def generate_tokens():
         tokens = ["Hello", ", ", "world", "!"]
         for token in tokens:
@@ -192,7 +200,7 @@ The primary way to register a handler is the `@app.response_handler` decorator:
 app = ResponsesAgentServerHost()
 
 @app.response_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello!")
 
 app.run()
@@ -240,7 +248,7 @@ from starlette.routing import Mount
 responses_app = ResponsesAgentServerHost()
 
 @responses_app.response_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello!")
 
 app = Starlette(routes=[
@@ -284,7 +292,7 @@ no custom provider registration is needed.
 
 ```python
 @app.response_handler
-def handler(
+async def handler(
     request: CreateResponse,
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
@@ -295,13 +303,22 @@ def handler(
 | Parameter | Description |
 |-----------|-------------|
 | `request` | The deserialized `CreateResponse` body from the client (model, input, tools, instructions, etc.) |
-| `context` | Provides the response ID, history resolution, and ID generation helpers |
-| `cancellation_signal` | An `asyncio.Event` set on cancellation (explicit `/cancel` call or client disconnection for non-background) |
+| `context` | The handler-facing `ResponseContext` — request-scoped state, async input/history helpers, the shutdown signal (`context.shutdown`), cancellation cause flags (`context.client_cancelled`), and recovery + steering fields (`context.is_recovery`, `context.is_steered_turn`, `context.pending_input_count`, `context.durable_metadata`, `context.exit_for_recovery()`) |
+| `cancellation_signal` | An `asyncio.Event` set on client cancel (`/cancel` API or non-bg POST disconnect) or steering pressure. Distinct from `context.shutdown` — shutdown does NOT fire this signal; handlers that care about both must observe each independently. |
+
+Handlers MUST be `async def` and take exactly three positional
+parameters `(request, context, cancellation_signal)`. Sync handlers and
+the 2-arg signature `(request, context)` are hard-rejected at
+decoration time with `TypeError`. Observe cancellation via
+`cancellation_signal.is_set()`; observe shutdown via
+`context.shutdown.is_set()`; see the [Cancellation](#cancellation)
+section for the cause-boolean shape and the
+[Shutdown](#shutdown-and-recovery) section for the recovery primitive.
 
 Your handler can either:
 
 1. **Return a `TextResponse`** — the simplest approach for text-only responses.
-2. **Be a Python generator** — `yield` events one at a time for full control.
+2. **Be an async generator** — `yield` events one at a time for full control.
 
 The library consumes the events, assigns sequence numbers, manages the response
 lifecycle, and delivers them to the client.
@@ -312,25 +329,28 @@ Use `return` — no generator yield needed:
 
 ```python
 @app.response_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello!")
 ```
 
 ### Generator handlers (ResponseEventStream)
 
-Use `yield` for full control. Can be **sync** or **async**:
+Use `yield` for full control. Handlers are always `async def`; they
+can be plain async functions that return an iterable, or async
+generators that `yield` events directly:
 
 ```python
-# Sync handler
+# Async generator — yields events one at a time
 @app.response_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
-    yield from stream.output_item_message("Hello!")
+    for event in stream.output_item_message("Hello!"):
+        yield event
     yield stream.emit_completed()
 
-# Async handler
+# Async generator with an async builder (token streaming)
 @app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
@@ -502,11 +522,28 @@ order. This prevents protocol violations at development time.
 
 ```python
 class ResponseContext:
-    response_id: str                        # Library-generated response ID
-    is_shutdown_requested: bool             # True when host is shutting down
-    request: CreateResponse | None          # Parsed request model
-    client_headers: dict[str, str]          # x-client-* headers from request (keys lowercase)
-    query_parameters: dict[str, str]        # Query parameters from the HTTP request
+    response_id: str                                # Library-generated response ID
+    conversation_chain_id: str                      # Stable identity for the multi-turn chain (see Durability)
+    request: CreateResponse | None                  # Parsed request model
+    client_headers: dict[str, str]                  # x-client-* headers from request (keys lowercase)
+    query_parameters: dict[str, str]                # Query parameters from the HTTP request
+    isolation: IsolationContext                     # Multi-tenant partition keys (user_key / chat_key)
+
+    # Shutdown surface (distinct from per-request cancellation_signal — see Cancellation)
+    shutdown: asyncio.Event                         # Set on graceful server shutdown
+    client_cancelled: bool                          # True for explicit /cancel call OR non-bg POST disconnect
+
+    async def exit_for_recovery() -> ExitForRecoverySignal
+        # Opt-in graceful-shutdown primitive — propagate via `return await context.exit_for_recovery()`
+        # to leave the response in_progress for next-lifetime recovery
+
+    # Recovery + steering classifiers (see Durability)
+    is_recovery: bool                               # True on a crash-recovered re-entry
+    is_steered_turn: bool                           # True on the drain re-entry that follows a steering input
+    pending_input_count: int                        # Live count of queued steering inputs
+    durable_metadata: DurableMetadataNamespace      # Persistent checkpoint store (Mapping + Callable facade)
+
+    # Async helpers
     async def get_input_items() -> Sequence[Item]   # Resolved input items as Item subtypes
     async def get_input_text() -> str               # Extract all text content from input items
     async def get_history() -> Sequence[OutputItem]  # Conversation history items
@@ -589,7 +626,7 @@ approach.
 
 ```python
 @app.response_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello, world!")
 ```
 
@@ -854,22 +891,168 @@ The `CreateResponse` object also provides:
 
 ## Cancellation
 
-The `cancellation_signal` (`asyncio.Event`) is set when:
+The handler observes cancellation via two **distinct** surfaces and a
+cause-flag boolean:
 
-- A client calls `POST /responses/{id}/cancel` (background mode only)
-- A client disconnects the HTTP connection (non-background mode)
+- **`cancellation_signal`** (3rd positional handler arg, `asyncio.Event`)
+  — set when the request itself is being cancelled. Three triggers fire
+  this signal: an explicit `POST /v1/responses/{id}/cancel` API call, a
+  non-background POST whose client disconnects mid-stream, or steering
+  pressure (a new turn arriving on the same steerable chain). This is
+  the wake-up signal handlers await / poll on inside their work loop.
+- **`context.shutdown`** (`asyncio.Event`) — set when the server is
+  shutting down (e.g. SIGTERM). Shutdown is a **separate** surface —
+  it does NOT fire the cancellation signal. The handler expectation
+  for shutdown is different from cancel: durable handlers should call
+  `await context.exit_for_recovery()` to leave the response
+  `in_progress` for re-entry on restart; non-durable handlers should
+  emit `response.failed` quickly. Handlers that care about both must
+  inspect each surface independently.
+- **`context.client_cancelled`** (`bool`) — cause flag stamped at the
+  HTTP boundary when the cancellation was an explicit client
+  cancellation (the `/cancel` endpoint OR a non-bg POST disconnect).
+  When `cancellation_signal` fires but `client_cancelled` is False
+  and `context.shutdown` is not set, the cause is steering pressure.
 
-### TextResponse Handlers
+| Cause | `cancellation_signal` | `context.shutdown` | `context.client_cancelled` | Framework Behaviour | What Handler Should Do |
+|-------|:---:|:---:|:---:|---|---|
+| **Steering** | set | not set | False | If no terminal emitted → auto-emit `response.failed`. If terminal emitted → honour it. | Break loop → close builders → `emit_completed()` |
+| **Client Cancel** | set | not set | True | Framework forces `cancelled` regardless of handler output. Output items abandoned. | Return as soon as cleanup is done. |
+| **Shutdown** | not set | set | False | Hard cutoff after `shutdown_grace_period_seconds`. Durable+bg: `await context.exit_for_recovery()` leaves the response `in_progress` for re-entry. Others: mark failed. | Checkpoint progress → `return await context.exit_for_recovery()` (durable+bg). Or complete quickly. |
+| **Shutdown + Client Cancel race** | set | set | True | Each surface reflects its independent cause; framework prefers the cancel-status path. | Inspect each surface as needed; typically prefer shutdown's `exit_for_recovery()` for durable bg. |
 
-`TextResponse` handlers use `return TextResponse(...)`. Cancellation is propagated
-automatically — if the signal fires while producing text, remaining events are
-suppressed and the library handles the winddown.
+**Key status rules:**
+- `cancelled` is ONLY produced by explicit client cancellation (`/cancel` or non-bg POST disconnect). Never by steering or shutdown.
+- `incomplete` is NEVER set by the framework — it's exclusively developer-controlled.
+- `context.exit_for_recovery()` is the opt-in graceful-shutdown recovery primitive. Handlers MUST propagate the sentinel via `return await context.exit_for_recovery()`; discarding it defeats the recovery contract.
 
-For streaming, check cancellation between chunks:
+> **On shutdown for durable handlers**: `return await context.exit_for_recovery()` leaves the response `in_progress` and the framework re-invokes your handler on restart (when `durable_background=True`). See [Durability](#durability) for the recovery contract — what the recovered handler must do, what the library guarantees on re-entry, and how clients reconcile the multi-attempt stream.
+
+### Default Pattern (handles cancel + shutdown)
+
+Most handlers need to observe BOTH `cancellation_signal` and
+`context.shutdown` in their work loop — cancel triggers graceful
+finish, shutdown triggers `exit_for_recovery()`:
 
 ```python
 @app.response_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
+
+    message = stream.add_output_item_message()
+    yield message.emit_added()
+    text = message.add_text_content()
+    yield text.emit_added()
+
+    async for token in model.stream(prompt):
+        if context.shutdown.is_set():
+            # Persist progress, then leave response in_progress for re-entry.
+            return await context.exit_for_recovery()
+        if cancellation_signal.is_set():
+            break
+        yield text.emit_delta(token)
+
+    yield text.emit_text_done()
+    yield text.emit_done()
+    yield message.emit_done()
+    yield stream.emit_completed()
+```
+
+This works for all three causes:
+- **Steering**: partial output is preserved, `completed` status is correct
+- **Client cancel**: framework overrides status to `cancelled` regardless
+- **Shutdown**: if you emit `completed` within the grace period, the response
+  finishes successfully. If you can't finish in time, prefer the advanced pattern.
+
+### Advanced Pattern (pre-entry steering, durable shutdown recovery)
+
+For steerable + durable handlers, the cancel event may be pre-set when
+a newer turn is already queued OR the server is mid-shutdown. Inspect
+the cause flags to route correctly — emit `completed` only for steering
+(the response was superseded); for shutdown, propagate the recovery
+sentinel; for explicit client cancel, just return:
+
+```python
+@app.response_handler
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    yield stream.emit_created()
+
+    # Pre-entry: cancellation_signal may be set from steering, shutdown, or
+    # client cancel. Inspect the cause flags to route correctly.
+    if cancellation_signal.is_set():
+        if context.shutdown.is_set():
+            # Server is shutting down; defer to next-lifetime recovery.
+            return await context.exit_for_recovery()
+        if context.client_cancelled:
+            # Explicit client cancel — framework forces "cancelled" status.
+            return
+        # Steering — emit completed so the superseded turn finishes cleanly.
+        yield stream.emit_completed()
+        return
+
+    yield stream.emit_in_progress()
+
+    message = stream.add_output_item_message()
+    yield message.emit_added()
+    text = message.add_text_content()
+    yield text.emit_added()
+
+    async for token in model.stream(prompt):
+        if cancellation_signal.is_set():
+            break
+        yield text.emit_delta(token)
+
+    # Shutdown mid-stream: defer to next-lifetime recovery instead of
+    # emitting a terminal.
+    if context.shutdown.is_set():
+        return await context.exit_for_recovery()
+
+    yield text.emit_text_done()
+    yield text.emit_done()
+    yield message.emit_done()
+    yield stream.emit_completed()
+```
+
+After the streaming loop breaks, check for `context.shutdown.is_set()`
+BEFORE closing builders. If shutdown interrupted mid-stream,
+`return await context.exit_for_recovery()` — the response stays
+`in_progress` and the handler is re-entered on the next process
+lifetime to produce the full output (requires
+`durable_background=True`).
+
+For all other cases (steering, client cancel, normal completion), close
+builders and emit `completed`:
+
+- **Steering/Normal**: `completed` is the correct status.
+- **Client cancel**: framework overrides to `cancelled` regardless.
+- **Shutdown**: handler hasn't finished its work — propagate
+  `await context.exit_for_recovery()` to defer re-entry.
+
+### Metadata Usage in Cancellation
+
+`context.durable_metadata` is appropriate for storing lightweight progress signals
+that help on re-entry — for example `last_processed_item_id` so you can
+take unprocessed items from response history after that point, or a step index
+for multi-phase workflows.
+
+**Acceptable**: step counters, message IDs, phase indicators, checkpoint
+references for framework-native stores (e.g., a SqliteSaver checkpoint ID).
+
+**Not acceptable**: full conversation history, LLM outputs, or framework
+checkpoint data. These belong in framework-native stores (SqliteSaver for
+LangGraph, Copilot SDK sessions, or your own backing store).
+
+### TextResponse Handlers
+
+`TextResponse` handlers handle cancellation automatically. For streaming
+text with cancellation awareness:
+
+```python
+@app.response_handler
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     async def stream_tokens():
         async for token in model.stream(prompt):
             if cancellation_signal.is_set():
@@ -879,81 +1062,28 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
     return TextResponse(context, request, text=stream_tokens())
 ```
 
-### ResponseEventStream Handlers — Sync
+### Rules
 
-Check the signal between iterations:
+1. **MUST emit `response.created` before any early return** — the framework
+   cannot persist or track a response until `emit_created()` is yielded.
 
-```python
-@app.response_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    stream = ResponseEventStream(...)
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
+2. **MUST emit a terminal event** (`emit_completed()`, `emit_incomplete()`,
+   or `emit_failed()`) in normal and cancellation paths. If the handler exits
+   without a terminal event, the framework forces `failed` status.
 
-    for chunk in get_chunks():
-        if cancellation_signal.is_set():
-            break
-        yield text.emit_delta(chunk)
+3. **Do NOT emit `emit_cancelled()`** — the `cancelled` status is reserved
+   for the framework when the client cancel API is used. Handlers should
+   always emit `completed` (or `incomplete`/`failed` for errors).
 
-    yield stream.emit_completed()
-```
+4. **Steering and client cancel are fully cooperative** — the framework
+   waits indefinitely for the handler to yield/return. Keep your cleanup fast
+   but you're not racing a deadline.
 
-### ResponseEventStream Handlers — Async
+5. **Shutdown has a hard cutoff** — after `shutdown_grace_period_seconds`
+   the process exits. Keep post-signal work under a few seconds.
 
-```python
-@app.response_handler
-async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    stream = ResponseEventStream(...)
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
-
-    async for token in model.stream(prompt):
-        if cancellation_signal.is_set():
-            break
-        yield text.emit_delta(token)
-
-    yield stream.emit_completed()
-```
-
-### What the Library Does on Cancellation
-
-Let the handler exit cleanly — the server handles the winddown automatically:
-
-1. The library sets the `cancellation_signal` event.
-2. It waits up to 10 seconds for the handler to wind down. If the handler doesn't
-   cooperate, the cancel endpoint returns the response in its current state.
-3. Once the handler finishes (within or beyond the grace period), the response
-   transitions to `cancelled` status and a `response.failed` terminal event is
-   emitted and persisted.
-
-You don't need to emit any terminal event on cancellation — just check the signal
-and exit your generator cleanly.
-
-### Graceful Shutdown
-
-When the host shuts down (e.g., SIGTERM), `context.is_shutdown_requested` is set to
-`True` and the cancellation signal is triggered. Use this to distinguish shutdown
-from explicit cancel:
-
-```python
-@app.response_handler
-async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    stream = ResponseEventStream(...)
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
-
-    try:
-        result = await do_long_running_work()
-    except asyncio.CancelledError:
-        if context.is_shutdown_requested:
-            yield stream.emit_incomplete()
-            return
-        raise
-
-    async for event in stream.aoutput_item_message(result):
-        yield event
-    yield stream.emit_completed()
-```
+6. **`return` in an async generator is a bare statement** — you cannot
+   `return value`. Use `yield` for events, then `return` to exit.
 
 ---
 
@@ -1131,6 +1261,320 @@ to disable nginx buffering.
 
 ---
 
+## Durability
+
+The framework re-invokes your handler when the server crashes mid-response
+(if `durable_background=True` and the request had `store=true, background=true`).
+What that re-invocation gives you, what you have to do to take advantage of it,
+and how clients reconcile a multi-attempt stream is the **recovery contract**.
+
+The deeper "how does this all fit together" view — the four-row dispatch matrix,
+the three termination paths (handler completes within grace, grace exhausted,
+crash), the exact persistence guarantees the framework makes, and the full
+conformance items — is in
+[`responses-durability-spec.md`](responses-durability-spec.md). That document is
+language-agnostic and intentionally exhaustive; this section is the developer
+how-to with worked Python examples. The conformance suite at
+`tests/e2e/durability_contract/` exercises every cell of the matrix.
+
+You can opt out of all of this and your response will still be correct (just
+duplicative). You opt in when you want the recovered attempt to pick up where
+the crashed one left off instead of re-running the whole turn.
+
+### Mental Model
+
+Three layers, each owning a specific slice of state:
+
+| Layer | Owns | On crash recovery, surfaces / provides |
+|---|---|---|
+| **Library** (this SDK) | Persisted SSE event stream (every event you emitted, in order) — used for client replay via `starting_after=`. The library writes the persisted response *object* exactly twice per response across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts emit `response.created` again but the framework dedups the write (idempotent persistence keyed on `response_id`). It does NOT keep a running snapshot of in-flight state. | Re-invokes the handler. Surfaces `context.is_recovery == True`, `context.is_steered_turn`, `context.pending_input_count`, and `context.durable_metadata`. Replays persisted events to reconnecting clients. Rebuilds your `ResponseContext` transparently — the handler sees the same `response_id` it had on the first attempt. |
+| **Handler** (your code) | The "what was safely committed" decision, plus side-effect watermarks in `context.durable_metadata`. | Decides the resumption point. Constructs the **resumption response**. Emits a fresh `response.in_progress` carrying it. Continues producing new output items. |
+| **Upstream framework** (Copilot SDK, LangGraph, your own LLM client) | The conversational / graph / agent state that has to outlive a process death. | Has its own resume facility (session ID, checkpoint store) that you call from the handler. |
+
+You do NOT own response event durability — that's the library. The library
+does NOT own conversational durability — that's upstream. You glue them
+together.
+
+### The Recovery Loop
+
+When the server restarts after a crash and your handler is re-invoked:
+
+1. The library calls your handler with `context.is_recovery == True`.
+2. You query upstream (and your own `context.durable_metadata` watermarks) to determine the **resumption point** — the most recent state you are confident is durably committed.
+3. You build a **resumption response**: a `ResponseObject` reflecting only the output items you trust at the resumption point. **In-flight items from the crashed attempt are excluded.** Construct this from upstream framework state + your own metadata watermarks — the library does NOT give you a snapshot of the prior attempt's in-flight state, because none exists in a useful form.
+4. You construct `ResponseEventStream(response=resumption_response, ...)` instead of the usual `request=request` form.
+5. You emit `response.created` exactly as you would on a fresh attempt — the framework dedups the response-store write so it happens exactly once across all recovery attempts. You do not need to branch on `is_recovery` to decide whether to emit `response.created`.
+6. You emit `response.in_progress`. This event's `response` payload IS the resumption response — and the library treats it as a **client-visible snapshot reset**. Reconnecting clients discard any partial in-progress state they had and adopt this payload as authoritative.
+7. You continue producing new output items, potentially at the same `output_index` values you used before the crash. Content does NOT have to match the pre-crash content (LLMs are non-deterministic; that's fine).
+8. You emit your terminal event.
+
+The library guarantees that step 6's `in_progress` is treated as a reset:
+- The persisted response state is REPLACED with the event payload.
+- Subsequent `output_item.added` at indexes already present in the resumption response REPLACE the prior item (don't append a duplicate).
+
+The library does NOT deduplicate handler-emitted events. If you don't emit a
+reset `in_progress`, the persisted state grows by whatever you emit, which
+is the naive fallback (see below).
+
+### What the Library Does
+
+- Persists every SSE event in order. No reordering, no deduplication of stream events.
+- Persists the response *object* exactly twice per response_id across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts' `response.created` and terminal writes are deduplicated by the framework (idempotent persistence keyed on `response_id`); the handler does not need to branch.
+- Rebuilds your `ResponseContext` transparently on any cross-process recovery — the recovered handler sees the same `response_id`, the same `request`, the same `conversation_chain_id`, and the same cancellation surface (`cancellation_signal` (3rd positional handler arg), `context.shutdown`, `context.client_cancelled`) it had on the first attempt. Id generation is a fresh-entry-only concern.
+- Surfaces flat recovery + steering classifiers on `ResponseContext`: `context.is_recovery`, `context.is_steered_turn`, `context.pending_input_count`, `context.durable_metadata`. The library does NOT expose a snapshot of the prior attempt — handler must consult its upstream framework for resumption state.
+- Treats any `response.in_progress` event after the first one as a snapshot reset.
+- Replays persisted events to reconnecting clients on `starting_after=`. The reset `in_progress` is part of the replay; clients use it as the reconciliation signal.
+- **Surfaces `await context.exit_for_recovery()` as the graceful-shutdown recovery primitive.** When your handler propagates the sentinel via `return await context.exit_for_recovery()`, the responses package leaves the response `in_progress` so the next process lifetime re-invokes your handler with `context.is_recovery=True`. You opt INTO this by writing the explicit `return await context.exit_for_recovery()` — bare `return` does not trigger the recovery path; it emits the default terminal.
+- For `background=false` responses (or `durable_background=False` background responses): marks the response `failed` on crash and does NOT re-invoke the handler.
+- For `store=false` responses: best-effort `failed` marker during shutdown grace period; no recovery.
+
+### What the Handler Does
+
+- Branches on `context.is_recovery` to choose fresh-entry vs recovered-entry code paths.
+- Builds the resumption response from upstream-framework state + own metadata watermarks. **Excludes in-flight items.**
+- Constructs `ResponseEventStream(response=resumption_response)` on recovered entry.
+- Emits `response.in_progress` early in the recovered path (this is the reset).
+- Uses upstream framework's native resume facility (e.g. session resume, checkpoint replay) — never re-runs a side-effecting upstream call without checking a watermark first.
+- Watermarks any upstream side-effecting call by writing a small marker to `context.durable_metadata` **before** the call and clearing it **after** the call has been durably committed upstream. Call `await context.durable_metadata.flush()` between the watermark write and the side effect to ensure the marker survives a crash.
+- For upstream-session-id needs: reads `context.conversation_chain_id` — the framework-computed stable identifier for the current conversation chain. Use this as the session id passed to upstream frameworks (Copilot `session_id`, LangGraph `thread_id`) instead of allocating your own UUID. The value is derived from `conversation_id` if present, else `previous_response_id` in steerable mode, else `response_id` — stable across all attempts of a given task.
+
+### Default Pattern (recovery-aware)
+
+A framework-agnostic recovery-aware handler. The upstream-specific reconciliation
+(how to query upstream for its state, how to resume a session) is in your
+sample's docstring; the pattern below stays uniform.
+
+```python
+from azure.ai.agentserver.responses import (
+    CreateResponse, ResponseContext, ResponseEventStream,
+)
+from azure.ai.agentserver.responses.models._generated import ResponseObject
+
+
+@app.response_handler
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    # ── Choose between fresh and recovered entry ────────────────────
+    if context.is_recovery:
+        # Ask upstream (or read context.durable_metadata) for what was
+        # safely committed.
+        resumption = _build_resumption_response(context, request)
+        stream = ResponseEventStream(
+            response_id=context.response_id, response=resumption,
+        )
+    else:
+        stream = ResponseEventStream(
+            response_id=context.response_id, request=request,
+        )
+
+    yield stream.emit_created()  # same call on fresh and recovered; framework dedups
+
+    # The cancellation contract still applies on recovered entry. If
+    # cancellation_signal is pre-set (steering pressure, explicit cancel, or
+    # shutdown), branch on the cause flags: emit `completed` for
+    # steering pressure; defer to recovery for shutdown; return for
+    # explicit client cancel.
+    if cancellation_signal.is_set():
+        if context.shutdown.is_set():
+            return await context.exit_for_recovery()
+        if context.client_cancelled:
+            return  # framework forces "cancelled" status
+        # Steering pressure — emit completed so the superseded turn
+        # finishes cleanly.
+        yield stream.emit_completed()
+        return
+
+    # ── This is the client-visible reset point on recovery ──────────
+    yield stream.emit_in_progress()
+
+    # Now produce new content. Use upstream's resume facility before any
+    # side-effecting call. Watermark before; clear after upstream commit.
+    async for event in _produce_new_output(stream, request, context):
+        yield event
+
+    # On graceful shutdown mid-work, defer to next-lifetime recovery —
+    # the framework leaves the response `in_progress` and re-invokes
+    # us on the next process restart (requires durable_background=True).
+    if context.shutdown.is_set():
+        return await context.exit_for_recovery()
+
+    yield stream.emit_completed()
+```
+
+### Fallback Pattern (no opt-in)
+
+A handler that does nothing recovery-specific still produces a correct response.
+The library:
+- accepts the duplicate `created` from re-entry,
+- accepts a fresh `in_progress` with empty output as the reset,
+- accumulates the re-streamed content as the new authoritative view.
+
+The cost: clients that reconnected with `starting_after=` see a reset to empty
+and a full re-stream. The final response is correct; the UX is jarring.
+Upstream side-effecting calls (LLM queries, agent session writes) may be
+issued twice — this corrupts upstream session history. If your upstream has
+durable history that matters, you MUST adopt the recovery-aware pattern. If
+your handler has no upstream side effects (e.g. it streams from an
+idempotent source), the fallback is fine.
+
+### Upstream History Pattern (preferred when available)
+
+Many stateful upstream SDKs expose their persisted conversation log directly —
+e.g. `claude_agent_sdk.get_session_messages(session_id)` returns the list of
+messages the SDK has durably committed, and Copilot's `session.get_messages()`
+does the same for its event log. When that API is available, use it as the
+source of truth for "did my prior attempt already send this turn?" — no handler
+metadata, no watermark, no flush ordering.
+
+```python
+async def _send_input_if_not_in_session(session, session_id, user_input):
+    history = await session.get_messages()
+    # If the most recent user message in upstream history matches the current
+    # input, the prior attempt already sent it — skip the upstream call.
+    last_user = next(
+        (evt for evt in reversed(history) if _is_user_message(evt)),
+        None,
+    )
+    if last_user is not None and _extract_user_text(last_user) == user_input:
+        return
+    await session.send(user_input)
+```
+
+Why this beats a handler-managed watermark:
+
+- The detection input is the upstream's own durable log — there is no window
+  between "we sent the call" and "we wrote our watermark" where a crash leaves
+  the handler and the upstream out of sync.
+- No `context.durable_metadata` write, no `metadata.flush()`, no decision about
+  flush-before vs flush-after.
+- On any attempt (fresh, recovered, multiply-recovered) the same one-liner
+  works: query history, compare, send only if needed.
+
+Edge case to document in your sample: if a prior turn's input was byte-equal to
+the current turn's input AND that prior turn completed normally, the
+"last user message in history equals current input" heuristic incorrectly
+skips. Rare in practice for human-driven conversations; if your domain has
+machine-generated identical-input replays, fall back to the watermark pattern
+below.
+
+### Watermark Pattern (fallback when upstream exposes no persisted history)
+
+When the upstream SDK does **not** expose its committed log — or does not
+distinguish "queued but unacked" from "durably committed" — the framework
+cannot know which of your calls have side effects, so you stamp a marker in
+`context.durable_metadata` before the call and clear it after the upstream commit.
+
+The strict at-most-once pattern is **write → flush → side effect → write →
+flush**. The explicit `await metadata.flush()` ensures the watermark hits
+durable storage before the side effect runs; otherwise the framework's 5s
+auto-flush could leave the watermark in memory only and a crash between
+"side effect issued" and "auto-flush fires" would re-issue the side effect
+on recovery.
+
+```python
+#flat context surface — no nested durability object
+# Stamp BEFORE the side-effecting call, and FLUSH to make the marker durable.
+context.durable_metadata["upstream_query_in_flight"] = True
+await context.durable_metadata.flush()
+
+await upstream.send_message(prompt)
+
+# Stream the response back…
+async for chunk in upstream.receive_response():
+    if cancellation_signal.is_set():
+        break
+    yield ...emit_delta(chunk)
+
+# Clear AFTER the upstream durably committed the result
+# (e.g. assistant message landed in the upstream's session log), and
+# FLUSH so the cleared marker survives a subsequent crash.
+context.durable_metadata["upstream_query_in_flight"] = False
+await context.durable_metadata.flush()
+```
+
+On recovery you check the marker:
+
+- Marker `True`: prior attempt called the upstream API. Use upstream's resume
+  facility (and, if available, fork primitive) to avoid duplicating the
+  message in upstream history. **Do NOT call `upstream.send_message(prompt)` again.**
+- Marker `False` (or missing): no prior side effect. Treat as fresh entry from
+  the upstream's perspective.
+
+The two flushes are the cost of at-most-once. If your side effect is naturally
+idempotent (e.g. it carries a client-supplied request id and the upstream
+dedupes), you can skip both flushes and rely on the upstream's dedup. The
+upstream-history pattern above is preferred whenever it's available because
+it removes the watermark window entirely.
+
+Watermark naming convention (recommended): `<upstream>_<operation>_in_flight: bool`.
+SDK-specific names belong in your sample's docstring.
+
+### Resumption Response Construction
+
+The resumption response is a small `ResponseObject` containing only the output
+items you are confident were durably committed. A minimal example for a handler
+whose only safe state is "the user message was committed; nothing else":
+
+```python
+from azure.ai.agentserver.responses.models._generated import ResponseObject
+
+
+def _build_resumption_response(durability, context, request) -> ResponseObject:
+    return ResponseObject({
+        "id": context.response_id,
+        "object": "response",
+        "status": "in_progress",
+        "output": [],   # exclude in-flight items from the crashed attempt
+        "model": request.model,
+    })
+```
+
+A handler whose upstream framework checkpoints intermediate state (e.g.
+LangGraph's SqliteSaver) can include the completed output items it can
+reconstruct from that checkpoint:
+
+```python
+def _build_resumption_response(durability, context, request) -> ResponseObject:
+    durable_items = _reconstruct_output_from_upstream_checkpoint(durability)
+    return ResponseObject({
+        "id": context.response_id,
+        "object": "response",
+        "status": "in_progress",
+        "output": durable_items,
+        "model": request.model,
+    })
+```
+
+There is no library-managed snapshot of the prior attempt's in-flight state.
+The library persists the response object exactly once at start (the first
+attempt's `response.created`) and exactly once at end (the first attempt
+that reaches a terminal event). Subsequent attempts re-emit these events
+naturally; the framework dedups the writes keyed on `response_id`. Trust your
+upstream framework (or your own metadata watermarks) as the source of truth
+for what's safely committed.
+
+### Recovery × Cancellation Composition
+
+The cancellation contract from the [Cancellation](#cancellation) section composes
+with recovery cleanly:
+
+- **Recovered entry + `cancellation_signal` (3rd positional handler arg) pre-set**: same as fresh entry — inspect the cause flags. Steering pressure (no cause flag) emits `completed`; explicit client cancel returns; shutdown propagates `await context.exit_for_recovery()`.
+- **Recovered entry + `cancellation_signal` (3rd positional handler arg) fires mid-stream**: same as fresh entry — break the loop, then check `context.shutdown.is_set()` for the recovery-deferral path; otherwise close builders and `emit_completed`.
+- **Crash during recovery itself**: same code path; each attempt queries upstream for its current state, computes a (possibly different) resumption response, emits a fresh reset `in_progress`. The loop is re-entrant.
+
+### Configuration
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `durable_background` | `False` | Opt INTO crash-recoverable background responses |
+| `steerable_conversations` | `False` | Multi-turn conversation steering (see [Cancellation](#cancellation)) |
+
+See the [Durable Responses Developer Guide](durable-responses-developer-guide.md)
+for the configuration matrix (`store` × `background` × `durable_background`),
+the flat `ResponseContext` recovery + steering surface, and client-side
+reconciliation rules.
+
+---
+
 ## Best Practices
 
 ### 1. Start with TextResponse
@@ -1158,7 +1602,7 @@ for word in words:
 
 ### 4. Check Cancellation in Loops
 
-Any long-running loop should check `cancellation_signal`:
+Any long-running loop should check `cancellation_signal.is_set()`:
 
 ```python
 for item in large_collection:
@@ -1203,6 +1647,79 @@ yield stream.emit_completed()
 ---
 
 ## Common Mistakes
+
+### Returning Without Emitting Events
+
+```python
+# ❌ Handler exits without producing anything — framework forces "failed"
+@app.response_handler
+async def handler(request, context, cancellation_signal):
+    if cancellation_signal.is_set():
+        return  # No events emitted! Response stuck in limbo.
+
+# ✅ Always emit response.created and a terminal event
+@app.response_handler
+async def handler(request, context, cancellation_signal):
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    yield stream.emit_created()
+    if cancellation_signal.is_set():
+        yield stream.emit_completed()
+        return
+    # ... normal processing
+    yield stream.emit_completed()
+```
+
+### Not Emitting response.created Before Early Return
+
+```python
+# ❌ Skips emit_created — framework cannot persist or track this response
+@app.response_handler
+async def handler(request, context, cancellation_signal):
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    if some_condition:
+        yield stream.emit_completed()  # Created was never emitted!
+        return
+
+# ✅ Always emit_created first, regardless of path
+@app.response_handler
+async def handler(request, context, cancellation_signal):
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    yield stream.emit_created()  # ALWAYS first
+    if some_condition:
+        yield stream.emit_completed()
+        return
+```
+
+### Emitting cancelled Status on Steering
+
+```python
+# ❌ "cancelled" is reserved for client cancel API — don't emit it yourself
+if cancellation_signal.is_set():
+    yield stream.emit_cancelled()  # WRONG — only framework sets cancelled
+
+# ✅ Emit completed — steering means "finish this turn, partial output is valid"
+if cancellation_signal.is_set():
+    yield text.emit_text_done()
+    yield text.emit_done()
+    yield message.emit_done()
+    yield stream.emit_completed()
+```
+
+### Returning None from Handler
+
+```python
+# ❌ Returning None (implicit or explicit) produces no events
+@app.response_handler
+async def handler(request, context, cancellation_signal):
+    result = await do_work()
+    # Forgot to return/yield! Python returns None implicitly.
+
+# ✅ Always return TextResponse or yield events from ResponseEventStream
+@app.response_handler
+async def handler(request, context, cancellation_signal):
+    result = await do_work()
+    return TextResponse(context, request, text=result)
+```
 
 ### Using ResponseEventStream When TextResponse Suffices
 
@@ -1275,3 +1792,91 @@ yield stream.emit_in_progress()
 yield from stream.output_item_message("Hello!")
 yield stream.emit_completed()
 ```
+
+### Expecting the Library to Hand You a Snapshot of the Prior Attempt
+
+```python
+# ❌ The library does NOT keep a running snapshot of in-flight state.
+# It only persists the response object at created and at terminal.
+# No such helper exists on the context.
+stream = ResponseEventStream(
+    response_id=context.response_id,
+    response=context.prior_attempt_snapshot,  # AttributeError
+)
+
+# ✅ Build a resumption response from your upstream framework state.
+# Only the upstream knows what was safely committed.
+resumption = _build_resumption_response(context, request)
+stream = ResponseEventStream(
+    response_id=context.response_id,
+    response=resumption,
+)
+```
+
+See [Durability → Resumption Response Construction](#durability) for what to
+include and what to leave out.
+
+### Calling Upstream Side-Effecting APIs on Recovery Without a Watermark
+
+```python
+# ❌ Re-calls upstream.send_message() on every recovery → duplicate user
+# messages in the upstream session history forever.
+async def handler(request, context, cancellation_signal):
+    if context.is_recovery:
+        ... # rebuild stream
+    await upstream.send_message(prompt)  # called on every attempt!
+
+# ✅ Watermark before the side-effecting call; check before re-issuing.
+async def handler(request, context, cancellation_signal):
+    if not context.durable_metadata.get("upstream_query_in_flight"):
+        context.durable_metadata["upstream_query_in_flight"] = True
+        await upstream.send_message(prompt)
+    # On recovery with watermark set, skip the send and just receive.
+    async for chunk in upstream.receive_response():
+        ...
+    context.durable_metadata["upstream_query_in_flight"] = False
+```
+
+See [Durability → Watermark Pattern](#durability).
+
+### Emitting `response.created` Without `response.in_progress` on Recovery
+
+```python
+# ❌ Recovery code path emits created and jumps to output items. No
+# reset point — clients merge new items with pre-crash partial state.
+async def handler(request, context, cancellation_signal):
+    if context.is_recovery:
+        stream = ResponseEventStream(
+            response_id=context.response_id,
+            response=_build_resumption_response(...),
+        )
+        yield stream.emit_created()
+        # Jumps straight to producing output → no reset signal for clients
+
+# ✅ Emit response.in_progress before any output items on recovery.
+# That event IS the snapshot reset point.
+async def handler(request, context, cancellation_signal):
+    if context.is_recovery:
+        stream = ResponseEventStream(
+            response_id=context.response_id,
+            response=_build_resumption_response(...),
+        )
+        yield stream.emit_created()
+        yield stream.emit_in_progress()  # ← client reset point
+        # ... then produce output
+```
+
+### Storing Conversation History in `context.durable_metadata`
+
+```python
+# ❌ Metadata isn't for bulk data. Hits payload limits, and the upstream
+# framework should be the source of truth for conversation history.
+context.durable_metadata["messages"] = [m.as_dict() for m in conversation]
+
+# ✅ Stash a small reference (session ID, checkpoint ID) and ask upstream
+# for the actual state when you need it.
+context.durable_metadata["claude_session_id"] = session_id  # a UUID string
+```
+
+See [Durability → Mental Model](#durability) for why upstream owns
+conversation state.

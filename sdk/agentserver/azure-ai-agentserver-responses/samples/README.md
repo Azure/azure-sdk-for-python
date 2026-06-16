@@ -37,9 +37,37 @@ python sample_01_getting_started.py
 | 14 | [File Inputs](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_14_file_inputs.py) | `ResponseContext` | Receive files via base64 data URL, URL, or file ID |
 | 15 | [Annotations](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | `ResponseEventStream` | Attach file_path, file_citation, and url_citation annotations to messages |
 | 16 | [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | `ResponseEventStream` | Return structured JSON as a `structured_outputs` item |
+| 18 | [Durable Copilot](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_durable_copilot.py) | Durable + steerable | GitHub Copilot SDK with `durable_background=True, steerable_conversations=True` — `create_session` / `resume_session` flow with live delta forwarding |
+| 19 | [Durable Streaming](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_durable_streaming.py) | Durable | Three-phase streaming handler with `durable_background=True` — uses `context.durable_metadata` watermarks to skip phases that already completed on recovery |
+| 20 | [Durable Steering](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_durable_steering.py) | Durable + steerable | Demonstrates `context.is_steered_turn` on the drain re-entry with `durable_background=True, steerable_conversations=True` |
+| 21 | [Durable LangGraph](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_21_durable_langgraph.py) | Durable + steerable | LangGraph upstream framework integration with `durable_background=True, steerable_conversations=True` — `context.conversation_chain_id` as the LangGraph thread id |
+| 22 | [Durable Multiturn](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_22_durable_multiturn.py) | Durable | Multi-turn conversation with `durable_background=True, steerable_conversations=False` — `context.durable_metadata` tracks per-turn counters |
 
 ### When to use which
 
 - **`TextResponse`** — Use for text-only responses (samples 1, 2, 5, 7–9). Handles the full SSE lifecycle automatically.
 - **`ResponseEventStream`** — Use when you need function calls, reasoning items, multiple output types, image generation, structured outputs, annotations, upstream proxying, or fine-grained event control (samples 3, 4, 6, 10–12, 15, 16).
-- **`ResponseContext`** — Use `get_input_items()` to inspect incoming images and files (samples 13, 14).
+- **`ResponseContext`** — Use `get_input_items()` to inspect incoming images and files (samples 13, 14). Use `context.is_recovery`, `context.is_steered_turn`, `context.pending_input_count`, and `context.durable_metadata` for durable / steerable handlers (samples 18–22).
+
+### Enabling durability and steering
+
+Durable + steerable behaviour is **opt-in** via `ResponsesServerOptions` —
+the defaults are both `False`. The durable samples (17–22) each show the
+exact options shape they require; in short:
+
+```python
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
+
+app = ResponsesAgentServerHost(
+    options=ResponsesServerOptions(
+        durable_background=True,             # opt-in to crash recovery
+        steerable_conversations=True,        # opt-in to mid-turn steering
+    ),
+)
+```
+
+Without `durable_background=True`, a crash mid-handler leaves the
+response in the "crash-failed" state (the next process lifetime marks
+it `failed` instead of re-invoking the handler). Without
+`steerable_conversations=True`, concurrent multi-turn requests for the
+same conversation return `409 conversation_locked` instead of queueing.
