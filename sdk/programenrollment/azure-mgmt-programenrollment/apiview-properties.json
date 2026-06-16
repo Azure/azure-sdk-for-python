@@ -33,5 +33,5 @@
         "azure.mgmt.programenrollment.operations.EduEnrollmentsOperations.list_by_subscription": "Microsoft.ProgramEnrollment.EduEnrollments.listBySubscription",
         "azure.mgmt.programenrollment.aio.operations.EduEnrollmentsOperations.list_by_subscription": "Microsoft.ProgramEnrollment.EduEnrollments.listBySubscription"
     },
-    "CrossLanguageVersion": "e8342b957fc1"
+    "CrossLanguageVersion": "e05d691b3f0e"
 }
