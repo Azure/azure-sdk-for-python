@@ -53,7 +53,12 @@ def _merge_query_response_messages(query: List[dict], response: List[dict]) -> L
 
 def _split_messages_at_latest_user(messages: List[dict]) -> Tuple[List[dict], List[dict]]:
     """Split messages into query/response slices at the latest user turn."""
-    latest_user_index = max(i for i, message in enumerate(messages) if message["role"] == MessageRole.USER)
+    latest_user_index = max(
+        (i for i, message in enumerate(messages) if message.get("role") == MessageRole.USER.value),
+        default=-1,
+    )
+    if latest_user_index == -1:
+        raise ValueError("messages must contain at least one message with role 'user'.")
     return messages[: latest_user_index + 1], messages[latest_user_index + 1 :]
 
 
