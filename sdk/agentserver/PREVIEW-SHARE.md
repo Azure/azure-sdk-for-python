@@ -54,6 +54,10 @@ export AGENTSERVER_TASKS_BACKEND=local
 export AGENTSERVER_DURABLE_ROOT=/tmp/durable   # task + response store
 ```
 
+There is an equivalent verified kit for the **invocations** durable demo at
+[`azure-ai-agentserver-invocations/samples/durable-agent-demo/local/`](azure-ai-agentserver-invocations/samples/durable-agent-demo/local/README.md)
+(same `./setup.sh` → `./run.sh` flow).
+
 ## Versions
 
 | Wheel | Version |

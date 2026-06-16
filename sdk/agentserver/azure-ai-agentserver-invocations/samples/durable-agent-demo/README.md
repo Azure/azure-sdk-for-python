@@ -1,5 +1,12 @@
 # Durable Research Agent — Demo
 
+> **▶ Run it locally (recommended for this preview):** the hosted task API is
+> currently returning **403**, which blocks deployed crash-recovery. Use the
+> verified local kit in **[`local/`](local/README.md)** to see the full
+> run → crash → recover → verify flow on your machine
+> (`cd local && ./setup.sh && ./run.sh`). The rest of this README covers the
+> azd-deployed flow for when the hosted task API is available again.
+
 A `@multi_turn_task`-decorated long-running research agent that demonstrates two
 platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
 
@@ -44,6 +51,28 @@ the hosted defaults). A `cooldown` SSE event is emitted at the start
 of each pause so the terminal shows a low-key
 `...cooling down 30s (between subcalls) — next: subcall 3/4 in phase 2/15`
 line instead of going silent.
+
+## Run locally (recommended for this preview)
+
+Because the hosted task API returns 403, the durable crash-recovery flow is
+exercised **locally** — file-backed task store, no hosted dependency. A
+ready-to-run, verified kit lives in [`local/`](local/README.md):
+
+```bash
+cd local
+./setup.sh        # builds a venv from ../../../../wheels + deps
+
+az login
+export FOUNDRY_PROJECT_ENDPOINT="https://<account>.services.ai.azure.com/api/projects/<project>"
+export AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4o"
+
+./run.sh          # automated: run -> crash -> restart -> recover -> verify
+./serve.sh        # or drive it yourself (curl http://localhost:8088/invocations)
+```
+
+See [`local/README.md`](local/README.md) for the manual curl recipe and how the
+local durable backend works (`AGENTSERVER_TASKS_BACKEND=local` +
+`FOUNDRY_AGENT_SESSION_ID`).
 
 ## Prerequisites
 
