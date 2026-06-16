@@ -37,8 +37,11 @@ set -uo pipefail
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
-# Default to the canonical hosted deployment. Edit if you deployed elsewhere.
-ENDPOINT="${ENDPOINT:-https://e2e-tests-westus2-account.services.ai.azure.com/api/projects/e2e-tests-westus2/agents/durable-responses-agent-demo/endpoint/protocols}"
+# Point at your own hosted deployment. After `azd ai agent run`, the
+# endpoint is printed in the deploy output (…/agents/<name>/endpoint/protocols),
+# or read it from your azd env (AGENT_*_RESPONSES_ENDPOINT). Override via
+# the ENDPOINT env var instead of editing this default.
+ENDPOINT="${ENDPOINT:-https://<account>.services.ai.azure.com/api/projects/<project>/agents/durable-responses-agent-demo/endpoint/protocols}"
 API_VERSION="${API_VERSION:-v1}"
 MODEL="${MODEL:-gpt-4.1-mini}"
 SESSION_FILE=".demo-session"
@@ -434,7 +437,7 @@ Usage:
   ./demo-client.sh reset             Clear local session state
 
 Environment overrides:
-  ENDPOINT     Foundry agent protocols endpoint (default points at e2e-tests-westus2).
+  ENDPOINT     Foundry agent protocols endpoint (set to your deployment).
   API_VERSION  Default: v1.
   MODEL        Default: gpt-4.1-mini.
 USAGE

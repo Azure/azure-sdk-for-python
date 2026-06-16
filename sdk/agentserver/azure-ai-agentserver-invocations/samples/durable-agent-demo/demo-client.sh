@@ -3,7 +3,7 @@
 # Durable Research Agent — Demo Client
 #
 # Showcases three platform capabilities of the durable-task primitive
-# (all empirically validated against e2e-tests-westus2):
+# (all empirically validated against a hosted Foundry deployment):
 #   1. LONG-RUNNING TASKS — the framework's PATCH .../tasks/<id> lease
 #      renewals (every ~30s) keep the platform's sandbox idle-reclaim
 #      timer fresh, so a single run stays warm well past the 15-min
@@ -31,7 +31,11 @@ set -uo pipefail
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
-ENDPOINT="https://e2e-tests-westus2-account.services.ai.azure.com/api/projects/e2e-tests-westus2/agents/durable-research-agent/endpoint/protocols"
+# Point at your own hosted deployment. After `azd ai agent run`, the
+# endpoint is printed in the deploy output (…/agents/<name>/endpoint/protocols),
+# or read it from your azd env (AGENT_*_INVOCATIONS_ENDPOINT). Override via
+# the ENDPOINT env var instead of editing this default.
+ENDPOINT="${ENDPOINT:-https://<account>.services.ai.azure.com/api/projects/<project>/agents/durable-research-agent/endpoint/protocols}"
 API_VERSION="v1"
 SESSION_FILE=".demo-session"
 

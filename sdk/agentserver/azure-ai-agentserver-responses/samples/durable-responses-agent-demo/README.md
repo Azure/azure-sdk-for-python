@@ -1,5 +1,12 @@
 # Durable Responses Research Agent — Demo
 
+> **▶ Run it locally (recommended for this preview):** the hosted task API is
+> currently returning **403**, which blocks deployed crash-recovery. Use the
+> verified local kit in **[`local/`](local/README.md)** to see the full
+> stream → crash → recover → verify flow on your machine
+> (`cd local && ./setup.sh && ./run.sh`). The rest of this README covers the
+> azd-deployed flow for when the hosted task API is available again.
+
 A `ResponsesAgentServerHost`-decorated long-running research agent
 that demonstrates four platform capabilities of the Azure AI Hosted
 Agent + the `azure-ai-agentserver-responses` package:
@@ -92,9 +99,9 @@ azd up
 ```
 
 The deploy provisions infra + ships the container image and prints
-the responses endpoint. `demo-client.sh` points at the canonical
-`e2e-tests-westus2` deployment by default — set the `ENDPOINT=` env
-var when invoking, or edit the script, if you deployed elsewhere.
+the responses endpoint. Point `demo-client.sh` at your deployment by
+setting the `ENDPOINT=` env var when invoking (or editing the default
+near the top of the script).
 
 > The `azure-ai-agentserver-responses` package's durable + steerable
 > surface is in **private preview** and is not on PyPI yet. It ships
@@ -149,26 +156,26 @@ prior id in `PREV_RESPONSE_ID` for convenience.
 
 ## Local iteration
 
-You can run the agent locally without `azd`:
+The **[`local/`](local/README.md)** kit runs this agent fully on your machine —
+a file-backed durable store (no hosted task API), with one command for the
+automated crash → recover demo and another to serve the agent for manual
+exploration:
 
 ```bash
+cd local
+./setup.sh        # builds a venv from ../../../../wheels + deps
+
+az login
 export FOUNDRY_PROJECT_ENDPOINT="https://<account>.services.ai.azure.com/api/projects/<project>"
-export AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4.1-mini"
-export DEMO_MODE=1
-export NUM_PHASES=3                # smaller for local iteration
-export INTER_PHASE_COOLDOWN_SEC=2
+export AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4o"
 
-# Install the local wheels (or pip install -e the responses package).
-pip install ../../../wheels/*.whl
-pip install -r src/durable-responses-agent-demo/requirements.txt
-
-# Run.
-python src/durable-responses-agent-demo/main.py
+./run.sh          # automated: stream -> crash -> restart -> recover -> verify
+./serve.sh        # or drive it yourself: curl http://localhost:8088/responses
 ```
 
-Then drive it with curl against `http://localhost:8088/responses`
-(no auth needed locally; `demo-client.sh` is hosted-aware and expects
-the `Authorization: Bearer ...` header).
+See [`local/README.md`](local/README.md) for the manual curl recipe (stream →
+crash → reconnect) and how the local durable backend works
+(`AGENTSERVER_TASKS_BACKEND=local` + `AGENTSERVER_DURABLE_ROOT`).
 
 ## Configuration
 

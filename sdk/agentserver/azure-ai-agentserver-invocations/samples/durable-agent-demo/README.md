@@ -1,5 +1,12 @@
 # Durable Research Agent — Demo
 
+> **▶ Run it locally (recommended for this preview):** the hosted task API is
+> currently returning **403**, which blocks deployed crash-recovery. Use the
+> verified local kit in **[`local/`](local/README.md)** to see the full
+> run → crash → recover → verify flow on your machine
+> (`cd local && ./setup.sh && ./run.sh`). The rest of this README covers the
+> azd-deployed flow for when the hosted task API is available again.
+
 A `@multi_turn_task`-decorated long-running research agent that demonstrates two
 platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
 
@@ -8,8 +15,8 @@ platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
    half of the 60s lease) signals activity through the task-storage API,
    which refreshes the platform's sandbox idle-reclaim timer. The demo
    runs for ~33 min with **zero client-side keepalive ingress** and the
-   sandbox stays warm the whole time. Validated end-to-end against the
-   `e2e-tests-westus2` deployment.
+   sandbox stays warm the whole time. Validated end-to-end against a
+   hosted Foundry deployment.
 
 2. **Recovery from container crashes.** When the agent container dies
    (intentional crash or OOM), the platform's nanny worker brings it
@@ -45,6 +52,28 @@ of each pause so the terminal shows a low-key
 `...cooling down 30s (between subcalls) — next: subcall 3/4 in phase 2/15`
 line instead of going silent.
 
+## Run locally (recommended for this preview)
+
+Because the hosted task API returns 403, the durable crash-recovery flow is
+exercised **locally** — file-backed task store, no hosted dependency. A
+ready-to-run, verified kit lives in [`local/`](local/README.md):
+
+```bash
+cd local
+./setup.sh        # builds a venv from ../../../../wheels + deps
+
+az login
+export FOUNDRY_PROJECT_ENDPOINT="https://<account>.services.ai.azure.com/api/projects/<project>"
+export AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4o"
+
+./run.sh          # automated: run -> crash -> restart -> recover -> verify
+./serve.sh        # or drive it yourself (curl http://localhost:8088/invocations)
+```
+
+See [`local/README.md`](local/README.md) for the manual curl recipe and how the
+local durable backend works (`AGENTSERVER_TASKS_BACKEND=local` +
+`FOUNDRY_AGENT_SESSION_ID`).
+
 ## Prerequisites
 
 - Python 3.11+
@@ -67,9 +96,9 @@ azd up
 ```
 
 The deploy provisions infra + ships the container image and prints the
-invocations endpoint. `demo-client.sh` already points at the canonical
-`e2e-tests-westus2` deployment — edit `ENDPOINT=` near the top of
-`demo-client.sh` if you deployed elsewhere.
+invocations endpoint. Point `demo-client.sh` at your deployment by
+setting the `ENDPOINT=` env var (or editing the default near the top of
+`demo-client.sh`).
 
 > The durable-task primitive (`@task` / `@multi_turn_task`) is in
 > **private preview** and is not on PyPI. It ships only as the
@@ -178,7 +207,7 @@ window — the framework's lease-renewal cycle keeps the sandbox warm.
 
 # Wait — DO NOT send any new ingress. The platform's nanny brings the
 # container back within ~1 min entirely on its own (validated: 43 sec
-# from crash to new worker_instance_id in the e2e-tests-westus2
+# from crash to new worker_instance_id in a hosted Foundry
 # deployment). The durable task auto-resumes from the last checkpoint
 # inside the new process — you don't need to do anything.
 
