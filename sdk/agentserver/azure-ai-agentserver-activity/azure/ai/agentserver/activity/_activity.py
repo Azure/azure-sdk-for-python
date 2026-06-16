@@ -157,6 +157,9 @@ class ActivityAgentServerHost(AgentServerHost):
         handler: Optional[Callable[[Request], Awaitable[Response]]] = None,
         **kwargs: Any,
     ) -> None:
+        # Initialize default env vars before bridge/app setup.
+        self._initialize_default_env_vars()
+
         if handler is not None and not inspect.iscoroutinefunction(handler):
             raise TypeError(
                 f"handler must be an async function, got {type(handler).__name__}. "
@@ -188,6 +191,47 @@ class ActivityAgentServerHost(AgentServerHost):
     # ------------------------------------------------------------------
     # Handler decorators
     # ------------------------------------------------------------------
+
+    def _initialize_default_env_vars(self) -> None:
+        """Initialize connection-related env vars used by the M365 SDK.
+
+        Precedence order is:
+        1. Existing explicit connection env vars
+        2. Values derived from Foundry-native env vars
+        3. Static defaults for non-critical options
+        """
+
+        def _get_nonempty(name: str) -> str:
+            return os.environ.get(name, "").strip()
+
+        def _set_if_missing(name: str, value: str) -> None:
+            if value and not _get_nonempty(name):
+                os.environ[name] = value
+
+        defaults = {
+            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__AUTHTYPE": "UserManagedIdentity",
+            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__SCOPES__0": "5a807f24-c9de-44ee-a3a7-329e88a00ffc/.default",
+            "CONNECTIONSMAP__0__SERVICEURL": "*",
+            "CONNECTIONSMAP__0__CONNECTION": "SERVICE_CONNECTION",
+        }
+        for key, value in defaults.items():
+            _set_if_missing(key, value)
+
+        foundry_blueprint_client_id = _get_nonempty("FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID")
+        foundry_tenant_id = _get_nonempty("FOUNDRY_AGENT_TENANT_ID")
+
+        _set_if_missing(
+            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID",
+            foundry_blueprint_client_id,
+        )
+        _set_if_missing(
+            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID",
+            foundry_tenant_id,
+        )
+        _set_if_missing(
+            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__AUTHORITY",
+            f"https://login.microsoftonline.com/{foundry_tenant_id}" if foundry_tenant_id else "",
+        )
 
     def activity(self, activity_type: str):
         """Register a handler for a specific activity type.

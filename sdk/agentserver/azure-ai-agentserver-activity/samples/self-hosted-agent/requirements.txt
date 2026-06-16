@@ -1,4 +1,3 @@
-azure-ai-agentserver-activity
 microsoft-agents-hosting-core
 microsoft-agents-authentication-msal
 microsoft-agents-activity
