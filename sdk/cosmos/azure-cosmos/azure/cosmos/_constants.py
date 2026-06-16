@@ -116,15 +116,17 @@ class _Constants:
     class Kwargs:
         """Keyword arguments used in the azure-cosmos package"""
 
+        # Whether to retry write operations if they fail. Used either at client level or request level.
         RETRY_WRITE: Literal["retry_write"] = "retry_write"
-        """Whether to retry write operations if they fail. Used either at client level or request level."""
         EXCLUDED_LOCATIONS: Literal["excludedLocations"] = "excludedLocations"
+        # Availability strategy config. Used either at client level or request level.
         AVAILABILITY_STRATEGY: Literal["availabilityStrategy"] = "availabilityStrategy"
-        """Availability strategy config. Used either at client level or request level"""
+        # Socket read timeout in seconds. Used either at client level or request level.
         READ_TIMEOUT: Literal["read_timeout"] = "read_timeout"
-        """Socket read timeout in seconds. Used either at client level or request level."""
+        # Absolute timeout in seconds for the combined HTTP request and response processing.
         TIMEOUT: Literal["timeout"] = "timeout"
-        """Absolute timeout in seconds for the combined HTTP request and response processing."""
+        # Socket connect (handshake) timeout in seconds. Used either at client level or request level.
+        CONNECTION_TIMEOUT: Literal["connection_timeout"] = "connection_timeout"
 
     class UserAgentFeatureFlags(IntEnum):
         """

@@ -1,0 +1,462 @@
+# The MIT License (MIT)
+# Copyright (c) Microsoft Corporation. All rights reserved.
+
+"""Unit tests for per-call timeout propagation to the container read, query
+plan, and partition-key ranges metadata calls.
+
+These tests are deliberately mock-light and do not touch the network, so they
+validate the propagation logic in isolation:
+
+* ``build_options`` carries ``connection_timeout`` into the options dict.
+* ``_carry_per_call_timeout_options`` forwards only the timeouts actually set,
+  plus the operation start time (``OperationStartTime``) when present.
+* ``format_pk_range_options`` carries the timers and the operation start time.
+* The query-plan dispatcher (sync + async) forwards ``connection_timeout``,
+  ``timeout`` and ``OperationStartTime`` only when set -- never as ``None`` --
+  so an unset value cannot override the client default in the request layer.
+* The container read (``_get_properties_with_options``) copies the timeouts and
+  the operation start time from options into the kwargs it hands down.
+"""
+
+import unittest
+
+import pytest
+
+from azure.cosmos import _base
+from azure.cosmos._constants import _Constants as Constants
+from azure.cosmos.container import ContainerProxy
+from azure.cosmos._execution_context.execution_dispatcher import _ProxyQueryExecutionContext
+from azure.cosmos._execution_context.aio.execution_dispatcher import (
+    _ProxyQueryExecutionContext as _AsyncProxyQueryExecutionContext,
+)
+from azure.cosmos._execution_context.hybrid_search_aggregator import _HybridSearchContextAggregator
+from azure.cosmos._execution_context.aio.hybrid_search_aggregator import (
+    _HybridSearchContextAggregator as _AsyncHybridSearchContextAggregator,
+)
+
+
+class _StopBeforePipeline(Exception):
+    """Raised by the recording client's query-plan stub to short-circuit
+    ``_create_execution_context_with_query_plan`` right after the gateway call,
+    before it tries to build a real pipelined execution context."""
+
+
+class _RecordingQueryPlanClient:
+    """Minimal stand-in for CosmosClientConnection that records the kwargs the
+    query-plan dispatcher forwards to ``_GetQueryPlanThroughGateway``."""
+
+    def __init__(self):
+        self.captured_kwargs = None
+
+    def _GetQueryPlanThroughGateway(self, query, resource_link, excluded_locations=None, **kwargs):
+        self.captured_kwargs = dict(kwargs)
+        raise _StopBeforePipeline()
+
+
+class _AsyncRecordingQueryPlanClient:
+    """Async counterpart of :class:`_RecordingQueryPlanClient`."""
+
+    def __init__(self):
+        self.captured_kwargs = None
+
+    async def _GetQueryPlanThroughGateway(self, query, resource_link, excluded_locations=None, **kwargs):
+        self.captured_kwargs = dict(kwargs)
+        raise _StopBeforePipeline()
+
+
+def _noop_fetch(_options):
+    return [], {}
+
+
+class TestBuildOptionsConnectionTimeout(unittest.TestCase):
+    """build_options copies connection_timeout into the options dict (like
+    read_timeout and timeout) while leaving it in kwargs for the page fetch."""
+
+    def test_connection_timeout_copied_into_options(self):
+        kwargs = {"connection_timeout": 0.5, "read_timeout": 30, "timeout": 2}
+        options = _base.build_options(kwargs)
+        assert options[Constants.Kwargs.CONNECTION_TIMEOUT] == 0.5
+        assert options[Constants.Kwargs.READ_TIMEOUT] == 30
+        assert options[Constants.Kwargs.TIMEOUT] == 2
+
+    def test_connection_timeout_stays_in_kwargs(self):
+        # A copy (not a pop): the page fetch consumes connection_timeout from
+        # kwargs, so build_options must not remove it.
+        kwargs = {"connection_timeout": 0.5}
+        _base.build_options(kwargs)
+        assert kwargs["connection_timeout"] == 0.5
+
+    def test_connection_timeout_absent_not_added(self):
+        options = _base.build_options({})
+        assert Constants.Kwargs.CONNECTION_TIMEOUT not in options
+
+
+class TestCarryPerCallTimeoutOptions(unittest.TestCase):
+    """The shared helper that copies the per-call timeouts into an options dict."""
+
+    def test_carries_only_present_keys(self):
+        destination = {}
+        _base._carry_per_call_timeout_options(
+            {"read_timeout": 30, "timeout": 2, "unrelated": 9}, destination
+        )
+        assert destination == {"read_timeout": 30, "timeout": 2}
+
+    def test_empty_source_leaves_destination_untouched(self):
+        destination = {"containerRID": "rid"}
+        _base._carry_per_call_timeout_options({}, destination)
+        assert destination == {"containerRID": "rid"}
+
+    def test_keys_are_the_three_per_call_timeouts(self):
+        assert _base._PER_CALL_TIMEOUT_OPTION_KEYS == (
+            Constants.Kwargs.READ_TIMEOUT,
+            Constants.Kwargs.CONNECTION_TIMEOUT,
+            Constants.Kwargs.TIMEOUT,
+        )
+
+
+def _make_sync_ctx(client, options):
+    return _ProxyQueryExecutionContext(
+        client,
+        "dbs/db/colls/coll",
+        "SELECT * FROM c",
+        options,
+        _noop_fetch,
+        None,
+        None,
+        "docs",
+    )
+
+
+def _make_async_ctx(client, options):
+    return _AsyncProxyQueryExecutionContext(
+        client,
+        "dbs/db/colls/coll",
+        "SELECT * FROM c",
+        options,
+        _noop_fetch,
+        None,
+        None,
+        "docs",
+    )
+
+
+class TestQueryPlanDispatcherForwarding(unittest.TestCase):
+    """The sync query-plan dispatcher forwards the per-call timeouts, and does
+    not pass connection_timeout or timeout as None when the caller left them
+    unset."""
+
+    def test_forwards_all_three_when_set(self):
+        client = _RecordingQueryPlanClient()
+        ctx = _make_sync_ctx(client, {"read_timeout": 30, "connection_timeout": 0.5, "timeout": 2})
+        with pytest.raises(_StopBeforePipeline):
+            ctx._create_execution_context_with_query_plan()
+        assert client.captured_kwargs == {
+            "read_timeout": 30,
+            "connection_timeout": 0.5,
+            "timeout": 2,
+        }
+
+    def test_omits_connection_timeout_and_timeout_when_unset(self):
+        # connection_timeout and timeout must not be forwarded as None: they go
+        # straight to the request as kwargs, where None would override the client
+        # default. read_timeout is still passed as-is.
+        client = _RecordingQueryPlanClient()
+        ctx = _make_sync_ctx(client, {})
+        with pytest.raises(_StopBeforePipeline):
+            ctx._create_execution_context_with_query_plan()
+        assert client.captured_kwargs == {"read_timeout": None}
+        assert "connection_timeout" not in client.captured_kwargs
+        assert "timeout" not in client.captured_kwargs
+
+    def test_forwards_only_connection_timeout_when_only_it_is_set(self):
+        client = _RecordingQueryPlanClient()
+        ctx = _make_sync_ctx(client, {"connection_timeout": 0.5})
+        with pytest.raises(_StopBeforePipeline):
+            ctx._create_execution_context_with_query_plan()
+        assert client.captured_kwargs == {"read_timeout": None, "connection_timeout": 0.5}
+
+
+class TestAsyncQueryPlanDispatcherForwarding(unittest.IsolatedAsyncioTestCase):
+    """The async query-plan dispatcher has the same contract as the sync one."""
+
+    async def test_forwards_all_three_when_set(self):
+        client = _AsyncRecordingQueryPlanClient()
+        ctx = _make_async_ctx(client, {"read_timeout": 30, "connection_timeout": 0.5, "timeout": 2})
+        with pytest.raises(_StopBeforePipeline):
+            await ctx._create_execution_context_with_query_plan()
+        assert client.captured_kwargs == {
+            "read_timeout": 30,
+            "connection_timeout": 0.5,
+            "timeout": 2,
+        }
+
+    async def test_omits_connection_timeout_and_timeout_when_unset(self):
+        client = _AsyncRecordingQueryPlanClient()
+        ctx = _make_async_ctx(client, {})
+        with pytest.raises(_StopBeforePipeline):
+            await ctx._create_execution_context_with_query_plan()
+        assert client.captured_kwargs == {"read_timeout": None}
+
+
+class TestDeadlineAnchorCarry(unittest.TestCase):
+    """The carry must move OperationStartTime as well as the three timeouts, so the
+    /pkranges and query-plan setup calls measure the deadline from the operation's
+    start instead of their own."""
+
+    def test_deadline_keys_extend_timeout_keys_with_anchor(self):
+        assert _base._PER_CALL_DEADLINE_OPTION_KEYS == (
+            Constants.Kwargs.READ_TIMEOUT,
+            Constants.Kwargs.CONNECTION_TIMEOUT,
+            Constants.Kwargs.TIMEOUT,
+            Constants.OperationStartTime,
+        )
+
+    def test_helper_carries_operation_start_time(self):
+        destination = {}
+        _base._carry_per_call_timeout_options(
+            {Constants.OperationStartTime: 123.0, "read_timeout": 30}, destination
+        )
+        assert destination[Constants.OperationStartTime] == 123.0
+        assert destination["read_timeout"] == 30
+
+    def test_helper_omits_operation_start_time_when_absent(self):
+        destination = {}
+        _base._carry_per_call_timeout_options({"timeout": 2}, destination)
+        assert Constants.OperationStartTime not in destination
+
+    def test_format_pk_range_options_carries_anchor_and_timers(self):
+        options = {
+            Constants.ContainerRID: "rid",
+            "read_timeout": 30,
+            "connection_timeout": 0.5,
+            "timeout": 2,
+            Constants.OperationStartTime: 123.0,
+        }
+        pk = _base.format_pk_range_options(options)
+        assert pk[Constants.ContainerRID] == "rid"
+        assert pk["read_timeout"] == 30
+        assert pk["connection_timeout"] == 0.5
+        assert pk["timeout"] == 2
+        assert pk[Constants.OperationStartTime] == 123.0
+
+    def test_format_pk_range_options_omits_unset(self):
+        pk = _base.format_pk_range_options({Constants.ContainerRID: "rid"})
+        assert Constants.OperationStartTime not in pk
+        assert "read_timeout" not in pk
+        assert "timeout" not in pk
+
+
+class TestQueryPlanDeadlineAnchorSync(unittest.TestCase):
+    """The sync query-plan dispatcher forwards OperationStartTime when set (so the
+    deadline is measured from the shared start) and omits it when unset (so the
+    request layer default is not overwritten)."""
+
+    def test_forwards_operation_start_time_when_set(self):
+        client = _RecordingQueryPlanClient()
+        ctx = _make_sync_ctx(client, {"timeout": 2, Constants.OperationStartTime: 123.0})
+        with pytest.raises(_StopBeforePipeline):
+            ctx._create_execution_context_with_query_plan()
+        assert client.captured_kwargs["timeout"] == 2
+        assert client.captured_kwargs[Constants.OperationStartTime] == 123.0
+
+    def test_omits_operation_start_time_when_unset(self):
+        client = _RecordingQueryPlanClient()
+        ctx = _make_sync_ctx(client, {"timeout": 2})
+        with pytest.raises(_StopBeforePipeline):
+            ctx._create_execution_context_with_query_plan()
+        assert Constants.OperationStartTime not in client.captured_kwargs
+
+
+class TestQueryPlanDeadlineAnchorAsync(unittest.IsolatedAsyncioTestCase):
+    """The async query-plan dispatcher has the same contract as the sync one."""
+
+    async def test_forwards_operation_start_time_when_set(self):
+        client = _AsyncRecordingQueryPlanClient()
+        ctx = _make_async_ctx(client, {"timeout": 2, Constants.OperationStartTime: 123.0})
+        with pytest.raises(_StopBeforePipeline):
+            await ctx._create_execution_context_with_query_plan()
+        assert client.captured_kwargs["timeout"] == 2
+        assert client.captured_kwargs[Constants.OperationStartTime] == 123.0
+
+    async def test_omits_operation_start_time_when_unset(self):
+        client = _AsyncRecordingQueryPlanClient()
+        ctx = _make_async_ctx(client, {"timeout": 2})
+        with pytest.raises(_StopBeforePipeline):
+            await ctx._create_execution_context_with_query_plan()
+        assert Constants.OperationStartTime not in client.captured_kwargs
+
+
+class TestContainerReadForwarding(unittest.TestCase):
+    """``_get_properties_with_options`` copies ``connection_timeout`` and
+    ``OperationStartTime`` (plus ``read_timeout`` / ``timeout`` /
+    ``excludedLocations``) from the options dict into the kwargs it hands to the
+    container read. Exercised without a live client by stubbing ``_get_properties``
+    to capture the kwargs."""
+
+    @staticmethod
+    def _capture(options):
+        proxy = ContainerProxy.__new__(ContainerProxy)
+        captured = {}
+        proxy._get_properties = lambda **kwargs: captured.update(kwargs) or {}
+        proxy._get_properties_with_options(options)
+        return captured
+
+    def test_forwards_all_timers_and_anchor(self):
+        captured = self._capture({
+            Constants.Kwargs.CONNECTION_TIMEOUT: 0.5,
+            Constants.Kwargs.READ_TIMEOUT: 30,
+            Constants.Kwargs.TIMEOUT: 2,
+            Constants.OperationStartTime: 123.0,
+            "excludedLocations": ["West US"],
+        })
+        assert captured[Constants.Kwargs.CONNECTION_TIMEOUT] == 0.5
+        assert captured[Constants.Kwargs.READ_TIMEOUT] == 30
+        assert captured[Constants.Kwargs.TIMEOUT] == 2
+        assert captured[Constants.OperationStartTime] == 123.0
+        assert captured["excluded_locations"] == ["West US"]
+
+    def test_omits_connection_timeout_when_unset(self):
+        captured = self._capture({Constants.Kwargs.READ_TIMEOUT: 30})
+        assert Constants.Kwargs.CONNECTION_TIMEOUT not in captured
+        assert captured[Constants.Kwargs.READ_TIMEOUT] == 30
+
+
+class _RecordingReadPKRangesClient:
+    """Captures the ``feed_options`` the hybrid all-ranges path hands to
+    ``_ReadPartitionKeyRanges``."""
+
+    def __init__(self):
+        self.captured_feed_options = None
+
+    def _ReadPartitionKeyRanges(self, collection_link, feed_options=None, **kwargs):  # noqa: N802
+        self.captured_feed_options = feed_options
+        return []
+
+
+class _AsyncRecordingReadPKRangesClient:
+    """Async counterpart for hybrid all-ranges feed-options capture."""
+
+    def __init__(self):
+        self.captured_feed_options = None
+
+    def _ReadPartitionKeyRanges(self, collection_link, feed_options=None, **kwargs):  # noqa: N802
+        self.captured_feed_options = feed_options
+
+        async def _empty_async_iter():
+            if False:
+                yield None
+
+        return _empty_async_iter()
+
+
+class TestHybridAllRangesCarry(unittest.TestCase):
+    """The hybrid-search all-ranges ``/pkranges`` fetch builds ``feed_options`` by
+    hand instead of using ``format_pk_range_options``, so it must still carry the
+    timeouts and ``OperationStartTime`` through the shared helper."""
+
+    def _capture_feed_options(self, options):
+        agg = _HybridSearchContextAggregator.__new__(_HybridSearchContextAggregator)
+        client = _RecordingReadPKRangesClient()
+        agg._client = client
+        agg._resource_link = "dbs/db/colls/coll"
+        agg._options = options
+        agg._get_target_partition_key_range(target_all_ranges=True)
+        return client.captured_feed_options
+
+    def test_all_ranges_feed_options_carries_timers_and_anchor(self):
+        fo = self._capture_feed_options({
+            Constants.ContainerRID: "rid",
+            "read_timeout": 30,
+            "connection_timeout": 0.5,
+            "timeout": 2,
+            Constants.OperationStartTime: 123.0,
+        })
+        assert fo[Constants.ContainerRID] == "rid"
+        assert fo["read_timeout"] == 30
+        assert fo["connection_timeout"] == 0.5
+        assert fo["timeout"] == 2
+        assert fo[Constants.OperationStartTime] == 123.0
+
+    def test_all_ranges_feed_options_omits_unset_timers(self):
+        fo = self._capture_feed_options({Constants.ContainerRID: "rid"})
+        assert fo[Constants.ContainerRID] == "rid"
+        assert "read_timeout" not in fo
+        assert "connection_timeout" not in fo
+        assert "timeout" not in fo
+        assert Constants.OperationStartTime not in fo
+
+
+class TestAsyncHybridAllRangesCarry(unittest.IsolatedAsyncioTestCase):
+    """Async hybrid-search all-ranges `/pkranges` carry has the same contract as sync."""
+
+    async def _capture_feed_options(self, options):
+        agg = _AsyncHybridSearchContextAggregator.__new__(_AsyncHybridSearchContextAggregator)
+        client = _AsyncRecordingReadPKRangesClient()
+        agg._client = client
+        agg._resource_link = "dbs/db/colls/coll"
+        agg._options = options
+        await agg._get_target_partition_key_range(target_all_ranges=True)
+        return client.captured_feed_options
+
+    async def test_all_ranges_feed_options_carries_timers_and_anchor(self):
+        fo = await self._capture_feed_options({
+            Constants.ContainerRID: "rid",
+            "read_timeout": 30,
+            "connection_timeout": 0.5,
+            "timeout": 2,
+            Constants.OperationStartTime: 123.0,
+        })
+        assert fo[Constants.ContainerRID] == "rid"
+        assert fo["read_timeout"] == 30
+        assert fo["connection_timeout"] == 0.5
+        assert fo["timeout"] == 2
+        assert fo[Constants.OperationStartTime] == 123.0
+
+    async def test_all_ranges_feed_options_omits_unset_timers(self):
+        fo = await self._capture_feed_options({Constants.ContainerRID: "rid"})
+        assert fo[Constants.ContainerRID] == "rid"
+        assert "read_timeout" not in fo
+        assert "connection_timeout" not in fo
+        assert "timeout" not in fo
+        assert Constants.OperationStartTime not in fo
+
+
+class TestCopyPerCallTimeoutsToKwargs(unittest.TestCase):
+    """The shared helper that copies the per-call timeouts and the operation start time
+    into kwargs, used by the container read, the page fetch, and the query-plan
+    dispatcher."""
+
+    def test_copies_present_values(self):
+        kwargs = {}
+        _base._copy_per_call_timeouts_to_kwargs(
+            {"read_timeout": 30, "connection_timeout": 0.5, "timeout": 2,
+             Constants.OperationStartTime: 123.0}, kwargs)
+        assert kwargs == {
+            "read_timeout": 30,
+            "connection_timeout": 0.5,
+            "timeout": 2,
+            Constants.OperationStartTime: 123.0,
+        }
+
+    def test_does_not_copy_none_values(self):
+        # A present-but-None timer must not be copied: forwarding None would make
+        # _Request's kwargs.pop(name, default) return None and override the default.
+        kwargs = {}
+        _base._copy_per_call_timeouts_to_kwargs({"read_timeout": None, "timeout": 2}, kwargs)
+        assert "read_timeout" not in kwargs
+        assert kwargs["timeout"] == 2
+
+    def test_setdefault_existing_kwarg_wins(self):
+        kwargs = {"read_timeout": 99}
+        _base._copy_per_call_timeouts_to_kwargs({"read_timeout": 30}, kwargs)
+        assert kwargs["read_timeout"] == 99
+
+    def test_none_or_empty_options_is_noop(self):
+        kwargs = {}
+        _base._copy_per_call_timeouts_to_kwargs(None, kwargs)
+        _base._copy_per_call_timeouts_to_kwargs({}, kwargs)
+        assert kwargs == {}
+
+
+if __name__ == "__main__":
+    unittest.main()

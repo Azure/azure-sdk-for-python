@@ -124,6 +124,11 @@ def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
         options[Constants.Kwargs.READ_TIMEOUT] = kwargs[Constants.Kwargs.READ_TIMEOUT]
     if Constants.Kwargs.TIMEOUT in kwargs:
         options[Constants.Kwargs.TIMEOUT] = kwargs[Constants.Kwargs.TIMEOUT]
+    # Copy (not pop) so connection_timeout stays in kwargs for the page fetch
+    # and is also placed in options, where the container read, partition-key
+    # ranges, and query plan calls read it.
+    if Constants.Kwargs.CONNECTION_TIMEOUT in kwargs:
+        options[Constants.Kwargs.CONNECTION_TIMEOUT] = kwargs[Constants.Kwargs.CONNECTION_TIMEOUT]
 
 
     options[Constants.OperationStartTime] = time.time()
@@ -1082,6 +1087,70 @@ def _build_properties_cache(properties: dict[str, Any], container_link: str) -> 
         "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
 
+# The per-call timeout keys a caller can set on a single request. Listed once
+# here so format_pk_range_options and the hybrid-search fetch forward the same
+# set.
+_PER_CALL_TIMEOUT_OPTION_KEYS: Tuple[str, ...] = (
+    Constants.Kwargs.READ_TIMEOUT,
+    Constants.Kwargs.CONNECTION_TIMEOUT,
+    Constants.Kwargs.TIMEOUT,
+)
+
+# The operation deadline is checked as elapsed = now - OperationStartTime, and
+# OperationStartTime defaults to the current time when it is missing. So timeout
+# and OperationStartTime must be carried together onto the metadata setup calls;
+# otherwise a setup call measures the deadline from its own start instead of the
+# operation's start. This adds OperationStartTime to the three timeout keys above.
+_PER_CALL_DEADLINE_OPTION_KEYS: Tuple[str, ...] = _PER_CALL_TIMEOUT_OPTION_KEYS + (
+    Constants.OperationStartTime,
+)
+
+
+def _carry_per_call_timeout_options(source: Mapping[str, Any], destination: dict[str, Any]) -> None:
+    """Copy the per-call timeouts and the operation start time from source into destination.
+
+    Copies read_timeout, connection_timeout, timeout, and OperationStartTime. Only
+    keys present in source are copied, so a timeout the caller did not set stays
+    absent and the request uses the client default instead of None.
+
+    :param source: The request options to read the timeouts from.
+    :type source: ~collections.abc.Mapping[str, typing.Any]
+    :param destination: The options dict to copy the timeouts into.
+    :type destination: dict[str, typing.Any]
+    :return: None
+    :rtype: None
+    """
+    for key in _PER_CALL_DEADLINE_OPTION_KEYS:
+        if key in source:
+            destination[key] = source[key]
+
+
+def _copy_per_call_timeouts_to_kwargs(
+        options: Optional[Mapping[str, Any]],
+        kwargs: dict[str, Any]
+) -> None:
+    """Copy the per-call timeouts and the operation start time from options into kwargs.
+
+    Moves read_timeout, connection_timeout, timeout, and OperationStartTime from
+    the request options into the kwargs the request layer reads. A value is copied
+    only when it is set (not None), so an unset timeout falls back to the client
+    default instead of None; setdefault keeps any value already in kwargs.
+
+    :param options: The request options to read the timeouts from (may be None or empty).
+    :type options: ~collections.abc.Mapping[str, typing.Any] or None
+    :param kwargs: The kwargs dict to copy the timeouts into; mutated in place.
+    :type kwargs: dict[str, typing.Any]
+    :return: None
+    :rtype: None
+    """
+    if not options:
+        return
+    for key in _PER_CALL_DEADLINE_OPTION_KEYS:
+        value = options.get(key)
+        if value is not None:
+            kwargs.setdefault(key, value)
+
+
 def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
     """Formats the partition key range options to be used internally from the query ones.
     :param dict query_options: The query options being used.
@@ -1094,4 +1163,7 @@ def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
             pk_range_options[Constants.ContainerRID] = query_options[Constants.ContainerRID]
         if "excludedLocations" in query_options:
             pk_range_options["excludedLocations"] = query_options["excludedLocations"]
+        # Keep the per-call timeouts so the partition-key ranges fetch uses them
+        # instead of the client default.
+        _carry_per_call_timeout_options(query_options, pk_range_options)
     return pk_range_options

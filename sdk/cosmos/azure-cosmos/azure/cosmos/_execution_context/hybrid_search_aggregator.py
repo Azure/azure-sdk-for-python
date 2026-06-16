@@ -8,6 +8,7 @@ from azure.cosmos._execution_context.base_execution_context import _QueryExecuti
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
+from azure.cosmos import _base
 from .._constants import _Constants as Constants
 
 # pylint: disable=protected-access
@@ -454,6 +455,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
             feed_options = {}
             if Constants.ContainerRID in self._options:
                 feed_options[Constants.ContainerRID] = self._options[Constants.ContainerRID]
+            # This path calls _ReadPartitionKeyRanges directly and skips
+            # format_pk_range_options, so copy the per-call timeouts here too.
+            _base._carry_per_call_timeout_options(self._options, feed_options)
             return list(self._client._ReadPartitionKeyRanges(
                 collection_link=self._resource_link, feed_options=feed_options))
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
