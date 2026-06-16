@@ -1371,8 +1371,10 @@ async def handler(request, context, cancellation_signal):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         start_phase = 0
 
-    yield stream.emit_created()      # framework dedups the duplicate on recovery
-    yield stream.emit_in_progress()  # client-visible reset point on recovery
+    yield stream.emit_created()      # recovery: framework suppresses the durable-stream
+                                     # write (stream already has the pre-crash created);
+                                     # this seeds the in-memory stream + first-event validator
+    yield stream.emit_in_progress()  # client-visible reset point on recovery (carries seeded items)
 
     for phase in range(start_phase, NUM_PHASES):
         message = stream.add_output_item_message()
