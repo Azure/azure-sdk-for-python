@@ -48,7 +48,7 @@ def get_file_hash(file_path):
 client = DeviceUpdateClient(credential=DefaultAzureCredential(), endpoint=endpoint, instance_id=instance)
 
 try:
-    content = [
+    content: list = [
         {
             "importManifest": {
                 "url": manifest_url,

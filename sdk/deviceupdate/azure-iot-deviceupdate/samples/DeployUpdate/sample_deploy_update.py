@@ -44,8 +44,9 @@ try:
         "groupId": group,
     }
 
-    response = client.device_management.create_or_update_deployment(group, deployment_id, deployment)
-    response = client.device_management.get_deployment_status(group, deployment_id)
-    print(response)
+    created = client.device_management.create_or_update_deployment(group, deployment_id, deployment)
+    status = client.device_management.get_deployment_status(group, deployment_id)
+    print(created)
+    print(status)
 except HttpResponseError as e:
     print("Failed to deploy update: {}".format(e))

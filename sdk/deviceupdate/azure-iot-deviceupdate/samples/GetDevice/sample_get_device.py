@@ -33,23 +33,23 @@ try:
     print("Get various device management information from Device Update for IoT Hub...")
 
     print("\nDevices:")
-    response = client.device_management.list_devices()
-    for item in response:
+    devices = client.device_management.list_devices()
+    for item in devices:
         print(f"  {item['deviceId']}")
 
     print("\nDevice groups:")
-    response = client.device_management.list_groups()
-    for item in response:
+    groups = client.device_management.list_groups()
+    for item in groups:
         print(f"  {item['groupId']}")
 
     print("\nDevice classes:")
-    response = client.device_management.list_device_classes()
-    for item in response:
+    device_classes = client.device_management.list_device_classes()
+    for item in device_classes:
         print(f"  {item['deviceClassId']}")
 
     print(f"\nFor group '{group}', best updates are:")
-    response = client.device_management.list_best_updates_for_group(group)
-    for item in response:
+    best_updates = client.device_management.list_best_updates_for_group(group)
+    for item in best_updates:
         print(f" Device class '{item['deviceClassId']}':")
         print(f"  {item['update']['updateId']['provider']}")
         print(f"  {item['update']['updateId']['name']}")

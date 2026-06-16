@@ -1669,6 +1669,8 @@
         "mday",
         "unflattened",
         "deseralize",
+        "deser",
+        "duiothub",
         "astimezone",
         "ctxt",
         "Nify"
