@@ -177,8 +177,6 @@ analyze_python_version = "3.11"
 This setting is read by `eng/scripts/dispatch_checks.py` and is passed to `azpysdk` via the `--python` flag (which requires `--isolate` and `uv`). This is useful for packages that use newer syntax or type features that require a more recent Python interpreter.
 
 > **Note:** This setting only affects the Python interpreter version used for the analyze venv; it does not change the minimum supported Python version declared in `setup.py`/`pyproject.toml`.
->
-> **Warning:** This override applies to _all_ analyze checks dispatched by `dispatch_checks.py`, including `apistub`. The `apistub` tool currently requires Python < 3.11 (`PYTHON_VERSION_LIMIT = (3, 11)` in `azpysdk/apistub.py`). Do not set `analyze_python_version` to `3.11` or higher for packages that still run `apistub` through the standard dispatched analyze flow.
 
 ## Environment variables important to CI
 

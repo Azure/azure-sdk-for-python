@@ -235,7 +235,7 @@
 /sdk/durabletask/    @berndverst @cgillum @kaibocai @philliphoff @RyanLettieri @torosent
 
 # PRLabel: %EngSys
-/sdk/template/    @benbp @scbedd @danieljurek @weshaggard
+/sdk/template/    @benbp @mikeharder @danieljurek 
 
 # PRLabel: %Evaluation
 /sdk/evaluation/    @Azure/azure-sdk-write-evaluation
@@ -810,25 +810,25 @@
 ###########
 # Eng Sys and other
 ###########
-/eng/                                                                @scbedd @danieljurek @weshaggard @benbp
+/eng/                                                                @danieljurek @mikeharder @benbp
 /eng/common/                                                         @Azure/azure-sdk-eng
-/eng/tools/                                                          @scbedd @danieljurek @mccoyp
+/eng/tools/                                                          @danieljurek @mccoyp
 /.github/workflows/                                                  @Azure/azure-sdk-eng
 /.github/workflows/typespec-python-regenerate.yml                    @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
 /.github/CODEOWNERS                                                  @lmazuel @kashifkhan @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
 /.github/prompts/                                                    @mccoyp @l0lawrence @benbp
 /.github/skills/                                                     @mccoyp @l0lawrence @benbp
-/sdk/pullrequest.yml                                                 @scbedd @danieljurek @weshaggard @benbp
+/sdk/pullrequest.yml                                                 @danieljurek @mikeharder @benbp
 
-/.config/1espt/                                                      @benbp @weshaggard
-/.devcontainer/                                                      @scbedd @danieljurek @mccoyp @benbp @weshaggard
-/.vscode/                                                            @scbedd @danieljurek @mccoyp @benbp @weshaggard
+/.config/1espt/                                                      @benbp @mikeharder
+/.devcontainer/                                                      @danieljurek @mccoyp @benbp @mikeharder
+/.vscode/                                                            @danieljurek @mccoyp @benbp @mikeharder
 
-/scripts/                                                            @scbedd @danieljurek @mccoyp
+/scripts/                                                            @danieljurek @mccoyp
 /scripts/breaking_changes_checker/                                   @catalinaperalta
-/doc/                                                                @scbedd @danieljurek @Azure/azure-python-sdk
-/conda/                                                              @scbedd @danieljurek @lmazuel
+/doc/                                                                @danieljurek @Azure/azure-python-sdk
+/conda/                                                              @danieljurek @xiangyan99 @lmazuel
 
 /shared_requirements.txt                                             @azure/azure-sdk-eng @kashifkhan @xirzec
 
@@ -836,7 +836,7 @@
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
 /eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp
 /eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
-/eng/pipelines/docindex.yml                                          @danieljurek @scbedd @weshaggard @benbp
+/eng/pipelines/docindex.yml                                          @danieljurek @benbp
 
 # Add approvers for typespec-python emitter version updates
 /eng/emitter-package.json                                            @mccoyp @catalinaperalta @iscai-msft @msyyc @ChenxiJiang333
@@ -845,8 +845,8 @@
 # TypeSpec Python generated tests and regeneration workflow
 /eng/tools/emitter/                                                  @tadelesh @msyyc @iscai-msft @lmazuel @lirenhe @ChenxiJiang333
 
-/pylintrc                                                            @l0lawrence @scbedd @danieljurek @mccoyp
-/sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd @danieljurek
+/pylintrc                                                            @l0lawrence @danieljurek @mccoyp
+/sdk/**/ci.yml                                                       @msyyc @lmazuel @danieljurek
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
 /sdk/eventhub/azure-eventhub/* @j7nw4r @SwayGom @sagar0207
