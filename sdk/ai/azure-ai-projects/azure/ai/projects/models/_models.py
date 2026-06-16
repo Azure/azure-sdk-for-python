@@ -10824,15 +10824,15 @@ class OptimizationInlineDatasetInput(OptimizationDatasetInput, discriminator="in
     :ivar type: Dataset input type discriminator. Required. Inline dataset — items are provided
      directly in the request body.
     :vartype type: str or ~azure.ai.projects.models.INLINE
-    :ivar items_property: Dataset items. Required.
-    :vartype items_property: list[~azure.ai.projects.models.OptimizationDatasetItem]
+    :ivar dataset_items: Dataset items. Required.
+    :vartype dataset_items: list[~azure.ai.projects.models.OptimizationDatasetItem]
     """
 
     type: Literal[OptimizationDatasetInputType.INLINE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Dataset input type discriminator. Required. Inline dataset — items are provided directly in the
      request body."""
-    items_property: list["_models.OptimizationDatasetItem"] = rest_field(
-        name="items", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="items"
+    dataset_items: list["_models.OptimizationDatasetItem"] = rest_field(
+        name="items", visibility=["read", "create", "update", "delete", "query"]
     )
     """Dataset items. Required."""
 
@@ -10840,7 +10840,7 @@ class OptimizationInlineDatasetInput(OptimizationDatasetInput, discriminator="in
     def __init__(
         self,
         *,
-        items_property: list["_models.OptimizationDatasetItem"],
+        dataset_items: list["_models.OptimizationDatasetItem"],
     ) -> None: ...
 
     @overload
