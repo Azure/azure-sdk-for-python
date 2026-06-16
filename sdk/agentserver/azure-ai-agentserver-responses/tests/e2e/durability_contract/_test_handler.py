@@ -99,6 +99,11 @@ _SLEEP_MS = _env_int("CONFORMANCE_HANDLER_SLEEP_MS", 50)
 _SHUTDOWN_GRACE_S = max(1, _env_int("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", 10))
 _PRE_SLEEP_DELTAS = max(0, _env_int("CONFORMANCE_PRE_SLEEP_DELTAS", 0))
 _EMIT_WATERMARK = _env_bool("CONFORMANCE_EMIT_METADATA_WATERMARK", False)
+# When true, the handler signals shutdown recovery with the explicit
+# unified primitive ``await context.exit_for_recovery()`` instead of the
+# implicit bare ``return``. Exercises the Spec 025 §A.4 orchestrator
+# translation of ``ResponseExitForRecovery`` → next-lifetime recovery.
+_EXPLICIT_EXIT_FOR_RECOVERY = _env_bool("CONFORMANCE_EXPLICIT_EXIT_FOR_RECOVERY", False)
 
 
 options = ResponsesServerOptions(
@@ -204,8 +209,12 @@ async def handle_create(
         pass
 
     if cancellation_signal.is_set():
-        # Shutting down: return without terminal so the framework's
-        # per-row Path-B / Path-C contract takes over.
+        # Shutting down: signal next-lifetime recovery. Either via the
+        # explicit unified primitive (Spec 025 §A.4) or the implicit
+        # bare ``return`` fallback — both leave the response in_progress
+        # for the per-row Path-B / Path-C recovery contract.
+        if _EXPLICIT_EXIT_FOR_RECOVERY:
+            await context.exit_for_recovery()
         return
 
     # Natural completion: emit the composite final text as a single delta

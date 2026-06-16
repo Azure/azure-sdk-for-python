@@ -232,10 +232,106 @@ def test_exit_for_recovery_raises_outside_durable_context() -> None:
 
 
 def test_exit_for_recovery_sentinel_is_not_none() -> None:
-    """The sentinel returned by exit_for_recovery() MUST be a non-None
-    framework-recognised value. Handlers `return` it for the framework to
-    leave the response in_progress for recovery."""
+    """``ExitForRecoverySignal`` remains exported as the framework's internal
+    recovery sentinel type (the orchestrator translates the raised
+    ``ResponseExitForRecovery`` into this core sentinel at the task boundary)."""
     from azure.ai.agentserver.responses import ExitForRecoverySignal
 
     # ExitForRecoverySignal is exported and is not None.
     assert ExitForRecoverySignal is not None
+
+
+def test_exit_for_recovery_raises_response_exit_for_recovery_in_durable_context() -> None:
+    """Spec 025 §A.4 (T29) — inside a durable task body
+    ``await context.exit_for_recovery()`` raises ``ResponseExitForRecovery``
+    (NoReturn); it never returns a value."""
+    from azure.ai.agentserver.responses import ResponseExitForRecovery
+    from azure.ai.agentserver.responses._response_context import IsolationContext
+    from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
+
+    ctx = ResponseContext(
+        response_id="r",
+        mode_flags=ResponseModeFlags(stream=False, store=True, background=True),
+        request=None,
+        isolation=IsolationContext(),
+    )
+    # Simulate a durable task body: a non-None task context.
+    ctx._task_context = object()  # type: ignore[attr-defined]
+
+    async def _check() -> None:
+        with pytest.raises(ResponseExitForRecovery):
+            await ctx.exit_for_recovery()
+
+    asyncio.run(_check())
+
+
+def test_exit_for_recovery_subclasses_base_exception_not_exception() -> None:
+    """Spec 025 §A.4 (T30a) — ``ResponseExitForRecovery`` subclasses
+    ``BaseException`` (NOT ``Exception``) so a handler's broad
+    ``except Exception`` cannot swallow the recovery signal."""
+    from azure.ai.agentserver.responses import ResponseExitForRecovery
+
+    assert issubclass(ResponseExitForRecovery, BaseException)
+    assert not issubclass(ResponseExitForRecovery, Exception)
+
+
+def test_exit_for_recovery_not_swallowed_by_except_exception() -> None:
+    """Spec 025 §A.4 (T30b) — the raised ``ResponseExitForRecovery`` propagates
+    THROUGH a handler-style ``except Exception`` guard."""
+    from azure.ai.agentserver.responses import ResponseExitForRecovery
+    from azure.ai.agentserver.responses._response_context import IsolationContext
+    from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
+
+    ctx = ResponseContext(
+        response_id="r",
+        mode_flags=ResponseModeFlags(stream=False, store=True, background=True),
+        request=None,
+        isolation=IsolationContext(),
+    )
+    ctx._task_context = object()  # type: ignore[attr-defined]
+
+    swallowed = {"caught_by_except_exception": False}
+
+    async def _handler() -> None:
+        try:
+            await ctx.exit_for_recovery()
+        except Exception:  # pylint: disable=broad-exception-caught
+            swallowed["caught_by_except_exception"] = True
+
+    async def _check() -> None:
+        with pytest.raises(ResponseExitForRecovery):
+            await _handler()
+
+    asyncio.run(_check())
+    assert swallowed["caught_by_except_exception"] is False
+
+
+def test_exit_for_recovery_works_in_async_generator_handler() -> None:
+    """Spec 025 §A.4 (T30c) — the unified idiom works in an async-generator
+    handler shape: ``await context.exit_for_recovery()`` raises and propagates
+    out of the generator (no ``return <value>`` SyntaxError)."""
+    from azure.ai.agentserver.responses import ResponseExitForRecovery
+    from azure.ai.agentserver.responses._response_context import IsolationContext
+    from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
+
+    ctx = ResponseContext(
+        response_id="r",
+        mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
+        request=None,
+        isolation=IsolationContext(),
+    )
+    ctx._task_context = object()  # type: ignore[attr-defined]
+
+    async def _gen():
+        yield {"type": "response.created"}
+        await ctx.exit_for_recovery()
+        yield {"type": "never reached"}  # pragma: no cover
+
+    async def _check() -> None:
+        gen = _gen()
+        assert await gen.__anext__() == {"type": "response.created"}
+        with pytest.raises(ResponseExitForRecovery):
+            await gen.__anext__()
+
+    asyncio.run(_check())
+

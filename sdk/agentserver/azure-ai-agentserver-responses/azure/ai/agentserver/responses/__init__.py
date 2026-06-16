@@ -13,6 +13,7 @@ from ._response_context import (
     ExitForRecoverySignal,
     IsolationContext,
     ResponseContext,
+    ResponseExitForRecovery,
 )
 from .hosting._routing import ResponsesAgentServerHost
 from .models import CreateResponse, ResponseObject
@@ -40,6 +41,7 @@ __all__ = [
     "data_url",  # pylint: disable=naming-mismatch
     "ConversationChainMetadataNamespace",
     "ExitForRecoverySignal",
+    "ResponseExitForRecovery",
     "ResponsesAgentServerHost",
     "ResponseContext",
     "IsolationContext",

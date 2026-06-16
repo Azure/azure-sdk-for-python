@@ -31,6 +31,7 @@ from azure.ai.agentserver.core.durable import (
 )
 
 from .._options import ResponsesServerOptions
+from .._response_context import ResponseExitForRecovery
 from ._task_id import derive_task_id
 
 if TYPE_CHECKING:
@@ -759,6 +760,20 @@ class DurableResponseOrchestrator:
                     response_id,
                 )
                 return await ctx.exit_for_recovery()
+        except ResponseExitForRecovery:
+            # Spec 025 §A.4 — the handler called
+            # ``await context.exit_for_recovery()`` (any handler shape),
+            # which raises ``ResponseExitForRecovery``. Translate it to the
+            # framework's task-level recovery primitive so the task stays
+            # ``in_progress`` for next-lifetime recovery (same disposition as
+            # the implicit shutdown bare-return fallback above).
+            logger.info(
+                "Response %s handler invoked context.exit_for_recovery(); "
+                "calling ctx.exit_for_recovery() so task stays in_progress "
+                "for next-lifetime recovery.",
+                response_id,
+            )
+            return await ctx.exit_for_recovery()
         finally:
             if cancel_bridge is not None and not cancel_bridge.done():
                 cancel_bridge.cancel()

@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Optional, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, NoReturn, Optional, Protocol, Sequence
 
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 
@@ -37,10 +37,12 @@ if TYPE_CHECKING:
     from .store._base import ResponseProviderProtocol
 
 
-# (Spec 024 Phase 5 — Proposal #11) Public type alias for the sentinel
-# returned by :meth:`ResponseContext.exit_for_recovery`. Handlers must
-# propagate this value via ``return await context.exit_for_recovery()``
-# for the framework to leave the response in_progress for recovery.
+# (Spec 024 Phase 5 — Proposal #11) ``_ExitForRecoverySentinel`` is the
+# framework's internal sentinel that leaves a response ``in_progress`` for
+# next-lifetime recovery. The public handler idiom is
+# ``await context.exit_for_recovery()`` which raises
+# :class:`ResponseExitForRecovery`; the orchestrator translates that to this
+# core sentinel at the durable task boundary.
 # Falls back to ``Any`` when the core module is unavailable at import
 # time (e.g. for type-stub generation).
 try:
@@ -49,15 +51,26 @@ except ImportError:  # pragma: no cover - defensive
     _ExitForRecoverySentinel = Any  # type: ignore[assignment,misc]
 
 ExitForRecoverySignal = _ExitForRecoverySentinel
-"""Sentinel type returned by :meth:`ResponseContext.exit_for_recovery`.
+"""Sentinel type the framework uses internally to leave a response
+``in_progress`` for next-lifetime recovery. Handlers do not use this directly —
+they call ``await context.exit_for_recovery()`` (see
+:class:`ResponseExitForRecovery`)."""
 
-Handlers MUST propagate the return value via
-``return await context.exit_for_recovery()`` so the framework can
-recognise the recovery-exit intent and leave the response
-``in_progress`` for the next-lifetime recovery scanner to pick up.
-Returning ``None`` (e.g. by discarding the sentinel) would cause the
-task to be marked completed and the recovery scanner would not fire.
-"""
+
+class ResponseExitForRecovery(BaseException):
+    """Control-flow signal raised by :meth:`ResponseContext.exit_for_recovery`.
+
+    Subclasses :class:`BaseException` (NOT :class:`Exception`) — like
+    :class:`asyncio.CancelledError` / :class:`GeneratorExit` — so a handler's
+    broad ``except Exception`` cannot accidentally swallow the recovery signal.
+    ``try/finally`` cleanup still runs. The framework catches it at the durable
+    task boundary and leaves the response ``in_progress`` for the next-lifetime
+    recovery scanner.
+
+    Handlers never construct or catch this directly; they simply
+    ``await context.exit_for_recovery()`` (which raises it), in any handler
+    shape — coroutine, async generator, or sync.
+    """
 
 
 class ConversationChainMetadataNamespace(Protocol):
@@ -154,7 +167,8 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         - :attr:`client_cancelled` — bool, True for explicit /cancel
           endpoint OR non-background POST disconnect.
         - :meth:`exit_for_recovery` — opt-in graceful-shutdown primitive
-          (must be propagated via ``return await context.exit_for_recovery()``).
+          (call as a bare ``await context.exit_for_recovery()`` — it raises
+          internally; works in any handler shape).
 
     Async helpers:
         - :meth:`get_input_items` / :meth:`get_input_text` / :meth:`get_history`.
@@ -301,29 +315,30 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
             steerable=self._steerable,
         )
 
-    async def exit_for_recovery(self) -> "_CoreExitForRecovery":
-        """Opt-in graceful-shutdown primitive — leave response in_progress for recovery.
+    async def exit_for_recovery(self) -> "NoReturn":
+        """Defer this response to next-lifetime recovery — one idiom, any shape.
 
-        (Spec 024 Phase 5 — Proposal #11) Handlers that want explicit
-        control over shutdown teardown call this and propagate its
-        return value via::
+        Call it as a bare statement, in coroutine, async-generator, or sync
+        handlers alike::
 
-            return await context.exit_for_recovery()
+            if context.shutdown.is_set():
+                await context.exit_for_recovery()
 
-        The framework's task primitive recognises the returned sentinel
-        as "leave the task in_progress so the next-lifetime recovery
-        scanner can reclaim it". For ``durable_background=True``
-        responses the handler will be re-invoked on the next process
-        startup; for ``durable_background=False`` responses the
-        next-lifetime mark-failed disposition persists a failed
-        response (matches the no-explicit-exit_for_recovery default).
+        It **raises** :class:`ResponseExitForRecovery` internally — it NEVER
+        returns. The framework catches the signal at the durable task boundary
+        and leaves the response ``in_progress`` so the handler is re-invoked on
+        the next process start (for ``durable_background=True`` responses).
 
-        :raises RuntimeError: When called outside a durable task body
-            (e.g. on a Row 4 ``store=False`` request where there is no
-            task to defer).
-        :returns: The sentinel value handlers must ``return`` for the
-            framework to honour the recovery exit.
-        :rtype: ExitForRecoverySignal
+        (Streaming handlers that simply ``return`` without emitting a terminal
+        while ``context.shutdown`` is set also recover via the implicit
+        fallback; ``await context.exit_for_recovery()`` is the explicit,
+        recommended form.)
+
+        :raises RuntimeError: When called outside a durable task body (e.g. on a
+            ``store=false`` request where there is no task to defer).
+        :raises ResponseExitForRecovery: Always, on success — the control-flow
+            signal the framework catches.
+        :rtype: NoReturn
         """
         if self._task_context is None:
             raise RuntimeError(
@@ -331,7 +346,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
                 "response handler (store=true). For store=false responses there is "
                 "no task to defer for recovery."
             )
-        return await self._task_context.exit_for_recovery()  # type: ignore[no-any-return]
+        raise ResponseExitForRecovery()
 
     async def get_input_items(self, *, resolve_references: bool = True) -> Sequence[Item]:
         """Return the caller's input items as :class:`Item` subtypes.
