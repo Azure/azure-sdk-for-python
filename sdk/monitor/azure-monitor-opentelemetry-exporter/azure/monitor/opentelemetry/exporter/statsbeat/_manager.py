@@ -383,5 +383,3 @@ class StatsbeatManager(metaclass=Singleton):
         """
         with self._lock:
             return self._initialized
-
-

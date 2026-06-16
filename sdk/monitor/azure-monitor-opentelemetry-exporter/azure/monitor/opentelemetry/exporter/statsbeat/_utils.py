@@ -184,7 +184,9 @@ def _get_additional_observations(metric_name: str, options: CallbackOptions) -> 
     :rtype: list[~opentelemetry.metrics.Observation]
     """
     # Lazy import to avoid a circular import between _manager and _utils.
-    from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatManager  # pylint: disable=import-outside-toplevel
+    from azure.monitor.opentelemetry.exporter.statsbeat._manager import (  # pylint: disable=import-outside-toplevel
+        StatsbeatManager,
+    )
 
     callbacks = StatsbeatManager()._additional_callbacks.get(metric_name, ())  # pylint: disable=protected-access
 
