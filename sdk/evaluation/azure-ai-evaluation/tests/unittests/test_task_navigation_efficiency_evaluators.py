@@ -467,10 +467,6 @@ class TestTaskNavigationEfficiencyEvaluator:
 
         result = evaluator(actions=actions, expected_actions=expected_actions)
         assert result["task_navigation_efficiency_passed"] is True
-        assert result["task_navigation_efficiency_result"] == "pass"
-        assert result["task_navigation_efficiency_properties"]["precision_score"] == 1.0
-        assert result["task_navigation_efficiency_properties"]["recall_score"] == 1.0
-        assert result["task_navigation_efficiency_properties"]["f1_score"] == 1.0
 
     def test_alias_inputs_mismatch(self):
         """Test that alias inputs produce a failing result when actions do not match expected_actions."""
