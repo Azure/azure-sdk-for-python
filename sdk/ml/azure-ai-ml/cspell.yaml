@@ -1,6 +1,4 @@
-import:
-  - ../../../.vscode/cspell.json
-
+version: "0.2"
 words:
   - aadtoken
   - alds
