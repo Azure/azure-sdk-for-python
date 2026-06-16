@@ -38,28 +38,21 @@ LOG = logging.getLogger()
 
 async def main():
     # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-    # AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT, WEBPUBSUB_CONNECTION_STRING
+    # AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WEBPUBSUB_ENDPOINT
     try:
         endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
-        connection_string = os.environ["WEBPUBSUB_CONNECTION_STRING"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'WEBPUBSUB_ENDPOINT' or 'WEBPUBSUB_CONNECTION_STRING' - please set if before running the example"
+            "Missing environment variable 'WEBPUBSUB_ENDPOINT' - please set it before running the example"
         )
         exit()
 
     # Build a client through AAD(async)
     async with DefaultAzureCredential() as credential:
-        async with WebPubSubServiceClientAsync(endpoint=endpoint, hub="hub", credential=credential) as client_aad_async:
+        async with WebPubSubServiceClientAsync(endpoint=endpoint, hub="hub", credential=credential) as client:
             # Build authentication token(async)
-            token_aad_async = await client_aad_async.get_client_access_token()
-            print("token by AAD(async): {}".format(token_aad_async))
-
-    # Build a client through connection string(async)
-    async with WebPubSubServiceClientAsync.from_connection_string(connection_string, hub="hub") as client_key_async:
-        # Build authentication token(async)
-        token_key_async = await client_key_async.get_client_access_token()
-        print("token by access key(async): {}".format(token_key_async))
+            token = await client.get_client_access_token()
+            print("token by AAD(async): {}".format(token))
 
 
 if __name__ == "__main__":

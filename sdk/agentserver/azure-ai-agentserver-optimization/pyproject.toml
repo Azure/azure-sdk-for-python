@@ -1,0 +1,62 @@
+[project]
+name = "azure-ai-agentserver-optimization"
+dynamic = ["version", "readme"]
+description = "Optimization config loader for Azure AI Hosted Agents"
+requires-python = ">=3.10"
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+keywords = ["azure", "azure sdk", "agent", "agentserver", "optimization"]
+
+dependencies = [
+    "pyyaml>=6.0",
+    "azure-core>=1.31.0",
+    "azure-identity>=1.15.0",
+]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+    "azure.ai.agentserver",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver.optimization._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.setuptools.package-data]
+"azure.ai.agentserver.optimization" = ["py.typed"]
+
+[tool.azure-sdk-build]
+breaking = false
+mypy = true
+pyright = true
+verifytypes = false
+latestdependency = false
+pylint = true
+type_check_samples = false
+
+[tool.uv.sources]

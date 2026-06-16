@@ -169,7 +169,7 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -184,38 +184,29 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = result.get("llm_output", result) if isinstance(result, dict) else result
 
         score = math.nan
-        llm_output_is_dict = isinstance(llm_output, dict)
-        if llm_output_is_dict or isinstance(llm_output, str):
-            reason = ""
-            if llm_output_is_dict:
-                score = float(llm_output.get("score", math.nan))
-                reason = llm_output.get("explanation", "")
-            else:
-                score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
+        if isinstance(llm_output, dict):
+            # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reason", "")
+                return self._return_not_applicable_result(reason, self._threshold)
 
-            binary_result = self._get_binary_result(score)
+            score = float(llm_output.get("score", math.nan))
+            reason = llm_output.get("reason", "")
+            llm_properties = llm_output.get("properties", {}) or {}
+            score_result = self._get_binary_result(score)
 
-            input_token_count = result.get("input_token_count", 0) if isinstance(result, dict) else 0
-            output_token_count = result.get("output_token_count", 0) if isinstance(result, dict) else 0
-            total_token_count = result.get("total_token_count", 0) if isinstance(result, dict) else 0
-            finish_reason = result.get("finish_reason", "") if isinstance(result, dict) else ""
-            model_id = result.get("model_id", "") if isinstance(result, dict) else ""
-            sample_input = result.get("sample_input", "") if isinstance(result, dict) else ""
-            sample_output = result.get("sample_output", "") if isinstance(result, dict) else ""
+            llm_properties.update(self._get_token_metadata(result if isinstance(result, dict) else {}))
 
-            # updating the result key and threshold to int based on the schema
             return {
-                f"{self._result_key}": int(score),
-                f"{self._result_key}_result": binary_result,
-                f"{self._result_key}_threshold": int(self._threshold),
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_result": score_result,
                 f"{self._result_key}_reason": reason,
-                f"{self._result_key}_prompt_tokens": input_token_count,
-                f"{self._result_key}_completion_tokens": output_token_count,
-                f"{self._result_key}_total_tokens": total_token_count,
-                f"{self._result_key}_finish_reason": finish_reason,
-                f"{self._result_key}_model": model_id,
-                f"{self._result_key}_sample_input": sample_input,
-                f"{self._result_key}_sample_output": sample_output,
+                f"{self._result_key}_status": "completed",
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_properties": llm_properties,
             }
 
         raise EvaluationException(

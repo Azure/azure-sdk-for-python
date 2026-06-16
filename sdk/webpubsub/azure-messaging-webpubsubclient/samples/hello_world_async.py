@@ -7,6 +7,7 @@ import os
 import asyncio
 from azure.messaging.webpubsubclient.aio import WebPubSubClient, WebPubSubClientCredential
 from azure.messaging.webpubsubservice.aio import WebPubSubServiceClient
+from azure.identity.aio import DefaultAzureCredential
 from azure.messaging.webpubsubclient.models import (
     OnConnectedArgs,
     OnGroupDataMessageArgs,
@@ -38,8 +39,9 @@ async def on_group_message(msg: OnGroupDataMessageArgs):
 
 
 async def main():
-    service_client = WebPubSubServiceClient.from_connection_string(  # type: ignore
-        connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING", ""), hub="hub"
+    credential = DefaultAzureCredential()
+    service_client = WebPubSubServiceClient(
+        endpoint=os.getenv("WEBPUBSUB_ENDPOINT", ""), hub="hub", credential=credential
     )
     async def client_access_url_provider():
         return (await service_client.get_client_access_token(

@@ -759,9 +759,9 @@ The following environment variables are recognized by `azure-core`. They are res
 
 | Variable | Description | Accepted Values | Default |
 | --- | --- | --- | --- |
-| `AZURE_LOG_LEVEL` | Logging level for all Azure SDK clients. | `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG` (case-insensitive) | `INFO` |
-| `AZURE_TRACING_ENABLED` | Enable/disable distributed tracing. | `true`/`false`, `yes`/`no`, `1`/`0`, `on`/`off` (case-insensitive) | Auto-detected based on `AZURE_SDK_TRACING_IMPLEMENTATION` |
-| `AZURE_SDK_TRACING_IMPLEMENTATION` | Tracing implementation to use. Requires the corresponding plugin package (`azure-core-tracing-opentelemetry`). | `opentelemetry` | None |
+| `AZURE_LOG_LEVEL` | Logging level for all Azure SDK clients. Invalid values fall back to `INFO` with a warning. | `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG`, `VERBOSE` (case-insensitive; `VERBOSE` treated as `DEBUG`) | `INFO` |
+| `AZURE_TRACING_ENABLED` | Enable/disable distributed tracing. Invalid values fall back to the default with a warning. | `true`/`false`, `yes`/`no`, `1`/`0`, `on`/`off` (case-insensitive) | Auto-detected based on `AZURE_SDK_TRACING_IMPLEMENTATION` |
+| `AZURE_SDK_TRACING_IMPLEMENTATION` | Tracing implementation to use. Requires the corresponding plugin package (`azure-core-tracing-opentelemetry`). Invalid values fall back to the default with a warning. | `opentelemetry` | None |
 | `AZURE_SDK_CLOUD_CONF` | Azure cloud environment. | `AZURE_PUBLIC_CLOUD`, `AZURE_CHINA_CLOUD`, `AZURE_US_GOVERNMENT` | `AZURE_PUBLIC_CLOUD` |
 
 These settings can also be read or set programmatically:

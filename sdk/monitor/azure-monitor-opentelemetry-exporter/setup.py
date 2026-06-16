@@ -86,8 +86,8 @@ setup(
         "azure-core<2.0.0,>=1.28.0",
         "azure-identity~=1.17",
         "msrest>=0.6.10",
-        "opentelemetry-api==1.40",
-        "opentelemetry-sdk==1.40",
+        "opentelemetry-api~=1.42.0",
+        "opentelemetry-sdk~=1.42.0",
         "psutil>=5.9,<8",
     ],
     entry_points={

@@ -1,5 +1,517 @@
 # Release History
 
+## 2.0.0 (2026-06-08)
+
+### Features Added
+
+  - Client `ManagedNetworkFabricMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ManagedNetworkFabricMgmtClient` added method `send_request`
+  - Client `ManagedNetworkFabricMgmtClient` added operation group `network_monitors`
+  - Client `ManagedNetworkFabricMgmtClient` added operation group `network_bootstrap_devices`
+  - Client `ManagedNetworkFabricMgmtClient` added operation group `network_bootstrap_interfaces`
+  - Model `AccessControlListAction` added property `remark_comment`
+  - Model `AccessControlListAction` added property `police_rate_configuration`
+  - Model `AccessControlListMatchCondition` added property `protocol_neighbors`
+  - Model `AccessControlListMatchCondition` added property `icmp_configuration`
+  - Model `AccessControlListPatchProperties` added property `default_action`
+  - Model `AccessControlListPatchProperties` added property `control_plane_acl_configuration`
+  - Model `AccessControlListPatchProperties` added property `acl_type`
+  - Model `AccessControlListPatchProperties` added property `device_role`
+  - Model `AccessControlListPatchProperties` added property `global_access_control_list_actions`
+  - Model `AccessControlListProperties` added property `default_action`
+  - Model `AccessControlListProperties` added property `acl_type`
+  - Model `AccessControlListProperties` added property `device_role`
+  - Model `AccessControlListProperties` added property `global_access_control_list_actions`
+  - Model `AccessControlListProperties` added property `last_operation`
+  - Model `AccessControlListProperties` added property `network_fabric_ids`
+  - Model `AccessControlListProperties` added property `control_plane_acl_configuration`
+  - Enum `AclActionType` added member `POLICE_RATE`
+  - Enum `AclActionType` added member `REMARK`
+  - Enum `AdministrativeState` added member `ENABLED_DEGRADED`
+  - Enum `AdministrativeState` added member `UNDER_MAINTENANCE`
+  - Model `BgpConfiguration` added property `bmp_configuration`
+  - Model `BgpConfiguration` added property `v4_over_v6_bgp_session`
+  - Model `BgpConfiguration` added property `v6_over_v4_bgp_session`
+  - Enum `ConfigurationState` added member `PENDING_ADMINISTRATIVE_UPDATE`
+  - Enum `ConfigurationState` added member `PENDING_COMMIT`
+  - Enum `ConfigurationState` added member `PROVISIONING`
+  - Enum `DeviceAdministrativeState` added member `DISABLE`
+  - Enum `DeviceAdministrativeState` added member `ENABLE`
+  - Enum `DeviceAdministrativeState` added member `UNDER_MAINTENANCE`
+  - Enum `DeviceAdministrativeState` added member `UNGRACEFUL_QUARANTINE`
+  - Enum `DeviceAdministrativeState` added member `UNGRACEFUL_RMA`
+  - Enum `EnableDisableState` added member `UNDER_MAINTENANCE`
+  - Model `ExternalNetworkPatchProperties` added property `network_to_network_interconnect_id`
+  - Model `ExternalNetworkPatchProperties` added property `static_route_configuration`
+  - Model `ExternalNetworkPatchPropertiesOptionAProperties` added property `bmp_configuration`
+  - Model `ExternalNetworkPatchPropertiesOptionAProperties` added property `v4_over_v6_bgp_session`
+  - Model `ExternalNetworkPatchPropertiesOptionAProperties` added property `v6_over_v4_bgp_session`
+  - Model `ExternalNetworkPatchPropertiesOptionAProperties` added property `native_ipv4_prefix_limit`
+  - Model `ExternalNetworkPatchPropertiesOptionAProperties` added property `native_ipv6_prefix_limit`
+  - Model `ExternalNetworkProperties` added property `static_route_configuration`
+  - Model `ExternalNetworkProperties` added property `last_operation`
+  - Model `ExternalNetworkProperties` added property `network_fabric_id`
+  - Model `ExternalNetworkPropertiesOptionAProperties` added property `bmp_configuration`
+  - Model `ExternalNetworkPropertiesOptionAProperties` added property `v4_over_v6_bgp_session`
+  - Model `ExternalNetworkPropertiesOptionAProperties` added property `v6_over_v4_bgp_session`
+  - Model `ExternalNetworkPropertiesOptionAProperties` added property `native_ipv4_prefix_limit`
+  - Model `ExternalNetworkPropertiesOptionAProperties` added property `native_ipv6_prefix_limit`
+  - Model `InternalNetworkPatchProperties` added property `native_ipv4_prefix_limit`
+  - Model `InternalNetworkPatchProperties` added property `native_ipv6_prefix_limit`
+  - Model `InternalNetworkProperties` added property `native_ipv4_prefix_limit`
+  - Model `InternalNetworkProperties` added property `native_ipv6_prefix_limit`
+  - Model `InternalNetworkProperties` added property `last_operation`
+  - Model `InternalNetworkProperties` added property `network_fabric_id`
+  - Model `InternetGatewayProperties` added property `internet_gateway_type`
+  - Model `InternetGatewayProperties` added property `last_operation`
+  - Model `InternetGatewayRuleProperties` added property `last_operation`
+  - Model `IpCommunityProperties` added property `network_fabric_id`
+  - Model `IpCommunityProperties` added property `last_operation`
+  - Model `IpExtendedCommunityProperties` added property `network_fabric_id`
+  - Model `IpExtendedCommunityProperties` added property `last_operation`
+  - Model `IpPrefixProperties` added property `network_fabric_id`
+  - Model `IpPrefixProperties` added property `last_operation`
+  - Model `L2IsolationDomain` added property `identity`
+  - Model `L2IsolationDomainPatch` added property `identity`
+  - Model `L2IsolationDomainPatchProperties` added property `extended_vlan`
+  - Model `L2IsolationDomainPatchProperties` added property `network_to_network_interconnect_id`
+  - Model `L2IsolationDomainProperties` added property `extended_vlan`
+  - Model `L2IsolationDomainProperties` added property `network_to_network_interconnect_id`
+  - Model `L2IsolationDomainProperties` added property `last_operation`
+  - Model `L3IsolationDomain` added property `identity`
+  - Model `L3IsolationDomainPatch` added property `identity`
+  - Model `L3IsolationDomainPatchProperties` added property `static_route_policy`
+  - Model `L3IsolationDomainPatchProperties` added property `v4_route_prefix_limit`
+  - Model `L3IsolationDomainPatchProperties` added property `v6_route_prefix_limit`
+  - Model `L3IsolationDomainPatchProperties` added property `export_policy_configuration`
+  - Model `L3IsolationDomainProperties` added property `static_route_policy`
+  - Model `L3IsolationDomainProperties` added property `unique_rd_configuration`
+  - Model `L3IsolationDomainProperties` added property `v4_route_prefix_limit`
+  - Model `L3IsolationDomainProperties` added property `v6_route_prefix_limit`
+  - Model `L3IsolationDomainProperties` added property `last_operation`
+  - Model `L3IsolationDomainProperties` added property `export_policy_configuration`
+  - Enum `Layer4Protocol` added member `SCTP`
+  - Model `NeighborAddress` added property `bfd_administrative_state`
+  - Model `NeighborAddress` added property `bgp_administrative_state`
+  - Model `NeighborGroup` added property `identity`
+  - Model `NeighborGroupPatch` added property `identity`
+  - Model `NeighborGroupProperties` added property `network_fabric_ids`
+  - Model `NeighborGroupProperties` added property `last_operation`
+  - Model `NeighborGroupProperties` added property `configuration_state`
+  - Model `NetworkDevice` added property `identity`
+  - Model `NetworkDevicePatchParameters` added property `identity`
+  - Model `NetworkDevicePatchParametersProperties` added property `identity_selector`
+  - Model `NetworkDeviceProperties` added property `identity_selector`
+  - Model `NetworkDeviceProperties` added property `rw_device_config`
+  - Model `NetworkDeviceProperties` added property `last_operation`
+  - Model `NetworkDeviceProperties` added property `secret_rotation_status`
+  - Model `NetworkDeviceProperties` added property `certificate_rotation_status`
+  - Model `NetworkDeviceProperties` added property `network_fabric_id`
+  - Model `NetworkFabric` added property `identity`
+  - Model `NetworkFabricController` added property `identity`
+  - Model `NetworkFabricControllerPatch` added property `identity`
+  - Model `NetworkFabricControllerProperties` added property `last_operation`
+  - Model `NetworkFabricPatch` added property `identity`
+  - Model `NetworkFabricPatchProperties` added property `storage_account_configuration`
+  - Model `NetworkFabricPatchProperties` added property `hardware_alert_threshold`
+  - Model `NetworkFabricPatchProperties` added property `control_plane_acls`
+  - Model `NetworkFabricPatchProperties` added property `trusted_ip_prefixes`
+  - Model `NetworkFabricPatchProperties` added property `unique_rd_configuration`
+  - Model `NetworkFabricPatchProperties` added property `qos_configuration`
+  - Model `NetworkFabricPatchProperties` added property `feature_flags`
+  - Model `NetworkFabricPatchProperties` added property `authorized_transceiver`
+  - Model `NetworkFabricProperties` added property `storage_account_configuration`
+  - Model `NetworkFabricProperties` added property `fabric_locks`
+  - Model `NetworkFabricProperties` added property `hardware_alert_threshold`
+  - Model `NetworkFabricProperties` added property `control_plane_acls`
+  - Model `NetworkFabricProperties` added property `feature_flags`
+  - Model `NetworkFabricProperties` added property `trusted_ip_prefixes`
+  - Model `NetworkFabricProperties` added property `unique_rd_configuration`
+  - Model `NetworkFabricProperties` added property `storage_array_count`
+  - Model `NetworkFabricProperties` added property `active_commit_batches`
+  - Model `NetworkFabricProperties` added property `secret_rotation_summary`
+  - Model `NetworkFabricProperties` added property `last_operation`
+  - Model `NetworkFabricProperties` added property `authorized_transceiver`
+  - Model `NetworkFabricProperties` added property `qos_configuration`
+  - Model `NetworkInterface` added property `identity`
+  - Model `NetworkInterfacePatchProperties` added property `additional_description`
+  - Model `NetworkInterfaceProperties` added property `description`
+  - Model `NetworkInterfaceProperties` added property `additional_description`
+  - Model `NetworkInterfaceProperties` added property `last_operation`
+  - Model `NetworkInterfaceProperties` added property `network_fabric_id`
+  - Model `NetworkInterfaceProperties` added property `configuration_state`
+  - Model `NetworkPacketBroker` added property `identity`
+  - Model `NetworkPacketBrokerPatch` added property `identity`
+  - Model `NetworkRackProperties` added property `last_operation`
+  - Model `NetworkRackProperties` added property `configuration_state`
+  - Model `NetworkTap` added property `identity`
+  - Model `NetworkTapPatch` added property `identity`
+  - Model `NetworkTapProperties` added property `network_fabric_ids`
+  - Model `NetworkTapProperties` added property `last_operation`
+  - Model `NetworkTapRule` added property `identity`
+  - Model `NetworkTapRulePatch` added property `identity`
+  - Model `NetworkTapRulePatchProperties` added property `identity_selector`
+  - Model `NetworkTapRulePatchProperties` added property `global_network_tap_rule_actions`
+  - Model `NetworkTapRuleProperties` added property `identity_selector`
+  - Model `NetworkTapRuleProperties` added property `network_tap_ids`
+  - Model `NetworkTapRuleProperties` added property `global_network_tap_rule_actions`
+  - Model `NetworkTapRuleProperties` added property `last_operation`
+  - Model `NetworkTapRuleProperties` added property `network_fabric_ids`
+  - Model `OptionBLayer3Configuration` added property `pe_loopback_ip_address`
+  - Model `OptionBLayer3Configuration` added property `bmp_configuration`
+  - Model `OptionBLayer3Configuration` added property `prefix_limits`
+  - Enum `PortType` added member `BIDIRECTIONAL`
+  - Model `RoutePolicyPatchableProperties` added property `default_action`
+  - Model `RoutePolicyProperties` added property `default_action`
+  - Model `RoutePolicyProperties` added property `last_operation`
+  - Model `RuleProperties` added property `condition`
+  - Model `RuleProperties` added property `destination_address_list`
+  - Model `RuleProperties` added property `source_address_list`
+  - Model `RuleProperties` added property `header_address_list`
+  - Enum `SourceDestinationType` added member `BIDIRECTIONAL`
+  - Model `StaticRouteConfiguration` added property `extension`
+  - Model `TerminalServerConfiguration` added property `secret_rotation_status`
+  - Added model `AccessControlListActionPatch`
+  - Added model `AccessControlListMatchConditionPatch`
+  - Added model `AccessControlListMatchConfigurationPatch`
+  - Added model `AccessControlListPortConditionPatch`
+  - Added enum `AclType`
+  - Added model `ActionIpCommunityPatchProperties`
+  - Added model `ActionIpExtendedCommunityPatchProperties`
+  - Added model `AggregateRoutePatchConfiguration`
+  - Added model `ArmConfigurationDiffOperationResponse`
+  - Added model `ArmConfigurationDiffResponseProperties`
+  - Added model `AuthorizedTransceiverPatchProperties`
+  - Added model `AuthorizedTransceiverProperties`
+  - Added model `BfdPatchConfiguration`
+  - Added enum `BgpAdministrativeState`
+  - Added model `BgpPatchConfiguration`
+  - Added model `BitRate`
+  - Added enum `BitRateUnit`
+  - Added model `BmpConfigurationPatchProperties`
+  - Added model `BmpConfigurationProperties`
+  - Added enum `BmpConfigurationState`
+  - Added enum `BmpExportPolicy`
+  - Added model `BmpExportPolicyPatchProperties`
+  - Added model `BmpExportPolicyProperties`
+  - Added enum `BmpMonitoredAddressFamily`
+  - Added model `BurstSize`
+  - Added enum `BurstSizeUnit`
+  - Added model `CertificateArchiveReference`
+  - Added model `CertificateRotationStatus`
+  - Added model `CommitBatchDetails`
+  - Added enum `CommitBatchState`
+  - Added model `CommitBatchStatusOperationResponse`
+  - Added model `CommitBatchStatusRequest`
+  - Added model `CommitBatchStatusResponseProperties`
+  - Added enum `CommitConfigurationPolicy`
+  - Added model `CommitConfigurationRequest`
+  - Added model `CommitConfigurationResponse`
+  - Added enum `CommitStage`
+  - Added model `CommonDynamicMatchConfigurationPatch`
+  - Added model `CommonErrorResponse`
+  - Added model `CommonMatchConditionsPatch`
+  - Added model `CommonPostActionResponseForDeviceROCommands`
+  - Added model `CommonPostActionResponseForDeviceROCommandsOperationStatusResult`
+  - Added model `ConditionalDefaultRouteProperties`
+  - Added model `ConnectedSubnetPatch`
+  - Added model `ConnectedSubnetRoutePolicyPatch`
+  - Added model `ControlPlanAclIpMatchCondition`
+  - Added model `ControlPlaneAclAction`
+  - Added model `ControlPlaneAclActionPatch`
+  - Added enum `ControlPlaneAclActionType`
+  - Added model `ControlPlaneAclIpMatchConditionPatch`
+  - Added model `ControlPlaneAclMatchCondition`
+  - Added model `ControlPlaneAclMatchConditionPatch`
+  - Added model `ControlPlaneAclMatchConfigurationPatchProperties`
+  - Added model `ControlPlaneAclMatchConfigurationProperties`
+  - Added model `ControlPlaneAclPatchProperties`
+  - Added model `ControlPlaneAclPortCondition`
+  - Added model `ControlPlaneAclPortMatchCondition`
+  - Added model `ControlPlaneAclPortMatchConditionPatch`
+  - Added enum `ControlPlaneAclPortMatchType`
+  - Added model `ControlPlaneAclProperties`
+  - Added model `ControlPlaneAclTtlMatchCondition`
+  - Added model `ControlPlaneAclTtlMatchConditionPatch`
+  - Added enum `ControlPlaneAclTtlMatchType`
+  - Added model `DestinationPatchProperties`
+  - Added model `DeviceRoCommand`
+  - Added enum `DeviceRole`
+  - Added model `DeviceRwCommand`
+  - Added model `DiscardCommitBatchOperationResponse`
+  - Added model `DiscardCommitBatchRequest`
+  - Added model `DiscardCommitBatchResponseProperties`
+  - Added model `ExportRoutePolicyInformationPatch`
+  - Added model `ExportRoutePolicyPatch`
+  - Added enum `ExtendedVlan`
+  - Added model `ExternalNetworkBmpPatchProperties`
+  - Added model `ExternalNetworkBmpProperties`
+  - Added enum `ExternalNetworkRouteType`
+  - Added model `ExternalNetworkStaticRouteConfiguration`
+  - Added model `ExternalNetworkStaticRoutePatchConfiguration`
+  - Added model `ExternalNetworkUpdateBfdAdministrativeStateRequest`
+  - Added model `ExternalNetworkUpdateBfdAdministrativeStateResponse`
+  - Added model `ExternalNetworkUpdateBfdAdministrativeStateResponseProperties`
+  - Added model `FabricLockProperties`
+  - Added model `FeatureFlagProperties`
+  - Added model `GetTopologyResponse`
+  - Added model `GetTopologyResponseProperties`
+  - Added model `GlobalAccessControlListActionPatchProperties`
+  - Added model `GlobalAccessControlListActionProperties`
+  - Added model `GlobalNetworkTapRuleActionPatchProperties`
+  - Added model `GlobalNetworkTapRuleActionProperties`
+  - Added model `HeaderAddressProperties`
+  - Added model `IcmpConfigurationPatchProperties`
+  - Added model `IcmpConfigurationProperties`
+  - Added model `IdentitySelector`
+  - Added model `IdentitySelectorPatch`
+  - Added model `ImportRoutePolicyInformationPatch`
+  - Added model `ImportRoutePolicyPatch`
+  - Added model `InternalNetworkBmpPatchProperties`
+  - Added model `InternalNetworkBmpProperties`
+  - Added enum `InternalNetworkRouteType`
+  - Added model `InternalNetworkUpdateBfdAdministrativeStateRequest`
+  - Added model `InternalNetworkUpdateBfdAdministrativeStateResponse`
+  - Added model `InternalNetworkUpdateBfdAdministrativeStateResponseProperties`
+  - Added model `InternalNetworkUpdateBgpAdministrativeStateRequest`
+  - Added model `InternalNetworkUpdateBgpAdministrativeStateResponse`
+  - Added model `InternalNetworkUpdateBgpAdministrativeStateResponseProperties`
+  - Added model `IpGroupPatchProperties`
+  - Added model `IpMatchConditionPatch`
+  - Added model `IsolationDomainPatchProperties`
+  - Added model `L3ExportRoutePolicyPatch`
+  - Added model `L3OptionBPatchProperties`
+  - Added model `L3UniqueRouteDistinguisherProperties`
+  - Added model `LastOperationProperties`
+  - Added model `Layer2ConfigurationPatch`
+  - Added model `Layer3IpPrefixPatchProperties`
+  - Added enum `LockConfigurationState`
+  - Added model `ManagedServiceIdentity`
+  - Added model `ManagedServiceIdentityPatch`
+  - Added enum `ManagedServiceIdentitySelectorType`
+  - Added enum `ManagedServiceIdentityType`
+  - Added enum `MicroBfdState`
+  - Added enum `NNIDerivedUniqueRouteDistinguisherConfigurationState`
+  - Added model `NativeIpv4PrefixLimitPatchProperties`
+  - Added model `NativeIpv4PrefixLimitProperties`
+  - Added model `NativeIpv6PrefixLimitPatchProperties`
+  - Added model `NativeIpv6PrefixLimitProperties`
+  - Added model `NeighborAddressBfdAdministrativeStatus`
+  - Added model `NeighborAddressBgpAdministrativeStatus`
+  - Added model `NeighborAddressPatch`
+  - Added model `NeighborGroupDestinationPatch`
+  - Added model `NeighborGroupResyncResponse`
+  - Added model `NetworkBootstrapDevice`
+  - Added model `NetworkBootstrapDevicePatch`
+  - Added model `NetworkBootstrapDevicePatchProperties`
+  - Added model `NetworkBootstrapDeviceProperties`
+  - Added model `NetworkBootstrapDeviceRebootResponse`
+  - Added model `NetworkBootstrapDeviceRefreshConfigurationResponse`
+  - Added model `NetworkBootstrapDeviceResyncPasswordsResponse`
+  - Added model `NetworkBootstrapDeviceUpdateAdministrativeStateResponse`
+  - Added model `NetworkBootstrapDeviceUpgradeResponse`
+  - Added model `NetworkBootstrapInterface`
+  - Added model `NetworkBootstrapInterfacePatch`
+  - Added model `NetworkBootstrapInterfacePatchProperties`
+  - Added model `NetworkBootstrapInterfaceProperties`
+  - Added model `NetworkDeviceRefreshConfigurationResponse`
+  - Added model `NetworkDeviceResyncPasswordsResponse`
+  - Added model `NetworkDeviceRunRwCommandResponse`
+  - Added model `NetworkDeviceRwCommandResponseProperties`
+  - Added model `NetworkDeviceUpdateAdministrativeStateResponse`
+  - Added model `NetworkDeviceUpgradeRequest`
+  - Added model `NetworkDeviceUpgradeResponse`
+  - Added enum `NetworkFabricLockAction`
+  - Added model `NetworkFabricLockRequest`
+  - Added enum `NetworkFabricLockType`
+  - Added model `NetworkFabricResyncCertificatesResponse`
+  - Added model `NetworkFabricResyncPasswordsResponse`
+  - Added model `NetworkFabricRotateCertificatesResponse`
+  - Added model `NetworkFabricRotatePasswordsResponse`
+  - Added enum `NetworkFabricUpgradeAction`
+  - Added model `NetworkMonitor`
+  - Added model `NetworkMonitorPatch`
+  - Added model `NetworkMonitorPatchProperties`
+  - Added model `NetworkMonitorProperties`
+  - Added model `NetworkRackPatch`
+  - Added model `NetworkTapResyncResponse`
+  - Added model `NetworkTapRuleActionPatch`
+  - Added model `NetworkTapRuleMatchConditionPatch`
+  - Added model `NetworkTapRuleMatchConfigurationPatch`
+  - Added model `NetworkTapRuleResyncResponse`
+  - Added model `NniBmpPatchProperties`
+  - Added model `NniBmpProperties`
+  - Added model `NniStaticRouteConfiguration`
+  - Added model `NniStaticRoutePatchConfiguration`
+  - Added model `NniUpdateBfdAdministrativeStateRequest`
+  - Added model `NniUpdateBfdAdministrativeStateResponse`
+  - Added model `NniUpdateBfdAdministrativeStateResponseProperties`
+  - Added model `NpbStaticRouteConfigurationPatch`
+  - Added model `OperationStatusResult`
+  - Added model `OptionBLayer3ConfigurationPatchProperties`
+  - Added model `OptionBLayer3PrefixLimitPatchProperties`
+  - Added model `OptionBLayer3PrefixLimitProperties`
+  - Added model `PoliceRateConfigurationProperties`
+  - Added model `PortConditionPatch`
+  - Added model `PortGroupPatchProperties`
+  - Added model `PrefixLimitPatchProperties`
+  - Added model `PrefixLimitProperties`
+  - Added model `ProxyResourceBase`
+  - Added enum `QosConfigurationState`
+  - Added model `QosPatchProperties`
+  - Added model `QosProperties`
+  - Added model `RoutePolicyStatementPatchProperties`
+  - Added model `RoutePrefixLimitPatchProperties`
+  - Added model `RoutePrefixLimitProperties`
+  - Added model `RouteTargetPatchInformation`
+  - Added enum `RouteType`
+  - Added enum `RuleCondition`
+  - Added model `SecretArchiveReference`
+  - Added model `SecretRotationStatus`
+  - Added model `SecretRotationSummary`
+  - Added model `StatementActionPatchProperties`
+  - Added model `StatementConditionPatchProperties`
+  - Added model `StaticRoutePatchConfiguration`
+  - Added model `StaticRoutePatchProperties`
+  - Added model `StaticRoutePolicy`
+  - Added model `StaticRoutePolicyPatch`
+  - Added enum `StationConfigurationState`
+  - Added enum `StationConnectionMode`
+  - Added model `StationConnectionPatchProperties`
+  - Added model `StationConnectionProperties`
+  - Added model `StorageAccountConfiguration`
+  - Added model `StorageAccountPatchConfiguration`
+  - Added enum `SynchronizationStatus`
+  - Added enum `UniqueRouteDistinguisherConfigurationState`
+  - Added model `UniqueRouteDistinguisherPatchProperties`
+  - Added model `UniqueRouteDistinguisherProperties`
+  - Added model `UpdateAdministrativeStateResponse`
+  - Added model `UpdateAdministrativeStateResponseProperties`
+  - Added model `UpgradeNetworkFabricProperties`
+  - Added model `UserAssignedIdentity`
+  - Added enum `V4OverV6BgpSessionState`
+  - Added enum `V6OverV4BgpSessionState`
+  - Added model `ViewDeviceConfigurationOperationResponse`
+  - Added model `ViewDeviceConfigurationResponseProperties`
+  - Added model `VlanGroupPatchProperties`
+  - Added model `VlanMatchConditionPatch`
+  - Added model `VpnOptionAPatchProperties`
+  - Added model `VpnOptionBPatchProperties`
+  - Operation group `ExternalNetworksOperations` added method `begin_update_bfd_administrative_state`
+  - Operation group `InternalNetworksOperations` added method `begin_update_bfd_administrative_state`
+  - Operation group `NeighborGroupsOperations` added method `begin_resync`
+  - Operation group `NetworkDevicesOperations` added method `begin_resync_certificates`
+  - Operation group `NetworkDevicesOperations` added method `begin_resync_passwords`
+  - Operation group `NetworkDevicesOperations` added method `begin_run_ro_command`
+  - Operation group `NetworkDevicesOperations` added method `begin_run_rw_command`
+  - Operation group `NetworkFabricsOperations` added method `begin_arm_configuration_diff`
+  - Operation group `NetworkFabricsOperations` added method `begin_commit_batch_status`
+  - Operation group `NetworkFabricsOperations` added method `begin_discard_commit_batch`
+  - Operation group `NetworkFabricsOperations` added method `begin_lock_fabric`
+  - Operation group `NetworkFabricsOperations` added method `begin_resync_certificates`
+  - Operation group `NetworkFabricsOperations` added method `begin_resync_passwords`
+  - Operation group `NetworkFabricsOperations` added method `begin_rotate_certificates`
+  - Operation group `NetworkFabricsOperations` added method `begin_rotate_passwords`
+  - Operation group `NetworkFabricsOperations` added method `begin_view_device_configuration`
+  - Operation group `NetworkToNetworkInterconnectsOperations` added method `begin_update_bfd_administrative_state`
+  - Added operation group `NetworkBootstrapDevicesOperations`
+  - Added operation group `NetworkBootstrapInterfacesOperations`
+  - Added operation group `NetworkMonitorsOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `AccessControlList` moved instance variable `annotation`, `configuration_type`, `acls_url`, `match_configurations`, `dynamic_match_configurations`, `last_synced_time`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `AccessControlListProperties`
+  - Model `AccessControlListPatch` moved instance variable `configuration_type`, `acls_url`, `match_configurations`, `dynamic_match_configurations` and `annotation` under property `properties` whose type is `AccessControlListPatchProperties`
+  - Model `ConnectedSubnetRoutePolicy` deleted or renamed its instance variable `export_route_policy_id`
+  - Model `ExternalNetwork` moved instance variable `annotation`, `import_route_policy`, `export_route_policy`, `network_to_network_interconnect_id`, `peering_option`, `option_b_properties`, `option_a_properties`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `ExternalNetworkProperties`
+  - Model `ExternalNetwork` deleted or renamed its instance variable `import_route_policy_id`
+  - Model `ExternalNetwork` deleted or renamed its instance variable `export_route_policy_id`
+  - Model `ExternalNetworkPatch` moved instance variable `annotation`, `import_route_policy`, `export_route_policy`, `peering_option`, `option_b_properties` and `option_a_properties` under property `properties` whose type is `ExternalNetworkPatchProperties`
+  - Model `ExternalNetworkPatch` deleted or renamed its instance variable `import_route_policy_id`
+  - Model `ExternalNetworkPatch` deleted or renamed its instance variable `export_route_policy_id`
+  - Model `ExternalNetworkPatchProperties` deleted or renamed its instance variable `import_route_policy_id`
+  - Model `ExternalNetworkPatchProperties` deleted or renamed its instance variable `export_route_policy_id`
+  - Model `ExternalNetworkProperties` deleted or renamed its instance variable `import_route_policy_id`
+  - Model `ExternalNetworkProperties` deleted or renamed its instance variable `export_route_policy_id`
+  - Model `InternalNetwork` moved instance variable `annotation`, `mtu`, `connected_i_pv4_subnets`, `connected_i_pv6_subnets`, `import_route_policy`, `export_route_policy`, `ingress_acl_id`, `egress_acl_id`, `is_monitoring_enabled`, `extension`, `vlan_id`, `bgp_configuration`, `static_route_configuration`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `InternalNetworkProperties`
+  - Model `InternalNetwork` deleted or renamed its instance variable `import_route_policy_id`
+  - Model `InternalNetwork` deleted or renamed its instance variable `export_route_policy_id`
+  - Model `InternalNetworkPatch` moved instance variable `annotation`, `mtu`, `connected_i_pv4_subnets`, `connected_i_pv6_subnets`, `import_route_policy`, `export_route_policy`, `ingress_acl_id`, `egress_acl_id`, `is_monitoring_enabled`, `bgp_configuration` and `static_route_configuration` under property `properties` whose type is `InternalNetworkPatchProperties`
+  - Model `InternalNetworkPatch` deleted or renamed its instance variable `import_route_policy_id`
+  - Model `InternalNetworkPatch` deleted or renamed its instance variable `export_route_policy_id`
+  - Model `InternalNetworkPatchProperties` deleted or renamed its instance variable `import_route_policy_id`
+  - Model `InternalNetworkPatchProperties` deleted or renamed its instance variable `export_route_policy_id`
+  - Model `InternalNetworkProperties` deleted or renamed its instance variable `import_route_policy_id`
+  - Model `InternalNetworkProperties` deleted or renamed its instance variable `export_route_policy_id`
+  - Model `InternetGateway` moved instance variable `annotation`, `internet_gateway_rule_id`, `ipv4_address`, `port`, `network_fabric_controller_id` and `provisioning_state` under property `properties` whose type is `InternetGatewayProperties`
+  - Model `InternetGateway` deleted or renamed its instance variable `type_properties_type`
+  - Model `InternetGatewayRule` moved instance variable `annotation`, `rule_properties`, `provisioning_state` and `internet_gateway_ids` under property `properties` whose type is `InternetGatewayRuleProperties`
+  - Model `IpCommunity` moved instance variable `annotation`, `ip_community_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `IpCommunityProperties`
+  - Model `IpCommunityPatch` moved instance variable `ip_community_rules` under property `properties` whose type is `IpCommunityPatchableProperties`
+  - Model `IpExtendedCommunity` moved instance variable `annotation`, `ip_extended_community_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `IpExtendedCommunityProperties`
+  - Model `IpExtendedCommunityPatch` moved instance variable `ip_extended_community_rules` and `annotation` under property `properties` whose type is `IpExtendedCommunityPatchProperties`
+  - Model `IpPrefix` moved instance variable `annotation`, `ip_prefix_rules`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `IpPrefixProperties`
+  - Model `IpPrefixPatch` moved instance variable `annotation` and `ip_prefix_rules` under property `properties` whose type is `IpPrefixPatchProperties`
+  - Model `L2IsolationDomain` moved instance variable `annotation`, `network_fabric_id`, `vlan_id`, `mtu`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `L2IsolationDomainProperties`
+  - Model `L2IsolationDomainPatch` moved instance variable `annotation` and `mtu` under property `properties` whose type is `L2IsolationDomainPatchProperties`
+  - Model `L3IsolationDomain` moved instance variable `annotation`, `redistribute_connected_subnets`, `redistribute_static_routes`, `aggregate_route_configuration`, `connected_subnet_route_policy`, `network_fabric_id`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `L3IsolationDomainProperties`
+  - Model `L3IsolationDomainPatch` moved instance variable `annotation`, `redistribute_connected_subnets`, `redistribute_static_routes`, `aggregate_route_configuration` and `connected_subnet_route_policy` under property `properties` whose type is `L3IsolationDomainPatchProperties`
+  - Model `NeighborGroup` moved instance variable `annotation`, `destination`, `network_tap_ids`, `network_tap_rule_ids` and `provisioning_state` under property `properties` whose type is `NeighborGroupProperties`
+  - Model `NeighborGroupPatch` moved instance variable `annotation` and `destination` under property `properties` whose type is `NeighborGroupPatchProperties`
+  - Model `NetworkDevice` moved instance variable `annotation`, `host_name`, `serial_number`, `version`, `network_device_sku`, `network_device_role`, `network_rack_id`, `management_ipv4_address`, `management_ipv6_address`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkDeviceProperties`
+  - Model `NetworkDevicePatchParameters` moved instance variable `annotation`, `host_name` and `serial_number` under property `properties` whose type is `NetworkDevicePatchParametersProperties`
+  - Model `NetworkFabric` moved instance variable `annotation`, `network_fabric_sku`, `fabric_version`, `router_ids`, `network_fabric_controller_id`, `rack_count`, `server_count_per_rack`, `ipv4_prefix`, `ipv6_prefix`, `fabric_asn`, `terminal_server_configuration`, `management_network_configuration`, `racks`, `l2_isolation_domains`, `l3_isolation_domains`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkFabricProperties`
+  - Model `NetworkFabricController` moved instance variable `annotation`, `infrastructure_express_route_connections`, `workload_express_route_connections`, `infrastructure_services`, `workload_services`, `managed_resource_group_configuration`, `network_fabric_ids`, `is_workload_management_network_enabled`, `tenant_internet_gateway_ids`, `ipv4_address_space`, `ipv6_address_space`, `nfc_sku` and `provisioning_state` under property `properties` whose type is `NetworkFabricControllerProperties`
+  - Model `NetworkFabricController` deleted or renamed its instance variable `workload_management_network`
+  - Model `NetworkFabricControllerProperties` deleted or renamed its instance variable `workload_management_network`
+  - Model `NetworkFabricPatch` moved instance variable `annotation`, `rack_count`, `server_count_per_rack`, `ipv4_prefix`, `ipv6_prefix`, `fabric_asn`, `terminal_server_configuration` and `management_network_configuration` under property `properties` whose type is `NetworkFabricPatchProperties`
+  - Model `NetworkInterface` moved instance variable `annotation`, `physical_identifier`, `connected_to`, `interface_type`, `ipv4_address`, `ipv6_address`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkInterfaceProperties`
+  - Model `NetworkInterfacePatch` moved instance variable `annotation` under property `properties` whose type is `NetworkInterfacePatchProperties`
+  - Model `NetworkRack` moved instance variable `annotation`, `network_rack_type`, `network_fabric_id`, `network_devices` and `provisioning_state` under property `properties` whose type is `NetworkRackProperties`
+  - Model `NetworkTap` moved instance variable `annotation`, `network_packet_broker_id`, `source_tap_rule_id`, `destinations`, `polling_type`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkTapProperties`
+  - Model `NetworkTapRule` moved instance variable `annotation`, `configuration_type`, `tap_rules_url`, `match_configurations`, `dynamic_match_configurations`, `network_tap_id`, `polling_interval_in_seconds`, `last_synced_time`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `NetworkTapRuleProperties`
+  - Model `NetworkTapRulePatch` moved instance variable `annotation`, `configuration_type`, `tap_rules_url`, `match_configurations` and `dynamic_match_configurations` under property `properties` whose type is `NetworkTapRulePatchProperties`
+  - Model `RoutePolicy` moved instance variable `annotation`, `statements`, `network_fabric_id`, `address_family_type`, `configuration_state`, `provisioning_state` and `administrative_state` under property `properties` whose type is `RoutePolicyProperties`
+  - Model `RoutePolicyPatch` moved instance variable `statements` under property `properties` whose type is `RoutePolicyPatchableProperties`
+  - Renamed model `ManagementNetworkConfigurationPatchableProperties` to `ManagementNetworkPatchConfiguration`
+  - Renamed model `NetworkFabricPatchablePropertiesTerminalServerConfiguration` to `TerminalServerPatchConfiguration`
+  - Renamed model `OptionBProperties` to `VpnOptionBProperties`
+  - Renamed model `VpnConfigurationPropertiesOptionAProperties` to `VpnOptionAProperties`
+  - Method `AccessControlListsOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `ExternalNetworksOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `ExternalNetworksOperations.begin_update_static_route_bfd_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `InternalNetworksOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `InternalNetworksOperations.begin_update_bgp_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[InternalNetworkUpdateBgpAdministrativeStateResponse]`
+  - Method `InternalNetworksOperations.begin_update_static_route_bfd_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `L2IsolationDomainsOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForDeviceUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `L3IsolationDomainsOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForDeviceUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `NetworkDevicesOperations.begin_reboot` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[OperationStatusResult]`
+  - Method `NetworkDevicesOperations.begin_refresh_configuration` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[NetworkDeviceRefreshConfigurationResponse]`
+  - Method `NetworkDevicesOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[NetworkDeviceUpdateAdministrativeStateResponse]`
+  - Method `NetworkDevicesOperations.begin_upgrade` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[NetworkDeviceUpgradeResponse]`
+  - Method `NetworkFabricsOperations.begin_commit_configuration` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[CommitConfigurationResponse]`
+  - Method `NetworkFabricsOperations.begin_deprovision` changed return type from `LROPoller[CommonPostActionResponseForDeviceUpdate]` to `LROPoller[OperationStatusResult]`
+  - Method `NetworkFabricsOperations.begin_get_topology` changed return type from `LROPoller[ValidateConfigurationResponse]` to `LROPoller[GetTopologyResponse]`
+  - Method `NetworkFabricsOperations.begin_provision` changed return type from `LROPoller[CommonPostActionResponseForDeviceUpdate]` to `LROPoller[OperationStatusResult]`
+  - Method `NetworkFabricsOperations.begin_refresh_configuration` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[OperationStatusResult]`
+  - Method `NetworkFabricsOperations.begin_update_infra_management_bfd_configuration` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `NetworkFabricsOperations.begin_update_workload_management_bfd_configuration` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `NetworkFabricsOperations.begin_upgrade` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[OperationStatusResult]`
+  - Method `NetworkInterfacesOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `NetworkTapRulesOperations.begin_resync` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[NetworkTapRuleResyncResponse]`
+  - Method `NetworkTapsOperations.begin_resync` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[NetworkTapResyncResponse]`
+  - Method `NetworkTapsOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForDeviceUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `NetworkToNetworkInterconnectsOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `NetworkToNetworkInterconnectsOperations.begin_update_npb_static_route_bfd_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForStateUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+  - Method `RoutePoliciesOperations.begin_update_administrative_state` changed return type from `LROPoller[CommonPostActionResponseForDeviceUpdate]` to `LROPoller[UpdateAdministrativeStateResponse]`
+
+### Other Changes
+
+  - Deleted model `ExternalNetworksList`/`InternalNetworksList`/`NetworkInterfacesList`/`NetworkToNetworkInterconnectsList` which actually were not used by SDK users
+  - Deleted model `AccessControlListPatchableProperties`/`ExtendedLocation`/`ExtensionEnumProperty`/`ExternalNetworkPatchableProperties`/`InternalNetworkPatchableProperties`/`InternalNetworkPropertiesBgpConfiguration`/`InternalNetworkPropertiesStaticRouteConfiguration`/`InternetGatewayPatchableProperties`/`IpCommunityAddOperationProperties`/`IpCommunityDeleteOperationProperties`/`IpCommunitySetOperationProperties`/`IpExtendedCommunityAddOperationProperties`/`IpExtendedCommunityDeleteOperationProperties`/`IpExtendedCommunityPatchableProperties`/`IpExtendedCommunitySetOperationProperties`/`IpPrefixPatchableProperties`/`L3IsolationDomainPatchableProperties`/`L3OptionAProperties`/`NeighborGroupPatchableProperties`/`NetworkDevicePatchableProperties`/`NetworkFabricControllerPatchableProperties`/`NetworkFabricPatchableProperties`/`NetworkTapPatchableParameters`/`NetworkTapPatchableParametersDestinationsItem`/`NetworkTapPropertiesDestinationsItem`/`NetworkTapRulePatchableProperties`/`NetworkToNetworkInterconnectPropertiesOptionBLayer3Configuration`/`OptionAProperties`/`TerminalServerPatchableProperties`/`VpnConfigurationPatchablePropertiesOptionAProperties` which actually were not used by SDK users
+  - Deleted enum `PollingIntervalInSeconds` which actually were not used by SDK users
+
 ## 1.0.0 (2023-07-19)
 
 ### Features Added
