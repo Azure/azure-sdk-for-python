@@ -116,30 +116,8 @@ async def _pause_at_cutpoint(context: ResponseContext, cancellation_signal: asyn
                 fut.cancel()
 
 
-def _item_text(item: object) -> str:
-    """Extract the ``output_text`` marker from a persisted output item.
-
-    ``context.persisted_response`` exposes typed ``OutputItem`` models
-    (MutableMappings, not plain ``dict``s), so access via duck-typed
-    ``.get()`` rather than an ``isinstance(dict)`` check.
-    """
-    get = getattr(item, "get", None)
-    if not callable(get):
-        return ""
-    for part in get("content") or []:
-        part_get = getattr(part, "get", None)
-        if callable(part_get) and part_get("type") == "output_text":
-            return part_get("text", "") or ""
-    return ""
-
-
 async def _emit_phase_item(stream: ResponseEventStream, marker: str):
-    """Emit one complete message output item carrying ``marker`` as its text.
-
-    Yields the builder events in order. Used both for fresh phases and for
-    the cheap replay of already-checkpointed phases on recovery (replaying
-    from persisted content, NOT re-computing).
-    """
+    """Emit one complete message output item carrying ``marker`` as its text."""
     message = stream.add_output_item_message()
     yield message.emit_added()
     text = message.add_text_content()
@@ -156,37 +134,37 @@ async def handle_create(
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
 ):
-    """One-item-per-phase durable handler with per-phase checkpoints.
+    """One-item-per-phase durable handler with per-phase checkpoints (spec §6).
 
     Fresh entry (lifetime 0): run every phase, emitting one item per phase
     tagged ``L0_phase{n}`` and ``yield stream.checkpoint()`` after each.
 
-    Recovered entry (lifetime 1): read ``context.persisted_response`` to learn
-    which phases were durably checkpointed, **replay** those items from their
-    persisted content (so they keep their original ``L0`` marker — the
-    checkpoint preserved them), then run the remaining phases tagged
-    ``L1_phase{n}``. The framework rebuilds the response output from this
-    lifetime's builder events, so replaying is what reconstructs the full
-    output; the value of the checkpoint is that completed phases are replayed
-    cheaply from content instead of re-computed.
+    Recovered entry (lifetime 1): **seed the stream from
+    context.persisted_response** so the already-checkpointed phases' items are
+    present in ``stream.response.output`` (keeping their original ``L0``
+    markers — the checkpoint preserved them), then resume at
+    ``len(stream.response.output)`` and run only the remaining phases, tagged
+    ``L1_phase{n}``. The persisted response IS the watermark; no replay, no
+    breadcrumb reconstruction.
     """
     lifetime = 1 if context.is_recovery else 0
 
-    # Fresh stream every entry — `response.created` MUST carry empty output
-    # (the orchestrator rejects a handler that pre-populates output there).
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
-    yield stream.emit_created()
+    # Recovery branch: seed from the persisted snapshot (§6). The completed
+    # phases' items are already in stream.response.output; count them to know
+    # where to resume.
+    if context.is_recovery and context.persisted_response is not None:
+        stream = ResponseEventStream(
+            response_id=context.response_id,
+            response=context.persisted_response,
+        )
+        resume_phase = len(stream.response.output)
+    else:
+        stream = ResponseEventStream(response_id=context.response_id, request=request)
+        resume_phase = 0
+
+    yield stream.emit_created()  # framework dedups the duplicate on recovery
     # On recovery this in_progress is the client-visible reset point.
     yield stream.emit_in_progress()
-
-    # Recovery: replay the checkpointed phases from persisted content.
-    resume_phase = 0
-    if context.is_recovery and context.persisted_response is not None:
-        persisted_output = context.persisted_response.get("output") or []
-        for item in persisted_output:
-            async for ev in _emit_phase_item(stream, _item_text(item)):
-                yield ev
-        resume_phase = len(persisted_output)
 
     # Remaining phases — fresh work tagged with this lifetime's marker.
     for phase in range(resume_phase, _PHASES):

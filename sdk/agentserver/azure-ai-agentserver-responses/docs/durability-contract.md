@@ -189,11 +189,12 @@ Row 11 covers the `yield stream.checkpoint()` write point used by the
 **one-OutputItem-per-phase** durable pattern. A handler emits one output item
 per logical phase and checkpoints at each phase boundary; the checkpoint
 persists a snapshot whose `output` holds exactly the phases completed so far.
-On recovery the handler reads `context.persisted_response` to learn which
-phases were durably checkpointed, replays those items from their persisted
-content (so they keep their original lifetime marker), and runs the remaining
-phases fresh. This makes the recovery resume-point directly observable in the
-recovered `response.output`.
+On recovery the handler **seeds the stream** from `context.persisted_response`
+(so the already-checkpointed phases' items are present in
+`stream.response.output`, keeping their original lifetime marker) and resumes
+at `len(stream.response.output)`, running only the remaining phases. This makes
+the recovery resume-point directly observable in the recovered
+`response.output`.
 
 `checkpoint()` is gated to durable background responses
 (`durable_background=True` + `store=true` + `background=true`) and is a no-op
@@ -285,7 +286,10 @@ absent; it MUST NOT silently downgrade to a weaker row.
 ## Handler obligations
 
 - Emit output via builder events (`add_output_item_*` → `emit_*`); do NOT
-  pre-populate `response.created` with output items.
+  pre-populate `response.created` with output items on a **fresh** entry. (On a
+  **recovered** entry, seeding the stream from `context.persisted_response` —
+  which carries the already-persisted items on `response.created` — is the
+  intended recovery pattern and is accepted by the framework.)
 - For durable graceful shutdown, call `await context.exit_for_recovery()` to
   leave the response `in_progress` for next-lifetime recovery.
 - For the checkpoint pattern (Row 11), checkpoint at safe phase boundaries and,

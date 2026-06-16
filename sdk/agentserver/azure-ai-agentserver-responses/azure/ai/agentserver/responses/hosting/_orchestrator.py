@@ -464,11 +464,20 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     created_response = normalized.get("response") or {}
                     created_output = created_response.get("output")
                     if isinstance(created_output, list) and len(created_output) != 0:
-                        raise ValueError(
-                            f"Handler directly modified Response.Output "
-                            f"(found {len(created_output)} items, expected 0). "
-                            f"Use output builder events instead."
-                        )
+                        # §6 recovery seeding: on a recovered entry the handler
+                        # legitimately seeds the stream from
+                        # context.persisted_response, so response.created carries
+                        # the already-persisted items. Treat them as the output
+                        # baseline (new output_item.added events accumulate on
+                        # top). Only a FRESH entry must not pre-populate output.
+                        if context is not None and context.is_recovery:
+                            output_item_count = len(created_output)
+                        else:
+                            raise ValueError(
+                                f"Handler directly modified Response.Output "
+                                f"(found {len(created_output)} items, expected 0). "
+                                f"Use output builder events instead."
+                            )
 
                     # Set initial response snapshot for POST response body without
                     # changing record.status (transition_to manages status lifecycle)
@@ -1797,10 +1806,18 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         #: output manipulation detection on response.created.
         # If the handler directly added items to response.output instead of
-        # using builder events, the output list will be non-empty.
+        # using builder events, the output list will be non-empty — EXCEPT on a
+        # recovered entry, where the handler legitimately seeds the stream from
+        # context.persisted_response (§6 one-item-per-phase recovery). The
+        # seeded items become the output baseline (see output_item_count below).
         created_response = first_normalized.get("response") or {}
         created_output = created_response.get("output")
-        if isinstance(created_output, list) and len(created_output) != 0:
+        _seeded_output_count = (
+            len(created_output)
+            if (isinstance(created_output, list) and ctx.context is not None and ctx.context.is_recovery)
+            else 0
+        )
+        if isinstance(created_output, list) and len(created_output) != 0 and _seeded_output_count == 0:
             _fr008a_msg = (
                 f"Handler directly modified Response.Output "
                 f"(found {len(created_output)} items, expected 0). "
@@ -1896,7 +1913,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         yield first_normalized
 
         # --- Remaining events ---
-        output_item_count = 0
+        # On a recovered entry the handler seeded response.created with the
+        # already-persisted items (§6); they form the output-count baseline so
+        # subsequent snapshot events (which carry seeded + new items) don't trip
+        # the count-mismatch guard.
+        output_item_count = _seeded_output_count
         try:
             async for raw in _iter_with_winddown(handler_iterator, ctx.cancellation_signal):
                 # Pre-check for output manipulation BEFORE validation.

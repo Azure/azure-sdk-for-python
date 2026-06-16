@@ -37,9 +37,9 @@ you opt in by passing `durable_background=True` to
 
 ## Decision Tree
 
-### What is `context.durable_metadata` for?
+### What is `context.conversation_chain_metadata` for?
 
-`context.durable_metadata` is a **small key-value store of references
+`context.conversation_chain_metadata` is a **small key-value store of references
 and watermarks** — it is NOT a place to keep your application's
 checkpoint data.
 
@@ -61,18 +61,18 @@ metadata pointer is what lets the recovered handler find that data.
 @app.response_handler
 async def handler(request, context, cancellation_signal):
     # Small watermark: which workflow step is next?
-    step = int(context.durable_metadata.get("workflow_step", 0))
+    step = int(context.conversation_chain_metadata.get("workflow_step", 0))
 
     for i in range(step, total_steps):
         # Do work — write any bulk data to your upstream store directly,
-        # NOT to context.durable_metadata.
+        # NOT to context.conversation_chain_metadata.
         await upstream_store.write_step_result(i, result)
         # Advance the watermark, then explicitly flush so the next
         # process lifetime (after a crash) skips the already-committed
         # step. Persistence is not implicit — flush before any side
         # effect whose effect must survive a crash.
-        context.durable_metadata["workflow_step"] = i + 1
-        await context.durable_metadata.flush()
+        context.conversation_chain_metadata["workflow_step"] = i + 1
+        await context.conversation_chain_metadata.flush()
 ```
 
 Why this distinction matters: metadata is persisted alongside the
@@ -248,12 +248,12 @@ async def handler(request, context, cancellation_signal):
     print(f"{context.pending_input_count} turns waiting")
 
     # Persistent metadata namespace. Safe across crashes and turns.
-    # The default namespace is `context.durable_metadata["key"]`;
-    # named namespaces are `context.durable_metadata("name")["key"]`.
-    # Call `await context.durable_metadata.flush()` before any side
+    # The default namespace is `context.conversation_chain_metadata["key"]`;
+    # named namespaces are `context.conversation_chain_metadata("name")["key"]`.
+    # Call `await context.conversation_chain_metadata.flush()` before any side
     # effect that depends on the write surviving a crash. Snapshots
     # also happen at lifecycle boundaries automatically.
-    context.durable_metadata["my_checkpoint_id"] = "abc-123"
+    context.conversation_chain_metadata["my_checkpoint_id"] = "abc-123"
 ```
 
 These fields are always present on the context (even for `store=false`
@@ -293,16 +293,16 @@ running `ResponseObject`. So there is no useful "what did the prior attempt
 look like" snapshot for the library to hand you. The resumption response is
 your responsibility to compose from upstream state.
 
-### Notes on `context.durable_metadata`
+### Notes on `context.conversation_chain_metadata`
 
 - The metadata API is a **callable namespace facade**. Use
-  `context.durable_metadata["key"] = value` for the default namespace;
-  use `context.durable_metadata("name")["key"] = value` for a sibling
+  `context.conversation_chain_metadata["key"] = value` for the default namespace;
+  use `context.conversation_chain_metadata("name")["key"] = value` for a sibling
   namespace (each namespace tracks dirty state independently and can be
-  `await context.durable_metadata("name").flush()`-ed in isolation).
+  `await context.conversation_chain_metadata("name").flush()`-ed in isolation).
 - Persistence is **explicit**, not auto-flushed. Call
-  `await context.durable_metadata.flush()` (or
-  `await context.durable_metadata("name").flush()`) before any side
+  `await context.conversation_chain_metadata.flush()` (or
+  `await context.conversation_chain_metadata("name").flush()`) before any side
   effect that depends on a metadata write surviving a crash. The
   framework also snapshots all touched namespaces at lifecycle
   boundaries (start/suspend/complete/fail/cancel/terminate), so values
@@ -344,7 +344,7 @@ This section adds the configuration / API context.
 ### What you get on recovered entry
 
 - `context.is_recovery == True`
-- `context.durable_metadata` carrying whatever watermarks you stamped
+- `context.conversation_chain_metadata` carrying whatever watermarks you stamped
 - The cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the cancel event is pre-set with the appropriate cause-boolean (`context.client_cancelled` for explicit cancel / non-bg disconnect; `context.shutdown.is_set()` for graceful shutdown; neither set for steering pressure) on re-entry.
 - The framework guarantees the response object is persisted **exactly once** at the first attempt's `response.created` and **exactly once** at the first attempt that reaches a terminal event. Subsequent attempts' `response.created` and terminal events are deduplicated by the framework keyed on `response_id`; you don't need to do anything special. The SSE event stream is persisted as you emit it (no dedup).
 
@@ -434,7 +434,7 @@ that compose to give you durable response handlers:
 - **The durable background runtime** provides the runtime primitives
   (flat recovery + steering fields on `ResponseContext` —
   `is_recovery`, `is_steered_turn`, `pending_input_count`,
-  `durable_metadata` — task store wiring, steerable conversation
+  `conversation_chain_metadata` — task store wiring, steerable conversation
   orchestration).
 - **The cancellation contract** provides two distinct surfaces — the
   3rd positional handler arg `cancellation_signal: asyncio.Event`
@@ -466,9 +466,9 @@ output.
    LangGraph has `SqliteSaver` checkpoints. Use them. Don't try to
    recreate upstream state from your own metadata.
 
-3. **Watermark before side effects.** Stamp `context.durable_metadata`
+3. **Watermark before side effects.** Stamp `context.conversation_chain_metadata`
    with a "this side effect is in flight" flag (and
-   `await context.durable_metadata.flush()`) BEFORE calling an
+   `await context.conversation_chain_metadata.flush()`) BEFORE calling an
    upstream API that has observable side effects (sending a user
    message, writing a checkpoint). Clear it AFTER the upstream
    durably committed the result.

@@ -37,6 +37,9 @@
 - [Durability](#durability)
   - [Mental Model](#mental-model)
   - [The Recovery Loop](#the-recovery-loop)
+  - [Stream Checkpoints](#stream-checkpoints)
+  - [Item and Response `internal_metadata`](#item-and-response-internal_metadata)
+  - [Which metadata facility?](#which-metadata-facility)
   - [Default Pattern (recovery-aware)](#default-pattern-recovery-aware)
   - [Fallback Pattern (no opt-in)](#fallback-pattern-no-opt-in)
   - [Upstream History Pattern](#upstream-history-pattern)
@@ -1344,6 +1347,134 @@ is the naive fallback (see below).
 - Uses upstream framework's native resume facility (e.g. session resume, checkpoint replay) — never re-runs a side-effecting upstream call without checking a watermark first.
 - Watermarks any upstream side-effecting call by writing a small marker to `context.conversation_chain_metadata` **before** the call and clearing it **after** the call has been durably committed upstream. Call `await context.conversation_chain_metadata.flush()` between the watermark write and the side effect to ensure the marker survives a crash.
 - For upstream-session-id needs: reads `context.conversation_chain_id` — the framework-computed stable identifier for the current conversation chain. Use this as the session id passed to upstream frameworks (Copilot `session_id`, LangGraph `thread_id`) instead of allocating your own UUID. The value is derived from `conversation_id` if present, else `previous_response_id` in steerable mode, else `response_id` — stable across all attempts of a given task.
+
+### Stream Checkpoints
+
+For durable background responses you can persist a snapshot of the response at
+explicit, developer-chosen boundaries with `yield stream.checkpoint()`. A
+checkpoint durably writes the current `stream.response` (every output item you
+have finished emitting) via the storage provider, so a crashed attempt can
+resume from the last checkpoint instead of re-running the whole turn.
+
+```python
+@app.response_handler
+async def handler(request, context, cancellation_signal):
+    # On recovery, seed the stream from the last durably-checkpointed
+    # snapshot — the completed phases' items are already in
+    # stream.response.output, so resume from their count.
+    if context.is_recovery and context.persisted_response is not None:
+        stream = ResponseEventStream(
+            response_id=context.response_id, response=context.persisted_response,
+        )
+        start_phase = len(stream.response.output)
+    else:
+        stream = ResponseEventStream(response_id=context.response_id, request=request)
+        start_phase = 0
+
+    yield stream.emit_created()      # framework dedups the duplicate on recovery
+    yield stream.emit_in_progress()  # client-visible reset point on recovery
+
+    for phase in range(start_phase, NUM_PHASES):
+        message = stream.add_output_item_message()
+        yield message.emit_added()
+        text = message.add_text_content()
+        yield text.emit_added()
+        yield text.emit_delta(await run_phase(phase))   # the expensive work
+        yield text.emit_done()
+        yield message.emit_done()
+        yield stream.checkpoint()        # phase N is now durable
+
+    yield stream.emit_completed()
+```
+
+Semantics (the full normative list is in
+[`responses-durability-spec.md`](responses-durability-spec.md) and
+[`durability-contract.md`](durability-contract.md) Row 11):
+
+- **Deterministic + developer-driven.** Checkpoints happen ONLY where you yield
+  one. There are no periodic, timer, or implicit checkpoints.
+- **Backpressured.** The handler is suspended at the `yield` until the provider
+  write completes — "I checkpointed" means "it is durable now". The handler
+  cannot race ahead while a slow write is in flight.
+- **No-op unless durable background.** The write happens ONLY when the
+  deployment has `durable_background=True` and the request is `background=true`
+  (which implies `store=true`). In every other configuration the checkpoint
+  event is dropped (no provider write), so you may yield it unconditionally.
+- **Idempotent.** A snapshot byte-identical to the last persisted one is
+  skipped.
+- **Failures swallowed.** A provider error is logged and ignored; recovery
+  falls back to the previously-persisted snapshot.
+- **After terminal.** A checkpoint yielded after a terminal event is dropped
+  (the terminal write is authoritative); no exception.
+
+#### `context.persisted_response`
+
+On a recovered entry, `context.persisted_response` is the last durably-persisted
+`ResponseObject` snapshot (the last checkpoint, or the `response.created`
+snapshot if no checkpoint ran), or `None` if nothing was persisted before the
+crash. It is an **entry-only** cache — read it at the start of a recovered
+invocation to decide where to resume; it is not refreshed mid-execution.
+
+The **one-OutputItem-per-phase** pattern composes naturally with it: emit one
+output item per phase and checkpoint at each boundary, then on recovery **seed
+the stream** with `context.persisted_response` and resume from
+`len(stream.response.output)`. A phase whose `output_item.done` + checkpoint
+completed survives (it is already in the seeded output, carrying its original
+content); a phase interrupted before its checkpoint is re-run — correct by
+construction, with no extra watermark bookkeeping.
+
+> On recovery you seed `ResponseEventStream(response=context.persisted_response)`
+> so the already-checkpointed items are present in `stream.response.output` and
+> the builder's output-index continues past them. You then `yield
+> stream.emit_created()` exactly as on a fresh attempt — the framework
+> recognises the recovered entry and accepts the seeded output (it dedups the
+> response-store write). You emit ONLY the remaining phases via builder events;
+> the persisted response is the watermark, so there is no replay or breadcrumb
+> reconstruction.
+
+### Item and Response `internal_metadata`
+
+`internal_metadata` is a **single-turn**, platform-internal key/value bag that
+rides on output items and on the response, is persisted with the response (so
+it survives crash recovery), and is **always stripped before any client-facing
+HTTP or SSE payload** — clients never see it.
+
+```python
+# Item-level — a live MutableMapping[str, Any], lazily created, never None.
+message = stream.add_output_item_message()
+message.internal_metadata["upstream_msg_id"] = "abc-123"
+message.internal_metadata["attempt"] = 2
+
+# Response-level — read/write/delete via the stream proxy.
+stream.internal_metadata["resume_phase"] = 3
+del stream.internal_metadata["scratch"]
+```
+
+Use it for lightweight per-turn watermarks, id mappings (e.g. an upstream
+framework's message id ↔ the emitted item), or stale-message / crash-recovery
+detection within the turn. It is persisted whenever the response is persisted —
+at `response.created`, at each `yield stream.checkpoint()`, and at terminal — so
+on recovery you read it back from `context.persisted_response`. It is distinct
+from the *public* `ResponseObject.metadata` dict (the client's own metadata,
+which is NOT stripped).
+
+### Which metadata facility?
+
+The context exposes **two** internal-metadata facilities at **different scopes**
+— do not confuse them:
+
+| Aspect | `context.conversation_chain_metadata` | `internal_metadata` (item + response) |
+|---|---|---|
+| **Scope** | **Cross-turn** — persists across turns/responses on the same conversation chain (steerable multi-turn, recovery re-entries). | **Single turn** — lives on this response (or its items) only. |
+| **Best for** | Cross-turn watermarks; state a later turn needs from an earlier one; coordination between layers/nodes spanning the chain. | Lightweight per-turn watermarks; id mappings; in-turn crash-recovery / stale-message detection. |
+| **Structure** | **Named scopes** — `conversation_chain_metadata(name)` returns an isolated sibling namespace, so parallel nodes/layers track + `flush()` independently. | Flat per-object map (use key prefixes if you need grouping). |
+| **Durability trigger** | Explicit `await …flush()` (+ durable-task lifecycle). | Persisted when the owning response is persisted (`created`, each `checkpoint()`, terminal). No separate flush. |
+| **Visibility** | Task/durability state — never on the wire. | Rides on the response/items but **stripped on egress/ingress** — clients never see it. |
+| **Lifetime** | The conversation chain / durable-task lifetime. | This response's persisted record; readable on recovery via `context.persisted_response`. |
+
+**Rule of thumb:** need it in a *later turn* → `conversation_chain_metadata`;
+need it only to reconstruct *this* response on crash recovery →
+`internal_metadata` (+ `stream.checkpoint()`).
 
 ### Default Pattern (recovery-aware)
 

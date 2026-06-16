@@ -283,7 +283,7 @@ previous_response_id, steerable_conversations)` tuple. Single-turn
 requests use a one-shot primitive; multi-turn requests use a chain
 primitive. The choice is invisible to handlers (the flat recovery +
 steering surface — `is_recovery`, `is_steered_turn`,
-`pending_input_count`, `durable_metadata` — looks the same regardless)
+`pending_input_count`, `conversation_chain_metadata` — looks the same regardless)
 and to clients (the HTTP/SSE contract is identical). The full table
 is in §6.4.
 
@@ -384,13 +384,13 @@ a reset `response.in_progress` event (§8). The framework does NOT
 re-execute the handler from a checkpoint; it re-invokes the whole
 handler body.
 
-The handler-facing `context.durable_metadata` carries whatever
+The handler-facing `context.conversation_chain_metadata` carries whatever
 watermarks the previous attempt persisted (the framework auto-flushes
 the metadata namespaces it owns at lifecycle boundaries — start /
 suspend / complete / fail / cancel / terminate — so values written
 and forgotten are still visible after a clean recovery; the fence for
 at-most-once side-effect patterns is the handler's explicit
-`durable_metadata.flush()` call).
+`conversation_chain_metadata.flush()` call).
 
 ### §7.2 — `disposition == "mark-failed"` (Rows 2, 3)
 
@@ -459,7 +459,8 @@ the response context:
 | `is_recovery` | `Bool` | True when this invocation is a re-entry after a crash; False on every other entry (including new turns in a multi-turn chain). |
 | `is_steered_turn` | `Bool` | True only on the drain re-entry that follows steering pressure — set when the queued steering input is being executed as its own turn. NOT set on the cancelled current turn that produced the steering pressure. |
 | `pending_input_count` | `Int` | Number of queued steering inputs visible to the handler (live count — decreases as the framework drains the queue). |
-| `durable_metadata` | Mapping + Callable | Developer checkpoint store; see §8.1. Typed via the public `DurableMetadataNamespace` Protocol. |
+| `conversation_chain_metadata` | Mapping + Callable | Cross-turn developer checkpoint store; see §8.1. Typed via the public `ConversationChainMetadataNamespace` Protocol. |
+| `persisted_response` | `ResponseObject` \| `None` | Entry-only — the last durably-persisted snapshot (last `stream.checkpoint()`, or `response.created`), or `None` if nothing persisted before the crash. See §8.4. |
 
 These fields are always present on the response context. For
 `store=true` rows the framework populates them from the underlying
@@ -468,20 +469,20 @@ default to a fresh, non-recovered, non-steered shape with an
 in-memory metadata backing (writes succeed at runtime but evaporate
 on restart).
 
-### §8.1 — `durable_metadata` semantics
+### §8.1 — `conversation_chain_metadata` semantics
 
-- **Default namespace** — `context.durable_metadata["key"] = value`.
-- **Named namespace** — `context.durable_metadata("name")["key"] = value`.
+- **Default namespace** — `context.conversation_chain_metadata["key"] = value`.
+- **Named namespace** — `context.conversation_chain_metadata("name")["key"] = value`.
 - **Reserved prefix** — keys and namespace names starting with `_` MUST
   raise `ValueError` from the handler-facing wrapper.
 - **Persistence** — writes are durable within the namespace's dirty
-  buffer. `await context.durable_metadata.flush()` (or the
+  buffer. `await context.conversation_chain_metadata.flush()` (or the
   namespace's `flush()`) is the at-most-once fence for side effects.
   The framework auto-flushes at lifecycle boundaries (start, suspend,
   complete, fail, cancel, terminate); a handler that never flushes
   still sees its writes on a clean recovery — the fence is only for
   side effects you cannot afford to repeat.
-- **Size discipline** — `durable_metadata` is a small key-value store
+- **Size discipline** — `conversation_chain_metadata` is a small key-value store
   for *references and watermarks*, not a checkpoint *store*. Bulk
   application state belongs in the handler's own upstream framework
   (LLM-SDK session JSONL, checkpoint DB, files on disk).
@@ -530,6 +531,81 @@ The naive opt-out is unsafe ONLY when the handler makes upstream
 side-effecting calls without watermarks — duplicate side effects
 (double-sending user input, double-debiting a credit balance, etc.)
 are the handler's responsibility to prevent.
+
+### §8.4 — Checkpoint-driven recovery (`stream.checkpoint()`, `persisted_response`, `internal_metadata`)
+
+Between the naive full-re-stream fallback (§8.3) and hand-rolled
+metadata watermarks, the framework offers a **developer checkpoint write
+point** so a recovered handler can resume from durably-persisted output
+rather than re-running the whole turn.
+
+**`stream.checkpoint()`** — a yielded stream event:
+
+```
+yield stream.checkpoint()
+```
+
+Yielding it durably persists the current `stream.response` snapshot (every
+output item finished so far) via `provider.update_response`. It is a third
+write point alongside `response.created` and the terminal write (§9.1).
+Properties:
+
+- **Deterministic + developer-driven** — checkpoints happen only where the
+  handler yields one. There are NO periodic, timer, or implicit checkpoints.
+- **Backpressured** — because the handler is an async generator consumed
+  lockstep, the provider write completes before control returns from the
+  `yield`. "I checkpointed" means "it is durable now".
+- **Durable-background-gated** — the write happens ONLY for a
+  `durable_background=True`, `background=true` (hence `store=true`) request —
+  the only configuration with a crash-recovery re-invocation path. In every
+  other case the event is dropped (no write), so a handler MAY yield it
+  unconditionally.
+- **Idempotent** — a snapshot byte-identical to the last persisted one is
+  skipped.
+- **Failures swallowed** — a provider error is logged and ignored; recovery
+  falls back to the previously-persisted snapshot.
+- **After terminal** — a checkpoint yielded after a terminal event is dropped
+  (the terminal write is authoritative); no exception.
+- **Deferral preserves the checkpoint** — when a handler defers via
+  `await context.exit_for_recovery()`, the framework MUST NOT overwrite the
+  last checkpoint snapshot with a pre-terminal record; the checkpoint remains
+  authoritative for the next lifetime.
+
+**`context.persisted_response`** — on a recovered entry, the last
+durably-persisted `ResponseObject` snapshot (the last checkpoint, or the
+`response.created` snapshot if none ran), or `None` if nothing persisted
+before the crash. Entry-only: read it at the start of the recovered
+invocation to decide the resume point; it is not refreshed mid-execution.
+
+**The one-OutputItem-per-phase pattern.** Emit one output item per logical
+phase and `yield stream.checkpoint()` at each boundary. On recovery, **seed
+the stream** with `context.persisted_response` and resume from
+`len(stream.response.output)`: a phase whose `output_item.done` + checkpoint
+completed is already present in the seeded output (it survives); a phase
+interrupted before its checkpoint is re-run — correct by construction. The
+recovered handler `yield stream.emit_created()` exactly as on a fresh entry;
+the framework recognises the recovered entry and accepts the seeded output
+(deduping the response-store write). It then emits only the remaining phases
+via builder events — the persisted response is the watermark, so there is no
+replay or breadcrumb reconstruction. The per-row × per-path conformance for
+this write point is **Row 11** in
+[`durability-contract.md`](durability-contract.md).
+
+**`internal_metadata`** — a single-turn, platform-internal key/value bag on
+each output item and on the response (via `stream.internal_metadata` /
+`item.internal_metadata`, both live `MutableMapping[str, Any]` views). It is
+persisted wherever the response is persisted (`response.created`, every
+`stream.checkpoint()`, terminal) and is **always stripped before any
+client-facing HTTP/SSE payload** — and symmetrically stripped on ingress, so
+clients can neither read nor inject it. Use it for lightweight per-turn
+watermarks, id mappings (upstream message id ↔ emitted item), or in-turn
+stale-message detection; read it back on recovery via
+`context.persisted_response`. It is distinct from the *public*
+`ResponseObject.metadata` (the client's own metadata, never stripped) and
+from `context.conversation_chain_metadata` (cross-turn, named-scope,
+flush-controlled — §8.1). Rule of thumb: cross-turn state →
+`conversation_chain_metadata`; reconstruct *this* response on crash →
+`internal_metadata` + `stream.checkpoint()`.
 
 ---
 
@@ -659,18 +735,24 @@ Cause matrix:
 | Race: client cancel + concurrent shutdown | set | set | True |
 | No cancellation has occurred | not set | not set | False |
 
-**Recovery exit primitive.** Handlers MAY call
-`return await context.exit_for_recovery()` to opt into the
-graceful-shutdown re-entry path explicitly. The framework recognises
-the returned sentinel value as "leave this response `in_progress`
-so the next-lifetime recovery scanner can resume it". For
-`durable_background=True` responses (Row 1) the handler is
-re-invoked on the next process startup; for `durable_background=False`
-responses (Rows 2/3) the next-lifetime mark-failed disposition
-persists a `failed` terminal. Handlers MUST propagate the sentinel
-via `return`; discarding it (e.g. assigning to a variable and
-returning `None`) defeats the recovery contract and the task is
-marked completed instead.
+**Recovery exit primitive.** Handlers request the graceful-shutdown
+re-entry path explicitly with a single uniform call:
+
+```
+await context.exit_for_recovery()
+```
+
+It **raises** `ResponseExitForRecovery` internally (it never returns), so
+the same line works in every handler shape — coroutine, async generator,
+or sync. The framework catches the signal at the durable task boundary and
+leaves the response `in_progress` so the next-lifetime recovery scanner can
+resume it. For `durable_background=True` responses (Row 1) the handler is
+re-invoked on the next process startup. For `store=false` / non-durable
+requests there is no task to defer, so the call raises `RuntimeError`
+(surfacing as a `failed` response — the documented non-durable shutdown
+disposition). `ResponseExitForRecovery` subclasses `BaseException` (not
+`Exception`), so a handler's broad `except Exception` cannot swallow the
+recovery signal; `try/finally` cleanup still runs.
 
 The cancellation contract for the handler:
 
@@ -678,8 +760,8 @@ The cancellation contract for the handler:
   work loop. On `cancellation_signal.is_set()`, break and emit
   `response.completed` with the current partial output (the framework
   overrides this to `cancelled` when `context.client_cancelled` is
-  True). On `context.shutdown.is_set()`, `return await
-  context.exit_for_recovery()` (durable+bg Row 1) or emit a quick
+  True). On `context.shutdown.is_set()`, call
+  `await context.exit_for_recovery()` (durable+bg Row 1) or emit a quick
   terminal (others). For steering pressure (cancel set but no cause
   flag), the handler's `completed` terminal is correct — the
   steered-out turn really did complete with whatever output it
@@ -688,12 +770,10 @@ The cancellation contract for the handler:
   `response.created` before any early return; framework forces
   `failed` if it does not. Every handler MUST emit a terminal event
   (`completed`, `incomplete`, `failed`) or the framework forces
-  `failed`. `return` in an async generator stops the generator; it
-  cannot return a value (Python syntax constraint; equivalent rules
-  apply in any host language that distinguishes generator-return from
-  value-return). Use `return await context.exit_for_recovery()` from
-  a coroutine handler when you need to defer to recovery without
-  emitting a terminal.
+  `failed`. To defer to recovery without a terminal, call
+  `await context.exit_for_recovery()` — because it raises rather than
+  returns a value, it works uniformly in async-generator and coroutine
+  handlers alike (no `return <value>` generator-syntax constraint).
 - **No `cancelled` from steering or shutdown** — the handler MUST
   NOT emit `response.cancelled` for steering pressure or shutdown;
   that terminal is reserved for `context.client_cancelled=True`.
@@ -710,7 +790,7 @@ Recovery composes with cancellation as follows:
 |---|---|
 | Steering pressure (during recovery) | Recovered entry sees `cancellation_signal.is_set()` with no cause flag. Handler honours the signal as in the fresh case. |
 | Client cancel (during recovery) | Recovered entry sees `cancellation_signal.is_set()` and `context.client_cancelled=True`. Handler honours the signal; framework finalises with `cancelled` terminal. |
-| Shutdown (during recovery) | If the handler returns without emitting a terminal AND `context.shutdown.is_set()`, the framework leaves the task `in_progress` for the next lifetime. Equivalent to a handler that explicitly does `return await context.exit_for_recovery()`. |
+| Shutdown (during recovery) | If `context.shutdown.is_set()`, the handler calls `await context.exit_for_recovery()` (or returns without a terminal — the implicit fallback); the framework leaves the task `in_progress` for the next lifetime. |
 
 The cancellation surface is unchanged across fresh and recovered
 entries — handlers do not need a separate branch for "I'm in
@@ -929,7 +1009,7 @@ HTTP   ──► POST /v1/responses { stream: true, store, background } ──�
        primitive: task lease expired → re-fire task body
        framework: task body entered with context.is_recovery=True
        framework: read _responses.disposition → "re-invoke"
-       framework: assign flat fields on response context (is_recovery=True, is_steered_turn=False, pending_input_count=0, durable_metadata=<rehydrated>)
+       framework: assign flat fields on response context (is_recovery=True, is_steered_turn=False, pending_input_count=0, conversation_chain_metadata=<rehydrated>)
        framework: reconstruct ResponseExecution, ResponseContext from serialized params
        framework: re-invoke handler with flat-field assignment on context
        handler:   is_recovery == True
@@ -1050,8 +1130,8 @@ shape in §7.3 — `type=code="server_error"`, structured
 
 The handler MUST observe the flat recovery + steering fields on the
 response context: `is_recovery: bool`, `is_steered_turn: bool`,
-`pending_input_count: int`, `durable_metadata: DurableMetadataNamespace`
-(see §8). `durable_metadata.flush()` MUST act as a durable-write
+`pending_input_count: int`, `conversation_chain_metadata: ConversationChainMetadataNamespace`
+(see §8). `conversation_chain_metadata.flush()` MUST act as a durable-write
 fence; the framework MUST also auto-flush at lifecycle boundaries
 (§8.1). Handler keys/namespaces starting with `_` MUST raise
 `ValueError`.
@@ -1201,7 +1281,7 @@ T=6   primitive: re-fire task body with ctx.context.is_recovery=True
                  (is_recovery=True,
                   is_steered_turn=False,
                   pending_input_count=0,
-                  durable_metadata=<rehydrated namespace facade>)
+                  conversation_chain_metadata=<rehydrated namespace facade>)
       framework: reconstruct (ResponseExecution, ResponseContext)
                  from serialized params
       framework: re-invoke handler
@@ -1357,21 +1437,7 @@ turn arriving from a different client connection gets queued.)
 
 ---
 
-## §18 — Backward-compatibility and migration notes
-
-This section is non-normative.
-
-- A task created before the `_responses.disposition` key existed
-  defaults to `re-invoke` on recovery. Implementations MAY preserve
-  that backward-compat for already-deployed tasks; new tasks MUST
-  stamp the key per §5.2.
-- The `_responses.background` key exists as a backward-compat fallback
-  for the pre-disposition recovery branch. New implementations SHOULD
-  stamp it but MUST NOT rely on it when `disposition` is present.
-
----
-
-## §19 — What this spec does NOT cover
+## §18 — What this spec does NOT cover
 
 - The underlying durable-task primitive's own contract (lease,
   heartbeat, suspend/resume, steering queue, retry semantics,
@@ -1389,13 +1455,14 @@ This section is non-normative.
 
 ---
 
-## §20 — Cross-references
+## §19 — Cross-references
 
 | External | Topic |
 |---|---|
 | `azure-ai-agentserver-core/docs/task-and-streaming-spec.md` | Underlying durable-task primitive (lease, suspend, recovery scanner, steering queue, input-precondition primitive, streaming reconciliation). |
 | `azure-ai-agentserver-responses/docs/durable-responses-developer-guide.md` | Developer-facing guide; configuration, public API surface, common patterns. |
 | `azure-ai-agentserver-responses/docs/handler-implementation-guide.md` | Developer-facing guide; cancellation patterns, resumption response construction, framework-agnostic recovery walkthrough. |
+| `azure-ai-agentserver-responses/docs/durability-contract.md` | The per-row × per-path conformance contract matrix (rows 1–4 + Row 11 checkpoint-write); the test-facing companion to this design spec. |
 
 A change to this spec implies coordinated changes to those documents.
 A change to the durable-task primitive's recovery / streaming /
@@ -1403,7 +1470,7 @@ steering surface implies a review of this spec.
 
 ---
 
-## §21 — Change discipline
+## §20 — Change discipline
 
 This spec is the source of truth for the responses durability layer.
 Implementation MUST NOT diverge silently. Every change here is
