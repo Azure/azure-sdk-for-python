@@ -36,7 +36,7 @@ jobs:
 
       - name: Run chronus verify
         id: verify
-        run: .github/chronus/node_modules/.bin/chronus verify
+        run: npm exec --no --prefix .github/chronus/ -- chronus verify
 
       # Sticky comment is only post-able when GITHUB_TOKEN has write scope —
       # i.e. PRs from the main repo. Fork PRs see only the error annotation below.
@@ -73,7 +73,7 @@ jobs:
               'See [`doc/dev/changelog_updates.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/changelog_updates.md) for full instructions.',
             ].join('\n');
 
-            const { data: comments } = await github.rest.issues.listComments({
+            const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.pull_request.number,
