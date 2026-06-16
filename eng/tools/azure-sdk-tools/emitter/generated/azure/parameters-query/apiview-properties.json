@@ -6,5 +6,5 @@
         "parameters.query.operations.SpecialCharOperations.dollar_sign": "Parameters.Query.SpecialChar.dollarSign",
         "parameters.query.aio.operations.SpecialCharOperations.dollar_sign": "Parameters.Query.SpecialChar.dollarSign"
     },
-    "CrossLanguageVersion": "d221aa20c419"
+    "CrossLanguageVersion": "8e99b5930726"
 }

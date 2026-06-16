@@ -51,7 +51,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_int32_seconds(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.int32_seconds(
-            duration=0,
+            duration="1 day, 0:00:00",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_int32_seconds_larger_unit(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.int32_seconds_larger_unit(
-            duration=0,
+            duration="1 day, 0:00:00",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_float_seconds(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.float_seconds(
-            duration=0.0,
+            duration="1 day, 0:00:00",
         )
 
         # please add some check logic here by yourself
@@ -84,7 +84,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_float_seconds_larger_unit(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.float_seconds_larger_unit(
-            duration=0.0,
+            duration="1 day, 0:00:00",
         )
 
         # please add some check logic here by yourself
@@ -95,7 +95,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_float64_seconds(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.float64_seconds(
-            duration=0.0,
+            duration="1 day, 0:00:00",
         )
 
         # please add some check logic here by yourself
@@ -106,7 +106,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_int32_milliseconds(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.int32_milliseconds(
-            duration=0,
+            duration="1 day, 0:00:00",
         )
 
         # please add some check logic here by yourself
@@ -117,7 +117,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_int32_milliseconds_larger_unit(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.int32_milliseconds_larger_unit(
-            duration=0,
+            duration="1 day, 0:00:00",
         )
 
         # please add some check logic here by yourself
@@ -128,7 +128,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_float_milliseconds(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.float_milliseconds(
-            duration=0.0,
+            duration="1 day, 0:00:00",
         )
 
         # please add some check logic here by yourself
@@ -139,7 +139,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_float_milliseconds_larger_unit(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.float_milliseconds_larger_unit(
-            duration=0.0,
+            duration="1 day, 0:00:00",
         )
 
         # please add some check logic here by yourself
@@ -150,7 +150,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_float64_milliseconds(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.float64_milliseconds(
-            duration=0.0,
+            duration="1 day, 0:00:00",
         )
 
         # please add some check logic here by yourself
@@ -161,7 +161,7 @@ class TestDurationHeaderOperationsAsync(DurationClientTestBaseAsync):
     async def test_header_int32_milliseconds_array(self, duration_endpoint):
         client = self.create_async_client(endpoint=duration_endpoint)
         response = await client.header.int32_milliseconds_array(
-            duration=[0],
+            duration=["1 day, 0:00:00"],
         )
 
         # please add some check logic here by yourself
