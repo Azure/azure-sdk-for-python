@@ -34,6 +34,12 @@ export INTER_PHASE_COOLDOWN_SEC="${INTER_PHASE_COOLDOWN_SEC:-1}"
 export TARGET_OUTPUT_TOKENS="${TARGET_OUTPUT_TOKENS:-80}"
 export PORT="${PORT:-8088}"
 
+# Fail fast with a clear message if the port is already taken.
+if "$VENV/bin/python" -c "import socket,sys; s=socket.socket(); r=s.connect_ex(('127.0.0.1', ${PORT})); s.close(); sys.exit(0 if r==0 else 1)"; then
+    echo "Port ${PORT} is already in use (a server may still be running). Stop it, or pick another port: PORT=8090 ./serve.sh" >&2
+    exit 1
+fi
+
 echo "Starting durable research agent on http://localhost:${PORT}"
 echo "  task store   : ${AGENTSERVER_DURABLE_ROOT}/tasks   (streams + checkpoints under ~/.durable-tasks)"
 echo "  session id   : ${FOUNDRY_AGENT_SESSION_ID}  (must match across restarts to recover)"

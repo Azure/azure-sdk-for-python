@@ -142,3 +142,9 @@ restarting the process against the same task store + session id.
 
 The agent itself is `../src/durable-research-agent/` (`app.py` = HTTP host,
 `agent.py` = the durable task).
+
+## Troubleshooting
+
+**`Address already in use` / `OSError: [Errno 98]`** — a server is still running
+on the port. `run.sh` auto-picks the next free port; for `serve.sh`, stop the
+old server (`Ctrl-C` in its terminal) or pick another port: `PORT=8090 ./serve.sh`.

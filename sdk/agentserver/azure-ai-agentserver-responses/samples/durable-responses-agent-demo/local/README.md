@@ -147,3 +147,9 @@ samples in this drop — see `../../sample_19_durable_streaming.py`,
 `sample_22_durable_multiturn.py`, and the invocations
 `durable_research` / `durable_multiturn` / `durable_langgraph` / `durable_copilot`
 samples.
+
+## Troubleshooting
+
+**`Address already in use` / `OSError: [Errno 98]`** — a server is still running
+on the port. `run.sh` auto-picks the next free port; for `serve.sh`, stop the
+old server (`Ctrl-C` in its terminal) or pick another port: `PORT=8090 ./serve.sh`.

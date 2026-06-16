@@ -54,6 +54,28 @@ HERE = Path(__file__).resolve().parent
 MAIN_PY = HERE.parent / "src" / "durable-responses-agent-demo" / "main.py"
 
 PORT = int(os.environ.get("PORT", "8088"))
+
+
+def _port_is_free(port: int) -> bool:
+    import socket
+
+    s = socket.socket()
+    try:
+        s.bind(("0.0.0.0", port))
+        return True
+    except OSError:
+        return False
+    finally:
+        s.close()
+
+
+# Auto-pick a free port if the requested one is busy (e.g. a leftover server).
+_requested_port = PORT
+while not _port_is_free(PORT) and PORT < _requested_port + 25:
+    PORT += 1
+if PORT != _requested_port:
+    print(f"  » port {_requested_port} is busy; using {PORT} instead", flush=True)
+
 BASE = f"http://localhost:{PORT}"
 NUM_PHASES = int(os.environ.get("NUM_PHASES", "3"))
 CRASH_AFTER = int(os.environ.get("CRASH_AFTER", "5"))
