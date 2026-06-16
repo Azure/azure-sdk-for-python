@@ -6954,14 +6954,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.OptimizationInlineDatasetInput(OptimizationDatasetInput, discriminator='inline'):
-        items_property: list[OptimizationDatasetItem]
+        dataset_items: list[OptimizationDatasetItem]
         type: Literal[OptimizationDatasetInputType.INLINE]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                items_property: list[OptimizationDatasetItem]
+                dataset_items: list[OptimizationDatasetItem]
             ) -> None: ...
 
         @overload
