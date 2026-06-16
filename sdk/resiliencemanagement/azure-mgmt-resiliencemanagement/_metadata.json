@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.AzureResilienceManagement": "2026-04-01-preview"
   },
-  "commit": "7950f0f1c6372cb09de2961797bdef2d7ceda991",
+  "commit": "e939f1954da28bf8957a6486571e9db24b22d07c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/azureresiliencemanagement/resource-manager/Microsoft.AzureResilienceManagement/AzureResilienceManagement",
   "emitterVersion": "0.63.1",

@@ -339,5 +339,5 @@
         "azure.mgmt.resiliencemanagement.operations.EnrollmentsOperations.list": "Microsoft.AzureResilienceManagement.Enrollments.list",
         "azure.mgmt.resiliencemanagement.aio.operations.EnrollmentsOperations.list": "Microsoft.AzureResilienceManagement.Enrollments.list"
     },
-    "CrossLanguageVersion": "b35d534674d7"
+    "CrossLanguageVersion": "f6bc6ae28274"
 }
