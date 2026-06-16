@@ -12,6 +12,7 @@ routing module which wraps these results.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import json
 import logging
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
@@ -47,6 +48,7 @@ from ..models.runtime import (
     build_failed_response as _build_failed_response,
 )
 from ..store._base import ResponseAlreadyExistsError, ResponseProviderProtocol
+from ..streaming._checkpoint import ResponseCheckpointEvent
 from ..streaming._helpers import (
     _apply_stream_event_defaults,
     _build_events,
@@ -249,6 +251,93 @@ def _validate_handler_event(
     return None
 
 
+def _is_durable_background(
+    runtime_options: "ResponsesServerOptions | None", *, store: bool, background: bool
+) -> bool:
+    """Return True for a durable background response (the only checkpoint consumer).
+
+    :param runtime_options: Server runtime options.
+    :type runtime_options: ResponsesServerOptions | None
+    :keyword store: Whether the response is stored.
+    :paramtype store: bool
+    :keyword background: Whether the response is background.
+    :paramtype background: bool
+    :returns: True iff ``durable_background`` is enabled and the response is a
+        stored background response.
+    :rtype: bool
+    """
+    return bool(
+        runtime_options is not None
+        and getattr(runtime_options, "durable_background", False)
+        and store
+        and background
+    )
+
+
+async def _do_checkpoint_persist(
+    event: ResponseCheckpointEvent,
+    *,
+    provider: "ResponseProviderProtocol | None",
+    runtime_options: "ResponsesServerOptions | None",
+    store: bool,
+    background: bool,
+    isolation: Any,
+    response_id: str,
+    last_snapshot: "bytes | None",
+    terminal_seen: bool,
+) -> "bytes | None":
+    """Durably persist a developer checkpoint snapshot (spec 025 §A.3).
+
+    Shared by both handler-draining paths. Persists only for durable background
+    responses; idempotent (byte-compare); failures logged + tagged, never
+    raised. Snapshots the response with its current status as-is.
+
+    :param event: The checkpoint event carrying the response snapshot.
+    :type event: ResponseCheckpointEvent
+    :keyword provider: The storage provider (``None`` ⇒ no-op).
+    :paramtype provider: ResponseProviderProtocol | None
+    :keyword runtime_options: Server runtime options.
+    :paramtype runtime_options: ResponsesServerOptions | None
+    :keyword store: Whether the response is stored.
+    :paramtype store: bool
+    :keyword background: Whether the response is background.
+    :paramtype background: bool
+    :keyword isolation: Tenant isolation context for the provider write.
+    :paramtype isolation: Any
+    :keyword response_id: The response id (for logging).
+    :paramtype response_id: str
+    :keyword last_snapshot: Serialised bytes of the previously persisted snapshot.
+    :paramtype last_snapshot: bytes | None
+    :keyword terminal_seen: Whether a terminal event has already been processed.
+    :paramtype terminal_seen: bool
+    :returns: The new ``last_snapshot`` bytes (unchanged when nothing persisted).
+    :rtype: bytes | None
+    """
+    if not _is_durable_background(runtime_options, store=store, background=background):
+        logger.debug("checkpoint() no-op (not a durable background response) for %s", response_id)
+        return last_snapshot
+    if terminal_seen:
+        logger.debug("checkpoint() after terminal dropped for %s", response_id)
+        return last_snapshot
+    response = event.response
+    if response is None or provider is None:
+        return last_snapshot
+    try:
+        snapshot_bytes = json.dumps(response.as_dict(), sort_keys=True, default=str).encode("utf-8")
+    except Exception:  # pylint: disable=broad-exception-caught
+        logger.debug("checkpoint() snapshot serialisation failed for %s", response_id, exc_info=True)
+        return last_snapshot
+    if snapshot_bytes == last_snapshot:
+        return last_snapshot  # idempotent — nothing changed since the last checkpoint
+    try:
+        await provider.update_response(response, isolation=isolation)
+        return snapshot_bytes
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        setattr(exc, PLATFORM_ERROR_TAG, True)
+        logger.error("checkpoint persist failed (response_id=%s): %s", response_id, exc, exc_info=True)
+        return last_snapshot
+
+
 async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-many-branches
     *,
     create_fn: Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]],
@@ -312,12 +401,31 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
     # Track whether the handler set queued status so we can honour it
     _handler_initial_status: str | None = None
     first_event_processed = False
+    # Spec 025 §A.3: developer checkpoint state for this background execution.
+    _checkpoint_last_snapshot: bytes | None = None
+    _terminal_seen = False
 
     try:
         try:
             async for handler_event in _iter_with_winddown(
                 create_fn(parsed, context, cancellation_signal), cancellation_signal
             ):
+                # Intercept developer ``stream.checkpoint()`` events (spec 025
+                # §A.3): durably persist (durable background only) and never
+                # forward them into the event pipeline.
+                if isinstance(handler_event, ResponseCheckpointEvent):
+                    _checkpoint_last_snapshot = await _do_checkpoint_persist(
+                        handler_event,
+                        provider=provider,
+                        runtime_options=runtime_options,
+                        store=store,
+                        background=record.mode_flags.background,
+                        isolation=context.isolation,
+                        response_id=response_id,
+                        last_snapshot=_checkpoint_last_snapshot,
+                        terminal_seen=_terminal_seen,
+                    )
+                    continue
                 # Client-initiated cancel (POST /cancel) → discard and force cancelled.
                 # Steering cancel (new turn queued) → let handler wind down and
                 # emit its own terminal status with output items preserved.
@@ -346,6 +454,8 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                 )
                 handler_events.append(normalized)
                 validator.validate_next(normalized)
+                if normalized.get("type") in _ResponseOrchestrator._TERMINAL_SSE_TYPES:
+                    _terminal_seen = True
                 if not first_event_processed:
                     first_event_processed = True
 
@@ -758,6 +868,7 @@ class _PipelineState:
         "provider_created",
         "next_seq",
         "leave_stream_open_for_recovery",
+        "last_persisted_snapshot",
     )
 
     def __init__(self) -> None:
@@ -786,6 +897,10 @@ class _PipelineState:
         # a terminal marker and the rehydrated stream is in CLOSED
         # state — the recovered handler's emits silently no-op.
         self.leave_stream_open_for_recovery: bool = False
+        # Serialised bytes of the last snapshot persisted via a developer
+        # ``stream.checkpoint()`` (spec 025 §A.3). Used for the idempotency
+        # byte-compare so a checkpoint that adds nothing is a no-op.
+        self.last_persisted_snapshot: bytes | None = None
 
 
 class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
@@ -1399,6 +1514,67 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         if not execution.persistence_failed:
             await self._safe_emit(state.bg_record.subject, first_normalized)
 
+    async def _intercept_checkpoints(
+        self,
+        ctx: "_ExecutionContext",
+        state: "_PipelineState",
+        handler_iterator: AsyncIterator[generated_models.ResponseStreamEvent],
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Drain the handler, intercepting + persisting ``checkpoint()`` events.
+
+        Checkpoint events are handled here (durable persistence) and are NOT
+        re-yielded, so the downstream pipeline never coerces/validates/forwards
+        them. All other events pass through unchanged.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :param handler_iterator: The raw handler event iterator.
+        :type handler_iterator: AsyncIterator[ResponseStreamEvent]
+        :returns: The handler events with checkpoint events removed.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        async for raw in handler_iterator:
+            if isinstance(raw, ResponseCheckpointEvent):
+                await self._persist_checkpoint(ctx, state, raw)
+                continue
+            yield raw
+
+    async def _persist_checkpoint(
+        self,
+        ctx: "_ExecutionContext",
+        state: "_PipelineState",
+        event: ResponseCheckpointEvent,
+    ) -> None:
+        """Durably persist a developer checkpoint snapshot (spec 025 §A.3).
+
+        Persists only for durable background responses; idempotent; failures are
+        logged + tagged and never raised into the handler. Snapshots the
+        response with whatever status it currently holds.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state (holds the idempotency watermark).
+        :type state: _PipelineState
+        :param event: The checkpoint event carrying the response snapshot.
+        :type event: ResponseCheckpointEvent
+        :rtype: None
+        """
+        # Gate: only durable background responses have a recovery re-invocation
+        # path, so only they have a consumer for an in-flight checkpoint.
+        state.last_persisted_snapshot = await _do_checkpoint_persist(
+            event,
+            provider=self._provider,
+            runtime_options=self._runtime_options,
+            store=ctx.store,
+            background=ctx.background,
+            isolation=ctx.context.isolation if ctx.context is not None else None,
+            response_id=ctx.response_id,
+            last_snapshot=state.last_persisted_snapshot,
+            terminal_seen=state.pending_terminal is not None,
+        )
+
     async def _process_handler_events(  # pylint: disable=too-many-return-statements,too-many-branches
         self,
         ctx: _ExecutionContext,
@@ -1436,6 +1612,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :return: Async iterator of normalised events (``ResponseStreamEvent`` model instances).
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
+        # Intercept developer ``stream.checkpoint()`` events (spec 025 §A.3)
+        # BEFORE any coercion/validation/forwarding: they are durably persisted
+        # by the orchestrator and never reach the wire or the event taxonomy.
+        handler_iterator = self._intercept_checkpoints(ctx, state, handler_iterator)
         # --- First event ---
         try:
             first_raw = await handler_iterator.__anext__()

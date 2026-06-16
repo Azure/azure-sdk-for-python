@@ -25,6 +25,7 @@ from .models._generated import (
     ItemReferenceParam,
     MessageContentInputTextContent,
     OutputItem,
+    ResponseObject,
 )
 from .models._helpers import get_input_expanded, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
@@ -176,6 +177,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
     conversation_chain_metadata: ConversationChainMetadataNamespace
     shutdown: asyncio.Event
     client_cancelled: bool
+    persisted_response: "ResponseObject | None"
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
@@ -232,6 +234,11 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self.is_recovery: bool = False
         self.is_steered_turn: bool = False
         self.pending_input_count: int = 0
+        # (Spec 025 §A.3) Entry-only cached snapshot of the persisted response,
+        # populated by the orchestrator on the recovery path so a recovered
+        # handler can seed its stream from already-persisted items. ``None`` on
+        # fresh entries; never refreshed mid-execution.
+        self.persisted_response: "ResponseObject | None" = None
         # Default-namespace metadata facade; framework code (in the
         # orchestrator) swaps the backing to the TaskContext.metadata
         # when the response runs inside a durable task body.

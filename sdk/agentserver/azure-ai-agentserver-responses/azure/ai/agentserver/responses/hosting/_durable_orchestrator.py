@@ -612,6 +612,25 @@ class DurableResponseOrchestrator:
             # framework's recovery sentinel.
             context._task_context = ctx  # pylint: disable=protected-access
 
+            # (Spec 025 §A.3) On a recovered entry, pre-fetch the persisted
+            # response so the handler can seed its stream from already-
+            # persisted items + the response-level watermark. Entry-only:
+            # never refreshed mid-execution. Best-effort — absence (handler
+            # crashed before the initial create) leaves it ``None``.
+            if is_recovery:
+                try:
+                    _isolation = context.isolation
+                    context.persisted_response = await self._provider.get_response(
+                        context.response_id, isolation=_isolation
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.debug(
+                        "persisted_response pre-fetch failed for %s (recovery)",
+                        context.response_id,
+                        exc_info=True,
+                    )
+                    context.persisted_response = None
+
         # Bridge task cancellation → response cancellation surface.
         # ``ctx.cancel`` (steering / explicit cancel) and ``ctx.shutdown``
         # (graceful TaskManager shutdown) are mapped to DISTINCT
