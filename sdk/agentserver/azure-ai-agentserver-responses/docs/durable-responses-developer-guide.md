@@ -367,6 +367,93 @@ point, and re-streams everything fresh. The only real risk is duplicating
 side effects against the upstream framework (LLM calls, session writes)
 — if you have any of those, you MUST adopt the recovery-aware pattern.
 
+## Checkpoint-driven recovery — one item per phase
+
+When your work decomposes into phases, the simplest correct recovery shape
+is **one `OutputItem` per phase + `yield stream.checkpoint()` at each phase
+boundary**. The persisted response *is* the watermark: on recovery you seed
+the stream from `context.persisted_response` and resume from
+`len(stream.response.output)`. A phase that finished (`output_item.done` +
+`checkpoint()`) is already in the seeded output; a phase interrupted before
+its checkpoint never entered the snapshot, so it re-runs cleanly — no
+hand-rolled breadcrumb reconstruction.
+
+```python
+from azure.ai.agentserver.responses import (
+    CreateResponse, ResponseContext, ResponseEventStream,
+)
+
+PHASES = ("gather", "analyze", "synthesize", "review", "publish")
+
+
+@app.response_handler
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+    # Recovery branch: seed from the persisted snapshot. The completed
+    # phases' items are already in stream.response.output; count them to
+    # know where to resume.
+    if context.is_recovery and context.persisted_response is not None:
+        stream = ResponseEventStream(
+            response_id=context.response_id, response=context.persisted_response,
+        )
+        done_phases = len(stream.response.output)
+    else:
+        stream = ResponseEventStream(response_id=context.response_id, request=request)
+        done_phases = 0
+
+    yield stream.emit_created()      # framework dedups the duplicate on recovery
+    if context.shutdown.is_set():
+        await context.exit_for_recovery()
+    yield stream.emit_in_progress()  # client-visible reset point on recovery
+
+    prompt = await context.get_input_text()
+    for phase_idx in range(done_phases, len(PHASES)):
+        message = stream.add_output_item_message()
+        message.internal_metadata["phase"] = PHASES[phase_idx]  # stripped on egress
+        yield message.emit_added()
+        text = message.add_text_content()
+        yield text.emit_added()
+        async for token in run_phase(PHASES[phase_idx], prompt):
+            if context.shutdown.is_set():
+                await context.exit_for_recovery()  # item not closed → phase re-runs
+            yield text.emit_delta(token)
+        yield text.emit_text_done()
+        yield text.emit_done()
+        yield message.emit_done()        # item now in stream.response.output
+        yield stream.checkpoint()        # phase durable; on to the next
+
+    yield stream.emit_completed()
+```
+
+`yield stream.checkpoint()` durably persists the current `stream.response`
+snapshot (gated to durable background responses; a no-op otherwise) and is
+backpressured — control does not return from the `yield` until the write
+completes. See the handler guide's
+[Stream Checkpoints](handler-implementation-guide.md#stream-checkpoints) for
+the full semantics and `durability-contract.md` Row 11 for the conformance
+contract.
+
+### Which metadata facility?
+
+There are **two** internal-metadata facilities at **different scopes**:
+
+- **`context.conversation_chain_metadata`** — **cross-turn**, named-scope,
+  explicit-`flush()` durable state over the whole conversation chain. Use it
+  for state a *later turn* needs from an earlier one, or for coordination
+  between layers/parallel nodes spanning the chain.
+- **`internal_metadata`** (on items via `item.internal_metadata`, and on the
+  response via `stream.internal_metadata`) — a **single-turn** live
+  `MutableMapping[str, Any]` that rides on the response/items, is persisted
+  with the response (so it survives recovery, read back via
+  `context.persisted_response`), and is **stripped before every client-facing
+  payload** (egress and ingress). Use it for lightweight per-turn watermarks,
+  id mappings, or in-turn stale-message detection.
+
+**Rule of thumb:** need it in a *later turn* → `conversation_chain_metadata`;
+need it only to reconstruct *this* response on crash →
+`internal_metadata` + `stream.checkpoint()`. Both are distinct from the
+*public* `ResponseObject.metadata` (the client's own metadata — never
+stripped).
+
 ## Stream Recovery (client-side reconciliation)
 
 The library persists every SSE event in order — including events emitted
