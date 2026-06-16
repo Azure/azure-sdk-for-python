@@ -140,11 +140,13 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 await _record_success_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
-                # Check timeout after successful execution
-                if timeout:
-                    elapsed = time.time() - operation_start_time
-                    if elapsed >= timeout:
-                        raise exceptions.CosmosClientTimeoutError(error=last_error)
+            # Check the deadline after a successful call. Outside the if/else so it
+            # also covers the normal request path (if args), matching the sync loop:
+            # a call that succeeds after the deadline passed must still raise.
+            if timeout:
+                elapsed = time.time() - operation_start_time
+                if elapsed >= timeout:
+                    raise exceptions.CosmosClientTimeoutError(error=last_error)
             if not client.last_response_headers:
                 client.last_response_headers = {}
 

@@ -1087,39 +1087,40 @@ def _build_properties_cache(properties: dict[str, Any], container_link: str) -> 
         "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
 
-# The per-call timeout keys a caller can set on a single request. Listed once
-# here so format_pk_range_options and the hybrid-search fetch forward the same
-# set.
+# The three per-call timeout keys a caller can set on one request. The deadline
+# tuple below adds OperationStartTime to these; the carry helpers iterate that
+# 4-key tuple, not this one.
 _PER_CALL_TIMEOUT_OPTION_KEYS: Tuple[str, ...] = (
     Constants.Kwargs.READ_TIMEOUT,
     Constants.Kwargs.CONNECTION_TIMEOUT,
     Constants.Kwargs.TIMEOUT,
 )
 
-# The operation deadline is checked as elapsed = now - OperationStartTime, and
-# OperationStartTime defaults to the current time when it is missing. So timeout
-# and OperationStartTime must be carried together onto the metadata setup calls;
-# otherwise a setup call measures the deadline from its own start instead of the
-# operation's start. This adds OperationStartTime to the three timeout keys above.
+# timeout and OperationStartTime must travel together: the deadline is checked as
+# now - OperationStartTime, which defaults to now when missing, so a metadata call
+# without it would measure from its own start, not the operation's.
 _PER_CALL_DEADLINE_OPTION_KEYS: Tuple[str, ...] = _PER_CALL_TIMEOUT_OPTION_KEYS + (
     Constants.OperationStartTime,
 )
 
 
-def _carry_per_call_timeout_options(source: Mapping[str, Any], destination: dict[str, Any]) -> None:
+def _carry_per_call_timeout_options(source: Optional[Mapping[str, Any]], destination: dict[str, Any]) -> None:
     """Copy the per-call timeouts and the operation start time from source into destination.
 
     Copies read_timeout, connection_timeout, timeout, and OperationStartTime. Only
     keys present in source are copied, so a timeout the caller did not set stays
-    absent and the request uses the client default instead of None.
+    absent and the request uses the client default instead of None. A None or empty
+    source is a no-op.
 
-    :param source: The request options to read the timeouts from.
-    :type source: ~collections.abc.Mapping[str, typing.Any]
+    :param source: The request options to read the timeouts from (may be None or empty).
+    :type source: ~collections.abc.Mapping[str, typing.Any] or None
     :param destination: The options dict to copy the timeouts into.
     :type destination: dict[str, typing.Any]
     :return: None
     :rtype: None
     """
+    if not source:
+        return
     for key in _PER_CALL_DEADLINE_OPTION_KEYS:
         if key in source:
             destination[key] = source[key]

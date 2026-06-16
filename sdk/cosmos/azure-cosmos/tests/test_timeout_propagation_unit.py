@@ -11,20 +11,24 @@ validate the propagation logic in isolation:
 * ``_carry_per_call_timeout_options`` forwards only the timeouts actually set,
   plus the operation start time (``OperationStartTime``) when present.
 * ``format_pk_range_options`` carries the timers and the operation start time.
-* The query-plan dispatcher (sync + async) forwards ``connection_timeout``,
-  ``timeout`` and ``OperationStartTime`` only when set -- never as ``None`` --
-  so an unset value cannot override the client default in the request layer.
+* The query-plan dispatcher (sync + async) forwards the per-call timeouts and
+  ``OperationStartTime`` only when set -- never as ``None`` -- so an unset value
+  cannot override the client/policy default in the request layer.
 * The container read (``_get_properties_with_options``) copies the timeouts and
   the operation start time from options into the kwargs it hands down.
 """
 
 import unittest
+from unittest import mock
 
 import pytest
 
 from azure.cosmos import _base
+from azure.cosmos import http_constants
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos._cosmos_client_connection import CosmosClientConnection as _SyncCosmosClientConnection
+from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection as _AsyncCosmosClientConnection
 from azure.cosmos._execution_context.execution_dispatcher import _ProxyQueryExecutionContext
 from azure.cosmos._execution_context.aio.execution_dispatcher import (
     _ProxyQueryExecutionContext as _AsyncProxyQueryExecutionContext,
@@ -106,6 +110,14 @@ class TestCarryPerCallTimeoutOptions(unittest.TestCase):
         _base._carry_per_call_timeout_options({}, destination)
         assert destination == {"containerRID": "rid"}
 
+    def test_none_source_is_noop(self):
+        # A None source must be a no-op rather than raising, mirroring the
+        # options->kwargs helper. Callers today never pass None, so this guards
+        # against a latent TypeError if a future caller does.
+        destination = {"containerRID": "rid"}
+        _base._carry_per_call_timeout_options(None, destination)
+        assert destination == {"containerRID": "rid"}
+
     def test_keys_are_the_three_per_call_timeouts(self):
         assert _base._PER_CALL_TIMEOUT_OPTION_KEYS == (
             Constants.Kwargs.READ_TIMEOUT,
@@ -156,24 +168,22 @@ class TestQueryPlanDispatcherForwarding(unittest.TestCase):
             "timeout": 2,
         }
 
-    def test_omits_connection_timeout_and_timeout_when_unset(self):
-        # connection_timeout and timeout must not be forwarded as None: they go
-        # straight to the request as kwargs, where None would override the client
-        # default. read_timeout is still passed as-is.
+    def test_omits_all_timeouts_when_unset(self):
+        # No timer is forwarded as None: each goes to the request as a kwarg, where
+        # None would override the client default. An unset timer is omitted so
+        # _Request falls back to the policy default.
         client = _RecordingQueryPlanClient()
         ctx = _make_sync_ctx(client, {})
         with pytest.raises(_StopBeforePipeline):
             ctx._create_execution_context_with_query_plan()
-        assert client.captured_kwargs == {"read_timeout": None}
-        assert "connection_timeout" not in client.captured_kwargs
-        assert "timeout" not in client.captured_kwargs
+        assert client.captured_kwargs == {}
 
     def test_forwards_only_connection_timeout_when_only_it_is_set(self):
         client = _RecordingQueryPlanClient()
         ctx = _make_sync_ctx(client, {"connection_timeout": 0.5})
         with pytest.raises(_StopBeforePipeline):
             ctx._create_execution_context_with_query_plan()
-        assert client.captured_kwargs == {"read_timeout": None, "connection_timeout": 0.5}
+        assert client.captured_kwargs == {"connection_timeout": 0.5}
 
 
 class TestAsyncQueryPlanDispatcherForwarding(unittest.IsolatedAsyncioTestCase):
@@ -190,12 +200,12 @@ class TestAsyncQueryPlanDispatcherForwarding(unittest.IsolatedAsyncioTestCase):
             "timeout": 2,
         }
 
-    async def test_omits_connection_timeout_and_timeout_when_unset(self):
+    async def test_omits_all_timeouts_when_unset(self):
         client = _AsyncRecordingQueryPlanClient()
         ctx = _make_async_ctx(client, {})
         with pytest.raises(_StopBeforePipeline):
             await ctx._create_execution_context_with_query_plan()
-        assert client.captured_kwargs == {"read_timeout": None}
+        assert client.captured_kwargs == {}
 
 
 class TestDeadlineAnchorCarry(unittest.TestCase):
@@ -456,6 +466,99 @@ class TestCopyPerCallTimeoutsToKwargs(unittest.TestCase):
         _base._copy_per_call_timeouts_to_kwargs(None, kwargs)
         _base._copy_per_call_timeouts_to_kwargs({}, kwargs)
         assert kwargs == {}
+
+
+def _make_query_feed_conn(connection_cls, get_fn):
+    """Build a connection stub so __QueryFeed can reach __Get without network or
+    header setup. Returns the bound (name-mangled) __QueryFeed to call."""
+    conn = connection_cls.__new__(connection_cls)
+    conn.default_headers = {}
+    conn.availability_strategy = None
+    # Sync reads availability_strategy_executor; async reads
+    # availability_strategy_max_concurrency. Set both so one helper serves both.
+    conn.availability_strategy_executor = None
+    conn.availability_strategy_max_concurrency = None
+    # _UpdateSessionIfRequired runs after __Get on the async ReadFeed branch.
+    conn._UpdateSessionIfRequired = lambda *_args, **_kwargs: None
+    # __Get is name-mangled; both sync and async classes are named
+    # CosmosClientConnection, so the mangled attribute name is identical.
+    setattr(conn, "_CosmosClientConnection__Get", get_fn)
+    return getattr(conn, "_CosmosClientConnection__QueryFeed")
+
+
+_QUERY_FEED_OPTIONS = {
+    "read_timeout": 30,
+    "connection_timeout": 0.5,
+    "timeout": 2,
+    Constants.OperationStartTime: 123.0,
+}
+
+
+def _assert_query_feed_timers_lifted(captured_kwargs):
+    assert captured_kwargs["read_timeout"] == 30
+    assert captured_kwargs["connection_timeout"] == 0.5
+    assert captured_kwargs["timeout"] == 2
+    assert captured_kwargs[Constants.OperationStartTime] == 123.0
+
+
+class TestSyncQueryFeedLift(unittest.TestCase):
+    """__QueryFeed is where both the /pkranges fetch and the query plan copy the
+    per-call timeouts from options into the kwargs _Request reads. This drives
+    that copy through the ReadFeed branch into __Get, which the helper tests
+    above do not cover."""
+
+    def test_queryfeed_lifts_timers_from_options_into_get_kwargs(self):
+        captured_kwargs = {}
+
+        def _fake_get(_path, _request_params, _headers, **kwargs):
+            captured_kwargs.update(kwargs)
+            return {}, {}
+
+        query_feed = _make_query_feed_conn(_SyncCosmosClientConnection, _fake_get)
+        with mock.patch.object(_base, "GetHeaders", return_value={}), \
+                mock.patch.object(_base, "set_session_token_header", return_value=None):
+            # query=None drives the ReadFeed branch, which ends in __Get.
+            query_feed(
+                "dbs/db/colls/coll/pkranges",
+                http_constants.ResourceType.PartitionKeyRange,
+                "rid",
+                lambda _r: [],
+                lambda _client, body: body,
+                None,
+                _QUERY_FEED_OPTIONS,
+            )
+
+        _assert_query_feed_timers_lifted(captured_kwargs)
+
+
+class TestAsyncQueryFeedLift(unittest.IsolatedAsyncioTestCase):
+    """Async __QueryFeed makes the same options-to-kwargs copy as the sync one."""
+
+    async def test_queryfeed_lifts_timers_from_options_into_get_kwargs(self):
+
+        captured_kwargs = {}
+
+        async def _fake_get(_path, _request_params, _headers, **kwargs):
+            captured_kwargs.update(kwargs)
+            return {}, {}
+
+        async def _noop_session_async(*_args, **_kwargs):
+            return None
+
+        query_feed = _make_query_feed_conn(_AsyncCosmosClientConnection, _fake_get)
+        with mock.patch.object(_base, "GetHeaders", return_value={}), \
+                mock.patch.object(_base, "set_session_token_header_async", new=_noop_session_async):
+            await query_feed(
+                "dbs/db/colls/coll/pkranges",
+                http_constants.ResourceType.PartitionKeyRange,
+                "rid",
+                lambda _r: [],
+                lambda _client, body: body,
+                None,
+                _QUERY_FEED_OPTIONS,
+            )
+
+        _assert_query_feed_timers_lifted(captured_kwargs)
 
 
 if __name__ == "__main__":
