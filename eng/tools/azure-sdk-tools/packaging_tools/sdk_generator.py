@@ -315,7 +315,7 @@ def main(generate_input, generate_output):
             if data.get("runMode") in ["spec-pull-request", "release"]:
                 apiview_start_time = time.time()
                 try:
-                    _LOGGER.info("install dependencies for apiview generation")
+                    _LOGGER.info("generate apiview artifacts")
                     package_path = Path(sdk_folder, folder_name, package_name)
                     cmds = [
                         "azpysdk",
