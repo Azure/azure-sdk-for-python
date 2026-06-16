@@ -9,7 +9,7 @@ FILE: sample_analyze_binary.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze a PDF file from disk using the prebuilt-documentSearch
-    analyzer.
+    analyzer and convert the result to LLM-friendly text.
 
     ## About analyzing documents from binary data
 
@@ -18,6 +18,16 @@ DESCRIPTION:
     items in AnalysisResult.contents. This sample starts with a document file, so each item is a
     DocumentContent (a subtype of AnalysisContent) that exposes markdown plus detailed structure such
     as pages, tables, figures, and paragraphs.
+
+    ## Using results with LLMs
+
+    The markdown returned by Content Understanding can be directly consumed by large language models
+    (LLMs) for summarization, question answering, and other generative AI tasks. To make this even
+    easier, the SDK provides a convenient ``to_llm_input()`` helper that converts an AnalysisResult
+    into a single text block with YAML front matter (content type, page numbers, extracted fields)
+    followed by the markdown body — ready for injection into LLM prompts, vector databases, or
+    agentic tool outputs. For advanced usage (output options, content ranges, video/audio, metadata),
+    see sample_to_llm_input.py.
 
     This sample focuses on document analysis. For prebuilt RAG analyzers covering images, audio, and
     video, see sample_analyze_url.py.
@@ -54,7 +64,7 @@ USAGE:
 import os
 
 from dotenv import load_dotenv
-from azure.ai.contentunderstanding import ContentUnderstandingClient
+from azure.ai.contentunderstanding import ContentUnderstandingClient, to_llm_input
 from azure.ai.contentunderstanding.models import (
     AnalysisResult,
     DocumentContent,
@@ -87,18 +97,71 @@ def main() -> None:
     result: AnalysisResult = poller.result()
     # [END analyze_document_from_binary]
 
+    # [START analyze_binary_with_content_range]
+    # Use a multi-page document for content range demonstrations.
+    multi_page_path = "sample_files/mixed_financial_invoices.pdf"
+    with open(multi_page_path, "rb") as f:
+        multi_page_bytes = f.read()
+
+    # Analyze only pages 3 onward.
+    print("\nAnalyzing pages 3 onward with content range '3-'...")
+    range_poller = client.begin_analyze_binary(
+        analyzer_id="prebuilt-documentSearch",
+        binary_input=multi_page_bytes,
+        content_range="3-",
+    )
+    range_result: AnalysisResult = range_poller.result()
+
+    if isinstance(range_result.contents[0], DocumentContent):
+        range_doc = range_result.contents[0]
+        page_nums = [p.page_number for p in range_doc.pages] if range_doc.pages else []
+        print(f"Content range analysis returned pages {page_nums}")
+    # [END analyze_binary_with_content_range]
+
+    # [START analyze_binary_with_combined_content_range]
+    # Analyze pages 1-3, page 5, and pages 9 onward.
+    print("\nAnalyzing combined pages (1-3, 5, 9-) with content range '1-3,5,9-'...")
+    combine_range_poller = client.begin_analyze_binary(
+        analyzer_id="prebuilt-documentSearch",
+        binary_input=multi_page_bytes,
+        content_range="1-3,5,9-",
+    )
+    combine_range_result: AnalysisResult = combine_range_poller.result()
+
+    if isinstance(combine_range_result.contents[0], DocumentContent):
+        combine_doc = combine_range_result.contents[0]
+        page_nums = [p.page_number for p in combine_doc.pages] if combine_doc.pages else []
+        print(f"Combined content range analysis returned pages {page_nums}")
+    # [END analyze_binary_with_combined_content_range]
+
+    # [START convert_to_llm_input]
+    # The markdown above can be consumed directly by LLMs. For convenience, the SDK
+    # provides to_llm_input() which packages the result into a single text block with
+    # YAML front matter (content type, pages, fields, optional metadata) followed by
+    # the markdown body — ready for LLM prompts, vector stores, or agentic tools.
+    print("\n" + "=" * 60)
+    print("LLM-READY OUTPUT")
+    print("=" * 60)
+
+    text = to_llm_input(result)
+    print(text)
+    # [END convert_to_llm_input]
+
     # [START extract_markdown]
-    print("\nMarkdown Content:")
-    print("=" * 50)
+    print("\n" + "=" * 60)
+    print("MARKDOWN CONTENT")
+    print("=" * 60)
 
     # A PDF file has only one content element even if it contains multiple pages
     content = result.contents[0]
     print(content.markdown)
-
-    print("=" * 50)
     # [END extract_markdown]
 
     # [START access_document_properties]
+    print("\n" + "=" * 60)
+    print("DOCUMENT PROPERTIES")
+    print("=" * 60)
+
     # Check if this is document content to access document-specific properties
     if isinstance(content, DocumentContent):
         print(f"\nDocument type: {content.mime_type or '(unknown)'}")

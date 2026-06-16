@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import functools
 from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
-from testcase import AppConfigTestCase, setup_configs, has_feature_flag, get_feature_flag
+from testcase import AppConfigTestCase, has_feature_flag, get_feature_flag
 from test_constants import APPCONFIGURATION_ENDPOINT_STRING, FEATURE_MANAGEMENT_KEY
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.appconfiguration.provider import SettingSelector, load
@@ -38,9 +38,6 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     @AppConfigProviderPreparer()
     @recorded_by_proxy
     def test_select_feature_flags(self, appconfiguration_endpoint_string):
-        client = self.create_appconfig_client(appconfiguration_endpoint_string)
-        setup_configs(client, None, None)
-
         credential = self.get_credential(AzureAppConfigurationClient)
         client = load(
             endpoint=appconfiguration_endpoint_string,

@@ -72,19 +72,6 @@ stages:
             env:
               GH_TOKEN: $(azuresdk-github-pat)
 
-          - task: PythonScript@0
-            displayName: 'Run Ruff'
-            continueOnError: true
-            inputs:
-              scriptPath: 'eng/scripts/dispatch_checks.py'
-              arguments: >-
-                ${{ parameters.BuildTargetingString }}
-                --service="${{ parameters.ServiceDirectory }}"
-                --checks="ruff"
-                --disablecov
-            env:
-              GH_TOKEN: $(azuresdk-github-pat)
-
           - script: |
               python -m pip install PyGithub>=1.59.0
               python -m pip install requests>=2.0

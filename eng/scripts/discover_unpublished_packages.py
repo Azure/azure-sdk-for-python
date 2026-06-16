@@ -16,8 +16,8 @@ INITIAL_VERSION = "1.0.0b1"
 
 def _is_on_pypi(client, name):
     try:
-        client.project(name)
-        return True
+        result = client.project(name)
+        return "info" in result
     except Exception:
         return False
 

@@ -78,6 +78,7 @@ class TestNetAppManagementCachesOperations(AzureMgmtRecordedTestCase):
                             }
                         ]
                     },
+                    "fileAccessLogs": "str",
                     "globalFileLocking": "str",
                     "kerberos": "str",
                     "keyVaultPrivateEndpointResourceId": "str",
@@ -181,8 +182,8 @@ class TestNetAppManagementCachesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_caches_list_by_capacity_pools(self, resource_group):
-        response = self.client.caches.list_by_capacity_pools(
+    def test_caches_list(self, resource_group):
+        response = self.client.caches.list(
             resource_group_name=resource_group.name,
             account_name="str",
             pool_name="str",

@@ -6,10 +6,17 @@
 
 import gzip
 import unittest
+import zlib
 from unittest.mock import patch, MagicMock
 
 from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
-from azure.monitor.opentelemetry._browser_sdk_loader.snippet_injector import WebSnippetInjector
+from azure.monitor.opentelemetry._browser_sdk_loader import snippet_injector as snippet_injector_module
+from azure.monitor.opentelemetry._browser_sdk_loader.snippet_injector import (
+    WebSnippetInjector,
+    _bounded_decompress,
+    _MAX_COMPRESSED_BYTES,
+    _MAX_DECOMPRESSED_BYTES,
+)
 
 
 class TestWebSnippetInjector(unittest.TestCase):
@@ -369,6 +376,78 @@ class TestWebSnippetInjector(unittest.TestCase):
             with self.subTest(content=content):
                 result = self.injector.should_inject("GET", "text/html", content)
                 self.assertFalse(result, f"Should detect existing script URL in: {content}")
+
+
+class TestSizeCaps(unittest.TestCase):
+    """Tests for the response-size and decompression-size guards."""
+
+    def setUp(self):
+        self.config = BrowserSDKConfig(
+            enabled=True,
+            connection_string=(
+                "InstrumentationKey=12345678-1234-1234-1234-123456789012;"
+                "IngestionEndpoint=https://test.in.applicationinsights.azure.com/"
+            ),
+        )
+        self.injector = WebSnippetInjector(self.config)
+
+    def test_should_inject_rejects_oversized_body(self):
+        """Bodies larger than the compressed cap must be skipped before any decompression."""
+        oversized = b"<html><body>" + b"a" * (_MAX_COMPRESSED_BYTES + 1) + b"</body></html>"
+        # Patch decompression to make sure we don't even reach it.
+        with patch.object(self.injector, "_get_decompressed_content") as mock_decompress:
+            result = self.injector.should_inject("GET", "text/html", oversized)
+        self.assertFalse(result)
+        mock_decompress.assert_not_called()
+
+    def test_should_inject_accepts_body_at_cap(self):
+        """A body exactly at the cap should still be processed."""
+        prefix = b"<html><head></head><body>"
+        suffix = b"</body></html>"
+        body = prefix + (b"a" * (_MAX_COMPRESSED_BYTES - len(prefix) - len(suffix))) + suffix
+        self.assertEqual(len(body), _MAX_COMPRESSED_BYTES)
+        self.assertTrue(self.injector.should_inject("GET", "text/html", body))
+
+    def test_bounded_decompress_gzip_under_cap(self):
+        payload = b"<html>hello</html>"
+        self.assertEqual(_bounded_decompress(gzip.compress(payload), "gzip"), payload)
+
+    def test_bounded_decompress_gzip_bomb_raises(self):
+        bomb = gzip.compress(b"a" * (_MAX_DECOMPRESSED_BYTES + 1024))
+        with self.assertRaises(ValueError):
+            _bounded_decompress(bomb, "gzip")
+
+    def test_bounded_decompress_deflate_under_cap(self):
+        payload = b"<html>hello</html>"
+        self.assertEqual(_bounded_decompress(zlib.compress(payload), "deflate"), payload)
+
+    def test_bounded_decompress_deflate_bomb_raises(self):
+        bomb = zlib.compress(b"a" * (_MAX_DECOMPRESSED_BYTES + 1024))
+        with self.assertRaises(ValueError):
+            _bounded_decompress(bomb, "deflate")
+
+    def test_bounded_decompress_brotli_under_cap(self):
+        if not snippet_injector_module.HAS_BROTLI:
+            self.skipTest("brotli not installed")
+        payload = b"<html>hello</html>"
+        compressed = snippet_injector_module._BROTLI_MODULE.compress(payload)
+        self.assertEqual(_bounded_decompress(compressed, "br"), payload)
+
+    def test_bounded_decompress_brotli_bomb_raises(self):
+        if not snippet_injector_module.HAS_BROTLI:
+            self.skipTest("brotli not installed")
+        bomb = snippet_injector_module._BROTLI_MODULE.compress(b"a" * (_MAX_DECOMPRESSED_BYTES + 1024))
+        with self.assertRaises(ValueError):
+            _bounded_decompress(bomb, "br")
+
+    def test_inject_with_compression_returns_original_on_bomb(self):
+        """A gzip bomb must not be expanded into memory by inject_with_compression."""
+        bomb = gzip.compress(b"a" * (_MAX_DECOMPRESSED_BYTES + 1024))
+        modified, encoding = self.injector.inject_with_compression(bomb, "gzip")
+        # On decompression cap / failure, injection must be skipped and the
+        # original body returned unchanged (no double-compression).
+        self.assertEqual(modified, bomb)
+        self.assertEqual(encoding, "gzip")
 
 
 if __name__ == "__main__":

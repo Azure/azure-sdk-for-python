@@ -3,7 +3,7 @@ import os
 import sys
 
 from typing import Optional, List
-from subprocess import CalledProcessError
+from subprocess import CalledProcessError, run
 
 from .Check import Check
 from ci_tools.functions import install_into_venv, find_whl
@@ -13,7 +13,6 @@ from ci_tools.logging import logger
 from ci_tools.parsing import ParsedSetup
 
 REPO_ROOT = discover_repo_root()
-MAX_PYTHON_VERSION = (3, 11)
 
 
 def get_package_wheel_path(pkg_root: str) -> str:
@@ -63,16 +62,38 @@ class apistub(Check):
             default=None,
             help="Destination directory for generated API stub token files.",
         )
+        p.add_argument(
+            "--md",
+            dest="generate_md",
+            default=False,
+            action="store_true",
+            help="Generate api.md from the JSON token file using Export-APIViewMarkdown.ps1. Output directory for api.md is the same as the generated token file.",
+        )
+        p.add_argument(
+            "--extract-metadata",
+            dest="extract_metadata",
+            default=False,
+            action="store_true",
+            help="Extract language-specific metadata from generated api.md into api.metadata.yml and remove metadata header from api.md.",
+        )
+        p.add_argument(
+            "--install-deps",
+            dest="install_deps",
+            default=False,
+            action="store_true",
+            help=(
+                "Install dev requirements and apiview dependencies before running. "
+                "Skipped by default for faster local iteration."
+            ),
+        )
         p.set_defaults(func=self.run)
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the apistub check command."""
         logger.info("Running apistub check...")
 
-        if sys.version_info > MAX_PYTHON_VERSION:
-            logger.error(
-                f"Python version {sys.version_info.major}.{sys.version_info.minor} is not supported. Maximum supported version is {MAX_PYTHON_VERSION[0]}.{MAX_PYTHON_VERSION[1]}."
-            )
+        if getattr(args, "extract_metadata", False) and not getattr(args, "generate_md", False):
+            logger.error("--extract-metadata requires --md.")
             return 1
 
         set_envvar_defaults()
@@ -85,25 +106,34 @@ class apistub(Check):
                 os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for apistub check")
 
-            # install dependencies
-            self.install_dev_reqs(executable, args, package_dir)
+            install_deps = getattr(args, "install_deps", False)
 
-            try:
-                install_into_venv(
-                    executable,
-                    [
-                        "-r",
-                        os.path.join(REPO_ROOT, "eng", "apiview_reqs.txt"),
-                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
-                    ],
-                    package_dir,
-                )
-            except CalledProcessError as e:
-                logger.error(f"Failed to install dependencies: {e}")
-                return e.returncode
+            if install_deps:
+                # install dependencies
+                self.install_dev_reqs(executable, args, package_dir)
+
+                try:
+                    install_into_venv(
+                        executable,
+                        [
+                            "-r",
+                            os.path.join(REPO_ROOT, "eng", "apiview_reqs.txt"),
+                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+                        ],
+                        package_dir,
+                    )
+                except CalledProcessError as e:
+                    logger.error(f"Failed to install dependencies: {e}")
+                    return e.returncode
 
             if not os.getenv("PREBUILT_WHEEL_DIR"):
                 create_package_and_install(
@@ -118,14 +148,15 @@ class apistub(Check):
                     python_executable=executable,
                 )
 
-            self.pip_freeze(executable)
+            if install_deps:
+                self.pip_freeze(executable)
 
             pkg_path = get_package_wheel_path(package_dir)
             pkg_path = os.path.abspath(pkg_path)
 
             dest_dir = getattr(args, "dest_dir", None)
             if dest_dir:
-                out_token_path = os.path.join(dest_dir, package_name)
+                out_token_path = os.path.abspath(dest_dir)
                 os.makedirs(out_token_path, exist_ok=True)
             else:
                 out_token_path = os.path.abspath(staging_directory)
@@ -141,13 +172,51 @@ class apistub(Check):
                 cmds.extend(["--out-path", out_token_path])
             if cross_language_mapping_path:
                 cmds.extend(["--mapping-path", cross_language_mapping_path])
+            if getattr(args, "generate_md", False):
+                cmds.append("--skip-pylint")
 
             logger.info("Running apistub {}.".format(cmds))
 
             try:
                 self.run_venv_command(executable, cmds, cwd=staging_directory, check=True, immediately_dump=True)
+                if getattr(args, "generate_md", False):
+                    token_json_path = os.path.join(out_token_path, f"{package_name}_python.json")
+                    md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
+                    metadata_script = os.path.join(REPO_ROOT, "eng", "scripts", "Extract-APIViewMetadata-Python.ps1")
+                    logger.info(f"Generating api.md for {package_name}")
+                    try:
+                        result = run(
+                            ["pwsh", md_script, "-TokenJsonPath", token_json_path, "-OutputPath", out_token_path],
+                            check=True,
+                            capture_output=True,
+                            text=True,
+                        )
+                        # pwsh script logs the api.md location
+                        if result.stdout:
+                            logger.info(result.stdout)
+
+                        if getattr(args, "extract_metadata", False):
+                            logger.info(f"Extracting API metadata for {package_name}")
+                            metadata_result = run(
+                                ["pwsh", metadata_script, "-OutputPath", out_token_path],
+                                check=True,
+                                capture_output=True,
+                                text=True,
+                            )
+                            if metadata_result.stdout:
+                                logger.info(metadata_result.stdout)
+                    except FileNotFoundError:
+                        logger.error("Failed to generate api.md: pwsh (PowerShell) is not installed or not on PATH.")
+                        results.append(1)
+                    except CalledProcessError as e:
+                        logger.error(f"Failed to generate api.md or extract metadata (exit code {e.returncode}):")
+                        if e.stderr:
+                            logger.error(e.stderr)
+                        if e.stdout:
+                            logger.error(e.stdout)
+                        results.append(1)
             except CalledProcessError as e:
-                logger.error(f"{package_name} exited with error {e.returncode}")
+                logger.error(f"{package_name} exited with error {e.returncode}: {e}")
                 results.append(e.returncode)
 
         return max(results) if results else 0

@@ -14,14 +14,7 @@ from azure.appconfiguration.provider.aio import load
 class AppConfigTestCase(AzureRecordedTestCase):
     async def create_client(self, **kwargs):
         credential = self.get_credential(AzureAppConfigurationClient, is_async=True)
-        client = None
 
-        if "connection_string" in kwargs:
-            client = AzureAppConfigurationClient.from_connection_string(kwargs["connection_string"])
-        else:
-            client = AzureAppConfigurationClient(kwargs["endpoint"], credential)
-
-        await setup_configs(client, kwargs.get("keyvault_secret_url"), kwargs.get("keyvault_secret_url2"))
         kwargs["user_agent"] = "SDK/Integration"
 
         if "endpoint" in kwargs:

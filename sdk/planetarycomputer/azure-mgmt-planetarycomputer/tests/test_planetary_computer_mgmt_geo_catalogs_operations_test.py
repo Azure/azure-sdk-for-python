@@ -32,4 +32,4 @@ class TestPlanetaryComputerMgmtGeoCatalogsOperations(AzureMgmtRecordedTestCase):
     def test_geo_catalogs_list_by_subscription(self, resource_group):
         response = self.client.geo_catalogs.list_by_subscription()
         result = [r for r in response]
-        assert response
+        assert len(result)

@@ -12,16 +12,19 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: 3.13
 
+      - name: Configure package indexes
+        uses: ./.github/actions/configure-package-indexes
+
       - name: Install azure-sdk-tools
         run: |
-          python -m pip install -e eng/tools/azure-sdk-tools[ghtools,conda]
+          python -m pip install -e 'eng/tools/azure-sdk-tools[ghtools,conda]'
           python -m pip freeze
         shell: bash
 
@@ -34,16 +37,19 @@ jobs:
   static-analysis:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: 3.13
 
+      - name: Configure package indexes
+        uses: ./.github/actions/configure-package-indexes
+
       - name: Install azure-sdk-tools
         run: |
-          python -m pip install -e eng/tools/azure-sdk-tools[ghtools,conda]
+          python -m pip install -e 'eng/tools/azure-sdk-tools[ghtools,conda]'
           python -m pip install black==24.4.0
           python -m pip freeze
         shell: bash
@@ -56,12 +62,15 @@ jobs:
   verify-azpysdk-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
 
       - name: Set up Python 3.13
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: 3.13
+
+      - name: Configure package indexes
+        uses: ./.github/actions/configure-package-indexes
 
       - name: Install uv
         run: |
@@ -70,7 +79,7 @@ jobs:
 
       - name: Install azure-sdk-tools on in global uv, discover azpysdk checks
         run: |
-          uv pip install --system eng/tools/azure-sdk-tools[ghtools,conda,systemperf]
+          uv pip install --system -e 'eng/tools/azure-sdk-tools[ghtools,conda,systemperf]'
 
           # Discover available azpysdk commands from the {command1,command2,...} line in help output
           CHECKS=$(azpysdk -h 2>&1 | \
@@ -79,6 +88,7 @@ jobs:
             tr -d '{}' | \
             tr ',' '\n' | \
             grep -v '^next-' | \
+            grep -v '^changelog$' | \
             sort | \
             paste -sd,)
 
@@ -92,44 +102,20 @@ jobs:
 
       - name: Run all discovered checks against azure-template using uv as package manager
         run: |
-          sdk_build azure-template -d $(pwd)/wheels --build_id 20250101.1
-          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir $(pwd)/wheels azure-template
+          sdk_build azure-template -d "$(pwd)/wheels" --build_id 20250101.1
+          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir "$(pwd)/wheels" azure-template
         shell: bash
         env:
-          TOX_PIP_IMPL: "uv"
+          AZPYSDK_PIP_IMPL: "uv"
 
       - name: Install azure-sdk-tools on global pip env
         run: |
-          python -m pip install -e eng/tools/azure-sdk-tools[ghtools,conda]
+          python -m pip install -e 'eng/tools/azure-sdk-tools[ghtools,conda]'
         shell: bash
 
       - name: Run all discovered checks against azure-template using pip as package manager
         run: |
-          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir $(pwd)/wheels azure-template
+          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir "$(pwd)/wheels" azure-template
         shell: bash
         env:
-          TOX_PIP_IMPL: "pip"
-
-  dev-setup-and-import:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python 3.13
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.13
-
-      - name: Run dev_setup to install specified packages
-        run: |
-          python scripts/dev_setup.py --packageList azure-storage-blob,azure-appconfiguration
-        shell: bash
-
-      - name: Validate imports
-        run: |
-          python - <<'PY'
-          from azure.storage.blob import *
-          from azure.appconfiguration import *
-          print("Successful Imports")
-          PY
-        shell: bash
+          AZPYSDK_PIP_IMPL: "pip"

@@ -38,6 +38,7 @@ def main():
         endpoint={
             "properties": {
                 "description": "Example Storage File Share Endpoint Description",
+                "endpointKind": "Target",
                 "endpointType": "AzureStorageSmbFileShare",
                 "fileShareName": "examples-fileshare",
                 "storageAccountResourceId": "/subscriptions/60bcfc77-6589-4da2-b7fd-f9ec9322cf95/resourceGroups/examples-rg/providers/Microsoft.Storage/storageAccounts/examplesa",
@@ -47,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/Endpoints_CreateOrUpdate_AzureStorageSmbFileShare.json
+# x-ms-original-file: 2025-12-01/Endpoints_CreateOrUpdate_AzureStorageSmbFileShare.json
 if __name__ == "__main__":
     main()

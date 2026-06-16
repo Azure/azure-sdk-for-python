@@ -18,22 +18,21 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
 import os
 from dotenv import load_dotenv
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
-from openai import OpenAI
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
@@ -51,9 +50,8 @@ with (
 
     # Upload file to vector store
     try:
-        file = openai_client.vector_stores.files.upload_and_poll(
-            vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
-        )
+        with open(asset_file_path, "rb") as f:
+            file = openai_client.vector_stores.files.upload_and_poll(vector_store_id=vector_store.id, file=f)
         print(f"File uploaded to vector store (id: {file.id})")
     except FileNotFoundError:
         print(f"Warning: Asset file not found at {asset_file_path}")
@@ -63,7 +61,7 @@ with (
     agent = project_client.agents.create_version(
         agent_name="StreamingFileSearchAgent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that can search through product information and provide detailed responses. Use the file search tool to find relevant information before answering.",
             tools=[FileSearchTool(vector_store_ids=[vector_store.id])],
         ),
@@ -103,7 +101,7 @@ with (
         elif event.type == "response.text.done":
             print(f"\nResponse done with full message: {event.text}")
         elif event.type == "response.completed":
-            print(f"\nResponse completed!")
+            print("\nResponse completed!")
             print(f"Full response: {event.response.output_text}")
 
     print("\n" + "=" * 60)
@@ -129,7 +127,7 @@ with (
         elif event.type == "response.output_text.delta":
             print(f"Delta: {event.delta}")
         elif event.type == "response.text.done":
-            print(f"\nFollow-up response done!")
+            print("\nFollow-up response done!")
         elif event.type == "response.output_item.done":
             if event.item.type == "message":
                 item = event.item
@@ -139,7 +137,7 @@ with (
                         if annotation.type == "file_citation":
                             print(f"File Citation - Filename: {annotation.filename}, File ID: {annotation.file_id}")
         elif event.type == "response.completed":
-            print(f"\nFollow-up completed!")
+            print("\nFollow-up completed!")
             print(f"Agent response: {event.response.output_text}")
 
     # Clean up resources
@@ -155,7 +153,7 @@ with (
     try:
         openai_client.vector_stores.delete(vector_store.id)
         print("Vector store deleted")
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         print(f"Warning: Could not delete vector store: {e}")
 
 print("\nFile search streaming sample completed!")

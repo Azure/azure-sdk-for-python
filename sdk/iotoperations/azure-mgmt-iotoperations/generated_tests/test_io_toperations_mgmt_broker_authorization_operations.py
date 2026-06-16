@@ -58,6 +58,7 @@ class TestIoTOperationsMgmtBrokerAuthorizationOperations(AzureMgmtRecordedTestCa
                             }
                         ],
                     },
+                    "healthState": "str",
                     "provisioningState": "str",
                 },
                 "systemData": {

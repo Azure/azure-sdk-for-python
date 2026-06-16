@@ -11,7 +11,7 @@ from ...credentials import AccessTokenInfo, TokenRequestOptions
 from ..pipeline import PipelineRequest, PipelineResponse
 from ..pipeline._tools_async import await_result
 from ._base_async import AsyncHTTPPolicy
-from ._authentication import _BearerTokenCredentialPolicyBase
+from ._authentication import _enforce_https
 from ...rest import AsyncHttpResponse, HttpRequest
 from ...exceptions import HttpResponseError
 from ...utils._utils import get_running_async_lock
@@ -72,7 +72,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         # If auth_flows is an empty list, we should not attempt to authorize the request.
         if auth_flows is not None and len(auth_flows) == 0:
             return
-        _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
+        _enforce_https(request)
 
         if self._token is None or self._need_new_token:
             async with self._lock:

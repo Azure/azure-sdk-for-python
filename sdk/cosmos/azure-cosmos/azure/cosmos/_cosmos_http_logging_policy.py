@@ -400,8 +400,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 request.context.pop("logger_attributes", None)
 
             except Exception as err:  # pylint: disable=broad-except
-                logger.warning("Failed to log request: %s",
-                               repr(err))  # pylint: disable=do-not-log-exceptions-if-not-debug
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to log request: %s", repr(err))
             return
         super().on_request(request)
 
@@ -496,8 +496,8 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     log_string += "\nResponse error message: {}".format(_format_error(http_response.text()))
                 logger.info(log_string, extra=log_data)
             except Exception as err:  # pylint: disable=broad-except
-                logger.warning("Failed to log response: %s", repr(err),
-                               extra=log_data)  # pylint: disable=do-not-log-exceptions-if-not-debug
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to log response: %s", repr(err), extra=log_data)
             return
         super().on_response(request, response)
 

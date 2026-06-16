@@ -23,14 +23,22 @@ from azure.core.pipeline.policies import (
     RequestIdPolicy,
     CustomHookPolicy,
     NetworkTraceLoggingPolicy,
+    SansIOHTTPPolicy,
 )
 from azure.core.rest import HttpRequest
 
 from ._authentication_async import _configure_credential
 from .._common_conversion import _is_cosmos_endpoint, _get_account
 from .._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
-from .._generated.aio import AzureTable
-from .._base_client import extract_batch_part_metadata, parse_query, format_query_string, get_api_version, AudienceType
+from .._generated.aio import AzureTableClient as _AzureTableClient
+from .._base_client import (
+    extract_batch_part_metadata,
+    parse_query,
+    format_query_string,
+    get_api_version,
+    AudienceType,
+    _NoOpCredential,
+)
 from .._error import (
     RequestTooLargeError,
     TableTransactionError,
@@ -124,10 +132,16 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
-        self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
+        self._client = _AzureTableClient(
+            self.url,
+            credential=credential or _NoOpCredential(),  # type: ignore[arg-type]
+            policies=kwargs.pop("policies", self._policies),
+            authentication_policy=kwargs.pop("authentication_policy", SansIOHTTPPolicy()),
+            **kwargs,
+        )
         # Incompatible assignment when assigning a str value to a Literal type variable
-        self._client._config.version = get_api_version(
-            api_version, self._client._config.version
+        self._client._config.api_version = get_api_version(
+            api_version, self._client._config.api_version
         )  # type: ignore[assignment]
 
     @property
@@ -194,7 +208,7 @@ class AsyncTablesBaseClient:  # pylint: disable=too-many-instance-attributes
         :return: The Storage API version.
         :type: str
         """
-        return self._client._config.version  # pylint: disable=protected-access
+        return self._client._config.api_version  # pylint: disable=protected-access
 
     async def __aenter__(self) -> Self:
         await self._client.__aenter__()

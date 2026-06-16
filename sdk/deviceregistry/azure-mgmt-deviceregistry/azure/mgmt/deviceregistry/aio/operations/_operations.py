@@ -52,6 +52,12 @@ from ...operations._operations import (
     build_assets_update_request,
     build_billing_containers_get_request,
     build_billing_containers_list_by_subscription_request,
+    build_credentials_create_or_update_request,
+    build_credentials_delete_request,
+    build_credentials_get_request,
+    build_credentials_list_by_resource_group_request,
+    build_credentials_synchronize_request,
+    build_credentials_update_request,
     build_namespace_assets_create_or_replace_request,
     build_namespace_assets_delete_request,
     build_namespace_assets_get_request,
@@ -61,6 +67,7 @@ from ...operations._operations import (
     build_namespace_devices_delete_request,
     build_namespace_devices_get_request,
     build_namespace_devices_list_by_resource_group_request,
+    build_namespace_devices_revoke_request,
     build_namespace_devices_update_request,
     build_namespace_discovered_assets_create_or_replace_request,
     build_namespace_discovered_assets_delete_request,
@@ -81,6 +88,13 @@ from ...operations._operations import (
     build_namespaces_update_request,
     build_operation_status_get_request,
     build_operations_list_request,
+    build_policies_activate_bring_your_own_root_request,
+    build_policies_create_or_update_request,
+    build_policies_delete_request,
+    build_policies_get_request,
+    build_policies_list_by_resource_group_request,
+    build_policies_revoke_issuer_request,
+    build_policies_update_request,
     build_schema_registries_create_or_replace_request,
     build_schema_registries_delete_request,
     build_schema_registries_get_request,
@@ -181,7 +195,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -197,7 +214,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -260,6 +280,7 @@ class OperationStatusOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -274,11 +295,14 @@ class OperationStatusOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.OperationStatusResult, response.json())
 
@@ -344,6 +368,7 @@ class AssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -358,11 +383,14 @@ class AssetsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Asset, response.json())
 
@@ -410,6 +438,7 @@ class AssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -423,7 +452,10 @@ class AssetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -433,7 +465,7 @@ class AssetsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -638,6 +670,7 @@ class AssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -651,7 +684,10 @@ class AssetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -659,7 +695,7 @@ class AssetsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -852,6 +888,7 @@ class AssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -865,7 +902,10 @@ class AssetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -873,7 +913,7 @@ class AssetsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1002,7 +1042,10 @@ class AssetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Asset], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Asset],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1018,7 +1061,10 @@ class AssetsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1086,7 +1132,10 @@ class AssetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Asset], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Asset],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1102,7 +1151,10 @@ class AssetsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1168,6 +1220,7 @@ class AssetEndpointProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1182,11 +1235,14 @@ class AssetEndpointProfilesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AssetEndpointProfile, response.json())
 
@@ -1238,6 +1294,7 @@ class AssetEndpointProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1251,7 +1308,10 @@ class AssetEndpointProfilesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1261,7 +1321,7 @@ class AssetEndpointProfilesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1474,6 +1534,7 @@ class AssetEndpointProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1487,7 +1548,10 @@ class AssetEndpointProfilesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1495,7 +1559,7 @@ class AssetEndpointProfilesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1695,6 +1759,7 @@ class AssetEndpointProfilesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1708,7 +1773,10 @@ class AssetEndpointProfilesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1716,7 +1784,7 @@ class AssetEndpointProfilesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1850,7 +1918,10 @@ class AssetEndpointProfilesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AssetEndpointProfile], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AssetEndpointProfile],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1866,7 +1937,10 @@ class AssetEndpointProfilesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1935,7 +2009,10 @@ class AssetEndpointProfilesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AssetEndpointProfile], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.AssetEndpointProfile],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1951,7 +2028,10 @@ class AssetEndpointProfilesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1980,7 +2060,14 @@ class BillingContainersOperations:
     @api_version_validation(
         method_added_on="2024-09-01-preview",
         params_added_on={"2024-09-01-preview": ["api_version", "subscription_id", "billing_container_name", "accept"]},
-        api_versions_list=["2024-09-01-preview", "2024-11-01", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2024-11-01",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def get(self, billing_container_name: str, **kwargs: Any) -> _models.BillingContainer:
         """Get a BillingContainer.
@@ -2016,6 +2103,7 @@ class BillingContainersOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2030,11 +2118,14 @@ class BillingContainersOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BillingContainer, response.json())
 
@@ -2047,7 +2138,14 @@ class BillingContainersOperations:
     @api_version_validation(
         method_added_on="2024-09-01-preview",
         params_added_on={"2024-09-01-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2024-09-01-preview", "2024-11-01", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2024-11-01",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.BillingContainer"]:
         """List BillingContainer resources by subscription ID.
@@ -2110,7 +2208,10 @@ class BillingContainersOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.BillingContainer], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.BillingContainer],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2126,7 +2227,10 @@ class BillingContainersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2157,7 +2261,7 @@ class NamespacesOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def get(self, resource_group_name: str, namespace_name: str, **kwargs: Any) -> _models.Namespace:
         """Get a Namespace.
@@ -2197,6 +2301,7 @@ class NamespacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2211,11 +2316,14 @@ class NamespacesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Namespace, response.json())
 
@@ -2236,7 +2344,7 @@ class NamespacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _create_or_replace_initial(
         self,
@@ -2281,6 +2389,7 @@ class NamespacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2294,7 +2403,10 @@ class NamespacesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2304,7 +2416,7 @@ class NamespacesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2408,7 +2520,7 @@ class NamespacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_create_or_replace(
         self,
@@ -2496,7 +2608,7 @@ class NamespacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _update_initial(
         self,
@@ -2541,6 +2653,7 @@ class NamespacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2554,7 +2667,10 @@ class NamespacesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2562,7 +2678,7 @@ class NamespacesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2666,7 +2782,7 @@ class NamespacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_update(
         self,
@@ -2747,7 +2863,7 @@ class NamespacesOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, namespace_name: str, **kwargs: Any
@@ -2778,6 +2894,7 @@ class NamespacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2791,7 +2908,10 @@ class NamespacesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2799,7 +2919,7 @@ class NamespacesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2812,7 +2932,7 @@ class NamespacesOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_delete(self, resource_group_name: str, namespace_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a Namespace.
@@ -2874,7 +2994,7 @@ class NamespacesOperations:
     @api_version_validation(
         method_added_on="2025-07-01-preview",
         params_added_on={"2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Namespace"]:
         """List Namespace resources by resource group.
@@ -2940,7 +3060,10 @@ class NamespacesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Namespace], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Namespace],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2956,7 +3079,10 @@ class NamespacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2967,7 +3093,7 @@ class NamespacesOperations:
     @api_version_validation(
         method_added_on="2025-07-01-preview",
         params_added_on={"2025-07-01-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.Namespace"]:
         """List Namespace resources by subscription ID.
@@ -3029,7 +3155,10 @@ class NamespacesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Namespace], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Namespace],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3045,7 +3174,10 @@ class NamespacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3064,7 +3196,7 @@ class NamespacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _migrate_initial(
         self,
@@ -3109,6 +3241,7 @@ class NamespacesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3122,7 +3255,10 @@ class NamespacesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3133,7 +3269,7 @@ class NamespacesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3234,7 +3370,7 @@ class NamespacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_migrate(
         self,
@@ -3305,6 +3441,2344 @@ class NamespacesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
+class CredentialsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.deviceregistry.aio.DeviceRegistryMgmtClient`'s
+        :attr:`credentials` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DeviceRegistryMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-01-preview",
+        params_added_on={
+            "2025-11-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name", "accept"]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+    )
+    async def get(self, resource_group_name: str, namespace_name: str, **kwargs: Any) -> _models.Credential:
+        """Get a Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :return: Credential. The Credential is compatible with MutableMapping
+        :rtype: ~azure.mgmt.deviceregistry.models.Credential
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Credential] = kwargs.pop("cls", None)
+
+        _request = build_credentials_get_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Credential, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-11-01-preview",
+        params_added_on={
+            "2025-11-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        resource: Union[_models.Credential, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_credentials_create_or_update_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        resource: _models.Credential,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Credential]:
+        """Create a Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.deviceregistry.models.Credential
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Credential. The Credential is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Credential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Credential]:
+        """Create a Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Credential. The Credential is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Credential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Credential]:
+        """Create a Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Credential. The Credential is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Credential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-01-preview",
+        params_added_on={
+            "2025-11-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        resource: Union[_models.Credential, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Credential]:
+        """Create a Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param resource: Resource create parameters. Is one of the following types: Credential, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.mgmt.deviceregistry.models.Credential or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns Credential. The Credential is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Credential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Credential] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Credential, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Credential].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Credential](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2025-11-01-preview",
+        params_added_on={
+            "2025-11-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name"]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, namespace_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_credentials_delete_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-01-preview",
+        params_added_on={
+            "2025-11-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name"]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+    )
+    async def begin_delete(self, resource_group_name: str, namespace_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        """Delete a Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2025-11-01-preview",
+        params_added_on={
+            "2025-11-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        properties: Union[_models.CredentialUpdate, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_credentials_update_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        properties: _models.CredentialUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Credential]:
+        """Update a Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.deviceregistry.models.CredentialUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Credential. The Credential is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Credential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        properties: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Credential]:
+        """Update a Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Credential. The Credential is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Credential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Credential]:
+        """Update a Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Credential. The Credential is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Credential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-01-preview",
+        params_added_on={
+            "2025-11-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        properties: Union[_models.CredentialUpdate, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Credential]:
+        """Update a Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param properties: The resource properties to be updated. Is one of the following types:
+         CredentialUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.deviceregistry.models.CredentialUpdate or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns Credential. The Credential is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Credential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Credential] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Credential, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Credential].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Credential](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-01-preview",
+        params_added_on={
+            "2025-11-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name", "accept"]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, namespace_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.Credential"]:
+        """List Credential resources by Namespace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :return: An iterator like instance of Credential
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.deviceregistry.models.Credential]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Credential]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_credentials_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    namespace_name=namespace_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Credential],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2025-11-01-preview",
+        params_added_on={
+            "2025-11-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name"]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+    )
+    async def _synchronize_initial(
+        self, resource_group_name: str, namespace_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_credentials_synchronize_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-01-preview",
+        params_added_on={
+            "2025-11-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name"]
+        },
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+    )
+    async def begin_synchronize(
+        self, resource_group_name: str, namespace_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """A long-running resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._synchronize_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class PoliciesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.deviceregistry.aio.DeviceRegistryMgmtClient`'s
+        :attr:`policies` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DeviceRegistryMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def get(
+        self, resource_group_name: str, namespace_name: str, policy_name: str, **kwargs: Any
+    ) -> _models.Policy:
+        """Get a Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :return: Policy. The Policy is compatible with MutableMapping
+        :rtype: ~azure.mgmt.deviceregistry.models.Policy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Policy] = kwargs.pop("cls", None)
+
+        _request = build_policies_get_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            policy_name=policy_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Policy, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        resource: Union[_models.Policy, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_policies_create_or_update_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            policy_name=policy_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        resource: _models.Policy,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Policy]:
+        """Create a Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.deviceregistry.models.Policy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Policy. The Policy is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Policy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        resource: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Policy]:
+        """Create a Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Policy. The Policy is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Policy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Policy]:
+        """Create a Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Policy. The Policy is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Policy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        resource: Union[_models.Policy, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Policy]:
+        """Create a Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param resource: Resource create parameters. Is one of the following types: Policy, JSON,
+         IO[bytes] Required.
+        :type resource: ~azure.mgmt.deviceregistry.models.Policy or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns Policy. The Policy is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Policy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Policy] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                policy_name=policy_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Policy, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Policy].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Policy](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, namespace_name: str, policy_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_policies_delete_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            policy_name=policy_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, namespace_name: str, policy_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                policy_name=policy_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        properties: Union[_models.PolicyUpdate, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_policies_update_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            policy_name=policy_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        properties: _models.PolicyUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Policy]:
+        """Update a Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.deviceregistry.models.PolicyUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Policy. The Policy is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Policy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        properties: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Policy]:
+        """Update a Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Policy. The Policy is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Policy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Policy]:
+        """Update a Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Policy. The Policy is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Policy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        properties: Union[_models.PolicyUpdate, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Policy]:
+        """Update a Policy.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param properties: The resource properties to be updated. Is one of the following types:
+         PolicyUpdate, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.deviceregistry.models.PolicyUpdate or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns Policy. The Policy is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.deviceregistry.models.Policy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Policy] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                policy_name=policy_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Policy, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Policy].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Policy](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name", "accept"]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, namespace_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.Policy"]:
+        """List Policy resources by Credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :return: An iterator like instance of Policy
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.deviceregistry.models.Policy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Policy]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policies_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    namespace_name=namespace_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Policy],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def _revoke_issuer_initial(
+        self, resource_group_name: str, namespace_name: str, policy_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_policies_revoke_issuer_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            policy_name=policy_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def begin_revoke_issuer(
+        self, resource_group_name: str, namespace_name: str, policy_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """A long-running resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._revoke_issuer_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                policy_name=policy_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def _activate_bring_your_own_root_initial(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        body: Union[_models.ActivateBringYourOwnRootRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_policies_activate_bring_your_own_root_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            policy_name=policy_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_activate_bring_your_own_root(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        body: _models.ActivateBringYourOwnRootRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Activates or renews a Bring Your Own Root policy by accepting a customer-provided signed
+        certificate. This is a long-running operation that returns no content upon completion.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.deviceregistry.models.ActivateBringYourOwnRootRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_activate_bring_your_own_root(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Activates or renews a Bring Your Own Root policy by accepting a customer-provided signed
+        certificate. This is a long-running operation that returns no content upon completion.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_activate_bring_your_own_root(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Activates or renews a Bring Your Own Root policy by accepting a customer-provided signed
+        certificate. This is a long-running operation that returns no content upon completion.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "policy_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def begin_activate_bring_your_own_root(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        policy_name: str,
+        body: Union[_models.ActivateBringYourOwnRootRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Activates or renews a Bring Your Own Root policy by accepting a customer-provided signed
+        certificate. This is a long-running operation that returns no content upon completion.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param policy_name: The name of the Policy proxy resource. Required.
+        :type policy_name: str
+        :param body: The content of the action request. Is one of the following types:
+         ActivateBringYourOwnRootRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.deviceregistry.models.ActivateBringYourOwnRootRequest or JSON or
+         IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._activate_bring_your_own_root_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                policy_name=policy_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
 class NamespaceAssetsOperations:
     """
     .. warning::
@@ -3335,7 +5809,7 @@ class NamespaceAssetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def get(
         self, resource_group_name: str, namespace_name: str, asset_name: str, **kwargs: Any
@@ -3380,6 +5854,7 @@ class NamespaceAssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3394,11 +5869,14 @@ class NamespaceAssetsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NamespaceAsset, response.json())
 
@@ -3420,7 +5898,7 @@ class NamespaceAssetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _create_or_replace_initial(
         self,
@@ -3467,6 +5945,7 @@ class NamespaceAssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3480,7 +5959,10 @@ class NamespaceAssetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3490,7 +5972,7 @@ class NamespaceAssetsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3604,7 +6086,7 @@ class NamespaceAssetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_create_or_replace(
         self,
@@ -3697,7 +6179,7 @@ class NamespaceAssetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _update_initial(
         self,
@@ -3744,6 +6226,7 @@ class NamespaceAssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3757,7 +6240,10 @@ class NamespaceAssetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -3765,7 +6251,7 @@ class NamespaceAssetsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -3879,7 +6365,7 @@ class NamespaceAssetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_update(
         self,
@@ -3970,7 +6456,7 @@ class NamespaceAssetsOperations:
                 "asset_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, namespace_name: str, asset_name: str, **kwargs: Any
@@ -4002,6 +6488,7 @@ class NamespaceAssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4015,7 +6502,10 @@ class NamespaceAssetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4023,7 +6513,7 @@ class NamespaceAssetsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4042,7 +6532,7 @@ class NamespaceAssetsOperations:
                 "asset_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, namespace_name: str, asset_name: str, **kwargs: Any
@@ -4111,7 +6601,7 @@ class NamespaceAssetsOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, namespace_name: str, **kwargs: Any
@@ -4183,7 +6673,10 @@ class NamespaceAssetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NamespaceAsset], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NamespaceAsset],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -4199,7 +6692,10 @@ class NamespaceAssetsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -4237,7 +6733,7 @@ class NamespaceDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def get(
         self, resource_group_name: str, namespace_name: str, device_name: str, **kwargs: Any
@@ -4282,6 +6778,7 @@ class NamespaceDevicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4296,11 +6793,14 @@ class NamespaceDevicesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NamespaceDevice, response.json())
 
@@ -4322,7 +6822,7 @@ class NamespaceDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _create_or_replace_initial(
         self,
@@ -4369,6 +6869,7 @@ class NamespaceDevicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4382,7 +6883,10 @@ class NamespaceDevicesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4392,7 +6896,7 @@ class NamespaceDevicesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4506,7 +7010,7 @@ class NamespaceDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_create_or_replace(
         self,
@@ -4599,7 +7103,7 @@ class NamespaceDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _update_initial(
         self,
@@ -4646,6 +7150,7 @@ class NamespaceDevicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4659,7 +7164,10 @@ class NamespaceDevicesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4667,7 +7175,7 @@ class NamespaceDevicesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4781,7 +7289,7 @@ class NamespaceDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_update(
         self,
@@ -4872,7 +7380,7 @@ class NamespaceDevicesOperations:
                 "device_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, namespace_name: str, device_name: str, **kwargs: Any
@@ -4904,6 +7412,7 @@ class NamespaceDevicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4917,7 +7426,10 @@ class NamespaceDevicesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -4925,7 +7437,7 @@ class NamespaceDevicesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -4944,7 +7456,7 @@ class NamespaceDevicesOperations:
                 "device_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, namespace_name: str, device_name: str, **kwargs: Any
@@ -5013,7 +7525,7 @@ class NamespaceDevicesOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, namespace_name: str, **kwargs: Any
@@ -5085,7 +7597,10 @@ class NamespaceDevicesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NamespaceDevice], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NamespaceDevice],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5101,12 +7616,289 @@ class NamespaceDevicesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "device_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def _revoke_initial(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        device_name: str,
+        body: Union[_models.DeviceCredentialsRevokeRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_namespace_devices_revoke_request(
+            resource_group_name=resource_group_name,
+            namespace_name=namespace_name,
+            device_name=device_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_revoke(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        device_name: str,
+        body: _models.DeviceCredentialsRevokeRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """A long-running resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param device_name: The name of the device. Required.
+        :type device_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.deviceregistry.models.DeviceCredentialsRevokeRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_revoke(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        device_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """A long-running resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param device_name: The name of the device. Required.
+        :type device_name: str
+        :param body: The content of the action request. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_revoke(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        device_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """A long-running resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param device_name: The name of the device. Required.
+        :type device_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01-preview",
+        params_added_on={
+            "2026-03-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "namespace_name",
+                "device_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01-preview"],
+    )
+    async def begin_revoke(
+        self,
+        resource_group_name: str,
+        namespace_name: str,
+        device_name: str,
+        body: Union[_models.DeviceCredentialsRevokeRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """A long-running resource action.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param namespace_name: The name of the namespace. Required.
+        :type namespace_name: str
+        :param device_name: The name of the device. Required.
+        :type device_name: str
+        :param body: The content of the action request. Is one of the following types:
+         DeviceCredentialsRevokeRequest, JSON, IO[bytes] Required.
+        :type body: ~azure.mgmt.deviceregistry.models.DeviceCredentialsRevokeRequest or JSON or
+         IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._revoke_initial(
+                resource_group_name=resource_group_name,
+                namespace_name=namespace_name,
+                device_name=device_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
 class NamespaceDiscoveredAssetsOperations:
@@ -5139,7 +7931,7 @@ class NamespaceDiscoveredAssetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def get(
         self, resource_group_name: str, namespace_name: str, discovered_asset_name: str, **kwargs: Any
@@ -5185,6 +7977,7 @@ class NamespaceDiscoveredAssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5199,11 +7992,14 @@ class NamespaceDiscoveredAssetsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NamespaceDiscoveredAsset, response.json())
 
@@ -5225,7 +8021,7 @@ class NamespaceDiscoveredAssetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _create_or_replace_initial(
         self,
@@ -5272,6 +8068,7 @@ class NamespaceDiscoveredAssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5285,7 +8082,10 @@ class NamespaceDiscoveredAssetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5295,7 +8095,7 @@ class NamespaceDiscoveredAssetsOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5412,7 +8212,7 @@ class NamespaceDiscoveredAssetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_create_or_replace(
         self,
@@ -5506,7 +8306,7 @@ class NamespaceDiscoveredAssetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _update_initial(
         self,
@@ -5553,6 +8353,7 @@ class NamespaceDiscoveredAssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5566,7 +8367,10 @@ class NamespaceDiscoveredAssetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5574,7 +8378,7 @@ class NamespaceDiscoveredAssetsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5691,7 +8495,7 @@ class NamespaceDiscoveredAssetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_update(
         self,
@@ -5784,7 +8588,7 @@ class NamespaceDiscoveredAssetsOperations:
                 "discovered_asset_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, namespace_name: str, discovered_asset_name: str, **kwargs: Any
@@ -5816,6 +8620,7 @@ class NamespaceDiscoveredAssetsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5829,7 +8634,10 @@ class NamespaceDiscoveredAssetsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -5837,7 +8645,7 @@ class NamespaceDiscoveredAssetsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -5856,7 +8664,7 @@ class NamespaceDiscoveredAssetsOperations:
                 "discovered_asset_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, namespace_name: str, discovered_asset_name: str, **kwargs: Any
@@ -5925,7 +8733,7 @@ class NamespaceDiscoveredAssetsOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, namespace_name: str, **kwargs: Any
@@ -5997,7 +8805,10 @@ class NamespaceDiscoveredAssetsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NamespaceDiscoveredAsset], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NamespaceDiscoveredAsset],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6013,7 +8824,10 @@ class NamespaceDiscoveredAssetsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6051,7 +8865,7 @@ class NamespaceDiscoveredDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def get(
         self, resource_group_name: str, namespace_name: str, discovered_device_name: str, **kwargs: Any
@@ -6097,6 +8911,7 @@ class NamespaceDiscoveredDevicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6111,11 +8926,14 @@ class NamespaceDiscoveredDevicesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.NamespaceDiscoveredDevice, response.json())
 
@@ -6137,7 +8955,7 @@ class NamespaceDiscoveredDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _create_or_replace_initial(
         self,
@@ -6184,6 +9002,7 @@ class NamespaceDiscoveredDevicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6197,7 +9016,10 @@ class NamespaceDiscoveredDevicesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -6207,7 +9029,7 @@ class NamespaceDiscoveredDevicesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6324,7 +9146,7 @@ class NamespaceDiscoveredDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_create_or_replace(
         self,
@@ -6419,7 +9241,7 @@ class NamespaceDiscoveredDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _update_initial(
         self,
@@ -6466,6 +9288,7 @@ class NamespaceDiscoveredDevicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6479,7 +9302,10 @@ class NamespaceDiscoveredDevicesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -6487,7 +9313,7 @@ class NamespaceDiscoveredDevicesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6604,7 +9430,7 @@ class NamespaceDiscoveredDevicesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_update(
         self,
@@ -6697,7 +9523,7 @@ class NamespaceDiscoveredDevicesOperations:
                 "discovered_device_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, namespace_name: str, discovered_device_name: str, **kwargs: Any
@@ -6729,6 +9555,7 @@ class NamespaceDiscoveredDevicesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6742,7 +9569,10 @@ class NamespaceDiscoveredDevicesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -6750,7 +9580,7 @@ class NamespaceDiscoveredDevicesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -6769,7 +9599,7 @@ class NamespaceDiscoveredDevicesOperations:
                 "discovered_device_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, namespace_name: str, discovered_device_name: str, **kwargs: Any
@@ -6838,7 +9668,7 @@ class NamespaceDiscoveredDevicesOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "namespace_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     def list_by_resource_group(
         self, resource_group_name: str, namespace_name: str, **kwargs: Any
@@ -6910,7 +9740,10 @@ class NamespaceDiscoveredDevicesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.NamespaceDiscoveredDevice], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.NamespaceDiscoveredDevice],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -6926,7 +9759,10 @@ class NamespaceDiscoveredDevicesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -6963,7 +9799,13 @@ class SchemaRegistriesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def get(self, resource_group_name: str, schema_registry_name: str, **kwargs: Any) -> _models.SchemaRegistry:
         """Get a SchemaRegistry.
@@ -7003,6 +9845,7 @@ class SchemaRegistriesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7017,11 +9860,14 @@ class SchemaRegistriesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SchemaRegistry, response.json())
 
@@ -7042,7 +9888,13 @@ class SchemaRegistriesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def _create_or_replace_initial(
         self,
@@ -7087,6 +9939,7 @@ class SchemaRegistriesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7100,7 +9953,10 @@ class SchemaRegistriesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7110,7 +9966,7 @@ class SchemaRegistriesOperations:
             )
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7214,7 +10070,13 @@ class SchemaRegistriesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def begin_create_or_replace(
         self,
@@ -7302,7 +10164,13 @@ class SchemaRegistriesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def _update_initial(
         self,
@@ -7347,6 +10215,7 @@ class SchemaRegistriesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7360,7 +10229,10 @@ class SchemaRegistriesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7368,7 +10240,7 @@ class SchemaRegistriesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7472,7 +10344,13 @@ class SchemaRegistriesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def begin_update(
         self,
@@ -7553,7 +10431,13 @@ class SchemaRegistriesOperations:
         params_added_on={
             "2024-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "schema_registry_name"]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def _delete_initial(
         self, resource_group_name: str, schema_registry_name: str, **kwargs: Any
@@ -7584,6 +10468,7 @@ class SchemaRegistriesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7597,7 +10482,10 @@ class SchemaRegistriesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -7605,7 +10493,7 @@ class SchemaRegistriesOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -7618,7 +10506,13 @@ class SchemaRegistriesOperations:
         params_added_on={
             "2024-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "schema_registry_name"]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def begin_delete(
         self, resource_group_name: str, schema_registry_name: str, **kwargs: Any
@@ -7682,7 +10576,13 @@ class SchemaRegistriesOperations:
     @api_version_validation(
         method_added_on="2024-09-01-preview",
         params_added_on={"2024-09-01-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
@@ -7751,7 +10651,10 @@ class SchemaRegistriesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SchemaRegistry], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SchemaRegistry],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7767,7 +10670,10 @@ class SchemaRegistriesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -7778,7 +10684,13 @@ class SchemaRegistriesOperations:
     @api_version_validation(
         method_added_on="2024-09-01-preview",
         params_added_on={"2024-09-01-preview": ["api_version", "subscription_id", "accept"]},
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.SchemaRegistry"]:
         """List SchemaRegistry resources by subscription ID.
@@ -7841,7 +10753,10 @@ class SchemaRegistriesOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SchemaRegistry], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SchemaRegistry],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -7857,7 +10772,10 @@ class SchemaRegistriesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -7895,7 +10813,13 @@ class SchemasOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def get(
         self, resource_group_name: str, schema_registry_name: str, schema_name: str, **kwargs: Any
@@ -7940,6 +10864,7 @@ class SchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7954,11 +10879,14 @@ class SchemasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Schema, response.json())
 
@@ -8071,7 +10999,13 @@ class SchemasOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def create_or_replace(
         self,
@@ -8134,6 +11068,7 @@ class SchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8148,11 +11083,14 @@ class SchemasOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Schema, response.json())
 
@@ -8172,7 +11110,7 @@ class SchemasOperations:
                 "schema_name",
             ]
         },
-        api_versions_list=["2025-10-01"],
+        api_versions_list=["2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, schema_registry_name: str, schema_name: str, **kwargs: Any
@@ -8204,6 +11142,7 @@ class SchemasOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8217,7 +11156,10 @@ class SchemasOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -8225,7 +11167,7 @@ class SchemasOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8244,7 +11186,7 @@ class SchemasOperations:
                 "schema_name",
             ]
         },
-        api_versions_list=["2025-10-01"],
+        api_versions_list=["2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, schema_registry_name: str, schema_name: str, **kwargs: Any
@@ -8319,7 +11261,13 @@ class SchemasOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     def list_by_schema_registry(
         self, resource_group_name: str, schema_registry_name: str, **kwargs: Any
@@ -8390,7 +11338,10 @@ class SchemasOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Schema], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Schema],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -8406,7 +11357,10 @@ class SchemasOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -8445,7 +11399,13 @@ class SchemaVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def get(
         self,
@@ -8498,6 +11458,7 @@ class SchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8512,11 +11473,14 @@ class SchemaVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SchemaVersion, response.json())
 
@@ -8639,7 +11603,13 @@ class SchemaVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     async def create_or_replace(
         self,
@@ -8706,6 +11676,7 @@ class SchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8720,11 +11691,14 @@ class SchemaVersionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SchemaVersion, response.json())
 
@@ -8745,7 +11719,7 @@ class SchemaVersionsOperations:
                 "schema_version_name",
             ]
         },
-        api_versions_list=["2025-10-01"],
+        api_versions_list=["2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def _delete_initial(
         self,
@@ -8783,6 +11757,7 @@ class SchemaVersionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8796,7 +11771,10 @@ class SchemaVersionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -8804,7 +11782,7 @@ class SchemaVersionsOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8824,7 +11802,7 @@ class SchemaVersionsOperations:
                 "schema_version_name",
             ]
         },
-        api_versions_list=["2025-10-01"],
+        api_versions_list=["2025-10-01", "2025-11-01-preview", "2026-03-01-preview"],
     )
     async def begin_delete(
         self,
@@ -8908,7 +11886,13 @@ class SchemaVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-09-01-preview", "2025-07-01-preview", "2025-10-01"],
+        api_versions_list=[
+            "2024-09-01-preview",
+            "2025-07-01-preview",
+            "2025-10-01",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     def list_by_schema(
         self, resource_group_name: str, schema_registry_name: str, schema_name: str, **kwargs: Any
@@ -8983,7 +11967,10 @@ class SchemaVersionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SchemaVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SchemaVersion],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -8999,7 +11986,10 @@ class SchemaVersionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

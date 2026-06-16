@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=too-many-public-methods, unnecessary-lambda-assignment
 
 import os
 import unittest
@@ -11,19 +12,7 @@ from json import dumps, loads
 from unittest import mock
 
 import pytest
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
-from azure.storage.queue import BinaryBase64DecodePolicy, BinaryBase64EncodePolicy, VERSION
-from azure.storage.queue.aio import QueueServiceClient
-from azure.storage.queue._encryption import (
-    _dict_to_encryption_data,
-    _EncryptionAgent,
-    _EncryptionData,
-    _ERROR_OBJECT_INVALID,
-    _GCM_NONCE_LENGTH,
-    _GCM_TAG_LENGTH,
-    _validate_and_unwrap_cek,
-    _WrappedContentKey,
-)
+
 from cryptography.hazmat import backends
 from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -35,6 +24,25 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import QueuePreparer
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.queue import (
+    BinaryBase64DecodePolicy,
+    BinaryBase64EncodePolicy,
+    VERSION,
+)
+from azure.storage.queue.aio import QueueServiceClient
+from azure.storage.queue._encryption import (
+    _dict_to_encryption_data,
+    _EncryptionAgent,
+    _EncryptionData,
+    _ERROR_OBJECT_INVALID,
+    _GCM_NONCE_LENGTH,
+    _GCM_TAG_LENGTH,
+    _validate_and_unwrap_cek,
+    _WrappedContentKey,
+)
+
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "encryptionqueue"
@@ -58,7 +66,7 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
     async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, **kwargs):
         queue = self._get_queue_reference(qsc, prefix, **kwargs)
         try:
-            created = await queue.create_queue()
+            await queue.create_queue()
         except ResourceExistsError:
             pass
         return queue
@@ -189,7 +197,7 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         list_result1.content = "Updated"
 
         # Act
-        message = await queue.update_message(list_result1)
+        await queue.update_message(list_result1)
         async for m in queue.receive_messages():
             messages.append(m)
         list_result2 = messages[0]
@@ -206,7 +214,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         # Arrange
         queue = await self._create_queue(
-            qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy()
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         )
         queue.key_encryption_key = KeyWrapper("key1")
 
@@ -305,7 +315,7 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError) as e:
             await queue.send_message("message")
 
-        assert str(e.value.args[0]), _ERROR_OBJECT_INVALID.format("key encryption key" == "get_kid")
+        assert str(e.value.args[0]) == _ERROR_OBJECT_INVALID.format("key encryption key", "get_kid")
 
         queue.key_encryption_key = KeyWrapper("key1")
         queue.key_encryption_key.get_kid = None
@@ -446,7 +456,8 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
 
         message = message["EncryptedMessageContents"]
         content_encryption_key = kek.unwrap_key(
-            encryption_data.wrapped_content_key.encrypted_key, encryption_data.wrapped_content_key.algorithm
+            encryption_data.wrapped_content_key.encrypted_key,
+            encryption_data.wrapped_content_key.algorithm,
         )
 
         # Create decryption cipher
@@ -676,7 +687,9 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
             key_encryption_key=KeyWrapper("key1"),
         )
         queue = await self._create_queue(
-            qsc, message_encode_policy=BinaryBase64EncodePolicy(), message_decode_policy=BinaryBase64DecodePolicy()
+            qsc,
+            message_encode_policy=BinaryBase64EncodePolicy(),
+            message_decode_policy=BinaryBase64DecodePolicy(),
         )
         queue.key_encryption_key = KeyWrapper("key1")
 

@@ -34,7 +34,7 @@ class CatalogTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Microsoft Planetary Computer Pro GeoCatalog tier."""
 
     BASIC = "Basic"
-    """The basic tier that utilizes shared resources across catalog instances"""
+    """The basic tier that utilizes shared resources across catalog instances."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

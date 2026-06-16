@@ -19,7 +19,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project.
     2) CONNECTION_NAME - Optional. The name of the Azure Storage Account connection to use for uploading files.
     3) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
@@ -39,7 +39,7 @@ from azure.storage.blob import ContainerClient
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 connection_name = os.environ.get("CONNECTION_NAME")
 dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
 dataset_version = os.environ.get("DATASET_VERSION", "1.0")

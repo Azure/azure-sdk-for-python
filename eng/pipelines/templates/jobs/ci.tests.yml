@@ -20,10 +20,7 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
-  - name: ToxEnvParallel
-    type: string
-    default: 'all'
-  - name: UnsupportedToxEnvironments
+  - name: UnsupportedChecks
     type: string
     default: ''
   - name: InjectedPackages
@@ -96,10 +93,6 @@ jobs:
         Paths:
           - '**'
 
-    # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
-    # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
-    - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
-
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -118,8 +111,7 @@ jobs:
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        ToxTestEnv: $(toxenv)
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        CheckEnv: $(checks)
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
         TestPipeline: ${{ parameters.TestPipeline }}

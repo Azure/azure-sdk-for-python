@@ -226,7 +226,12 @@ class _SharedAccessHelper(object):
         self._add_query(QueryStringConstants.SIGNED_RESOURCE_TYPES, resource_types)
 
     def add_override_response_headers(
-        self, cache_control, content_disposition, content_encoding, content_language, content_type
+        self,
+        cache_control,
+        content_disposition,
+        content_encoding,
+        content_language,
+        content_type,
     ):
         self._add_query(QueryStringConstants.SIGNED_CACHE_CONTROL, cache_control)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_DISPOSITION, content_disposition)
@@ -275,7 +280,10 @@ class _SharedAccessHelper(object):
             + "\n"  # Signed Encryption Scope - always empty for queue
         )
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE, sign_string(account_key, string_to_sign))
+        self._add_query(
+            QueryStringConstants.SIGNED_SIGNATURE,
+            sign_string(account_key, string_to_sign),
+        )
         self.string_to_sign = string_to_sign
 
     def get_token(self) -> str:

@@ -42,7 +42,12 @@ class TestStandbyPoolMgmtStandbyVirtualMachinePoolsOperations(AzureMgmtRecordedT
                 "properties": {
                     "virtualMachineState": "str",
                     "attachedVirtualMachineScaleSetId": "str",
-                    "elasticityProfile": {"maxReadyCapacity": 0, "minReadyCapacity": 0},
+                    "elasticityProfile": {
+                        "maxReadyCapacity": 0,
+                        "dynamicSizing": {"enabled": bool},
+                        "minReadyCapacity": 0,
+                        "postProvisioningDelay": "str",
+                    },
                     "provisioningState": "str",
                 },
                 "systemData": {
@@ -81,7 +86,12 @@ class TestStandbyPoolMgmtStandbyVirtualMachinePoolsOperations(AzureMgmtRecordedT
             properties={
                 "properties": {
                     "attachedVirtualMachineScaleSetId": "str",
-                    "elasticityProfile": {"maxReadyCapacity": 0, "minReadyCapacity": 0},
+                    "elasticityProfile": {
+                        "maxReadyCapacity": 0,
+                        "dynamicSizing": {"enabled": bool},
+                        "minReadyCapacity": 0,
+                        "postProvisioningDelay": "str",
+                    },
                     "virtualMachineState": "str",
                 },
                 "tags": {"str": "str"},

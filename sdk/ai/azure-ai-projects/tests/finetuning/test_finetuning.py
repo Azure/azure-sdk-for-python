@@ -5,9 +5,9 @@
 # ------------------------------------
 
 import os
-import pytest
 import time
 from pathlib import Path
+import pytest
 from test_base import (
     TestBase,
     servicePreparer,
@@ -318,7 +318,7 @@ class TestFineTuning(TestBase):
                 self._cleanup_test_file(openai_client, train_file.id)
                 self._cleanup_test_file(openai_client, validation_file.id)
 
-    def _extract_account_name_from_endpoint(self, project_endpoint, test_prefix):
+    def _extract_account_name_from_endpoint(self, project_endpoint: str) -> str:
         endpoint_clean = project_endpoint.replace("https://", "").replace("http://", "")
         if ".services.ai.azure.com" not in endpoint_clean:
             raise ValueError(
@@ -327,21 +327,27 @@ class TestFineTuning(TestBase):
         return endpoint_clean.split(".services.ai.azure.com")[0]
 
     def _test_deploy_and_infer_helper(
-        self, completed_job_id, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+        self,
+        completed_job_id: str,
+        deployment_format: str,
+        deployment_capacity: int,
+        test_prefix: str,
+        inference_content: str,
+        **kwargs,
     ):
         if not completed_job_id:
             pytest.skip(f"completed_job_id parameter not set - skipping {test_prefix} deploy and infer test")
 
         subscription_id = kwargs.get("azure_subscription_id")
         resource_group = kwargs.get("azure_resource_group")
-        project_endpoint = kwargs.get("azure_ai_project_endpoint")
+        project_endpoint = kwargs.get("foundry_project_endpoint")
 
         if not all([subscription_id, resource_group, project_endpoint]):
             pytest.skip(
-                f"Missing required environment variables for deployment (azure_subscription_id, azure_resource_group, azure_ai_project_endpoint) - skipping {test_prefix} deploy and infer test"
+                f"Missing required environment variables for deployment (azure_subscription_id, azure_resource_group, foundry_project_endpoint) - skipping {test_prefix} deploy and infer test"
             )
 
-        account_name = self._extract_account_name_from_endpoint(project_endpoint, test_prefix)
+        account_name = self._extract_account_name_from_endpoint(project_endpoint)
         print(f"[{test_prefix}] Account name: {account_name}")
 
         with self.create_client(**kwargs) as project_client:
@@ -653,6 +659,10 @@ class TestFineTuning(TestBase):
                 self._cleanup_test_file(openai_client, train_file.id)
                 self._cleanup_test_file(openai_client, validation_file.id)
 
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
+    )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_finetuning_pause_job(self, **kwargs):
@@ -683,6 +693,10 @@ class TestFineTuning(TestBase):
 
                 print(f"[test_finetuning_pause_job] Successfully paused and verified job: {running_job_id}")
 
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
+    )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_finetuning_resume_job(self, **kwargs):
