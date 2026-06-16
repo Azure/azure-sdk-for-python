@@ -131,7 +131,7 @@ class TestQuickpulse(unittest.TestCase):
         from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
         class _FakeCredential:
-            def get_token(self, *scopes, **kwargs): # pylint: disable=unused-argument
+            def get_token(self, *scopes, **kwargs):  # pylint: disable=unused-argument
                 return mock.MagicMock(token="fake", expires_on=9999999999)
 
         credential = _FakeCredential()
@@ -266,7 +266,7 @@ class TestQuickpulse(unittest.TestCase):
         update_filter_mock.assert_not_called()
 
     @mock.patch(
-        "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed" # pylint: disable=line-too-long
+        "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed"  # pylint: disable=line-too-long
     )
     def test_ping(self, ping_mock):
         ping_response = _Response(
@@ -282,14 +282,14 @@ class TestQuickpulse(unittest.TestCase):
 
     def test_ping_exception(self):
         with mock.patch(
-            "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed", # pylint: disable=line-too-long
+            "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed",  # pylint: disable=line-too-long
             throw(HttpResponseError),
         ):  # noqa: E501
             response = self._exporter._ping(monitoring_data_point=self._data_point)
             self.assertIsNone(response)
 
     @mock.patch(
-        "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed" # pylint: disable=line-too-long
+        "azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient.is_subscribed"  # pylint: disable=line-too-long
     )
     def test_ping_etag_response(self, ping_mock):
         ping_response = _Response(

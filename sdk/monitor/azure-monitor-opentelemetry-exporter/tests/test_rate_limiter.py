@@ -89,7 +89,7 @@ class TestTokenBucketRateLimiter(unittest.TestCase):
             try:
                 for _ in range(100):
                     limiter.try_consume(1)
-            except Exception as e: # pylint: disable=broad-exception-caught
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 errors.append(e)
 
         threads = [threading.Thread(target=consume) for _ in range(10)]
