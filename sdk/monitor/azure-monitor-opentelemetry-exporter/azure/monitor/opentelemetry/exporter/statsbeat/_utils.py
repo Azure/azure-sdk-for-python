@@ -3,8 +3,7 @@
 import os
 import logging
 import json
-import threading
-from collections.abc import Iterable, Callable, Iterator  # pylint: disable=import-error
+from collections.abc import Iterable  # pylint: disable=import-error
 from typing import Optional, Dict, List
 from opentelemetry.metrics import CallbackOptions, Observation
 
@@ -27,9 +26,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
     _REQUESTS_MAP_LOCK,
 )
-
-_ADDITIONAL_CALLBACKS: Dict[str, List[Callable[[CallbackOptions], Iterable[Observation]]]] = {}
-_ADDITIONAL_CALLBACKS_LOCK = threading.Lock()
 
 
 def _get_stats_connection_string(endpoint: str) -> str:
@@ -172,30 +168,31 @@ def _get_connection_string_for_region_from_config(target_region: str, settings: 
         return None
 
 
-def _iter_additional_observations(metric_name: str, options: CallbackOptions) -> Iterator[Observation]:
-    """Yield observations contributed via :func:`add_metric_callback`.
+def _get_additional_observations(metric_name: str, options: CallbackOptions) -> List[Observation]:
+    """Return observations contributed by extra callbacks registered on :class:`StatsbeatManager`.
 
     Invoked by the built-in ``_StatsbeatMetrics`` callbacks at collection time.
-    Snapshots the registered callbacks under the registry lock to avoid
-    mutation during iteration, then releases the lock before invoking user
-    callbacks (so they cannot deadlock against the registry). Exceptions raised
-    by individual callbacks are caught, logged, and skipped.
+    Reads ``StatsbeatManager()._additional_callbacks`` (a live mutable dict on the
+    singleton instance), which SDKs/distros populate directly. Exceptions raised by
+    individual callbacks are caught, logged, and skipped.
 
     :param metric_name: Name of the built-in statsbeat metric being collected.
     :type metric_name: str
     :param options: OpenTelemetry callback options forwarded to each registered callback.
     :type options: ~opentelemetry.metrics.CallbackOptions
-    :returns: Iterator over observations contributed by registered callbacks.
-    :rtype: Iterator[~opentelemetry.metrics.Observation]
+    :returns: List of observations contributed by registered callbacks.
+    :rtype: list[~opentelemetry.metrics.Observation]
     """
+    # Lazy import to avoid a circular import between _manager and _utils.
+    from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatManager  # pylint: disable=import-outside-toplevel
 
-    with _ADDITIONAL_CALLBACKS_LOCK:
-        callbacks = tuple(_ADDITIONAL_CALLBACKS.get(metric_name, ()))
+    callbacks = StatsbeatManager()._additional_callbacks.get(metric_name, ())  # pylint: disable=protected-access
 
+    observations: List[Observation] = []
     iter_logger = logging.getLogger(__name__)
     for cb in callbacks:
         try:
-            yield from cb(options)
+            observations.extend(cb(options))
         except Exception:  # pylint: disable=broad-except
             iter_logger.debug(
                 "Extra statsbeat callback %r for %r raised; skipping.",
@@ -203,3 +200,4 @@ def _iter_additional_observations(metric_name: str, options: CallbackOptions) ->
                 metric_name,
                 exc_info=True,
             )
+    return observations

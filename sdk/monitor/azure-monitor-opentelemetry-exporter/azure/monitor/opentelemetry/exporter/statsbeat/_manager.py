@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 import logging
 import threading
-from typing import Callable, Iterable, Optional, Any, Dict
+from typing import Callable, Iterable, List, Optional, Any, Dict
 
 from opentelemetry.metrics import CallbackOptions, Observation
 from opentelemetry.sdk.metrics import MeterProvider
@@ -20,8 +20,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._utils import (
     _get_stats_long_export_interval,
     _get_stats_short_export_interval,
     _get_connection_string_for_region_from_config,
-    _ADDITIONAL_CALLBACKS,
-    _ADDITIONAL_CALLBACKS_LOCK,
 )
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
@@ -163,6 +161,11 @@ class StatsbeatManager(metaclass=Singleton):
 
         # Set during first initialization, preserved in shutdown for potential re-initialization
         self._config: Optional[StatsbeatConfig] = None  # type: ignore
+
+        # Extra observation callbacks contributed by SDKs/distros. Keyed by built-in
+        # statsbeat metric name. Registered directly on the singleton instance, e.g.
+        # ``StatsbeatManager()._additional_callbacks.setdefault(name, []).append(cb)``.
+        self._additional_callbacks: Dict[str, List[Callable[[CallbackOptions], Iterable[Observation]]]] = {}
 
     @staticmethod
     def _validate_config(config: Optional[StatsbeatConfig]) -> bool:
@@ -381,24 +384,4 @@ class StatsbeatManager(metaclass=Singleton):
         with self._lock:
             return self._initialized
 
-    def add_metric_callback(
-        self,
-        metric_name: str,
-        callback: Callable[[CallbackOptions], Iterable[Observation]],
-    ) -> bool:
-        """Register an extra observation callback that an SDK/Distro with its own network sdkstats metric can use to
-        contribute rows to a built-in statsbeat metric.
 
-        :param metric_name: Name of the built-in statsbeat metric to extend.
-        :type metric_name: str
-        :param callback: OpenTelemetry observable-gauge callback ``(CallbackOptions) -> Iterable[Observation]``.
-        :type callback: Callable[[CallbackOptions], Iterable[Observation]]
-        :returns: ``True`` if newly registered, ``False`` if already registered.
-        :rtype: bool
-        """
-        with _ADDITIONAL_CALLBACKS_LOCK:
-            callbacks = _ADDITIONAL_CALLBACKS.setdefault(metric_name, [])
-            if callback in callbacks:
-                return False
-            callbacks.append(callback)
-            return True
