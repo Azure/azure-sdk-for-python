@@ -243,8 +243,8 @@ async def handler(
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         yield stream.emit_created()
         yield stream.emit_failed(
-            error_code="server_error",
-            error_message="Demo-mode crash trigger fired; process exiting in 300ms.",
+            code="server_error",
+            message="Demo-mode crash trigger fired; process exiting in 300ms.",
         )
         return
 
