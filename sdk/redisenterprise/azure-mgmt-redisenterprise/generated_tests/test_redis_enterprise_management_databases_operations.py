@@ -48,6 +48,7 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
                     "evictionPolicy": "str",
                     "geoReplication": {"groupNickname": "str", "linkedDatabases": [{"id": "str", "state": "str"}]},
                     "modules": [{"name": "str", "args": "str", "version": "str"}],
+                    "notifyKeyspaceEvents": "str",
                     "persistence": {
                         "aofEnabled": bool,
                         "aofFrequency": "str",
@@ -90,6 +91,7 @@ class TestRedisEnterpriseManagementDatabasesOperations(AzureMgmtRecordedTestCase
                     "evictionPolicy": "str",
                     "geoReplication": {"groupNickname": "str", "linkedDatabases": [{"id": "str", "state": "str"}]},
                     "modules": [{"name": "str", "args": "str", "version": "str"}],
+                    "notifyKeyspaceEvents": "str",
                     "persistence": {
                         "aofEnabled": bool,
                         "aofFrequency": "str",

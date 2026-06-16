@@ -5,11 +5,11 @@
 
 import os
 import tempfile
-from typing import Optional
 
 from devtools_testutils.perfstress_tests import RandomStream
 
 from ._test_base import _BlobTest
+
 
 class DownloadToFileTest(_BlobTest):
     _temp_file: str = ""
@@ -27,11 +27,11 @@ class DownloadToFileTest(_BlobTest):
         await super().cleanup()
 
     def run_sync(self):
-        with open(self._temp_file, 'wb') as f:
+        with open(self._temp_file, "wb") as f:
             stream = self.blob_client.download_blob(max_concurrency=self.args.max_concurrency)
             stream.readinto(f)
 
     async def run_async(self):
-        with open(self._temp_file, 'wb') as f:
+        with open(self._temp_file, "wb") as f:
             stream = await self.async_blob_client.download_blob(max_concurrency=self.args.max_concurrency)
             await stream.readinto(f)

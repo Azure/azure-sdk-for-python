@@ -118,6 +118,12 @@ class TestSampleGrantCopyAuth(ContentUnderstandingClientTestBase):
             from azure.core.credentials import AzureKeyCredential
             from azure.identity import DefaultAzureCredential
 
+            # Normalize the target endpoint by removing any trailing slash. The recorded
+            # ``target_endpoint`` variable may carry a trailing slash, which would otherwise
+            # produce a double slash (``//contentunderstanding``) in the request URL during
+            # playback and fail to match the recorded single-slash request.
+            target_endpoint = target_endpoint.rstrip("/")
+
             if target_endpoint != contentunderstanding_endpoint or target_key:
                 # Create target client with different endpoint/credential
                 if target_key:

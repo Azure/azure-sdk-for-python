@@ -7,10 +7,10 @@ import pytest
 from pytest_mock import MockFixture
 
 from azure.ai.ml import load_workspace
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import Workspace as RestWorkspace
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import (
     CustomerManagedKey,
@@ -227,7 +227,7 @@ class TestWorkspaceOperation:
             # Will return empty dict if serverless_compute_settings is None
             assert len(settings) == 0
         else:
-            RestServerlessComputeSettings.deserialize(settings) == serverless_compute_settings._to_rest_object()
+            RestServerlessComputeSettings._deserialize(settings, []) == serverless_compute_settings._to_rest_object()
 
     @pytest.mark.parametrize(
         "new_settings",

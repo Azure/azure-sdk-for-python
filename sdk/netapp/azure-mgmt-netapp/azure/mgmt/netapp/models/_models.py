@@ -1921,6 +1921,10 @@ class CacheProperties(_Model):
     :ivar write_back: Flag indicating whether writeback is enabled for the cache. Known values are:
      "Disabled" and "Enabled".
     :vartype write_back: str or ~azure.mgmt.netapp.models.EnableWriteBackState
+    :ivar file_access_logs: Flag indicating whether file access logs are enabled for the Cache,
+     based on active diagnostic settings present on the Cache. Known values are: "Enabled" and
+     "Disabled".
+    :vartype file_access_logs: str or ~azure.mgmt.netapp.models.CacheFileAccessLogs
     """
 
     file_path: str = rest_field(name="filePath", visibility=["read", "create"])
@@ -2024,6 +2028,11 @@ class CacheProperties(_Model):
     )
     """Flag indicating whether writeback is enabled for the cache. Known values are: \"Disabled\" and
      \"Enabled\"."""
+    file_access_logs: Optional[Union[str, "_models.CacheFileAccessLogs"]] = rest_field(
+        name="fileAccessLogs", visibility=["read"]
+    )
+    """Flag indicating whether file access logs are enabled for the Cache, based on active diagnostic
+     settings present on the Cache. Known values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(

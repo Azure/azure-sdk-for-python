@@ -9,7 +9,6 @@
 2. [Adding performance tests to an SDK](#adding-performance-tests-to-an-sdk)
     - [Writing a test](#writing-a-test)
     - [Writing a batch test](#writing-a-batch-test)
-    - [Adding legacy T1 tests](#adding-legacy-t1-tests)
 3. [Running the tests](#running-the-tests)
     - [Running the system tests](#running-the-system-tests)
 4. [Readme](#readme)
@@ -113,7 +112,6 @@ class PerfStressTest:
 
     async def run_async(self) -> None:
         # Must be implemented. This will be the perf test to be run asynchronously.
-        # If writing a test for an SDK without async support (e.g. a T1 legacy SDK), implement this method and raise an exception.
 
 ```
 ### The BatchPerfTest baseclass
@@ -133,7 +131,6 @@ class BatchPerfTest:
         # Run cumulative operation(s) asynchronously - i.e. an operation that results in more than a single logical result.
         # When inheriting from BatchPerfTest, this method will need to be implemented.
         # Must return the number of completed results represented by a single successful test run.
-        # If writing a test for an SDK without async support (e.g. a T1 legacy SDK), implement this method and raise an exception.
 
 ```
 ### The EventPerfTest baseclass
@@ -344,7 +341,7 @@ class UploadTest(_StorageStreamTestBase):
         # Setup service clients
         blob_name = "uploadtest"
         self.blob_client = self.service_client.get_blob_client(self.container_name, blob_name)
-        self.async_blob_client = self.async_serive_client.get_blob_client(self.container_name, blob_name)
+        self.async_blob_client = self.async_service_client.get_blob_client(self.container_name, blob_name)
 
         # Setup readable file-like upload data sources, using the configurable 'size' argument
         self.upload_stream = RandomStream(self.args.size)
@@ -388,7 +385,7 @@ class DownloadTest(_StorageStreamTestBase):
         # Setup service clients
         blob_name = "downloadtest"
         self.blob_client = self.service_client.get_blob_client(self.container_name, blob_name)
-        self.async_blob_client = self.async_serive_client.get_blob_client(self.container_name, blob_name)
+        self.async_blob_client = self.async_service_client.get_blob_client(self.container_name, blob_name)
 
         self.download_stream = WriteStream()
 
@@ -455,28 +452,9 @@ class MessageReceiveTest(BatchPerfTest):
 
 ```
 
-## Adding legacy T1 tests
-To compare performance against T1 libraries, you can add tests for a legacy SDK. To do this, add a submodule into the `perfstress_tests` module called `T1_legacy_tests` (and add an empty `__init__.py`).
-To configure the exact T1 SDK you wish to compare perf against, add a `t1_test_requirements.txt` file to install any package requirements. Note that this will likely be incompatible with the T2 SDK testing environment, and running the legacy tests will probably need to be from a separate virtual environment (see the [Running the tests](#running-the-tests) section below).
-Writing the tests themselves will be done exactly the same way - however it's recommended to prefix the test names with `Legacy` (or similar) to avoid confusion.
-```
-perfstress_tests
-│   README.md
-|   __init__.py
-│   upload.py
-|   download.py
-│
-└───T1_legacy_tests
-|   |   __init__.py
-│   │   legacy_upload.py
-│   │   legacy_download.py
-|   |   t1_test_requirements.txt
-```
-
 # Running the tests
 In order to run the performance tests, the `devtools_testutils` package must be installed. This is done as part of the `dev_requirements`.
-Start be creating a new virtual environment for your perf tests. This will need to be a Python 3 environment, preferably >=3.7.
-Note that tests for T1 and T2 SDKs usually cannot be run from the same environment, and will need to be setup separately.
+Start by creating a new virtual environment for your perf tests. This will need to be a [supported Python version](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 
 ### Setup for test resources
 Depending on the tests, some resource configuration (e.g. environment variables) may need to be done first. This should documented in the perfstress_tests readme file.
@@ -490,12 +468,6 @@ AZURE_STORAGE_CONNECTION_STRING=<live storage account connection string>
 (env) ~/azure-storage-file-share> pip install -r dev_requirements.txt
 (env) ~/azure-storage-file-share> pip install -e .
 ```
-### Setup for T1 legacy perf test runs
-
-```cmd
-(legacy-env) ~/azure-storage-file-share> pip install -r dev_requirements.txt
-(legacy-env) ~/azure-storage-file-share> pip install tests/perfstress_tests/T1_legacy_tests/t1_test_requirements.txt
-```
 ### Test commands
 
 When `devtools_testutils` is installed, you will have access to the `perfstress` command line tool, which will scan the current module for runable perf tests. Only a specific test can be run at a time (i.e. there is no "run all" feature).
@@ -503,7 +475,7 @@ When `devtools_testutils` is installed, you will have access to the `perfstress`
 ```cmd
 (env) ~/azure-storage-file-share> perfstress
 ```
-Using the `perfstress` command alone will list the available perf tests found. Note that the available tests discovered will vary depending on whether your environment is configured for the T1 or T2 SDK.
+Using the `perfstress` command alone will list the available perf tests found.
 If your tests are not being discovered, run the `perfstressdebug` command instead for additional logging.
 
 ### Example test run command

@@ -143,7 +143,7 @@ def assign_rbac():  # pylint: disable=too-many-statements
 
             # Define the Azure AI User role definition ID
             # This is the built-in role ID for "Azure AI User"
-            azure_ai_user_role_id = "64702f94-c441-49e6-a78b-ef80e0188fee"
+            azure_ai_user_role_id = "53ca6127-db72-4b80-b1b0-d745d6d5456d"
 
             # Create the scope (project level)
             scope = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.CognitiveServices/accounts/{account_name}/projects/{project_name}"
@@ -258,14 +258,14 @@ def schedule_dataset_evaluation() -> None:
                 name="violence",
                 evaluator_name="builtin.violence",
                 data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
-                initialization_parameters={"deployment_name": "{{aoai_deployment_and_model}}"},
+                initialization_parameters={"model": "{{aoai_deployment_and_model}}"},
             ),
             TestingCriterionAzureAIEvaluator(type="azure_ai_evaluator", name="f1", evaluator_name="builtin.f1_score"),
             TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
                 name="coherence",
                 evaluator_name="builtin.coherence",
-                initialization_parameters={"deployment_name": "{{aoai_deployment_and_model}}"},
+                initialization_parameters={"model": "{{aoai_deployment_and_model}}"},
             ),
         ]
 
@@ -380,7 +380,7 @@ def schedule_redteam_evaluation() -> None:  # pylint: disable=too-many-locals
             description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input
         )
 
-        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
+        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, taxonomy=eval_taxonomy_input)
         taxonomy_path = os.path.join(data_folder, f"taxonomy_{agent_name}.json")
         # Create the data folder if it doesn't exist
         os.makedirs(data_folder, exist_ok=True)

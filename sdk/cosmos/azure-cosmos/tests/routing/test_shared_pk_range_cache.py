@@ -1,10 +1,13 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import gc
+import threading
 import unittest
 
 import pytest
 
+import azure.cosmos._routing.routing_map_provider as rmp
 from azure.cosmos._routing.routing_range import Range, PKRange
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos._routing.routing_map_provider import (
@@ -13,6 +16,7 @@ from azure.cosmos._routing.routing_map_provider import (
     _shared_cache_lock,
     _shared_collection_locks,
     _shared_locks_locks,
+    _shared_cache_refcounts,
 )
 
 
@@ -21,23 +25,20 @@ class MockClient:
         self.url_connection = url_connection
 
 
+def _reset_shared_cache_state():
+    """Wipe all four shared-cache globals so successive tests start clean."""
+    with _shared_cache_lock:
+        _shared_routing_map_cache.clear()
+        _shared_collection_locks.clear()
+        _shared_locks_locks.clear()
+        _shared_cache_refcounts.clear()
+
+
 @pytest.mark.cosmosEmulator
 class TestSharedPartitionKeyRangeCache(unittest.TestCase):
 
     def tearDown(self):
-        # Wipe ALL four shared-cache globals between unit tests, not just
-        # the routing-map dict, so refcount and lock state stay consistent
-        # for tests that exercise lifecycle behavior.
-        from azure.cosmos._routing.routing_map_provider import (
-            _shared_collection_locks,
-            _shared_locks_locks,
-            _shared_cache_refcounts,
-        )
-        with _shared_cache_lock:
-            _shared_routing_map_cache.clear()
-            _shared_collection_locks.clear()
-            _shared_locks_locks.clear()
-            _shared_cache_refcounts.clear()
+        _reset_shared_cache_state()
 
     def test_same_endpoint_shares_cache(self):
         c1 = MockClient("https://account1.documents.azure.com:443/")
@@ -172,27 +173,14 @@ class TestSharedPartitionKeyRangeCache(unittest.TestCase):
         self.assertEqual(r.min, "05C1C9CD")
 
 
-
-
 @pytest.mark.cosmosEmulator
 class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
     """Refcount and release() lifecycle tests for the process-global cache."""
 
     def tearDown(self):
-        # Defensive: wipe all four globals after every test in this class.
-        from azure.cosmos._routing.routing_map_provider import (
-            _shared_collection_locks,
-            _shared_locks_locks,
-            _shared_cache_refcounts,
-        )
-        with _shared_cache_lock:
-            _shared_routing_map_cache.clear()
-            _shared_collection_locks.clear()
-            _shared_locks_locks.clear()
-            _shared_cache_refcounts.clear()
+        _reset_shared_cache_state()
 
     def _refcount(self, endpoint):
-        from azure.cosmos._routing.routing_map_provider import _shared_cache_refcounts
         return _shared_cache_refcounts.get(endpoint, 0)
 
     def test_construct_increments_refcount(self):
@@ -202,7 +190,9 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         self.assertEqual(self._refcount(ep), 1)
         c2 = PartitionKeyRangeCache(MockClient(ep))
         self.assertEqual(self._refcount(ep), 2)
-        del c1, c2  # avoid unused warnings
+        # Keep references alive until end of test so refcount checks above
+        # observe the constructed-but-not-released state.
+        _ = (c1, c2)
 
     def test_release_decrements_refcount(self):
         ep = "https://lifecycle2.documents.azure.com:443/"
@@ -215,11 +205,6 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         self.assertEqual(self._refcount(ep), 0)
 
     def test_release_evicts_at_zero(self):
-        from azure.cosmos._routing.routing_map_provider import (
-            _shared_collection_locks,
-            _shared_locks_locks,
-            _shared_cache_refcounts,
-        )
         ep = "https://lifecycle3.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
         # All four dicts have an entry for the endpoint.
@@ -258,6 +243,8 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         self.assertEqual(self._refcount(ep), 1)
         # c2's entries must remain.
         self.assertIn(ep, _shared_routing_map_cache)
+        # Keep c2 alive until the assertion above runs.
+        _ = c2
 
     def test_concurrent_release_does_not_double_decrement(self):
         """TOCTOU regression: two threads racing release() decrement at most once.
@@ -267,7 +254,6 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         ``__del__``) can both pass the early-return guard before either
         sets the flag, producing a double decrement.
         """
-        import threading
         ep = "https://lifecycle6.documents.azure.com:443/"
         # Hold an extra refcount via c_keep so a double-decrement bug would
         # observably wrong-evict the endpoint (refcount would go to -1 and
@@ -297,7 +283,6 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
 
     def test_del_fallback_releases(self):
         """``__del__`` decrements refcount when client teardown was skipped."""
-        import gc
         ep = "https://lifecycle7.documents.azure.com:443/"
         c1 = PartitionKeyRangeCache(MockClient(ep))
         self.assertEqual(self._refcount(ep), 1)
@@ -315,6 +300,115 @@ class TestSharedPartitionKeyRangeCacheLifecycle(unittest.TestCase):
         self.assertEqual(self._refcount(ep), before)
         # Endpoint still present.
         self.assertIn(ep, _shared_routing_map_cache)
+
+    def test_reentrant_release_during_init_does_not_deadlock(self):
+        """Acquires ``_shared_cache_lock`` on a single thread and calls
+        ``release()`` from inside that critical section. A non-reentrant
+        ``Lock`` would deadlock here; an ``RLock`` returns cleanly.
+        """
+        ep = "https://reentry1.documents.azure.com:443/"
+        c1 = PartitionKeyRangeCache(MockClient(ep))
+        self.assertEqual(self._refcount(ep), 1)
+
+        # Explicit ``Any`` value type so the static checker doesn't infer
+        # ``dict[str, bool | None]`` from the initial values and then flag
+        # the ``Exception`` assignment in the exception arm as a type error.
+        result: dict = {"done": False, "error": None}
+
+        def reenter():
+            try:
+                # Acquire the shared lock first to mimic the ``__init__``
+                # critical section, then call ``release()`` from inside it
+                # to simulate the GC-driven ``__del__`` path. A non-reentrant
+                # Lock deadlocks here; an RLock returns cleanly.
+                with _shared_cache_lock:
+                    c1.release()
+                result["done"] = True
+            except Exception as exc:  # pylint: disable=broad-except
+                result["error"] = exc
+
+        worker = threading.Thread(target=reenter)
+        worker.start()
+        worker.join(timeout=5)
+
+        self.assertFalse(
+            worker.is_alive(),
+            "Reentrant release() under _shared_cache_lock deadlocked; "
+            "the lock must be a threading.RLock (see module-level comment)."
+        )
+        self.assertIsNone(result["error"])
+        self.assertTrue(result["done"])
+        # Refcount must have decremented exactly once.
+        self.assertEqual(self._refcount(ep), 0)
+        self.assertNotIn(ep, _shared_routing_map_cache)
+
+    def test_init_under_gc_triggered_by_dict_op_does_not_deadlock(self):
+        """Reproduces the GC re-entry chain that requires
+        ``_shared_cache_lock`` to be an ``RLock``.
+
+        A ``PartitionKeyRangeCache`` that participates in a reference cycle
+        can only be collected by cyclic GC. When another instance is
+        constructed against the same endpoint, the dict op inside
+        ``__init__``'s critical section can trigger cyclic GC, which
+        sweeps the cycled instance and runs its ``__del__`` ->
+        ``release()`` on the same thread, re-acquiring the lock.
+
+        To force the chain deterministically: build a cache in a reference
+        cycle, drop the outer reference, swap ``_shared_routing_map_cache``
+        for a dict whose ``__contains__`` calls ``gc.collect()``, then
+        construct a second cache in a worker thread with a short timeout.
+        ``Lock`` deadlocks the worker; ``RLock`` returns in milliseconds.
+        """
+        class _GcTriggeringDict(dict):
+            """``__contains__`` runs cyclic GC so collection of the
+            unreachable cycle happens inside the init lock block.
+            """
+            def __contains__(self, key):  # type: ignore[override]
+                gc.collect()
+                return super().__contains__(key)
+
+        ep = "https://reentry-gc.documents.azure.com:443/"
+
+        # Build a cache in a reference cycle and drop the outer reference;
+        # only cyclic GC can collect it now.
+        cache_in_cycle = PartitionKeyRangeCache(MockClient(ep))
+        cache_in_cycle._cycle_self = cache_in_cycle  # type: ignore[attr-defined]
+        del cache_in_cycle
+
+        # Disable automatic gen-0/1/2 collection so the only collection
+        # opportunity is the explicit gc.collect() inside __contains__.
+        gc.disable()
+        original_cache_dict = rmp._shared_routing_map_cache
+        rmp._shared_routing_map_cache = _GcTriggeringDict(original_cache_dict)
+        try:
+            # Construct a second cache in a worker thread with a short
+            # timeout. Lock deadlocks; RLock completes in milliseconds.
+            outcome: dict = {"done": False, "error": None}
+
+            def _construct():
+                try:
+                    outcome["instance"] = PartitionKeyRangeCache(MockClient(ep))
+                    outcome["done"] = True
+                except Exception as e:  # pylint: disable=broad-except
+                    outcome["error"] = e
+
+            worker = threading.Thread(
+                target=_construct, name="gc-reentry-worker", daemon=True,
+            )
+            worker.start()
+            worker.join(timeout=3.0)
+
+            self.assertFalse(
+                worker.is_alive(),
+                "PartitionKeyRangeCache(...) deadlocked when cyclic GC "
+                "fired inside the init critical section; "
+                "_shared_cache_lock must be a threading.RLock.",
+            )
+            self.assertIsNone(outcome["error"], f"Construction errored: {outcome['error']}")
+            self.assertTrue(outcome["done"])
+        finally:
+            rmp._shared_routing_map_cache = original_cache_dict
+            gc.enable()
 
 
 if __name__ == "__main__":

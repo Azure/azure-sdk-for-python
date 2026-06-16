@@ -6,11 +6,16 @@
 
 import gzip
 import importlib
+import io
 import re
 from logging import getLogger
 from typing import Any, Dict, Optional, Tuple
 
 from ._config import BrowserSDKConfig
+from .._constants import (
+    _BROWSER_SDK_MAX_COMPRESSED_BYTES as _MAX_COMPRESSED_BYTES,
+    _BROWSER_SDK_MAX_DECOMPRESSED_BYTES as _MAX_DECOMPRESSED_BYTES,
+)
 
 # Optional compression libraries
 _BROTLI_MODULE: Optional[Any]
@@ -32,6 +37,58 @@ except ImportError:
     HAS_ZLIB = False
 
 _logger = getLogger(__name__)
+
+
+def _bounded_decompress(data: bytes, encoding: str) -> bytes:
+    """Decompress ``data`` with the given encoding, raising if output exceeds the cap.
+
+    Supports ``gzip``, ``deflate`` (zlib), and ``br`` (brotli). Returns the
+    decompressed bytes or raises ``ValueError`` if the output would exceed
+    ``_MAX_DECOMPRESSED_BYTES`` (defense against decompression bombs).
+
+    :param data: Compressed input bytes.
+    :type data: bytes
+    :param encoding: One of ``gzip``, ``deflate``, ``br``.
+    :type encoding: str
+    :return: Decompressed bytes (at most ``_MAX_DECOMPRESSED_BYTES``).
+    :rtype: bytes
+    """
+    cap = _MAX_DECOMPRESSED_BYTES
+    if encoding == "gzip":
+        # GzipFile.read(N) reads at most N bytes; ask for cap+1 to detect overflow.
+        with gzip.GzipFile(fileobj=io.BytesIO(data)) as gz:
+            out = gz.read(cap + 1)
+    elif encoding == "deflate":
+        if _ZLIB_MODULE is None:
+            raise RuntimeError("zlib module not available")
+        # zlib's decompressobj supports a native max_length parameter.
+        decompressor = _ZLIB_MODULE.decompressobj()
+        out = decompressor.decompress(data, cap + 1)
+        if decompressor.unconsumed_tail or len(out) > cap:
+            raise ValueError("deflate-decompressed body exceeds cap")
+        out += decompressor.flush()
+        if len(out) > cap:
+            raise ValueError("deflate-decompressed body exceeds cap")
+        return bytes(out)
+    elif encoding == "br":
+        if _BROTLI_MODULE is None:
+            raise RuntimeError("brotli module not available")
+        # Brotli has no built-in size limit; feed chunks and tally bytes.
+        decompressor = _BROTLI_MODULE.Decompressor()
+        chunk = 64 * 1024
+        pieces, total = [], 0
+        for start in range(0, len(data), chunk):
+            piece = decompressor.process(data[start : start + chunk])
+            total += len(piece)
+            if total > cap:
+                raise ValueError("brotli-decompressed body exceeds cap")
+            pieces.append(piece)
+        return b"".join(pieces)
+    else:
+        raise ValueError(f"unsupported encoding: {encoding}")
+    if len(out) > cap:
+        raise ValueError(f"{encoding}-decompressed body exceeds cap")
+    return out
 
 
 def _mark_browser_loader_feature(is_enabled: bool) -> None:
@@ -107,7 +164,7 @@ class WebSnippetInjector:
         ]
         _mark_browser_loader_feature(self.config.enabled)
 
-    def should_inject(
+    def should_inject(  # pylint: disable=too-many-return-statements
         self, request_method: str, content_type: Optional[str], content: bytes, content_encoding: Optional[str] = None
     ) -> bool:
         """Determine whether the web snippet should be injected into the response.
@@ -131,8 +188,21 @@ class WebSnippetInjector:
         # Check content type for HTML
         if not content_type or "html" not in content_type.lower():
             return False
-        # Get decompressed content once and cache it for reuse
-        decompressed_content = self._get_decompressed_content(content, content_encoding)
+        # Bail out on oversized bodies; never decompress/scan/recompress them.
+        if len(content) > _MAX_COMPRESSED_BYTES:
+            _logger.debug(
+                "Response body %d bytes exceeds injection cap; skipping snippet injection",
+                len(content),
+            )
+            return False
+        # Get decompressed content once and cache it for reuse. If decompression
+        # fails (e.g., size cap exceeded or malformed body), skip injection rather
+        # than risk modifying a body we cannot safely decode.
+        try:
+            decompressed_content = self._get_decompressed_content(content, content_encoding)
+        except Exception as ex:  # pylint: disable=broad-exception-caught
+            _logger.debug("Skipping snippet injection; decompression failed: %s", ex)
+            return False
         # Check if Web SDK is already present using cached decompressed content
         if self._has_existing_web_sdk_from_decompressed(decompressed_content):
             _logger.debug("Web SDK already detected in HTML, skipping injection")
@@ -372,19 +442,23 @@ class WebSnippetInjector:
         try:
             normalized = encoding.lower()
             if normalized == "gzip":
-                result = gzip.decompress(content)
+                result = _bounded_decompress(content, "gzip")
             elif normalized == "br":
                 if not HAS_BROTLI or _BROTLI_MODULE is None:
                     _logger.warning("brotli library not available for decompression")
                 else:
-                    result = _BROTLI_MODULE.decompress(content)
+                    result = _bounded_decompress(content, "br")
             elif normalized == "deflate":
                 if not HAS_ZLIB or _ZLIB_MODULE is None:
                     _logger.warning("zlib library not available for decompression")
                 else:
-                    result = _ZLIB_MODULE.decompress(content)
+                    result = _bounded_decompress(content, "deflate")
         except Exception as ex:  # pylint: disable=broad-exception-caught
+            # Re-raise so callers (e.g., inject_with_compression / should_inject) can
+            # fall back to returning the original response untouched instead of
+            # treating still-compressed bytes as HTML and double-compressing them.
             _logger.warning("Failed to decompress content with encoding %s: %s", encoding, ex)
+            raise
         return result
 
     def _compress_content(self, content: bytes, encoding: str) -> bytes:

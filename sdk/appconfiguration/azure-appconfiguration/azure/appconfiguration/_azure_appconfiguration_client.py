@@ -164,15 +164,15 @@ class AzureAppConfigurationClient:
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
         **kwargs: Any,
-    ) -> ItemPaged[ConfigurationSetting]:
+    ) -> ConfigurationSettingPaged:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label, tags and accept_datetime. For more information about supported filters, see
         https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value?pivots=v23-11#supported-filters.
 
-        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
+        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard at the end
             of the filter.
         :paramtype key_filter: str or None
-        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard at the end
             of the filter.
         :paramtype label_filter: str or None
         :keyword tags_filter: Filter results based on their tags.
@@ -183,7 +183,7 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
+        :rtype: ~azure.appconfiguration.ConfigurationSettingPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`
 
@@ -213,7 +213,7 @@ class AzureAppConfigurationClient:
         snapshot_name: str,
         fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
         **kwargs: Any,
-    ) -> ItemPaged[ConfigurationSetting]:
+    ) -> ConfigurationSettingPaged:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         fields to present in return.
 
@@ -222,12 +222,12 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
         :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.core.paging.ItemPaged[~azure.appconfiguration.ConfigurationSetting]
+        :rtype: ~azure.appconfiguration.ConfigurationSettingPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
 
     @distributed_trace
-    def list_configuration_settings(self, *args: Optional[str], **kwargs: Any) -> ItemPaged[ConfigurationSetting]:
+    def list_configuration_settings(self, *args: Optional[str], **kwargs: Any) -> ConfigurationSettingPaged:
         accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
@@ -237,17 +237,18 @@ class AzureAppConfigurationClient:
         snapshot_name = kwargs.pop("snapshot_name", None)
 
         if snapshot_name is not None:
-            return self._impl.get_key_values(  # type: ignore[return-value]
+            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
+            return ConfigurationSettingPaged(
+                command,
                 snapshot=snapshot_name,
                 accept_datetime=accept_datetime,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                **kwargs,
+                page_iterator_class=ConfigurationSettingPropertiesPaged,
             )
         tags = kwargs.pop("tags_filter", None)
         key_filter, kwargs = get_key_filter(*args, **kwargs)
         label_filter, kwargs = get_label_filter(*args, **kwargs)
-        command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
+        command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
         return ConfigurationSettingPaged(
             command,
             key=key_filter,
@@ -255,6 +256,57 @@ class AzureAppConfigurationClient:
             accept_datetime=accept_datetime,
             select=select,
             tags=tags,
+            page_iterator_class=ConfigurationSettingPropertiesPaged,
+        )
+
+    @distributed_trace
+    def check_configuration_settings(
+        self,
+        *,
+        key_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        tags_filter: Optional[List[str]] = None,
+        accept_datetime: Optional[Union[datetime, str]] = None,
+        **kwargs: Any,
+    ) -> ConfigurationSettingPaged:
+        """Check configuration settings using a HEAD request, returning only headers without the
+        response body. This is useful for efficiently checking if settings have changed by comparing ETags.
+
+        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard at the end
+            of the filter.
+        :paramtype key_filter: str or None
+        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard at the end
+            of the filter.
+        :paramtype label_filter: str or None
+        :keyword tags_filter: Filter results based on their tags.
+        :paramtype tags_filter: list[str] or None
+        :keyword accept_datetime: Retrieve ConfigurationSetting that existed at this datetime
+        :paramtype accept_datetime: ~datetime.datetime or str or None
+        :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
+        :return: A pager intended for :meth:`by_page` iteration to inspect page headers (for example, ``etag``)
+            and detect changed pages. This operation issues HEAD requests and does not return full
+            :class:`~azure.appconfiguration.ConfigurationSetting` bodies when iterated item by item.
+        :rtype: ~azure.appconfiguration.ConfigurationSettingPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`
+
+        Example
+
+        .. code-block:: python
+
+            items = client.check_configuration_settings(key_filter="my_key*")
+            for page in items.by_page():
+                print(page.etag)  # etag for this page
+        """
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
+        command = functools.partial(self._impl.check_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
+        return ConfigurationSettingPaged(
+            command,
+            key=key_filter,
+            label=label_filter,
+            accept_datetime=accept_datetime,
+            tags=tags_filter,
             page_iterator_class=ConfigurationSettingPropertiesPaged,
         )
 
@@ -473,10 +525,10 @@ class AzureAppConfigurationClient:
         For more information about supported filters, see
         https://learn.microsoft.com/azure/azure-app-configuration/rest-api-revisions?pivots=v23-11#supported-filters.
 
-        :param key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
+        :param key_filter: Filter results based on their keys. '*' can be used as wildcard at the end
             of the filter.
         :type key_filter: str or None
-        :param label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+        :param label_filter: Filter results based on their label. '*' can be used as wildcard at the end
             of the filter.
         :type label_filter: str or None
         :keyword tags_filter: Filter results based on their tags.
@@ -625,6 +677,7 @@ class AzureAppConfigurationClient:
         composition_type: Optional[Union[str, SnapshotComposition]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
         **kwargs: Any,
     ) -> LROPoller[ConfigurationSnapshot]:
         """Create a snapshot of the configuration settings.
@@ -646,13 +699,19 @@ class AzureAppConfigurationClient:
         :paramtype retention_period: int or None
         :keyword tags: The tags of the configuration snapshot.
         :paramtype tags: dict[str, str] or None
+        :keyword description: The description of the configuration snapshot.
+        :paramtype description: str or None
         :return: A poller for create configuration snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         snapshot = ConfigurationSnapshot(
-            filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
+            filters=filters,
+            composition_type=composition_type,
+            retention_period=retention_period,
+            tags=tags,
+            description=description,
         )
         return cast(
             LROPoller[ConfigurationSnapshot],
