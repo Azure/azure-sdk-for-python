@@ -3,6 +3,8 @@ namespace azure.keyvault.keys
 
     class azure.keyvault.keys.ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         V2016_10_01 = "2016-10-01"
+        V2025_07_01 = "2025-07-01"
+        V2026_01_01_PREVIEW = "2026-01-01-preview"
         V7_0 = "7.0"
         V7_1 = "7.1"
         V7_2 = "7.2"
@@ -30,6 +32,17 @@ namespace azure.keyvault.keys
                 recovery_id: Optional[str] = None, 
                 scheduled_purge_date: Optional[datetime] = None, 
                 **kwargs: Any
+            ) -> None: ...
+
+        def __repr__(self) -> str: ...
+
+
+    class azure.keyvault.keys.ExternalKey:
+
+        def __init__(
+                self, 
+                *, 
+                id: str
             ) -> None: ...
 
         def __repr__(self) -> str: ...
@@ -125,6 +138,20 @@ namespace azure.keyvault.keys
                 exportable: Optional[bool] = ..., 
                 hardware_protected: Optional[bool] = False, 
                 key_operations: Optional[List[Union[str, KeyOperation]]] = ..., 
+                not_before: Optional[datetime] = ..., 
+                release_policy: Optional[KeyReleasePolicy] = ..., 
+                tags: Optional[Dict[str, str]] = ..., 
+                **kwargs: Any
+            ) -> KeyVaultKey: ...
+
+        @distributed_trace
+        def create_external_key(
+                self, 
+                name: str, 
+                external_key: ExternalKey, 
+                *, 
+                enabled: Optional[bool] = ..., 
+                expires_on: Optional[datetime] = ..., 
                 not_before: Optional[datetime] = ..., 
                 release_policy: Optional[KeyReleasePolicy] = ..., 
                 tags: Optional[Dict[str, str]] = ..., 
@@ -358,15 +385,17 @@ namespace azure.keyvault.keys
         property enabled: Optional[bool]    # Read-only
         property expires_on: Optional[datetime]    # Read-only
         property exportable: Optional[bool]    # Read-only
+        property external_key: Optional[ExternalKey]    # Read-only
         property hsm_platform: Optional[str]    # Read-only
         property id: str    # Read-only
+        property key_size: Optional[int]    # Read-only
         property managed: Optional[bool]    # Read-only
         property name: str    # Read-only
         property not_before: Optional[datetime]    # Read-only
         property recoverable_days: Optional[int]    # Read-only
         property recovery_level: Optional[str]    # Read-only
         property release_policy: Optional[KeyReleasePolicy]    # Read-only
-        property tags: Dict[str, str]    # Read-only
+        property tags: Optional[Dict[str, str]]    # Read-only
         property updated_on: Optional[datetime]    # Read-only
         property vault_url: str    # Read-only
         property version: Optional[str]    # Read-only
@@ -501,6 +530,20 @@ namespace azure.keyvault.keys.aio
                 exportable: Optional[bool] = ..., 
                 hardware_protected: Optional[bool] = False, 
                 key_operations: Optional[List[Union[str, KeyOperation]]] = ..., 
+                not_before: Optional[datetime] = ..., 
+                release_policy: Optional[KeyReleasePolicy] = ..., 
+                tags: Optional[Dict[str, str]] = ..., 
+                **kwargs: Any
+            ) -> KeyVaultKey: ...
+
+        @distributed_trace_async
+        async def create_external_key(
+                self, 
+                name: str, 
+                external_key: ExternalKey, 
+                *, 
+                enabled: Optional[bool] = ..., 
+                expires_on: Optional[datetime] = ..., 
                 not_before: Optional[datetime] = ..., 
                 release_policy: Optional[KeyReleasePolicy] = ..., 
                 tags: Optional[Dict[str, str]] = ..., 
@@ -856,6 +899,8 @@ namespace azure.keyvault.keys.crypto
 
         def __copy__(self) -> KeyVaultRSAPrivateKey: ...
 
+        def __deepcopy__(self, memo: dict) -> KeyVaultRSAPrivateKey: ...
+
         def __init__(
                 self, 
                 client: CryptographyClient, 
@@ -897,6 +942,8 @@ namespace azure.keyvault.keys.crypto
         property key_size: int    # Read-only
 
         def __copy__(self) -> KeyVaultRSAPublicKey: ...
+
+        def __deepcopy__(self, memo: dict) -> KeyVaultRSAPublicKey: ...
 
         def __eq__(self, other: object) -> bool: ...
 
