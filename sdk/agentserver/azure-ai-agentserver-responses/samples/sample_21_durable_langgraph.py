@@ -9,7 +9,7 @@ lifting; the response handler is just the bridge.
 
 This sample implements the recovery contract:
 
-- ``context.durable_metadata`` only stores a small ``stable_checkpoint_id``
+- ``context.conversation_chain_metadata`` only stores a small ``stable_checkpoint_id``
   watermark — the last graph checkpoint where the handler successfully
   emitted an AI reply.
 - On recovered entry, the handler queries the graph's current state,
@@ -294,7 +294,7 @@ async def handler(
     # Only emit completed for steering. Others (client-cancel, shutdown):
     # just return.
     if cancellation_signal.is_set() or context.shutdown.is_set():
-        stable_cp = context.durable_metadata.get("stable_checkpoint_id")
+        stable_cp = context.conversation_chain_metadata.get("stable_checkpoint_id")
         if stable_cp:
             await asyncio.to_thread(_fork_from_checkpoint, _graph, thread_config, stable_cp, input_text)
         if cancellation_signal.is_set() and context.pending_input_count > 0:
@@ -313,7 +313,7 @@ async def handler(
     # stable checkpoint to fork from, branch the graph to that point
     # with the new message. Skip on a recovered entry — we never want to
     # re-fork on recovery; the SqliteSaver state IS the source of truth.
-    stable_cp = context.durable_metadata.get("stable_checkpoint_id")
+    stable_cp = context.conversation_chain_metadata.get("stable_checkpoint_id")
     if not context.is_recovery and stable_cp and context.is_steered_turn:
         forked = await asyncio.to_thread(_fork_from_checkpoint, _graph, thread_config, stable_cp, input_text)
         if forked:
@@ -337,7 +337,7 @@ async def handler(
 
             # Save new stable checkpoint
             state = await asyncio.to_thread(_graph.get_state, thread_config)
-            context.durable_metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
+            context.conversation_chain_metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
             # Emit the AI reply
             for event in _build_reply_events(resp_stream, state):
                 yield event
@@ -376,7 +376,7 @@ async def handler(
 
     # Save stable checkpoint reference
     state = await asyncio.to_thread(_graph.get_state, thread_config)
-    context.durable_metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
+    context.conversation_chain_metadata["stable_checkpoint_id"] = state.config["configurable"]["checkpoint_id"]
 
     for event in _build_reply_events(resp_stream, state):
         yield event

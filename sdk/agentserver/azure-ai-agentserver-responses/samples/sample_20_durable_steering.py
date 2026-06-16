@@ -125,26 +125,29 @@ async def handler(
     yield stream.emit_created()
 
     # ── Pre-entry cancellation/shutdown check ────────
-    # Either a cancel cause fired before we even started, or the server
-    # is shutting down. Shutdown does NOT fire cancellation_signal —
-    # the two surfaces are observed independently.
-    if cancellation_signal.is_set() or context.shutdown.is_set():
-        if cancellation_signal.is_set() and context.pending_input_count > 0:
+    # Shutdown and cancellation are independent, mutually exclusive
+    # surfaces — check shutdown FIRST. (Shutdown does NOT fire
+    # cancellation_signal.)
+    if context.shutdown.is_set():
+        # Graceful shutdown before we started: defer to next-lifetime
+        # recovery (the framework re-invokes us on restart).
+        await context.exit_for_recovery()
+    if cancellation_signal.is_set():
+        if context.pending_input_count > 0:
             # Steering pre-entry: emit completed so the partial output
             # (none in this case) becomes valid context for the drain
             # turn that follows.
             yield stream.emit_completed()
-        # Otherwise: client-cancelled (framework forces ``cancelled``)
-        # or shutdown (framework re-invokes us). Either way: return
-        # silently without a terminal.
+        # Otherwise: client-cancelled (framework forces ``cancelled``) —
+        # return silently without a terminal.
         return
 
     yield stream.emit_in_progress()
 
     # Cross-turn state: bump the turn counter. This survives crashes
-    # and turn boundaries since it lives in `context.durable_metadata`.
-    turn_count = int(context.durable_metadata.get("turn_count", 0)) + 1
-    context.durable_metadata["turn_count"] = turn_count
+    # and turn boundaries since it lives in `context.conversation_chain_metadata`.
+    turn_count = int(context.conversation_chain_metadata.get("turn_count", 0)) + 1
+    context.conversation_chain_metadata["turn_count"] = turn_count
 
     # Optional local shutdown simulation.
     shutdown_timer: asyncio.Task | None = None
@@ -176,11 +179,12 @@ async def handler(
     if shutdown_timer and not shutdown_timer.done():
         shutdown_timer.cancel()
 
-    # ── Post-stream cancellation check ────────────
-    # Shutdown mid-stream: return without terminal so the framework
-    # re-invokes us; recovery branch above re-streams from scratch.
+    # ── Post-stream shutdown check ────────────────
+    # Shutdown mid-stream: defer to next-lifetime recovery so the
+    # framework re-invokes us; the recovery branch above re-streams from
+    # scratch.
     if context.shutdown.is_set():
-        return
+        await context.exit_for_recovery()
 
     # All other cases (steered, client-cancelled, normal completion):
     # emit the terminal event. The framework overrides status for
