@@ -34,25 +34,25 @@ try:
 
     print("\nDevices:")
     devices = client.device_management.list_devices()
-    for item in devices:
-        print(f"  {item['deviceId']}")
+    for device in devices:
+        print(f"  {device['deviceId']}")
 
     print("\nDevice groups:")
     groups = client.device_management.list_groups()
-    for item in groups:
-        print(f"  {item['groupId']}")
+    for group_item in groups:
+        print(f"  {group_item['groupId']}")
 
     print("\nDevice classes:")
     device_classes = client.device_management.list_device_classes()
-    for item in device_classes:
-        print(f"  {item['deviceClassId']}")
+    for device_class in device_classes:
+        print(f"  {device_class['deviceClassId']}")
 
     print(f"\nFor group '{group}', best updates are:")
     best_updates = client.device_management.list_best_updates_for_group(group)
-    for item in best_updates:
-        print(f" Device class '{item['deviceClassId']}':")
-        print(f"  {item['update']['updateId']['provider']}")
-        print(f"  {item['update']['updateId']['name']}")
+    for best_update in best_updates:
+        print(f" Device class '{best_update['deviceClassId']}':")
+        print(f"  {best_update['update']['updateId']['provider']}")
+        print(f"  {best_update['update']['updateId']['name']}")
         print(f"  {item['update']['updateId']['version']}")
 except HttpResponseError as e:
     print("Failed to get device message: {}".format(e))
