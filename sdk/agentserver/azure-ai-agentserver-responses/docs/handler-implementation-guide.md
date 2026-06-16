@@ -1281,9 +1281,10 @@ and how clients reconcile a multi-attempt stream is the **recovery contract**.
 The deeper "how does this all fit together" view — the four-row dispatch matrix,
 the three termination paths (handler completes within grace, grace exhausted,
 crash), the exact persistence guarantees the framework makes, and the full
-conformance items — is covered by the framework's internal durability spec.
-This section is the developer how-to with worked Python examples. The
-conformance suite at
+conformance items — is in
+[`responses-durability-spec.md`](responses-durability-spec.md). That document is
+language-agnostic and intentionally exhaustive; this section is the developer
+how-to with worked Python examples. The conformance suite at
 `tests/e2e/durability_contract/` exercises every cell of the matrix.
 
 You can opt out of all of this and your response will still be correct (just
@@ -1370,8 +1371,10 @@ async def handler(request, context, cancellation_signal):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         start_phase = 0
 
-    yield stream.emit_created()      # framework dedups the duplicate on recovery
-    yield stream.emit_in_progress()  # client-visible reset point on recovery
+    yield stream.emit_created()      # recovery: framework suppresses the durable-stream
+                                     # write (stream already has the pre-crash created);
+                                     # this seeds the in-memory stream + first-event validator
+    yield stream.emit_in_progress()  # client-visible reset point on recovery (carries seeded items)
 
     for phase in range(start_phase, NUM_PHASES):
         message = stream.add_output_item_message()
@@ -1386,8 +1389,9 @@ async def handler(request, context, cancellation_signal):
     yield stream.emit_completed()
 ```
 
-Semantics (the full normative list lives in the framework's internal
-durability spec):
+Semantics (the full normative list is in
+[`responses-durability-spec.md`](responses-durability-spec.md) and
+[`durability-contract.md`](durability-contract.md) Row 11):
 
 - **Deterministic + developer-driven.** Checkpoints happen ONLY where you yield
   one. There are no periodic, timer, or implicit checkpoints.

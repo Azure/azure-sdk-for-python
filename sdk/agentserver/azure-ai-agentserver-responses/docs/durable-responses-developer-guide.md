@@ -124,8 +124,9 @@ def my_acceptor(request, context):
 Recovery semantics depend on three request flags and one server option. The
 table below is a quick orientation. For the **normative** specification — the
 exact behaviour you can rely on per row, per termination path, and per
-stream/poll mode. This section summarises the durability behaviour for
-developer ergonomics.
+stream/poll mode — see
+[`responses-durability-spec.md`](responses-durability-spec.md). That document
+is the source of truth; this section summarises it for developer ergonomics.
 
 | `store` | `background` | `durable_background` | Summary |
 |---|---|---|---|
@@ -428,7 +429,8 @@ snapshot (gated to durable background responses; a no-op otherwise) and is
 backpressured — control does not return from the `yield` until the write
 completes. See the handler guide's
 [Stream Checkpoints](handler-implementation-guide.md#stream-checkpoints) for
-the full semantics.
+the full semantics and `durability-contract.md` Row 11 for the conformance
+contract.
 
 ### Which metadata facility?
 
@@ -464,7 +466,25 @@ GET /responses/{id}?stream=true&starting_after=42
 
 This returns only events with `sequence_number > 42`.
 
-The post-recovery part of this guarantee is normative: for
+A durable stream has **exactly one** `response.created` — it is the first
+event of the stream. On a recovered entry the framework does **not** append a
+second `response.created` (it is suppressed at the durable-stream write because
+the stream is non-empty), so the full replayed sequence a reconnecting client
+sees end-to-end is:
+
+```
+response.created
+response.in_progress
+<events emitted before the crash>
+response.in_progress        ← recovery reset: carries the stable
+                              (already-persisted) output items at the
+                              resumption point
+<events emitted after recovery>
+response.completed
+```
+
+The post-recovery part of this guarantee is normative per
+[`responses-durability-spec.md`](responses-durability-spec.md): for
 `(store=true, background=true, durable_background=True, stream=true)` —
 the row that supports handler re-invoke — a client reconnecting AFTER a
 crash receives the events the recovered handler emits, framed by the
