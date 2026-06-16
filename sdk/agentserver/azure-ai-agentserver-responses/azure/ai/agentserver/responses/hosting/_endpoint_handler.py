@@ -787,7 +787,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         snapshot.get("status"),
                         len(snapshot.get("output", [])),
                     )
-                    return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=self._session_headers(agent_session_id))
+                    return JSONResponse(
+                        strip_internal_metadata(snapshot),
+                        status_code=200,
+                        headers=self._session_headers(agent_session_id),
+                    )
                 except _HandlerError as exc:
                     logger.error(
                         "Handler error in sync create (response_id=%s)",
@@ -819,7 +823,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 ctx.response_id,
                 snapshot.get("status"),
             )
-            return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=self._session_headers(agent_session_id))
+            return JSONResponse(
+                strip_internal_metadata(snapshot), status_code=200, headers=self._session_headers(agent_session_id)
+            )
         except LastInputIdPreconditionFailed as exc:
             # Spec 023 — under the spec-022 narrow surface, only
             # ``actual_last_input_id`` is carried (``expected_last_input_id``
