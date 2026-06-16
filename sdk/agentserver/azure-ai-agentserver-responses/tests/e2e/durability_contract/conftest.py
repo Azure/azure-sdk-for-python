@@ -122,6 +122,50 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     return _factory
 
 
+_CHECKPOINT_HANDLER_MODULE = "tests.e2e.durability_contract._checkpoint_handler"
+
+
+@pytest.fixture
+def make_checkpoint_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
+    """Factory for the Row 11 one-item-per-phase + checkpoint handler.
+
+    Returns a callable taking:
+
+    - ``phases`` (int, default 3) — number of phases the handler runs.
+    - ``crash_cutpoint`` (str | None) — ``after_checkpoint:N`` /
+      ``before_checkpoint:N`` / ``None`` — where the fresh entry pauses for
+      a Path B/C crash.
+    - ``shutdown_grace_seconds`` (int, default LONG_GRACE_S).
+    - ``readiness_timeout`` (float, default 15.0).
+
+    Returns an unstarted ``CrashHarness`` (durable_background is always True
+    for Row 11 — it is a Row 1 extension).
+    """
+
+    def _factory(
+        *,
+        phases: int = 3,
+        crash_cutpoint: str | None = None,
+        shutdown_grace_seconds: int = LONG_GRACE_S,
+        readiness_timeout: float = 15.0,
+    ) -> CrashHarness:
+        env = {
+            "CONFORMANCE_PHASES": str(phases),
+            "CONFORMANCE_CRASH_CUTPOINT": crash_cutpoint or "none",
+            "AGENTSERVER_SHUTDOWN_GRACE_SECONDS": str(shutdown_grace_seconds),
+            "AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS": str(shutdown_grace_seconds),
+            "LOGLEVEL": os.environ.get("LOGLEVEL", "WARNING"),
+        }
+        return CrashHarness(
+            sample_module=_CHECKPOINT_HANDLER_MODULE,
+            tmp_path=tmp_path,
+            readiness_timeout_seconds=readiness_timeout,
+            env_extras=env,
+        )
+
+    return _factory
+
+
 # ── Helper: poll until terminal ───────────────────────────────────────
 
 
@@ -152,6 +196,58 @@ async def poll_until_terminal(
     raise TimeoutError(
         f"Response {response_id} did not reach terminal within " f"{timeout_seconds}s. Last seen: {last}"
     )
+
+
+async def poll_until_output_count(
+    client: httpx.AsyncClient,
+    response_id: str,
+    count: int,
+    *,
+    timeout_seconds: float = 20.0,
+) -> dict[str, Any]:
+    """Poll ``GET /responses/{id}`` until its persisted ``output`` has ``count`` items.
+
+    Used by Row 11 to time crash signals deterministically against the
+    checkpointed snapshot: a checkpoint persists the phases completed so
+    far, so the persisted ``output`` length is the observable progress
+    marker. Returns the response body once ``len(output) >= count``.
+    """
+    deadline = asyncio.get_event_loop().time() + timeout_seconds
+    last: dict[str, Any] = {}
+    while asyncio.get_event_loop().time() < deadline:
+        try:
+            r = await client.get(f"/responses/{response_id}")
+        except httpx.RequestError:
+            await asyncio.sleep(0.05)
+            continue
+        if r.status_code == 200:
+            last = r.json()
+            output = last.get("output") or []
+            if len(output) >= count:
+                return last
+        await asyncio.sleep(0.05)
+    raise TimeoutError(
+        f"Response {response_id} did not reach output count {count} within "
+        f"{timeout_seconds}s. Last seen output length: {len(last.get('output') or [])}"
+    )
+
+
+def output_text_markers(response_body: dict[str, Any]) -> list[str]:
+    """Extract the per-phase text markers from a response body's ``output``.
+
+    Each Row 11 output item is a message with one ``output_text`` content
+    part carrying an ``L{lifetime}_phase{n}`` marker. Returns the markers in
+    output order so tests can assert exactly which phases survived (and from
+    which lifetime) after recovery.
+    """
+    markers: list[str] = []
+    for item in response_body.get("output") or []:
+        if not isinstance(item, dict):
+            continue
+        for part in item.get("content") or []:
+            if isinstance(part, dict) and part.get("type") == "output_text":
+                markers.append(part.get("text", ""))
+    return markers
 
 
 async def post_and_get_response_id(

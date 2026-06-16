@@ -35,6 +35,7 @@ from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-erro
 )
 
 from .._options import ResponsesServerOptions
+from .._response_context import ResponseExitForRecovery
 from ..models import _generated as generated_models
 from ..models.runtime import (
     ResponseExecution,
@@ -251,9 +252,7 @@ def _validate_handler_event(
     return None
 
 
-def _is_durable_background(
-    runtime_options: "ResponsesServerOptions | None", *, store: bool, background: bool
-) -> bool:
+def _is_durable_background(runtime_options: "ResponsesServerOptions | None", *, store: bool, background: bool) -> bool:
     """Return True for a durable background response (the only checkpoint consumer).
 
     :param runtime_options: Server runtime options.
@@ -267,10 +266,7 @@ def _is_durable_background(
     :rtype: bool
     """
     return bool(
-        runtime_options is not None
-        and getattr(runtime_options, "durable_background", False)
-        and store
-        and background
+        runtime_options is not None and getattr(runtime_options, "durable_background", False) and store and background
     )
 
 
@@ -404,6 +400,11 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
     # Spec 025 §A.3: developer checkpoint state for this background execution.
     _checkpoint_last_snapshot: bytes | None = None
     _terminal_seen = False
+    # Spec 025 §A.4: when the handler defers to next-lifetime recovery via
+    # ``await context.exit_for_recovery()``, the last checkpoint snapshot is
+    # the durable state — the finalization persistence below MUST NOT
+    # overwrite it with the pre-terminal ``record.response``.
+    _exit_for_recovery = False
 
     try:
         try:
@@ -613,6 +614,15 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
             # likely from event-loop / scope teardown — re-raise so the
             # shielded runner can absorb it.
             raise
+        except ResponseExitForRecovery:
+            # Spec 025 §A.4: the handler deferred to next-lifetime recovery.
+            # Leave the last checkpointed snapshot as the durable state and
+            # re-raise so the durable task body performs the recovery
+            # translation. The finally block must NOT persist the
+            # (pre-terminal) record.response over the checkpoint.
+            _exit_for_recovery = True
+            record.response_created_signal.set()
+            raise
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error(
                 "Handler raised during background processing (response_id=%s)",
@@ -700,7 +710,15 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
         # Persist terminal state update via provider (bg non-stream: update after runner completes)
         # §3.5: Persistence failure sets persistence_failed on the record and
         # replaces the snapshot with storage_error so GET returns the failure.
-        if store and provider is not None and record.status not in {"cancelled"} and record.response is not None:
+        # Spec 025 §A.4: skip when deferring to recovery — the last checkpoint
+        # snapshot is authoritative and must not be clobbered.
+        if (
+            store
+            and provider is not None
+            and not _exit_for_recovery
+            and record.status not in {"cancelled"}
+            and record.response is not None
+        ):
             if record.persistence_failed:
                 # Phase 1 already failed — skip update attempt and apply storage error.
                 storage_error_response = _build_failed_response(
