@@ -96,6 +96,16 @@ per-response watermark surface is the `internal_metadata` map. The handler
 seeds its resumption from `context.persisted_response` (the last durably
 persisted snapshot — see Row 11).
 
+**Recovery precondition (persisted response required).** The framework
+re-invokes the handler only if the response was durably created in the
+response store. If the response is **definitively absent** on recovery
+(a typed not-found from the store), the original `POST /responses`
+connection closed without ever returning a response id, so no client can
+fetch it — the framework MUST drop the durable execution (no
+re-invocation, no `response.*` stream events, no terminal write) and settle
+the task so the recovery scan does not re-select it. A transient/ambiguous
+store error is NOT a definitive absence and MUST NOT trigger a drop.
+
 ---
 
 ## The matrix
@@ -260,10 +270,23 @@ When `stream=true`, the row's contract applies as written, PLUS:
    MUST return durable events strictly after `<event_id>` and then live-tail
    (or return the terminal event if the response is complete).
 3. **`response.in_progress` reset event.** On re-invocation the recovered
-   handler MUST emit a `response.in_progress` event as its first event,
-   carrying the corrected output items.
+   handler MUST emit a `response.in_progress` event as its first **client-visible**
+   event, carrying the corrected output items. The recovered handler may still
+   emit `response.created` first (to seed its in-memory stream and satisfy the
+   first-event validator), but the framework MUST NOT append a second
+   `response.created` to the durable stream — see clause 5.
 4. **Stable event ids across recovery.** Pre-crash events retain their ids;
    recovered events get fresh monotonic ids after the last pre-crash id.
+5. **Single `response.created` per durable stream.** `response.created` is, by
+   definition, the first event of a durable stream. The framework appends it to
+   the durable stream provider **only when the stream is empty** (no events ever
+   appended). On a recovered entry the stream already carries the pre-crash
+   `response.created`, so the re-emitted one is suppressed at the provider
+   write; a reconnecting/replaying client therefore observes `response.created`
+   exactly once across the full (pre-crash + recovered) sequence. The
+   persisted-but-stream-empty window (response created, crash before the first
+   stream emit) correctly re-appends `response.created` because the stream is
+   genuinely empty.
 
 **Client-side rule.** A streaming client MUST reset its accumulator on every
 `response.in_progress` event after the first.
@@ -307,6 +330,12 @@ absent; it MUST NOT silently downgrade to a weaker row.
   failure, preserve the prior snapshot (C5).
 - On recovery deferral (`exit_for_recovery`), preserve the last checkpoint
   snapshot — do NOT overwrite it with a pre-terminal record (Row 11 Path B).
+- **Append `response.created` to the durable stream only when the stream is
+  empty** — never re-append it on a recovered entry (Streaming sub-contract
+  clause 5).
+- **Drop recovery when the response was never durably created** — on a
+  definitive store not-found, do not re-invoke the handler; settle the task
+  (Recovered entry § Recovery precondition).
 - Strip `internal_metadata` (item-level and the response-level reserved key)
   from every client egress; never persist client-injected internal metadata.
 

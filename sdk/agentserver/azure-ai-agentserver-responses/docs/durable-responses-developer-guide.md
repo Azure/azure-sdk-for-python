@@ -466,6 +466,23 @@ GET /responses/{id}?stream=true&starting_after=42
 
 This returns only events with `sequence_number > 42`.
 
+A durable stream has **exactly one** `response.created` — it is the first
+event of the stream. On a recovered entry the framework does **not** append a
+second `response.created` (it is suppressed at the durable-stream write because
+the stream is non-empty), so the full replayed sequence a reconnecting client
+sees end-to-end is:
+
+```
+response.created
+response.in_progress
+<events emitted before the crash>
+response.in_progress        ← recovery reset: carries the stable
+                              (already-persisted) output items at the
+                              resumption point
+<events emitted after recovery>
+response.completed
+```
+
 The post-recovery part of this guarantee is normative per
 [`responses-durability-spec.md`](responses-durability-spec.md): for
 `(store=true, background=true, durable_background=True, stream=true)` —

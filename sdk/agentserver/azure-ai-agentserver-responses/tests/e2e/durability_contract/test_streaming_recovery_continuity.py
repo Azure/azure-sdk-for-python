@@ -230,6 +230,22 @@ async def test_pre_crash_deltas_survive_recovery(
             + "\n".join(f"  seq={e.get('sequence_number')} type={e.get('type')}" for e in events)
         )
 
+        # (Spec 026 FR-026-1 / Streaming sub-contract clause 5) The recovered
+        # lifetime MUST NOT re-emit response.created to the durable stream.
+        # ``_get_full_stream`` reads with starting_after=0, which excludes the
+        # single legitimate seq-0 response.created; any response.created event
+        # appearing in this stream therefore has seq > 0 and is a duplicate
+        # written by the recovered lifetime — which is exactly the defect this
+        # asserts against. (RED before the empty-stream gate; GREEN after.)
+        duplicate_created = [e for e in events if e.get("type") == "response.created"]
+        assert duplicate_created == [], (
+            "Recovered durable stream must not re-emit response.created "
+            "(a stream has exactly one, at seq 0). Found "
+            f"{len(duplicate_created)} duplicate(s) at seq "
+            f"{[e.get('sequence_number') for e in duplicate_created]}. Full stream:\n"
+            + "\n".join(f"  seq={e.get('sequence_number')} type={e.get('type')}" for e in events)
+        )
+
         # Recovered deltas (lifetime 1) must also be present with seq > max
         # pre-crash seq — the per-lifetime tagging makes this verifiable.
         recovered_deltas = [
