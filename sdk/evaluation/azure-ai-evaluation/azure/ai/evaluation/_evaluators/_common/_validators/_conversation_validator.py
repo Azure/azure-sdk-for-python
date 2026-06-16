@@ -130,7 +130,7 @@ class ConversationValidator(ValidatorInterface):
 
         if not isinstance(content_item["text"], str):
             return EvaluationException(
-                message=f"The 'text' field must be a string in content items.",
+                message="The 'text' field must be a string in content items.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
@@ -196,16 +196,16 @@ class ConversationValidator(ValidatorInterface):
         """Validate assistant message content."""
         content = message["content"]
 
-        valid_assistant_content_types = [
-            ContentType.TEXT,
-            ContentType.OUTPUT_TEXT,
-            ContentType.TOOL_CALL,
-            ContentType.FUNCTION_CALL,
-            ContentType.MCP_APPROVAL_REQUEST,
-            ContentType.OPENAPI_CALL,
-        ]
-        valid_assistant_content_types_as_strings = [t.value for t in valid_assistant_content_types]
         if isinstance(content, list):
+            valid_assistant_content_types = [
+                ContentType.TEXT,
+                ContentType.OUTPUT_TEXT,
+                ContentType.TOOL_CALL,
+                ContentType.FUNCTION_CALL,
+                ContentType.MCP_APPROVAL_REQUEST,
+                ContentType.OPENAPI_CALL,
+            ]
+            valid_assistant_content_types_as_strings = [t.value for t in valid_assistant_content_types]
             for content_item in content:
                 content_type = content_item["type"]
                 if content_type not in valid_assistant_content_types:
@@ -225,19 +225,21 @@ class ConversationValidator(ValidatorInterface):
                     if error:
                         return error
 
-                # Raise error in case of unsupported tools for evaluators that enabled check_for_unsupported_tools
-                if self.check_for_unsupported_tools:
-                    if content_type == ContentType.TOOL_CALL or content_type == ContentType.OPENAPI_CALL:
-                        name = (
-                            "openapi_call" if content_type == ContentType.OPENAPI_CALL else content_item["name"].lower()
-                        )
-                        if name in self.UNSUPPORTED_TOOLS:
-                            return EvaluationException(
-                                message=f"{name} tool call is currently not supported for {self.error_target.value} evaluator.",
-                                blame=ErrorBlame.USER_ERROR,
-                                category=ErrorCategory.NOT_APPLICABLE,
-                                target=self.error_target,
+                    # Raise error in case of unsupported tools for evaluators that enabled check_for_unsupported_tools
+                    if self.check_for_unsupported_tools:
+                        if content_type == ContentType.TOOL_CALL or content_type == ContentType.OPENAPI_CALL:
+                            name = (
+                                "openapi_call"
+                                if content_type == ContentType.OPENAPI_CALL
+                                else content_item["name"].lower()
                             )
+                            if name in self.UNSUPPORTED_TOOLS:
+                                return EvaluationException(
+                                    message=f"{name} tool call is currently not supported for {self.error_target.value} evaluator.",
+                                    blame=ErrorBlame.USER_ERROR,
+                                    category=ErrorCategory.NOT_APPLICABLE,
+                                    target=self.error_target,
+                                )
         return None
 
     def _validate_tool_message(self, message: Dict[str, Any]) -> Optional[EvaluationException]:
@@ -314,7 +316,7 @@ class ConversationValidator(ValidatorInterface):
         )
         if not content_is_string_or_list_of_dicts:
             return EvaluationException(
-                message=f"The 'content' field must be a string or a list of dictionaries messages.",
+                message="The 'content' field must be a string or a list of dictionaries messages.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
@@ -322,23 +324,22 @@ class ConversationValidator(ValidatorInterface):
 
         if len(content) == 0:
             return EvaluationException(
-                message=f"The 'content' field can't be empty.",
+                message="The 'content' field can't be empty.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=self.error_target,
             )
 
         if isinstance(content, list):
-            all_messages_have_type_field = all("type" in item for item in content)
-            if not all_messages_have_type_field:
+            if not all("type" in item for item in content):
                 return EvaluationException(
-                    message=f"Each content item in the 'content' list must contain a 'type' field.",
+                    message="Each content item in the 'content' list must contain a 'type' field.",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
                 )
 
-        if role in [MessageRole.USER, MessageRole.SYSTEM]:
+        if role in [MessageRole.USER, MessageRole.SYSTEM, MessageRole.DEVELOPER]:
             error = self._validate_user_or_system_message(message, role)
             if error:
                 return error
