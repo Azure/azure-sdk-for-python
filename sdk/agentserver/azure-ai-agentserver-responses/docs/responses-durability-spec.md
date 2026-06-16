@@ -240,7 +240,7 @@ wrapper.
 | Key | Value | Written by | Read by |
 |---|---|---|---|
 | `response_id` | The chain's response id stamp (informational; useful for operator triage) | First entry of the task body | Operators (logs / dumps) |
-| `background` | The original `background` request flag at first entry | First entry of the task body | Recovery dispatch (backward-compat fallback) |
+| `background` | The original `background` request flag at first entry | First entry of the task body | Recovery dispatch (secondary signal; `disposition` is primary) |
 | `disposition` | `"re-invoke"` (Row 1) or `"mark-failed"` (Rows 2, 3) | First entry of the task body, flushed durably before any subsequent await | Recovery dispatch (§7) |
 | `last_sequence_number` | The highest sequence number persisted to the stream event store for this chain (most recent turn) | Stream pipeline, after each event persist | Reconnection bookkeeping |
 
