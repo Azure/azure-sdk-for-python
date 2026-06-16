@@ -3,7 +3,6 @@
 # init env
 python -m pip install -U pip > /dev/null
 python -m pip install eng/tools/azure-sdk-tools[ghtools] > /dev/null
-python -m pip install -r eng/apiview_reqs.txt > /dev/null
 
 # install tsp-client
 echo Install tsp-client
