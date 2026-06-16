@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # pylint: disable=attribute-defined-outside-init
 
-import asyncio
 from datetime import datetime, timedelta
 
 import pytest
@@ -19,6 +18,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
     BlobBlock,
     BlobSasPermissions,
+    BlobServiceClient as SyncBlobServiceClient,
     BlobType,
     CustomerProvidedEncryptionKey,
     generate_blob_sas,
@@ -41,9 +41,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
     def _teardown(self, bsc):
         if self.is_live:
-            loop = asyncio.get_event_loop()
             try:
-                loop.run_until_complete(bsc.delete_container(self.container_name))
+                sync_credential = self.get_credential(SyncBlobServiceClient, is_async=False)
+                with SyncBlobServiceClient(account_url=bsc.url, credential=sync_credential) as sync_bsc:
+                    sync_bsc.delete_container(self.container_name)
             except HttpResponseError:
                 pass
 
@@ -647,7 +648,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         assert md["hello"] == "world"
         assert md["number"] == "42"
         assert md["up"] == "upval"
-        assert not "Up" in md
+        assert "Up" not in md
 
     @BlobPreparer()
     @recorded_by_proxy_async

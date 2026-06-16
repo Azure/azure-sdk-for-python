@@ -1,5 +1,19 @@
 # Release History
 
+## 17.0.0 (2026-06-10)
+
+### Features Added
+
+  - Model `CacheProperties` added property `file_access_logs`
+  - Added enum `CacheFileAccessLogs`
+
+### Breaking Changes
+
+  - Method `CachesOperations.begin_pool_change` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Cache]`
+  - Method `CachesOperations.begin_reset_smb_password` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[Cache]`
+  - Method `CachesOperations.begin_pool_change` changed return type from `LROPoller[None]` to `LROPoller[Cache]`
+  - Method `CachesOperations.begin_reset_smb_password` changed return type from `LROPoller[None]` to `LROPoller[Cache]`
+
 ## 16.0.0 (2026-04-20)
 
 ### Features Added

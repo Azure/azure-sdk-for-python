@@ -37,7 +37,7 @@ class AzureAppConfigurationClient(_AzureAppConfigurationClientOperationsMixin):
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Known values are "2024-09-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str

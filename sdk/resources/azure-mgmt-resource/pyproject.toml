@@ -13,17 +13,16 @@ authors = [
 description = "Microsoft Azure Resource Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = [
     "azure",
     "azure sdk",
@@ -42,7 +41,7 @@ dynamic = [
 repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic.version]
-attr = "azure.mgmt.resource._version.VERSION"
+attr = "azure.mgmt.resource.resources._version.VERSION"
 
 [tool.setuptools.dynamic.readme]
 file = [
@@ -60,6 +59,7 @@ exclude = [
     "doc*",
     "azure",
     "azure.mgmt",
+    "azure.mgmt.resource",
 ]
 
 [tool.setuptools.package-data]
@@ -78,11 +78,12 @@ verifytypes = false
 package_name = "azure-mgmt-resource"
 package_pprint_name = "Resource Management"
 package_doc_id = "resources?view=azure-python-preview"
-is_stable = true
+is_stable = false
 need_msrestazure = false
 need_azuremgmtcore = true
 sample_link = ""
 title = "ResourceManagementClient"
 package_nspkg = "azure-mgmt-nspkg"
 is_arm = true
+sub_namespace = "resources"
 exclude_folders = ""

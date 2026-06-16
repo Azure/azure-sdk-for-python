@@ -72,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01/ManagedClustersCreate_IngressProfile_WebAppRouting.json
+# x-ms-original-file: 2026-04-02-preview/ManagedClustersCreate_IngressProfile_WebAppRouting.json
 if __name__ == "__main__":
     main()
