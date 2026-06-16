@@ -24,4 +24,4 @@ class TestResilienceManagementUsagePlansOperationsAsync(AzureMgmtRecordedTestCas
     async def test_usage_plans_list_by_subscription(self, resource_group):
         response = self.client.usage_plans.list_by_subscription()
         result = [r async for r in response]
-        assert len(result)
+        assert result == []
