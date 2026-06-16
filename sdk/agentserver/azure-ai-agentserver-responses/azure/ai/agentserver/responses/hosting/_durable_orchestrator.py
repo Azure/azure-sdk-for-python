@@ -616,17 +616,40 @@ class DurableResponseOrchestrator:
             # (Spec 025 §A.3) On a recovered entry, pre-fetch the persisted
             # response so the handler can seed its stream from already-
             # persisted items + the response-level watermark. Entry-only:
-            # never refreshed mid-execution. Best-effort — absence (handler
-            # crashed before the initial create) leaves it ``None``.
+            # never refreshed mid-execution.
+            #
+            # (Spec 026 FR-026-4/5/6) Recovery is only meaningful when the
+            # response was durably created in the store. If it is DEFINITIVELY
+            # absent (typed not-found), the original POST disconnected without
+            # ever returning a response id, so no client can fetch it — drop
+            # the durable execution (do NOT re-invoke the handler). Returning
+            # here settles the task (the recovery scan selects ``in_progress``
+            # records; a settled record is not re-selected), so this is not
+            # retried indefinitely. A transient/ambiguous error is NOT a
+            # definitive absence and MUST NOT drop — proceed with
+            # ``persisted_response=None``.
             if is_recovery:
+                from ..store._foundry_errors import (  # pylint: disable=import-outside-toplevel
+                    FoundryResourceNotFoundError,
+                )
+
                 try:
                     _isolation = context.isolation
                     context.persisted_response = await self._provider.get_response(
                         context.response_id, isolation=_isolation
                     )
+                except (KeyError, FoundryResourceNotFoundError):
+                    logger.info(
+                        "Recovery dropped for %s: response was never durably "
+                        "created (definitive not-found); abandoning durable "
+                        "execution without re-invoking the handler.",
+                        context.response_id,
+                    )
+                    return
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.debug(
-                        "persisted_response pre-fetch failed for %s (recovery)",
+                        "persisted_response pre-fetch failed for %s "
+                        "(recovery, transient — not dropping)",
                         context.response_id,
                         exc_info=True,
                     )

@@ -1538,8 +1538,26 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # durable streaming path) never observe ``response.created`` when
         # Phase 1 create_response failed — matching the contract requirement
         # that no ``response.created`` precedes the standalone error event.
+        #
+        # (Spec 026 FR-026-1/2/2a) ``response.created`` is, by definition, the
+        # first event of a durable stream. On a recovered entry the durable
+        # stream already carries the pre-crash ``response.created``, so
+        # re-appending it would make a reconnecting client observe
+        # ``response.created`` twice. Gate the provider append on the stream
+        # being EMPTY (no events ever appended): a fresh entry's stream is
+        # empty -> append; a recovered entry's stream is non-empty -> suppress,
+        # and the recovered handler's subsequent ``response.in_progress`` reset
+        # becomes its first stream-visible event. Emptiness is read from the
+        # cursor-capable durable replay provider (``last_cursor() is None`` iff
+        # empty). The persisted-but-stream-empty crash window (create_response
+        # succeeded, crash before this emit) correctly re-appends
+        # ``response.created`` because the stream is genuinely empty. Only the
+        # provider append is gated; first-event validation, the seeded-output
+        # baseline, and the in-memory snapshot already ran upstream.
         if not execution.persistence_failed:
-            await self._safe_emit(state.bg_record.subject, first_normalized)
+            stream_is_empty = await state.bg_record.subject.last_cursor() is None
+            if stream_is_empty:
+                await self._safe_emit(state.bg_record.subject, first_normalized)
 
     async def _intercept_checkpoints(
         self,
