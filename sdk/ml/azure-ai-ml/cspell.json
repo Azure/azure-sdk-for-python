@@ -1,10 +1,14 @@
 {
   "version": "0.2",
   "ignoreWords": [
+    "Arimax",
     "FAISS",
     "Faiss",
     "LLMRAG",
+    "MASKRCNN",
+    "MOBILENETV",
     "SERP",
+    "VITL",
     "aadtoken",
     "alds",
     "elts",
@@ -12,11 +16,14 @@
     "expirable",
     "faiss",
     "kwoa",
+    "maskrcnn",
     "merkle",
     "merkletree",
     "misformatted",
+    "mobilenetv",
     "mpnet",
     "restclient",
-    "rslex"
+    "rslex",
+    "vitl"
   ]
 }
