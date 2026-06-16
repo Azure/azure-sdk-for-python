@@ -40,7 +40,6 @@
       - [Regression Test](#regression-test)
       - [Autorest Automation](#autorest-automation)
   - [Weekly Analyze Checks](#weekly-analyze-checks)
-    - [Ruff](#ruff)
     - [Next-Generation Checks](#next-generation-checks)
 
 This document describes every CI check run against Azure SDK for Python packages — what each one does, when it runs, and how to reproduce it locally.
@@ -178,8 +177,6 @@ analyze_python_version = "3.11"
 This setting is read by `eng/scripts/dispatch_checks.py` and is passed to `azpysdk` via the `--python` flag (which requires `--isolate` and `uv`). This is useful for packages that use newer syntax or type features that require a more recent Python interpreter.
 
 > **Note:** This setting only affects the Python interpreter version used for the analyze venv; it does not change the minimum supported Python version declared in `setup.py`/`pyproject.toml`.
->
-> **Warning:** This override applies to _all_ analyze checks dispatched by `dispatch_checks.py`, including `apistub`. The `apistub` tool currently requires Python < 3.11 (`PYTHON_VERSION_LIMIT = (3, 11)` in `azpysdk/apistub.py`). Do not set `analyze_python_version` to `3.11` or higher for packages that still run `apistub` through the standard dispatched analyze flow.
 
 ## Environment variables important to CI
 
@@ -589,18 +586,6 @@ python scripts/devops_tasks/verify_autorest.py --service_directory <your_service
 <a name="weekly-analyze-checks"></a>
 
 The following checks run on a weekly cadence (not on every PR or nightly) via the `python-analyze-weekly` pipeline. They are exploratory/informational and use `continueOnError: true`, meaning failures are surfaced as warnings but do not block merges.
-
-### Ruff
-
-<a name="ruff"></a>
-
-[`Ruff`](https://docs.astral.sh/ruff/) is a fast Python linter and formatter written in Rust. It runs only during the weekly analyze job, not on every PR.
-
-To run locally:
-
-```bash
-azpysdk ruff .
-```
 
 ### Next-Generation Checks
 

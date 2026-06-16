@@ -7,7 +7,7 @@ description: Generate an API markdown file and token file using ApiView. Use thi
 
 ## Prerequisites
 
-1. Activate your virtual environment with a Python version that is strictly less than the version limit specified in `eng/tools/azure-sdk-tools/azpysdk/apistub.py`.
+1. Activate your virtual environment.
 2. Install the required dependencies:
    ```bash
    cd <repo_root>
@@ -19,5 +19,6 @@ description: Generate an API markdown file and token file using ApiView. Use thi
 1. Navigate to the desired package directory
 2. Run the command:
    ```bash
-   azpysdk apistub --md .
+   azpysdk apistub --md --extract-metadata --install-deps --dest-dir . .
+   ```
 3. The command outputs the location of the generated markdown file. Provide this file to the user for review.

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import json
 import math
 import re
 import os
@@ -201,7 +202,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
+            return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
@@ -216,58 +217,82 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
         score = math.nan
+        reason = ""
+        llm_properties = {}
+
         if prompty_output_dict:
             llm_output = prompty_output_dict.get("llm_output", "")
-            input_token_count = prompty_output_dict.get("input_token_count", 0)
-            output_token_count = prompty_output_dict.get("output_token_count", 0)
-            total_token_count = prompty_output_dict.get("total_token_count", 0)
-            finish_reason = prompty_output_dict.get("finish_reason", "")
-            model_id = prompty_output_dict.get("model_id", "")
-            sample_input = prompty_output_dict.get("sample_input", "")
-            sample_output = prompty_output_dict.get("sample_output", "")
-            # Parse out score and reason from evaluators known to possess them.
-            if self._result_key in PROMPT_BASED_REASON_EVALUATORS:
-                score, reason = parse_quality_evaluator_reason_score(llm_output)
-                binary_result = self._get_binary_result(score)
-                return {
-                    self._result_key: float(score),
-                    f"gpt_{self._result_key}": float(score),
-                    f"{self._result_key}_reason": reason,
-                    f"{self._result_key}_result": binary_result,
-                    f"{self._result_key}_threshold": self._threshold,
-                    f"{self._result_key}_prompt_tokens": input_token_count,
-                    f"{self._result_key}_completion_tokens": output_token_count,
-                    f"{self._result_key}_total_tokens": total_token_count,
-                    f"{self._result_key}_finish_reason": finish_reason,
-                    f"{self._result_key}_model": model_id,
-                    f"{self._result_key}_sample_input": sample_input,
-                    f"{self._result_key}_sample_output": sample_output,
-                }
-            match = re.search(r"\d", llm_output)
-            if match:
-                score = float(match.group())
-                binary_result = self._get_binary_result(score)
+
+            # Parse JSON output from LLM
+            parsed_output = None
+            if isinstance(llm_output, dict):
+                parsed_output = llm_output
+            elif isinstance(llm_output, str):
+                try:
+                    parsed_output = json.loads(llm_output)
+                except (json.JSONDecodeError, TypeError):
+                    parsed_output = None
+
+            if parsed_output and isinstance(parsed_output, dict):
+                # Handle skipped status from LLM
+                llm_status = parsed_output.get("status", "completed")
+                if llm_status == "skipped":
+                    skip_reason = parsed_output.get("reason", "")
+                    return self._return_not_applicable_result(skip_reason, self._threshold)
+
+                score = parsed_output.get("score", math.nan)
+                reason = parsed_output.get("reason", "")
+                llm_properties = parsed_output.get("properties", {}) or {}
+            else:
+                # Fallback: try to parse legacy XML format or extract digit
+                if isinstance(llm_output, str) and self._result_key in PROMPT_BASED_REASON_EVALUATORS:
+                    score, reason = parse_quality_evaluator_reason_score(llm_output)
+                elif isinstance(llm_output, str):
+                    match = re.search(r"\d", llm_output)
+                    if match:
+                        score = float(match.group())
+
+            score = float(score) if score is not None else math.nan
+            score_result = self._get_binary_result(score)
+
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
+
             return {
-                self._result_key: float(score),
-                f"gpt_{self._result_key}": float(score),
-                f"{self._result_key}_result": binary_result,
+                self._result_key: score,
+                f"{self._result_key}_score": score,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_result": score_result,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_prompt_tokens": input_token_count,
-                f"{self._result_key}_completion_tokens": output_token_count,
-                f"{self._result_key}_total_tokens": total_token_count,
-                f"{self._result_key}_finish_reason": finish_reason,
-                f"{self._result_key}_model": model_id,
-                f"{self._result_key}_sample_input": sample_input,
-                f"{self._result_key}_sample_output": sample_output,
+                f"{self._result_key}_properties": llm_properties,
             }
 
-        binary_result = self._get_binary_result(score)
         raise EvaluationException(
             message="Evaluator returned invalid output.",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,
         )
+
+    @staticmethod
+    def _get_token_metadata(prompty_output: Dict) -> Dict:
+        """Extract token usage and model metadata from the prompty output dict.
+
+        :param prompty_output: The raw output dictionary from the prompty flow.
+        :type prompty_output: Dict
+        :return: A dictionary with token counts, finish reason, model, and sample I/O.
+        :rtype: Dict
+        """
+        return {
+            "prompt_tokens": prompty_output.get("input_token_count", 0),
+            "completion_tokens": prompty_output.get("output_token_count", 0),
+            "total_tokens": prompty_output.get("total_token_count", 0),
+            "finish_reason": prompty_output.get("finish_reason", ""),
+            "model": prompty_output.get("model_id", ""),
+            "sample_input": prompty_output.get("sample_input", ""),
+            "sample_output": prompty_output.get("sample_output", ""),
+        }
 
     @staticmethod
     def _get_built_in_tool_definition(tool_name: str):
@@ -401,45 +426,6 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
 
         return needed_tool_definitions
 
-    def _not_applicable_result(
-        self, error_message: str, threshold: Union[int, float], has_details: bool = False
-    ) -> Dict[str, Union[str, int, float, Dict]]:
-        """Return a result indicating that the evaluation is not applicable.
-
-        When evaluation cannot be performed (e.g., no tool calls, missing definitions),
-        this returns the threshold value as the score with a "pass" result.
-
-        :param error_message: The error message explaining why evaluation is not applicable.
-        :type error_message: str
-        :param threshold: The threshold value for the evaluator, used as the score.
-        :type threshold: Union[int, float]
-        :param has_details: Whether to include an empty details field in the result.
-        :type has_details: bool
-        :return: A dictionary containing the result of the evaluation.
-        :rtype: Dict[str, Union[str, float, Dict]]
-        """
-        # If no tool calls were made or tool call type is not supported, return threshold as score with pass result
-        result = {
-            self._result_key: threshold,
-            f"{self._result_key}_result": "pass",
-            f"{self._result_key}_threshold": threshold,
-            f"{self._result_key}_reason": f"Not applicable: {error_message}",
-            f"{self._result_key}_prompt_tokens": 0,
-            f"{self._result_key}_completion_tokens": 0,
-            f"{self._result_key}_total_tokens": 0,
-            f"{self._result_key}_finish_reason": "",
-            f"{self._result_key}_model": "",
-            f"{self._result_key}_sample_input": "",
-            f"{self._result_key}_sample_output": "",
-        }
-
-        # Add empty details field if requested
-        if has_details:
-            result[f"{self._result_key}_details"] = {}
-
-        return result
-
-    # TODO: After all evaluators output are updated, we can remove the _not_applicable_result method and replace calls to it with _return_not_applicable_result, which returns a "skipped" status instead of "pass" to avoid confusion.
     def _return_not_applicable_result(
         self, error_message: str, threshold: Union[int, float]
     ) -> Dict[str, Union[str, float, Dict, None]]:
@@ -455,10 +441,8 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         return {
             f"{self._result_key}": None,
             f"{self._result_key}_score": None,
-            # TODO: Return "not_applicable" instead of "pass" once the
-            # evaluation service accepts it as a valid result value.
-            f"{self._result_key}_result": "pass",
             f"{self._result_key}_passed": None,
+            f"{self._result_key}_result": "not_applicable",
             f"{self._result_key}_reason": f"Not applicable: {error_message}",
             f"{self._result_key}_status": "skipped",
             f"{self._result_key}_threshold": threshold,

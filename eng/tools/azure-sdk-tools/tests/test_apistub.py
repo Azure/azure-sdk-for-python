@@ -73,29 +73,101 @@ class TestGetPackageWheelPath:
 class TestRunOutputDirectory:
     """Verify that dest_dir controls where the output token path ends up."""
 
-    def _make_args(self, dest_dir=None, generate_md=False):
+    def _make_args(self, dest_dir=None, generate_md=False, isolate=False, install_deps=False):
         return argparse.Namespace(
             target=".",
-            isolate=False,
+            isolate=isolate,
             command="apistub",
             service=None,
             dest_dir=dest_dir,
             generate_md=generate_md,
+            install_deps=install_deps,
         )
 
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
     )
-    @patch("azpysdk.apistub.PYTHON_VERSION_LIMIT", (99, 99))
     @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
     @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
     @patch("azpysdk.apistub.create_package_and_install")
     @patch("azpysdk.apistub.install_into_venv")
     @patch("azpysdk.apistub.set_envvar_defaults")
-    def test_dest_dir_creates_package_subfolder(
+    def test_isolate_does_not_install_dependencies(
+        self, _env, install_into_venv, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
+    ):
+        """When only --isolate is passed, apistub should not install dependencies."""
+        monkeypatch.chdir(os.getcwd())
+        stub = apistub()
+        staging = str(tmp_path / "staging")
+        os.makedirs(staging, exist_ok=True)
+        fake_parsed = MagicMock()
+        fake_parsed.folder = str(tmp_path)
+        fake_parsed.name = "azure-core"
+
+        with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
+            stub, "get_executable", return_value=(sys.executable, staging)
+        ), patch.object(stub, "install_dev_reqs") as install_dev_reqs, patch.object(
+            stub, "pip_freeze"
+        ) as pip_freeze, patch.object(
+            stub, "run_venv_command"
+        ):
+            stub.run(self._make_args(isolate=True))
+
+        install_dev_reqs.assert_not_called()
+        install_into_venv.assert_not_called()
+        pip_freeze.assert_not_called()
+
+    @patch(
+        "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    )
+    @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
+    @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
+    @patch("azpysdk.apistub.create_package_and_install")
+    @patch("azpysdk.apistub.install_into_venv")
+    @patch("azpysdk.apistub.set_envvar_defaults")
+    def test_install_deps_installs_dependencies(
+        self, _env, install_into_venv, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
+    ):
+        """When --install-deps is passed, apistub should install dependencies."""
+        monkeypatch.chdir(os.getcwd())
+        stub = apistub()
+        staging = str(tmp_path / "staging")
+        os.makedirs(staging, exist_ok=True)
+        fake_parsed = MagicMock()
+        fake_parsed.folder = str(tmp_path)
+        fake_parsed.name = "azure-core"
+
+        with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
+            stub, "get_executable", return_value=(sys.executable, staging)
+        ), patch.object(stub, "install_dev_reqs") as install_dev_reqs, patch.object(
+            stub, "pip_freeze"
+        ) as pip_freeze, patch.object(
+            stub, "run_venv_command"
+        ):
+            args = self._make_args(install_deps=True)
+            stub.run(args)
+
+        install_dev_reqs.assert_called_once_with(sys.executable, args, str(tmp_path))
+        install_into_venv.assert_called_once()
+        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+        assert install_into_venv.call_args.args[1][0:2] == [
+            "-r",
+            os.path.join(repo_root, "eng", "apiview_reqs.txt"),
+        ]
+        pip_freeze.assert_called_once_with(sys.executable)
+
+    @patch(
+        "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    )
+    @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
+    @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
+    @patch("azpysdk.apistub.create_package_and_install")
+    @patch("azpysdk.apistub.install_into_venv")
+    @patch("azpysdk.apistub.set_envvar_defaults")
+    def test_dest_dir_uses_destination_directory(
         self, _env, _install, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
     ):
-        """When --dest-dir is given, output should go to <dest_dir>/<package_name>/."""
+        """When --dest-dir is given, output should go directly to <dest_dir>/."""
         monkeypatch.chdir(os.getcwd())
         dest = tmp_path / "output"
         dest.mkdir()
@@ -131,7 +203,7 @@ class TestRunOutputDirectory:
 
             stub.run(self._make_args(dest_dir=str(dest), generate_md=True))
 
-        expected_out = os.path.join(str(dest), "azure-core")
+        expected_out = str(dest)
         assert os.path.isdir(expected_out)
         assert os.path.exists(os.path.join(expected_out, "api.md"))
         assert os.path.exists(os.path.join(expected_out, "azure-core_python.json"))
@@ -139,7 +211,6 @@ class TestRunOutputDirectory:
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
     )
-    @patch("azpysdk.apistub.PYTHON_VERSION_LIMIT", (99, 99))
     @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
     @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
     @patch("azpysdk.apistub.create_package_and_install")
@@ -191,7 +262,6 @@ class TestRunOutputDirectory:
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
     )
-    @patch("azpysdk.apistub.PYTHON_VERSION_LIMIT", (99, 99))
     @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
     @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
     @patch("azpysdk.apistub.create_package_and_install")
@@ -235,7 +305,6 @@ class TestRunOutputDirectory:
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
     )
-    @patch("azpysdk.apistub.PYTHON_VERSION_LIMIT", (99, 99))
     @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
     @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
     @patch("azpysdk.apistub.create_package_and_install")

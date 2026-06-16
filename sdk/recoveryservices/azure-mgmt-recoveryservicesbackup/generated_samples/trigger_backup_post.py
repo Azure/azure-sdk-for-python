@@ -40,6 +40,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-01-01-preview/Common/TriggerBackup_Post.json
+# x-ms-original-file: 2026-01-31-preview/Common/TriggerBackup_Post.json
 if __name__ == "__main__":
     main()

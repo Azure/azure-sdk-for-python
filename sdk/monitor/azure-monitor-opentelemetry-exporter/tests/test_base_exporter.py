@@ -423,6 +423,60 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.delete.assert_called_once()  # Corrupted blob should be deleted
         transmit_mock.assert_not_called()  # No transmission should occur
 
+    def test_transmit_from_storage_stops_on_retryable_failure(self):
+        """Test that _transmit_from_storage stops draining blobs when
+        a retryable failure (e.g. 429) occurs, preventing retry storms."""
+        exporter = BaseExporter()
+        exporter.storage = mock.Mock()
+        envelope_mock = {"name": "test", "time": "time"}
+        # Create three blobs in storage
+        blob1 = mock.Mock()
+        blob1.lease.return_value = True
+        blob1.get.return_value = [envelope_mock]
+        blob2 = mock.Mock()
+        blob2.lease.return_value = True
+        blob2.get.return_value = [envelope_mock]
+        blob3 = mock.Mock()
+        blob3.lease.return_value = True
+        blob3.get.return_value = [envelope_mock]
+        exporter.storage.gets.return_value = [blob1, blob2, blob3]
+        with mock.patch.object(exporter, "_transmit") as transmit_mock:
+            # First blob transmit fails with retryable error
+            transmit_mock.return_value = ExportResult.FAILED_RETRYABLE
+            exporter._transmit_from_storage()
+        # Only the first blob should have been attempted; loop should break
+        transmit_mock.assert_called_once()
+        blob1.lease.assert_called()
+        # blob2 and blob3 should not have been touched
+        blob2.lease.assert_not_called()
+        blob3.lease.assert_not_called()
+
+    def test_transmit_from_storage_caps_drain_batch_size(self):
+        """Test that _transmit_from_storage processes at most
+        _MAX_STORAGE_DRAIN_BATCH blobs per invocation to prevent
+        flooding the service on recovery from throttling."""
+        exporter = BaseExporter()
+        exporter.storage = mock.Mock()
+        envelope_mock = {"name": "test", "time": "time"}
+        num_blobs = exporter._MAX_STORAGE_DRAIN_BATCH + 5
+        blobs = []
+        for _ in range(num_blobs):
+            b = mock.Mock()
+            b.lease.return_value = True
+            b.get.return_value = [envelope_mock]
+            blobs.append(b)
+        exporter.storage.gets.return_value = blobs
+        with mock.patch.object(exporter, "_transmit") as transmit_mock:
+            transmit_mock.return_value = ExportResult.SUCCESS
+            exporter._transmit_from_storage()
+        # Should only process _MAX_STORAGE_DRAIN_BATCH blobs
+        self.assertEqual(transmit_mock.call_count, exporter._MAX_STORAGE_DRAIN_BATCH)
+        # The extra blobs beyond the cap should not be deleted
+        for i in range(exporter._MAX_STORAGE_DRAIN_BATCH):
+            blobs[i].delete.assert_called_once()
+        for i in range(exporter._MAX_STORAGE_DRAIN_BATCH, num_blobs):
+            blobs[i].delete.assert_not_called()
+
     def test_telemetry_item_dict_roundtrip(self):
         """Test that TelemetryItem correctly round-trips through as_dict() -> TelemetryItem(dict)
         for all telemetry data types used in offline storage."""
@@ -693,7 +747,11 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmit_http_error_redirect(self):
         response = HttpResponse(None, None)
         response.status_code = 307
-        response.headers = {"location": "https://example.com"}
+        # Redirect target whose host differs from the default ingestion host
+        # (`dc.services.visualstudio.com`) only in the leftmost DNS label, with
+        # the same number of labels and a 3-label shared suffix, so the
+        # cross-origin redirect guard permits it.
+        response.headers = {"location": "https://westus.services.visualstudio.com"}
         prev_redirects = self._base.client._config.redirect_policy.max_redirects
         self._base.client._config.redirect_policy.max_redirects = 2
         prev_host = self._base.client._config.host
@@ -703,9 +761,56 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
             self.assertEqual(post.call_count, 2)
-            self.assertEqual(self._base.client._config.host, "https://example.com")
+            self.assertEqual(
+                self._base.client._config.host,
+                "https://westus.services.visualstudio.com",
+            )
         self._base.client._config.redirect_policy.max_redirects = prev_redirects
         self._base.client._config.host = prev_host
+
+    def test_transmit_http_error_redirect_refuses_cross_origin(self):
+        """A redirect to a different registered domain must be refused so the
+        auth policy does not attach a bearer token for a foreign host on the
+        recursive _transmit call."""
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location": "https://attacker.example.com"}
+        prev_host = self._base.client._config.host
+        error = HttpResponseError(response=response)
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.side_effect = error
+            result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(post.call_count, 1)
+            self.assertEqual(self._base.client._config.host, prev_host)
+
+    def test_is_same_registered_domain(self):
+        same = self._base._is_same_registered_domain
+        # Same host (exact match) is always safe, even when not under a
+        # trusted ingestion suffix (e.g. customer-configured custom host).
+        self.assertTrue(same("westus-0.in.applicationinsights.azure.com", "westus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("custom-ingestion.example.invalid", "custom-ingestion.example.invalid"))
+        # Both hosts under the same trusted Azure Monitor ingestion suffix
+        # are permitted -- this is the cross-region case.
+        self.assertTrue(same("westus-0.in.applicationinsights.azure.com", "eastus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("dc.services.visualstudio.com", "westus.services.visualstudio.com"))
+        self.assertTrue(same("foo.applicationinsights.azure.us", "bar.applicationinsights.azure.us"))
+        # Different registered domain entirely is rejected.
+        self.assertFalse(same("westus-0.in.applicationinsights.azure.com", "attacker.com"))
+        self.assertFalse(same("foo.example.com", "foo.example.org"))
+        # Sibling subdomains under an untrusted parent are rejected -- this
+        # is the cross-origin-leak PoC scenario.
+        self.assertFalse(same("legit-ingestion.example.invalid", "attacker.example.invalid"))
+        self.assertFalse(same("foo.azure.com", "bar.azure.com"))
+        # A trusted host cannot be redirected to a host under an untrusted
+        # suffix (and vice versa).
+        self.assertFalse(same("dc.services.visualstudio.com", "attacker.example.invalid"))
+        self.assertFalse(same("legit-ingestion.example.invalid", "dc.services.visualstudio.com"))
+        # Mixing two different trusted suffixes is rejected.
+        self.assertFalse(same("dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com"))
+        # Empty inputs are treated as not-same.
+        self.assertFalse(same("", "applicationinsights.azure.com"))
+        self.assertFalse(same("applicationinsights.azure.com", ""))
 
     def test_transmit_http_error_redirect_missing_headers(self):
         response = HttpResponse(None, None)

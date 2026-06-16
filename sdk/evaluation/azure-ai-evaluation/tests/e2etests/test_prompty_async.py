@@ -14,7 +14,6 @@ from openai.types.chat import ChatCompletion
 from azure.ai.evaluation._legacy.prompty import AsyncPrompty, InvalidInputError
 from azure.ai.evaluation import AzureOpenAIModelConfiguration
 
-
 PROMPTY_TEST_DIR: Final[Path] = Path(path.dirname(__file__), "data").resolve()
 EVALUATOR_ROOT_DIR: Final[Path] = Path(path.dirname(__file__), "../../azure/ai/evaluation/_evaluators").resolve()
 BASIC_PROMPTY: Final[Path] = PROMPTY_TEST_DIR / "basic.prompty"
@@ -85,17 +84,13 @@ class TestPrompty:
         assert isinstance(result, dict)
         llm_output = result["llm_output"]
 
-        # We expect an output string that contains <S0>chain of thoughts</S0> <S1>explanation<S1> <S2>int_score</S2>
-        assert isinstance(llm_output, str)
-        matched = re.match(
-            r"^\s*<S0>(.*)</S0>\s*<S1>(.*)</S1>\s*<S2>(.*)</S2>\s*$",
-            llm_output,
-            re.MULTILINE | re.DOTALL,
-        )
-        assert matched
-        assert isinstance(matched.group(1), str)
-        assert isinstance(matched.group(2), str)
-        score: int = int(matched.group(3))
+        # Coherence prompty now uses json_object response_format and returns a dict
+        # containing at least "score" (int) and "reason" (str).
+        assert isinstance(llm_output, Mapping)
+        assert "score" in llm_output
+        assert "reason" in llm_output
+        assert isinstance(llm_output["reason"], str)
+        score: int = int(llm_output["score"])
         assert score >= 0 and score <= 5
 
     @pytest.mark.asyncio

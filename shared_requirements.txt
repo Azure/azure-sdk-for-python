@@ -62,7 +62,6 @@ azure-nspkg
 azure-ai-nspkg
 azure-cognitiveservices-nspkg
 azure-mgmt-nspkg
-azure-mixedreality-authentication
 azure-schemaregistry
 websocket-client
 avro
@@ -78,6 +77,7 @@ httpx
 pandas
 nltk
 azure-monitor-opentelemetry
+microsoft-opentelemetry
 python-dotenv
 pyrit
 prompty
@@ -101,3 +101,5 @@ langchain-openai
 azure-ai-language-questionanswering
 github-copilot-sdk
 hypercorn
+pystac
+geojson

@@ -16,7 +16,7 @@ all_api_versions = get_decorator(is_async=True, only_vault=True)
 
 class TestCryptoExamples(KeyVaultTestCase):
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_encrypt_decrypt_async(self, key_client, **kwargs):
@@ -59,7 +59,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         # [END decrypt]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_wrap_unwrap_async(self, key_client, **kwargs):
@@ -68,7 +68,9 @@ class TestCryptoExamples(KeyVaultTestCase):
         key = await key_client.create_rsa_key(key_name)
         client = CryptographyClient(key, credential, api_version=key_client.api_version)
 
-        key_bytes = b'\xc5\xb0\xfc\xf1C\x8a\x88pj\x11\x8d\xe5\x94\xe8\xff\x04\x0eY\xfeu\x8a\xe9<\x06(\xdb\x7f\xa9~\x85\x02\x04'
+        key_bytes = (
+            b"\xc5\xb0\xfc\xf1C\x8a\x88pj\x11\x8d\xe5\x94\xe8\xff\x04\x0eY\xfeu\x8a\xe9<\x06(\xdb\x7f\xa9~\x85\x02\x04"
+        )
 
         # [START wrap_key]
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
@@ -87,7 +89,7 @@ class TestCryptoExamples(KeyVaultTestCase):
         # [END unwrap_key]
 
     @pytest.mark.asyncio
-    @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
+    @pytest.mark.parametrize("api_version,is_hsm", all_api_versions)
     @AsyncKeysClientPreparer()
     @recorded_by_proxy_async
     async def test_sign_verify_async(self, key_client, **kwargs):

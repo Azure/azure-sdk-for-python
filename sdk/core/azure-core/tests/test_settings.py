@@ -167,16 +167,22 @@ class TestConverters(object):
         assert m.convert_logging(level) == level
 
     def test_convert_logging_bad(self):
-        with pytest.raises(ValueError):
-            m.convert_logging("junk")
+        # Invalid values now fall back to INFO with a warning logged.
+        assert m.convert_logging("junk") == logging.INFO
+
+    def test_convert_logging_verbose(self):
+        # "verbose" is accepted as an alias for "debug".
+        assert m.convert_logging("verbose") == logging.DEBUG
+        assert m.convert_logging("VERBOSE") == logging.DEBUG
 
     def test_convert_azure_cloud(self):
         with pytest.raises(ValueError):
             m.convert_azure_cloud(10)
 
     def test_convert_tracing_impl_bad(self):
-        with pytest.raises(ValueError):
-            m.convert_tracing_impl("foo")
+        m.convert_tracing_impl.cache_clear()
+        # Invalid values now fall back to None with a warning logged.
+        assert m.convert_tracing_impl("foo") is None
 
     def test_convert_tracing_impl_caching(self):
         m.convert_tracing_impl.cache_clear()
