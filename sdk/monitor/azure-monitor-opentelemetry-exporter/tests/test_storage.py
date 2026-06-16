@@ -526,7 +526,6 @@ class TestLocalFileStorage(unittest.TestCase):
         set_local_storage_setup_state_exception("")
 
         # Create an OSError with Read-only file system
-        import errno
 
         readonly_error = OSError("Read-only file system")
         readonly_error.errno = errno.EROFS  # cspell:disable-line
@@ -1215,7 +1214,7 @@ class TestLocalFileStorage(unittest.TestCase):
 
                                         # Storage MUST be disabled — attacker owns the dir
                                         self.assertFalse(stor._enabled)
-                                        # fchmod must NOT be called — we refuse to use the directory  # cspell:disable-line
+                                        # fchmod must NOT be called — we refuse to use the directory  # cspell:disable-line # pylint: disable=line-too-long
                                         mock_fchmod.assert_not_called()  # cspell:disable-line
                                         # No data can be written
                                         result = stor.put([{"telemetry": "sensitive_data"}])
