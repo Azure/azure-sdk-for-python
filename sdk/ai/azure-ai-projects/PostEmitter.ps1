@@ -113,6 +113,19 @@ foreach ($f in $files) {
     Set-Content $f $c -NoNewline
 }
 
+# A block of code in the implementation of "list_memories", in both sync 
+# and async _operations.py files, needs to be moved up. It's emitted in the wrong place,
+# in the inline function named "prepare_request". Instead it should be moved up into the
+# main body of the "list_memories" method, just before the line "error_map.update(kwargs.pop("error_map", {}) or {})".
+# If you don't do this, the PR pipeline will show failures in Pyright (`error: "body" is unbound (reportUnboundVariable)`)
+# and some tests will fail. This is the block of code that needs to move up:
+#            if body is _Unset:
+#                if scope is _Unset:
+#                    raise TypeError("missing required argument: scope")
+#                body = {"scope": scope}
+#                body = {k: v for k, v in body.items() if v is not None}
+
+
 # Finishing by running 'black' tool to format code. 
 pip install black
 black --config ../../../eng/black-pyproject.toml .
