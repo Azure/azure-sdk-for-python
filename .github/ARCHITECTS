@@ -1,0 +1,10 @@
+# Instructions for ARCHITECTS file format:
+# This file follows the CODEOWNERS pattern style. Each non-comment line maps a
+# repository path pattern to the GitHub user responsible for API architecture review.
+
+###########
+# SDK
+###########
+
+# Catch all
+/sdk/ @kashifkhan
