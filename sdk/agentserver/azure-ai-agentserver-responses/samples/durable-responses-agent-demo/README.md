@@ -16,7 +16,7 @@ Agent + the `azure-ai-agentserver-responses` package:
    brings it back within ~1 min **without any new client ingress**.
    The durable response automatically resumes with
    `context.is_recovery is True`. Recovery uses the
-   **one-OutputItem-per-phase** pattern: the persisted response *is*
+   **one-OutputItem-per-subcall** pattern: the persisted response *is*
    the watermark — the handler seeds its stream from
    `context.persisted_response` and resumes at
    `len(stream.response.output)`, re-emitting `response.in_progress`
@@ -51,17 +51,21 @@ had to wire by hand:
 | Durability + steering | Compose `@multi_turn_task(steerable=True)` directly; map `task_id`/`input_id` to session/invocation | Opt-in via `ResponsesServerOptions(durable_background=True, steerable_conversations=True)` — framework handles the rest |
 | Recovery surface | Read `ctx.entry_mode == "recovered"` + `ctx.metadata` | Read `context.is_recovery` + seed from `context.persisted_response`; same recovery primitive underneath |
 
-`main.py` here is ~190 lines (mostly the phase-streaming logic);
+`main.py` here is ~250 lines (mostly the subcall-streaming logic);
 `agent.py` + `app.py` for the invocations demo is ~700 lines.
 
-What the agent actually does: 5 logical research phases on whatever
-topic the caller supplies. Each phase produces one streamed message
-output item (~200 tokens) via a real `gpt-4.1-mini` call (streamed
-token-by-token through `response.output_text.delta` events). The
-handler `yield stream.checkpoint()` after each phase completes — a
-crash mid-phase recovers at the next un-finished phase (the
-actively-streaming item was never closed, so it never entered the
-snapshot and is re-run cleanly).
+What the agent actually does: a faithful port of the invocations
+`durable-agent-demo` — **15 research phases × 4 chained subcalls each**
+(research → critique → refine → synthesize, ~1500 tokens/subcall via a
+real `gpt-4.1-mini` call), with intra-phase and inter-phase cooldowns so
+a run spans ~33 min (~2x the sandbox-eviction window). Each subcall is
+**one OutputItem** with its own `yield stream.checkpoint()`, so the
+persisted response is a per-subcall watermark: a crash recovers at the
+next un-finished subcall (the actively-streaming item was never closed,
+so it never entered the snapshot and is re-run cleanly — at most one
+wasted subcall). Same env knobs as the invocations demo
+(`NUM_PHASES`, `CALLS_PER_PHASE`, `TARGET_OUTPUT_TOKENS`,
+`INTRA_PHASE_COOLDOWN_SEC`, `INTER_PHASE_COOLDOWN_SEC`, `DEMO_MODE`).
 
 Between phases the agent sleeps for `INTER_PHASE_COOLDOWN_SEC` (30s
 default in the hosted defaults) so a single demo run spans the
