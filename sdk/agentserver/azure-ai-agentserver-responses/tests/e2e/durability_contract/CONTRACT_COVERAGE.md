@@ -72,6 +72,7 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 | At-most-once side effects via metadata + flush + dedup token check | **GAP** — no e2e test exercises this pattern | metadata |
 | `run_attempt` is per-process retry counter; does NOT survive recovery (see backlog B10) | **DOC-ONLY** — no behavioural test (and current behaviour is acknowledged-broken pending B10) | meta |
 | **NEW (T-173):** `context.conversation_chain_id` is stable across attempts | `test_conversation_chain_id_stability.py` (TO BE ADDED, T-173) | chain id |
+| **NEW (Spec 025 §A.4):** `await context.exit_for_recovery()` (unified recovery primitive) leaves the response `in_progress` for next-lifetime recovery — works in any handler shape; the orchestrator translates `ResponseExitForRecovery` to the core sentinel | `test_explicit_exit_for_recovery.py::test_explicit_exit_for_recovery_recovers` (stream=F/T) | response.status (post-restart `completed`) |
 
 ---
 
