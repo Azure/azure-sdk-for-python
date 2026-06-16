@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -27,6 +27,7 @@ from .operations import (
     LoadBalancersOperations,
     MachinesOperations,
     MaintenanceConfigurationsOperations,
+    MaintenanceWindowsOperations,
     ManagedClusterSnapshotsOperations,
     ManagedClustersOperations,
     ManagedNamespacesOperations,
@@ -41,6 +42,11 @@ from .operations import (
     TrustedAccessRolesOperations,
     VmSkusOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -57,6 +63,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
     :ivar maintenance_configurations: MaintenanceConfigurationsOperations operations
     :vartype maintenance_configurations:
      azure.mgmt.containerservice.operations.MaintenanceConfigurationsOperations
+    :ivar maintenance_windows: MaintenanceWindowsOperations operations
+    :vartype maintenance_windows:
+     azure.mgmt.containerservice.operations.MaintenanceWindowsOperations
     :ivar managed_namespaces: ManagedNamespacesOperations operations
     :vartype managed_namespaces: azure.mgmt.containerservice.operations.ManagedNamespacesOperations
     :ivar machines: MachinesOperations operations
@@ -108,8 +117,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-02-02-preview". Default value is "2026-02-02-preview". Note that overriding this default
-     value may result in unsupported behavior.
+     "2026-04-02-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -167,6 +177,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.maintenance_configurations = MaintenanceConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.maintenance_windows = MaintenanceWindowsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_namespaces = ManagedNamespacesOperations(

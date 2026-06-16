@@ -26,7 +26,6 @@ class TestContainerInstanceManagementContainerGroupsOperationsAsync(AzureMgmtRec
         result = [r async for r in response]
         assert response
 
-
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list_by_resource_group(self, resource_group):

@@ -541,6 +541,7 @@ class TestComputeFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
                         "rdmaSupport": "str",
                         "vmCategories": ["str"],
                     },
+                    "vmNamePrefix": "str",
                     "zoneAllocationPolicy": {
                         "distributionStrategy": "str",
                         "zonePreferences": [{"zone": "str", "rank": 0}],
@@ -1069,6 +1070,7 @@ class TestComputeFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
                         "rdmaSupport": "str",
                         "vmCategories": ["str"],
                     },
+                    "vmNamePrefix": "str",
                     "zoneAllocationPolicy": {
                         "distributionStrategy": "str",
                         "zonePreferences": [{"zone": "str", "rank": 0}],
@@ -1129,16 +1131,5 @@ class TestComputeFleetMgmtFleetsOperations(AzureMgmtRecordedTestCase):
             name="str",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_fleets_begin_cancel(self, resource_group):
-        response = self.client.fleets.begin_cancel(
-            resource_group_name=resource_group.name,
-            fleet_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
         # please add some check logic here by yourself
         # ...

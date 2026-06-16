@@ -42,7 +42,6 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 
-    # [START prompt_agent_basic]
     with project_client.get_openai_client() as openai_client:
         agent = project_client.agents.create_version(
             agent_name="MyAgent",
@@ -81,4 +80,3 @@ with (
 
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
     print("Agent deleted")
-    # [END prompt_agent_basic]

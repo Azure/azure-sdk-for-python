@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, TYPE_CHECKING, Union
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -16,23 +16,29 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import AzureAppConfigurationClientConfiguration
-from ._operations import AzureAppConfigurationClientOperationsMixin
-from ._serialization import Deserializer, Serializer
+from ._operations import _AzureAppConfigurationClientOperationsMixin
+from ._utils.serialization import Deserializer, Serializer
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureAppConfigurationClient(AzureAppConfigurationClientOperationsMixin):
+class AzureAppConfigurationClient(_AzureAppConfigurationClientOperationsMixin):
     """Azure App Configuration REST API.
 
     :param endpoint: Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     AzureKeyCredential type or a TokenCredential type. Required.
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2023-11-01".
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -42,6 +48,7 @@ class AzureAppConfigurationClient(AzureAppConfigurationClientOperationsMixin):
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
         _endpoint = "{endpoint}"
         self._config = AzureAppConfigurationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

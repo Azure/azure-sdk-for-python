@@ -3,35 +3,35 @@ from typing import Optional
 import pytest
 
 from azure.ai.ml import MLClient
-from azure.ai.ml._restclient.v2024_10_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
-from azure.ai.ml._restclient.v2024_10_01_preview.models import FqdnOutboundRule as RestFqdnOutboundRule
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import FqdnOutboundRule as RestFqdnOutboundRule
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2024_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     ServerlessComputeSettings as RestServerlessComputeSettings,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     ServiceTagDestination as RestServiceTagOutboundRuleDestination,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
-from azure.ai.ml._restclient.v2024_10_01_preview.models import UserAssignedIdentity
-from azure.ai.ml._restclient.v2024_10_01_preview.models import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import UserAssignedIdentity
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
     Workspace as RestWorkspace,  # this one only for workspace hubs
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.models import WorkspaceHubConfig as RestWorkspaceHubConfig
-from azure.ai.ml._restclient.v2024_10_01_preview.operations import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import WorkspaceHubConfig as RestWorkspaceHubConfig
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.operations import (
     ManagedNetworkSettingsRuleOperations as RestClientManagedNetworkSettingsRuleOperations,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview.operations import (
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp.operations import (
     WorkspacesOperations as RestClientWorkspacesOperations,
 )
 from azure.ai.ml.constants._workspace import IsolationMode

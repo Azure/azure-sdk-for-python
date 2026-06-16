@@ -19,10 +19,8 @@ class LegacyUploadBlockTest(_LegacyContainerTest):
 
     def run_sync(self):
         self.service_client.put_block(
-            container_name=self.container_name,
-            blob_name=self.blob_name,
-            block=self.data,
-            block_id=self.block_id)
+            container_name=self.container_name, blob_name=self.blob_name, block=self.data, block_id=self.block_id
+        )
 
     async def run_async(self):
         raise NotImplementedError("Async not supported for legacy T1 tests.")
