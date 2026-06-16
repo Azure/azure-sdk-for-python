@@ -14,27 +14,6 @@ REM - The emitter uses lower case "i" in "Ai". I want to keep it upper case in t
 REM - We want a vanity link for the "repository" value, deep linking to the SDK folder (not root of repo): https://aka.ms/azsdk/azure-ai-projects-v2/python/code
 git restore pyproject.toml
 
-REM Rename `"items_property": items`, to `"items": items` in search_memories and begin_update_memories methods. "items" is specified in TypeSpec, but Python emitter does not allow it.
-powershell -Command "(Get-Content azure\ai\projects\aio\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\aio\operations\_operations.py"
-powershell -Command "(Get-Content azure\ai\projects\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\operations\_operations.py"
-
-REM Rename WEB_SEARCH_PREVIEW2025_03_11 enum member to WEB_SEARCH_PREVIEW_2025_03_11, to match actual string value
-powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'WEB_SEARCH_PREVIEW2025_03_11', 'WEB_SEARCH_PREVIEW_2025_03_11' | Set-Content azure\ai\projects\models\_enums.py"
-powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'WEB_SEARCH_PREVIEW2025_03_11', 'WEB_SEARCH_PREVIEW_2025_03_11' | Set-Content azure\ai\projects\models\_models.py"
-
-REM Rename DEFAULT2024_11_15 to DEFAULT_2024_11_15
-powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'DEFAULT2024_11_15', 'DEFAULT_2024_11_15' | Set-Content azure\ai\projects\models\_enums.py"
-
-REM Rename `A2_A` to `A2A` in enum class AgentEndpointProtocol and ToolType
-powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'A2_A', 'A2A' | Set-Content azure\ai\projects\models\_enums.py"
-powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'A2_A', 'A2A' | Set-Content azure\ai\projects\models\_models.py"
-
-REM Rename MEMORY1_GB/MEMORY4_GB/MEMORY16_GB/MEMORY64_GB to MEMORY_1GB/MEMORY_4GB/MEMORY_16GB/MEMORY_64GB in enum class ContainerMemoryLimit
-REM For some reason these TypeSpec decorators stopped working. Need to understand why: @@clientName(OpenAI.ContainerMemoryLimit.`1g`, "MEMORY_1GB", "python");
-powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY1_GB', 'MEMORY_1GB' | Set-Content azure\ai\projects\models\_enums.py"
-powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY4_GB', 'MEMORY_4GB' | Set-Content azure\ai\projects\models\_enums.py"
-powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY16_GB', 'MEMORY_16GB' | Set-Content azure\ai\projects\models\_enums.py"
-powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'MEMORY64_GB', 'MEMORY_64GB' | Set-Content azure\ai\projects\models\_enums.py"
 
 REM Edit both _operations.py files to fix missing Foundry-Features HTTP request header in continued list paging calls. Add:
 REM   headers=_headers
