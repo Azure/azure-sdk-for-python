@@ -72,6 +72,7 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 | At-most-once side effects via metadata + flush + dedup token check | **GAP** — no e2e test exercises this pattern | metadata |
 | `run_attempt` is per-process retry counter; does NOT survive recovery (see backlog B10) | **DOC-ONLY** — no behavioural test (and current behaviour is acknowledged-broken pending B10) | meta |
 | **NEW (T-173):** `context.conversation_chain_id` is stable across attempts | `test_conversation_chain_id_stability.py` (TO BE ADDED, T-173) | chain id |
+| **NEW (Spec 025 §A.4):** `await context.exit_for_recovery()` (unified recovery primitive) leaves the response `in_progress` for next-lifetime recovery — works in any handler shape; the orchestrator translates `ResponseExitForRecovery` to the core sentinel | `test_explicit_exit_for_recovery.py::test_explicit_exit_for_recovery_recovers` (stream=F/T) | response.status (post-restart `completed`) |
 
 ---
 
@@ -95,6 +96,29 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 | **NEW (Spec 024 Phase 1 step 7):** No race window on fast-handler completion (Rows 2/3 unified durable-task path) | `test_no_fast_handler_race.py::test_no_fast_handler_race_row_2`, `::test_no_fast_handler_race_row_3` | race-guard |
 | **NEW (T-174):** Per-cell tests verify the row's full contract surface — events + content + response.output as applicable, not just terminal status | `test_contract_completeness.py::test_per_cell_tests_assert_contract_surface` (TO BE ADDED, T-174) | meta |
 | **NEW (T-174):** Every contract clause in `durability-contract.md` has an entry in CONTRACT_COVERAGE.md | `test_contract_completeness.py::test_contract_coverage_matrix_complete` (TO BE ADDED, T-174) | meta |
+
+---
+
+## Row 11 — Developer checkpoint write (§ Per-row contracts → Row 11)
+
+Row 11 is the checkpoint-write extension of Row 1 (`store=true, background=true,
+durable_background=True`). It covers `yield stream.checkpoint()` in the
+one-OutputItem-per-phase pattern. Cutpoints C1/C3 require real crashes and are
+exercised e2e (Path B graceful `exit_for_recovery` + Path C SIGKILL); C2 is a
+documented provider-atomicity limitation; C4/C5 are unit-tested.
+
+| Clause | Test | Dimension |
+|---|---|---|
+| Row 11 Path A: all phases checkpoint + complete; final `response.output` = every fresh-entry phase | `test_row_11_path_a.py::test_row_11_path_a` (stream=F/T) | response.output content (per-lifetime markers) |
+| Row 11 Path B (C1=`after_checkpoint`): graceful shutdown after a successful checkpoint → `exit_for_recovery` → recovery resumes at next phase | `test_row_11_path_b.py::test_row_11_path_b[C1=after_checkpoint]` (stream=F/T) | response.output content; per-lifetime markers |
+| Row 11 Path B (C3=`before_checkpoint`): graceful shutdown before a checkpoint → un-checkpointed phase re-runs | `test_row_11_path_b.py::test_row_11_path_b[C3=before_checkpoint]` (stream=F/T) | response.output content; per-lifetime markers |
+| Row 11 Path C (C1=`after_checkpoint`): SIGKILL after a successful checkpoint → recovery resumes at next phase (no loss/dup) | `test_row_11_path_c.py::test_row_11_path_c[C1=after_checkpoint]` (stream=F/T) | response.output content; per-lifetime markers |
+| Row 11 Path C (C3=`before_checkpoint`): SIGKILL before a checkpoint → un-checkpointed phase re-runs (central guarantee) | `test_row_11_path_c.py::test_row_11_path_c[C3=before_checkpoint]` (stream=F/T) | response.output content; per-lifetime markers |
+| C2: mid-checkpoint-write crash exposes prior-or-new committed snapshot, never a torn one (FileResponseStore atomic `os.replace`) | **LIMITATION** — documented in `docs/durability-contract.md` § Row 11 → C2; no torn-write recovery asserted (provider commits atomically) | provider atomicity |
+| C4: checkpoint event after terminal is dropped; terminal snapshot wins; no exception | `tests/unit/test_checkpoint.py` (post-terminal drop) | event ordering |
+| C5: provider `update_response` failure during `checkpoint()` is swallowed; recovery sees the prior snapshot | `tests/unit/test_checkpoint.py` (swallow-on-failure) | provider failure |
+| Recovery deferral (`exit_for_recovery`) MUST NOT overwrite the last checkpoint snapshot with a pre-terminal record | `test_row_11_path_b.py` (stream=F asserts the checkpointed phase survives as `L0` after deferral) | response.output content |
+| `checkpoint()` gated to durable background (`durable_background` + `store` + `background`); no-op otherwise | `tests/unit/test_checkpoint.py` (gate) | gate |
 
 ---
 

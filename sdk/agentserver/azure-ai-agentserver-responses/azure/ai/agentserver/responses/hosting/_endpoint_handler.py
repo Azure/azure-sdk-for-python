@@ -47,6 +47,7 @@ from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-erro
 )
 
 from .._id_generator import IdGenerator
+from .._egress import strip_internal_metadata
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
@@ -642,6 +643,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         try:
             payload = await request.json()
+            # Ingress strip (spec 025 §A.2): remove any client-supplied
+            # framework-internal metadata BEFORE validation, so a client can
+            # neither inject nor read the reserved `_internal_metadata` key (and
+            # so the metadata 16-key/size validation counts only client keys).
+            strip_internal_metadata(payload)
             _prevalidate_identity_payload(payload)
             parsed = parse_and_validate_create_response(payload, options=self._runtime_options)
         except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -781,7 +787,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         snapshot.get("status"),
                         len(snapshot.get("output", [])),
                     )
-                    return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
+                    return JSONResponse(
+                        strip_internal_metadata(snapshot),
+                        status_code=200,
+                        headers=self._session_headers(agent_session_id),
+                    )
                 except _HandlerError as exc:
                     logger.error(
                         "Handler error in sync create (response_id=%s)",
@@ -813,7 +823,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 ctx.response_id,
                 snapshot.get("status"),
             )
-            return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
+            return JSONResponse(
+                strip_internal_metadata(snapshot), status_code=200, headers=self._session_headers(agent_session_id)
+            )
         except LastInputIdPreconditionFailed as exc:
             # Spec 023 — under the spec-022 narrow surface, only
             # ``actual_last_input_id`` is carried (``expected_last_input_id``
@@ -953,7 +965,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             snapshot.get("status"),
             len(snapshot.get("output", [])),
         )
-        return JSONResponse(snapshot, status_code=200, headers=_hdrs)
+        return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=_hdrs)
 
     def _handle_get_stream(
         self,
@@ -1036,7 +1048,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     snapshot.get("status"),
                     len(snapshot.get("output", [])),
                 )
-                return JSONResponse(snapshot, status_code=200, headers=_hdrs)
+                return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=_hdrs)
             except FoundryResourceNotFoundError:
                 pass  # Fall through to 404 below
             except FoundryBadRequestError as exc:
@@ -1482,7 +1494,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 record.set_response_snapshot(
                     build_cancelled_response(record.response_id, record.agent_reference, record.model)
                 )
-                return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=_hdrs)
+                return JSONResponse(
+                    strip_internal_metadata(_RuntimeState.to_snapshot(record)), status_code=200, headers=_hdrs
+                )
             return terminal_error
 
         # B11: initiate cancellation winddown
@@ -1525,7 +1539,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         await self._runtime_state.try_evict(record.response_id)
 
         logger.info("Cancelled response %s, status=%s", response_id, snapshot.get("status"))
-        return JSONResponse(snapshot, status_code=200, headers=_hdrs)
+        return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=_hdrs)
 
     async def _handle_cancel_fallback(
         self,
@@ -1574,7 +1588,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             terminal_error = _check_cancel_terminal_status(stored_status, _hdrs)
             if terminal_error is not None:
                 if stored_status == "cancelled":
-                    return JSONResponse(persisted, status_code=200, headers=_hdrs)
+                    return JSONResponse(strip_internal_metadata(persisted), status_code=200, headers=_hdrs)
                 return terminal_error
         except FoundryResourceNotFoundError:
             pass  # Fall through to 404 below
@@ -1674,13 +1688,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         page_data = page
 
         return JSONResponse(
-            {
-                "object": "list",
-                "data": page_data,
-                "first_id": first_id,
-                "last_id": last_id,
-                "has_more": has_more,
-            },
+            strip_internal_metadata(
+                {
+                    "object": "list",
+                    "data": page_data,
+                    "first_id": first_id,
+                    "last_id": last_id,
+                    "has_more": has_more,
+                }
+            ),
             status_code=200,
             headers=_hdrs,
         )

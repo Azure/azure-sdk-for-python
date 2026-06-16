@@ -31,6 +31,7 @@ from azure.ai.agentserver.core.durable import (
 )
 
 from .._options import ResponsesServerOptions
+from .._response_context import ResponseExitForRecovery
 from ._task_id import derive_task_id
 
 if TYPE_CHECKING:
@@ -479,7 +480,7 @@ class DurableResponseOrchestrator:
         # this conversation (response_id, background, disposition, etc.).
         # Per spec 015 FR-005, this namespace is reserved (the `_` prefix
         # indicates framework-only). The handler-facing
-        # ``durable_metadata`` facade rejects access to it; framework
+        # ``conversation_chain_metadata`` facade rejects access to it; framework
         # code (this orchestrator) uses the underlying
         # ``TaskContext.metadata`` directly which has no such restriction.
         responses_ns = ctx.metadata(_RESPONSES_NS)
@@ -606,11 +607,30 @@ class DurableResponseOrchestrator:
                 _DeveloperMetadataFacade,
             )
 
-            context.durable_metadata = _DeveloperMetadataFacade(ctx.metadata)
+            context.conversation_chain_metadata = _DeveloperMetadataFacade(ctx.metadata)
             # (Spec 024 Phase 5 — Proposal #11) Expose the task context
             # so ``context.exit_for_recovery()`` can delegate to the
             # framework's recovery sentinel.
             context._task_context = ctx  # pylint: disable=protected-access
+
+            # (Spec 025 §A.3) On a recovered entry, pre-fetch the persisted
+            # response so the handler can seed its stream from already-
+            # persisted items + the response-level watermark. Entry-only:
+            # never refreshed mid-execution. Best-effort — absence (handler
+            # crashed before the initial create) leaves it ``None``.
+            if is_recovery:
+                try:
+                    _isolation = context.isolation
+                    context.persisted_response = await self._provider.get_response(
+                        context.response_id, isolation=_isolation
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.debug(
+                        "persisted_response pre-fetch failed for %s (recovery)",
+                        context.response_id,
+                        exc_info=True,
+                    )
+                    context.persisted_response = None
 
         # Bridge task cancellation → response cancellation surface.
         # ``ctx.cancel`` (steering / explicit cancel) and ``ctx.shutdown``
@@ -740,6 +760,20 @@ class DurableResponseOrchestrator:
                     response_id,
                 )
                 return await ctx.exit_for_recovery()
+        except ResponseExitForRecovery:
+            # Spec 025 §A.4 — the handler called
+            # ``await context.exit_for_recovery()`` (any handler shape),
+            # which raises ``ResponseExitForRecovery``. Translate it to the
+            # framework's task-level recovery primitive so the task stays
+            # ``in_progress`` for next-lifetime recovery (same disposition as
+            # the implicit shutdown bare-return fallback above).
+            logger.info(
+                "Response %s handler invoked context.exit_for_recovery(); "
+                "calling ctx.exit_for_recovery() so task stays in_progress "
+                "for next-lifetime recovery.",
+                response_id,
+            )
+            return await ctx.exit_for_recovery()
         finally:
             if cancel_bridge is not None and not cancel_bridge.done():
                 cancel_bridge.cancel()

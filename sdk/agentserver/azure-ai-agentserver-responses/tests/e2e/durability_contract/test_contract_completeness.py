@@ -232,6 +232,7 @@ def test_per_cell_tests_assert_more_than_just_status() -> None:
         "sequence_number",
         "_get_full_stream",  # caller of the GET-replay helper
         "GET ?stream=true",
+        "output_text_markers",  # Row 11 per-lifetime response.output content helper
     )
     findings: list[str] = []
     for module_file in _HERE.glob("test_row_*_path_*.py"):

@@ -56,22 +56,20 @@ def _contract_path() -> Path:
 
     Layout::
 
-        sdk/agentserver/
-        ├── specs/
-        │   └── durability-contract.md          ← target
-        └── azure-ai-agentserver-responses/
-            └── tests/e2e/durability_contract/   ← here
-                └── _contract_parser.py
+        sdk/agentserver/azure-ai-agentserver-responses/
+        ├── docs/
+        │   └── durability-contract.md           ← target (committed)
+        └── tests/e2e/durability_contract/        ← here
+            └── _contract_parser.py
 
     From ``_contract_parser.py``:
       parents[0] = durability_contract/
       parents[1] = e2e/
       parents[2] = tests/
       parents[3] = azure-ai-agentserver-responses/
-      parents[4] = agentserver/
     """
     here = Path(__file__).resolve()
-    return here.parents[4] / "specs" / "durability-contract.md"
+    return here.parents[3] / "docs" / "durability-contract.md"
 
 
 def _extract_matrix_section(text: str) -> str:

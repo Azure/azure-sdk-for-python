@@ -42,7 +42,7 @@ def _make_context(
     context.is_recovery = entry_mode == "recovered"
     context.is_steered_turn = False
     context.pending_input_count = 0
-    context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.conversation_chain_metadata = _DeveloperMetadataFacade(metadata or {})
     context._cancellation_signal = asyncio.Event()
     context.shutdown = asyncio.Event()
     context.client_cancelled = False
@@ -51,6 +51,13 @@ def _make_context(
         return "test prompt"
 
     context.get_input_text = _get_input_text
+
+    async def _exit_for_recovery() -> Any:
+        from azure.ai.agentserver.responses import ResponseExitForRecovery
+
+        raise ResponseExitForRecovery()
+
+    context.exit_for_recovery = _exit_for_recovery
     return context
 
 
@@ -83,7 +90,7 @@ class TestSample20FreshEntry:
         assert "response.completed" in types
         assert types.count("response.output_item.added") == 1
         assert types.count("response.output_item.done") == 1
-        assert ctx.durable_metadata.get("turn_count") == 1
+        assert ctx.conversation_chain_metadata.get("turn_count") == 1
 
 
 @pytest.mark.asyncio
@@ -111,7 +118,7 @@ class TestSample20Recovery:
         # The recovered attempt re-streams a single message item fresh.
         assert sum(1 for e in events if _event_type(e) == "response.output_item.added") == 1
         # turn_count incremented from carry-over watermark.
-        assert ctx.durable_metadata.get("turn_count") == 2
+        assert ctx.conversation_chain_metadata.get("turn_count") == 2
 
 
 @pytest.mark.asyncio
@@ -150,15 +157,21 @@ class TestSample20PreEntryCancellation:
 
 @pytest.mark.asyncio
 class TestSample20Shutdown:
-    async def test_pre_entry_shutdown_returns_without_terminal(self) -> None:
+    async def test_pre_entry_shutdown_defers_to_recovery(self) -> None:
+        from azure.ai.agentserver.responses import ResponseExitForRecovery
         from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
         # Shutdown does NOT fire cancellation_signal — they are distinct surfaces.
         ctx.shutdown.set()
-        signal = asyncio.Event()
 
-        events = await _drive(handler, _make_request(), ctx)
+        # The handler emits `response.created`, then signals recovery via the
+        # unified primitive `await context.exit_for_recovery()`, which raises
+        # ResponseExitForRecovery (the orchestrator translates it to
+        # next-lifetime recovery — no terminal is emitted).
+        events: list[Any] = []
+        with pytest.raises(ResponseExitForRecovery):
+            async for event in handler(_make_request(), ctx, ctx._cancellation_signal):
+                events.append(event)
         types = [_event_type(e) for e in events]
-        # Only `created` — handler returns silently to allow re-invocation.
         assert types == ["response.created"]

@@ -16,7 +16,7 @@ for the terminal text). Tests rely on these tags to verify:
 - Sequence numbers across recovery attempts are strictly monotonic.
 - The recovered handler's output_item slot reuse follows reset semantics.
 - ``context.conversation_chain_id`` is stable across attempts.
-- ``context.durable_metadata`` writes from prior lifetimes are visible to the
+- ``context.conversation_chain_metadata`` writes from prior lifetimes are visible to the
   recovered handler (when the watermark knob is enabled).
 
 The tags live in :mod:`_test_handler_markers` so tests can import the
@@ -99,6 +99,11 @@ _SLEEP_MS = _env_int("CONFORMANCE_HANDLER_SLEEP_MS", 50)
 _SHUTDOWN_GRACE_S = max(1, _env_int("AGENTSERVER_SHUTDOWN_GRACE_SECONDS", 10))
 _PRE_SLEEP_DELTAS = max(0, _env_int("CONFORMANCE_PRE_SLEEP_DELTAS", 0))
 _EMIT_WATERMARK = _env_bool("CONFORMANCE_EMIT_METADATA_WATERMARK", False)
+# When true, the handler signals shutdown recovery with the explicit
+# unified primitive ``await context.exit_for_recovery()`` instead of the
+# implicit bare ``return``. Exercises the Spec 025 §A.4 orchestrator
+# translation of ``ResponseExitForRecovery`` → next-lifetime recovery.
+_EXPLICIT_EXIT_FOR_RECOVERY = _env_bool("CONFORMANCE_EXPLICIT_EXIT_FOR_RECOVERY", False)
 
 
 options = ResponsesServerOptions(
@@ -171,11 +176,11 @@ async def handle_create(
     # that enable this knob assert the final text's visited list
     # contains every lifetime that contributed to the response.
     if _EMIT_WATERMARK:
-        visited = list(context.durable_metadata.get(WATERMARK_METADATA_KEY, []))
+        visited = list(context.conversation_chain_metadata.get(WATERMARK_METADATA_KEY, []))
         if lifetime not in visited:
             visited.append(lifetime)
-            context.durable_metadata[WATERMARK_METADATA_KEY] = visited
-            await context.durable_metadata.flush()
+            context.conversation_chain_metadata[WATERMARK_METADATA_KEY] = visited
+            await context.conversation_chain_metadata.flush()
 
     # Output item + content part — always at index 0 so the recovered
     # handler's repeat add at the same index exercises the slot-
@@ -204,8 +209,12 @@ async def handle_create(
         pass
 
     if cancellation_signal.is_set():
-        # Shutting down: return without terminal so the framework's
-        # per-row Path-B / Path-C contract takes over.
+        # Shutting down: signal next-lifetime recovery. Either via the
+        # explicit unified primitive (Spec 025 §A.4) or the implicit
+        # bare ``return`` fallback — both leave the response in_progress
+        # for the per-row Path-B / Path-C recovery contract.
+        if _EXPLICIT_EXIT_FOR_RECOVERY:
+            await context.exit_for_recovery()
         return
 
     # Natural completion: emit the composite final text as a single delta
@@ -213,7 +222,7 @@ async def handle_create(
     # (the framework's snapshot extraction uses delta accumulation, not
     # the emit_text_done payload), then emit text_done with the same
     # value so the wire's done event also carries the composite.
-    visited_now = list(context.durable_metadata.get(WATERMARK_METADATA_KEY, [])) if _EMIT_WATERMARK else None
+    visited_now = list(context.conversation_chain_metadata.get(WATERMARK_METADATA_KEY, [])) if _EMIT_WATERMARK else None
     final = final_text(
         lifetime=lifetime,
         pre_count=_PRE_SLEEP_DELTAS,

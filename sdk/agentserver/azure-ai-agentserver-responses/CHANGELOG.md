@@ -4,158 +4,76 @@
 
 ### Features Added
 
-- **Durable + steerable conversations.** New
-  `ResponsesServerOptions(durable_background=False, steerable_conversations=False)`
-  knobs opt handlers into:
+- **Durable background responses.** `ResponsesServerOptions(durable_background=True)`
+  makes `store=true`, `background=true` responses survive process crashes:
+  the framework persists handler progress and re-invokes the registered
+  handler on the next process start when a prior attempt did not reach a
+  terminal event. Defaults to `False`.
 
-  - **`durable_background=True`** — background responses survive
-    process crashes. The framework persists handler state per turn,
-    re-invokes the registered handler on the next process startup if
-    the previous attempt didn't reach a terminal event, and resumes
-    the SSE stream where the prior attempt left off.
+- **Steerable conversations.** `ResponsesServerOptions(steerable_conversations=True)`
+  lets clients post a new turn on an in-flight conversation; the running
+  handler is woken (via the cancellation signal, distinguished by
+  `context.pending_input_count > 0`), drains the queued input on a fresh
+  invocation, and the turns are linked in a stable conversation chain.
+  Defaults to `False`.
 
-  - **`steerable_conversations=True`** — clients can post a new turn
-    on an in-flight conversation while the current turn is still
-    running. The framework wakes the running handler (via the
-    cancellation signal — see `pending_input_count > 0` to
-    distinguish steering from other cancel causes), drains the
-    pending input on a fresh handler invocation, and links the turns
-    in a stable conversation chain.
+- **`ResponseContext` durability + steering surface.** Flat fields stamped on
+  each invocation: `context.is_recovery`, `context.is_steered_turn`,
+  `context.pending_input_count`, and `context.conversation_chain_id` (a stable
+  identifier shared by every turn of a conversation chain, usable as a key into
+  application-side session state).
 
-  Both options default to `False` — existing handlers that don't opt
-  in are unaffected.
+- **Developer checkpoints.** `yield stream.checkpoint()` durably persists the
+  current response snapshot at a developer-chosen boundary (gated to durable
+  background responses; a no-op otherwise; backpressured and idempotent). On a
+  recovered entry, `context.persisted_response` exposes the last persisted
+  snapshot so the handler can seed its stream and resume — the basis of the
+  one-`OutputItem`-per-phase recovery pattern.
 
-- **`ResponseContext` surface for durable + steerable handlers.**
-  Flat fields the framework stamps on each invocation:
-  `context.is_recovery: bool` (`True` when the framework is resuming
-  a crashed prior attempt), `context.is_steered_turn: bool` (`True` on
-  the drain re-entry that follows a steering input),
-  `context.pending_input_count: int` (live count of queued steering
-  inputs), `context.durable_metadata: DurableMetadataNamespace`
-  (persistent per-response checkpoint store the handler can use to
-  watermark its own progress and resume cleanly after a crash), and
-  `await context.exit_for_recovery()` (opt-in graceful-shutdown
-  recovery primitive — return its result via
-  `return await context.exit_for_recovery()` to leave the response
-  `in_progress` for the next-lifetime recovery scanner).
+- **`internal_metadata`.** A single-turn, platform-internal `MutableMapping[str, Any]`
+  on output items (`item.internal_metadata`) and on the response
+  (`stream.internal_metadata`). It is persisted with the response (so it is
+  available on recovery) and is always stripped before any client-facing
+  HTTP/SSE payload, and on ingress. Distinct from the public
+  `ResponseObject.metadata`.
 
-- **`DurableMetadataNamespace` Protocol** — public type for
-  `context.durable_metadata`. `MutableMapping` shape
-  (`__getitem__`/`__setitem__`/`get`/`clear`/`pop`/`setdefault`/
-  `update`/etc.) plus `__call__(name)` for named namespaces and
-  `await flush()` for explicit at-most-once side-effect fencing.
+- **`context.conversation_chain_metadata`.** Cross-turn, named-scope,
+  explicit-`flush()` durable metadata over a conversation chain, typed by the
+  public `ConversationChainMetadataNamespace` Protocol.
 
-- **`ExitForRecoverySignal` type alias** — return type of
-  `context.exit_for_recovery()`.
+- **`await context.exit_for_recovery()`.** A single uniform graceful-shutdown
+  recovery primitive that works in every handler shape (coroutine, async
+  generator, sync) — it raises `ResponseExitForRecovery` internally to leave
+  the response `in_progress` for next-lifetime recovery.
 
-- **`FileResponseStore`** is now exported from
-  `azure.ai.agentserver.responses`.
+- **Stream recovery.** SSE events are persisted incrementally; clients reconnect
+  with `GET /responses/{id}?stream=true&starting_after=<event_id>` and resume
+  from their last received event.
 
-- **Local-development default response store changed from in-memory to
-  file-backed.** When `ResponsesAgentServerHost()` is constructed
-  without a `store=` argument in a non-hosted environment, the framework
-  now registers a `FileResponseStore` under
-  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/`. In a hosted
-  environment, the default remains the Foundry hosted responses
-  storage API — this change does not affect production hosted
-  deployments. To explicitly retain the previous in-memory behaviour
-  for local development, pass `store=InMemoryResponseProvider()`.
+- **Response acceptor hook.** Register `@app.response_acceptor` to customize the
+  response shape returned when a turn is queued behind an active steerable
+  conversation.
 
-- **`AGENTSERVER_DURABLE_ROOT` environment variable** — single
-  storage root for the local-development durable layout. The package
-  derives `responses/` and `streams/` subdirectories from this root.
+- **Storage.** `FileResponseStore` is exported from
+  `azure.ai.agentserver.responses` and is the default local-development store
+  (under `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/`) when no `store=`
+  is supplied in a non-hosted environment; pass
+  `store=InMemoryResponseProvider()` to opt out. The `AGENTSERVER_DURABLE_ROOT`
+  environment variable sets the local durable storage root. A typed
+  `ResponseAlreadyExistsError` is raised by the response-store providers on a
+  duplicate `create_response` (the idempotent-create signal on recovery).
 
-### Breaking Changes
+- **Error source classification headers.** HTTP error responses carry
+  `x-platform-error-source` (`user` / `platform` / `upstream`); platform errors
+  also include `x-platform-error-detail` with truncated diagnostics.
 
-- **Sync handlers are no longer accepted.** `response_handler` now
-  requires `async def`. The shipped 3-arg signature
-  `(request, context, cancellation_signal)` is unchanged. Sync
-  handlers cannot observe the `asyncio.Event` cancellation signal,
-  so they're rejected at decoration time with a clear `TypeError`.
+- **Handlers are `async def`.** `@app.response_handler` requires an async
+  handler with the `(request, context, cancellation_signal)` signature so it can
+  observe the `asyncio.Event` cancellation signal.
 
-## 1.0.0b6 (Unreleased)
-
-### Breaking Changes
-
-- **Unified onto the SDK `streams` registry for SSE event fan-out and replay.** The orchestrator and endpoint handler now obtain per-response event streams from `azure.ai.agentserver.core.streaming.streams` rather than from package-private machinery. As a consequence:
-  - **Removed `azure.ai.agentserver.responses.streaming.FileStreamProvider`.** The on-disk JSONL layout, single-writer locking, per-event TTL, and rehydrate-on-restart semantics are now provided by `streams.use_file_backed_replay(...)` in the core package. The responses host configures this at startup against the operator-supplied `AGENTSERVER_STREAM_STORE_PATH` directory (or a per-process temp directory) when `durable_background=True`; otherwise it configures `streams.use_in_memory_replay(...)`.
-  - **Removed the internal `_ResponseEventSubject` class.** Both the live SSE wire iterator and the GET ?stream=true replay path now subscribe to the same `EventStream` instance returned by `await streams.get_or_create(response_id)`. The orchestrator's previous `pre_subject` / `bg_record.subject` / `wire_subject` triplet collapsed to a single stream variable because the registry guarantees instance identity per id.
-  - **Removed the `ResponseStreamProviderProtocol` and `DurableStreamProviderProtocol` types and their package exports.** Stream-event persistence is no longer a responsibility of the response provider; the registry handles it independently. `InMemoryResponseProvider` no longer implements either protocol.
-  - **Removed the `stream_provider=` plumbing** on the internal orchestrator and endpoint handler. Callers using the public `ResponsesAgentServerHost` constructor are unaffected.
-- **HTTP wire mappings for stream registry errors.** `EventStreamNotFoundError` (no stream was ever registered for the id) and `EventStreamGoneError` (the stream was explicitly destroyed via `streams.delete(id)`) both surface as `404 Not Found` on the GET ?stream=true path — matching the existing contract that an unknown / expired replay returns 404. The streams registry preserves the NotFound vs Gone distinction internally for any future caller that needs to differentiate.
-- **Composition guard error message simplified.** The error raised when `durable_background=True` is combined with an explicit non-persistent `store=` no longer references a specific spec rule number; the message still names the offending store type and lists the three resolution options.
-- **Migrated to the new core durable-task primitive surface** (per spec 015). This is a coordinated cleanup of the durable response path now that the underlying primitive ships its final pre-GA shape (see the `azure-ai-agentserver-core` 2.0.0b4 entry):
-  - **`DurabilityContext.run_attempt` renamed to `retry_attempt`**, and the counter is now durable across crash/recovery (re-hydrated from the underlying task's `payload["_retry_attempt"]`).
-  - **`DurabilityContext.metadata` is now a callable namespace facade.** `ctx.metadata["key"]` accesses the default namespace; `ctx.metadata("namespace_name")["key"]` accesses a sibling namespace. The handler-facing wrapper **rejects keys (and namespace names) starting with `_`** with `ValueError` to protect developers from colliding with framework-internal namespaces.
-  - **Framework-internal metadata now lives under the `_responses` namespace.** All `_framework.*` keys (`response_id`, `last_sequence_number`, `background`, `disposition`) have moved to `ctx.metadata("_responses")[...]`. The orchestrator uses the underlying `TaskContext` directly so it can write `_*`-prefixed namespace names; the handler-facing `DurabilityContext` wrapper enforces the rejection.
-  - **`_FilteredMetadata` helper class removed.** It is replaced by the new callable metadata facade.
-  - **Auto-flush of metadata removed.** Persistence happens at lifecycle boundaries via explicit `await ctx.metadata("_responses").flush()`. No background task is needed.
-
-### Features Added
-
-- **Cross-process recovery for durable background responses**: when a server crashes mid-response, the recovered task rebuilds the in-memory handler context (`ResponseExecution`, `ResponseContext`, parsed request) from the durable task input and resumes the canonical recovery contract. Previously the recovered task's early-exit path made cross-process recovery a no-op even though same-process tests passed; now both paths behave correctly. (Spec 013 US1 (a))
-- **`FileResponseStore` for local-dev recovery testing**: new `azure.ai.agentserver.responses.store.FileResponseStore` provider persists response objects as JSON files under a configurable directory with atomic `os.replace()` writes. The default `MemoryResponseProvider` does not survive a process restart, so cross-process recovery scenarios require either this file-backed provider or the production Foundry provider. (Spec 013 US1 (c))
-- **`ResponseAlreadyExistsError` typed exception** in `azure.ai.agentserver.responses.store`. Raised by both the in-memory and Foundry response-store providers on duplicate `create_response`. Replaces the previously-untyped `ValueError`. Callers can catch it as the idempotent-create signal during recovery. (Spec 013 US1 (b))
-- **Steerable conversations reject conversation forks**: when `steerable_conversations=True`, a new turn that supplies a stale `previous_response_id` (referring to a turn that is no longer the most recent) is rejected with HTTP 409 and the structured error code `conversation_fork_not_supported`. Previously, fork attempts silently corrupted the task state by queueing input out of order; the framework now enforces sequential turn ordering at the input boundary via the new input-precondition primitive. (Spec 013 US2)
-- **`ResponseContext.conversation_chain_id`**: framework-computed stable identifier shared by every turn in a multi-turn conversation. Derived from `conversation_id` → `previous_response_id` → `response_id` in priority order. Handlers use it as a deterministic key into application-side conversation state (e.g., upstream SDK session ids, per-conversation rate limits). Stable across turns and across crash recovery — no metadata round-trip needed to allocate or look up an id. See `docs/durable-responses-developer-guide.md` and `docs/handler-implementation-guide.md`. (Spec 013 US3)
-- **Durable background responses**: Background responses with `store=True` are now automatically crash-recoverable. If the server crashes mid-response, handlers are re-invoked on restart via the durable task primitive. Zero handler code changes required for basic crash recovery.
-- **Stream recovery**: SSE events are persisted incrementally during streaming. Clients can reconnect using the `starting_after` query parameter and resume from their last received event. Stream events are retained for a configurable TTL (default 10 minutes) after response completion.
-- **Steerable conversations**: Enable `steerable_conversations=True` for multi-turn agents. New turns can cancel in-progress responses via cooperative cancellation. Queued turns return a "queued" response shape, customizable via `@app.response_acceptor`.
-- **DurabilityContext API**: Handlers can access `context.durability` for crash-recovery metadata, entry mode detection (`"fresh"` vs `"recovered"`), run attempt tracking, and pending input counts.
-- **File-based stream provider**: New `FileStreamProvider` stores stream events as JSON lines with configurable TTL-based expiry. Used automatically in local development when no custom durable provider is configured.
-- **Acceptance hook**: Register `@app.response_acceptor` to customize the response shape when turns are queued behind an active steerable conversation.
-- Error source classification headers: All HTTP error responses now include `x-platform-error-source` with a value of `user`, `platform`, or `upstream` to indicate which component caused the error. Client validation errors (400/404) are classified as `user`, Foundry storage infrastructure errors (transport failures, 5xx) as `platform`, and developer handler exceptions as `upstream`. Platform errors additionally include `x-platform-error-detail` with truncated exception details (max 2048 characters) for diagnostics. Matches the container image specification §8 error source classification.
-
-- Added durable samples demonstrating real SDK integrations: Claude Agent SDK (`durable_claude`), Copilot SDK (`durable_copilot`), LangGraph (`durable_langgraph`), and multi-turn conversation (`durable_multiturn`).
-
-### Bugs Fixed
-
-- **Bookkeeping durable record for all `store=true` responses (closes spec 014 divergences 2 + 3, FR-003 + FR-004)**: every accepted `store=true` response now creates a durable task at accept time with a `mark-failed` disposition (Rows 2 and 3) — or the existing `re-invoke` disposition (Row 1). On a process crash (SIGKILL or any uncaughtable failure), the next-lifetime recovery scanner reclaims the bookkeeping task and persists a `server_error` failed terminal to the response store via the idempotent `_persist_crash_failed` helper (T-062 / T-066). Previously, Rows 2 and 3 had no durable record at all — a server crash mid-response left the response stuck at `status="in_progress"` forever and `GET /responses/{id}` returned the stale in-progress snapshot indefinitely. Now `GET` reflects the actual outcome (`failed` with `error.code="server_error"` and `error.additionalInfo.shutdown_reason="crash_recovery"`). Race-safe: if a SIGKILL fires between handler-side terminal-persist and bookkeeping-task-complete, `_persist_crash_failed` reads the store first and skips overwrite when a terminal is already present. Applies to: `(background=true, store=true, durable_background=false)` and `(background=false, store=true)`. (Spec 014 FR-003 / FR-004)
-- **Phase-1 create_response failure for foreground stream disconnect now correctly returns 404**: the pre-Phase-4 B17 path in `_finalize_stream` attempted to persist a `status="cancelled"` response on every non-bg stream interruption, but the persistence was silently failing on every backend (wrong kwarg name `history_ids` vs `history_item_ids`, raw dict vs `ResponseObject`). The fix removes the persist call from B17 — client disconnect on a non-bg stream legitimately returns 404 (the response was never persisted), matching the existing `test_e12_stream_disconnect_then_get_returns_not_found` contract test. Server-shutdown cases that previously relied on this B17 path are now covered by the Phase 4 bookkeeping recovery instead. (Spec 014 Phase 4 follow-up)
-- **Bookkeeping completion signal no longer lost under fast handler races (Spec 014 Phase 6 F1)**: bookkeeping durable tasks for Rows 2/3 (`mark-failed` disposition) now have their completion event pre-registered from the caller side before the durable task body is scheduled. Previously, the body wrote `_BOOKKEEPING_EVENTS[response_id]` on its own first line, opening a window where a fast handler that completed its terminal before the body's initial await tick would call `_complete_bookkeeping_task` against an empty registry and have the signal silently dropped — leaving the bookkeeping task `in_progress` until process shutdown (next-lifetime recovery scanner reclaimed it idempotently, so no user-visible bug, but stale durable state). The new idempotent `DurableResponseOrchestrator.ensure_bookkeeping_event` helper is invoked from `_start_durable_background` whenever the disposition is `mark-failed`, so the registration always wins the race.
-- **Durable streaming row now actually uses the durable task primitive (closes spec 014 divergence 1, FR-002)**: when `(store=true, background=true, durable_background=true, stream=true)`, the response is now routed through the durable task primitive so the handler is re-invokable on server crash. Previously the streaming wire path bypassed `_start_durable_background` entirely, leaving `durable_background=True` a silent no-op for the entire stream-on row of the durability matrix — recovered clients reconnecting via `GET /responses/{id}?stream=true&starting_after=N` would never see the handler resume. The fix pre-allocates a `_ResponseEventSubject` on the wire side, plumbs it through the pipeline via the new `_PipelineState.pre_subject` field, and engages the durable body which drives `_process_handler_events` and publishes through the shared subject. The first event is now published AFTER `provider.create_response` succeeds (was before), so Phase 1 storage failures no longer leak a `response.created` event to replay subscribers. (Spec 014 FR-002)
-- **Graceful-shutdown handler return no longer marks the task `completed` (closes spec 014 divergence 4, FR-005a)**: when the durable task body returns from the handler under `ctx.shutdown` without emitting a terminal event, the orchestrator now raises `asyncio.CancelledError` to route the core runner into the cooperative-cancel branch — keeping the task `status="in_progress"` so the next-lifetime recovery scanner reclaims it. Previously the task was marked `completed` on graceful shutdown, and the recovery scanner skipped it on restart — the response stayed `in_progress` in the store forever. Affects every Path B (in-process / graceful) shutdown of a row-1 durable handler that returns cooperatively instead of emitting a terminal. (Spec 014 FR-005a; documented in `azure-ai-agentserver-core/docs/durable-task-developer-guide.md` § Graceful Shutdown.)
-- **In-process shutdown marker now persists the failed terminal to the store (closes spec 014 divergence 5, FR-005b)**: the grace-exhausted in-process shutdown loop in `_endpoint_handler.py` now invokes the response-store terminal-persist hook after stamping the failed response snapshot, so on subprocess restart the store reflects `status="failed"` with `code="server_error"` instead of stuck `status="in_progress"`. Previously the marker mutated only the in-memory record, which was discarded with the dying process. Affects Row 2 Path B × `stream=False` and Row 3 Path B × `stream=False/True`. (Spec 014 FR-005b)
-- **Idempotent `response.created` persistence across recovery attempts**: the response object is now persisted exactly once at `response.created` and exactly once at the terminal event, regardless of how many recovery attempts occur in between. Recovered handlers' re-emit of `response.created` against a store that already has the response no longer leaves the response stuck in `in_progress` — the existing entry is preserved and the terminal `update_response` lands. (Spec 013 US1 (b))
-- **Durable background path now actually persists tasks**: the orchestrator splits `ctx_params` into in-memory runtime refs (`_record_ref`, `_context_ref`, etc.) and JSON-serializable params before invoking the durable task primitive. Previously the `asyncio.Event` reference in `ctx_params` silently failed JSON serialization at the `LocalFileTaskProvider` boundary, forcing every durable_background request through the non-durable fallback and rendering cross-process recovery a no-op for the file-backed provider. (Spec 013 US1 (a/c))
-- **Graceful shutdown notifies durable handlers**: the durable orchestrator now bridges both `ctx.cancel` (steering / explicit cancel) and `ctx.shutdown` (TaskManager graceful shutdown) to the response context's `cancellation_signal`, stamping `CancellationReason.SHUTTING_DOWN` for the shutdown case so handlers can checkpoint and return cleanly instead of running until forcibly cancelled.
-- **`runtime_options` reference**: fixed an `UndefinedName` in `_run_background_non_stream`'s cancellation branch that previously raised `NameError` for durable-background tasks cancelled mid-flight under `SHUTTING_DOWN` reason. `runtime_options` is now explicitly threaded through.
-- **Pre-crash SSE events now survive recovery on Row 1 durable streaming (Spec 014 Phase 9 follow-up)**: three layered bugs in the streaming-recovery persistence path were closed so a reconnecting client at `GET /responses/{id}?stream=true&starting_after=N` sees the complete assembled event log across recovery attempts, not just the recovered attempt's events. (a) `_PipelineState.next_seq` now seeds from the prior persisted event count on recovered entry to `_run_durable_stream_body`, so the recovered handler's events have sequence numbers strictly succeeding the pre-crash events — keeping the assembled stream monotonic. (b) The truncating `save_stream_events` call at terminal-persist and `_finalize_bg_stream` time is now skipped when the durable stream provider has been receiving incremental `append_stream_event` calls — the previous behaviour overwrote the JSONL file with the recovered attempt's events only, erasing pre-crash content. (c) The `response.created` first event and the empty-handler fallback lifecycle events now go through the same incremental `append_stream_event` discipline as the rest of the handler events. Verified by a new conformance test (`test_streaming_recovery_continuity.py`) that asserts pre-crash deltas remain in the persisted stream after SIGKILL + recovery, sequence numbers are strictly monotonic across the assembled stream, and the recovered handler's events have seq > the last pre-crash event.
-
-### Other Changes
-
-- **Configurable TaskManager shutdown grace via `AGENTSERVER_TASK_MANAGER_SHUTDOWN_GRACE_SECONDS` env var** (fallback: `AGENTSERVER_SHUTDOWN_GRACE_SECONDS`). The default 25s TaskManager grace blocks the responses-layer `handle_shutdown` from firing for that long. With Phase 4 making every `store=true` response create a bookkeeping task, operators / tests can now align TaskManager's grace with the responses-layer `shutdown_grace_period_seconds` so both fire promptly. (Spec 014 Phase 4 follow-up)
-- **Shutdown-hook reordering**: `on_shutdown` (responses layer's `handle_shutdown`) now fires BEFORE `TaskManager.shutdown` in the host lifespan. Without this, foreground responses could race Hypercorn's client-connection close during the TaskManager grace and be stamped `CancellationReason.CLIENT_CANCELLED` instead of `SHUTTING_DOWN`. (Spec 014 Phase 4 follow-up)
-
-
-- **`FileResponseStore` is now a true drop-in replacement for `InMemoryResponseProvider`** within the scope of `ResponseProviderProtocol`: it persists per-response `input_item_ids` / `output_item_ids` / `history_item_ids` indexes, tracks `conversation_id → response_ids` membership, walks both `previous_response_id` and `conversation_id` correctly in `get_history_item_ids` (skipping deleted responses), implements `get_items` against a flat global item index, and matches the in-memory provider's exception contract (`KeyError` for missing / soft-deleted lookups, `ResponseAlreadyExistsError` on duplicate create, `ValueError` for `get_input_items` on a deleted response). `IsolationContext` is accepted but ignored, matching `InMemoryResponseProvider`. Streaming (`ResponseStreamProviderProtocol` / `DurableStreamProviderProtocol`) remains delegated to `FileStreamProvider` via the existing host-routing auto-compose path; the two are explicitly separate so the on-disk JSONL stream format lives in one place. (Spec 013 follow-up #2)
-
-- **Operator / test env-var hooks**: `AGENTSERVER_RESPONSE_STORE_PATH` and `AGENTSERVER_STREAM_STORE_PATH` now select a `FileResponseStore` / `FileStreamProvider` rooted at the supplied path by default (when no explicit `store=` is passed to `ResponsesAgentServerHost`). Used by `_crash_harness.py` and live recovery samples; opt-in for production via explicit construction.
-
-- **Sample 18 (`durable_copilot`) now streams live deltas + replays on recovery**. The handler previously accumulated Copilot's `AssistantMessageData` content into a list and emitted all deltas at once after the session reached `SessionIdleData`, producing batched output that looked nothing like real streaming. The refactored handler now pushes each `AssistantMessageData` content into an `asyncio.Queue` inside the SDK callback and forwards it as an `output_text.delta` SSE event the moment it arrives. On crash recovery, the handler reads the upstream Copilot session's accumulated assistant content for the current turn via `session.get_messages()` and emits it as a single replay delta before resuming live streaming — recovered clients see `response.in_progress` (zero output items) → one replay delta → continued live deltas. See the sample's module docstring for the full streaming + recovery contract. (Spec 013 follow-up #3)
-
-- **Removed unused recovery helpers `check_stream_consistency`, `hydrate_subject`, `filter_events_by_sequence`, `check_ttl_expired` (Spec 014 Phase 7 / FR-014)**: the standalone helpers and their two source files (`hosting/_stream_recovery.py` and `streaming/_recovery.py`) were scaffolding for an undelivered spec 010 sub-contract — the canonical durable-streaming recovery path uses `_durable_stream_provider.append_stream_event` / `get_stream_events` directly inside `_process_handler_events` (incremental persist) and the responses orchestrator's pre-allocated `_ResponseEventSubject` for replay (no helper-mediated hydration). The helpers had zero production call sites, the consistency-check + TTL helpers were only exercised by their own helper-internal unit tests (`tests/unit/test_stream_recovery.py`), and none participated in any conformance- or contract-bound behaviour. Removing the dead surface area shrinks the recovery API and removes a misleading "use this for recovery" signal from the codebase.
-
-- **Docs: link developer and handler guides to the normative recovery contract (Spec 014 Phase 9 / FR-011)**. The Configuration Matrix in `docs/durable-responses-developer-guide.md` and the Durability section in `docs/handler-implementation-guide.md` now both link to `sdk/agentserver/specs/durability-contract.md` as the source of truth for per-row × per-cancellation-path behaviour, and acknowledge that the conformance suite at `tests/e2e/durability_contract/` exercises every cell. The Stream Recovery section now explicitly confirms the post-recovery guarantee (Row 1 Path C) that Phase 3-B made real. The Watermark Pattern worked example now shows the strict at-most-once flow with explicit `await durability.metadata.flush()` calls bracketing the side-effecting upstream call, rather than relying on the 5s auto-flush. A new cross-reference note also appears at the top of the core package's `docs/durable-task-developer-guide.md` pointing response-layer readers at the responses-package guides and contract.
-
-- **Sample 18 invocation-pattern e2e suite (Spec 014 Phase 9)**: new `tests/e2e/sample_18_invocation_patterns/` package — 6 test modules (14 test cases) exercising the realistic Copilot handler (`samples/sample_18_durable_copilot.py`) under every per-request flag combination + cancellation path that sample 18's fixed configuration (`durable_background=True` + `steerable_conversations=True`) admits. Covers durable-background polled (p01), durable-background streamed (p02 — the spec 014 divergence-1 closure), foreground polled (p05), foreground streamed (p06), multi-turn chain via `previous_response_id` with crash recovery (p08), and multi-turn grouping via `conversation_id` with crash recovery (p09). Sample 18 itself is unchanged — no test-only env knobs, no server-option overrides; Path-B determinism comes from prompt selection (Path-B and Path-C tests use a `SLOW_PROMPT` that reliably takes Copilot longer than the short grace to answer). Suite is `@pytest.mark.live` because sample 18 imports the real GitHub Copilot SDK; default CI runs skip. Patterns that require non-default sample 18 server options (`durable_background=False`, `store_disabled=True`) are framework-level and remain covered by the conformance suite at `tests/e2e/durability_contract/`.
-
-### Breaking Changes
-
-- **Spec 014 FR-006: composition guard refuses startup with `durable_background=True` + explicit non-persistent store** — `ResponsesAgentServerHost` now raises `ValueError` at construction time when the operator passes `options=ResponsesServerOptions(durable_background=True)` AND an explicit `store=` argument whose value is `InMemoryResponseProvider` (or any subclass). Operators who deliberately opted into crash recovery while supplying a non-persistent store will get a descriptive error naming the missing provider class and the available alternatives (`FileResponseStore` for local dev, `FoundryStorageProvider` for production, or the `AGENTSERVER_RESPONSE_STORE_PATH` env-var override). The default path (no `store=` argument) is unaffected — it continues to use the in-memory provider plus the existing auto-composed `FileStreamProvider` so in-process tests and local-dev workflows continue to work. (Spec 014 FR-006 / RD-3)
-- **Spec 014 FR-005a/b: error `code` rename** — server-side recovery and shutdown failures now report `code="server_error"` instead of `code="server_crashed"`. The `error.type` remains `"server_error"`; only the `code` is renamed for consistency with `durability-contract.md` § Glossary. Clients that compared `error.code === "server_crashed"` must update to `"server_error"`. Recovery-shutdown error payloads additionally carry `error.additionalInfo.shutdown_reason ∈ {"grace_exhausted", "crash_recovery"}` so clients can distinguish the two server-side failure modes. (Spec 014)
-- Removed the automatic `invoke_agent` server span that was created on each response creation request. Trace context propagation is now handled by the core `TraceContextMiddleware`, and user-created spans inside handlers are correctly parented without framework-generated spans.
-- Removed `_safe_set_attrs`, `_wrap_streaming_response`, and `_classify_error_code` internal helpers (no longer needed without framework-level span management).
-- Removed OTel error tagging attributes (`azure.ai.agentserver.responses.error.code`, `azure.ai.agentserver.responses.error.message`) that were set on the framework span.
-
-### Bugs Fixed
-
-- Removed `ContentDecodePolicy` from the `FoundryStorageProvider` HTTP pipeline.  The policy eagerly decoded every response body as JSON and crashed with `UnicodeDecodeError` when the storage backend (or an intermediary gateway/load-balancer) returned a non-UTF-8 body — for example a gzip-compressed payload, an HTML error page, or a transport-corrupted response.  The crash propagated up before our error-classification code could see the response, masking the underlying status with a generic decode error.  Our serializers and error-extraction helpers already call `http_resp.text()` lazily with defensive error handling, so the eager decode policy was never needed.
-
-### Other Changes
-
-- Platform header name constants (e.g. `x-platform-error-source`, `x-platform-error-detail`) are now imported from `azure-ai-agentserver-core` (`_platform_headers` module). Error source classification helpers remain internal to this package.
-- Simplified request handling: baggage entries (`response_id`, `conversation_id`, `streaming`, `x-request-id`) are still set on each request, but span creation and lifecycle management are left to downstream frameworks.
+- Added durable samples demonstrating real SDK integrations (Claude Agent SDK,
+  Copilot SDK, LangGraph) and durable streaming / steering / multi-turn
+  patterns.
 
 ## 1.0.0b5 (2026-04-22)
 

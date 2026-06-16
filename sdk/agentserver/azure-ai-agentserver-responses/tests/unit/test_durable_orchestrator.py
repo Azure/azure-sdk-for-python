@@ -201,7 +201,7 @@ class TestDurableOrchestratorExecuteInTask:
         The pre-Phase-5 ``DurabilityContext`` indirection is deleted —
         this test asserts the post-Phase-5 contract: ``is_recovery``,
         ``is_steered_turn``, ``pending_input_count`` and a swapped-in
-        ``durable_metadata`` namespace facade are set on the context
+        ``conversation_chain_metadata`` namespace facade are set on the context
         BEFORE the handler runs.
         """
         orch = DurableResponseOrchestrator(
@@ -252,7 +252,7 @@ class TestDurableOrchestratorExecuteInTask:
         # The metadata facade was swapped in to back the task metadata.
         from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
 
-        assert isinstance(real_context.durable_metadata, _DeveloperMetadataFacade)
+        assert isinstance(real_context.conversation_chain_metadata, _DeveloperMetadataFacade)
 
     @pytest.mark.asyncio
     async def test_steerable_returns_none_for_implicit_suspend(self) -> None:

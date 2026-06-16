@@ -130,7 +130,7 @@ def test_durability_fields_flat_on_context() -> None:
     assert hasattr(ctx, "is_recovery")
     assert hasattr(ctx, "is_steered_turn")
     assert hasattr(ctx, "pending_input_count")
-    assert hasattr(ctx, "durable_metadata")
+    assert hasattr(ctx, "conversation_chain_metadata")
     # Default values for fresh handler invocation
     assert ctx.is_recovery is False
     assert ctx.is_steered_turn is False
@@ -254,13 +254,13 @@ def test_cancellation_reason_enum_not_in_runtime_module() -> None:
 
 
 # ─────────────────────────────────────────────────────────────────────
-# Public type exports (DurableMetadataNamespace, ExitForRecoverySignal)
+# Public type exports (ConversationChainMetadataNamespace, ExitForRecoverySignal)
 # ─────────────────────────────────────────────────────────────────────
 
 
-def test_durable_metadata_namespace_protocol_exported() -> None:
-    """`DurableMetadataNamespace` Protocol exported from the package."""
-    from azure.ai.agentserver.responses import DurableMetadataNamespace  # noqa: F401
+def test_conversation_chain_metadata_namespace_protocol_exported() -> None:
+    """`ConversationChainMetadataNamespace` Protocol exported from the package."""
+    from azure.ai.agentserver.responses import ConversationChainMetadataNamespace  # noqa: F401
 
 
 def test_exit_for_recovery_signal_exported() -> None:

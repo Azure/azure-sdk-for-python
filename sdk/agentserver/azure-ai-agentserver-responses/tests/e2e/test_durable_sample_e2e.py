@@ -437,13 +437,13 @@ def _make_sample22_app() -> TestClient:
     @app.response_handler
     async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         input_text = await context.get_input_text()
-        turn_count = context.durable_metadata.get("turn_count", 0) + 1
+        turn_count = context.conversation_chain_metadata.get("turn_count", 0) + 1
         if input_text.strip().lower() == "done":
-            context.durable_metadata.clear()
+            context.conversation_chain_metadata.clear()
             return TextResponse(context, request, text=f"Done! Session complete after {turn_count - 1} turns.")
         history_items = await context.get_history()
         reply = f"Turn {turn_count}: '{input_text}', context={len(history_items)} items"
-        context.durable_metadata["turn_count"] = turn_count
+        context.conversation_chain_metadata["turn_count"] = turn_count
         return TextResponse(context, request, text=reply)
 
     return TestClient(app)

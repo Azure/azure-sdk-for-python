@@ -34,7 +34,7 @@ def _make_graph_app() -> TestClient:
     @app.response_handler
     async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         stream = ResponseEventStream(response_id=context.response_id, request=request)
-        completed = context.durable_metadata.get("completed_nodes", [])
+        completed = context.conversation_chain_metadata.get("completed_nodes", [])
         start_node = len(completed)
 
         yield stream.emit_created()
@@ -45,9 +45,9 @@ def _make_graph_app() -> TestClient:
                 break
             for event in stream.output_item_message(f"[{GRAPH_NODES[i]}] done. "):
                 yield event
-            completed = context.durable_metadata.get("completed_nodes", [])
+            completed = context.conversation_chain_metadata.get("completed_nodes", [])
             completed.append(GRAPH_NODES[i])
-            context.durable_metadata["completed_nodes"] = completed
+            context.conversation_chain_metadata["completed_nodes"] = completed
 
         yield stream.emit_completed()
 

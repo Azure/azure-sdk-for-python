@@ -104,6 +104,27 @@ def _read_json_or_none(path: Path) -> dict[str, Any] | None:
         return None
 
 
+def _deserialize_item(data: dict[str, Any] | None) -> OutputItem | None:
+    """Deserialize a stored item dict into a typed ``OutputItem`` subtype.
+
+    Items persist to disk as JSON dicts; consumers (and the typed
+    ``OutputItem.internal_metadata`` accessor) expect proper discriminated
+    subtypes. Returns ``None`` for a missing record; falls back to the raw dict
+    if deserialization fails for an unrecognised shape.
+
+    :param data: The raw stored item dict, or ``None``.
+    :type data: dict[str, Any] | None
+    :returns: The typed ``OutputItem`` subtype, or ``None`` if *data* is ``None``.
+    :rtype: ~azure.ai.agentserver.responses.models._generated.OutputItem | None
+    """
+    if data is None:
+        return None
+    try:
+        return OutputItem._deserialize(data, [])  # pylint: disable=protected-access
+    except Exception:  # pylint: disable=broad-exception-caught
+        return data  # type: ignore[return-value]
+
+
 def _response_to_dict(response: ResponseObject) -> dict[str, Any]:
     """Convert a ``ResponseObject`` to a JSON-safe dict for persistence.
 
@@ -412,8 +433,9 @@ class FileResponseStore(ResponseProviderProtocol):
             results: list[OutputItem] = []
             for iid in ordered[:safe_limit]:
                 data = _read_json_or_none(self._global_item_path(iid))
-                if data is not None:
-                    results.append(data)  # type: ignore[arg-type]
+                item = _deserialize_item(data)
+                if item is not None:
+                    results.append(item)
             return results
 
     async def get_items(
@@ -440,7 +462,7 @@ class FileResponseStore(ResponseProviderProtocol):
             results: list[OutputItem | None] = []
             for iid in item_ids:
                 data = _read_json_or_none(self._global_item_path(iid))
-                results.append(data if data is not None else None)  # type: ignore[arg-type]
+                results.append(_deserialize_item(data))
             return results
 
     async def get_history_item_ids(

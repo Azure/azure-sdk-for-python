@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterable
+from collections.abc import AsyncIterable, MutableMapping
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, AsyncIterator, Iterator, Sequence, cast
@@ -14,6 +14,7 @@ from ..models import _generated as generated_models
 from ..models._generated import AgentReference
 from ..models._generated.sdk.models._utils.model_base import Model as _Model
 from . import _internals
+from ._checkpoint import ResponseCheckpointEvent
 from ._builders import (
     OutputItemBuilder,
     OutputItemCodeInterpreterCallBuilder,
@@ -171,6 +172,57 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseObject
         """
         return self._response
+
+    @property
+    def internal_metadata(self) -> "MutableMapping[str, Any]":
+        """Live, mutable response-level framework-internal metadata.
+
+        A convenience proxy for ``self.response.internal_metadata`` — read /
+        write / delete in place (``stream.internal_metadata["phase"] = 3``).
+        Backed by a reserved key inside the response's public ``metadata`` map
+        and stripped from every client-facing payload. Persisted at the next
+        ``yield stream.checkpoint()`` (and at terminal). Values may be any
+        JSON-serialisable type.
+
+        :rtype: ~collections.abc.MutableMapping[str, ~typing.Any]
+        """
+        return self._response.internal_metadata  # type: ignore[attr-defined,no-any-return]
+
+    def checkpoint(self) -> "ResponseCheckpointEvent":
+        """Return a checkpoint event to ``yield`` for durable persistence.
+
+        Usage (inside a durable background response handler)::
+
+            yield stream.checkpoint()
+
+        Yielding the event durably persists the current ``stream.response``
+        snapshot via the storage provider. It is processed by the orchestrator
+        and is NOT forwarded to the SSE wire (internal control signal).
+
+        Semantics (enforced by the orchestrator):
+
+        - **Deterministic + developer-driven** — only where the handler yields
+          one; there are no periodic / implicit checkpoints.
+        - **Backpressure** — because the orchestrator fully processes the event
+          (awaiting the provider write) before requesting the next event, the
+          handler is suspended at the yield until the persist completes.
+        - **Durable background only** — persists only when the deployment has
+          ``durable_background=True`` and the request is ``background=True``
+          (⇒ ``store=True``); a no-op otherwise.
+        - **Idempotent** — a snapshot byte-identical to the last persisted one
+          is skipped.
+        - **Failures swallowed** — provider errors are logged, never raised into
+          the handler; recovery falls back to the previously-persisted snapshot.
+        - **After terminal** — a checkpoint yielded after a terminal event is
+          dropped.
+
+        Persists the response with whatever ``status`` it currently has — the
+        checkpoint never overrides it.
+
+        :returns: The checkpoint event to yield.
+        :rtype: ~azure.ai.agentserver.responses.streaming._checkpoint.ResponseCheckpointEvent
+        """
+        return ResponseCheckpointEvent(self._response)
 
     def emit_queued(self) -> generated_models.ResponseQueuedEvent:
         """Emit a ``response.queued`` lifecycle event.
