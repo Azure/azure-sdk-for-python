@@ -312,35 +312,25 @@ def main(generate_input, generate_output):
             run_post_emitter_script(sdk_code_path)
 
             # Generate ApiView
-            if data.get("runMode") in ["spec-pull-request"]:
+            if data.get("runMode") in ["spec-pull-request", "release"]:
                 apiview_start_time = time.time()
                 try:
-                    _LOGGER.info("install dependencies for apiview generation")
+                    _LOGGER.info("generate apiview artifacts")
                     package_path = Path(sdk_folder, folder_name, package_name)
-                    check_call(
-                        [
-                            "python",
-                            "-m",
-                            "pip",
-                            "install",
-                            "-r",
-                            "../../../eng/apiview_reqs.txt",
-                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
-                            "/simple/",
-                        ],
-                        cwd=package_path,
-                        timeout=600,
-                    )
-                    cmds = ["apistubgen", "--pkg-path", "."]
-                    cross_language_mapping_path = Path(package_path, "apiview-properties.json")
-                    if cross_language_mapping_path.exists():
-                        cmds.extend(["--mapping-path", str(cross_language_mapping_path)])
-
+                    cmds = [
+                        "azpysdk",
+                        "apistub",
+                        "--md",
+                        "--extract-metadata",
+                        package_name,
+                        "--dest-dir",
+                        package_path.absolute(),
+                    ]
                     _LOGGER.info(f"generate apiview file for package {package_name}")
                     check_call(
                         cmds,
-                        cwd=package_path,
-                        timeout=600,
+                        timeout=900 if data.get("runMode") == "spec-pull-request" else 36000,
+                        cwd=".",
                         # known issue that higher python version meet install warning with lower pylint.
                         # we skip the output here to reduce confusion and will remove it after apiview tool upgrade to higher pylint version.
                         stderr=subprocess.DEVNULL,
