@@ -1,0 +1,24 @@
+import:
+  - ../../../.vscode/cspell.json
+
+words:
+  - aadtoken
+  - alds
+  - arimax
+  - elts
+  - entra
+  - expirable
+  - faiss
+  - kwoa
+  - llmrag
+  - maskrcnn
+  - merkle
+  - merkletree
+  - misformatted
+  - mobilenetv
+  - mpnet
+  - restclient
+  - rslex
+  - serp
+  - vectorizer
+  - vitl
