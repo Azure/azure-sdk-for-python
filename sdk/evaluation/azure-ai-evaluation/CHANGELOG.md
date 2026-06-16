@@ -1,5 +1,11 @@
 # Release History
 
+## 1.17.1 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed `RedTeam.scan()` storing decoded plaintext instead of the actual encoded payload for converter-based attack strategies (`Base64`, `Flip`, `Morse`, `ROT13`, `Caesar`, `Leetspeak`, `AsciiArt`, `AnsiAttack`, `Atbash`, `Binary`, `CharacterSpace`, `CharSwap`, `Diacritic`, `StringJoin`, `SuffixAppend`, `UnicodeConfusable`, `UnicodeSubstitution`, `Url`, `AsciiSmuggler`, `Tense`) in `evaluation_results.json` / `results.json`. The persisted `conversation[].content` for user turns now reflects what the target actually received (`converted_value`); the pre-converter adversarial objective is preserved on the same message as a new `original_value` field so the audit trail of what the attack meant to say is not lost. Baseline (non-encoded) strategies are unaffected. Resolves [Azure/azure-sdk-for-python#47228](https://github.com/Azure/azure-sdk-for-python/issues/47228).
+
 ## 1.17.0 (2026-06-03)
 
 ### Breaking Changes
