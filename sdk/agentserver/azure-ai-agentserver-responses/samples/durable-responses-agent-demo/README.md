@@ -15,10 +15,13 @@ Agent + the `azure-ai-agentserver-responses` package:
    dies (intentional crash or OOM), the platform's nanny worker
    brings it back within ~1 min **without any new client ingress**.
    The durable response automatically resumes with
-   `context.is_recovery is True`, reads the last completed phase from
-   `context.durable_metadata`, and re-emits the snapshot reset on
-   `response.in_progress`. User-visible: any reconnect attempt picks
-   up the recovered run.
+   `context.is_recovery is True`. Recovery uses the
+   **one-OutputItem-per-phase** pattern: the persisted response *is*
+   the watermark — the handler seeds its stream from
+   `context.persisted_response` and resumes at
+   `len(stream.response.output)`, re-emitting `response.in_progress`
+   as the client-visible reset. User-visible: any reconnect attempt
+   picks up the recovered run.
 
 3. **Steering.** POSTing a follow-up turn (with `previous_response_id`
    pointing at the still-running response) queues the input as a
@@ -46,18 +49,19 @@ had to wire by hand:
 | Cancellation route | Custom `@app.cancel_invocation_handler` that looks up the task and calls `run.cancel()` | Built-in `POST /responses/{id}/cancel` route handled by the framework |
 | Stream replay route | Custom `@app.get_invocation_handler` that subscribes to the per-invocation stream | Built-in `GET /responses/{id}?stream=true&starting_after=N` |
 | Durability + steering | Compose `@multi_turn_task(steerable=True)` directly; map `task_id`/`input_id` to session/invocation | Opt-in via `ResponsesServerOptions(durable_background=True, steerable_conversations=True)` — framework handles the rest |
-| Recovery surface | Read `ctx.entry_mode == "recovered"` + `ctx.metadata` | Read `context.is_recovery` + `context.durable_metadata`; same recovery primitive underneath |
+| Recovery surface | Read `ctx.entry_mode == "recovered"` + `ctx.metadata` | Read `context.is_recovery` + seed from `context.persisted_response`; same recovery primitive underneath |
 
-`main.py` here is ~300 lines (mostly the phase-streaming logic);
+`main.py` here is ~190 lines (mostly the phase-streaming logic);
 `agent.py` + `app.py` for the invocations demo is ~700 lines.
 
 What the agent actually does: 5 logical research phases on whatever
-topic the caller supplies. Each phase produces ~200 tokens via a real
-`gpt-4.1-mini` call (streamed token-by-token through
-`response.output_text.delta` events). The handler checkpoints to
-`context.durable_metadata` after each phase completes — a crash
-mid-phase recovers at the next un-finished phase (worst case: the
-one that was actively streaming is replayed).
+topic the caller supplies. Each phase produces one streamed message
+output item (~200 tokens) via a real `gpt-4.1-mini` call (streamed
+token-by-token through `response.output_text.delta` events). The
+handler `yield stream.checkpoint()` after each phase completes — a
+crash mid-phase recovers at the next un-finished phase (the
+actively-streaming item was never closed, so it never entered the
+snapshot and is re-run cleanly).
 
 Between phases the agent sleeps for `INTER_PHASE_COOLDOWN_SEC` (30s
 default in the hosted defaults) so a single demo run spans the

@@ -14,9 +14,12 @@ package:
 
 2. **Recovery from container crashes.** When the agent container dies,
    the platform's nanny worker brings it back within ~1 min and the
-   framework re-invokes this handler with ``context.is_recovery is True``,
-   resuming from the last completed phase recorded in
-   ``context.durable_metadata``.
+   framework re-invokes this handler with ``context.is_recovery is True``.
+   Recovery uses the **one-OutputItem-per-phase** pattern: the persisted
+   response *is* the watermark. The handler seeds its stream from
+   ``context.persisted_response`` and resumes at
+   ``len(stream.response.output)`` — completed phases survive, the
+   interrupted phase re-runs.
 
 3. **Steering.** Sending a follow-up turn (POST a new response with
    ``previous_response_id`` pointing at the still-running one) queues
@@ -31,15 +34,12 @@ package:
    what the handler emits.
 
 What the agent actually does: 5 logical research phases on whatever
-topic the caller supplies. Each phase produces 4-6 short paragraphs
-via a real ``gpt-4.1-mini`` call (streamed token-by-token through the
-SDK). Between subcalls and between phases the agent sleeps for a
-configurable cooldown so the demo session spans the
-sandbox-eviction window.
-
-The handler checkpoints to ``context.durable_metadata`` after each
-phase completes — a crash mid-phase recovers at the next un-finished
-phase (worst case: the one that was actively streaming is replayed).
+topic the caller supplies. Each phase produces one streamed message
+output item via a real ``gpt-4.1-mini`` call. After each phase the
+handler ``yield stream.checkpoint()`` — durably persisting the
+completed phases so a crash mid-phase recovers at the next un-finished
+phase. Between phases the agent sleeps for a configurable cooldown so
+the demo session spans the sandbox-eviction window.
 
 Special behaviour: ``POST /responses`` with input "crash" (when the
 container has ``DEMO_MODE=1``) forces ``os._exit(137)`` shortly after
@@ -64,7 +64,6 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
 )
-from azure.ai.agentserver.responses.models._generated import ResponseObject
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -102,9 +101,7 @@ def _get_client() -> Any:
     global _responses_client, _credential
     if _responses_client is None:
         _credential = DefaultAzureCredential()
-        _responses_client = AIProjectClient(
-            endpoint=_endpoint, credential=_credential
-        ).get_openai_client().responses
+        _responses_client = AIProjectClient(endpoint=_endpoint, credential=_credential).get_openai_client().responses
     return _responses_client
 
 
@@ -124,58 +121,17 @@ app = ResponsesAgentServerHost(
 
 # ── Helpers ─────────────────────────────────────────────────────────────
 
+
 def _phase_title(idx: int) -> str:
     return PHASE_TITLES[idx] if idx < len(PHASE_TITLES) else f"Phase {idx + 1}"
 
 
-def _phase_message_payload(phase_idx: int, text: str) -> dict[str, Any]:
-    return {
-        "type": "message",
-        "id": f"phase_{phase_idx}_msg",
-        "role": "assistant",
-        "status": "completed",
-        "content": [{"type": "output_text", "text": text, "annotations": []}],
-    }
+async def _stream_phase_tokens(phase_idx: int, topic: str, signals: tuple[asyncio.Event, ...]) -> Any:
+    """Stream one phase's tokens from the upstream model.
 
-
-def _build_resumption_response(context: ResponseContext, request: CreateResponse) -> ResponseObject:
-    """Build the resumption response from completed phases recorded in metadata.
-
-    Only includes items for phases whose ``output_item.done`` was emitted
-    in a prior attempt. In-flight items from a crashed phase are excluded
-    — that phase will be re-run from scratch on this attempt.
-    """
-    completed_phases = int(context.durable_metadata.get("completed_phases", 0))
-    phase_texts: dict[str, str] = context.durable_metadata.get("phase_texts", {}) or {}
-    output: list[dict[str, Any]] = []
-    for i in range(completed_phases):
-        output.append(_phase_message_payload(i, phase_texts.get(str(i), "")))
-    return ResponseObject(
-        {
-            "id": context.response_id,
-            "object": "response",
-            "status": "in_progress",
-            "output": output,
-            "model": request.model,
-        }
-    )
-
-
-async def _stream_one_phase(
-    phase_idx: int,
-    topic: str,
-    cancellation_signal: asyncio.Event,
-    context: ResponseContext,
-    state: dict[str, Any],
-) -> Any:
-    """Stream one phase's tokens via the upstream model.
-
-    Yields delta strings. The caller passes a ``state`` dict that this
-    function mutates: ``state["accumulated"]`` carries the rolling text
-    and ``state["interrupted"]`` is True if cancel or shutdown fired
-    mid-stream (the caller should NOT advance the watermark in that
-    case). Side-channeling via ``state`` is necessary because Python
-    forbids ``return value`` from an async generator.
+    Yields delta strings. Stops fetching early if any of ``signals``
+    (cancellation / shutdown) fires — the handler decides what to do with
+    the interruption (defer to recovery vs wind down).
     """
     client = _get_client()
     title = _phase_title(phase_idx)
@@ -184,9 +140,6 @@ async def _stream_one_phase(
         f"Be concise (target ~{TARGET_OUTPUT_TOKENS} tokens). Produce only the body for this phase; "
         f"do NOT repeat the topic or restate the phase title."
     )
-
-    state["accumulated"] = ""
-    state["interrupted"] = False
 
     stream_obj = client.create(
         model=_model,
@@ -199,23 +152,38 @@ async def _stream_one_phase(
 
     loop = asyncio.get_running_loop()
 
-    def _next_event(it):
+    def _next_event(it: Any) -> Any:
         return next(it, None)
 
     iterator = await loop.run_in_executor(None, lambda: iter(stream_obj))
     while True:
-        if cancellation_signal.is_set() or context.shutdown.is_set():
-            state["interrupted"] = True
+        if any(sig.is_set() for sig in signals):
             return
         event = await loop.run_in_executor(None, _next_event, iterator)
         if event is None:
             return
         if event.type == "response.output_text.delta":
-            state["accumulated"] += event.delta
             yield event.delta
 
 
+async def _cooldown(context: ResponseContext, cancellation_signal: asyncio.Event, phase_idx: int) -> None:
+    """Sleep between phases so the session spans the sandbox-eviction window.
+
+    Sleeps in short ticks so cancel / shutdown wake quickly. On shutdown the
+    completed phase is already checkpointed, so we defer to recovery.
+    """
+    slept = 0.0
+    while slept < INTER_PHASE_COOLDOWN_SEC:
+        if context.shutdown.is_set():
+            await context.exit_for_recovery()
+        if cancellation_signal.is_set():
+            return
+        await asyncio.sleep(0.5)
+        slept += 0.5
+
+
 # ── Handler ──────────────────────────────────────────────────────────────
+
 
 @app.response_handler
 async def handler(
@@ -223,10 +191,11 @@ async def handler(
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
 ):
-    """5-phase durable + steerable research handler."""
-    # Demo-only crash trigger. Inspect the input directly — input_text()
-    # is the most direct way to get the user message in this handler.
+    """5-phase durable + steerable research handler (one item per phase)."""
     topic = (await context.get_input_text()) or ""
+
+    # Demo-only crash trigger — exit shortly after returning so the
+    # platform nanny can demonstrate recovery.
     if DEMO_MODE and topic.strip().lower() in ("crash", "kill", "💥"):
         logger.critical("CRASH triggered via input=%r — exiting in 300ms", topic)
 
@@ -235,8 +204,6 @@ async def handler(
             os._exit(137)
 
         asyncio.create_task(_crash())
-        # Fall through and emit a quick failed terminal — we won't be alive
-        # long enough for the framework to process much beyond response.created.
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         yield stream.emit_created()
         yield stream.emit_failed(
@@ -245,131 +212,66 @@ async def handler(
         )
         return
 
-    # ── Recovery vs steered vs fresh entry ──────────────────────────
-    if context.is_recovery:
-        # Seed the stream with a resumption response derived from metadata
-        # watermarks. The library treats this run's response.in_progress as
-        # the client-visible snapshot reset.
-        stream = ResponseEventStream(
-            response_id=context.response_id,
-            response=_build_resumption_response(context, request),
-        )
+    # ── Recovery branch: seed from the persisted snapshot ────────────
+    # The persisted response already holds the completed phases' items —
+    # it IS the watermark. Count them to know where to resume.
+    if context.is_recovery and context.persisted_response is not None:
+        stream = ResponseEventStream(response_id=context.response_id, response=context.persisted_response)
+        done_phases = len(stream.response.output)
     else:
         stream = ResponseEventStream(response_id=context.response_id, request=request)
+        done_phases = 0
 
-    yield stream.emit_created()
+    yield stream.emit_created()  # framework dedups the duplicate on recovery
 
-    # ── Pre-entry cancellation / shutdown check ────────────────────
-    if cancellation_signal.is_set() or context.shutdown.is_set():
-        if cancellation_signal.is_set() and context.pending_input_count > 0:
-            # Steering pre-entry: emit completed so the partial output (none)
-            # becomes valid context for the drain turn that follows.
-            yield stream.emit_completed()
-        # Otherwise: client_cancelled (framework forces cancelled) or
-        # shutdown (framework re-invokes on restart).
-        return
+    # ── Pre-entry: shutdown and cancellation are DISTINCT surfaces ───
+    if context.shutdown.is_set():
+        await context.exit_for_recovery()
+    if cancellation_signal.is_set():
+        if context.pending_input_count > 0:
+            yield stream.emit_completed()  # steering pre-entry — finish cleanly
+        return  # client cancel — framework forces "cancelled"
 
-    yield stream.emit_in_progress()
+    yield stream.emit_in_progress()  # client-visible reset point on recovery
 
-    # ── Drive the phases ─────────────────────────────────────────────
-    completed = int(context.durable_metadata.get("completed_phases", 0))
-    phase_texts: dict[str, str] = dict(context.durable_metadata.get("phase_texts", {}) or {})
-
-    for phase_idx in range(completed, NUM_PHASES):
-        title = _phase_title(phase_idx)
-        # Phase header as its own message for the consumer's terminal UX.
-        header_msg = stream.add_output_item_message()
-        yield header_msg.emit_added()
-        header_text = header_msg.add_text_content()
-        yield header_text.emit_added()
-        header_str = f"\n\n=== Phase {phase_idx + 1}/{NUM_PHASES} — {title} ===\n\n"
-        yield header_text.emit_delta(header_str)
-        yield header_text.emit_text_done(header_str.strip())
-        yield header_text.emit_done()
-        yield header_msg.emit_done()
-
-        # Phase body as a separate message — streamed token-by-token.
-        msg = stream.add_output_item_message()
-        yield msg.emit_added()
-        text = msg.add_text_content()
+    # ── Drive the phases — one OutputItem per phase ──────────────────
+    for phase_idx in range(done_phases, NUM_PHASES):
+        message = stream.add_output_item_message()
+        message.internal_metadata["phase"] = phase_idx  # observability; stripped on egress
+        yield message.emit_added()
+        text = message.add_text_content()
         yield text.emit_added()
 
-        phase_state: dict[str, Any] = {}
-        completed_cleanly = True
-        try:
-            async for delta in _stream_one_phase(
-                phase_idx, topic, cancellation_signal, context, phase_state
-            ):
-                yield text.emit_delta(delta)
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            logger.exception("Phase %d failed", phase_idx + 1)
-            yield text.emit_delta(f"\n\n[phase {phase_idx + 1} failed: {exc}]")
-            completed_cleanly = False
-        accumulated = phase_state.get("accumulated", "")
-        if phase_state.get("interrupted"):
-            completed_cleanly = False
+        header = f"=== Phase {phase_idx + 1}/{NUM_PHASES} — {_phase_title(phase_idx)} ===\n\n"
+        yield text.emit_delta(header)
+        async for delta in _stream_phase_tokens(phase_idx, topic, (cancellation_signal, context.shutdown)):
+            yield text.emit_delta(delta)
 
-        yield text.emit_text_done(accumulated.strip())
+        # Mid-phase shutdown: defer BEFORE closing the item, so the item
+        # never enters the snapshot and the phase re-runs on recovery.
+        if context.shutdown.is_set():
+            await context.exit_for_recovery()
+
+        yield text.emit_text_done()
         yield text.emit_done()
-        yield msg.emit_done()
+        yield message.emit_done()  # item now in stream.response.output
 
-        # Cancel/shutdown mid-phase: do NOT advance the watermark.
-        if cancellation_signal.is_set() or context.shutdown.is_set():
+        # Steering / client cancel mid-phase: wind down without advancing
+        # the watermark (don't checkpoint this phase).
+        if cancellation_signal.is_set():
             break
 
-        if completed_cleanly:
-            phase_texts[str(phase_idx)] = accumulated.strip()
-            context.durable_metadata["phase_texts"] = phase_texts
-            context.durable_metadata["completed_phases"] = phase_idx + 1
-            await context.durable_metadata.flush()
+        yield stream.checkpoint()  # phase durable; on to the next
 
-        # Inter-phase cooldown (skip after the last phase).
-        if phase_idx < NUM_PHASES - 1 and INTER_PHASE_COOLDOWN_SEC > 0:
-            cooldown_msg = stream.add_output_item_message()
-            yield cooldown_msg.emit_added()
-            cooldown_text = cooldown_msg.add_text_content()
-            yield cooldown_text.emit_added()
-            next_title = _phase_title(phase_idx + 1)
-            cooldown_str = (
-                f"\n\n...cooling down {INTER_PHASE_COOLDOWN_SEC}s "
-                f"— next: phase {phase_idx + 2}/{NUM_PHASES} ({next_title})\n\n"
-            )
-            yield cooldown_text.emit_delta(cooldown_str)
-            yield cooldown_text.emit_text_done(cooldown_str.strip())
-            yield cooldown_text.emit_done()
-            yield cooldown_msg.emit_done()
+        if phase_idx < NUM_PHASES - 1:
+            await _cooldown(context, cancellation_signal, phase_idx)
+            if cancellation_signal.is_set():
+                break
 
-            # Cooldown sleeps in 0.5s ticks so cancel / shutdown wake quickly.
-            slept = 0.0
-            while slept < INTER_PHASE_COOLDOWN_SEC:
-                if cancellation_signal.is_set() or context.shutdown.is_set():
-                    break
-                await asyncio.sleep(0.5)
-                slept += 0.5
-
-        if cancellation_signal.is_set() or context.shutdown.is_set():
-            break
-
-    # ── Post-loop terminal selection ─────────────────────────────────
-    # Shutdown: return without a terminal so the framework re-invokes on
-    # restart from the last completed phase.
-    if context.shutdown.is_set():
-        return
-
-    # Steering wake: emit completed; the framework re-enters with the
-    # queued input as a fresh steered turn.
-    if cancellation_signal.is_set() and context.pending_input_count > 0:
-        yield stream.emit_completed()
-        return
-
-    # Client cancel: emit completed and let the framework override to
-    # cancelled. The framework's B11/B17 path forces status=cancelled
-    # regardless of what we emit.
-    if cancellation_signal.is_set() and context.client_cancelled:
-        yield stream.emit_completed()
-        return
-
-    # Normal completion.
+    # ── Post-loop terminal ───────────────────────────────────────────
+    # Steering wake → emit completed (framework re-enters with the queued
+    # input as a fresh steered turn). Client cancel → emit completed and
+    # let the framework override to cancelled. Normal → completed.
     yield stream.emit_completed()
 
 
