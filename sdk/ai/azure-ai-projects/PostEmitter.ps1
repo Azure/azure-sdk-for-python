@@ -6,7 +6,8 @@
 #  tsp-client update --debug --local-spec-repo <path>" ==> to use your local TypeSpec folder. Path is like:
 #       D:\src\azure-rest-api-specs\specification\ai-foundry\data-plane\Foundry\src\sdk-python-js-azure-ai-projects
 #
-# Then run this script to "fix" the emitted code.
+# Then run this script to "fix" the emitted code:
+#  powershell -ExecutionPolicy Bypass -File PostEmitter.ps1
 #
 
 # Revert emitted pyprojects.toml, since it overrides the following changes:
