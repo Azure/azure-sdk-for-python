@@ -14,6 +14,7 @@
 # - We added "Programming Language :: Python :: 3.14". The emitter removes it.
 # - The emitter uses lower case "i" in "Ai". I want to keep it upper case in the description field: "Microsoft Corporation Azure AI Projects Client Library for Python".
 # - We want a vanity link for the "repository" value, deep linking to the SDK folder (not root of repo): https://aka.ms/azsdk/azure-ai-projects-v2/python/code
+# See GitHub issue: https://github.com/microsoft/typespec/issues/10311
 git restore pyproject.toml
 
 
@@ -70,6 +71,7 @@ foreach ($f in $files) {
 #          { "type": "mcp", "server_label": "deepwiki" },
 #          { "type": "image_generation" }
 #        ]. Required.
+# See GitHub issue: https://github.com/microsoft/typespec/issues/10314
 (Get-Content azure\ai\projects\models\_models.py) -replace 'Responses API, the list of tool definitions might look like:', 'Responses API, the list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py
 (Get-Content azure\ai\projects\models\_models.py) -replace 'list of tool definitions might look like:', 'list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py
 (Get-Content azure\ai\projects\models\_models.py) -replace '        \]\. Required\.', '        ]' | Set-Content azure\ai\projects\models\_models.py
