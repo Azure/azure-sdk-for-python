@@ -107,7 +107,7 @@ The `ResponseContext` provides request-scoped state:
 | `is_recovery` | `bool` set on a crash-recovered re-entry |
 | `is_steered_turn` | `bool` set on the drain re-entry that follows a steering input |
 | `pending_input_count` | `int` count of queued steering inputs |
-| `durable_metadata` | `DurableMetadataNamespace` for handler-managed checkpoint state |
+| `conversation_chain_metadata` | `ConversationChainMetadataNamespace` for handler-managed checkpoint state |
 | `exit_for_recovery()` | `await` to opt into the graceful-shutdown recovery path |
 | `get_input_items()` | Load resolved input items as `Item` subtypes |
 | `get_input_text()` | Extract all text content from input items as a single string |
@@ -239,7 +239,7 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 | [Annotations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | Attach file_path, file_citation, and url_citation annotations |
 | [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | Return structured JSON as a `structured_outputs` item |
 | [Durable Copilot](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_durable_copilot.py) | GitHub Copilot SDK with `durable_background=True, steerable_conversations=True` |
-| [Durable Streaming](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_durable_streaming.py) | Three-phase streaming handler with `durable_background=True` and `context.durable_metadata` watermarks |
+| [Durable Streaming](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_durable_streaming.py) | Three-phase streaming handler with `durable_background=True` and `context.conversation_chain_metadata` watermarks |
 | [Durable Steering](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_durable_steering.py) | `context.is_steered_turn` on the drain re-entry with `durable_background=True, steerable_conversations=True` |
 | [Durable LangGraph](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_21_durable_langgraph.py) | LangGraph integration with `durable_background=True, steerable_conversations=True` |
 | [Durable Multi-turn](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_22_durable_multiturn.py) | Multi-turn conversation with `durable_background=True, steerable_conversations=False` |
