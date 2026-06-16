@@ -18,13 +18,15 @@ resources:
     memory: 2Gi
 environment_variables:
     - name: AZURE_AI_MODEL_DEPLOYMENT_NAME
-      value: gpt-4.1-mini
+      value: gpt-4o
     # Long-running demo: per-phase ≈ 12s LLM + 3×30s intra + 30s inter ≈ 132s,
     # × 15 phases ≈ 33 min total — runs ~2x past the platform's 15-min
     # sandbox-eviction window so each run exercises the durable-task lease
     # keep-alive path. Local main.py defaults (10/20s, ~15 min) apply when
     # running outside the hosted container for fast iteration.
     - name: INTRA_PHASE_COOLDOWN_SEC
-      value: "30"
+      value: "3"
     - name: INTER_PHASE_COOLDOWN_SEC
-      value: "30"
+      value: "3"
+    - name: TARGET_OUTPUT_TOKENS
+      value: "150"
