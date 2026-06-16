@@ -24,6 +24,7 @@ MAIN_REF = f"{REMOTE}/main"
 SYNC_METADATA_MARKER = "api-md-review-sync"
 SYNC_METADATA_WARNING = "DO NOT MODIFY THESE CONTENTS!"
 GITHUB_API_TIMEOUT_SECONDS = 30
+AZSDK_INSTALL_SCRIPT = REPO_ROOT / "eng" / "common" / "mcp" / "azure-sdk-mcp.ps1"
 
 
 class GitHubApiError(Exception):
@@ -87,7 +88,9 @@ def log_error(message: str) -> None:
     print(message, file=sys.stderr)
 
 
-def run(args: list[str], *, cwd: Path = REPO_ROOT, check: bool = True, capture: bool = False, shell: bool = False) -> CommandResult:
+def run(
+    args: list[str], *, cwd: Path = REPO_ROOT, check: bool = True, capture: bool = False, shell: bool = False
+) -> CommandResult:
     printable = " ".join(args)
     log_info(f"$ {printable}")
     completed = subprocess.run(
@@ -364,7 +367,9 @@ def find_package_dir(package_name: str) -> Path:
     if not matches:
         raise RuntimeError(f"ERROR: package '{package_name}' not found under sdk/*/")
     if len(matches) > 1:
-        raise RuntimeError(f"ERROR: multiple matches for '{package_name}': {', '.join(str(match) for match in matches)}")
+        raise RuntimeError(
+            f"ERROR: multiple matches for '{package_name}': {', '.join(str(match) for match in matches)}"
+        )
     return matches[0]
 
 
@@ -459,6 +464,129 @@ def parse_simple_yaml(text: str) -> dict[str, str]:
         if match:
             result[match.group(1)] = match.group(2).strip()
     return result
+
+
+def write_simple_yaml(file_path: Path, metadata: dict[str, str]) -> None:
+    existing_text = file_path.read_text(encoding="utf-8") if file_path.exists() else ""
+    line_ending = "\r\n" if "\r\n" in existing_text else "\n"
+    file_path.write_text(
+        line_ending.join(f"{key}: {metadata[key]}" for key in sorted(metadata)) + line_ending, encoding="utf-8"
+    )
+
+
+def package_version_major_minor(package_version: str) -> str:
+    match = re.match(r"^(\d+)(?:\.(\d+))?", package_version.strip())
+    if not match:
+        raise RuntimeError(f"ERROR: could not derive major/minor version from package version '{package_version}'.")
+    major = match.group(1)
+    minor = match.group(2) or "0"
+    return f"{major}.{minor}"
+
+
+def parse_package_work_item_id(output: str) -> int | None:
+    try:
+        parsed = json.loads(output)
+        if isinstance(parsed, dict):
+            value = parsed.get("work_item_id") or parsed.get("workItemId")
+            if isinstance(value, int):
+                return value
+            if isinstance(value, str) and value.isdigit():
+                return int(value)
+    except json.JSONDecodeError:
+        pass
+
+    match = re.search(r"Work Item ID:\s*(\d+)", output)
+    return int(match.group(1)) if match else None
+
+
+def find_azsdk_executable() -> str | None:
+    azsdk_from_path = shutil.which("azsdk")
+    if azsdk_from_path:
+        return azsdk_from_path
+
+    for install_dir in [Path.home() / "bin", Path.home() / ".azure-sdk-mcp"]:
+        for executable_name in ["azsdk.exe", "azsdk"]:
+            candidate = install_dir / executable_name
+            if candidate.is_file():
+                return str(candidate)
+
+    return None
+
+
+def combined_command_output(result: CommandResult) -> str:
+    return "\n".join(part.strip() for part in [result.stdout, result.stderr] if part.strip())
+
+
+def resolve_azsdk_executable() -> str:
+    azsdk_executable = find_azsdk_executable()
+    if azsdk_executable:
+        return azsdk_executable
+
+    raise RuntimeError(
+        "ERROR: azsdk CLI not found. Install it by running "
+        f"'pwsh {AZSDK_INSTALL_SCRIPT}', or run with '-UpdatePathInProfile' to add it to PATH."
+    )
+
+
+def ensure_azsdk_find_work_item_available() -> None:
+    azsdk_executable = resolve_azsdk_executable()
+    result = run([azsdk_executable, "package", "find-work-item", "--help"], check=False, capture=True)
+    if result.status == 0:
+        return
+
+    details = combined_command_output(result)
+    raise RuntimeError(
+        "ERROR: azsdk CLI is installed, but the 'package find-work-item' command is unavailable. "
+        f"Update it by running 'pwsh {AZSDK_INSTALL_SCRIPT}'." + (f"\n{details}" if details else "")
+    )
+
+
+def package_work_item_metadata_value(package_name: str, package_version: str) -> str:
+    package_version_major_minor_value = package_version_major_minor(package_version)
+    result = run(
+        [
+            resolve_azsdk_executable(),
+            "package",
+            "find-work-item",
+            "--package-name",
+            package_name,
+            "--package-version",
+            package_version_major_minor_value,
+            "--language",
+            "Python",
+        ],
+        check=False,
+        capture=True,
+    )
+    output = combined_command_output(result)
+
+    if result.status != 0:
+        metadata_value = '"Unknown"' if "No package work item found" in output else '"ERROR"'
+        log_warning(
+            f"WARNING: failed to resolve package work item ID for {package_name} {package_version_major_minor_value}. "
+            f"api.metadata.yml will use packageWorkItemId: {metadata_value}." + (f"\n{output}" if output else "")
+        )
+        return metadata_value
+
+    work_item_id = parse_package_work_item_id(result.stdout)
+    if work_item_id is None:
+        log_warning(
+            f"WARNING: azsdk package find-work-item completed for {package_name} {package_version_major_minor_value} "
+            'but did not return a work item ID. api.metadata.yml will use packageWorkItemId: "Unknown".'
+            + (f"\n{output}" if output else "")
+        )
+        return '"Unknown"'
+    return str(work_item_id)
+
+
+def add_package_work_item_metadata(package_name: str, package_version: str, package_dir: Path) -> None:
+    metadata_file = metadata_path(package_dir)
+    if not metadata_file.exists():
+        return
+
+    metadata = parse_simple_yaml(metadata_file.read_text(encoding="utf-8"))
+    metadata["packageWorkItemId"] = package_work_item_metadata_value(package_name, package_version)
+    write_simple_yaml(metadata_file, metadata)
 
 
 def metadata_sha_or_none(metadata_bytes: bytes | None) -> str | None:
@@ -573,7 +701,9 @@ def ensure_branch_state_has_metadata_sha(branch_label: str, state: BranchState) 
 
 
 def select_best_pr(prs: list[dict[str, Any]]) -> dict[str, Any] | None:
-    candidates = [pr for pr in prs if pr.get("number") is not None and pr.get("url") and pr.get("state") and pr.get("updatedAt")]
+    candidates = [
+        pr for pr in prs if pr.get("number") is not None and pr.get("url") and pr.get("state") and pr.get("updatedAt")
+    ]
     if not candidates:
         return None
     open_prs = [pr for pr in candidates if str(pr.get("state", "")).lower() == "open"]
@@ -631,7 +761,9 @@ def build_sync_metadata_object(
         "workingBranch": working_branch["branch"],
     }
     working_pr = find_open_pr_for_head(head_selector)
-    metadata["workingPrNumber"] = working_pr.get("number") if working_pr and isinstance(working_pr.get("number"), int) else None
+    metadata["workingPrNumber"] = (
+        working_pr.get("number") if working_pr and isinstance(working_pr.get("number"), int) else None
+    )
     return metadata
 
 
@@ -697,7 +829,10 @@ def ensure_pr_body_sync_metadata(pr: dict[str, Any] | None, metadata_block: str 
         log_info(f"Updated API review sync metadata on PR #{pr['number']}.")
     except Exception as error:  # pylint: disable=broad-except
         details = str(error)
-        log_warning(f"WARNING: failed to update API review sync metadata on PR #{pr['number']}." + (f"\n  {details}" if details else ""))
+        log_warning(
+            f"WARNING: failed to update API review sync metadata on PR #{pr['number']}."
+            + (f"\n  {details}" if details else "")
+        )
 
 
 def find_open_pr_for_head(head_selector: str) -> dict[str, Any] | None:
@@ -746,9 +881,18 @@ def find_open_pr_for_branches(base_branch: str, head_branch: str) -> dict[str, A
 def create_draft_pr(base_branch: str, head_branch: str, title: str, body: str) -> dict[str, Any]:
     try:
         created_pr = get_github_api().create_draft_pull_request(base_branch, head_branch, title, body)
-        return {"ok": True, "url": created_pr.get("html_url") or created_pr.get("url") or "", "stderr": "", "stdout": ""}
+        return {
+            "ok": True,
+            "url": created_pr.get("html_url") or created_pr.get("url") or "",
+            "stderr": "",
+            "stdout": "",
+        }
     except GitHubApiError as error:
         return {"ok": False, "status": error.status, "stdout": "", "stderr": str(error)}
+
+
+def single_line_output(value: Any) -> str:
+    return str(value or "").replace(chr(10), " ").replace(chr(13), " ").strip()
 
 
 def branch_reference_markdown(head_selector: str) -> str:
@@ -804,6 +948,7 @@ def generate_api_bytes_for_ref(
         if not output_path.exists():
             raise RuntimeError(f"ERROR: did not produce {output_path}")
 
+        add_package_work_item_metadata(package_name, version, package_dir)
         metadata = metadata_path(package_dir).read_bytes() if metadata_path(package_dir).exists() else None
         return ApiResult(output_path.read_bytes(), metadata, version)
     finally:
@@ -817,12 +962,16 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--package-name", required=True)
     parser.add_argument("--base", required=True)
     parser.add_argument("--target")
-    parser.add_argument("--python", "--runtime", dest="runtime_executable", default=os.environ.get("RUNTIME_EXECUTABLE"))
+    parser.add_argument(
+        "--python", "--runtime", dest="runtime_executable", default=os.environ.get("RUNTIME_EXECUTABLE")
+    )
     return parser.parse_args(argv)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv or sys.argv[1:])
+    ensure_azsdk_find_work_item_available()
+
     package_dir = find_package_dir(args.package_name)
     log_info(f"Found package at: {package_dir}")
 
@@ -965,21 +1114,18 @@ def main(argv: list[str] | None = None) -> int:
                 item
                 for item in [
                     f"Exit code: {pr_create.get('status')}",
-                    f"stderr: {str(pr_create.get('stderr') or '').replace(chr(10), ' ').replace(chr(13), ' ').strip()}"
-                    if pr_create.get("stderr")
-                    else "",
-                    f"stdout: {str(pr_create.get('stdout') or '').replace(chr(10), ' ').replace(chr(13), ' ').strip()}"
-                    if pr_create.get("stdout")
-                    else "",
-                    f"Debug repro: use the GitHub REST API endpoint POST /repos/{REPO_SLUG}/pulls with base/head/title/body/draft=true.",
+                    f"stderr: {single_line_output(pr_create.get('stderr'))}" if pr_create.get("stderr") else "",
+                    f"stdout: {single_line_output(pr_create.get('stdout'))}" if pr_create.get("stdout") else "",
+                    "Debug repro: use the GitHub REST API endpoint POST "
+                    f"/repos/{REPO_SLUG}/pulls with base/head/title/body/draft=true.",
                 ]
                 if item
             )
             log_warning(
-                "\nWARNING: GitHub PR creation failed. Both branches were pushed successfully -- open the PR manually here:\n"
+                "\nWARNING: GitHub PR creation failed. Both branches were pushed successfully -- "
+                "open the PR manually here:\n"
                 f"  {compare_url}\n"
-                f"  Title: {title}"
-                + (f"\n  {error_details}" if error_details else "")
+                f"  Title: {title}" + (f"\n  {error_details}" if error_details else "")
             )
         return 0
     finally:
