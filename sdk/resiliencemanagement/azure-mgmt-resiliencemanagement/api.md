@@ -1,6 +1,4 @@
 ```py
-
-
 namespace azure.mgmt.resiliencemanagement
 
     class azure.mgmt.resiliencemanagement.ResilienceManagementClient: implements ContextManager 
