@@ -1262,23 +1262,33 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 )
         return None
 
-    async def _reclaim_one(self, task_info: TaskInfo) -> None:
+    async def _reclaim_one(self, task_info: TaskInfo) -> "TaskInfo | None":
         """: CAS-protected lease reclaim helper.
 
         Updates the lease ownership to this process's owner+instance
         with ``If-Match: <etag>`` so two concurrent reclaims produce
-        exactly one winner. Tolerates the LocalFileTaskProvider
-        (which ignores ``if_match``) — race protection is best-effort
-        in tests, deterministic against the hosted client.
+        exactly one winner. The LocalFileTaskProvider enforces
+        ``if_match`` strictly (matching the hosted task API), so the CAS
+        is deterministic against both providers.
+
+        Routes through :meth:`_provider_update_locked`, which refreshes
+        the tracked etag from the post-reclaim record. Returns that
+        record so callers can pick up the post-reclaim lease
+        generation/instance/etag — critical for the recovery path, where
+        the lease-renewal heartbeat would otherwise keep sending the
+        stale pre-reclaim etag and 412 on its first tick.
 
         :param task_info: The task to reclaim.
         :type task_info: TaskInfo
+        :return: The post-reclaim task record, or None if the provider
+            returned no record.
+        :rtype: TaskInfo | None
         :raises TransportClassifiedError: With classification='evicted'
             on orphan-sandbox rejection; with other classifications on
             transient / conflict / permanent outcomes.
         """
         etag = getattr(task_info, "etag", None) or None
-        await self._provider_update_locked(
+        return await self._provider_update_locked(
             task_info.id,
             TaskPatchRequest(
                 lease_owner=self._lease_owner,
@@ -2796,7 +2806,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         logger.error("Task %s failed: %s", task_id, exc)
 
-    async def _steering_cleanup_orphan_attachments(self, task_info: TaskInfo) -> None:
+    async def _steering_cleanup_orphan_attachments(self, task_info: TaskInfo) -> "TaskInfo | None":
         """— delete orphaned ``_steering_input_*`` attachments.
 
         On startup-scan / recovery, walk ``task_info.attachments`` for
@@ -2814,16 +2824,20 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         :param task_info: The recovered ``TaskInfo`` (pre-reclaim).
         :type task_info: TaskInfo
+        :return: The updated task record when a cleanup PATCH was
+            issued (so the caller can refresh its stale ``task_info``
+            before reclaim), or None when nothing was written.
+        :rtype: TaskInfo | None
         """
         if not task_info.attachments:
-            return
+            return None
         from ._attachments import (  # pylint: disable=import-outside-toplevel
             _STEERING_INPUT_KEY_PREFIX,
         )
 
         steering_keys = {k for k in task_info.attachments if k.startswith(_STEERING_INPUT_KEY_PREFIX)}
         if not steering_keys:
-            return
+            return None
         pending: list[Any] = (task_info.payload or {}).get("_steering", {}).get("pending_inputs", [])
         referenced = {
             _ref_key(entry)
@@ -2832,14 +2846,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         }
         orphans = steering_keys - referenced
         if not orphans:
-            return
+            return None
         logger.info(
             "Deleting %d orphan steering attachment(s) on task %s: %s",
             len(orphans),
             task_info.id,
             sorted(orphans),
         )
-        await self._provider_update_locked(
+        return await self._provider_update_locked(
             task_info.id,
             TaskPatchRequest(
                 attachments={k: None for k in orphans},
@@ -2882,7 +2896,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             # ``_steering_input_*`` attachment that no live ref in
             # ``pending_inputs`` references.
             try:
-                await self._steering_cleanup_orphan_attachments(task_info)
+                refreshed = await self._steering_cleanup_orphan_attachments(task_info)
+                if refreshed is not None:
+                    # Cleanup wrote — adopt the post-cleanup record so the
+                    # reclaim below carries the current etag (else reclaim
+                    # 412s on the stale scan etag and recovery is skipped).
+                    task_info = refreshed
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
                     "Orphan attachment cleanup failed for %s",
@@ -2896,17 +2915,19 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 # (inline AND cold-start/periodic) carry if_match. On
                 # 412, ABANDON per §25.3 — another process beat us;
                 # let the next scan re-evaluate.
-                reclaim_etag = getattr(task_info, "etag", None)
-                self._track_etag(task_info.id, reclaim_etag)
-                await self._provider.update(
-                    task_info.id,
-                    TaskPatchRequest(
-                        lease_owner=self._lease_owner,
-                        lease_instance_id=self._instance_id,
-                        lease_duration_seconds=_DEFAULT_LEASE_SECONDS,
-                        if_match=reclaim_etag,
-                    ),
-                )
+                #
+                # Route through _reclaim_one so the reclaim takes the
+                # per-task write lock AND refreshes the tracked etag from
+                # the post-reclaim record. Adopt that record as task_info
+                # so (a) the lease-renewal heartbeat's tracked etag
+                # matches the store — otherwise its first tick sends the
+                # stale pre-reclaim etag, 412s, and recovery is cancelled
+                # as "lost ownership" ~one lease-half-life in — and (b)
+                # _start_existing_task sees the post-reclaim lease
+                # generation/instance.
+                reclaimed_info = await self._reclaim_one(task_info)
+                if reclaimed_info is not None:
+                    task_info = reclaimed_info
                 logger.info(
                     "Reclaimed stale task %s (generation will increment)",
                     task_info.id,
