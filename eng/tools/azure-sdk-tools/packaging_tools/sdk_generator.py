@@ -317,11 +317,20 @@ def main(generate_input, generate_output):
                 try:
                     _LOGGER.info("install dependencies for apiview generation")
                     package_path = Path(sdk_folder, folder_name, package_name)
-                    cmds = ["azpysdk", "apistub", "--md", "--extract-metadata", package_name, "--dest-dir", "."]
+                    cmds = [
+                        "azpysdk",
+                        "apistub",
+                        "--md",
+                        "--extract-metadata",
+                        package_name,
+                        "--dest-dir",
+                        package_path.absolute(),
+                    ]
                     _LOGGER.info(f"generate apiview file for package {package_name}")
                     check_call(
                         cmds,
                         timeout=900 if data.get("runMode") == "spec-pull-request" else 36000,
+                        cwd=".",
                         # known issue that higher python version meet install warning with lower pylint.
                         # we skip the output here to reduce confusion and will remove it after apiview tool upgrade to higher pylint version.
                         stderr=subprocess.DEVNULL,
