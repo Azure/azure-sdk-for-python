@@ -479,7 +479,7 @@ class DurableResponseOrchestrator:
         # this conversation (response_id, background, disposition, etc.).
         # Per spec 015 FR-005, this namespace is reserved (the `_` prefix
         # indicates framework-only). The handler-facing
-        # ``durable_metadata`` facade rejects access to it; framework
+        # ``conversation_chain_metadata`` facade rejects access to it; framework
         # code (this orchestrator) uses the underlying
         # ``TaskContext.metadata`` directly which has no such restriction.
         responses_ns = ctx.metadata(_RESPONSES_NS)
@@ -606,7 +606,7 @@ class DurableResponseOrchestrator:
                 _DeveloperMetadataFacade,
             )
 
-            context.durable_metadata = _DeveloperMetadataFacade(ctx.metadata)
+            context.conversation_chain_metadata = _DeveloperMetadataFacade(ctx.metadata)
             # (Spec 024 Phase 5 — Proposal #11) Expose the task context
             # so ``context.exit_for_recovery()`` can delegate to the
             # framework's recovery sentinel.

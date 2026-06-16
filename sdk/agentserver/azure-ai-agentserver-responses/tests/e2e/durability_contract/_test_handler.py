@@ -16,7 +16,7 @@ for the terminal text). Tests rely on these tags to verify:
 - Sequence numbers across recovery attempts are strictly monotonic.
 - The recovered handler's output_item slot reuse follows reset semantics.
 - ``context.conversation_chain_id`` is stable across attempts.
-- ``context.durable_metadata`` writes from prior lifetimes are visible to the
+- ``context.conversation_chain_metadata`` writes from prior lifetimes are visible to the
   recovered handler (when the watermark knob is enabled).
 
 The tags live in :mod:`_test_handler_markers` so tests can import the
@@ -171,11 +171,11 @@ async def handle_create(
     # that enable this knob assert the final text's visited list
     # contains every lifetime that contributed to the response.
     if _EMIT_WATERMARK:
-        visited = list(context.durable_metadata.get(WATERMARK_METADATA_KEY, []))
+        visited = list(context.conversation_chain_metadata.get(WATERMARK_METADATA_KEY, []))
         if lifetime not in visited:
             visited.append(lifetime)
-            context.durable_metadata[WATERMARK_METADATA_KEY] = visited
-            await context.durable_metadata.flush()
+            context.conversation_chain_metadata[WATERMARK_METADATA_KEY] = visited
+            await context.conversation_chain_metadata.flush()
 
     # Output item + content part — always at index 0 so the recovered
     # handler's repeat add at the same index exercises the slot-
@@ -213,7 +213,7 @@ async def handle_create(
     # (the framework's snapshot extraction uses delta accumulation, not
     # the emit_text_done payload), then emit text_done with the same
     # value so the wire's done event also carries the composite.
-    visited_now = list(context.durable_metadata.get(WATERMARK_METADATA_KEY, [])) if _EMIT_WATERMARK else None
+    visited_now = list(context.conversation_chain_metadata.get(WATERMARK_METADATA_KEY, [])) if _EMIT_WATERMARK else None
     final = final_text(
         lifetime=lifetime,
         pre_count=_PRE_SLEEP_DELTAS,

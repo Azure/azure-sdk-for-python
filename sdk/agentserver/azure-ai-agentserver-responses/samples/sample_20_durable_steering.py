@@ -142,9 +142,9 @@ async def handler(
     yield stream.emit_in_progress()
 
     # Cross-turn state: bump the turn counter. This survives crashes
-    # and turn boundaries since it lives in `context.durable_metadata`.
-    turn_count = int(context.durable_metadata.get("turn_count", 0)) + 1
-    context.durable_metadata["turn_count"] = turn_count
+    # and turn boundaries since it lives in `context.conversation_chain_metadata`.
+    turn_count = int(context.conversation_chain_metadata.get("turn_count", 0)) + 1
+    context.conversation_chain_metadata["turn_count"] = turn_count
 
     # Optional local shutdown simulation.
     shutdown_timer: asyncio.Task | None = None

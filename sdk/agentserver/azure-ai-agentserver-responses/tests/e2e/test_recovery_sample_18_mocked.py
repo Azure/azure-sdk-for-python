@@ -18,7 +18,7 @@ Pins:
 6. Pre-entry CLIENT_CANCELLED / SHUTTING_DOWN return without touching
    the SDK.
 7. The sample uses no ``last_processed_input_item_id`` watermark and
-   never calls ``context.durable_metadata.flush()``.
+   never calls ``context.conversation_chain_metadata.flush()``.
 """
 
 from __future__ import annotations
@@ -62,7 +62,7 @@ def _make_context(
     context.is_recovery = entry_mode == "recovered"
     context.is_steered_turn = False
     context.pending_input_count = 0
-    context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.conversation_chain_metadata = _DeveloperMetadataFacade(metadata or {})
     context._cancellation_signal = asyncio.Event()
     context.shutdown = asyncio.Event()
     context.client_cancelled = False

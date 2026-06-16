@@ -46,11 +46,11 @@ def _make_multiturn_app() -> TestClient:
         cancellation_signal: asyncio.Event,
     ):
         input_text = await context.get_input_text()
-        turn_count = context.durable_metadata.get("turn_count", 0) + 1
-        context_list = context.durable_metadata.get("conversation_context", [])
+        turn_count = context.conversation_chain_metadata.get("turn_count", 0) + 1
+        context_list = context.conversation_chain_metadata.get("conversation_context", [])
         context_list.append({"turn": turn_count, "input": input_text})
-        context.durable_metadata["turn_count"] = turn_count
-        context.durable_metadata["conversation_context"] = context_list
+        context.conversation_chain_metadata["turn_count"] = turn_count
+        context.conversation_chain_metadata["conversation_context"] = context_list
         text = f"Turn {turn_count}: {input_text}"
 
         return TextResponse(context, request, text=text)
@@ -199,8 +199,8 @@ def _make_conv_id_non_steerable_app() -> tuple[Any, dict[str, Any]]:
     ):
         input_text = await context.get_input_text()
         chain_id = context.conversation_chain_id
-        turn_count = context.durable_metadata.get("turn_count", 0) + 1
-        context.durable_metadata["turn_count"] = turn_count
+        turn_count = context.conversation_chain_metadata.get("turn_count", 0) + 1
+        context.conversation_chain_metadata["turn_count"] = turn_count
         handler_state["invocations"].append(
             {
                 "input": input_text,

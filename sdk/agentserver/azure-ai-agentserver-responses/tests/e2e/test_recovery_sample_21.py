@@ -52,7 +52,7 @@ def _make_context(
     context.is_recovery = entry_mode == "recovered"
     context.is_steered_turn = False
     context.pending_input_count = 0
-    context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.conversation_chain_metadata = _DeveloperMetadataFacade(metadata or {})
     context._cancellation_signal = asyncio.Event()
     context.shutdown = asyncio.Event()
     context.client_cancelled = False

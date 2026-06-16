@@ -59,16 +59,16 @@ task to be marked completed and the recovery scanner would not fire.
 """
 
 
-class DurableMetadataNamespace(Protocol):
-    """Public Protocol describing the shape of ``context.durable_metadata``.
+class ConversationChainMetadataNamespace(Protocol):
+    """Public Protocol describing the shape of ``context.conversation_chain_metadata``.
 
     Handlers type-annotate their interactions with the metadata namespace
     using this Protocol. The concrete implementation
     (``_DeveloperMetadataFacade``) is internal — handlers never need to
     know about it directly.
 
-    Use ``context.durable_metadata["key"] = value`` for the default
-    namespace, or ``context.durable_metadata("my_namespace")["key"] = value``
+    Use ``context.conversation_chain_metadata["key"] = value`` for the default
+    namespace, or ``context.conversation_chain_metadata("my_namespace")["key"] = value``
     for a named namespace. Keys (and namespace names) starting with ``_``
     are rejected — those are reserved for framework-internal layers.
 
@@ -95,7 +95,7 @@ class DurableMetadataNamespace(Protocol):
     def pop(self, key: str, *default: Any) -> Any: ...
     def setdefault(self, key: str, default: Any = None) -> Any: ...
     def update(self, *args: Any, **kwargs: Any) -> None: ...
-    def __call__(self, name: Optional[str] = None) -> "DurableMetadataNamespace": ...
+    def __call__(self, name: Optional[str] = None) -> "ConversationChainMetadataNamespace": ...
     async def flush(self) -> None: ...
 
 
@@ -144,7 +144,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         - :attr:`is_recovery` — True on a crash-recovered re-entry.
         - :attr:`is_steered_turn` — True on a steering-drain re-entry.
         - :attr:`pending_input_count` — queued steering inputs (live count).
-        - :attr:`durable_metadata` — :class:`DurableMetadataNamespace`-typed
+        - :attr:`conversation_chain_metadata` — :class:`ConversationChainMetadataNamespace`-typed
           checkpoint store.
 
     Cancellation surface (Proposal #11):
@@ -173,7 +173,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
     is_recovery: bool
     is_steered_turn: bool
     pending_input_count: int
-    durable_metadata: DurableMetadataNamespace
+    conversation_chain_metadata: ConversationChainMetadataNamespace
     shutdown: asyncio.Event
     client_cancelled: bool
 
@@ -235,7 +235,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         # Default-namespace metadata facade; framework code (in the
         # orchestrator) swaps the backing to the TaskContext.metadata
         # when the response runs inside a durable task body.
-        self.durable_metadata: DurableMetadataNamespace = _DeveloperMetadataFacade({})
+        self.conversation_chain_metadata: ConversationChainMetadataNamespace = _DeveloperMetadataFacade({})
 
         # Composing cancellation surface. ``_cancellation_signal`` is
         # the per-request cancel Event delivered to the handler as the

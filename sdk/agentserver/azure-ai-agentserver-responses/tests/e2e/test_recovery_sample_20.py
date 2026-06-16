@@ -42,7 +42,7 @@ def _make_context(
     context.is_recovery = entry_mode == "recovered"
     context.is_steered_turn = False
     context.pending_input_count = 0
-    context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.conversation_chain_metadata = _DeveloperMetadataFacade(metadata or {})
     context._cancellation_signal = asyncio.Event()
     context.shutdown = asyncio.Event()
     context.client_cancelled = False
@@ -83,7 +83,7 @@ class TestSample20FreshEntry:
         assert "response.completed" in types
         assert types.count("response.output_item.added") == 1
         assert types.count("response.output_item.done") == 1
-        assert ctx.durable_metadata.get("turn_count") == 1
+        assert ctx.conversation_chain_metadata.get("turn_count") == 1
 
 
 @pytest.mark.asyncio
@@ -111,7 +111,7 @@ class TestSample20Recovery:
         # The recovered attempt re-streams a single message item fresh.
         assert sum(1 for e in events if _event_type(e) == "response.output_item.added") == 1
         # turn_count incremented from carry-over watermark.
-        assert ctx.durable_metadata.get("turn_count") == 2
+        assert ctx.conversation_chain_metadata.get("turn_count") == 2
 
 
 @pytest.mark.asyncio

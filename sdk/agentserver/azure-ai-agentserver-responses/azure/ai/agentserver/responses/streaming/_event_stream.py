@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterable
+from collections.abc import AsyncIterable, MutableMapping
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, AsyncIterator, Iterator, Sequence, cast
@@ -171,6 +171,21 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseObject
         """
         return self._response
+
+    @property
+    def internal_metadata(self) -> "MutableMapping[str, Any]":
+        """Live, mutable response-level framework-internal metadata.
+
+        A convenience proxy for ``self.response.internal_metadata`` — read /
+        write / delete in place (``stream.internal_metadata["phase"] = 3``).
+        Backed by a reserved key inside the response's public ``metadata`` map
+        and stripped from every client-facing payload. Persisted at the next
+        ``yield stream.checkpoint()`` (and at terminal). Values may be any
+        JSON-serialisable type.
+
+        :rtype: ~collections.abc.MutableMapping[str, ~typing.Any]
+        """
+        return self._response.internal_metadata  # type: ignore[attr-defined,no-any-return]
 
     def emit_queued(self) -> generated_models.ResponseQueuedEvent:
         """Emit a ``response.queued`` lifecycle event.

@@ -53,7 +53,7 @@ def _make_context(
     context.is_recovery = entry_mode == "recovered"
     context.is_steered_turn = False
     context.pending_input_count = 0
-    context.durable_metadata = _DeveloperMetadataFacade(metadata or {})
+    context.conversation_chain_metadata = _DeveloperMetadataFacade(metadata or {})
     context._cancellation_signal = asyncio.Event()
     context.shutdown = asyncio.Event()
     context.client_cancelled = False
@@ -108,7 +108,7 @@ class TestSample19FreshEntry:
         assert done_count == 3, f"expected 3 phase items done, got {done_count}"
 
         # Phase watermark advanced to the last phase.
-        assert ctx.durable_metadata.get("phase_complete") == "refine"
+        assert ctx.conversation_chain_metadata.get("phase_complete") == "refine"
 
 
 @pytest.mark.asyncio
@@ -154,7 +154,7 @@ class TestSample19RecoveryAfterAnalyze:
         assert added_count == 2, f"expected 2 new items on recovery; got {added_count}"
 
         # Final watermark: all phases done.
-        assert ctx.durable_metadata.get("phase_complete") == "refine"
+        assert ctx.conversation_chain_metadata.get("phase_complete") == "refine"
 
 
 @pytest.mark.asyncio
@@ -193,4 +193,4 @@ class TestSample19RecoveryAfterGenerate:
         assert added_count == 1
 
         # All three phases complete by end.
-        assert ctx.durable_metadata.get("phase_complete") == "refine"
+        assert ctx.conversation_chain_metadata.get("phase_complete") == "refine"

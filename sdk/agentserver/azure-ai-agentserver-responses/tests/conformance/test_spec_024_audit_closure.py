@@ -20,10 +20,10 @@ Gaps closed by this file:
    endpoint and asserts the handler records the cause-boolean
    transition.
 
-3. ``test_durable_metadata_protocol_matches_mutable_mapping_shape`` —
-   spec 024 audit Concern 2: the ``DurableMetadataNamespace`` Protocol
+3. ``test_conversation_chain_metadata_protocol_matches_mutable_mapping_shape`` —
+   spec 024 audit Concern 2: the ``ConversationChainMetadataNamespace`` Protocol
    MUST expose ``MutableMapping``-style methods (clear, pop, keys,
-   etc.) so sample 22's ``context.durable_metadata.clear()`` and
+   etc.) so sample 22's ``context.conversation_chain_metadata.clear()`` and
    similar idioms typecheck cleanly.
 
 4. ``test_handler_signature_rejects_var_positional`` — spec 024
@@ -39,7 +39,7 @@ from typing import Any
 import pytest
 
 from azure.ai.agentserver.responses import (
-    DurableMetadataNamespace,
+    ConversationChainMetadataNamespace,
     FileResponseStore,
     ResponseContext,
     ResponsesAgentServerHost,
@@ -174,12 +174,12 @@ def test_client_cancelled_observed_by_handler_after_cancel_endpoint(tmp_path, mo
 
 
 # ──────────────────────────────────────────────────────────────────────
-# Gap 3 — DurableMetadataNamespace Protocol matches MutableMapping
+# Gap 3 — ConversationChainMetadataNamespace Protocol matches MutableMapping
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_durable_metadata_protocol_includes_mutable_mapping_methods() -> None:
-    """``DurableMetadataNamespace`` MUST expose ``MutableMapping``-style
+def test_conversation_chain_metadata_protocol_includes_mutable_mapping_methods() -> None:
+    """``ConversationChainMetadataNamespace`` MUST expose ``MutableMapping``-style
     methods so handler code that calls ``clear()`` / ``pop()`` /
     ``update()`` typechecks against the Protocol annotation."""
     required = {
@@ -202,7 +202,7 @@ def test_durable_metadata_protocol_includes_mutable_mapping_methods() -> None:
     }
     actual = {
         name
-        for name in dir(DurableMetadataNamespace)
+        for name in dir(ConversationChainMetadataNamespace)
         if not name.startswith("_")
         or name
         in {
@@ -217,7 +217,7 @@ def test_durable_metadata_protocol_includes_mutable_mapping_methods() -> None:
     }
     missing = required - actual
     assert not missing, (
-        f"DurableMetadataNamespace Protocol is missing MutableMapping "
+        f"ConversationChainMetadataNamespace Protocol is missing MutableMapping "
         f"methods that handlers + samples use: {sorted(missing)}"
     )
 
@@ -225,7 +225,7 @@ def test_durable_metadata_protocol_includes_mutable_mapping_methods() -> None:
 def test_concrete_metadata_facade_satisfies_protocol_at_runtime() -> None:
     """The internal ``_DeveloperMetadataFacade`` MUST satisfy every
     Protocol method at runtime (so handlers can call them on the live
-    facade returned by ``context.durable_metadata``)."""
+    facade returned by ``context.conversation_chain_metadata``)."""
     from azure.ai.agentserver.responses._durability_context import (
         _DeveloperMetadataFacade,
     )

@@ -5,7 +5,7 @@
 (Spec 024 Phase 5 — Proposal #10 + #13) The pre-Phase-5
 ``DurabilityContext`` class is DELETED. Its fields are flattened into
 top-level :class:`ResponseContext` attributes (``is_recovery``,
-``is_steered_turn``, ``pending_input_count``, ``durable_metadata``).
+``is_steered_turn``, ``pending_input_count``, ``conversation_chain_metadata``).
 The ``DurabilityEntryMode`` Literal alias and the ``retry_attempt``
 field are also deleted (Proposal #12 / #13).
 
@@ -13,7 +13,7 @@ What survives in this module:
 
 - :class:`_DeveloperMetadataFacade` — the internal wrapper that rejects
   keys / namespaces starting with ``_`` (framework-internal).
-  Implements the public :class:`DurableMetadataNamespace` Protocol
+  Implements the public :class:`ConversationChainMetadataNamespace` Protocol
   exported from :mod:`azure.ai.agentserver.responses._response_context`.
 
 Per spec 015 FR-040 / FR-005, the handler-facing metadata wrapper
@@ -41,7 +41,7 @@ class _DeveloperMetadataFacade(MutableMapping[str, Any]):
     must use the underlying ``TaskContext.metadata`` directly — they do
     NOT go through this wrapper.
 
-    Satisfies the public :class:`DurableMetadataNamespace` Protocol.
+    Satisfies the public :class:`ConversationChainMetadataNamespace` Protocol.
     """
 
     def __init__(self, raw: Any, _namespaces: Optional[dict[str, Any]] = None) -> None:
@@ -93,8 +93,8 @@ class _DeveloperMetadataFacade(MutableMapping[str, Any]):
     def __call__(self, name: Optional[str] = None) -> "_DeveloperMetadataFacade":
         """Return a sibling namespace facade.
 
-        ``ctx.durable_metadata`` accesses the default (unnamed) namespace.
-        ``ctx.durable_metadata(name)`` accesses a named namespace.
+        ``ctx.conversation_chain_metadata`` accesses the default (unnamed) namespace.
+        ``ctx.conversation_chain_metadata(name)`` accesses a named namespace.
 
         :raises ValueError: If ``name`` starts with ``_`` (reserved).
         """
