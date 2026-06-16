@@ -175,7 +175,7 @@ The host populates these on `request.state` before dispatching:
 | `request.state.user_isolation_key` | invoke | `x-agent-user-isolation-key` header |
 | `request.state.chat_isolation_key` | invoke | `x-agent-chat-isolation-key` header |
 
-Per the [invocation protocol spec](https://github.com/Azure/foundrysdk_specs/blob/main/specs/hosted-agents/container-spec/docs/invocation-protocol-spec.md),
+Per the invocation protocol contract,
 GET and cancel have **no platform-defined query parameters** — the
 session is implicit (env-var sourced). The framework resolves it from
 `FOUNDRY_AGENT_SESSION_ID` and stamps it on
@@ -222,7 +222,7 @@ async def cancel(request: Request) -> Response:
     return JSONResponse({"status": "cancelled"})
 ```
 
-The [`durable-agent-demo`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo)
+The [`durable-agent-demo`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo)
 sample wires this end-to-end with SSE streaming, file-backed task
 storage, and crash recovery.
 
@@ -250,7 +250,7 @@ these.
 
 Consume the checked-in wheels per:
 
-- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/wheels)
+- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/wheels)
 
 The wheels bundle all three preview packages (`core`,
 `invocations`, `responses`) so a single
@@ -260,14 +260,9 @@ The wheels bundle all three preview packages (`core`,
 
 | Topic | Link |
 |---|---|
-| **Package README** (decorator catalog, request/response headers, distributed tracing, WebSocket lifecycle) | [`README.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/README.md) |
-| **Invocation protocol spec** (the wire contract — POST/GET/cancel routes, headers, query params, session-id resolution, response headers, OpenAPI spec endpoint, error format) | [`invocation-protocol-spec.md`](https://github.com/Azure/foundrysdk_specs/blob/main/specs/hosted-agents/container-spec/docs/invocation-protocol-spec.md) |
-| Minimal echo agent | [`samples/simple_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/simple_invoke_agent) |
-| Long-running + polling | [`samples/async_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent) |
-| SSE streaming | [`samples/streaming_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/streaming_invoke_agent) |
-| WebSocket (echo + bidirectional) | [`samples/ws_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_invoke_agent), [`samples/ws_bidirectional_streaming_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_bidirectional_streaming_agent) |
-| Multi-turn (suspend / resume on top of `@multi_turn_task`) | [`samples/multiturn_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/multiturn_invoke_agent), [`samples/durable_multiturn/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_multiturn) |
-| End-to-end **long-running + crash + steer** demo (Foundry hosted) | [`samples/durable-agent-demo/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo) |
+| **Package README** (decorator catalog, request/response headers, distributed tracing, WebSocket lifecycle) | [`README.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/README.md) |
+| Multi-turn (suspend / resume on top of `@multi_turn_task`) | [`samples/durable_multiturn/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_multiturn) |
+| End-to-end **long-running + crash + steer** demo (Foundry hosted) | [`samples/durable-agent-demo/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo) |
 | Companion: durable-task primitive skill (the `@task` underneath) | [`durable-task-skill.md`](durable-task-skill.md) |
 | Companion: streaming registry skill (producer/subscriber fan-out + replay) | [`streaming-skill.md`](streaming-skill.md) |
 | Companion: responses-API host skill (when you need OpenAI Responses API wire format instead) | [`responses-skill.md`](responses-skill.md) |

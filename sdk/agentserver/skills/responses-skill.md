@@ -196,7 +196,7 @@ ships only via the pre-release wheels checked into this branch.**
 
 Consume the checked-in wheels per:
 
-- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/wheels)
+- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/wheels)
 
 The wheels bundle all three preview packages (`core`,
 `invocations`, `responses`) so a single
@@ -206,13 +206,11 @@ The wheels bundle all three preview packages (`core`,
 
 | Topic | Link |
 |---|---|
-| **Handler implementation guide** (full patterns, builder API, terminal-status rules, cancellation matrix) | [`docs/handler-implementation-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-responses-spec016/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) |
-| **Durable responses developer guide** (recovery contract, watermark patterns, upstream-framework integration, the `is_recovery` / `is_steered_turn` / `pending_input_count` surface) | [`docs/durable-responses-developer-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-responses-spec016/sdk/agentserver/azure-ai-agentserver-responses/docs/durable-responses-developer-guide.md) |
-| **Source-of-truth durability spec** (language-agnostic protocol contract) | [`docs/responses-durability-spec.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-responses-spec016/sdk/agentserver/azure-ai-agentserver-responses/docs/responses-durability-spec.md) |
-| Minimal handler examples (TextResponse, ResponseEventStream, function calling, multi-output, streaming upstream) | [`samples/sample_01_getting_started.py`..`sample_16_structured_outputs.py`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-responses-spec016/sdk/agentserver/azure-ai-agentserver-responses/samples) |
-| Durable + steerable patterns (Copilot SDK, three-phase streaming with watermarks, steering drain, LangGraph integration, multi-turn) | [`samples/sample_18_durable_copilot.py`..`sample_22_durable_multiturn.py`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-responses-spec016/sdk/agentserver/azure-ai-agentserver-responses/samples) |
-| Companion: durable-task primitive skill (the `@task` underneath) | [`durable-task-skill.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/skills/durable-task-skill.md) |
-| Companion: streaming registry skill (the `streams` registry underneath) | [`streaming-skill.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/skills/streaming-skill.md) |
+| **Handler implementation guide** (full patterns, builder API, terminal-status rules, cancellation matrix) | [`docs/handler-implementation-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) |
+| **Durable responses developer guide** (recovery contract, watermark patterns, upstream-framework integration, the `is_recovery` / `is_steered_turn` / `pending_input_count` surface) | [`docs/durable-responses-developer-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-responses/docs/durable-responses-developer-guide.md) |
+| Durable + steerable patterns (Copilot SDK, three-phase streaming with watermarks, steering drain, LangGraph integration, multi-turn) | [`samples/sample_18_durable_copilot.py`..`sample_22_durable_multiturn.py`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-responses/samples) |
+| Companion: durable-task primitive skill (the `@task` underneath) | [`durable-task-skill.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/skills/durable-task-skill.md) |
+| Companion: streaming registry skill (the `streams` registry underneath) | [`streaming-skill.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/skills/streaming-skill.md) |
 
 Read the handler implementation guide first — it covers the full
 event taxonomy (every SSE event type the host accepts, the builder

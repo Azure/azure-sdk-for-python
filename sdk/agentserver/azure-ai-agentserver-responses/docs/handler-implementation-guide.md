@@ -1281,10 +1281,9 @@ and how clients reconcile a multi-attempt stream is the **recovery contract**.
 The deeper "how does this all fit together" view — the four-row dispatch matrix,
 the three termination paths (handler completes within grace, grace exhausted,
 crash), the exact persistence guarantees the framework makes, and the full
-conformance items — is in
-[`responses-durability-spec.md`](responses-durability-spec.md). That document is
-language-agnostic and intentionally exhaustive; this section is the developer
-how-to with worked Python examples. The conformance suite at
+conformance items — is covered by the framework's internal durability spec.
+This section is the developer how-to with worked Python examples. The
+conformance suite at
 `tests/e2e/durability_contract/` exercises every cell of the matrix.
 
 You can opt out of all of this and your response will still be correct (just
@@ -1387,9 +1386,8 @@ async def handler(request, context, cancellation_signal):
     yield stream.emit_completed()
 ```
 
-Semantics (the full normative list is in
-[`responses-durability-spec.md`](responses-durability-spec.md) and
-[`durability-contract.md`](durability-contract.md) Row 11):
+Semantics (the full normative list lives in the framework's internal
+durability spec):
 
 - **Deterministic + developer-driven.** Checkpoints happen ONLY where you yield
   one. There are no periodic, timer, or implicit checkpoints.

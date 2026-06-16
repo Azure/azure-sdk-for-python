@@ -190,12 +190,15 @@ To report an issue with the client library, or request additional features, plea
 
 ## Next steps
 
-Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples) folder for complete working examples:
+Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples) folder for the **durable** examples:
 
 | Sample | Description |
 |---|---|
-| [simple_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/simple_invoke_agent/) | Minimal synchronous request-response |
-| [async_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent/) | Long-running operations with polling and cancellation |
+| [durable_research](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_research/) | Long-running research agent with file-backed checkpoints |
+| [durable_multiturn](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_multiturn/) | Multi-turn suspend / resume on top of `@multi_turn_task` |
+| [durable_langgraph](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_langgraph/) | LangGraph integration with durable checkpoints |
+| [durable_copilot](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_copilot/) | GitHub Copilot SDK durable agent |
+| [durable-agent-demo](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo/) | End-to-end long-running + crash + steer demo |
 
 ## Contributing
 

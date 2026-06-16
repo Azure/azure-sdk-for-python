@@ -168,19 +168,19 @@ the regular PyPI version of `azure-ai-agentserver-core` will not give you
 
 Consume the checked-in wheels per:
 
-- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/wheels)
+- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/wheels)
 
 ## Authoritative references
 
 | Topic | Link |
 |---|---|
-| **Full developer guide** (mental model, lifecycle, API reference, patterns) | [`docs/durable-task-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md) |
-| **Streaming developer guide** (registry API, backings, per-turn id convention, exception/wire mapping) | [`docs/streaming-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md) |
-| Minimal retry sample | [`samples/durable_retry/durable_retry.py`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/samples/durable_retry/durable_retry.py) |
-| Streaming via the `streams` registry | [`samples/durable_streaming/durable_streaming.py`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/samples/durable_streaming/durable_streaming.py) |
-| End-to-end **long-running + crash + steer** demo (Foundry hosted) | [`samples/durable-agent-demo/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo) |
-| Multi-turn (suspend / resume) | [`samples/durable_multiturn/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_multiturn) |
-| LangGraph integration | [`samples/durable_langgraph/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_langgraph) |
+| **Full developer guide** (mental model, lifecycle, API reference, patterns) | [`docs/durable-task-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md) |
+| **Streaming developer guide** (registry API, backings, per-turn id convention, exception/wire mapping) | [`docs/streaming-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md) |
+| Minimal retry sample | [`samples/durable_retry/durable_retry.py`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-core/samples/durable_retry/durable_retry.py) |
+| Streaming via the `streams` registry | [`samples/durable_streaming/durable_streaming.py`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-core/samples/durable_streaming/durable_streaming.py) |
+| End-to-end **long-running + crash + steer** demo (Foundry hosted) | [`samples/durable-agent-demo/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo) |
+| Multi-turn (suspend / resume) | [`samples/durable_multiturn/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_multiturn) |
+| LangGraph integration | [`samples/durable_langgraph/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_langgraph) |
 
 Read the developer guide first — it covers `EntryMode`, retry semantics,
 `Suspended`, steering queue backpressure, cancel-cause booleans

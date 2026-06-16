@@ -4,56 +4,63 @@ languages:
 - python
 products:
 - azure
-name: azure-ai-agentserver-responses samples for Python
-description: Samples for the azure-ai-agentserver-responses client library.
+name: azure-ai-agentserver-responses durable samples for Python
+description: Durable Responses-API agent samples for the azure-ai-agentserver-responses preview.
 ---
 
-# azure-ai-agentserver-responses Samples
+# azure-ai-agentserver-responses — durable samples
 
-## Quick start
+This preview drop ships the **durable** Responses-API samples. Each shows a
+crash-resilient, optionally steerable handler built on the spec-025 durability
+primitives (`durable_background=True`, one `OutputItem` + `stream.checkpoint()`
+per unit of work, recovery via `context.persisted_response`).
 
-```bash
-pip install -r requirements.txt
-python sample_01_getting_started.py
-```
+## Run them locally (crash → recover)
+
+The hosted task API is currently returning 403, so the durable samples are
+exercised **locally** — the durable task store + response store are file-backed,
+no hosted dependency. A ready-to-run, verified kit lives at:
+
+> **[`durable-responses-agent-demo/local/`](durable-responses-agent-demo/local/README.md)** —
+> `./setup.sh` then `./run.sh` for an automated stream → crash → recover → verify
+> run, or `./serve.sh` to drive the agent yourself.
+
+The same pattern (`AGENTSERVER_TASKS_BACKEND=local` +
+`AGENTSERVER_DURABLE_ROOT=<dir>`, restart the process to recover) applies to
+every sample below.
 
 ## Samples index
 
 | # | Sample | Pattern | Description |
 |---|--------|---------|-------------|
-| 01 | [Getting Started](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_01_getting_started.py) | `TextResponse` | Echo handler — simplest async handler that echoes user input |
-| 02 | [Streaming Text Deltas](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_02_streaming_text_deltas.py) | `TextResponse` + `text=iterable` | Token-by-token streaming via async iterable, with `configure` callback |
-| 03 | [Full Control](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_03_full_control.py) | `ResponseEventStream` | Convenience, streaming, and builder — three ways to emit the same output |
-| 04 | [Function Calling](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_04_function_calling.py) | `ResponseEventStream` | Two-turn function calling with convenience and builder variants |
-| 05 | [Conversation History](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_05_conversation_history.py) | `TextResponse` + `text=callable` | Study tutor with `context.get_history()` and `ResponsesServerOptions` |
-| 06 | [Multi-Output](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_06_multi_output.py) | `ResponseEventStream` | Math solver: reasoning + message, convenience and builder variants |
-| 07 | [Customization](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_07_customization.py) | `TextResponse` | Custom `ResponsesServerOptions`, default model, debug logging |
-| 08 | [Mixin Composition](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_08_mixin_composition.py) | `TextResponse` | Multi-protocol server via cooperative mixin inheritance |
-| 09 | [Self-Hosting](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_09_self_hosting.py) | `TextResponse` | Mount responses into an existing Starlette app under `/api` |
-| 10 | [Streaming Upstream](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_10_streaming_upstream.py) | Raw events | Forward to upstream streaming LLM via `openai` SDK, relay SSE events |
-| 11 | [Non-Streaming Upstream](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_11_non_streaming_upstream.py) | `ResponseEventStream` | Forward to upstream non-streaming LLM via `openai` SDK, emit items |
-| 12 | [Image Generation](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_12_image_generation.py) | `ResponseEventStream` | Image gen convenience, streaming partials, and full-control builder |
-| 13 | [Image Input](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_13_image_input.py) | `ResponseContext` | Receive images via URL, base64 data URL, or file ID |
-| 14 | [File Inputs](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_14_file_inputs.py) | `ResponseContext` | Receive files via base64 data URL, URL, or file ID |
-| 15 | [Annotations](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | `ResponseEventStream` | Attach file_path, file_citation, and url_citation annotations to messages |
-| 16 | [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | `ResponseEventStream` | Return structured JSON as a `structured_outputs` item |
-| 18 | [Durable Copilot](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_durable_copilot.py) | Durable + steerable | GitHub Copilot SDK with `durable_background=True, steerable_conversations=True` — `create_session` / `resume_session` flow with live delta forwarding |
-| 19 | [Durable Streaming](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_durable_streaming.py) | Durable | Three-phase streaming handler with `durable_background=True` — uses `context.conversation_chain_metadata` watermarks to skip phases that already completed on recovery |
-| 20 | [Durable Steering](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_durable_steering.py) | Durable + steerable | Demonstrates `context.is_steered_turn` on the drain re-entry with `durable_background=True, steerable_conversations=True` |
-| 21 | [Durable LangGraph](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_21_durable_langgraph.py) | Durable + steerable | LangGraph upstream framework integration with `durable_background=True, steerable_conversations=True` — `context.conversation_chain_id` as the LangGraph thread id |
-| 22 | [Durable Multiturn](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_22_durable_multiturn.py) | Durable | Multi-turn conversation with `durable_background=True, steerable_conversations=False` — `context.conversation_chain_metadata` tracks per-turn counters |
+| 18 | [Durable Copilot](sample_18_durable_copilot.py) | Durable + steerable | GitHub Copilot SDK with `durable_background=True, steerable_conversations=True` — `create_session` / `resume_session` flow with live delta forwarding |
+| 19 | [Durable Streaming](sample_19_durable_streaming.py) | Durable | Three-phase streaming handler with `durable_background=True` — uses `context.conversation_chain_metadata` watermarks to skip phases that already completed on recovery |
+| 20 | [Durable Steering](sample_20_durable_steering.py) | Durable + steerable | Demonstrates `context.is_steered_turn` on the drain re-entry with `durable_background=True, steerable_conversations=True` |
+| 21 | [Durable LangGraph](sample_21_durable_langgraph.py) | Durable + steerable | LangGraph upstream framework integration — `context.conversation_chain_id` as the LangGraph thread id |
+| 22 | [Durable Multiturn](sample_22_durable_multiturn.py) | Durable | Multi-turn conversation with `durable_background=True, steerable_conversations=False` — `context.conversation_chain_metadata` tracks per-turn counters |
 
-### When to use which
+The flagship end-to-end demo (15-phase × 4-subcall research agent, one
+checkpoint per sub-call, azd-deployable + locally runnable) is
+[`durable-responses-agent-demo/`](durable-responses-agent-demo/).
 
-- **`TextResponse`** — Use for text-only responses (samples 1, 2, 5, 7–9). Handles the full SSE lifecycle automatically.
-- **`ResponseEventStream`** — Use when you need function calls, reasoning items, multiple output types, image generation, structured outputs, annotations, upstream proxying, or fine-grained event control (samples 3, 4, 6, 10–12, 15, 16).
-- **`ResponseContext`** — Use `get_input_items()` to inspect incoming images and files (samples 13, 14). Use `context.is_recovery`, `context.is_steered_turn`, `context.pending_input_count`, and `context.conversation_chain_metadata` for durable / steerable handlers (samples 18–22).
+## Key durable APIs
 
-### Enabling durability and steering
+Use these from a durable handler (`ResponseContext`):
 
-Durable + steerable behaviour is **opt-in** via `ResponsesServerOptions` —
-the defaults are both `False`. The durable samples (17–22) each show the
-exact options shape they require; in short:
+- `context.is_recovery` / `context.persisted_response` — seed the stream from the
+  persisted snapshot and resume at the first un-checkpointed item.
+- `context.is_steered_turn` / `context.pending_input_count` — observe and drain
+  mid-turn steering inputs.
+- `context.conversation_chain_metadata` / `context.conversation_chain_id` —
+  per-conversation durable metadata and the stable chain id.
+- `await context.exit_for_recovery()` — graceful-shutdown primitive that leaves
+  the response `in_progress` for next-lifetime recovery (works in every handler
+  shape).
+
+## Enabling durability and steering
+
+Durable + steerable behaviour is **opt-in** via `ResponsesServerOptions` — the
+defaults are both `False`:
 
 ```python
 from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
@@ -66,8 +73,8 @@ app = ResponsesAgentServerHost(
 )
 ```
 
-Without `durable_background=True`, a crash mid-handler leaves the
-response in the "crash-failed" state (the next process lifetime marks
-it `failed` instead of re-invoking the handler). Without
-`steerable_conversations=True`, concurrent multi-turn requests for the
-same conversation return `409 conversation_locked` instead of queueing.
+Without `durable_background=True`, a crash mid-handler leaves the response in the
+"crash-failed" state (the next process lifetime marks it `failed` instead of
+re-invoking the handler). Without `steerable_conversations=True`, concurrent
+multi-turn requests for the same conversation return `409 conversation_locked`
+instead of queueing.

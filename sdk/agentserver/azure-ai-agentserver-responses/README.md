@@ -197,23 +197,15 @@ To report an issue with the client library, or request additional features, plea
 
 ## Next steps
 
-Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples) folder for complete working examples:
+Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-responses/samples) folder for the **durable** examples, and the [`durable-responses-agent-demo/local/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-responses/samples/durable-responses-agent-demo/local) kit to run a crash → recover demo locally:
 
 | Sample | Description |
 |---|---|
-| [Getting Started](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_01_getting_started.py) | Minimal echo handler using `TextResponse` |
-| [Streaming Text Deltas](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_02_streaming_text_deltas.py) | Token-by-token streaming with `configure` callback |
-| [Full Control](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_03_full_control.py) | Convenience, streaming, and builder — three ways to emit output |
-| [Function Calling](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_04_function_calling.py) | Two-turn function calling with convenience and builder variants |
-| [Conversation History](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_05_conversation_history.py) | Multi-turn study tutor with `context.get_history()` |
-| [Multi-Output](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_06_multi_output.py) | Reasoning + message in a single response |
-| [Streaming Upstream](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_10_streaming_upstream.py) | Forward to upstream streaming LLM via `openai` SDK |
-| [Non-Streaming Upstream](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_11_non_streaming_upstream.py) | Forward to upstream non-streaming LLM, emit items via builders |
-| [Image Generation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_12_image_generation.py) | Image gen convenience, streaming partials, and full-control builder |
-| [Image Input](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_13_image_input.py) | Receive images via URL, base64 data URL, or file ID |
-| [File Inputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_14_file_inputs.py) | Receive files via base64 data URL, URL, or file ID |
-| [Annotations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | Attach file_path, file_citation, and url_citation annotations |
-| [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | Return structured JSON as a `structured_outputs` item |
+| [Durable Copilot](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_durable_copilot.py) | Copilot SDK durable + steerable session flow |
+| [Durable Streaming](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_durable_streaming.py) | Phase watermarks; skip completed phases on recovery |
+| [Durable Steering](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_durable_steering.py) | `context.is_steered_turn` mid-turn steering drain |
+| [Durable LangGraph](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_21_durable_langgraph.py) | LangGraph thread id = `context.conversation_chain_id` |
+| [Durable Multiturn](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-preview-share/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_22_durable_multiturn.py) | Per-turn counters in `context.conversation_chain_metadata` |
 
 - [Handler implementation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) — Detailed reference for building handlers
 
