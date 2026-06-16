@@ -150,12 +150,16 @@ async def handler(
 
     # ── Pre-entry cancellation/shutdown check ──────────────────────
     # This sample does NOT enable steerable_conversations, so STEERED
-    # cannot occur. The only pre-entry reasons here are
-    # CLIENT_CANCELLED (cancellation_signal) and shutdown
-    # (context.shutdown). Both call for returning without a terminal
-    # event — the framework forces ``cancelled`` for the former and
-    # re-invokes the handler on restart for the latter.
-    if cancellation_signal.is_set() or context.shutdown.is_set():
+    # cannot occur. Shutdown and client-cancel are independent, mutually
+    # exclusive surfaces — check shutdown FIRST.
+    if context.shutdown.is_set():
+        # Graceful shutdown before we started: defer to next-lifetime
+        # recovery. The unified primitive raises internally and works in
+        # this streaming async-generator shape.
+        await context.exit_for_recovery()
+    if cancellation_signal.is_set():
+        # Client-cancelled: return without a terminal (framework forces
+        # ``cancelled``).
         return
 
     yield stream.emit_in_progress()
@@ -208,12 +212,12 @@ async def handler(
     if shutdown_timer and not shutdown_timer.done():
         shutdown_timer.cancel()
 
-    # ── Post-stream cancellation check ──────────────────────────────
-    # Shutdown mid-stream: return without terminal so the framework
-    # re-invokes us; recovery branch above picks up from the last
-    # completed phase.
+    # ── Post-stream shutdown check ──────────────────────────────────
+    # Shutdown mid-stream: defer to next-lifetime recovery so the
+    # framework re-invokes us; the recovery branch above picks up from
+    # the last completed phase.
     if context.shutdown.is_set():
-        return
+        await context.exit_for_recovery()
 
     yield stream.emit_completed()
 

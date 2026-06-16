@@ -62,6 +62,13 @@ def _make_context(
         return "test prompt"
 
     context.get_input_text = _get_input_text
+
+    async def _exit_for_recovery() -> Any:
+        from azure.ai.agentserver.responses import ResponseExitForRecovery
+
+        raise ResponseExitForRecovery()
+
+    context.exit_for_recovery = _exit_for_recovery
     return context
 
 
