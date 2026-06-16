@@ -75,7 +75,6 @@ with (
     )
     print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
-    # [START memory_search_tool_declaration]
     # Set scope to associate the memories with
     # You can also use "{{$userId}}" to take the oid of the request authentication header
     scope = "user_123"
@@ -86,7 +85,6 @@ with (
         update_delay=1,  # Wait 1 second of inactivity before updating memories
         # In a real application, set this to a higher value like 300 (5 minutes, default)
     )
-    # [END memory_search_tool_declaration]
 
     # Create a prompt agent with memory search tool
     agent = project_client.agents.create_version(

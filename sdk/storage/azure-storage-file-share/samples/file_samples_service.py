@@ -31,16 +31,20 @@ SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
 
 class FileShareServiceSamples(object):
 
-    connection_string = os.getenv('STORAGE_CONNECTION_STRING')
+    connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
     def file_service_properties(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: file_service_properties")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: file_service_properties"
+            )
             sys.exit(1)
 
         # Instantiate the ShareServiceClient from a connection string
         from azure.storage.fileshare import ShareServiceClient
+
         file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
         # [START set_service_properties]
@@ -49,13 +53,14 @@ class FileShareServiceSamples(object):
 
         # Create metrics for requests statistics
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
-        minute_metrics = Metrics(enabled=True, include_apis=True,
-                                 retention_policy=RetentionPolicy(enabled=True, days=5))
+        minute_metrics = Metrics(
+            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+        )
 
         # Create CORS rules
-        cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
-        allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
-        allowed_methods = ['GET', 'PUT']
+        cors_rule1 = CorsRule(["www.xyz.com"], ["GET"])
+        allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
+        allowed_methods = ["GET", "PUT"]
         max_age_in_seconds = 500
         exposed_headers = ["x-ms-meta-data*", "x-ms-meta-source*", "x-ms-meta-abc", "x-ms-meta-bcd"]
         allowed_headers = ["x-ms-meta-data*", "x-ms-meta-target*", "x-ms-meta-xyz", "x-ms-meta-foo"]
@@ -64,7 +69,8 @@ class FileShareServiceSamples(object):
             allowed_methods,
             max_age_in_seconds=max_age_in_seconds,
             exposed_headers=exposed_headers,
-            allowed_headers=allowed_headers)
+            allowed_headers=allowed_headers,
+        )
 
         cors = [cors_rule1, cors_rule2]
 
@@ -78,12 +84,16 @@ class FileShareServiceSamples(object):
 
     def list_shares_in_service(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: list_shares_in_service")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: list_shares_in_service"
+            )
             sys.exit(1)
 
         # Instantiate the ShareServiceClient from a connection string
         from azure.storage.fileshare import ShareServiceClient
+
         file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
         # [START fsc_create_shares]
@@ -106,12 +116,12 @@ class FileShareServiceSamples(object):
 
     def get_share_client(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: get_share_client")
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: get_share_client")
             sys.exit(1)
 
         # [START get_share_client]
         from azure.storage.fileshare import ShareServiceClient
+
         file_service = ShareServiceClient.from_connection_string(self.connection_string)
 
         # Get a share client to interact with a specific share
@@ -119,9 +129,8 @@ class FileShareServiceSamples(object):
         # [END get_share_client]
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = FileShareServiceSamples()
     sample.file_service_properties()
     sample.list_shares_in_service()
     sample.get_share_client()
-

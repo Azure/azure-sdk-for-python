@@ -1,5 +1,13 @@
 # Release History
 
+## 1.2.0b1 (2026-05-01)
+
+### Features Added
+
+  - Model `MongoClusterProperties` added property `network_bypass_mode`
+  - Model `MongoClusterUpdateProperties` added property `network_bypass_mode`
+  - Added enum `NetworkBypassMode`
+
 ## 1.1.0 (2025-10-15)
 
 ### Features Added

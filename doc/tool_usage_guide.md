@@ -21,7 +21,6 @@ The following checks are available via the `azpysdk` entrypoint.
 |`pyright`| Runs `pyright` checks or `next-pyright` checks. (based on presence of `--next` argument) | `azpysdk pyright .` |
 |`black`| Runs `black` checks. | `azpysdk black .` |
 |`verifytypes`| Runs `verifytypes` checks. | `azpysdk verifytypes .` |
-|`ruff`| Runs `ruff` checks. | `azpysdk ruff .` |
 |`apistub`| Generates an api stub for the package. | `azpysdk apistub .` |
 |`bandit`| Runs `bandit` checks, which detect common security issues. | `azpysdk bandit .` |
 |`verifywhl`| Verifies that the root directory in whl is azure, and verifies manifest so that all directories in source are included in sdist. | `azpysdk verifywhl .` |

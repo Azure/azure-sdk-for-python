@@ -22,6 +22,7 @@ from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     ConfigurationStoresOperations,
     KeyValuesOperations,
+    NetworkSecurityPerimeterConfigurationsOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
@@ -43,6 +44,10 @@ class AppConfigurationManagementClient:  # pylint: disable=too-many-instance-att
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.appconfiguration.operations.PrivateEndpointConnectionsOperations
+    :ivar network_security_perimeter_configurations:
+     NetworkSecurityPerimeterConfigurationsOperations operations
+    :vartype network_security_perimeter_configurations:
+     azure.mgmt.appconfiguration.operations.NetworkSecurityPerimeterConfigurationsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.appconfiguration.operations.PrivateLinkResourcesOperations
@@ -63,9 +68,9 @@ class AppConfigurationManagementClient:  # pylint: disable=too-many-instance-att
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-06-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2025-08-01-preview". Default value is "2025-08-01-preview". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -122,6 +127,9 @@ class AppConfigurationManagementClient:  # pylint: disable=too-many-instance-att
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.network_security_perimeter_configurations = NetworkSecurityPerimeterConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(

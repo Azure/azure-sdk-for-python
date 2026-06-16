@@ -58,7 +58,6 @@ setup(
         "Intended Audience :: Developers",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
@@ -84,7 +83,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.28.0",
         "azure-core-tracing-opentelemetry~=1.0.0b11",
-        "azure-monitor-opentelemetry-exporter~=1.0.0b49",
+        "azure-monitor-opentelemetry-exporter~=1.0.0b52",
         "opentelemetry-sdk==1.40",
         "opentelemetry-instrumentation-django==0.61b0",
         "opentelemetry-instrumentation-fastapi==0.61b0",

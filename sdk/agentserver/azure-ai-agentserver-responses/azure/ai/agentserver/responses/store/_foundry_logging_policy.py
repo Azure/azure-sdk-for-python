@@ -15,11 +15,7 @@ import time
 import urllib.parse
 from typing import cast
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.core.pipeline.policies import AsyncHTTPPolicy
-from azure.core.rest import HttpResponse
-
-from .._platform_headers import (
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     APIM_REQUEST_ID,
     CHAT_ISOLATION_KEY,
     CLIENT_REQUEST_ID,
@@ -27,6 +23,9 @@ from .._platform_headers import (
     TRACEPARENT,
     USER_ISOLATION_KEY,
 )
+from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.policies import AsyncHTTPPolicy
+from azure.core.rest import HttpResponse
 
 logger = logging.getLogger("azure.ai.agentserver")
 
