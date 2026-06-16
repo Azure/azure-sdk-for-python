@@ -149,7 +149,7 @@ class TestBrowserSDKIntegration(unittest.TestCase):
         self.assertIsNone(config.connection_string)
 
     @patch("azure.monitor.opentelemetry._configure._logger")
-    def test_invalid_browser_sdk_config_type(self, mock_logger): # pylint: disable=unused-argument
+    def test_invalid_browser_sdk_config_type(self, mock_logger):  # pylint: disable=unused-argument
         """Test handling of invalid browser SDK config types."""
         from azure.monitor.opentelemetry._utils.configurations import _get_configurations
 
@@ -161,7 +161,7 @@ class TestBrowserSDKIntegration(unittest.TestCase):
             configurations = {BROWSER_SDK_LOADER_CONFIG_ARG: invalid_config}
             # The actual validation would happen in the setup function
             self.assertIn(BROWSER_SDK_LOADER_CONFIG_ARG, configurations)
-        except Exception: # pylint: disable=broad-exception-caught
+        except Exception:  # pylint: disable=broad-exception-caught
             self.fail("Should handle invalid config types gracefully")
 
 
