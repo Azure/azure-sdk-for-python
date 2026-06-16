@@ -204,7 +204,14 @@ class ArtifactCache:
                 artifacts_tool_uri = response.json()["uri"]
                 response = requests_pipeline.get(artifacts_tool_uri)  # pylint: disable=too-many-function-args
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
-                    zip_file.extractall(artifacts_tool_path)
+                    artifacts_tool_resolved = Path(artifacts_tool_path).resolve()
+                    for member_info in zip_file.infolist():
+                        member_resolved = (artifacts_tool_resolved / member_info.filename).resolve()
+                        if not member_resolved.is_relative_to(artifacts_tool_resolved):
+                            raise RuntimeError(
+                                f"Unsafe path in zip archive: '{member_info.filename}' resolves outside the target directory."
+                            )
+                        zip_file.extract(member_info, artifacts_tool_path)
                 os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(artifacts_tool_path.resolve())
                 self._artifacts_tool_path = artifacts_tool_path
             else:
