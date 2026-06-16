@@ -327,6 +327,7 @@ def main(generate_input, generate_output):
                             "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
                         ],
                         timeout=600,
+                        stderr=None if data.get("runMode") == "release" else subprocess.DEVNULL,
                     )
 
                     _LOGGER.info("generate apiview artifacts")
