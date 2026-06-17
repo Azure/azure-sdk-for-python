@@ -87,7 +87,10 @@ endpoint_app_id = os.environ["ENDPOINT_APP_ID"]
 
 # Derive account name from the project endpoint URL
 # e.g., https://np-int.services.ai.azure.com/api/projects/default -> "np-int"
-account_name = urlparse(endpoint).hostname.split(".")[0]
+hostname = urlparse(endpoint).hostname
+if not hostname:
+    raise ValueError(f"Could not parse hostname from endpoint: {endpoint}")
+account_name = hostname.split(".")[0]
 connection_name = "my-endpoint-entra-connection"
 
 with (
