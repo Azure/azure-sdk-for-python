@@ -128,7 +128,7 @@ class TestRunOutputDirectory:
     def test_install_deps_installs_dependencies(
         self, _env, install_into_venv, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
     ):
-        """When --install-deps is passed, apistub should install target package dependencies."""
+        """When --install-deps is passed, apistub should install target package dev requirements."""
         monkeypatch.chdir(os.getcwd())
         stub = apistub()
         staging = str(tmp_path / "staging")
@@ -150,6 +150,26 @@ class TestRunOutputDirectory:
         install_dev_reqs.assert_called_once_with(sys.executable, args, str(tmp_path))
         install_into_venv.assert_not_called()
         pip_freeze.assert_called_once_with(sys.executable)
+
+    @patch("azpysdk.apistub.logger.error")
+    @patch("azpysdk.apistub.set_envvar_defaults")
+    def test_runtime_error_installing_apiview_dependencies_returns_one(self, _env, logger_error, tmp_path, monkeypatch):
+        """When APIView dependency install raises RuntimeError, run() should log and return 1."""
+        monkeypatch.chdir(os.getcwd())
+        stub = apistub()
+        staging = str(tmp_path / "staging")
+        os.makedirs(staging, exist_ok=True)
+        fake_parsed = MagicMock()
+        fake_parsed.folder = str(tmp_path)
+        fake_parsed.name = "azure-core"
+
+        with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
+            stub, "get_executable", return_value=(sys.executable, staging)
+        ), patch.object(stub, "ensure_apistub_dependencies", side_effect=RuntimeError("401 auth error")):
+            result = stub.run(self._make_args())
+
+        assert result == 1
+        logger_error.assert_called_once_with("Failed to install APIView dependencies: 401 auth error")
 
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))

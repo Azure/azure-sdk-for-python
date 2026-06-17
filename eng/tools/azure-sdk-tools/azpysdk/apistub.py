@@ -81,7 +81,7 @@ class apistub(Check):
             dest="install_deps",
             default=False,
             action="store_true",
-            help=("Install target package dev requirements before running. "),
+            help="Install target package dev requirements before running.",
         )
         p.set_defaults(func=self.run)
 
@@ -137,9 +137,9 @@ class apistub(Check):
 
             try:
                 self.ensure_apistub_dependencies(executable, package_dir, staging_directory)
-            except CalledProcessError as e:
+            except (CalledProcessError, RuntimeError) as e:
                 logger.error(f"Failed to install APIView dependencies: {e}")
-                return e.returncode
+                return getattr(e, "returncode", 1)
 
             if not os.getenv("PREBUILT_WHEEL_DIR"):
                 create_package_and_install(
