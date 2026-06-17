@@ -65,3 +65,25 @@ def test_disconnect_swallows_transport_close_errors():
     connection._disconnect()
 
     connection._transport.close.assert_called_once()
+
+
+def test_close_closes_transport_when_outgoing_close_raises():
+    """Regression test at the public API surface.
+
+    When Connection.close() hits its exception path (here, _outgoing_close
+    raising), it sets state to END and falls through to _disconnect() in the
+    finally block. The transport must still be closed exactly once rather than
+    leaked."""
+    connection = _make_connection()
+    connection.state = ConnectionState.OPENED
+    connection._error = None
+    connection._outgoing_close = MagicMock(side_effect=RuntimeError("boom"))
+    connection._set_state = MagicMock(
+        side_effect=lambda new_state: setattr(connection, "state", new_state)
+    )
+
+    connection.close()
+
+    connection._outgoing_close.assert_called_once()
+    assert connection.state == ConnectionState.END
+    connection._transport.close.assert_called_once()

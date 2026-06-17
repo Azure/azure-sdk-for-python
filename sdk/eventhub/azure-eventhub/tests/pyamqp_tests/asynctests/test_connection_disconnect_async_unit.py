@@ -83,3 +83,28 @@ async def test_disconnect_swallows_transport_close_errors():
     await connection._disconnect()
 
     connection._transport.close.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_close_closes_transport_when_outgoing_close_raises():
+    """Regression test at the public API surface.
+
+    When Connection.close() hits its exception path (here, _outgoing_close
+    raising), it sets state to END and falls through to _disconnect() in the
+    finally block. The transport (the aiohttp ClientSession for the websocket
+    transport) must still be closed exactly once rather than leaked."""
+    connection = _make_connection()
+    connection.state = ConnectionState.OPENED
+    connection._error = None
+    connection._outgoing_close = AsyncMock(side_effect=RuntimeError("boom"))
+
+    async def _set_state(new_state):
+        connection.state = new_state
+
+    connection._set_state = AsyncMock(side_effect=_set_state)
+
+    await connection.close()
+
+    connection._outgoing_close.assert_awaited_once()
+    assert connection.state == ConnectionState.END
+    connection._transport.close.assert_awaited_once()
