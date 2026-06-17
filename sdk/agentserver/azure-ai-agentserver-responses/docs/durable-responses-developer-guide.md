@@ -14,9 +14,13 @@ task**. If the server crashes mid-response:
 - Stream events are preserved for client reconnection
 - Conversation state is maintained across crashes
 
-**You get crash recovery with zero code changes to your handler** once
-you opt in by passing `durable_background=True` to
-`ResponsesServerOptions`.
+**Opting in (`durable_background=True`) gets you the framework half for
+free**: re-invocation on restart, event replay for reconnecting clients, and
+conversation continuity — with no handler changes. A naive handler re-invoked
+this way still produces a correct response (it just re-runs the whole turn).
+The *handler* half — making the recovered attempt resume *where it left off*
+and not repeat non-idempotent side effects — is optional work you take on when
+you want it; see [Choosing a resume strategy](#choosing-a-resume-strategy).
 
 > **Default**: `durable_background` defaults to `False`. Without the
 > opt-in, a crash mid-handler leaves the response in the
@@ -99,18 +103,32 @@ With steering enabled:
 
 ### Do you need a custom acceptance hook?
 
-When a new turn arrives while another is in progress, the framework returns a
-"queued" response. Customize this with `@app.response_acceptor`:
+When a new turn is queued onto an **already-active steerable conversation**
+(steering pressure — never the first turn of a conversation), the framework
+returns a "queued" response to that POST. By default it's a minimal
+`status="queued"` envelope. Register `@app.response_acceptor` to customize it
+— the hook returns a strongly-typed `ResponseObject`:
 
 ```python
+from azure.ai.agentserver.responses import (
+    CreateResponse, ResponseContext, ResponseObject,
+)
+
 @app.response_acceptor
-def my_acceptor(request, context):
-    return {
-        "status": "queued",
-        "id": context.response_id,
-        "message": "Your request is queued behind the current response",
-    }
+def my_acceptor(request: CreateResponse, context: ResponseContext) -> ResponseObject:
+    return ResponseObject(
+        {
+            "id": context.response_id,
+            "object": "response",
+            "status": "queued",
+        }
+    )
 ```
+
+This is optional — the default queued envelope is fine for most agents. See
+the handler guide's
+[steering API](handler-implementation-guide.md#steering-api) for the hook
+mechanics.
 
 ## Configuration
 
@@ -262,12 +280,23 @@ mapping that evaporates on restart).
 
 ### Conversation chain identity
 
-`ResponseContext.conversation_chain_id: str` exposes the framework-computed
-conversation chain identifier — the stable id every turn in a multi-turn
-conversation shares (and the same value the framework uses internally to
-partition durable tasks). Handlers that wrap a stateful upstream framework
-(Copilot SDK, LangGraph, …) can use this as their upstream session
-id without allocating their own UUIDs:
+`ResponseContext.conversation_chain_id: str` is a **derived, stable chain
+identifier**: the framework computes it so that **every turn of the same
+conversation resolves to the same value**, and so it stays constant across all
+attempts of a turn (fresh, recovered, multiply-recovered). It is the same value
+the framework uses internally to partition durable tasks. Think of it as "the
+stable name of this conversation", not as any single request field.
+
+It's derived by anchoring to the conversation's root rather than to the current
+turn: a `conversation_id` (explicit conversation scope) or the head of a
+`previous_response_id` chain pins every turn to one identifier; a first turn that
+has neither falls back to its own `response_id` as the chain root. The point of
+the derivation is that pinning — so you get **one durable key per conversation**,
+not a new one per turn.
+
+Handlers that wrap a stateful upstream framework (Copilot SDK, LangGraph, …) can
+use it as their upstream session id — a convenient way to avoid allocating (and
+persisting) your own UUID, though you're free to use your own identifier:
 
 ```python
 session = await upstream_client.create_or_resume_session(
@@ -275,23 +304,20 @@ session = await upstream_client.create_or_resume_session(
 )
 ```
 
-The value is derived as follows (same rule the framework uses internally):
+What snapshot does the library hand you on recovery? It depends on your resume
+model (see [Choosing a resume strategy](#choosing-a-resume-strategy)):
 
-1. If the request has a `conversation_id`, return it.
-2. Else if `steerable_conversations=True` and the request has a
-   `previous_response_id`, return it (so every turn in a steerable conversation
-   returns the same value).
-3. Else return a deterministic derivative of `response_id` (so first-turn
-   handlers always get a non-None identity).
+- If you use **framework checkpoints** (`stream.checkpoint()`), the library
+  persists the response snapshot at `response.created`, at each checkpoint, and
+  at the terminal event — and exposes the **last** such snapshot on a recovered
+  entry as `context.persisted_response`. That snapshot is your watermark.
+- If your durable state lives in an **upstream framework/store**, the library
+  does not hold a useful in-flight snapshot of the crashed attempt — you build
+  the resumption response from the upstream's state.
 
-Stable across all attempts of a given task (fresh, recovered, multiply-recovered).
-
-There is intentionally no `last_snapshot` property. The library only persists
-the response object at `response.created` and at the terminal event — between
-those points it persists the SSE event stream (for client replay), not a
-running `ResponseObject`. So there is no useful "what did the prior attempt
-look like" snapshot for the library to hand you. The resumption response is
-your responsibility to compose from upstream state.
+Either way, the library never keeps a *running* snapshot of in-flight items
+between persistence points; what it persists is the SSE event stream (for
+client replay) plus the snapshot at each of the points above.
 
 ### Notes on `context.conversation_chain_metadata`
 
@@ -314,58 +340,94 @@ your responsibility to compose from upstream state.
 - Keep values JSON-serializable (strings, numbers, lists, dicts).
 - **DO NOT** store conversation history, LLM outputs, or any bulk data in metadata. Use the upstream framework's own storage (session JSONL, checkpoint DB, etc.) for that.
 
-## Building a Resumption Response
+## Choosing a resume strategy
 
-The resumption response is a `ResponseObject` you build on a recovered entry,
-reflecting only what is durably committed at your resumption point. It's
-constructed from:
+When the framework re-invokes your handler after a crash
+(`context.is_recovery == True`), how the recovered attempt resumes coherently is
+**your choice**, driven by one question: **where does your durable progress
+state live?**
 
-- The upstream framework's persisted state (Copilot session events,
-  LangGraph SqliteSaver checkpoints, your own custom store, etc.).
-- Your own metadata watermarks that disambiguate "we did this" from "we
-  didn't".
+| Where state lives | Strategy | On recovery |
+|---|---|---|
+| Nowhere (cheap to re-run) | **Naive re-run** | Do nothing recovery-specific; the whole turn re-runs. Correct, just duplicative — only unsafe if it repeats non-idempotent side effects. |
+| In the response snapshot | **Framework checkpoint** | Emit one `OutputItem` per phase + `yield stream.checkpoint()`. `context.persisted_response` is the last snapshot — seed the stream from it and resume past the items already there. |
+| In an upstream framework/store | **Upstream-owned** | Rebuild a resumption `ResponseObject` from the upstream's state (Copilot session, LangGraph checkpoint, your DB) and emit it as the reset. |
 
-You pass it to `ResponseEventStream(response=resumption_response)`. The
-handler's `response.in_progress` event then carries it as the client-visible
-reset point.
+Minimal skeletons (full templates are in the handler guide's
+[Durability section](handler-implementation-guide.md#durability)):
 
-The library cannot compose this for you — only you know which prior-attempt
-items your upstream framework actually committed. See the handler guide's
-[Resumption Response Construction](handler-implementation-guide.md#resumption-response-construction)
-for a worked example.
+```python
+# Framework checkpoint — state lives in the response snapshot
+if context.is_recovery and context.persisted_response is not None:
+    stream = ResponseEventStream(response=context.persisted_response,
+                                 response_id=context.response_id)
+    start = len(stream.response.output)          # resume past checkpointed phases
+else:
+    stream = ResponseEventStream(request=request, response_id=context.response_id)
+    start = 0
 
-## Crash Recovery
+# Upstream-owned — state lives in your framework/store
+resumption = build_response_from(upstream.load(context.conversation_chain_id))
+stream = ResponseEventStream(response=resumption, response_id=context.response_id)
+```
 
-Re-entry is governed by the recovery contract documented in the
-[handler guide's Durability section](handler-implementation-guide.md#durability).
-That document is the canonical mental model and the prescribed patterns.
-This section adds the configuration / API context.
+**Watermark overlay (composable — not a fourth strategy).** Independently of the
+strategy you pick: if your handler makes a **non-idempotent side effect** (sending
+a user message upstream, charging a card) that the upstream can't dedup for you,
+fence it with a metadata watermark so a recovered attempt doesn't repeat it:
+
+```python
+context.conversation_chain_metadata["sent_msg"] = True
+await context.conversation_chain_metadata.flush()   # durable BEFORE the side effect
+await upstream.send_message(...)                    # the non-idempotent call
+del context.conversation_chain_metadata["sent_msg"]
+await context.conversation_chain_metadata.flush()   # clear AFTER it durably committed
+```
+
+These compose: a handler may checkpoint its response output **and** watermark a
+non-response side effect in the same turn.
+
+## Crash recovery — what you get, what you owe
+
+Re-entry is governed by the recovery contract in the
+[handler guide's Durability section](handler-implementation-guide.md#durability)
+(the canonical mental model and worked templates). This section is the
+configuration / decision context.
 
 ### What you get on recovered entry
 
-- `context.is_recovery == True`
-- `context.conversation_chain_metadata` carrying whatever watermarks you stamped
-- The cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the cancel event is pre-set with the appropriate cause-boolean (`context.client_cancelled` for explicit cancel / non-bg disconnect; `context.shutdown.is_set()` for graceful shutdown; neither set for steering pressure) on re-entry.
-- The framework guarantees the response object is persisted **exactly once** at the first attempt's `response.created` and **exactly once** at the first attempt that reaches a terminal event. Subsequent attempts' `response.created` and terminal events are deduplicated by the framework keyed on `response_id`; you don't need to do anything special. The SSE event stream is persisted as you emit it (no dedup).
+- `context.is_recovery == True`, plus `context.persisted_response` — the last
+  durably-persisted snapshot (last `stream.checkpoint()`, else the
+  `response.created` snapshot, else `None`).
+- `context.conversation_chain_metadata` carrying whatever watermarks you stamped.
+- The cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the cancel surface is pre-set with the appropriate cause-boolean (`context.client_cancelled` for explicit cancel / non-bg disconnect; `context.shutdown.is_set()` for graceful shutdown; neither for steering pressure) on re-entry.
+- The framework persists the response object at `response.created`, at **each
+  successful `stream.checkpoint()`**, and at the terminal event; the
+  `response.created` and terminal writes are **deduplicated** across recovery
+  attempts keyed on `response_id`, so you never branch for them. The SSE event
+  stream is persisted as you emit it (no dedup) — except that a recovered
+  handler's re-emitted `response.created` is **not** re-appended to the
+  already-non-empty durable stream, so a replaying client sees `response.created`
+  exactly once.
 
-### What you owe on recovered entry
+### What you owe on recovered entry (only if you chose a non-naive strategy)
 
-- Build a resumption response from upstream framework state + your metadata.
-- Construct `ResponseEventStream(response=resumption_response)`.
-- Emit `response.in_progress` (this is the client-visible reset point).
-- Use the upstream framework's native resume / fork facility before any
-  side-effecting call.
-- Honour your watermarks: don't re-issue a side-effecting upstream call
-  whose watermark is still set from the prior attempt.
+- Seed or build your resumption response (framework-checkpoint: from
+  `context.persisted_response`; upstream-owned: from upstream state).
+- Emit `response.in_progress` early — it is the client-visible reset point.
+- For non-idempotent side effects without upstream idempotency, honour your
+  watermarks: don't re-issue a call whose watermark is still set from the prior
+  attempt.
 
 ### Naive opt-out
 
-A handler that does nothing recovery-specific still produces a correct
-response. The library accepts duplicate `response.created` events, treats
-the first non-empty `response.in_progress` after a duplicate as the reset
-point, and re-streams everything fresh. The only real risk is duplicating
-side effects against the upstream framework (LLM calls, session writes)
-— if you have any of those, you MUST adopt the recovery-aware pattern.
+A handler that does nothing recovery-specific still produces a correct response:
+it re-runs from scratch, the recovered stream's first client-visible event is a
+fresh `response.in_progress` (the duplicate `response.created` is suppressed at
+the durable stream), and everything re-streams. The one real risk is **repeating
+non-idempotent side effects** (a second upstream user message, a double charge) —
+if your handler has any, reach for the watermark overlay or a strategy that
+resumes past them.
 
 ## Checkpoint-driven recovery — one item per phase
 
@@ -526,7 +588,7 @@ final response but may render intermediate states incorrectly.
 When `background=false` (foreground streaming):
 
 - Response is tied to the HTTP connection lifetime.
-- If the server crashes: response is marked `failed` with `code=server_crashed`.
+- If the server crashes: response is marked `failed` with `code=server_error`.
 - The handler is NOT re-invoked (client is already disconnected).
 - Conversation lock still applies (prevents concurrent modifications).
 
@@ -561,29 +623,36 @@ output.
 
 ## Best Practices
 
-1. **Make `is_recovery` the first check.** A recovery-aware handler diverges
-   from a fresh handler at this branch — keep the divergence at the top of
-   the function so the two paths are easy to read in isolation.
+These are recommendations, not framework requirements — adapt them to your
+handler. (The genuine hard rules are few: a `ResponseEventStream` handler emits
+`response.created` then `response.in_progress` first and exactly one terminal
+event; a recovered streaming entry emits `response.in_progress` as the reset
+point; and clients supporting durable streams treat any later
+`response.in_progress` as a snapshot reset.)
 
-2. **Use upstream framework's resume facility.** Copilot SDK has
-   `create_session(session_id=...)` / `resume_session(session_id=...)`;
-   LangGraph has `SqliteSaver` checkpoints. Use them. Don't try to
-   recreate upstream state from your own metadata.
+1. **Keep the recovery branch easy to find.** A recovery-aware handler usually
+   diverges from a fresh handler near the top (`if context.is_recovery:`).
+   Branching early keeps the two paths readable — a readability tip, not a rule.
 
-3. **Watermark before side effects.** Stamp `context.conversation_chain_metadata`
-   with a "this side effect is in flight" flag (and
-   `await context.conversation_chain_metadata.flush()`) BEFORE calling an
-   upstream API that has observable side effects (sending a user
-   message, writing a checkpoint). Clear it AFTER the upstream
-   durably committed the result.
+2. **Prefer your upstream framework's own resume facility** when you have one.
+   Copilot SDK has `create_session(session_id=...)` / `resume_session(...)`;
+   LangGraph has `SqliteSaver` checkpoints. Reconstructing upstream state from
+   your own metadata is usually more work and more fragile.
 
-4. **Keep metadata small.** Watermarks, session IDs, checkpoint references.
-   Never bulk data.
+3. **Watermark non-idempotent side effects — when the upstream can't dedup them.**
+   If a recovered attempt could repeat an observable side effect (sending a user
+   message, charging a card) and the upstream offers no idempotency key or
+   "already done?" query, fence it: stamp + `flush()` `context.conversation_chain_metadata`
+   BEFORE the call, clear + `flush()` AFTER it durably commits. If the upstream is
+   already idempotent, or you use the framework-checkpoint model where the snapshot
+   is your side-effect boundary, you may not need this.
 
-5. **Honour the cancellation contract.** Recovery doesn't change the
+4. **Keep metadata small.** Watermarks, session IDs, checkpoint references —
+   never bulk data (it hits task-store payload limits and slows recovery).
+
+5. **Honour the cancellation contract on recovery.** Recovery doesn't change the
    cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation):
-   the same pre-entry / mid-stream / shutdown rules apply on recovered
-   entries.
+   the same pre-entry / mid-stream / shutdown rules apply on recovered entries.
 
 6. **Don't store secrets in metadata.** The task store persists it.
 
