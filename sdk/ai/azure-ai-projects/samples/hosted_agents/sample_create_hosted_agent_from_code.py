@@ -80,7 +80,7 @@ with (
                 cpu="0.5",
                 memory="1Gi",
                 code_configuration=CodeConfiguration(
-                    runtime="python_3_12",
+                    runtime="python_3_14",
                     entry_point=["python", "main.py"],
                     dependency_resolution=dependency_resolution,
                 ),
