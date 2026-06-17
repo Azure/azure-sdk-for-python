@@ -868,24 +868,15 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTP
     :keyword bool disable_redirect_cleanup: Opt out cleaning up sensitive headers when redirecting to another domain.
     """
 
-    DEFAULT_SENSITIVE_HEADERS = set(
-        [
-            "Authorization",
-            "x-ms-authorization-auxiliary",
-            "x-ms-copy-source",
-            "x-ms-copy-source-authorization",
-            "x-ms-rename-source",
-        ]
-    )
+    DEFAULT_SENSITIVE_HEADERS = {
+        "Authorization", "x-ms-authorization-auxiliary", "x-ms-copy-source", "x-ms-copy-source-authorization",
+        "x-ms-rename-source"
+    }
 
-    DEFAULT_SENSITIVE_QUERY_PARAMS = set(
-        [
-            "sig",
-        ]
-    )
+    DEFAULT_SENSITIVE_QUERY_PARAMS = {"sig"}
 
     def __init__(
-        self,
+        self,  # pylint: disable=unused-argument
         *,
         blocked_redirect_headers: Optional[List[str]] = None,
         blocked_query_params: Optional[List[str]] = None,
@@ -918,9 +909,9 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTP
             # Clean up request query parameters
             parsed = urlparse(request.http_request.url)
             kept = [
-                pair
-                for pair in parsed.query.split("&")
-                if pair and pair.split("=", 1)[0] not in self._blocked_query_params
+                f"{k}={v}"
+                for k, v in parse_qsl(parsed.query, keep_blank_values=True)
+                if k and k not in self._blocked_query_params
             ]
             request.http_request.url = urlunparse(parsed._replace(query="&".join(kept)))
 
