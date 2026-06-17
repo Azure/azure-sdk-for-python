@@ -74,8 +74,10 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
                 # double check because another coroutine may have acquired a token while we waited to acquire the lock
                 if self._token is None or self._need_new_token():
                     await self._request_token(*self._scopes)
-        bearer_token = cast(Union[AccessToken, AccessTokenInfo], self._token).token
-        request.http_request.headers["Authorization"] = "Bearer " + bearer_token
+        token = cast(Union[AccessToken, AccessTokenInfo], self._token)
+        request.http_request.headers["Authorization"] = "{} {}".format(
+            getattr(token, "token_type", "Bearer"), token.token
+        )
 
     async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
@@ -89,8 +91,10 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
 
         async with self._lock:
             await self._request_token(*scopes, **kwargs)
-        bearer_token = cast(Union[AccessToken, AccessTokenInfo], self._token).token
-        request.http_request.headers["Authorization"] = "Bearer " + bearer_token
+        token = cast(Union[AccessToken, AccessTokenInfo], self._token)
+        request.http_request.headers["Authorization"] = "{} {}".format(
+            getattr(token, "token_type", "Bearer"), token.token
+        )
 
     async def send(
         self, request: PipelineRequest[HTTPRequestType]

@@ -112,6 +112,22 @@ def test_bearer_policy_adds_header_access_token_info(http_request):
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_bearer_policy_adds_header_access_token_info_token_type(http_request):
+    """The bearer token policy should use the token type from AccessTokenInfo when available."""
+    expected_token = AccessTokenInfo("expected_token", 2524608000, token_type="pop")
+
+    def verify_authorization_header(request):
+        assert request.http_request.headers["Authorization"] == "pop {}".format(expected_token.token)
+        return Mock()
+
+    fake_credential = Mock(get_token=Mock(), get_token_info=Mock(return_value=expected_token))
+    policies = [BearerTokenCredentialPolicy(fake_credential, "scope"), Mock(send=verify_authorization_header)]
+
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+    pipeline.run(http_request("GET", "https://spam.eggs"))
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_bearer_policy_authorize_request_access_token_info(http_request):
     """The authorize_request method should add a header containing a token from its credential"""
     # 2524608000 == 01/01/2050 @ 12:00am (UTC)
