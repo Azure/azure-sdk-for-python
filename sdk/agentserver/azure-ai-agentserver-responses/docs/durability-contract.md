@@ -103,8 +103,10 @@ response store. If the response is **definitively absent** on recovery
 connection closed without ever returning a response id, so no client can
 fetch it — the framework MUST drop the durable execution (no
 re-invocation, no `response.*` stream events, no terminal write) and settle
-the task so the recovery scan does not re-select it. A transient/ambiguous
-store error is NOT a definitive absence and MUST NOT trigger a drop.
+the task so the recovery scan does not re-select it. This applies to **both
+`stream=false` and `stream=true`** durable background recovery — the gate
+runs before the stream-vs-non-stream dispatch. A transient/ambiguous store
+error is NOT a definitive absence and MUST NOT trigger a drop.
 
 ---
 
