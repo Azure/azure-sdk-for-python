@@ -214,3 +214,39 @@ async def test_same_item_id_reuse_is_stable(tmp_path: Path) -> None:
     out1 = _norm_output(await fil.get_response("r1"))
     out2 = _norm_output(await fil.get_response("r2"))
     assert out1 == out2 == [shared]
+
+
+# ---------------------------------------------------------------------------
+# FR-028-8 — no redundant per-response history.json; history lives in indexes
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_no_history_json_history_in_indexes(tmp_path: Path) -> None:
+    root = tmp_path / "store"
+    fil = FileResponseStore(storage_dir=root)
+    await fil.create_response(
+        _response("r1", output=[_output_item("o1")]),
+        None,
+        ["hist_a", "hist_b"],
+    )
+    # The redundant per-response history file is NOT written.
+    assert not (root / "responses" / "r1.history.json").exists()
+    # history_item_ids are persisted in indexes.json (the single source).
+    indexes = json.loads((root / "responses" / "r1.indexes.json").read_text())
+    assert indexes["history_item_ids"] == ["hist_a", "hist_b"]
+    # And history walking still resolves them.
+    resolved = await fil.get_history_item_ids("r1", None, 100)
+    assert "hist_a" in resolved and "hist_b" in resolved
+
+
+@pytest.mark.asyncio
+async def test_legacy_history_json_cleaned_on_create(tmp_path: Path) -> None:
+    root = tmp_path / "store"
+    (root / "responses").mkdir(parents=True)
+    # Simulate a pre-normalization stray history file.
+    stray = root / "responses" / "r1.history.json"
+    stray.write_text(json.dumps({"history_item_ids": ["stale"]}))
+    fil = FileResponseStore(storage_dir=root)
+    await fil.create_response(_response("r1", output=[_output_item("o1")]), None, ["fresh"])
+    assert not stray.exists()
