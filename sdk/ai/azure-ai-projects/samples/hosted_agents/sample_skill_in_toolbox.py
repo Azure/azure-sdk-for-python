@@ -19,7 +19,7 @@ DESCRIPTION:
 
     Skills and Toolboxes are currently preview features. In the Python SDK,
     you access these operations via `project_client.beta.skills` and
-    `project_client.beta.toolboxes`.
+    `project_client.toolboxes`.
 
 USAGE:
     python sample_skill_in_toolbox.py
@@ -68,7 +68,7 @@ with (
 ):
 
     try:
-        project_client.beta.toolboxes.delete(TOOLBOX_NAME)
+        project_client.toolboxes.delete(TOOLBOX_NAME)
     except ResourceNotFoundError:
         pass
 
@@ -92,7 +92,7 @@ with (
     )
     print(f"Created skill: {skill_version.name} version={skill_version.version}")
 
-    toolbox_version = project_client.beta.toolboxes.create_version(
+    toolbox_version = project_client.toolboxes.create_version(
         name=TOOLBOX_NAME,
         description="Toolbox exposing a shipping-cost skill.",
         tools=[ToolboxSearchPreviewTool()],
@@ -107,7 +107,6 @@ with (
         server_label="skill-toolbox",
         server_url=toolbox_mcp_url,
         authorization=token,
-        headers={"Foundry-Features": "Toolboxes=V1Preview"},
         require_approval="never",
     )
 
@@ -149,7 +148,7 @@ with (
 
     print(f"Response: {response.output_text}")
 
-    project_client.beta.toolboxes.delete(TOOLBOX_NAME)
+    project_client.toolboxes.delete(TOOLBOX_NAME)
     print("Toolbox deleted")
     project_client.beta.skills.delete(SKILL_NAME)
     print("Skill deleted")

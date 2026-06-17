@@ -14,7 +14,7 @@ DESCRIPTION:
     MCP `require_approval` setting from the fetched default version.
 
     Toolboxes are currently a preview feature. In the Python SDK, you access
-    these operations via `project_client.beta.toolboxes`.
+    these operations via `project_client.toolboxes`.
 
 USAGE:
     python sample_toolboxes_crud_async.py
@@ -60,7 +60,7 @@ async def main() -> None:
         toolbox_name = "toolbox_with_mcp_tool"
 
         try:
-            await project_client.beta.toolboxes.delete(toolbox_name)
+            await project_client.toolboxes.delete(toolbox_name)
             print(f"Toolbox `{toolbox_name}` deleted")
         except ResourceNotFoundError:
             pass
@@ -81,14 +81,14 @@ async def main() -> None:
             )
         ]
 
-        created = await project_client.beta.toolboxes.create_version(
+        created = await project_client.toolboxes.create_version(
             name=toolbox_name,
             description="Toolbox version with MCP require_approval set to 'never'.",
             tools=tools_with_mcp_approval_never,
         )
         print(f"Created toolbox: {created.name} with MCP tools requiring approval 'never' in version {created.version}")
 
-        created = await project_client.beta.toolboxes.create_version(
+        created = await project_client.toolboxes.create_version(
             name=toolbox_name,
             description="Toolbox version with MCP require_approval set to 'always'.",
             tools=tools_with_mcp_approval_always,
@@ -97,42 +97,42 @@ async def main() -> None:
             f"Created toolbox: {created.name} with MCP tools requiring approval 'always' in version {created.version}"
         )
 
-        updated = await project_client.beta.toolboxes.update(
+        updated = await project_client.toolboxes.update(
             name=toolbox_name,
             default_version="2",
         )
         print(f"Updated toolbox: {updated.name} default version is now {updated.default_version}")
 
-        fetched = await project_client.beta.toolboxes.get(name=toolbox_name)
+        fetched = await project_client.toolboxes.get(name=toolbox_name)
         print(f"Retrieved toolbox with default version: {fetched.default_version}")
-        fetched_version = await project_client.beta.toolboxes.get_version(
+        fetched_version = await project_client.toolboxes.get_version(
             name=toolbox_name,
             version=fetched.default_version,
         )
         print_mcp_require_approval(fetched_version.tools)
 
-        updated = await project_client.beta.toolboxes.update(
+        updated = await project_client.toolboxes.update(
             toolbox_name,
             default_version="1",
         )
         print(f"Updated toolbox: {updated.name} default version is now {updated.default_version}")
 
-        fetched = await project_client.beta.toolboxes.get(name=toolbox_name)
+        fetched = await project_client.toolboxes.get(name=toolbox_name)
         print(f"Retrieved toolbox with default version: {fetched.default_version}")
-        fetched_version = await project_client.beta.toolboxes.get_version(
+        fetched_version = await project_client.toolboxes.get_version(
             name=toolbox_name,
             version=fetched.default_version,
         )
         print_mcp_require_approval(fetched_version.tools)
 
         toolboxes = []
-        async for item in project_client.beta.toolboxes.list():
+        async for item in project_client.toolboxes.list():
             toolboxes.append(item)
         print(f"Found {len(toolboxes)} toolboxes")
         for item in toolboxes:
             print(f"  - {item.name} ({item.id})")
 
-        await project_client.beta.toolboxes.delete(name=toolbox_name)
+        await project_client.toolboxes.delete(name=toolbox_name)
         print("Toolbox deleted")
 
 

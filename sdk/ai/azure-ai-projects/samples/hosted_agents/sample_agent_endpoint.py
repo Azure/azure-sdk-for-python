@@ -65,7 +65,7 @@ with (
 
     agent = get_latest_active_agent_version(project_client, agent_name)
 
-    session = project_client.beta.agents.create_session(
+    session = project_client.agents.create_session(
         agent_name=agent_name,
         version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
@@ -82,7 +82,7 @@ with (
             protocols=[AgentEndpointProtocol.RESPONSES],
         )
 
-        patched_agent = project_client.beta.agents.patch_agent_details(
+        patched_agent = project_client.agents.patch_agent_details(
             agent_name=agent_name,
             agent_endpoint=endpoint_config,
         )
@@ -100,7 +100,7 @@ with (
         )
         print(f"Response output: {response.output_text}")
     finally:
-        project_client.beta.agents.delete_session(
+        project_client.agents.delete_session(
             agent_name=agent_name,
             session_id=session.agent_session_id,
         )

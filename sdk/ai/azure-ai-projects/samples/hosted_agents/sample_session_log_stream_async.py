@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to stream hosted agent session logs
-    using `project_client.beta.agents.get_session_log_stream` with the
+    using `project_client.agents.get_session_log_stream` with the
     asynchronous AIProjectClient.
 
     Sessions only work with Hosted Agents.
@@ -127,7 +127,7 @@ async def main():
         ) as project_client,
     ):
         agent = await get_latest_active_agent_version_async(project_client, agent_name)
-        session = await project_client.beta.agents.create_session(
+        session = await project_client.agents.create_session(
             agent_name=agent_name,
             version_indicator=VersionRefIndicator(agent_version=agent.version),
         )
@@ -142,7 +142,7 @@ async def main():
                 protocols=[AgentEndpointProtocol.RESPONSES],
             )
 
-            await project_client.beta.agents.patch_agent_details(
+            await project_client.agents.patch_agent_details(
                 agent_name=agent_name,
                 agent_endpoint=endpoint_config,
             )
@@ -160,7 +160,7 @@ async def main():
             print(f"Response output: {response.output_text}")
 
             print("Streaming session logs...")
-            raw_stream = await project_client.beta.agents.get_session_log_stream(
+            raw_stream = await project_client.agents.get_session_log_stream(
                 agent_name=agent_name,
                 agent_version=agent.version,
                 session_id=session.agent_session_id,
@@ -169,7 +169,7 @@ async def main():
                 print(f"SSE event: {frame.get('event')}")
                 print(f"SSE data: {frame.get('data')}\n")
         finally:
-            await project_client.beta.agents.delete_session(
+            await project_client.agents.delete_session(
                 agent_name=agent_name,
                 session_id=session.agent_session_id,
             )

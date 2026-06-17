@@ -10,19 +10,20 @@ There are a total of 134 unique public methods across all sub-clients.
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `agents` | AgentsOperations | 8 |
+| `agents` | AgentsOperations | 21 |
 | `evaluation_rules` | EvaluationRulesOperations | 4 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 9 |
 | `deployments` | DeploymentsOperations | 2 |
 | `indexes` | IndexesOperations | 5 |
 | `telemetry` | TelemetryOperations | 1 |
+| `toolboxes` | ToolboxesOperations | 8 |
 
 ### Nested Sub-clients (beta operations)
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `beta.agents` | BetaAgentsOperations | 18 |
+| `beta.agents` | BetaAgentsOperations | 5 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
 | `beta.evaluators` | BetaEvaluatorsOperations | 13 |
@@ -33,12 +34,11 @@ There are a total of 134 unique public methods across all sub-clients.
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
 | `beta.skills` | BetaSkillsOperations | 11 |
-| `beta.toolboxes` | BetaToolboxesOperations | 8 |
 
 
-## Method list table
+## Stable methods
 
-Alphabetically sorted, with ".beta" sub-client at the end. If the method is a new hand-written method, there will be an asterisk at the end.
+Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
 ```
 .agents.create_version
@@ -49,6 +49,19 @@ Alphabetically sorted, with ".beta" sub-client at the end. If the method is a ne
 .agents.get_version
 .agents.list
 .agents.list_versions
+.agents.create_session
+.agents.create_version_from_code
+.agents.delete_session
+.agents.delete_session_file
+.agents.download_code
+.agents.download_session_file
+.agents.get_session
+.agents.get_session_log_stream
+.agents.list_session_files
+.agents.list_sessions
+.agents.patch_agent_details
+.agents.stop_session
+.agents.upload_session_file*
 
 .connections.get*
 .connections.get_default*
@@ -80,24 +93,26 @@ Alphabetically sorted, with ".beta" sub-client at the end. If the method is a ne
 
 .telemetry.get_application_insights_connection_string*
 
+.toolboxes.create_version
+.toolboxes.delete
+.toolboxes.delete_version
+.toolboxes.get
+.toolboxes.get_version
+.toolboxes.list
+.toolboxes.list_versions
+.toolboxes.update
+```
+
+## Beta methods
+
+Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
+
+```
 .beta.agents.cancel_optimization_job
 .beta.agents.create_optimization_job
-.beta.agents.create_session
-.beta.agents.create_version_from_code
 .beta.agents.delete_optimization_job
-.beta.agents.delete_session
-.beta.agents.delete_session_file
-.beta.agents.download_code
-.beta.agents.download_session_file
 .beta.agents.get_optimization_job
-.beta.agents.get_session
-.beta.agents.get_session_log_stream
 .beta.agents.list_optimization_jobs
-.beta.agents.list_session_files
-.beta.agents.list_sessions
-.beta.agents.patch_agent_details
-.beta.agents.stop_session
-.beta.agents.upload_session_file*
 
 .beta.datasets.cancel_generation_job
 .beta.datasets.create_generation_job
@@ -184,13 +199,4 @@ Alphabetically sorted, with ".beta" sub-client at the end. If the method is a ne
 .beta.skills.list
 .beta.skills.list_versions
 .beta.skills.update
-
-.beta.toolboxes.create_version
-.beta.toolboxes.delete
-.beta.toolboxes.delete_version
-.beta.toolboxes.get
-.beta.toolboxes.get_version
-.beta.toolboxes.list
-.beta.toolboxes.list_versions
-.beta.toolboxes.update
 ```

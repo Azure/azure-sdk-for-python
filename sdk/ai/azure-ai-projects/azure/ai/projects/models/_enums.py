@@ -14,14 +14,8 @@ from azure.core import CaseInsensitiveEnumMeta
 class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
 
-    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
-    """HOSTED_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
-    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
-    """AGENT_ENDPOINT_V1_PREVIEW."""
-    CODE_AGENTS_V1_PREVIEW = "CodeAgents=V1Preview"
-    """CODE_AGENTS_V1_PREVIEW."""
     EXTERNAL_AGENTS_V1_PREVIEW = "ExternalAgents=V1Preview"
     """EXTERNAL_AGENTS_V1_PREVIEW."""
 
@@ -41,8 +35,6 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
     ROUTINES_V1_PREVIEW = "Routines=V1Preview"
     """ROUTINES_V1_PREVIEW."""
-    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
-    """TOOLBOXES_V1_PREVIEW."""
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
     DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"

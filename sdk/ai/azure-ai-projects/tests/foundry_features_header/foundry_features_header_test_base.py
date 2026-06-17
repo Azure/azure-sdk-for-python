@@ -43,10 +43,9 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "red_teams": "RedTeams=V1Preview",
     "routines": "Routines=V1Preview",
     "schedules": "Schedules=V1Preview",
-    "toolboxes": "Toolboxes=V1Preview",
     "skills": "Skills=V1Preview",
     "datasets": "DataGenerationJobs=V1Preview",
-    "agents": "HostedAgents=V1Preview,WorkflowAgents=V1Preview,AgentEndpoints=V1Preview,CodeAgents=V1Preview,ExternalAgents=V1Preview,AgentsOptimization=V2Preview",
+    "agents": "WorkflowAgents=V1Preview,ExternalAgents=V1Preview,AgentsOptimization=V2Preview",
 }
 
 # Methods on .beta sub-clients that are NOT simple one-HTTP-call wrappers and

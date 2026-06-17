@@ -63,14 +63,14 @@ with (
     ) as project_client,
 ):
     agent = get_latest_active_agent_version(project_client, agent_name)
-    session = project_client.beta.agents.create_session(
+    session = project_client.agents.create_session(
         agent_name=agent_name,
         version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
     print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
     try:
         # Upload and list session files
-        project_client.beta.agents.upload_session_file(
+        project_client.agents.upload_session_file(
             agent_name=agent_name,
             session_id=session.agent_session_id,
             content_or_file_path=data_file1,
@@ -78,7 +78,7 @@ with (
         )
 
         print(f"Uploading session file: {data_file2} -> {remote_file_path2}")
-        project_client.beta.agents.upload_session_file(
+        project_client.agents.upload_session_file(
             agent_name=agent_name,
             session_id=session.agent_session_id,
             content_or_file_path=data_file2,
@@ -86,7 +86,7 @@ with (
         )
 
         print("Listing session files for the session at path '.'...")
-        files = project_client.beta.agents.list_session_files(
+        files = project_client.agents.list_session_files(
             agent_name=agent_name,
             agent_session_id=session.agent_session_id,
             path="/remote",
@@ -96,7 +96,7 @@ with (
 
         print(f"Downloading and printing content from '{remote_file_path1}'")
         content_bytes = b"".join(
-            project_client.beta.agents.download_session_file(
+            project_client.agents.download_session_file(
                 agent_name=agent_name,
                 agent_session_id=session.agent_session_id,
                 path=remote_file_path1,
@@ -106,20 +106,20 @@ with (
         print(f"Session file content ({remote_file_path1}):\n{file_content}")
 
         print(f"Deleting session file at path: {remote_file_path1}...")
-        project_client.beta.agents.delete_session_file(
+        project_client.agents.delete_session_file(
             agent_name=agent_name,
             agent_session_id=session.agent_session_id,
             path=remote_file_path1,
         )
 
         print(f"Deleting session file at path: {remote_file_path2}...")
-        project_client.beta.agents.delete_session_file(
+        project_client.agents.delete_session_file(
             agent_name=agent_name,
             agent_session_id=session.agent_session_id,
             path=remote_file_path2,
         )
     finally:
-        project_client.beta.agents.delete_session(
+        project_client.agents.delete_session(
             agent_name=agent_name,
             session_id=session.agent_session_id,
         )

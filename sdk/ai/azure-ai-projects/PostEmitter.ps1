@@ -17,30 +17,6 @@
 # See GitHub issue: https://github.com/microsoft/typespec/issues/10311
 git restore pyproject.toml
 
-
-# Edit both _operations.py files to fix missing Foundry-Features HTTP request header in continued list paging calls. Add:
-#   headers=_headers
-# to the end of each of these lines in the BetaXxxOperations classes (do not do this in GA operations classes!)
-#   "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-# In emitted code, these first 7 of those lines are associated with GA operations, so start the replacement
-# from the 8th occurrence onward.
-$gaCount = 7
-$old = [char]34 + 'GET' + [char]34 + ', urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params'
-$new = $old + ', headers=_headers'
-foreach ($f in 'azure\ai\projects\aio\operations\_operations.py', 'azure\ai\projects\operations\_operations.py') {
-    $c = Get-Content $f -Raw
-    $parts = $c -split [regex]::Escape($old)
-    $r = $parts[0]
-    for ($i = 1; $i -lt $parts.Length; $i++) {
-        if ($i -le $gaCount) {
-            $r += $old + $parts[$i]
-        } else {
-            $r += $new + $parts[$i]
-        }
-    }
-    Set-Content $f $r -NoNewline
-}
-
 # Force streaming in get_session_log_stream for both sync and async operations.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
