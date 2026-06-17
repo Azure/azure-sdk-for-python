@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -43,6 +43,7 @@ from .operations import (
     GalleryScriptsOperations,
     GallerySharingProfileOperations,
     ImagesOperations,
+    InterconnectBlocksOperations,
     LogAnalyticsOperations,
     Operations,
     ProximityPlacementGroupsOperations,
@@ -71,6 +72,11 @@ from .operations import (
     VirtualMachineSizesOperations,
     VirtualMachinesOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -127,6 +133,8 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar capacity_reservations: CapacityReservationsOperations operations
     :vartype capacity_reservations:
      azure.mgmt.compute.aio.operations.CapacityReservationsOperations
+    :ivar interconnect_blocks: InterconnectBlocksOperations operations
+    :vartype interconnect_blocks: azure.mgmt.compute.aio.operations.InterconnectBlocksOperations
     :ivar virtual_machine_run_commands: VirtualMachineRunCommandsOperations operations
     :vartype virtual_machine_run_commands:
      azure.mgmt.compute.aio.operations.VirtualMachineRunCommandsOperations
@@ -315,6 +323,9 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.capacity_reservations = CapacityReservationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.interconnect_blocks = InterconnectBlocksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
