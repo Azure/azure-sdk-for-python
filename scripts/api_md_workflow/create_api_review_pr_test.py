@@ -56,8 +56,8 @@ class StubGithubApi:
             "html_url": "https://github.com/Azure/azure-sdk-for-python/pull/1",
         }
 
-    def request_reviewers(self, pr_number, reviewers):
-        self.reviewers.append((pr_number, reviewers))
+    def request_reviewers(self, pr_number, reviewers, team_reviewers=None):
+        self.reviewers.append((pr_number, reviewers, team_reviewers or []))
 
 
 class ApiReviewPrTests(unittest.TestCase):
@@ -366,6 +366,21 @@ class ApiReviewPrTests(unittest.TestCase):
                 ["tjprescott"],
             )
 
+    def test_architects_for_package_keeps_team_owners(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            architects_path = Path(temp_dir) / "ARCHITECTS"
+            architects_path.write_text(
+                "/sdk/keyvault/ @tjprescott @Azure/keyvault-arch\n",
+                encoding="utf-8",
+            )
+
+            self.assertEqual(
+                workflow.architects_for_package(
+                    "sdk/keyvault/azure-keyvault-keys", architects_path
+                ),
+                ["tjprescott", "Azure/keyvault-arch"],
+            )
+
     def test_assign_architects_to_pr_requests_matching_architects_as_reviewers(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             architects_path = Path(temp_dir) / "ARCHITECTS"
@@ -380,7 +395,7 @@ class ApiReviewPrTests(unittest.TestCase):
                     123, "sdk/keyvault/azure-keyvault-keys"
                 )
 
-            self.assertEqual(github.reviewers, [(123, ["tjprescott"])])
+            self.assertEqual(github.reviewers, [(123, ["tjprescott"], [])])
 
     def test_assign_uses_cached_architects(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -394,7 +409,35 @@ class ApiReviewPrTests(unittest.TestCase):
                     123, "sdk/keyvault/azure-keyvault-keys", architects=["l0lawrence"]
                 )
 
-            self.assertEqual(github.reviewers, [(123, ["l0lawrence"])])
+            self.assertEqual(github.reviewers, [(123, ["l0lawrence"], [])])
+
+    def test_assign_architects_to_pr_requests_team_reviewers(self):
+        github = StubGithubApi()
+        workflow.set_github_api_for_test(github)
+
+        workflow.assign_architects_to_pr(
+            123,
+            "sdk/keyvault/azure-keyvault-keys",
+            architects=["tjprescott", "Azure/keyvault-arch"],
+        )
+
+        self.assertEqual(
+            github.reviewers,
+            [(123, ["tjprescott"], ["keyvault-arch"])],
+        )
+
+    def test_assign_architects_to_pr_keeps_team_when_author_is_user(self):
+        github = StubGithubApi()
+        workflow.set_github_api_for_test(github)
+
+        workflow.assign_architects_to_pr(
+            123,
+            "sdk/keyvault/azure-keyvault-keys",
+            "tjprescott",
+            architects=["tjprescott", "Azure/keyvault-arch"],
+        )
+
+        self.assertEqual(github.reviewers, [(123, [], ["keyvault-arch"])])
 
     def test_assign_architects_to_pr_warns_when_architect_is_pr_author(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -462,13 +505,13 @@ class ApiReviewPrTests(unittest.TestCase):
             ),
             patch.object(workflow, "log_warning") as log_warning,
         ):
-                self.assertEqual(
-                    workflow.package_work_item_id("azure-example", "1.2.3b1"), "ERROR"
-                )
+            self.assertEqual(
+                workflow.package_work_item_id("azure-example", "1.2.3b1"), "ERROR"
+            )
 
         log_warning.assert_called_once()
         self.assertIn(
-                "PR body sync metadata will set packageWorkItemId to ERROR",
+            "PR body sync metadata will set packageWorkItemId to ERROR",
             log_warning.call_args.args[0],
         )
 

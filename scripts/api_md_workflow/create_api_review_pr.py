@@ -62,6 +62,12 @@ class BranchSelection:
     remote_ref: str | None
 
 
+@dataclass
+class ArchitectReviewers:
+    users: list[str]
+    teams: list[str]
+
+
 GitRunner = Callable[[list[str], bool], CommandResult]
 _git_runner: GitRunner | None = None
 _github_api: "GitHubApi | None" = None
@@ -299,27 +305,43 @@ query($query: String!, $first: Int!) {
             {"base": base, "head": head, "title": title, "body": body, "draft": True},
         )
 
-    def request_reviewers(self, pr_number: int, reviewers: list[str]) -> None:
+    def request_reviewers(
+        self,
+        pr_number: int,
+        reviewers: list[str],
+        team_reviewers: list[str] | None = None,
+    ) -> None:
         url = self._rest_url(
             f"/repos/{REPO_OWNER}/{REPO_NAME}/pulls/{pr_number}/requested_reviewers"
         )
+        payload: dict[str, Any] = {"reviewers": reviewers}
+        if team_reviewers:
+            payload["team_reviewers"] = team_reviewers
         log_info(
-            f"API review architect diagnostics: requesting PR reviewers at {url}: {reviewers}"
+            "API review architect diagnostics: requesting PR reviewers at "
+            f"{url}: reviewers={reviewers}, team_reviewers={team_reviewers or []}"
         )
         response = self._request(
             "POST",
             url,
-            {"reviewers": reviewers},
+            payload,
         )
         requested_reviewers = []
+        requested_teams = []
         if isinstance(response, dict):
             requested_reviewers = [
                 reviewer.get("login")
                 for reviewer in response.get("requested_reviewers", [])
                 if isinstance(reviewer, dict) and reviewer.get("login")
             ]
+            requested_teams = [
+                team.get("slug")
+                for team in response.get("requested_teams", [])
+                if isinstance(team, dict) and team.get("slug")
+            ]
         log_info(
-            f"API review architect diagnostics: GitHub response requested_reviewers={requested_reviewers}"
+            "API review architect diagnostics: GitHub response "
+            f"requested_reviewers={requested_reviewers}, requested_teams={requested_teams}"
         )
 
 
@@ -767,11 +789,24 @@ def codeowners_style_pattern_matches(pattern: str, path: str) -> bool:
     return False
 
 
-def github_user_from_owner(owner: str) -> str | None:
-    if not owner.startswith("@") or "/" in owner:
+def github_owner_from_owner(owner: str) -> str | None:
+    if not owner.startswith("@"):
         return None
-    user = owner[1:].strip()
-    return user or None
+    github_owner = owner[1:].strip()
+    return github_owner or None
+
+
+def architect_reviewers_from_owners(owners: list[str]) -> ArchitectReviewers:
+    users: list[str] = []
+    teams: list[str] = []
+    for owner in owners:
+        if "/" in owner:
+            _, team_slug = owner.split("/", 1)
+            if team_slug:
+                teams.append(team_slug)
+            continue
+        users.append(owner)
+    return ArchitectReviewers(users=users, teams=teams)
 
 
 def architects_for_package(
@@ -800,11 +835,13 @@ def architects_for_package(
         pattern = parts[0]
         if codeowners_style_pattern_matches(pattern, package_relative):
             matching_architects = [
-                user for owner in parts[1:] if (user := github_user_from_owner(owner))
+                owner
+                for candidate in parts[1:]
+                if (owner := github_owner_from_owner(candidate))
             ]
             log_info(
                 "API review architect diagnostics: "
-                f"matched ARCHITECTS pattern={pattern!r}, owners={parts[1:]}, users={matching_architects}"
+                f"matched ARCHITECTS pattern={pattern!r}, owners={parts[1:]}, resolved={matching_architects}"
             )
     log_info(
         f"API review architect diagnostics: resolved architects={matching_architects}"
@@ -1184,15 +1221,17 @@ def assign_architects_to_pr(
             f"no architects resolved for package_dir={package_dir}; skipping reviewer request"
         )
         return
+    resolved_reviewers = architect_reviewers_from_owners(architects)
     log_info(f"API review architect diagnostics: PR author login={pr_author_login}")
-    reviewers = architects
+    reviewers = resolved_reviewers.users
+    team_reviewers = resolved_reviewers.teams
     if pr_author_login:
         author_login = pr_author_login.lower()
         self_reviewers = [
-            architect for architect in architects if architect.lower() == author_login
+            architect for architect in reviewers if architect.lower() == author_login
         ]
         reviewers = [
-            architect for architect in architects if architect.lower() != author_login
+            architect for architect in reviewers if architect.lower() != author_login
         ]
         if self_reviewers:
             log_warning(
@@ -1200,16 +1239,20 @@ def assign_architects_to_pr(
                 f"skipping architect reviewer(s) on PR #{pr_number}: "
                 f"{', '.join('@' + user for user in self_reviewers)}"
             )
-        if not reviewers:
+        if not reviewers and not team_reviewers:
             log_warning(
                 "API review architect diagnostics: "
                 f"all resolved architects are the PR author; no reviewer request will be sent for PR #{pr_number}"
             )
             return
     try:
-        get_github_api().request_reviewers(pr_number, reviewers)
+        get_github_api().request_reviewers(pr_number, reviewers, team_reviewers)
+        requested_owners = [
+            *["@" + user for user in reviewers],
+            *["@" + REPO_OWNER + "/" + team for team in team_reviewers],
+        ]
         log_info(
-            f"Requested API review from architect(s) on PR #{pr_number}: {', '.join('@' + user for user in reviewers)}"
+            f"Requested API review from architect(s) on PR #{pr_number}: {', '.join(requested_owners)}"
         )
     except GitHubApiError as error:
         log_warning(
