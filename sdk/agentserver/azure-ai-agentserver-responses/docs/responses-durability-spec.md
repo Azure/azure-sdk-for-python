@@ -1448,6 +1448,46 @@ to disk atomically (write to tempfile + `os.replace()`). Production
 implementations (Foundry) MUST translate the HTTP 409 from
 double-`POST` into `ResponseAlreadyExistsError`.
 
+#### §16.2.1 — `FileResponseStore` on-disk layout (local dev, informative)
+
+The response-store **contract** above (operations + atomic envelope
+commit) is normative. The physical file layout below is specific to the
+local-dev `FileResponseStore` and is **not** binding on other
+implementations (Foundry uses its own storage); it is documented here
+because the file provider is part of the responses durability workstream.
+
+Under the store root, each item is persisted **exactly once**; the
+response envelope and conversations hold only pointers:
+
+```
+responses/
+    {response_id}.json        # envelope. output[] entries are pointer
+                              #   stubs {"$item_ref": <item_id>} for id'd
+                              #   items; id-less items stay inline.
+    {response_id}.indexes.json # ordered {input,output,history}_item_ids —
+                              #   the single place history_item_ids is read.
+    {response_id}.deleted     # soft-delete marker
+items/
+    {item_id}.json            # THE one copy of each item's content
+conversations/
+    {conversation_id}.json    # {response_ids: [...]}
+```
+
+- `get_items` / `get_input_items` / `get_history_item_ids` resolve content
+  and id lists from `items/` + `indexes.json`; `get_response` rehydrates
+  the envelope's pointer stubs from `items/`, returning a `ResponseObject`
+  whose `output[]` is byte-equal (content and order) to the in-memory
+  provider.
+- **Crash ordering.** Writers store every referenced item under `items/`
+  **before** the atomic envelope write. Items are immutable by id (re-stores
+  are idempotent same-content), so a crash exposes either the prior or the
+  new snapshot — **never** an envelope referencing a missing or
+  mid-mutated item. An unresolvable pointer on read is treated as transient
+  corruption (a non-`KeyError` storage error), **not** as the "definitively
+  absent" not-found that triggers the §7 recovery drop.
+- There is no per-response item directory and no separate `history.json`
+  (both were redundant copies of data already in `items/` / `indexes.json`).
+
 ### §16.3 — Stream event store
 
 Holds the ordered SSE event log per `response_id`. Operations:

@@ -237,12 +237,15 @@ the one-item-per-phase model):
   **This is the central guarantee of the one-item-per-phase pattern.**
 - **C2 — crash mid-checkpoint-write (provider-atomicity limitation).** The
   `FileResponseStore` provider commits the response envelope via an atomic
-  `os.replace`, so a crash during `update_response` exposes either the prior
-  committed snapshot or the newly committed one — **never a torn snapshot**.
-  Whether recovery sees N or N+1 items therefore depends on the provider's
-  commit point, not on a torn write. The contract guarantees *no corruption*;
-  it does NOT promise "prior snapshot only" for a mid-write crash with this
-  provider. No torn-write recovery is asserted.
+  `os.replace`, and writes each output item to the shared `items/` store
+  **before** the envelope (items-first). Items are immutable by id
+  (re-stores are idempotent same-content), so a crash during
+  `update_response` exposes either the prior committed snapshot or the newly
+  committed one — **never a torn snapshot** (and never an envelope pointing
+  at a missing item). Whether recovery sees N or N+1 items therefore depends
+  on the provider's commit point, not on a torn write. The contract
+  guarantees *no corruption*; it does NOT promise "prior snapshot only" for a
+  mid-write crash with this provider. No torn-write recovery is asserted.
 - **C4 — checkpoint after terminal.** A checkpoint event yielded after the
   terminal event is dropped (the terminal write is authoritative); no
   overwrite, no exception.
