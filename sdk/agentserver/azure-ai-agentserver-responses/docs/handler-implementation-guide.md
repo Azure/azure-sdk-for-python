@@ -645,7 +645,8 @@ yield stream.emit_created()
 yield stream.emit_in_progress()
 
 # Complete text — full value up-front
-yield from stream.output_item_message("Hello, world!")
+for evt in stream.output_item_message("Hello, world!"):
+    yield evt
 
 yield stream.emit_completed()
 ```
@@ -694,7 +695,8 @@ yield stream.emit_created()
 yield stream.emit_in_progress()
 
 args = json.dumps({"location": "Seattle"})
-yield from stream.output_item_function_call("get_weather", "call_1", args)
+for evt in stream.output_item_function_call("get_weather", "call_1", args):
+    yield evt
 
 yield stream.emit_completed()
 ```
@@ -746,7 +748,8 @@ When your handler itself executes a tool and includes the output in the response
 (no client round-trip):
 
 ```python
-yield from stream.output_item_function_call_output("call_weather_1", weather_json)
+for evt in stream.output_item_function_call_output("call_weather_1", weather_json):
+    yield evt
 ```
 
 Function call outputs have no deltas — only `output_item.added` and
@@ -764,10 +767,12 @@ yield stream.emit_created()
 yield stream.emit_in_progress()
 
 # Output 0: Reasoning
-yield from stream.output_item_reasoning_item("Let me think about this...")
+for evt in stream.output_item_reasoning_item("Let me think about this..."):
+    yield evt
 
 # Output 1: Message with the answer
-yield from stream.output_item_message("The answer is 42.")
+for evt in stream.output_item_message("The answer is 42."):
+    yield evt
 
 yield stream.emit_completed()
 ```
@@ -796,10 +801,12 @@ yield stream.emit_created()
 yield stream.emit_in_progress()
 
 # Output 0
-yield from stream.output_item_message("First message.")
+for evt in stream.output_item_message("First message."):
+    yield evt
 
 # Output 1
-yield from stream.output_item_message("Second message.")
+for evt in stream.output_item_message("Second message."):
+    yield evt
 
 yield stream.emit_completed()
 ```
@@ -839,20 +846,23 @@ avoid the builder ceremony entirely:
 
 ```python
 # Image generation — emits full lifecycle automatically
-yield from stream.output_item_image_gen_call(result_base64)
+for evt in stream.output_item_image_gen_call(result_base64):
+    yield evt
 
 # Structured outputs
-yield from stream.output_item_structured_outputs({"sentiment": "positive", "confidence": 0.95})
+for evt in stream.output_item_structured_outputs({"sentiment": "positive", "confidence": 0.95}):
+    yield evt
 
 # Message with annotations
 from azure.ai.agentserver.responses.models import FilePath, UrlCitationBody
-yield from stream.output_item_message(
+for evt in stream.output_item_message(
     "Here are your sources.",
     annotations=[
         FilePath(file_id="/reports/summary.pdf", index=0),
         UrlCitationBody(url="https://example.com", start_index=0, end_index=5, title="Link"),
     ],
-)
+):
+    yield evt
 ```
 
 All convenience generators have async variants (prefixed with `a`):
@@ -1845,7 +1855,8 @@ else:
 # ✅ Same event sequence for all modes
 yield stream.emit_created()
 yield stream.emit_in_progress()
-yield from stream.output_item_message("Hello!")
+for evt in stream.output_item_message("Hello!"):
+    yield evt
 yield stream.emit_completed()
 ```
 
@@ -1936,7 +1947,8 @@ async def handler(request, context, cancellation_signal):
 stream = ResponseEventStream(response_id=context.response_id, request=request)
 yield stream.emit_created()
 yield stream.emit_in_progress()
-yield from stream.output_item_message("Hello!")
+for evt in stream.output_item_message("Hello!"):
+    yield evt
 yield stream.emit_completed()
 
 # ✅ Use TextResponse — one line, same result
@@ -1997,7 +2009,8 @@ else:
 # ✅ Same event sequence regardless of mode
 yield stream.emit_created()
 yield stream.emit_in_progress()
-yield from stream.output_item_message("Hello!")
+for evt in stream.output_item_message("Hello!"):
+    yield evt
 yield stream.emit_completed()
 ```
 
