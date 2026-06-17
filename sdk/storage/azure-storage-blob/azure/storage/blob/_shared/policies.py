@@ -29,10 +29,10 @@ from azure.core.pipeline.policies import (
     RequestHistory,
     SansIOHTTPPolicy,
 )
-from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.transport import (
     HttpRequest as LegacyHttpRequest,
     HttpResponse as LegacyHttpResponse,
+    PipelineRequest,
 )
 from azure.core.rest import HttpRequest, HttpResponse
 
