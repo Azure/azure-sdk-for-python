@@ -708,7 +708,6 @@ class TestBaseExporter(unittest.TestCase):
             result = blob.put(envelopes_to_store)
 
             # ASSERT: put should return SUCCESS, not an error string
-            from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 
             self.assertEqual(
                 result,
