@@ -46,8 +46,9 @@ Storage layout under ``storage_dir``::
                                          #   for id'd items (id-less items
                                          #   stay inline). get_response
                                          #   rehydrates from items/.
-        {response_id}.history.json       # explicit history_item_ids
         {response_id}.indexes.json       # input/output/history id lists
+                                         #   (the only place history_item_ids
+                                         #   is read from)
         {response_id}.deleted            # soft-delete marker
     items/                               # THE single copy of each item
         {item_id}.json
@@ -231,9 +232,6 @@ class FileResponseStore(ResponseProviderProtocol):
     def _per_response_items_dir(self, response_id: str) -> Path:
         return self._responses_dir / f"{response_id}.items"
 
-    def _history_path(self, response_id: str) -> Path:
-        return self._responses_dir / f"{response_id}.history.json"
-
     def _indexes_path(self, response_id: str) -> Path:
         return self._responses_dir / f"{response_id}.indexes.json"
 
@@ -304,12 +302,12 @@ class FileResponseStore(ResponseProviderProtocol):
                     "history_item_ids": history_ids,
                 },
             )
-            # Maintain the explicit per-response history file for backwards
-            # compatibility with any external readers.
-            _atomic_write_json(
-                self._history_path(response_id),
-                {"history_item_ids": history_ids},
-            )
+            # (Spec 028) Best-effort removal of a legacy per-response
+            # history file from a pre-normalization layout — history_item_ids
+            # live in indexes.json (the only place any reader consults).
+            legacy_history = self._responses_dir / f"{response_id}.history.json"
+            if legacy_history.exists():
+                legacy_history.unlink()
 
             conversation_id = get_conversation_id(response)
             if conversation_id is not None:
