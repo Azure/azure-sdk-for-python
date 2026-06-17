@@ -1,3 +1,4 @@
+aiohttp==3.13.3
 astroid==4.0.4
 charset-normalizer==3.4.1
 dill==0.3.9
