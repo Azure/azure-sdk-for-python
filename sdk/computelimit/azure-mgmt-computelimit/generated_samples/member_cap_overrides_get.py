@@ -15,7 +15,7 @@ from azure.mgmt.computelimit import ComputeLimitMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computelimit
 # USAGE
-    python shared_limits_list.py
+    python member_cap_overrides_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.shared_limits.list_by_subscription_location_resource(
+    response = client.member_cap_overrides.get(
         location="eastus",
+        vm_family_name="StandardDSv3Family",
+        member_subscription_id="11111111-1111-1111-1111-111111111111",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: 2026-07-01/SharedLimits_List.json
+# x-ms-original-file: 2026-07-01/MemberCapOverrides_Get.json
 if __name__ == "__main__":
     main()
