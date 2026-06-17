@@ -41,16 +41,25 @@ processes will race on the underlying filesystem.
 Storage layout under ``storage_dir``::
 
     responses/
-        {response_id}.json               # envelope
+        {response_id}.json               # envelope; output[] entries are
+                                         #   pointer stubs {"$item_ref": id}
+                                         #   for id'd items (id-less items
+                                         #   stay inline). get_response
+                                         #   rehydrates from items/.
         {response_id}.history.json       # explicit history_item_ids
-        {response_id}.items/             # per-response input items
-            {item_id}.json
         {response_id}.indexes.json       # input/output/history id lists
         {response_id}.deleted            # soft-delete marker
-    items/                               # flat item index for get_items
+    items/                               # THE single copy of each item
         {item_id}.json
     conversations/                       # response_id list per conversation
         {conversation_id}.json
+
+Each item is persisted exactly once under ``items/``; the response
+envelope and conversations hold only pointers (spec 028). ``get_items``
+and ``get_input_items`` resolve item content from ``items/``;
+``get_response`` rehydrates the envelope's pointer stubs from the same
+store. Writers persist items **before** the pointerized envelope, so a
+crash can never leave the envelope referencing a missing item file.
 
 Atomic-write semantics mirror the pattern used by the durable task store's
 ``_local_provider.py``: write to a tempfile, then ``os.replace()`` it into
@@ -62,6 +71,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import os
+import shutil
 from copy import deepcopy
 from pathlib import Path
 from typing import Any, Iterable
@@ -70,6 +80,12 @@ from .._response_context import IsolationContext
 from ..models._generated import OutputItem, ResponseObject
 from ..models._helpers import get_conversation_id
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
+
+# Sentinel key marking an ``output[]`` entry as a pointer to an item stored
+# under ``items/{id}.json`` (spec 028). A real response output item is a typed
+# model that always carries at least a ``type`` field, so a dict whose ONLY
+# key is this sentinel is unambiguously a pointer stub.
+_ITEM_REF_KEY = "$item_ref"
 
 
 def _atomic_write_json(path: Path, data: dict[str, Any]) -> None:
@@ -267,11 +283,19 @@ class FileResponseStore(ResponseProviderProtocol):
             if deleted_marker.exists():
                 deleted_marker.unlink()
 
-            input_ids = self._store_items_unlocked(response_id, input_items or [])
+            # (Spec 028) Best-effort removal of any legacy per-response items
+            # directory from a pre-normalization layout — it is dead weight.
+            legacy_items = self._per_response_items_dir(response_id)
+            if legacy_items.exists():
+                shutil.rmtree(legacy_items, ignore_errors=True)
+
+            # Items first, pointerized envelope last: a crash can never leave
+            # the envelope referencing an item file that does not exist.
+            input_ids = self._store_items_unlocked(input_items or [])
             output_ids = self._store_output_items_unlocked(response)
             history_ids = list(history_item_ids) if history_item_ids is not None else []
 
-            _atomic_write_json(target, _response_to_dict(response))
+            _atomic_write_json(target, self._pointerize_output(_response_to_dict(response)))
             _atomic_write_json(
                 self._indexes_path(response_id),
                 {
@@ -310,7 +334,7 @@ class FileResponseStore(ResponseProviderProtocol):
             data = _read_json_or_none(self._response_path(response_id))
             if data is None:
                 raise KeyError(f"response '{response_id}' not found")
-            return _dict_to_response(deepcopy(data))
+            return _dict_to_response(deepcopy(self._rehydrate_output(data)))
 
     async def update_response(self, response: ResponseObject, *, isolation: IsolationContext | None = None) -> None:
         """Update a stored response envelope.
@@ -337,8 +361,10 @@ class FileResponseStore(ResponseProviderProtocol):
             if not target.exists():
                 raise KeyError(f"response '{response_id}' not found")
             response_dict = _response_to_dict(response)
-            _atomic_write_json(target, response_dict)
+            # Items first, pointerized envelope last (spec 028 — same
+            # crash-ordering invariant as create_response).
             output_ids = self._store_output_items_unlocked(response)
+            _atomic_write_json(target, self._pointerize_output(response_dict))
             self._update_indexes_unlocked(response_id, output_item_ids=output_ids)
 
     async def delete_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> None:
@@ -529,26 +555,20 @@ class FileResponseStore(ResponseProviderProtocol):
     # Internal helpers (must be called with self._lock held)
     # ------------------------------------------------------------------
 
-    def _store_items_unlocked(self, response_id: str, items: Iterable[Any]) -> list[str]:
-        """Persist items to per-response and global indices.
+    def _store_items_unlocked(self, items: Iterable[Any]) -> list[str]:
+        """Persist items to the single global ``items/`` store.
 
-        :param response_id: The owning response identifier.
-        :type response_id: str
         :param items: Iterable of items (each must expose an ``id``).
         :type items: Iterable[Any]
         :returns: Ordered list of stored item ids.
         :rtype: list[str]
         """
-        items_dir = self._per_response_items_dir(response_id)
-        items_dir.mkdir(parents=True, exist_ok=True)
         stored_ids: list[str] = []
         for item in items:
             iid = _item_id(item)
             if not iid:
                 continue
-            data = _serialize_item(item)
-            _atomic_write_json(items_dir / f"{iid}.json", data)
-            _atomic_write_json(self._global_item_path(iid), data)
+            _atomic_write_json(self._global_item_path(iid), _serialize_item(item))
             stored_ids.append(iid)
         return stored_ids
 
@@ -567,8 +587,73 @@ class FileResponseStore(ResponseProviderProtocol):
             output = response.get("output")
         if not output:
             return []
-        response_id = str(getattr(response, "id", None) or (response.get("id") if isinstance(response, dict) else ""))
-        return self._store_items_unlocked(response_id, output)
+        return self._store_items_unlocked(output)
+
+    @staticmethod
+    def _pointerize_output(envelope: dict[str, Any]) -> dict[str, Any]:
+        """Replace each id'd ``output[]`` item with a pointer stub.
+
+        Id'd items live (once) under ``items/``; the envelope keeps only a
+        ``{"$item_ref": id}`` stub in their place. Items without an ``id``
+        (which are not stored under ``items/``) are kept inline so they
+        survive the round-trip. Order and position are preserved.
+
+        :param envelope: The JSON-safe response envelope dict.
+        :type envelope: dict[str, Any]
+        :returns: A shallow copy of *envelope* with a pointerized ``output``.
+        :rtype: dict[str, Any]
+        """
+        output = envelope.get("output")
+        if not output or not isinstance(output, list):
+            return envelope
+        new_output: list[Any] = []
+        for entry in output:
+            iid = entry.get("id") if isinstance(entry, dict) else None
+            new_output.append({_ITEM_REF_KEY: iid} if iid else entry)
+        envelope = dict(envelope)
+        envelope["output"] = new_output
+        return envelope
+
+    def _rehydrate_output(self, envelope: dict[str, Any]) -> dict[str, Any]:
+        """Substitute ``output[]`` pointer stubs with item content from ``items/``.
+
+        Inverse of :meth:`_pointerize_output`. Non-stub entries (id-less
+        items, or legacy fully-inline items) are kept as-is, preserving
+        order and position.
+
+        :param envelope: The persisted response envelope dict.
+        :type envelope: dict[str, Any]
+        :returns: A shallow copy of *envelope* with ``output`` rehydrated.
+        :rtype: dict[str, Any]
+        :raises RuntimeError: If a pointer references an item file that is
+            missing. This is **not** a ``KeyError`` / not-found: the response
+            envelope exists (was durably created), so the durable recovery
+            prefetch must treat this as transient corruption, not as the
+            spec-026 "never persisted" drop signal.
+        """
+        output = envelope.get("output")
+        if not output or not isinstance(output, list):
+            return envelope
+        new_output: list[Any] = []
+        for entry in output:
+            if (
+                isinstance(entry, dict)
+                and set(entry.keys()) == {_ITEM_REF_KEY}
+                and isinstance(entry[_ITEM_REF_KEY], str)
+            ):
+                iid = entry[_ITEM_REF_KEY]
+                item = _read_json_or_none(self._global_item_path(iid))
+                if item is None:
+                    raise RuntimeError(
+                        f"FileResponseStore: response envelope references item "
+                        f"'{iid}' but items/{iid}.json is missing (store corruption)"
+                    )
+                new_output.append(item)
+            else:
+                new_output.append(entry)
+        envelope = dict(envelope)
+        envelope["output"] = new_output
+        return envelope
 
     def _update_indexes_unlocked(
         self,
