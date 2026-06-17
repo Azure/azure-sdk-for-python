@@ -137,7 +137,9 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider")
-    def test_initialize_with_credential(self, mock_meter_provider, mock_metric_reader, mock_exporter):
+    def test_initialize_with_credential(  # pylint: disable=unused-argument
+        self, mock_meter_provider, mock_metric_reader, mock_exporter
+    ):
         """Test that credential is passed through to the exporter during initialization."""
         mock_meter = Mock()
         mock_meter_provider_instance = Mock()
@@ -160,7 +162,9 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
     @patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.PeriodicExportingMetricReader")
     @patch("azure.monitor.opentelemetry.exporter.statsbeat.customer._manager.MeterProvider")
-    def test_initialize_without_credential(self, mock_meter_provider, mock_metric_reader, mock_exporter):
+    def test_initialize_without_credential(  # pylint: disable=unused-argument
+        self, mock_meter_provider, mock_metric_reader, mock_exporter
+    ):
         """Test that credential is not passed to the exporter when not provided."""
         mock_meter = Mock()
         mock_meter_provider_instance = Mock()
