@@ -3,8 +3,15 @@
 ## 12.31.0b1 (Unreleased)
 
 ### Features Added
-- Added support for service version 2026-10-06.- Added access tier information to the response of `BlobClient`'s `download_blob` API. The `blob_tier`, `blob_tier_inferred`,
-`blob_tier_change_time`, and `smart_access_tier` properties are now populated on the downloaded blob's `properties`.
+- Added support for service version 2026-10-06.
+- Added access tier information to the response of `BlobClient`'s `download_blob` API.
+The `blob_tier`, `blob_tier_inferred`, `blob_tier_change_time`, and `smart_access_tier`
+properties are now populated on the downloaded blob's `properties`.
+- The service-calculated CRC64 is now surfaced as `content_crc64` on the response of
+`BlobClient` upload operations (`stage_block`, `stage_block_from_url`, `upload_page`,
+`upload_pages_from_url`, `append_block`, `append_block_from_url`, `upload_blob`, and
+`upload_blob_from_url`) in addition to `content_md5` when a content MD5 is
+provided with the request.
 
 ## 12.30.0 (2026-06-08)
 
