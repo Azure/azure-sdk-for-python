@@ -1518,6 +1518,63 @@ class TestFoundryResultProcessor:
         # original == content here, so no separate audit field is needed.
         assert "original_value" not in messages[0]
 
+    def test_build_messages_preserves_non_string_payloads(self):
+        """Non-string ``converted_value`` payloads must survive unchanged.
+
+        PyRIT message pieces can carry structured / multimodal content
+        (e.g., bytes or list-of-parts payloads) on ``converted_value``.
+        ``content`` must pass those through so persisted conversations
+        remain a faithful record of what the target received; only the
+        ``original_value`` audit field is gated on both sides being text.
+        """
+        mock_scenario = MagicMock()
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_scenario,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        # Structured multimodal-style payload on converted_value, plain
+        # string objective on original_value.
+        structured_payload = [
+            {"type": "text", "text": "describe this image"},
+            {"type": "image_url", "image_url": {"url": "https://example/img.png"}},
+        ]
+        user_piece = MagicMock()
+        user_piece.api_role = "user"
+        user_piece.original_value = "Describe this image"
+        user_piece.converted_value = structured_payload
+        user_piece.sequence = 0
+        user_piece.prompt_metadata = {}
+        user_piece.labels = {}
+
+        # Bytes payload on assistant converted_value — must not be coerced
+        # to "" by str-gating logic.
+        assistant_piece = MagicMock()
+        assistant_piece.api_role = "assistant"
+        assistant_piece.original_value = None
+        assistant_piece.converted_value = b"\x89PNG\r\n"
+        assistant_piece.sequence = 1
+        assistant_piece.prompt_metadata = {}
+        assistant_piece.labels = {}
+
+        messages = processor._build_messages_from_pieces([user_piece, assistant_piece])
+
+        # Structured user payload passed through unchanged.
+        assert messages[0]["role"] == "user"
+        assert messages[0]["content"] is structured_payload
+        # Audit field omitted: content is non-text so cross-type comparison
+        # against the str original would be meaningless.
+        assert "original_value" not in messages[0]
+
+        # Bytes assistant payload preserved (not silently dropped to "").
+        assert messages[1]["role"] == "assistant"
+        assert messages[1]["content"] == b"\x89PNG\r\n"
+        assert "original_value" not in messages[1]
+
     def test_get_prompt_group_id_from_conversation(self):
         """Test extracting prompt_group_id from conversation."""
         mock_scenario = MagicMock()

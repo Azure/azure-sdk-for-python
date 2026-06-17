@@ -357,11 +357,16 @@ class FoundryResultProcessor:
             # ``original_value`` on the same message so consumers can still
             # display / score against the decoded text without losing fidelity
             # of the actual attack surface.
+            #
+            # ``converted_value`` / ``original_value`` are passed through
+            # without forcing them to ``str`` so non-text payloads (bytes,
+            # structured / multimodal content) survive unchanged. ``content``
+            # falls back to ``""`` only when both fields are falsy / missing.
             original = getattr(piece, "original_value", None)
             converted = getattr(piece, "converted_value", None)
-            if isinstance(converted, str) and converted:
+            if converted:
                 content = converted
-            elif isinstance(original, str) and original:
+            elif original:
                 content = original
             else:
                 content = ""
@@ -375,10 +380,13 @@ class FoundryResultProcessor:
             # transmitted content. This keeps the audit trail intact: callers
             # can compare ``content`` (what the target saw) with
             # ``original_value`` (what the attack meant to say) for every
-            # encoding-based strategy.
+            # encoding-based strategy. Restricted to strings because the
+            # audit field is only meaningful when both values are textual
+            # (and arbitrary cross-type inequality would be too aggressive).
             if (
                 isinstance(original, str)
                 and original
+                and isinstance(content, str)
                 and original != content
             ):
                 message["original_value"] = original
