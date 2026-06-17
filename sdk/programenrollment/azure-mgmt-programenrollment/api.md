@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.programenrollment
 
-    class azure.mgmt.programenrollment.ProgramEnrollmentClient: implements ContextManager 
+    class azure.mgmt.programenrollment.ProgramEnrollmentMgmtClient: implements ContextManager 
         edu_enrollments: EduEnrollmentsOperations
         operations: Operations
 
@@ -30,7 +30,7 @@ namespace azure.mgmt.programenrollment
 
 namespace azure.mgmt.programenrollment.aio
 
-    class azure.mgmt.programenrollment.aio.ProgramEnrollmentClient: implements AsyncContextManager 
+    class azure.mgmt.programenrollment.aio.ProgramEnrollmentMgmtClient: implements AsyncContextManager 
         edu_enrollments: EduEnrollmentsOperations
         operations: Operations
 

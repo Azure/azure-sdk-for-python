@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.ProgramEnrollment": "2026-03-01-preview"
   },
-  "commit": "9a84af9201f37ad7c221b42652c4e04f0d8473f3",
+  "commit": "c8c51661d65b46a2d527bde080c4bac88f6d2096",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/programenrollment/resource-manager/Microsoft.ProgramEnrollment/ProgramEnrollment",
   "emitterVersion": "0.63.1",

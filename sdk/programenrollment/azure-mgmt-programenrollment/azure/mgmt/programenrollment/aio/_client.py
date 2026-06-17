@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import ProgramEnrollmentClientConfiguration
+from ._configuration import ProgramEnrollmentMgmtClientConfiguration
 from .operations import EduEnrollmentsOperations, Operations
 
 if sys.version_info >= (3, 11):
@@ -31,8 +31,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ProgramEnrollmentClient:
-    """ProgramEnrollmentClient.
+class ProgramEnrollmentMgmtClient:
+    """ProgramEnrollmentMgmtClient.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.programenrollment.aio.operations.Operations
@@ -71,7 +71,7 @@ class ProgramEnrollmentClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ProgramEnrollmentClientConfiguration(
+        self._config = ProgramEnrollmentMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

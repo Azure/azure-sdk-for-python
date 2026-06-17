@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.programenrollment import ProgramEnrollmentClient
+from azure.mgmt.programenrollment import ProgramEnrollmentMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.programenrollment import ProgramEnrollmentClient
 
 
 def main():
-    client = ProgramEnrollmentClient(
+    client = ProgramEnrollmentMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
