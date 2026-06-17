@@ -161,7 +161,7 @@ class TestChangelogExecution:
 
     All tests in this class patch ``_is_chronus_installed`` to return True
     so the installation check is bypassed.  Chronus is invoked via the
-    pinned binary at ``.github/chronus/node_modules/.bin/chronus``.
+    pinned binary at ``.github/node_modules/.bin/chronus``.
     """
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
@@ -303,7 +303,7 @@ class TestResolvePackage:
         mock_get_pkg.return_value = SimpleNamespace(name="azure-core")
         result = changelog._resolve_package("sdk/core/azure-core")
         assert result == "azure-core"
-        mock_get_pkg.assert_called_once_with("sdk/core/azure-core", REPO_ROOT)
+        mock_get_pkg.assert_called_once_with(os.path.join(REPO_ROOT, "sdk/core/azure-core"), REPO_ROOT)
 
     @patch("azpysdk.changelog.get_package_from_repo")
     def test_bare_name_resolves(self, mock_get_pkg):
@@ -356,9 +356,9 @@ class TestEnsureChronusInstalled:
         mock_call.assert_called_once()
         cmd = mock_call.call_args[0][0]
         assert cmd == ["/usr/bin/npm", "ci"]
-        # And it must run from the .github/chronus directory, not repo root.
+        # And it must run from the .github directory, not repo root.
         _, kwargs = mock_call.call_args
-        assert kwargs["cwd"].endswith(os.path.join(".github", "chronus"))
+        assert kwargs["cwd"].endswith(".github")
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=False)
     @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npm")

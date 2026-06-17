@@ -28,6 +28,7 @@ from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
+    _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
     _AZURE_MONITOR_DISTRO_VERSION_ARG,
     _APPLICATIONINSIGHTS_AUTHENTICATION_STRING,
     _INVALID_STATUS_CODES,
@@ -458,10 +459,32 @@ class BaseExporter:
                         else:
                             redirect_has_headers = False
                         if redirect_has_headers and url.scheme and url.netloc:  # pylint: disable=E0606
-                            # Change the host to the new redirected host
-                            self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
-                            # Attempt to export again
-                            result = self._transmit(envelopes, _skip_rate_limit=True)
+                            current_url = urlparse(self.client._config.host)  # pylint: disable=W0212
+                            # Refuse cross-origin redirects so an attacker-controlled
+                            # `Location` header cannot cause the auth policy to attach
+                            # a freshly-signed Authorization header for a foreign host
+                            # on the recursive _transmit call.
+                            if not self._is_same_registered_domain(current_url.netloc, url.netloc):
+                                if not self._is_stats_exporter():
+                                    if self._should_collect_customer_sdkstats():
+                                        track_dropped_items(
+                                            envelopes,
+                                            DropCode.CLIENT_EXCEPTION,
+                                            _exception_categories.CLIENT_EXCEPTION.value,
+                                        )
+                                    logger.error(
+                                        "Refusing cross-origin redirect to %s://%s.",
+                                        url.scheme,
+                                        url.netloc,
+                                    )
+                                result = ExportResult.FAILED_NOT_RETRYABLE
+                            else:
+                                # Change the host to the new redirected host
+                                self.client._config.host = "{}://{}".format(
+                                    url.scheme, url.netloc
+                                )  # pylint: disable=W0212
+                                # Attempt to export again
+                                result = self._transmit(envelopes, _skip_rate_limit=True)
                         else:
                             if not self._is_stats_exporter():
                                 if self._should_collect_customer_sdkstats():
@@ -610,6 +633,46 @@ class BaseExporter:
 
     def _is_customer_sdkstats_exporter(self):
         return getattr(self, "_is_customer_sdkstats", False)
+
+    def _is_same_registered_domain(self, current_netloc: str, redirect_netloc: str) -> bool:
+        """Return True if the redirect target is safe to follow.
+
+        Used to gate redirects so an attacker-controlled ``Location`` header
+        cannot cause the exporter (and its credential-bearing pipeline) to
+        send telemetry and the Authorization header to an unrelated host.
+
+        A redirect is permitted only when the target equals the currently
+        configured host exactly, or when both the current host and the
+        redirect target are under one of the known Azure Monitor ingestion
+        host suffixes (see ``_ALLOWED_REDIRECT_DOMAIN_SUFFIXES``). Customers
+        with a custom (non-Azure) ingestion host will therefore not have
+        server-issued cross-host redirects followed; such deployments should
+        configure their proxy to terminate redirects locally.
+
+        :param str current_netloc: The netloc of the currently-configured ingestion endpoint.
+        :param str redirect_netloc: The netloc of the redirect target from the server's location header.
+        :return: True if the redirect target is considered safe to follow.
+        :rtype: bool
+        """
+
+        def _host(netloc: str) -> str:
+            return netloc.split("@")[-1].split(":")[0].lower().rstrip(".")
+
+        if not current_netloc or not redirect_netloc:
+            return False
+        current_host = _host(current_netloc)
+        redirect_host = _host(redirect_netloc)
+        if not current_host or not redirect_host:
+            return False
+        # Exact host match is always safe.
+        if current_host == redirect_host:
+            return True
+        # Otherwise both hosts must live under the same trusted Azure Monitor
+        # ingestion suffix.
+        for suffix in _ALLOWED_REDIRECT_DOMAIN_SUFFIXES:
+            if current_host.endswith(suffix) and redirect_host.endswith(suffix):
+                return True
+        return False
 
 
 def _is_invalid_code(response_code: Optional[int]) -> bool:

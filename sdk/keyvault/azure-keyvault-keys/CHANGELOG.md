@@ -1,6 +1,6 @@
 # Release History
 
-## 4.12.0b2 (Unreleased)
+## 4.12.0b3 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,14 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 4.12.0b2 (2026-05-29)
+
+### Features Added
+
+- Added the `ExternalKey` model and the new `KeyClient.create_external_key` method
+  for registering a Key Vault key whose material is held in an external HSM [#47200](https://github.com/Azure/azure-sdk-for-python/pull/47200).
+- Added the `KeyProperties.external_key` read-only property.
 
 ## 4.12.0b1 (2026-05-26)
 

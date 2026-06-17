@@ -36,7 +36,6 @@ def main():
         cluster_name="cache1",
         parameters={
             "properties": {
-                "forceMigrate": True,
                 "skipDataMigration": True,
                 "sourceResourceId": "/subscriptions/e7b5a9d2-6b6a-4d2f-9143-20d9a10f5b8f/resourceGroups/rg1/providers/Microsoft.Cache/redis/cache1",
                 "sourceType": "AzureCacheForRedis",
@@ -47,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/RedisEnterpriseMigrationStart.json
+# x-ms-original-file: 2026-02-01-preview/RedisEnterpriseMigrationStart.json
 if __name__ == "__main__":
     main()

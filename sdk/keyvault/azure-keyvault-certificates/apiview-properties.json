@@ -31,6 +31,7 @@
         "azure.keyvault.certificates._generated.models.KeyVaultErrorError": "KeyVaultError.error.anonymous",
         "azure.keyvault.certificates._generated.models.LifetimeAction": "KeyVault.LifetimeAction",
         "azure.keyvault.certificates._generated.models.OrganizationDetails": "KeyVault.OrganizationDetails",
+        "azure.keyvault.certificates._generated.models.PlatformManaged": "KeyVault.PlatformManaged",
         "azure.keyvault.certificates._generated.models.SecretProperties": "KeyVault.SecretProperties",
         "azure.keyvault.certificates._generated.models.SubjectAlternativeNames": "KeyVault.SubjectAlternativeNames",
         "azure.keyvault.certificates._generated.models.Trigger": "KeyVault.Trigger",
@@ -94,5 +95,6 @@
         "azure.keyvault.certificates._generated.aio.KeyVaultClient.purge_deleted_certificate": "KeyVault.purgeDeletedCertificate",
         "azure.keyvault.certificates._generated.KeyVaultClient.recover_deleted_certificate": "KeyVault.recoverDeletedCertificate",
         "azure.keyvault.certificates._generated.aio.KeyVaultClient.recover_deleted_certificate": "KeyVault.recoverDeletedCertificate"
-    }
+    },
+    "CrossLanguageVersion": "62e5a7e522bd"
 }

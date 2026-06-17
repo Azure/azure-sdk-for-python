@@ -4,6 +4,11 @@
 
 ### Features Added
 
+## 12.25.0 (2026-06-08)
+
+### Features Added
+- Stable release of features from 12.25.0b1
+
 ## 12.24.0 (2026-05-14)
 
 ### Features Added
@@ -18,7 +23,7 @@ basis and with retries. Prior to this fix logging may have not behaved as expect
 
 ### Features Added
 - Added support for service version 2026-06-06.
-- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes
 for `DataLakeServiceClient`, `FileSystemClient`, `DataLakeDirectoryClient`, and `DataLakeFileClient`.
 - Added support for `DataLakeDirectoryClient` and `DataLakeFileClient`'s `set_tags` and `get_tags` APIs
 to conditionally set and get tags associated with a directory or file client, respectively.
@@ -30,15 +35,15 @@ to conditionally set and get tags associated with a directory or file client, re
 
 ### Features Added
 - Added support for service version 2026-04-06.
-- Added support for the keyword `user_delegation_tid` to `DataLakeServiceClient.get_user_delegation_key` 
-API, which can be used in `generate_file_system_sas`, `generate_directory_sas`, and `generate_file_sas` 
-to specify the Tenant ID that is authorized to use the generated SAS URL. Note that `user_delegation_tid` 
+- Added support for the keyword `user_delegation_tid` to `DataLakeServiceClient.get_user_delegation_key`
+API, which can be used in `generate_file_system_sas`, `generate_directory_sas`, and `generate_file_sas`
+to specify the Tenant ID that is authorized to use the generated SAS URL. Note that `user_delegation_tid`
 must be used together with `user_delegation_oid`.
-- Added support for the keyword `request_headers` to `generate_file_system_sas`, `generate_directory_sas`, 
-and `generate_file_sas` which specifies a set of headers and their corresponding values that 
+- Added support for the keyword `request_headers` to `generate_file_system_sas`, `generate_directory_sas`,
+and `generate_file_sas` which specifies a set of headers and their corresponding values that
 must be present in the request header when using the generated SAS.
-- Added support for the keyword `request_query_params` to `generate_file_system_sas`, `generate_directory_sas`, 
-and `generate_file_sas` which specifies a set of query parameters and their corresponding values that 
+- Added support for the keyword `request_query_params` to `generate_file_system_sas`, `generate_directory_sas`,
+and `generate_file_sas` which specifies a set of query parameters and their corresponding values that
 must be present in the request URL when using the generated SAS.
 
 ### Other Changes
@@ -65,9 +70,9 @@ significantly better throughput on large file downloads for most environments.
 - Added the ability to skip auto decompression on `DataLakeFileClient.download_file` via the `decompress` keyword.
 
 ### Other Changes
-- Migrated any previously documented `kwarg` arguments to be named keywords. 
+- Migrated any previously documented `kwarg` arguments to be named keywords.
 Some public types may have been adjusted if they were previously erroneous or incomplete.
-- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`,
 and let the `AttributeError` raise directly.
 
 ## 12.22.0 (2025-10-15)
@@ -76,7 +81,7 @@ and let the `AttributeError` raise directly.
 - Stable release of features from 12.22.0b1
 
 ### Other Changes
-- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`,
 and let the `AttributeError` raise directly.
 
 ## 12.21.0 (2025-07-16)
@@ -95,7 +100,7 @@ This version and all future versions will require Python 3.9+. Python 3.8 is no 
 
 ### Features Added
 - Added support for service version 2025-07-05.
-- Added support for OAuth authentication in `FileSystemClient`'s `get_file_system_access_policy` 
+- Added support for OAuth authentication in `FileSystemClient`'s `get_file_system_access_policy`
 and `set_file_system_access_policy` APIs.
 - Added support for progress tracking to `DataLakeFileClient`'s `upload_data` and `download_file`
 APIs via a new optional callback, `progress_hook`.

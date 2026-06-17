@@ -65,6 +65,25 @@ pip install azure-search-documents
 * Custom HTTP requests (SearchIndexClient): [sample_index_client_custom_request.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_index_client_custom_request.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_index_client_custom_request_async.py))
 * Knowledge base agentic retrieval: [sample_agentic_retrieval.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_agentic_retrieval.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_agentic_retrieval_async.py))
 
+### Preview samples (2026-05-01-preview)
+
+The following samples target an `azure-search-documents` build whose default API version is `2026-05-01-preview`. Behavior of preview APIs may change before GA.
+
+Knowledge base and retrieval:
+
+* Knowledge base preview configuration (CORS, model, retrieval defaults): [sample_knowledge_base_configuration_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_base_configuration_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_base_configuration_preview_async.py))
+* Retrieve response (activity model_name, Purview labels, output modes): [sample_knowledge_retrieval_response_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_retrieval_response_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_retrieval_response_preview_async.py))
+* Service stats with knowledge base / source counters: [sample_knowledge_service_stats_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_service_stats_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_service_stats_preview_async.py))
+* Source attach-time defaults (`enable_freshness`, `enable_image_serving`): [sample_knowledge_source_freshness_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_freshness_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_freshness_preview_async.py))
+
+Knowledge source kinds:
+
+* File knowledge source: [sample_knowledge_source_file_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_file_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_file_preview_async.py))
+* MCP server knowledge source: [sample_knowledge_source_mcp_server_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_mcp_server_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_mcp_server_preview_async.py))
+* WorkIQ knowledge source: [sample_knowledge_source_workiq_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_workiq_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_workiq_preview_async.py))
+* Fabric ontology knowledge source: [sample_knowledge_source_fabric_ontology_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_fabric_ontology_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_fabric_ontology_preview_async.py))
+* Fabric data agent knowledge source: [sample_knowledge_source_fabric_data_agent_preview.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_fabric_data_agent_preview.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/search/azure-search-documents/samples/sample_knowledge_source_fabric_data_agent_preview_async.py))
+
 ## Next steps
 
 Check out the [Azure AI Search REST API reference](https://learn.microsoft.com/rest/api/searchservice/)
