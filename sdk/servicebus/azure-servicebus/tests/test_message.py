@@ -415,7 +415,7 @@ def test_servicebus_received_message_from_bytes():
     # Validate application properties
     assert received.raw_amqp_message.application_properties == {b"custom_prop": b"custom_value"}
 
-    # Validate settled state (from_bytes creates settled messages)
+    # This payload carries no delivery-annotations lock token, so lock_token is None.
     assert received.lock_token is None
 
 
@@ -465,6 +465,53 @@ def test_servicebus_received_message_from_bytes_sequence_body():
     assert received.body_type == AmqpMessageBodyType.SEQUENCE
     # Confirm the decoded sequence contents round-trip, not just the body type.
     assert list(received.body) == [1, 2, 3]
+
+
+def test_servicebus_received_message_from_bytes_raises_for_none():
+    """Test from_bytes raises a clear TypeError for non-bytes input."""
+    with pytest.raises(TypeError, match="message must be bytes"):
+        ServiceBusReceivedMessage.from_bytes(None)  # type: ignore[arg-type]
+
+
+def test_servicebus_received_message_from_bytes_raises_for_empty_payload():
+    """Test from_bytes rejects empty payloads with a clear ValueError."""
+    with pytest.raises(ValueError, match="message cannot be empty"):
+        ServiceBusReceivedMessage.from_bytes(b"")
+
+
+def test_servicebus_received_message_from_bytes_raises_for_invalid_payload():
+    """Test from_bytes wraps decode failures from malformed bytes in a chained ValueError.
+
+    Garbage bytes make the AMQP decoder raise low-level errors (e.g. ``TypeError`` /
+    ``IndexError``); ``from_bytes`` must surface a clear ``ValueError`` instead of
+    leaking those, and chain the original cause for diagnosability.
+    """
+    with pytest.raises(ValueError, match="not a valid AMQP") as exc_info:
+        ServiceBusReceivedMessage.from_bytes(b"\x01\x02\x03\x04")
+    assert exc_info.value.__cause__ is not None
+
+
+def test_servicebus_received_message_from_bytes_preserves_broker_metadata():
+    """Test from_bytes preserves broker metadata carried in the payload.
+
+    The payload's delivery-annotations carry ``x-opt-lock-token`` and its
+    message-annotations carry ``x-opt-sequence-number`` / ``x-opt-enqueued-time`` /
+    ``x-opt-locked-until``. Those properties must therefore be populated rather than
+    ``None``. This is a regression guard against forcing ``RECEIVE_AND_DELETE`` on
+    reconstruction, which would mark the message settled and suppress ``lock_token``
+    and ``locked_until_utc``.
+    """
+    # Real AMQP payload captured from the Azure Functions host in issue #43979.
+    payload = b'\x00Sp\xc0\x0b\x05@@pH\x19\x08\x00@R\x01\x00Sq\xc1$\x02\xa3\x10x-opt-lock-token\x98\xfcS\xa1_\xddfIO\x82]\xee\x1b|4<\xfb\x00Sr\xc1U\x06\xa3\x13x-opt-enqueued-time\x83\x00\x00\x01\x8ev\xc7\xdb\xc8\xa3\x15x-opt-sequence-numberU\x0c\xa3\x12x-opt-locked-until\x83\x00\x00\x01\x8ev\xc8\xc67\x00Ss\xc0?\r\xa1 f00d2a33551440389d68e299d31adc7c@@@@@@@\x83\x00\x00\x01\x8e\xbe\xe0\xe3\xc8\x83\x00\x00\x01\x8ev\xc7\xdb\xc8@@@\x00Su\xa0\x05hello'
+
+    received = ServiceBusReceivedMessage.from_bytes(payload)
+
+    assert b"".join(received.body) == b"hello"
+    assert received.message_id == "f00d2a33551440389d68e299d31adc7c"
+    assert received.sequence_number == 12
+    assert received.enqueued_time_utc is not None
+    assert received.locked_until_utc is not None
+    assert str(received.lock_token) == "fc53a15f-dd66-494f-825d-ee1b7c343cfb"
 
 
 class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
