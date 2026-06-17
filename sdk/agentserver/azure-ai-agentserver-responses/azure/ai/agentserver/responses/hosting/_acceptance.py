@@ -12,20 +12,27 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any, Callable
 
+from ..models._generated import ResponseObject
+
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
     from ..models._generated import CreateResponse
 
 logger = logging.getLogger("azure.ai.agentserver.responses.acceptance")
 
-AcceptanceHookFn = Callable[["CreateResponse", "ResponseContext"], dict[str, Any]]
+# The acceptance hook is the developer-facing boundary, so it speaks the
+# strongly-typed public model: it returns the queued ``ResponseObject``
+# surfaced to the HTTP caller. The internal HTTP path works in plain dicts
+# (see ``to_snapshot``), so ``dispatch_acceptance_hook`` is the single place
+# that normalizes the typed result down to a dict.
+AcceptanceHookFn = Callable[["CreateResponse", "ResponseContext"], "ResponseObject"]
 
 
 def generate_default_acceptance(
     *,
     response_id: str,
     model: str | None = None,
-) -> dict[str, Any]:
+) -> ResponseObject:
     """Generate the default queued response envelope.
 
     Used when no custom acceptance hook is registered, or as fallback
@@ -33,15 +40,38 @@ def generate_default_acceptance(
 
     :param response_id: The response ID for the queued turn.
     :param model: The model name from the request.
-    :returns: A response dict with status="queued".
+    :returns: A queued ``ResponseObject`` (``status="queued"``).
+    :rtype: ~azure.ai.agentserver.responses.models.ResponseObject
     """
-    return {
-        "id": response_id,
-        "object": "response",
-        "status": "queued",
-        "model": model,
-        "output": [],
-    }
+    return ResponseObject(
+        {
+            "id": response_id,
+            "object": "response",
+            "status": "queued",
+            "model": model,
+            "output": [],
+        }
+    )
+
+
+def _to_queued_dict(response: Any) -> dict[str, Any]:
+    """Normalize a hook result to the internal queued-response dict.
+
+    Accepts a :class:`ResponseObject` (the typed contract) and, defensively,
+    a plain ``dict``. Ensures ``status`` defaults to ``"queued"``.
+
+    :param response: The hook's return value.
+    :returns: A JSON-safe queued-response dict.
+    :rtype: dict[str, Any]
+    """
+    if hasattr(response, "as_dict") and callable(response.as_dict):
+        result: dict[str, Any] = response.as_dict()
+    elif isinstance(response, dict):
+        result = dict(response)
+    else:
+        result = {"object": "response", "output": []}
+    result.setdefault("status", "queued")
+    return result
 
 
 def dispatch_acceptance_hook(
@@ -51,24 +81,24 @@ def dispatch_acceptance_hook(
     context: "ResponseContext",
     model: str | None = None,
 ) -> dict[str, Any]:
-    """Call the acceptance hook or generate default queued response.
+    """Call the acceptance hook or generate the default queued response.
 
-    If a custom hook is registered and succeeds, returns its result.
-    If it raises, falls back to the default response and logs a warning.
+    If a custom hook is registered and succeeds, returns its (normalized)
+    result. If it raises, falls back to the default response and logs a
+    warning. The return is a dict because the internal HTTP path serializes
+    it directly; the developer-facing hook itself returns a typed
+    :class:`ResponseObject`.
 
     :param hook: The registered acceptance hook, or None.
     :param request: The parsed create-response request.
     :param context: The response context for this turn.
     :param model: The model name from the request.
     :returns: A queued response envelope dict.
+    :rtype: dict[str, Any]
     """
     if hook is not None:
         try:
-            result = hook(request, context)
-            # Ensure status is queued
-            if isinstance(result, dict):
-                result.setdefault("status", "queued")
-            return result
+            return _to_queued_dict(hook(request, context))
         except Exception:  # pylint: disable=broad-exception-caught
             logger.warning(
                 "Acceptance hook raised — falling back to default (response_id=%s)",
@@ -76,7 +106,9 @@ def dispatch_acceptance_hook(
                 exc_info=True,
             )
 
-    return generate_default_acceptance(
-        response_id=context.response_id,
-        model=model,
+    return _to_queued_dict(
+        generate_default_acceptance(
+            response_id=context.response_id,
+            model=model,
+        )
     )
