@@ -462,11 +462,13 @@ class ApiReviewPrTests(unittest.TestCase):
             ),
             patch.object(workflow, "log_warning") as log_warning,
         ):
-            self.assertIsNone(workflow.package_work_item_id("azure-example", "1.2.3b1"))
+                self.assertEqual(
+                    workflow.package_work_item_id("azure-example", "1.2.3b1"), "ERROR"
+                )
 
         log_warning.assert_called_once()
         self.assertIn(
-            "PR body sync metadata will omit packageWorkItemId",
+                "PR body sync metadata will set packageWorkItemId to ERROR",
             log_warning.call_args.args[0],
         )
 
@@ -484,11 +486,13 @@ class ApiReviewPrTests(unittest.TestCase):
             ),
             patch.object(workflow, "log_warning") as log_warning,
         ):
-            self.assertIsNone(workflow.package_work_item_id("azure-example", "1.2.3b1"))
+            self.assertEqual(
+                workflow.package_work_item_id("azure-example", "1.2.3b1"), "ERROR"
+            )
 
         log_warning.assert_called_once()
         self.assertIn(
-            "PR body sync metadata will omit packageWorkItemId",
+            "PR body sync metadata will set packageWorkItemId to ERROR",
             log_warning.call_args.args[0],
         )
 
@@ -504,11 +508,13 @@ class ApiReviewPrTests(unittest.TestCase):
             ),
             patch.object(workflow, "log_warning") as log_warning,
         ):
-            self.assertIsNone(workflow.package_work_item_id("azure-example", "1.2.3b1"))
+            self.assertEqual(
+                workflow.package_work_item_id("azure-example", "1.2.3b1"), "NONE"
+            )
 
         log_warning.assert_called_once()
         self.assertIn(
-            "PR body sync metadata will omit packageWorkItemId",
+            "PR body sync metadata will set packageWorkItemId to NONE",
             log_warning.call_args.args[0],
         )
 
