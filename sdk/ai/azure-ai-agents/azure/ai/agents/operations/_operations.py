@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,11 +6,10 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-import datetime
 from io import IOBase
-from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union, cast, overload
+import json
+from typing import Any, Callable, IO, Iterator, Optional, TYPE_CHECKING, TypeVar, Union, overload
 import urllib.parse
-import uuid
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -26,20 +24,21 @@ from azure.core.exceptions import (
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.polling import LROPoller, NoPolling, PollingMethod
-from azure.core.polling.base_polling import LROBasePolling
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import types, types as _types_models1
-from .._configuration import AIProjectClientConfiguration
+from .. import models as _models
+from .._configuration import AgentsClientConfiguration
+from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
-from .._utils.utils import ClientMixinABC
-from ..models._enums import FoundryFeaturesOptInKeys
+from .._utils.utils import ClientMixinABC, prepare_multipart_form_data
+from .._validation import api_version_validation
 
-_Unset: Any = object()
+if TYPE_CHECKING:
+    from .. import _types
 JSON = MutableMapping[str, Any]
+_Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -48,97 +47,16 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_agents_create_agent_request(
-    *, foundry_features: Optional[types.AgentDefinitionOptInKeys] = None, **kwargs: Any
-) -> HttpRequest:
+def build_threads_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if foundry_features is not None:
-        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_agents_update_agent_request(
-    agent_name: str, *, foundry_features: Optional[types.AgentDefinitionOptInKeys] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if foundry_features is not None:
-        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_agents_create_agent_from_manifest_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents:import"
+    _url = "/threads"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -151,64 +69,10 @@ def build_agents_create_agent_from_manifest_request(**kwargs: Any) -> HttpReques
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_update_agent_from_manifest_request(  # pylint: disable=name-too-long
-    agent_name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/import"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_agents_delete_request(agent_name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_agents_list_request(
+def build_threads_list_request(
     *,
-    kind: Optional[types.AgentKind] = None,
     limit: Optional[int] = None,
-    order: Optional[types.PageOrder] = None,
+    order: Optional[Union[str, _models.ListSortOrder]] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -216,15 +80,14 @@ def build_agents_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents"
+    _url = "/threads"
 
     # Construct parameters
-    if kind is not None:
-        _params["kind"] = _SERIALIZER.query("kind", kind, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
@@ -233,7 +96,6 @@ def build_agents_list_request(
         _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
         _params["before"] = _SERIALIZER.query("before", before, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -241,20 +103,17 @@ def build_agents_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_version_request(
-    agent_name: str, *, foundry_features: Optional[types.AgentDefinitionOptInKeys] = None, **kwargs: Any
-) -> HttpRequest:
+def build_threads_get_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/versions"
+    _url = "/threads/{threadId}"
     path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -263,29 +122,23 @@ def build_agents_create_version_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    if foundry_features is not None:
-        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_version_from_manifest_request(  # pylint: disable=name-too-long
-    agent_name: str, **kwargs: Any
-) -> HttpRequest:
+def build_threads_update_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/versions:import"
+    _url = "/threads/{threadId}"
     path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -301,43 +154,17 @@ def build_agents_create_version_from_manifest_request(  # pylint: disable=name-t
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_get_version_request(agent_name: str, agent_version: str, **kwargs: Any) -> HttpRequest:
+def build_threads_delete_thread_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/versions/{agent_version}"
+    _url = "/threads/{threadId}"
     path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "agent_version": _SERIALIZER.url("agent_version", agent_version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_agents_delete_version_request(agent_name: str, agent_version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/versions/{agent_version}"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "agent_version": _SERIALIZER.url("agent_version", agent_version, "str"),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -351,356 +178,18 @@ def build_agents_delete_version_request(agent_name: str, agent_version: str, **k
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_list_versions_request(
-    agent_name: str,
-    *,
-    limit: Optional[int] = None,
-    order: Optional[types.PageOrder] = None,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/agents/{agent_name}/versions"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_rules_get_request(id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationrules/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_rules_delete_request(id: str, **kwargs: Any) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/evaluationrules/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too-long
-    id: str,
-    *,
-    foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_messages_create_request(thread_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluationrules/{id}"
+    _url = "/threads/{threadId}/messages"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if foundry_features is not None:
-        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_rules_list_request(
-    *,
-    action_type: Optional[types.EvaluationRuleActionType] = None,
-    agent_name: Optional[str] = None,
-    enabled: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationrules"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if action_type is not None:
-        _params["actionType"] = _SERIALIZER.query("action_type", action_type, "str")
-    if agent_name is not None:
-        _params["agentName"] = _SERIALIZER.query("agent_name", agent_name, "str")
-    if enabled is not None:
-        _params["enabled"] = _SERIALIZER.query("enabled", enabled, "bool")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_connections_get_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/connections/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_connections_get_with_credentials_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/connections/{name}/getConnectionWithCredentials"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_connections_list_request(
-    *, connection_type: Optional[types.ConnectionType] = None, default_connection: Optional[bool] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/connections"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if connection_type is not None:
-        _params["connectionType"] = _SERIALIZER.query("connection_type", connection_type, "str")
-    if default_connection is not None:
-        _params["defaultConnection"] = _SERIALIZER.query("default_connection", default_connection, "bool")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_datasets_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/datasets/{name}/versions"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_datasets_list_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/datasets"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_datasets_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/datasets/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_datasets_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/datasets/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_datasets_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/datasets/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_datasets_pending_upload_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/datasets/{name}/versions/{version}/startPendingUpload"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -716,745 +205,12 @@ def build_datasets_pending_upload_request(name: str, version: str, **kwargs: Any
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_datasets_get_credentials_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/datasets/{name}/versions/{version}/credentials"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployments_get_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/deployments/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_deployments_list_request(
+def build_messages_list_request(
+    thread_id: str,
     *,
-    model_publisher: Optional[str] = None,
-    model_name: Optional[str] = None,
-    deployment_type: Optional[types.DeploymentType] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/deployments"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if model_publisher is not None:
-        _params["modelPublisher"] = _SERIALIZER.query("model_publisher", model_publisher, "str")
-    if model_name is not None:
-        _params["modelName"] = _SERIALIZER.query("model_name", model_name, "str")
-    if deployment_type is not None:
-        _params["deploymentType"] = _SERIALIZER.query("deployment_type", deployment_type, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_indexes_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/indexes/{name}/versions"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_indexes_list_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/indexes"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_indexes_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/indexes/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/indexes/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_indexes_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/indexes/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_ai_project_delete_job_request(job_id: str, **kwargs: Any) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/{jobId}"
-    path_format_arguments = {
-        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_beta_evaluation_taxonomies_get_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationtaxonomies/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluation_taxonomies_list_request(  # pylint: disable=name-too-long
-    *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    input_name: Optional[str] = None,
-    input_type: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationtaxonomies"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if input_name is not None:
-        _params["inputName"] = _SERIALIZER.query("input_name", input_name, "str")
-    if input_type is not None:
-        _params["inputType"] = _SERIALIZER.query("input_type", input_type, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluation_taxonomies_delete_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/evaluationtaxonomies/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluation_taxonomies_create_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationtaxonomies/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationtaxonomies/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_list_versions_request(  # pylint: disable=name-too-long
-    name: str,
-    *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
-    limit: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluators/{name}/versions"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if type is not None:
-        _params["type"] = _SERIALIZER.query("type", type, "str")
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_list_request(
-    *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
-    limit: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluators"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if type is not None:
-        _params["type"] = _SERIALIZER.query("type", type, "str")
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_get_version_request(  # pylint: disable=name-too-long
-    name: str,
-    version: str,
-    *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluators/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_delete_version_request(  # pylint: disable=name-too-long
-    name: str,
-    version: str,
-    *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/evaluators/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_create_version_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluators/{name}/versions"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_evaluators_update_version_request(  # pylint: disable=name-too-long
-    name: str,
-    version: str,
-    *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluators/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_insights_generate_request(
-    *, foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/insights"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if foundry_features is not None:
-        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if "Repeatability-Request-ID" not in _headers:
-        _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
-    if "Repeatability-First-Sent" not in _headers:
-        _headers["Repeatability-First-Sent"] = _SERIALIZER.serialize_data(
-            datetime.datetime.now(datetime.timezone.utc), "rfc-1123"
-        )
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_insights_get_request(
-    id: str,
-    *,
-    foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]] = None,
-    include_coordinates: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/insights/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    if include_coordinates is not None:
-        _params["includeCoordinates"] = _SERIALIZER.query("include_coordinates", include_coordinates, "bool")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if foundry_features is not None:
-        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_insights_list_request(
-    *,
-    foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]] = None,
-    type: Optional[types.InsightType] = None,
-    eval_id: Optional[str] = None,
     run_id: Optional[str] = None,
-    agent_name: Optional[str] = None,
-    include_coordinates: Optional[bool] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/insights"
-
-    # Construct parameters
-    if type is not None:
-        _params["type"] = _SERIALIZER.query("type", type, "str")
-    if eval_id is not None:
-        _params["evalId"] = _SERIALIZER.query("eval_id", eval_id, "str")
-    if run_id is not None:
-        _params["runId"] = _SERIALIZER.query("run_id", run_id, "str")
-    if agent_name is not None:
-        _params["agentName"] = _SERIALIZER.query("agent_name", agent_name, "str")
-    if include_coordinates is not None:
-        _params["includeCoordinates"] = _SERIALIZER.query("include_coordinates", include_coordinates, "bool")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if foundry_features is not None:
-        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_memory_stores_create_request(
-    *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_memory_stores_update_request(
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_memory_stores_get_request(
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_memory_stores_list_request(
-    *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
     limit: Optional[int] = None,
-    order: Optional[types.PageOrder] = None,
+    order: Optional[Union[str, _models.ListSortOrder]] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
     **kwargs: Any
@@ -1462,13 +218,21 @@ def build_beta_memory_stores_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/memory_stores"
+    _url = "/threads/{threadId}/messages"
+    path_format_arguments = {
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
+    if run_id is not None:
+        _params["run_id"] = _SERIALIZER.query("run_id", run_id, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
@@ -1477,28 +241,25 @@ def build_beta_memory_stores_list_request(
         _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
         _params["before"] = _SERIALIZER.query("before", before, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_delete_request(
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_messages_get_request(thread_id: str, message_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/memory_stores/{name}"
+    _url = "/threads/{threadId}/messages/{messageId}"
     path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "messageId": _SERIALIZER.url("message_id", message_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1507,35 +268,88 @@ def build_beta_memory_stores_delete_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_messages_update_request(thread_id: str, message_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/threads/{threadId}/messages/{messageId}"
+    path_format_arguments = {
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "messageId": _SERIALIZER.url("message_id", message_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_messages_delete_request(thread_id: str, message_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/threads/{threadId}/messages/{messageId}"
+    path_format_arguments = {
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "messageId": _SERIALIZER.url("message_id", message_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_search_memories_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+def build_runs_create_request(
+    thread_id: str, *, include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/memory_stores/{name}:search_memories"
+    _url = "/threads/{threadId}/runs"
     path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if include is not None:
+        _params["include[]"] = _SERIALIZER.query("include", include, "[str]", div=",")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1543,235 +357,58 @@ def build_beta_memory_stores_search_memories_request(  # pylint: disable=name-to
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_memory_stores_update_memories_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}:update_memories"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_memory_stores_delete_scope_request(  # pylint: disable=name-too-long
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}:delete_scope"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_red_teams_get_request(
-    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/redTeams/runs/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_red_teams_list_request(
-    *, foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/redTeams/runs"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_red_teams_create_request(
-    *, foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/redTeams/runs:run"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_schedules_delete_request(
-    schedule_id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    # Construct URL
-    _url = "/schedules/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("schedule_id", schedule_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_schedules_get_request(
-    schedule_id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/schedules/{id}"
-    path_format_arguments = {
-        "id": _SERIALIZER.url("schedule_id", schedule_id, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_beta_schedules_list_request(
+def build_runs_list_request(
+    thread_id: str,
     *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-    type: Optional[types.ScheduleTaskType] = None,
-    enabled: Optional[bool] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.ListSortOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/schedules"
+    _url = "/threads/{threadId}/runs"
+    path_format_arguments = {
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if type is not None:
-        _params["type"] = _SERIALIZER.query("type", type, "str")
-    if enabled is not None:
-        _params["enabled"] = _SERIALIZER.query("enabled", enabled, "bool")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-long
-    schedule_id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
-) -> HttpRequest:
+def build_runs_get_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/schedules/{id}"
+    _url = "/threads/{threadId}/runs/{runId}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("schedule_id", schedule_id, "str"),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1780,32 +417,225 @@ def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-l
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_runs_update_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/threads/{threadId}/runs/{runId}"
+    path_format_arguments = {
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_schedules_get_run_request(
-    schedule_id: str,
+def build_runs_submit_tool_outputs_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/threads/{threadId}/runs/{runId}/submit_tool_outputs"
+    path_format_arguments = {
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_runs_cancel_request(thread_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/threads/{threadId}/runs/{runId}/cancel"
+    path_format_arguments = {
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_run_steps_get_request(
+    thread_id: str,
+    run_id: str,
+    step_id: str,
+    *,
+    include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/threads/{threadId}/runs/{runId}/steps/{stepId}"
+    path_format_arguments = {
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+        "stepId": _SERIALIZER.url("step_id", step_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if include is not None:
+        _params["include[]"] = _SERIALIZER.query("include", include, "[str]", div=",")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_run_steps_list_request(
+    thread_id: str,
     run_id: str,
     *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
+    include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.ListSortOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/schedules/{schedule_id}/runs/{run_id}"
+    _url = "/threads/{threadId}/runs/{runId}/steps"
     path_format_arguments = {
-        "schedule_id": _SERIALIZER.url("schedule_id", schedule_id, "str"),
-        "run_id": _SERIALIZER.url("run_id", run_id, "str"),
+        "threadId": _SERIALIZER.url("thread_id", thread_id, "str"),
+        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if include is not None:
+        _params["include[]"] = _SERIALIZER.query("include", include, "[str]", div=",")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_files_list_request(
+    *, purpose: Optional[Union[str, _models.FilePurpose]] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/files"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if purpose is not None:
+        _params["purpose"] = _SERIALIZER.query("purpose", purpose, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_files_upload_file_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/files"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_files_delete_file_request(file_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/files/{fileId}"
+    path_format_arguments = {
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1814,12126 +644,705 @@ def build_beta_schedules_get_run_request(
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_files_get_request(file_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/files/{fileId}"
+    path_format_arguments = {
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_schedules_list_runs_request(
-    schedule_id: str,
+def build_files_get_file_content_request(file_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/octet-stream")
+
+    # Construct URL
+    _url = "/files/{fileId}/content"
+    path_format_arguments = {
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_stores_list_request(
     *,
-    foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-    type: Optional[types.ScheduleTaskType] = None,
-    enabled: Optional[bool] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.ListSortOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/schedules/{id}/runs"
+    _url = "/vector_stores"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_stores_create_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_stores_get_request(vector_store_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("schedule_id", schedule_id, "str"),
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if type is not None:
-        _params["type"] = _SERIALIZER.query("type", type, "str")
-    if enabled is not None:
-        _params["enabled"] = _SERIALIZER.query("enabled", enabled, "bool")
 
     # Construct headers
-    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class BetaOperations:
+def build_vector_stores_modify_request(vector_store_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}"
+    path_format_arguments = {
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_stores_delete_vector_store_request(  # pylint: disable=name-too-long
+    vector_store_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}"
+    path_format_arguments = {
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_store_files_list_request(
+    vector_store_id: str,
+    *,
+    filter: Optional[Union[str, _models.VectorStoreFileStatusFilter]] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.ListSortOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}/files"
+    path_format_arguments = {
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if filter is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_store_files_create_request(vector_store_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}/files"
+    path_format_arguments = {
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_store_files_get_request(vector_store_id: str, file_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}/files/{fileId}"
+    path_format_arguments = {
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_store_files_delete_vector_store_file_request(  # pylint: disable=name-too-long
+    vector_store_id: str, file_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}/files/{fileId}"
+    path_format_arguments = {
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+        "fileId": _SERIALIZER.url("file_id", file_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_store_file_batches_create_request(  # pylint: disable=name-too-long
+    vector_store_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}/file_batches"
+    path_format_arguments = {
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_store_file_batches_get_request(  # pylint: disable=name-too-long
+    vector_store_id: str, batch_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}/file_batches/{batchId}"
+    path_format_arguments = {
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+        "batchId": _SERIALIZER.url("batch_id", batch_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_store_file_batches_cancel_request(  # pylint: disable=name-too-long
+    vector_store_id: str, batch_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}/file_batches/{batchId}/cancel"
+    path_format_arguments = {
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+        "batchId": _SERIALIZER.url("batch_id", batch_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vector_store_file_batches_list_files_request(  # pylint: disable=name-too-long
+    vector_store_id: str,
+    batch_id: str,
+    *,
+    filter: Optional[Union[str, _models.VectorStoreFileStatusFilter]] = None,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.ListSortOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/vector_stores/{vectorStoreId}/file_batches/{batchId}/files"
+    path_format_arguments = {
+        "vectorStoreId": _SERIALIZER.url("vector_store_id", vector_store_id, "str"),
+        "batchId": _SERIALIZER.url("batch_id", batch_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    if filter is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_create_agent_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/assistants"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_list_agents_request(
+    *,
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.ListSortOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/assistants"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_get_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/assistants/{assistantId}"
+    path_format_arguments = {
+        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_update_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/assistants/{assistantId}"
+    path_format_arguments = {
+        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_delete_agent_request(agent_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/assistants/{assistantId}"
+    path_format_arguments = {
+        "assistantId": _SERIALIZER.url("agent_id", agent_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_agents_create_thread_and_run_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-15-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/threads/runs"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class ThreadsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`beta` attribute.
+        :class:`~azure.ai.agents.AgentsClient`'s
+        :attr:`threads` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-        self.evaluation_taxonomies = BetaEvaluationTaxonomiesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.insights = BetaInsightsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.red_teams = BetaRedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.schedules = BetaSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
-
-
-class AgentsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`agents` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, agent_name: str, **kwargs: Any) -> _types_models1.AgentDetails:
-        """Retrieves the agent.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :return: AgentDetails
-        :rtype: ~azure.ai.agents.types.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "versions": {
-                        "latest": {
-                            "created_at": "2020-02-20 00:00:00",
-                            "definition": agent_definition,
-                            "id": "str",
-                            "metadata": {
-                                "str": "str"
-                            },
-                            "name": "str",
-                            "object": "str",
-                            "version": "str",
-                            "description": "str"
-                        }
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.AgentDetails] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_request(
-            agent_name=agent_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
-    def _create_agent(
+    def create(
         self,
-        name: str,
-        definition: _types_models1.AgentDefinition,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-    @overload
-    def _create_agent(
-        self,
-        body: JSON,
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-    @overload
-    def _create_agent(
-        self,
-        body: IO[bytes],
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-
-    @distributed_trace
-    def _create_agent(
-        self,
-        name: str = _Unset,
-        definition: _types_models1.AgentDefinition = _Unset,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails:
-        """Creates the agent.
-
-        :param name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type name: str
-        :param definition: The agent definition. This can be a workflow, hosted agent, or a simple
-         agent definition. Required.
-        :type definition: ~azure.ai.agents.types.AgentDefinition
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :type metadata: dict[str, str]
-        :param description: A human-readable description of the agent. Default value is None.
-        :type description: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.AgentDefinitionOptInKeys
-        :return: AgentDetails
-        :rtype: ~azure.ai.agents.types.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "definition": agent_definition,
-                    "name": "str",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "versions": {
-                        "latest": {
-                            "created_at": "2020-02-20 00:00:00",
-                            "definition": agent_definition,
-                            "id": "str",
-                            "metadata": {
-                                "str": "str"
-                            },
-                            "name": "str",
-                            "object": "str",
-                            "version": "str",
-                            "description": "str"
-                        }
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.AgentDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            if definition is _Unset:
-                raise TypeError("missing required argument: definition")
-            body = {"definition": definition, "description": description, "metadata": metadata, "name": name}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        _request = build_agents_create_agent_request(
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def _update_agent(
-        self,
-        agent_name: str,
-        definition: _types_models1.AgentDefinition,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-    @overload
-    def _update_agent(
-        self,
-        agent_name: str,
-        body: JSON,
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-    @overload
-    def _update_agent(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-
-    @distributed_trace
-    def _update_agent(
-        self,
-        agent_name: str,
-        definition: _types_models1.AgentDefinition = _Unset,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition. If
-        no changes, returns the existing agent version.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :param definition: The agent definition. This can be a workflow, hosted agent, or a simple
-         agent definition. Required.
-        :type definition: ~azure.ai.agents.types.AgentDefinition
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :type metadata: dict[str, str]
-        :param description: A human-readable description of the agent. Default value is None.
-        :type description: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.AgentDefinitionOptInKeys
-        :return: AgentDetails
-        :rtype: ~azure.ai.agents.types.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "definition": agent_definition,
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "versions": {
-                        "latest": {
-                            "created_at": "2020-02-20 00:00:00",
-                            "definition": agent_definition,
-                            "id": "str",
-                            "metadata": {
-                                "str": "str"
-                            },
-                            "name": "str",
-                            "object": "str",
-                            "version": "str",
-                            "description": "str"
-                        }
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.AgentDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if definition is _Unset:
-                raise TypeError("missing required argument: definition")
-            body = {"definition": definition, "description": description, "metadata": metadata}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        _request = build_agents_update_agent_request(
-            agent_name=agent_name,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def _create_agent_from_manifest(
-        self,
-        name: str,
-        manifest_id: str,
-        parameter_values: dict[str, Any],
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-    @overload
-    def _create_agent_from_manifest(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-    @overload
-    def _create_agent_from_manifest(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-
-    @distributed_trace
-    def _create_agent_from_manifest(
-        self,
-        name: str = _Unset,
-        manifest_id: str = _Unset,
-        parameter_values: dict[str, Any] = _Unset,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        messages: Optional[List[_models.ThreadMessageOptions]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
         metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
         **kwargs: Any
-    ) -> _types_models1.AgentDetails:
-        """Creates an agent from a manifest.
+    ) -> _models.AgentThread:
+        """Creates a new thread. Threads contain messages and can be run by agents.
 
-        :param name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type name: str
-        :param manifest_id: The manifest ID to import the agent version from. Required.
-        :type manifest_id: str
-        :param parameter_values: The inputs to the manifest that will result in a fully materialized
-         Agent. Required.
-        :type parameter_values: dict[str, any]
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :type metadata: dict[str, str]
-        :param description: A human-readable description of the agent. Default value is None.
-        :type description: str
-        :return: AgentDetails
-        :rtype: ~azure.ai.agents.types.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "manifest_id": "str",
-                    "name": "str",
-                    "parameter_values": {
-                        "str": {}
-                    },
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "versions": {
-                        "latest": {
-                            "created_at": "2020-02-20 00:00:00",
-                            "definition": agent_definition,
-                            "id": "str",
-                            "metadata": {
-                                "str": "str"
-                            },
-                            "name": "str",
-                            "object": "str",
-                            "version": "str",
-                            "description": "str"
-                        }
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.AgentDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            if manifest_id is _Unset:
-                raise TypeError("missing required argument: manifest_id")
-            if parameter_values is _Unset:
-                raise TypeError("missing required argument: parameter_values")
-            body = {
-                "description": description,
-                "manifest_id": manifest_id,
-                "metadata": metadata,
-                "name": name,
-                "parameter_values": parameter_values,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        _request = build_agents_create_agent_from_manifest_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def _update_agent_from_manifest(
-        self,
-        agent_name: str,
-        manifest_id: str,
-        parameter_values: dict[str, Any],
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-    @overload
-    def _update_agent_from_manifest(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-    @overload
-    def _update_agent_from_manifest(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _types_models1.AgentDetails: ...
-
-    @distributed_trace
-    def _update_agent_from_manifest(
-        self,
-        agent_name: str,
-        manifest_id: str = _Unset,
-        parameter_values: dict[str, Any] = _Unset,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> _types_models1.AgentDetails:
-        """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition. If no changes, returns the existing agent version.
-
-        :param agent_name: The name of the agent to update. Required.
-        :type agent_name: str
-        :param manifest_id: The manifest ID to import the agent version from. Required.
-        :type manifest_id: str
-        :param parameter_values: The inputs to the manifest that will result in a fully materialized
-         Agent. Required.
-        :type parameter_values: dict[str, any]
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :type metadata: dict[str, str]
-        :param description: A human-readable description of the agent. Default value is None.
-        :type description: str
-        :return: AgentDetails
-        :rtype: ~azure.ai.agents.types.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "manifest_id": "str",
-                    "parameter_values": {
-                        "str": {}
-                    },
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "versions": {
-                        "latest": {
-                            "created_at": "2020-02-20 00:00:00",
-                            "definition": agent_definition,
-                            "id": "str",
-                            "metadata": {
-                                "str": "str"
-                            },
-                            "name": "str",
-                            "object": "str",
-                            "version": "str",
-                            "description": "str"
-                        }
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.AgentDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if manifest_id is _Unset:
-                raise TypeError("missing required argument: manifest_id")
-            if parameter_values is _Unset:
-                raise TypeError("missing required argument: parameter_values")
-            body = {
-                "description": description,
-                "manifest_id": manifest_id,
-                "metadata": metadata,
-                "parameter_values": parameter_values,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        _request = build_agents_update_agent_from_manifest_request(
-            agent_name=agent_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete(self, agent_name: str, **kwargs: Any) -> _types_models1.DeleteAgentResponse:
-        """Deletes an agent.
-
-        :param agent_name: The name of the agent to delete. Required.
-        :type agent_name: str
-        :return: DeleteAgentResponse
-        :rtype: ~azure.ai.agents.types.DeleteAgentResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "deleted": bool,
-                    "name": "str",
-                    "object": "str"
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.DeleteAgentResponse] = kwargs.pop("cls", None)
-
-        _request = build_agents_delete_request(
-            agent_name=agent_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        kind: Optional[types.AgentKind] = None,
-        limit: Optional[int] = None,
-        order: Optional[types.PageOrder] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.AgentDetails"]:
-        """Returns the list of all agents.
-
-        :keyword kind: Filter agents by kind. If not provided, all agents are returned. Known values
-         are: "prompt", "hosted", and "workflow". Default value is None.
-        :paramtype kind: str or ~azure.ai.agents.models.AgentKind
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.agents.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of AgentDetails
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.AgentDetails]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "versions": {
-                        "latest": {
-                            "created_at": "2020-02-20 00:00:00",
-                            "definition": agent_definition,
-                            "id": "str",
-                            "metadata": {
-                                "str": "str"
-                            },
-                            "name": "str",
-                            "object": "str",
-                            "version": "str",
-                            "description": "str"
-                        }
-                    }
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.AgentDetails]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_agents_list_request(
-                kind=kind,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("data", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(
-                    _types_models1.ApiErrorResponse,
-                    pipeline_response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @overload
-    def create_version(
-        self,
-        agent_name: str,
-        definition: _types_models1.AgentDefinition,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentVersionDetails:
-        """Create a new agent version.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param definition: The agent definition. This can be a workflow, hosted agent, or a simple
-         agent definition. Required.
-        :type definition: ~azure.ai.agents.types.AgentDefinition
-        :param metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :type metadata: dict[str, str]
-        :param description: A human-readable description of the agent. Default value is None.
-        :type description: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.AgentDefinitionOptInKeys
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionDetails
-        :rtype: ~azure.ai.agents.types.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": agent_definition,
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "object": "str",
-                    "version": "str",
-                    "description": "str"
-                }
-        """
-
-    @overload
-    def create_version(
-        self,
-        agent_name: str,
-        body: JSON,
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentVersionDetails:
-        """Create a new agent version.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.AgentDefinitionOptInKeys
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentVersionDetails
-        :rtype: ~azure.ai.agents.types.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "definition": agent_definition,
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": agent_definition,
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "object": "str",
-                    "version": "str",
-                    "description": "str"
-                }
-        """
-
-    @overload
-    def create_version(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentVersionDetails:
-        """Create a new agent version.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.AgentDefinitionOptInKeys
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentVersionDetails
-        :rtype: ~azure.ai.agents.types.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": agent_definition,
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "object": "str",
-                    "version": "str",
-                    "description": "str"
-                }
-        """
-
-    @distributed_trace
-    def create_version(
-        self,
-        agent_name: str,
-        definition: _types_models1.AgentDefinition = _Unset,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        *,
-        foundry_features: Optional[types.AgentDefinitionOptInKeys] = None,
-        **kwargs: Any
-    ) -> _types_models1.AgentVersionDetails:
-        """Create a new agent version.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param definition: The agent definition. This can be a workflow, hosted agent, or a simple
-         agent definition. Required.
-        :type definition: ~azure.ai.agents.types.AgentDefinition
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :type metadata: dict[str, str]
-        :param description: A human-readable description of the agent. Default value is None.
-        :type description: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Known values are: "HostedAgents=V1Preview" and
-         "WorkflowAgents=V1Preview". Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.AgentDefinitionOptInKeys
-        :return: AgentVersionDetails
-        :rtype: ~azure.ai.agents.types.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "definition": agent_definition,
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": agent_definition,
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "object": "str",
-                    "version": "str",
-                    "description": "str"
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.AgentVersionDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if definition is _Unset:
-                raise TypeError("missing required argument: definition")
-            body = {"definition": definition, "description": description, "metadata": metadata}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        _request = build_agents_create_version_request(
-            agent_name=agent_name,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def create_version_from_manifest(
-        self,
-        agent_name: str,
-        manifest_id: str,
-        parameter_values: dict[str, Any],
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.AgentVersionDetails:
-        """Create a new agent version from a manifest.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param manifest_id: The manifest ID to import the agent version from. Required.
-        :type manifest_id: str
-        :param parameter_values: The inputs to the manifest that will result in a fully materialized
-         Agent. Required.
-        :type parameter_values: dict[str, any]
-        :param metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :type metadata: dict[str, str]
-        :param description: A human-readable description of the agent. Default value is None.
-        :type description: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentVersionDetails
-        :rtype: ~azure.ai.agents.types.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": agent_definition,
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "object": "str",
-                    "version": "str",
-                    "description": "str"
-                }
-        """
-
-    @overload
-    def create_version_from_manifest(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _types_models1.AgentVersionDetails:
-        """Create a new agent version from a manifest.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentVersionDetails
-        :rtype: ~azure.ai.agents.types.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "manifest_id": "str",
-                    "parameter_values": {
-                        "str": {}
-                    },
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": agent_definition,
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "object": "str",
-                    "version": "str",
-                    "description": "str"
-                }
-        """
-
-    @overload
-    def create_version_from_manifest(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _types_models1.AgentVersionDetails:
-        """Create a new agent version from a manifest.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentVersionDetails
-        :rtype: ~azure.ai.agents.types.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": agent_definition,
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "object": "str",
-                    "version": "str",
-                    "description": "str"
-                }
-        """
-
-    @distributed_trace
-    def create_version_from_manifest(
-        self,
-        agent_name: str,
-        manifest_id: str = _Unset,
-        parameter_values: dict[str, Any] = _Unset,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> _types_models1.AgentVersionDetails:
-        """Create a new agent version from a manifest.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param manifest_id: The manifest ID to import the agent version from. Required.
-        :type manifest_id: str
-        :param parameter_values: The inputs to the manifest that will result in a fully materialized
-         Agent. Required.
-        :type parameter_values: dict[str, any]
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :type metadata: dict[str, str]
-        :param description: A human-readable description of the agent. Default value is None.
-        :type description: str
-        :return: AgentVersionDetails
-        :rtype: ~azure.ai.agents.types.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "manifest_id": "str",
-                    "parameter_values": {
-                        "str": {}
-                    },
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": agent_definition,
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "object": "str",
-                    "version": "str",
-                    "description": "str"
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.AgentVersionDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if manifest_id is _Unset:
-                raise TypeError("missing required argument: manifest_id")
-            if parameter_values is _Unset:
-                raise TypeError("missing required argument: parameter_values")
-            body = {
-                "description": description,
-                "manifest_id": manifest_id,
-                "metadata": metadata,
-                "parameter_values": parameter_values,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        _request = build_agents_create_version_from_manifest_request(
-            agent_name=agent_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _types_models1.AgentVersionDetails:
-        """Retrieves a specific version of an agent.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent to retrieve. Required.
-        :type agent_version: str
-        :return: AgentVersionDetails
-        :rtype: ~azure.ai.agents.types.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": agent_definition,
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "object": "str",
-                    "version": "str",
-                    "description": "str"
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.AgentVersionDetails] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_version_request(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete_version(
-        self, agent_name: str, agent_version: str, **kwargs: Any
-    ) -> _types_models1.DeleteAgentVersionResponse:
-        """Deletes a specific version of an agent.
-
-        :param agent_name: The name of the agent to delete. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent to delete. Required.
-        :type agent_version: str
-        :return: DeleteAgentVersionResponse
-        :rtype: ~azure.ai.agents.types.DeleteAgentVersionResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "deleted": bool,
-                    "name": "str",
-                    "object": "str",
-                    "version": "str"
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.DeleteAgentVersionResponse] = kwargs.pop("cls", None)
-
-        _request = build_agents_delete_version_request(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_versions(
-        self,
-        agent_name: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[types.PageOrder] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.AgentVersionDetails"]:
-        """Returns the list of versions of an agent.
-
-        :param agent_name: The name of the agent to retrieve versions for. Required.
-        :type agent_name: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.agents.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of AgentVersionDetails
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.AgentVersionDetails]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "hosted":
-                agent_definition = {
-                    "container_protocol_versions": [
-                        {
-                            "protocol": "str",
-                            "version": "str"
-                        }
-                    ],
-                    "cpu": "str",
-                    "kind": "hosted",
-                    "memory": "str",
-                    "environment_variables": {
-                        "str": "str"
-                    },
-                    "image": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "tools": [
-                        tool
-                    ]
-                }
-
-                # JSON input template for discriminator value "prompt":
-                agent_definition = {
-                    "kind": "prompt",
-                    "model": "str",
-                    "instructions": "str",
-                    "rai_config": {
-                        "rai_policy_name": "str"
-                    },
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "structured_inputs": {
-                        "str": {
-                            "default_value": {},
-                            "description": "str",
-                            "required": bool,
-                            "schema": {
-                                "str": {}
-                            }
-                        }
-                    },
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_p": 0.0
-                }
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format = {
-                    "name": "str",
-                    "schema": {
-                        "str": {}
-                    },
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": agent_definition,
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "object": "str",
-                    "version": "str",
-                    "description": "str"
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.AgentVersionDetails]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_agents_list_versions_request(
-                agent_name=agent_name,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("data", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(
-                    _types_models1.ApiErrorResponse,
-                    pipeline_response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class EvaluationRulesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`evaluation_rules` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, id: str, **kwargs: Any) -> _types_models1.EvaluationRule:
-        """Get an evaluation rule.
-
-        :param id: Unique identifier for the evaluation rule. Required.
-        :type id: str
-        :return: EvaluationRule
-        :rtype: ~azure.ai.agents.types.EvaluationRule
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "continuousEvaluation":
-                evaluation_rule_action = {
-                    "evalId": "str",
-                    "type": "continuousEvaluation",
-                    "maxHourlyRuns": 0
-                }
-
-                # JSON input template for discriminator value "humanEvaluationPreview":
-                evaluation_rule_action = {
-                    "templateId": "str",
-                    "type": "humanEvaluationPreview"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "action": evaluation_rule_action,
-                    "enabled": bool,
-                    "eventType": "str",
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "description": "str",
-                    "displayName": "str",
-                    "filter": {
-                        "agentName": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.EvaluationRule] = kwargs.pop("cls", None)
-
-        _request = build_evaluation_rules_get_request(
-            id=id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Delete an evaluation rule.
-
-        :param id: Unique identifier for the evaluation rule. Required.
-        :type id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_evaluation_rules_delete_request(
-            id=id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: _types_models1.EvaluationRule,
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.EvaluationRule:
-        """Create or update an evaluation rule.
-
-        :param id: Unique identifier for the evaluation rule. Required.
-        :type id: str
-        :param evaluation_rule: Evaluation rule resource. Required.
-        :type evaluation_rule: ~azure.ai.agents.types.EvaluationRule
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationRule
-        :rtype: ~azure.ai.agents.types.EvaluationRule
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "continuousEvaluation":
-                evaluation_rule_action = {
-                    "evalId": "str",
-                    "type": "continuousEvaluation",
-                    "maxHourlyRuns": 0
-                }
-
-                # JSON input template for discriminator value "humanEvaluationPreview":
-                evaluation_rule_action = {
-                    "templateId": "str",
-                    "type": "humanEvaluationPreview"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                evaluation_rule = {
-                    "action": evaluation_rule_action,
-                    "enabled": bool,
-                    "eventType": "str",
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "description": "str",
-                    "displayName": "str",
-                    "filter": {
-                        "agentName": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "continuousEvaluation":
-                evaluation_rule_action = {
-                    "evalId": "str",
-                    "type": "continuousEvaluation",
-                    "maxHourlyRuns": 0
-                }
-
-                # JSON input template for discriminator value "humanEvaluationPreview":
-                evaluation_rule_action = {
-                    "templateId": "str",
-                    "type": "humanEvaluationPreview"
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "continuousEvaluation":
-                evaluation_rule_action = {
-                    "evalId": "str",
-                    "type": "continuousEvaluation",
-                    "maxHourlyRuns": 0
-                }
-
-                # JSON input template for discriminator value "humanEvaluationPreview":
-                evaluation_rule_action = {
-                    "templateId": "str",
-                    "type": "humanEvaluationPreview"
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "action": evaluation_rule_action,
-                    "enabled": bool,
-                    "eventType": "str",
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "description": "str",
-                    "displayName": "str",
-                    "filter": {
-                        "agentName": "str"
-                    }
-                }
-        """
-
-    @overload
-    def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: IO[bytes],
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.EvaluationRule:
-        """Create or update an evaluation rule.
-
-        :param id: Unique identifier for the evaluation rule. Required.
-        :type id: str
-        :param evaluation_rule: Evaluation rule resource. Required.
-        :type evaluation_rule: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationRule
-        :rtype: ~azure.ai.agents.types.EvaluationRule
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "continuousEvaluation":
-                evaluation_rule_action = {
-                    "evalId": "str",
-                    "type": "continuousEvaluation",
-                    "maxHourlyRuns": 0
-                }
-
-                # JSON input template for discriminator value "humanEvaluationPreview":
-                evaluation_rule_action = {
-                    "templateId": "str",
-                    "type": "humanEvaluationPreview"
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "continuousEvaluation":
-                evaluation_rule_action = {
-                    "evalId": "str",
-                    "type": "continuousEvaluation",
-                    "maxHourlyRuns": 0
-                }
-
-                # JSON input template for discriminator value "humanEvaluationPreview":
-                evaluation_rule_action = {
-                    "templateId": "str",
-                    "type": "humanEvaluationPreview"
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "action": evaluation_rule_action,
-                    "enabled": bool,
-                    "eventType": "str",
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "description": "str",
-                    "displayName": "str",
-                    "filter": {
-                        "agentName": "str"
-                    }
-                }
-        """
-
-    @distributed_trace
-    def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: Union[_types_models1.EvaluationRule, IO[bytes]],
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        **kwargs: Any
-    ) -> _types_models1.EvaluationRule:
-        """Create or update an evaluation rule.
-
-        :param id: Unique identifier for the evaluation rule. Required.
-        :type id: str
-        :param evaluation_rule: Evaluation rule resource. Is either a EvaluationRule type or a
-         IO[bytes] type. Required.
-        :type evaluation_rule: ~azure.ai.agents.types.EvaluationRule or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :return: EvaluationRule
-        :rtype: ~azure.ai.agents.types.EvaluationRule
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "continuousEvaluation":
-                evaluation_rule_action = {
-                    "evalId": "str",
-                    "type": "continuousEvaluation",
-                    "maxHourlyRuns": 0
-                }
-
-                # JSON input template for discriminator value "humanEvaluationPreview":
-                evaluation_rule_action = {
-                    "templateId": "str",
-                    "type": "humanEvaluationPreview"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                evaluation_rule = {
-                    "action": evaluation_rule_action,
-                    "enabled": bool,
-                    "eventType": "str",
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "description": "str",
-                    "displayName": "str",
-                    "filter": {
-                        "agentName": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "continuousEvaluation":
-                evaluation_rule_action = {
-                    "evalId": "str",
-                    "type": "continuousEvaluation",
-                    "maxHourlyRuns": 0
-                }
-
-                # JSON input template for discriminator value "humanEvaluationPreview":
-                evaluation_rule_action = {
-                    "templateId": "str",
-                    "type": "humanEvaluationPreview"
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "continuousEvaluation":
-                evaluation_rule_action = {
-                    "evalId": "str",
-                    "type": "continuousEvaluation",
-                    "maxHourlyRuns": 0
-                }
-
-                # JSON input template for discriminator value "humanEvaluationPreview":
-                evaluation_rule_action = {
-                    "templateId": "str",
-                    "type": "humanEvaluationPreview"
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "action": evaluation_rule_action,
-                    "enabled": bool,
-                    "eventType": "str",
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "description": "str",
-                    "displayName": "str",
-                    "filter": {
-                        "agentName": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.EvaluationRule] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(evaluation_rule, (IOBase, bytes)):
-            _content = evaluation_rule
-        else:
-            _json = evaluation_rule
-
-        _request = build_evaluation_rules_create_or_update_request(
-            id=id,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        action_type: Optional[types.EvaluationRuleActionType] = None,
-        agent_name: Optional[str] = None,
-        enabled: Optional[bool] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.EvaluationRule"]:
-        """List all evaluation rules.
-
-        :keyword action_type: Filter by the type of evaluation rule. Known values are:
-         "continuousEvaluation" and "humanEvaluationPreview". Default value is None.
-        :paramtype action_type: str or ~azure.ai.agents.models.EvaluationRuleActionType
-        :keyword agent_name: Filter by the agent name. Default value is None.
-        :paramtype agent_name: str
-        :keyword enabled: Filter by the enabled status. Default value is None.
-        :paramtype enabled: bool
-        :return: An iterator like instance of EvaluationRule
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.EvaluationRule]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "continuousEvaluation":
-                evaluation_rule_action = {
-                    "evalId": "str",
-                    "type": "continuousEvaluation",
-                    "maxHourlyRuns": 0
-                }
-
-                # JSON input template for discriminator value "humanEvaluationPreview":
-                evaluation_rule_action = {
-                    "templateId": "str",
-                    "type": "humanEvaluationPreview"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "action": evaluation_rule_action,
-                    "enabled": bool,
-                    "eventType": "str",
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "description": "str",
-                    "displayName": "str",
-                    "filter": {
-                        "agentName": "str"
-                    }
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.EvaluationRule]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_evaluation_rules_list_request(
-                    action_type=action_type,
-                    agent_name=agent_name,
-                    enabled=enabled,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class ConnectionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`connections` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def _get(self, name: str, **kwargs: Any) -> _types_models1.Connection:
-        """Get a connection by name, without populating connection credentials.
-
-        :param name: The friendly name of the connection, provided by the user. Required.
-        :type name: str
-        :return: Connection
-        :rtype: ~azure.ai.agents.types.Connection
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AAD":
-                base_credentials = {
-                    "type": "AAD"
-                }
-
-                # JSON input template for discriminator value "AgenticIdentityToken_Preview":
-                base_credentials = {
-                    "type": "AgenticIdentityToken_Preview"
-                }
-
-                # JSON input template for discriminator value "ApiKey":
-                base_credentials = {
-                    "type": "ApiKey",
-                    "key": "str"
-                }
-
-                # JSON input template for discriminator value "CustomKeys":
-                base_credentials = {
-                    "type": "CustomKeys"
-                }
-
-                # JSON input template for discriminator value "None":
-                base_credentials = {
-                    "type": "None"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "credentials": base_credentials,
-                    "id": "str",
-                    "isDefault": bool,
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "target": "str",
-                    "type": "str"
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.Connection] = kwargs.pop("cls", None)
-
-        _request = build_connections_get_request(
-            name=name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def _get_with_credentials(self, name: str, **kwargs: Any) -> _types_models1.Connection:
-        """Get a connection by name, with its connection credentials.
-
-        :param name: The friendly name of the connection, provided by the user. Required.
-        :type name: str
-        :return: Connection
-        :rtype: ~azure.ai.agents.types.Connection
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AAD":
-                base_credentials = {
-                    "type": "AAD"
-                }
-
-                # JSON input template for discriminator value "AgenticIdentityToken_Preview":
-                base_credentials = {
-                    "type": "AgenticIdentityToken_Preview"
-                }
-
-                # JSON input template for discriminator value "ApiKey":
-                base_credentials = {
-                    "type": "ApiKey",
-                    "key": "str"
-                }
-
-                # JSON input template for discriminator value "CustomKeys":
-                base_credentials = {
-                    "type": "CustomKeys"
-                }
-
-                # JSON input template for discriminator value "None":
-                base_credentials = {
-                    "type": "None"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "credentials": base_credentials,
-                    "id": "str",
-                    "isDefault": bool,
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "target": "str",
-                    "type": "str"
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.Connection] = kwargs.pop("cls", None)
-
-        _request = build_connections_get_with_credentials_request(
-            name=name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        connection_type: Optional[types.ConnectionType] = None,
-        default_connection: Optional[bool] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.Connection"]:
-        """List all connections in the project, without populating connection credentials.
-
-        :keyword connection_type: List connections of this specific type. Known values are:
-         "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
-         "AppConfig", "AppInsights", "CustomKeys", and "RemoteTool_Preview". Default value is None.
-        :paramtype connection_type: str or ~azure.ai.agents.models.ConnectionType
-        :keyword default_connection: List connections that are default connections. Default value is
+        :keyword messages: The initial messages to associate with the new thread. Default value is
          None.
-        :paramtype default_connection: bool
-        :return: An iterator like instance of Connection
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.Connection]
+        :paramtype messages: list[~azure.ai.agents.models.ThreadMessageOptions]
+        :keyword tool_resources: A set of resources that are made available to the agent's tools in
+         this thread. The resources are specific to the
+         type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
+         the ``file_search`` tool requires
+         a list of vector store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AAD":
-                base_credentials = {
-                    "type": "AAD"
-                }
-
-                # JSON input template for discriminator value "AgenticIdentityToken_Preview":
-                base_credentials = {
-                    "type": "AgenticIdentityToken_Preview"
-                }
-
-                # JSON input template for discriminator value "ApiKey":
-                base_credentials = {
-                    "type": "ApiKey",
-                    "key": "str"
-                }
-
-                # JSON input template for discriminator value "CustomKeys":
-                base_credentials = {
-                    "type": "CustomKeys"
-                }
-
-                # JSON input template for discriminator value "None":
-                base_credentials = {
-                    "type": "None"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "credentials": base_credentials,
-                    "id": "str",
-                    "isDefault": bool,
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "name": "str",
-                    "target": "str",
-                    "type": "str"
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.Connection]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_connections_list_request(
-                    connection_type=connection_type,
-                    default_connection=default_connection,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class DatasetsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`datasets` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_types_models1.DatasetVersion"]:
-        """List all versions of the given DatasetVersion.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :return: An iterator like instance of DatasetVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.DatasetVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == dataset_version
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.DatasetVersion]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_datasets_list_versions_request(
-                    name=name,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_types_models1.DatasetVersion"]:
-        """List the latest version of each DatasetVersion.
-
-        :return: An iterator like instance of DatasetVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.DatasetVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == dataset_version
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.DatasetVersion]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_datasets_list_request(
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def get(self, name: str, version: str, **kwargs: Any) -> _types_models1.DatasetVersion:
-        """Get the specific version of the DatasetVersion. The service returns 404 Not Found error if the
-        DatasetVersion does not exist.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to retrieve. Required.
-        :type version: str
-        :return: DatasetVersion
-        :rtype: ~azure.ai.agents.types.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == dataset_version
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.DatasetVersion] = kwargs.pop("cls", None)
-
-        _request = build_datasets_get_request(
-            name=name,
-            version=version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete(self, name: str, version: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Delete the specific version of the DatasetVersion. The service returns 204 No Content if the
-        DatasetVersion was deleted successfully or if the DatasetVersion does not exist.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the DatasetVersion to delete. Required.
-        :type version: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_datasets_delete_request(
-            name=name,
-            version=version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    def create_or_update(
-        self,
-        name: str,
-        version: str,
-        dataset_version: _types_models1.DatasetVersion,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _types_models1.DatasetVersion:
-        """Create a new or update an existing DatasetVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to create or update. Required.
-        :type version: str
-        :param dataset_version: The DatasetVersion to create or update. Required.
-        :type dataset_version: ~azure.ai.agents.types.DatasetVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: DatasetVersion
-        :rtype: ~azure.ai.agents.types.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                dataset_version = dataset_version
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == dataset_version
         """
 
     @overload
-    def create_or_update(
-        self,
-        name: str,
-        version: str,
-        dataset_version: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _types_models1.DatasetVersion:
-        """Create a new or update an existing DatasetVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to create or update. Required.
-        :type version: str
-        :param dataset_version: The DatasetVersion to create or update. Required.
-        :type dataset_version: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: DatasetVersion
-        :rtype: ~azure.ai.agents.types.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == dataset_version
-        """
-
-    @distributed_trace
-    def create_or_update(
-        self, name: str, version: str, dataset_version: Union[_types_models1.DatasetVersion, IO[bytes]], **kwargs: Any
-    ) -> _types_models1.DatasetVersion:
-        """Create a new or update an existing DatasetVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to create or update. Required.
-        :type version: str
-        :param dataset_version: The DatasetVersion to create or update. Is either a DatasetVersion type
-         or a IO[bytes] type. Required.
-        :type dataset_version: ~azure.ai.agents.types.DatasetVersion or IO[bytes]
-        :return: DatasetVersion
-        :rtype: ~azure.ai.agents.types.DatasetVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                dataset_version = dataset_version
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "uri_file":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_file",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "uri_folder":
-                dataset_version = {
-                    "dataUri": "str",
-                    "name": "str",
-                    "type": "uri_folder",
-                    "version": "str",
-                    "connectionName": "str",
-                    "description": "str",
-                    "id": "str",
-                    "isReference": bool,
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == dataset_version
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.DatasetVersion] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/merge-patch+json"
-        _json = None
-        _content = None
-        if isinstance(dataset_version, (IOBase, bytes)):
-            _content = dataset_version
-        else:
-            _json = dataset_version
-
-        _request = build_datasets_create_or_update_request(
-            name=name,
-            version=version,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: _types_models1.PendingUploadRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.PendingUploadResponse:
-        """Start a new or get an existing pending upload of a dataset for a specific version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to operate on. Required.
-        :type version: str
-        :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: ~azure.ai.agents.types.PendingUploadRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse
-        :rtype: ~azure.ai.agents.types.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                pending_upload_request = {
-                    "pendingUploadType": "str",
-                    "connectionName": "str",
-                    "pendingUploadId": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "blobReference": {
-                        "blobUri": "str",
-                        "credential": {
-                            "sasUri": "str",
-                            "type": "SAS"
-                        },
-                        "storageAccountArmId": "str"
-                    },
-                    "pendingUploadId": "str",
-                    "pendingUploadType": "str",
-                    "version": "str"
-                }
-        """
-
-    @overload
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.PendingUploadResponse:
-        """Start a new or get an existing pending upload of a dataset for a specific version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to operate on. Required.
-        :type version: str
-        :param pending_upload_request: The pending upload request parameters. Required.
-        :type pending_upload_request: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PendingUploadResponse
-        :rtype: ~azure.ai.agents.types.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "blobReference": {
-                        "blobUri": "str",
-                        "credential": {
-                            "sasUri": "str",
-                            "type": "SAS"
-                        },
-                        "storageAccountArmId": "str"
-                    },
-                    "pendingUploadId": "str",
-                    "pendingUploadType": "str",
-                    "version": "str"
-                }
-        """
-
-    @distributed_trace
-    def pending_upload(
-        self,
-        name: str,
-        version: str,
-        pending_upload_request: Union[_types_models1.PendingUploadRequest, IO[bytes]],
-        **kwargs: Any
-    ) -> _types_models1.PendingUploadResponse:
-        """Start a new or get an existing pending upload of a dataset for a specific version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to operate on. Required.
-        :type version: str
-        :param pending_upload_request: The pending upload request parameters. Is either a
-         PendingUploadRequest type or a IO[bytes] type. Required.
-        :type pending_upload_request: ~azure.ai.agents.types.PendingUploadRequest or IO[bytes]
-        :return: PendingUploadResponse
-        :rtype: ~azure.ai.agents.types.PendingUploadResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                pending_upload_request = {
-                    "pendingUploadType": "str",
-                    "connectionName": "str",
-                    "pendingUploadId": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "blobReference": {
-                        "blobUri": "str",
-                        "credential": {
-                            "sasUri": "str",
-                            "type": "SAS"
-                        },
-                        "storageAccountArmId": "str"
-                    },
-                    "pendingUploadId": "str",
-                    "pendingUploadType": "str",
-                    "version": "str"
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.PendingUploadResponse] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(pending_upload_request, (IOBase, bytes)):
-            _content = pending_upload_request
-        else:
-            _json = pending_upload_request
-
-        _request = build_datasets_pending_upload_request(
-            name=name,
-            version=version,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_credentials(self, name: str, version: str, **kwargs: Any) -> _types_models1.DatasetCredential:
-        """Get the SAS credential to access the storage account associated with a Dataset version.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the DatasetVersion to operate on. Required.
-        :type version: str
-        :return: DatasetCredential
-        :rtype: ~azure.ai.agents.types.DatasetCredential
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "blobReference": {
-                        "blobUri": "str",
-                        "credential": {
-                            "sasUri": "str",
-                            "type": "SAS"
-                        },
-                        "storageAccountArmId": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.DatasetCredential] = kwargs.pop("cls", None)
-
-        _request = build_datasets_get_credentials_request(
-            name=name,
-            version=version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class DeploymentsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`deployments` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _types_models1.Deployment:
-        """Get a deployed model.
-
-        :param name: Name of the deployment. Required.
-        :type name: str
-        :return: Deployment
-        :rtype: ~azure.ai.agents.types.Deployment
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "ModelDeployment":
-                deployment = {
-                    "capabilities": {
-                        "str": "str"
-                    },
-                    "modelName": "str",
-                    "modelPublisher": "str",
-                    "modelVersion": "str",
-                    "name": "str",
-                    "sku": {
-                        "capacity": 0,
-                        "family": "str",
-                        "name": "str",
-                        "size": "str",
-                        "tier": "str"
-                    },
-                    "type": "ModelDeployment",
-                    "connectionName": "str"
-                }
-
-                # response body for status code(s): 200
-                response == deployment
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.Deployment] = kwargs.pop("cls", None)
-
-        _request = build_deployments_get_request(
-            name=name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        model_publisher: Optional[str] = None,
-        model_name: Optional[str] = None,
-        deployment_type: Optional[types.DeploymentType] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.Deployment"]:
-        """List all deployed models in the project.
-
-        :keyword model_publisher: Model publisher to filter models by. Default value is None.
-        :paramtype model_publisher: str
-        :keyword model_name: Model name (the publisher specific name) to filter models by. Default
-         value is None.
-        :paramtype model_name: str
-        :keyword deployment_type: Type of deployment to filter list by. "ModelDeployment" Default value
-         is None.
-        :paramtype deployment_type: str or ~azure.ai.agents.models.DeploymentType
-        :return: An iterator like instance of Deployment
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.Deployment]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "ModelDeployment":
-                deployment = {
-                    "capabilities": {
-                        "str": "str"
-                    },
-                    "modelName": "str",
-                    "modelPublisher": "str",
-                    "modelVersion": "str",
-                    "name": "str",
-                    "sku": {
-                        "capacity": 0,
-                        "family": "str",
-                        "name": "str",
-                        "size": "str",
-                        "tier": "str"
-                    },
-                    "type": "ModelDeployment",
-                    "connectionName": "str"
-                }
-
-                # response body for status code(s): 200
-                response == deployment
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.Deployment]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_deployments_list_request(
-                    model_publisher=model_publisher,
-                    model_name=model_name,
-                    deployment_type=deployment_type,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class IndexesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`indexes` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def list_versions(self, name: str, **kwargs: Any) -> ItemPaged["_types_models1.Index"]:
-        """List all versions of the given Index.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :return: An iterator like instance of Index
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.Index]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == index
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.Index]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_indexes_list_versions_request(
-                    name=name,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_types_models1.Index"]:
-        """List the latest version of each Index.
-
-        :return: An iterator like instance of Index
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.Index]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == index
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.Index]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_indexes_list_request(
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def get(self, name: str, version: str, **kwargs: Any) -> _types_models1.Index:
-        """Get the specific version of the Index. The service returns 404 Not Found error if the Index
-        does not exist.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the Index to retrieve. Required.
-        :type version: str
-        :return: Index
-        :rtype: ~azure.ai.agents.types.Index
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == index
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.Index] = kwargs.pop("cls", None)
-
-        _request = build_indexes_get_request(
-            name=name,
-            version=version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete(self, name: str, version: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Delete the specific version of the Index. The service returns 204 No Content if the Index was
-        deleted successfully or if the Index does not exist.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the Index to delete. Required.
-        :type version: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_indexes_delete_request(
-            name=name,
-            version=version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    def create_or_update(
-        self,
-        name: str,
-        version: str,
-        index: _types_models1.Index,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _types_models1.Index:
-        """Create a new or update an existing Index with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the Index to create or update. Required.
-        :type version: str
-        :param index: The Index to create or update. Required.
-        :type index: ~azure.ai.agents.types.Index
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: Index
-        :rtype: ~azure.ai.agents.types.Index
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                index = index
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == index
-        """
-
-    @overload
-    def create_or_update(
-        self,
-        name: str,
-        version: str,
-        index: IO[bytes],
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _types_models1.Index:
-        """Create a new or update an existing Index with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the Index to create or update. Required.
-        :type version: str
-        :param index: The Index to create or update. Required.
-        :type index: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: Index
-        :rtype: ~azure.ai.agents.types.Index
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == index
-        """
-
-    @distributed_trace
-    def create_or_update(
-        self, name: str, version: str, index: Union[_types_models1.Index, IO[bytes]], **kwargs: Any
-    ) -> _types_models1.Index:
-        """Create a new or update an existing Index with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the Index to create or update. Required.
-        :type version: str
-        :param index: The Index to create or update. Is either a Index type or a IO[bytes] type.
-         Required.
-        :type index: ~azure.ai.agents.types.Index or IO[bytes]
-        :return: Index
-        :rtype: ~azure.ai.agents.types.Index
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                index = index
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureSearch":
-                index = {
-                    "connectionName": "str",
-                    "indexName": "str",
-                    "name": "str",
-                    "type": "AzureSearch",
-                    "version": "str",
-                    "description": "str",
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "CosmosDBNoSqlVectorStore":
-                index = {
-                    "connectionName": "str",
-                    "containerName": "str",
-                    "databaseName": "str",
-                    "embeddingConfiguration": {
-                        "embeddingField": "str",
-                        "modelDeploymentName": "str"
-                    },
-                    "fieldMapping": {
-                        "contentFields": [
-                            "str"
-                        ],
-                        "filepathField": "str",
-                        "metadataFields": [
-                            "str"
-                        ],
-                        "titleField": "str",
-                        "urlField": "str",
-                        "vectorFields": [
-                            "str"
-                        ]
-                    },
-                    "name": "str",
-                    "type": "CosmosDBNoSqlVectorStore",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "ManagedAzureSearch":
-                index = {
-                    "name": "str",
-                    "type": "ManagedAzureSearch",
-                    "vectorStoreId": "str",
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == index
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.Index] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/merge-patch+json"
-        _json = None
-        _content = None
-        if isinstance(index, (IOBase, bytes)):
-            _content = index
-        else:
-            _json = index
-
-        _request = build_indexes_create_or_update_request(
-            name=name,
-            version=version,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class _AIProjectClientOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AIProjectClientConfiguration]
-):
-
-    @distributed_trace
-    def delete_job(self, job_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Delete a job. Returns 204 No Content.
-
-        :param job_id: The ID of the job to delete. Required.
-        :type job_id: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_ai_project_delete_job_request(
-            job_id=job_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-
-class BetaEvaluationTaxonomiesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`evaluation_taxonomies` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
-    ) -> _types_models1.EvaluationTaxonomy:
-        """Get an evaluation run by name.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :return: EvaluationTaxonomy
-        :rtype: ~azure.ai.agents.types.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.EvaluationTaxonomy] = kwargs.pop("cls", None)
-
-        _request = build_beta_evaluation_taxonomies_get_request(
-            name=name,
-            foundry_features=foundry_features,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        input_name: Optional[str] = None,
-        input_type: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.EvaluationTaxonomy"]:
-        """List evaluation taxonomies.
-
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword input_name: Filter by the evaluation input name. Default value is None.
-        :paramtype input_name: str
-        :keyword input_type: Filter by taxonomy input type. Default value is None.
-        :paramtype input_type: str
-        :return: An iterator like instance of EvaluationTaxonomy
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.EvaluationTaxonomy]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.EvaluationTaxonomy]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_beta_evaluation_taxonomies_list_request(
-                    foundry_features=foundry_features,
-                    input_name=input_name,
-                    input_type=input_type,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
-    ) -> None:
-        """Delete an evaluation taxonomy by name.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_evaluation_taxonomies_delete_request(
-            name=name,
-            foundry_features=foundry_features,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    def create(
-        self,
-        name: str,
-        body: _types_models1.EvaluationTaxonomy,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.EvaluationTaxonomy:
-        """Create an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: ~azure.ai.agents.types.EvaluationTaxonomy
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy
-        :rtype: ~azure.ai.agents.types.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-        """
-
-    @overload
-    def create(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.EvaluationTaxonomy:
-        """Create an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy
-        :rtype: ~azure.ai.agents.types.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-        """
-
-    @distributed_trace
-    def create(
-        self,
-        name: str,
-        body: Union[_types_models1.EvaluationTaxonomy, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _types_models1.EvaluationTaxonomy:
-        """Create an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Is either a EvaluationTaxonomy type or a IO[bytes] type.
-         Required.
-        :type body: ~azure.ai.agents.types.EvaluationTaxonomy or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :return: EvaluationTaxonomy
-        :rtype: ~azure.ai.agents.types.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.EvaluationTaxonomy] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        _request = build_beta_evaluation_taxonomies_create_request(
-            name=name,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update(
-        self,
-        name: str,
-        body: _types_models1.EvaluationTaxonomy,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.EvaluationTaxonomy:
-        """Update an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: ~azure.ai.agents.types.EvaluationTaxonomy
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy
-        :rtype: ~azure.ai.agents.types.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-        """
-
-    @overload
-    def update(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.EvaluationTaxonomy:
-        """Update an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy
-        :rtype: ~azure.ai.agents.types.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-        """
-
-    @distributed_trace
-    def update(
-        self,
-        name: str,
-        body: Union[_types_models1.EvaluationTaxonomy, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _types_models1.EvaluationTaxonomy:
-        """Update an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Is either a EvaluationTaxonomy type or a IO[bytes] type.
-         Required.
-        :type body: ~azure.ai.agents.types.EvaluationTaxonomy or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :return: EvaluationTaxonomy
-        :rtype: ~azure.ai.agents.types.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "agent":
-                evaluation_taxonomy_input = {
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "target": target,
-                    "type": "agent"
-                }
-
-                # JSON input template for discriminator value "azure_ai_agent":
-                target = {
-                    "name": "str",
-                    "type": "azure_ai_agent",
-                    "tool_descriptions": [
-                        {
-                            "description": "str",
-                            "name": "str"
-                        }
-                    ],
-                    "version": "str"
-                }
-
-                # JSON input template for discriminator value "azure_ai_model":
-                target = {
-                    "type": "azure_ai_model",
-                    "model": "str",
-                    "sampling_params": {
-                        "max_completion_tokens": 0,
-                        "seed": 0,
-                        "temperature": 0.0,
-                        "top_p": 0.0
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "name": "str",
-                    "taxonomyInput": evaluation_taxonomy_input,
-                    "version": "str",
-                    "description": "str",
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    },
-                    "taxonomyCategories": [
-                        {
-                            "id": "str",
-                            "name": "str",
-                            "riskCategory": "str",
-                            "subCategories": [
-                                {
-                                    "enabled": bool,
-                                    "id": "str",
-                                    "name": "str",
-                                    "description": "str",
-                                    "properties": {
-                                        "str": "str"
-                                    }
-                                }
-                            ],
-                            "description": "str",
-                            "properties": {
-                                "str": "str"
-                            }
-                        }
-                    ]
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.EvaluationTaxonomy] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        _request = build_beta_evaluation_taxonomies_update_request(
-            name=name,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class BetaEvaluatorsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`evaluators` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def list_versions(
-        self,
-        name: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
-        limit: Optional[int] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.EvaluatorVersion"]:
-        """List all versions of the given evaluator.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
-         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
-         value is None.
-        :paramtype type: str or str or str or str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :return: An iterator like instance of EvaluatorVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.EvaluatorVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.EvaluatorVersion]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_beta_evaluators_list_versions_request(
-                    name=name,
-                    foundry_features=foundry_features,
-                    type=type,
-                    limit=limit,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
-        limit: Optional[int] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.EvaluatorVersion"]:
-        """List the latest version of each evaluator.
-
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
-         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
-         value is None.
-        :paramtype type: str or str or str or str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the default is 20. Default value is None.
-        :paramtype limit: int
-        :return: An iterator like instance of EvaluatorVersion
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.EvaluatorVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.EvaluatorVersion]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_beta_evaluators_list_request(
-                    foundry_features=foundry_features,
-                    type=type,
-                    limit=limit,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def get_version(
-        self,
-        name: str,
-        version: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _types_models1.EvaluatorVersion:
-        """Get the specific version of the EvaluatorVersion. The service returns 404 Not Found error if
-        the EvaluatorVersion does not exist.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The specific version id of the EvaluatorVersion to retrieve. Required.
-        :type version: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :return: EvaluatorVersion
-        :rtype: ~azure.ai.agents.types.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.EvaluatorVersion] = kwargs.pop("cls", None)
-
-        _request = build_beta_evaluators_get_version_request(
-            name=name,
-            version=version,
-            foundry_features=foundry_features,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def delete_version(  # pylint: disable=inconsistent-return-statements
-        self,
-        name: str,
-        version: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> None:
-        """Delete the specific version of the EvaluatorVersion. The service returns 204 No Content if the
-        EvaluatorVersion was deleted successfully or if the EvaluatorVersion does not exist.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to delete. Required.
-        :type version: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_evaluators_delete_version_request(
-            name=name,
-            version=version,
-            foundry_features=foundry_features,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    def create_version(
-        self,
-        name: str,
-        evaluator_version: _types_models1.EvaluatorVersion,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.EvaluatorVersion:
-        """Create a new EvaluatorVersion with auto incremented version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param evaluator_version: Required.
-        :type evaluator_version: ~azure.ai.agents.types.EvaluatorVersion
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion
-        :rtype: ~azure.ai.agents.types.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                evaluator_version = {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # response body for status code(s): 201
-                response == {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @overload
-    def create_version(
-        self,
-        name: str,
-        evaluator_version: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.EvaluatorVersion:
-        """Create a new EvaluatorVersion with auto incremented version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param evaluator_version: Required.
-        :type evaluator_version: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion
-        :rtype: ~azure.ai.agents.types.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # response body for status code(s): 201
-                response == {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @distributed_trace
-    def create_version(
-        self,
-        name: str,
-        evaluator_version: Union[_types_models1.EvaluatorVersion, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _types_models1.EvaluatorVersion:
-        """Create a new EvaluatorVersion with auto incremented version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param evaluator_version: Is either a EvaluatorVersion type or a IO[bytes] type. Required.
-        :type evaluator_version: ~azure.ai.agents.types.EvaluatorVersion or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :return: EvaluatorVersion
-        :rtype: ~azure.ai.agents.types.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                evaluator_version = {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # response body for status code(s): 201
-                response == {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.EvaluatorVersion] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(evaluator_version, (IOBase, bytes)):
-            _content = evaluator_version
-        else:
-            _json = evaluator_version
-
-        _request = build_beta_evaluators_create_version_request(
-            name=name,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: _types_models1.EvaluatorVersion,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.EvaluatorVersion:
-        """Update an existing EvaluatorVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to update. Required.
-        :type version: str
-        :param evaluator_version: Evaluator resource. Required.
-        :type evaluator_version: ~azure.ai.agents.types.EvaluatorVersion
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion
-        :rtype: ~azure.ai.agents.types.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                evaluator_version = {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @overload
-    def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.EvaluatorVersion:
-        """Update an existing EvaluatorVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to update. Required.
-        :type version: str
-        :param evaluator_version: Evaluator resource. Required.
-        :type evaluator_version: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorVersion
-        :rtype: ~azure.ai.agents.types.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @distributed_trace
-    def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: Union[_types_models1.EvaluatorVersion, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _types_models1.EvaluatorVersion:
-        """Update an existing EvaluatorVersion with the given version id.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :param version: The version of the EvaluatorVersion to update. Required.
-        :type version: str
-        :param evaluator_version: Evaluator resource. Is either a EvaluatorVersion type or a IO[bytes]
-         type. Required.
-        :type evaluator_version: ~azure.ai.agents.types.EvaluatorVersion or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.EVALUATIONS_V1_PREVIEW
-        :return: EvaluatorVersion
-        :rtype: ~azure.ai.agents.types.EvaluatorVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                evaluator_version = {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "code":
-                evaluator_definition = {
-                    "code_text": "str",
-                    "type": "code",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # JSON input template for discriminator value "prompt":
-                evaluator_definition = {
-                    "prompt_text": "str",
-                    "type": "prompt",
-                    "data_schema": {
-                        "str": {}
-                    },
-                    "init_parameters": {
-                        "str": {}
-                    },
-                    "metrics": {
-                        "str": {
-                            "desirable_direction": "str",
-                            "is_primary": bool,
-                            "max_value": 0.0,
-                            "min_value": 0.0,
-                            "type": "str"
-                        }
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "categories": [
-                        "str"
-                    ],
-                    "created_at": "2020-02-20 00:00:00",
-                    "created_by": "str",
-                    "definition": evaluator_definition,
-                    "evaluator_type": "str",
-                    "modified_at": "2020-02-20 00:00:00",
-                    "name": "str",
-                    "version": "str",
-                    "description": "str",
-                    "display_name": "str",
-                    "id": "str",
-                    "metadata": {
-                        "str": "str"
-                    },
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.EvaluatorVersion] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(evaluator_version, (IOBase, bytes)):
-            _content = evaluator_version
-        else:
-            _json = evaluator_version
-
-        _request = build_beta_evaluators_update_version_request(
-            name=name,
-            version=version,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class BetaInsightsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`insights` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    def generate(
-        self,
-        insight: _types_models1.Insight,
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.Insight:
-        """Generate Insights.
-
-        :param insight: Complete evaluation configuration including data source, evaluators, and result
-         settings. Required.
-        :type insight: ~azure.ai.agents.types.Insight
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.INSIGHTS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Insight
-        :rtype: ~azure.ai.agents.types.Insight
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_request = {
-                    "agentName": "str",
-                    "type": "AgentClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_request = {
-                    "baselineRunId": "str",
-                    "evalId": "str",
-                    "treatmentRunIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationComparison"
-                }
-
-                # JSON input template for discriminator value "EvaluationRunClusterInsight":
-                insight_request = {
-                    "evalId": "str",
-                    "runIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationRunClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_result = {
-                    "clusterInsight": {
-                        "clusters": [
-                            {
-                                "description": "str",
-                                "id": "str",
-                                "label": "str",
-                                "suggestion": "str",
-                                "suggestionTitle": "str",
-                                "weight": 0,
-                                "samples": [
-                                    insight_sample
-                                ],
-                                "subClusters": [
-                                    ...
-                                ]
-                            }
-                        ],
-                        "summary": {
-                            "method": "str",
-                            "sampleCount": 0,
-                            "uniqueClusterCount": 0,
-                            "uniqueSubclusterCount": 0,
-                            "usage": {
-                                "inputTokenUsage": 0,
-                                "outputTokenUsage": 0,
-                                "totalTokenUsage": 0
-                            }
-                        },
-                        "coordinates": {
-                            "str": {
-                                "size": 0,
-                                "x": 0,
-                                "y": 0
-                            }
-                        }
-                    },
-                    "type": "AgentClusterInsight"
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_result = {
-                    "comparisons": [
-                        {
-                            "baselineRunSummary": {
-                                "average": 0.0,
-                                "runId": "str",
-                                "sampleCount": 0,
-                                "standardDeviation": 0.0
-                            },
-                            "compareItems": [
-                                {
-                                    "deltaEstimate": 0.0,
-                                    "pValue": 0.0,
-                                    "treatmentEffect": "str",
-                                    "treatmentRunId": "str",
-                                    "treatmentRunSummary": {
-                                        "average": 0.0,
-                                        "runId": "str",
-                                        "sampleCount": 0,
-                                        "standardDeviation": 0.0
-                                    }
-                                }
-                            ],
-                            "evaluator": "str",
-                            "metric": "str",
-                            "testingCriteria": "str"
-                        }
-                    ],
-                    "method": "str",
-                    "type": "EvaluationComparison"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                insight = {
-                    "displayName": "str",
-                    "id": "str",
-                    "metadata": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "completedAt": "2020-02-20 00:00:00"
-                    },
-                    "request": insight_request,
-                    "state": "str",
-                    "result": insight_result
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_request = {
-                    "agentName": "str",
-                    "type": "AgentClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_request = {
-                    "baselineRunId": "str",
-                    "evalId": "str",
-                    "treatmentRunIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationComparison"
-                }
-
-                # JSON input template for discriminator value "EvaluationRunClusterInsight":
-                insight_request = {
-                    "evalId": "str",
-                    "runIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationRunClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_result = {
-                    "clusterInsight": {
-                        "clusters": [
-                            {
-                                "description": "str",
-                                "id": "str",
-                                "label": "str",
-                                "suggestion": "str",
-                                "suggestionTitle": "str",
-                                "weight": 0,
-                                "samples": [
-                                    insight_sample
-                                ],
-                                "subClusters": [
-                                    ...
-                                ]
-                            }
-                        ],
-                        "summary": {
-                            "method": "str",
-                            "sampleCount": 0,
-                            "uniqueClusterCount": 0,
-                            "uniqueSubclusterCount": 0,
-                            "usage": {
-                                "inputTokenUsage": 0,
-                                "outputTokenUsage": 0,
-                                "totalTokenUsage": 0
-                            }
-                        },
-                        "coordinates": {
-                            "str": {
-                                "size": 0,
-                                "x": 0,
-                                "y": 0
-                            }
-                        }
-                    },
-                    "type": "AgentClusterInsight"
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_result = {
-                    "comparisons": [
-                        {
-                            "baselineRunSummary": {
-                                "average": 0.0,
-                                "runId": "str",
-                                "sampleCount": 0,
-                                "standardDeviation": 0.0
-                            },
-                            "compareItems": [
-                                {
-                                    "deltaEstimate": 0.0,
-                                    "pValue": 0.0,
-                                    "treatmentEffect": "str",
-                                    "treatmentRunId": "str",
-                                    "treatmentRunSummary": {
-                                        "average": 0.0,
-                                        "runId": "str",
-                                        "sampleCount": 0,
-                                        "standardDeviation": 0.0
-                                    }
-                                }
-                            ],
-                            "evaluator": "str",
-                            "metric": "str",
-                            "testingCriteria": "str"
-                        }
-                    ],
-                    "method": "str",
-                    "type": "EvaluationComparison"
-                }
-
-                # response body for status code(s): 201
-                response == {
-                    "displayName": "str",
-                    "id": "str",
-                    "metadata": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "completedAt": "2020-02-20 00:00:00"
-                    },
-                    "request": insight_request,
-                    "state": "str",
-                    "result": insight_result
-                }
-        """
-
-    @overload
-    def generate(
-        self,
-        insight: IO[bytes],
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.Insight:
-        """Generate Insights.
-
-        :param insight: Complete evaluation configuration including data source, evaluators, and result
-         settings. Required.
-        :type insight: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.INSIGHTS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Insight
-        :rtype: ~azure.ai.agents.types.Insight
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_request = {
-                    "agentName": "str",
-                    "type": "AgentClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_request = {
-                    "baselineRunId": "str",
-                    "evalId": "str",
-                    "treatmentRunIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationComparison"
-                }
-
-                # JSON input template for discriminator value "EvaluationRunClusterInsight":
-                insight_request = {
-                    "evalId": "str",
-                    "runIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationRunClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_result = {
-                    "clusterInsight": {
-                        "clusters": [
-                            {
-                                "description": "str",
-                                "id": "str",
-                                "label": "str",
-                                "suggestion": "str",
-                                "suggestionTitle": "str",
-                                "weight": 0,
-                                "samples": [
-                                    insight_sample
-                                ],
-                                "subClusters": [
-                                    ...
-                                ]
-                            }
-                        ],
-                        "summary": {
-                            "method": "str",
-                            "sampleCount": 0,
-                            "uniqueClusterCount": 0,
-                            "uniqueSubclusterCount": 0,
-                            "usage": {
-                                "inputTokenUsage": 0,
-                                "outputTokenUsage": 0,
-                                "totalTokenUsage": 0
-                            }
-                        },
-                        "coordinates": {
-                            "str": {
-                                "size": 0,
-                                "x": 0,
-                                "y": 0
-                            }
-                        }
-                    },
-                    "type": "AgentClusterInsight"
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_result = {
-                    "comparisons": [
-                        {
-                            "baselineRunSummary": {
-                                "average": 0.0,
-                                "runId": "str",
-                                "sampleCount": 0,
-                                "standardDeviation": 0.0
-                            },
-                            "compareItems": [
-                                {
-                                    "deltaEstimate": 0.0,
-                                    "pValue": 0.0,
-                                    "treatmentEffect": "str",
-                                    "treatmentRunId": "str",
-                                    "treatmentRunSummary": {
-                                        "average": 0.0,
-                                        "runId": "str",
-                                        "sampleCount": 0,
-                                        "standardDeviation": 0.0
-                                    }
-                                }
-                            ],
-                            "evaluator": "str",
-                            "metric": "str",
-                            "testingCriteria": "str"
-                        }
-                    ],
-                    "method": "str",
-                    "type": "EvaluationComparison"
-                }
-
-                # response body for status code(s): 201
-                response == {
-                    "displayName": "str",
-                    "id": "str",
-                    "metadata": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "completedAt": "2020-02-20 00:00:00"
-                    },
-                    "request": insight_request,
-                    "state": "str",
-                    "result": insight_result
-                }
-        """
-
-    @distributed_trace
-    def generate(
-        self,
-        insight: Union[_types_models1.Insight, IO[bytes]],
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]] = None,
-        **kwargs: Any
-    ) -> _types_models1.Insight:
-        """Generate Insights.
-
-        :param insight: Complete evaluation configuration including data source, evaluators, and result
-         settings. Is either a Insight type or a IO[bytes] type. Required.
-        :type insight: ~azure.ai.agents.types.Insight or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.INSIGHTS_V1_PREVIEW
-        :return: Insight
-        :rtype: ~azure.ai.agents.types.Insight
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_request = {
-                    "agentName": "str",
-                    "type": "AgentClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_request = {
-                    "baselineRunId": "str",
-                    "evalId": "str",
-                    "treatmentRunIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationComparison"
-                }
-
-                # JSON input template for discriminator value "EvaluationRunClusterInsight":
-                insight_request = {
-                    "evalId": "str",
-                    "runIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationRunClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_result = {
-                    "clusterInsight": {
-                        "clusters": [
-                            {
-                                "description": "str",
-                                "id": "str",
-                                "label": "str",
-                                "suggestion": "str",
-                                "suggestionTitle": "str",
-                                "weight": 0,
-                                "samples": [
-                                    insight_sample
-                                ],
-                                "subClusters": [
-                                    ...
-                                ]
-                            }
-                        ],
-                        "summary": {
-                            "method": "str",
-                            "sampleCount": 0,
-                            "uniqueClusterCount": 0,
-                            "uniqueSubclusterCount": 0,
-                            "usage": {
-                                "inputTokenUsage": 0,
-                                "outputTokenUsage": 0,
-                                "totalTokenUsage": 0
-                            }
-                        },
-                        "coordinates": {
-                            "str": {
-                                "size": 0,
-                                "x": 0,
-                                "y": 0
-                            }
-                        }
-                    },
-                    "type": "AgentClusterInsight"
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_result = {
-                    "comparisons": [
-                        {
-                            "baselineRunSummary": {
-                                "average": 0.0,
-                                "runId": "str",
-                                "sampleCount": 0,
-                                "standardDeviation": 0.0
-                            },
-                            "compareItems": [
-                                {
-                                    "deltaEstimate": 0.0,
-                                    "pValue": 0.0,
-                                    "treatmentEffect": "str",
-                                    "treatmentRunId": "str",
-                                    "treatmentRunSummary": {
-                                        "average": 0.0,
-                                        "runId": "str",
-                                        "sampleCount": 0,
-                                        "standardDeviation": 0.0
-                                    }
-                                }
-                            ],
-                            "evaluator": "str",
-                            "metric": "str",
-                            "testingCriteria": "str"
-                        }
-                    ],
-                    "method": "str",
-                    "type": "EvaluationComparison"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                insight = {
-                    "displayName": "str",
-                    "id": "str",
-                    "metadata": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "completedAt": "2020-02-20 00:00:00"
-                    },
-                    "request": insight_request,
-                    "state": "str",
-                    "result": insight_result
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_request = {
-                    "agentName": "str",
-                    "type": "AgentClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_request = {
-                    "baselineRunId": "str",
-                    "evalId": "str",
-                    "treatmentRunIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationComparison"
-                }
-
-                # JSON input template for discriminator value "EvaluationRunClusterInsight":
-                insight_request = {
-                    "evalId": "str",
-                    "runIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationRunClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_result = {
-                    "clusterInsight": {
-                        "clusters": [
-                            {
-                                "description": "str",
-                                "id": "str",
-                                "label": "str",
-                                "suggestion": "str",
-                                "suggestionTitle": "str",
-                                "weight": 0,
-                                "samples": [
-                                    insight_sample
-                                ],
-                                "subClusters": [
-                                    ...
-                                ]
-                            }
-                        ],
-                        "summary": {
-                            "method": "str",
-                            "sampleCount": 0,
-                            "uniqueClusterCount": 0,
-                            "uniqueSubclusterCount": 0,
-                            "usage": {
-                                "inputTokenUsage": 0,
-                                "outputTokenUsage": 0,
-                                "totalTokenUsage": 0
-                            }
-                        },
-                        "coordinates": {
-                            "str": {
-                                "size": 0,
-                                "x": 0,
-                                "y": 0
-                            }
-                        }
-                    },
-                    "type": "AgentClusterInsight"
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_result = {
-                    "comparisons": [
-                        {
-                            "baselineRunSummary": {
-                                "average": 0.0,
-                                "runId": "str",
-                                "sampleCount": 0,
-                                "standardDeviation": 0.0
-                            },
-                            "compareItems": [
-                                {
-                                    "deltaEstimate": 0.0,
-                                    "pValue": 0.0,
-                                    "treatmentEffect": "str",
-                                    "treatmentRunId": "str",
-                                    "treatmentRunSummary": {
-                                        "average": 0.0,
-                                        "runId": "str",
-                                        "sampleCount": 0,
-                                        "standardDeviation": 0.0
-                                    }
-                                }
-                            ],
-                            "evaluator": "str",
-                            "metric": "str",
-                            "testingCriteria": "str"
-                        }
-                    ],
-                    "method": "str",
-                    "type": "EvaluationComparison"
-                }
-
-                # response body for status code(s): 201
-                response == {
-                    "displayName": "str",
-                    "id": "str",
-                    "metadata": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "completedAt": "2020-02-20 00:00:00"
-                    },
-                    "request": insight_request,
-                    "state": "str",
-                    "result": insight_result
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.Insight] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(insight, (IOBase, bytes)):
-            _content = insight
-        else:
-            _json = insight
-
-        _request = build_beta_insights_generate_request(
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get(
-        self,
-        id: str,
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]] = None,
-        include_coordinates: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _types_models1.Insight:
-        """Get a specific insight by Id.
-
-        :param id: The unique identifier for the insights report. Required.
-        :type id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.INSIGHTS_V1_PREVIEW
-        :keyword include_coordinates: Whether to include coordinates for visualization in the response.
-         Defaults to false. Default value is None.
-        :paramtype include_coordinates: bool
-        :return: Insight
-        :rtype: ~azure.ai.agents.types.Insight
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_request = {
-                    "agentName": "str",
-                    "type": "AgentClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_request = {
-                    "baselineRunId": "str",
-                    "evalId": "str",
-                    "treatmentRunIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationComparison"
-                }
-
-                # JSON input template for discriminator value "EvaluationRunClusterInsight":
-                insight_request = {
-                    "evalId": "str",
-                    "runIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationRunClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_result = {
-                    "clusterInsight": {
-                        "clusters": [
-                            {
-                                "description": "str",
-                                "id": "str",
-                                "label": "str",
-                                "suggestion": "str",
-                                "suggestionTitle": "str",
-                                "weight": 0,
-                                "samples": [
-                                    insight_sample
-                                ],
-                                "subClusters": [
-                                    ...
-                                ]
-                            }
-                        ],
-                        "summary": {
-                            "method": "str",
-                            "sampleCount": 0,
-                            "uniqueClusterCount": 0,
-                            "uniqueSubclusterCount": 0,
-                            "usage": {
-                                "inputTokenUsage": 0,
-                                "outputTokenUsage": 0,
-                                "totalTokenUsage": 0
-                            }
-                        },
-                        "coordinates": {
-                            "str": {
-                                "size": 0,
-                                "x": 0,
-                                "y": 0
-                            }
-                        }
-                    },
-                    "type": "AgentClusterInsight"
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_result = {
-                    "comparisons": [
-                        {
-                            "baselineRunSummary": {
-                                "average": 0.0,
-                                "runId": "str",
-                                "sampleCount": 0,
-                                "standardDeviation": 0.0
-                            },
-                            "compareItems": [
-                                {
-                                    "deltaEstimate": 0.0,
-                                    "pValue": 0.0,
-                                    "treatmentEffect": "str",
-                                    "treatmentRunId": "str",
-                                    "treatmentRunSummary": {
-                                        "average": 0.0,
-                                        "runId": "str",
-                                        "sampleCount": 0,
-                                        "standardDeviation": 0.0
-                                    }
-                                }
-                            ],
-                            "evaluator": "str",
-                            "metric": "str",
-                            "testingCriteria": "str"
-                        }
-                    ],
-                    "method": "str",
-                    "type": "EvaluationComparison"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "displayName": "str",
-                    "id": "str",
-                    "metadata": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "completedAt": "2020-02-20 00:00:00"
-                    },
-                    "request": insight_request,
-                    "state": "str",
-                    "result": insight_result
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.Insight] = kwargs.pop("cls", None)
-
-        _request = build_beta_insights_get_request(
-            id=id,
-            foundry_features=foundry_features,
-            include_coordinates=include_coordinates,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]] = None,
-        type: Optional[types.InsightType] = None,
-        eval_id: Optional[str] = None,
-        run_id: Optional[str] = None,
-        agent_name: Optional[str] = None,
-        include_coordinates: Optional[bool] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.Insight"]:
-        """List all insights in reverse chronological order (newest first).
-
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.INSIGHTS_V1_PREVIEW
-        :keyword type: Filter by the type of analysis. Known values are: "EvaluationRunClusterInsight",
-         "AgentClusterInsight", and "EvaluationComparison". Default value is None.
-        :paramtype type: str or ~azure.ai.agents.models.InsightType
-        :keyword eval_id: Filter by the evaluation ID. Default value is None.
-        :paramtype eval_id: str
-        :keyword run_id: Filter by the evaluation run ID. Default value is None.
-        :paramtype run_id: str
-        :keyword agent_name: Filter by the agent name. Default value is None.
-        :paramtype agent_name: str
-        :keyword include_coordinates: Whether to include coordinates for visualization in the response.
-         Defaults to false. Default value is None.
-        :paramtype include_coordinates: bool
-        :return: An iterator like instance of Insight
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.Insight]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_request = {
-                    "agentName": "str",
-                    "type": "AgentClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_request = {
-                    "baselineRunId": "str",
-                    "evalId": "str",
-                    "treatmentRunIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationComparison"
-                }
-
-                # JSON input template for discriminator value "EvaluationRunClusterInsight":
-                insight_request = {
-                    "evalId": "str",
-                    "runIds": [
-                        "str"
-                    ],
-                    "type": "EvaluationRunClusterInsight",
-                    "modelConfiguration": {
-                        "modelDeploymentName": "str"
-                    }
-                }
-
-                # JSON input template for discriminator value "AgentClusterInsight":
-                insight_result = {
-                    "clusterInsight": {
-                        "clusters": [
-                            {
-                                "description": "str",
-                                "id": "str",
-                                "label": "str",
-                                "suggestion": "str",
-                                "suggestionTitle": "str",
-                                "weight": 0,
-                                "samples": [
-                                    insight_sample
-                                ],
-                                "subClusters": [
-                                    ...
-                                ]
-                            }
-                        ],
-                        "summary": {
-                            "method": "str",
-                            "sampleCount": 0,
-                            "uniqueClusterCount": 0,
-                            "uniqueSubclusterCount": 0,
-                            "usage": {
-                                "inputTokenUsage": 0,
-                                "outputTokenUsage": 0,
-                                "totalTokenUsage": 0
-                            }
-                        },
-                        "coordinates": {
-                            "str": {
-                                "size": 0,
-                                "x": 0,
-                                "y": 0
-                            }
-                        }
-                    },
-                    "type": "AgentClusterInsight"
-                }
-
-                # JSON input template for discriminator value "EvaluationComparison":
-                insight_result = {
-                    "comparisons": [
-                        {
-                            "baselineRunSummary": {
-                                "average": 0.0,
-                                "runId": "str",
-                                "sampleCount": 0,
-                                "standardDeviation": 0.0
-                            },
-                            "compareItems": [
-                                {
-                                    "deltaEstimate": 0.0,
-                                    "pValue": 0.0,
-                                    "treatmentEffect": "str",
-                                    "treatmentRunId": "str",
-                                    "treatmentRunSummary": {
-                                        "average": 0.0,
-                                        "runId": "str",
-                                        "sampleCount": 0,
-                                        "standardDeviation": 0.0
-                                    }
-                                }
-                            ],
-                            "evaluator": "str",
-                            "metric": "str",
-                            "testingCriteria": "str"
-                        }
-                    ],
-                    "method": "str",
-                    "type": "EvaluationComparison"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "displayName": "str",
-                    "id": "str",
-                    "metadata": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "completedAt": "2020-02-20 00:00:00"
-                    },
-                    "request": insight_request,
-                    "state": "str",
-                    "result": insight_result
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.Insight]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_beta_insights_list_request(
-                    foundry_features=foundry_features,
-                    type=type,
-                    eval_id=eval_id,
-                    run_id=run_id,
-                    agent_name=agent_name,
-                    include_coordinates=include_coordinates,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(
-                    _types_models1.ApiErrorResponse,
-                    pipeline_response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-
-class BetaMemoryStoresOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`memory_stores` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    def create(
-        self,
-        name: str,
-        definition: _types_models1.MemoryStoreDefinition,
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDetails:
-        """Create a memory store.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param definition: The memory store definition. Required.
-        :type definition: ~azure.ai.agents.types.MemoryStoreDefinition
-        :param description: A human-readable description of the memory store. Default value is None.
-        :type description: str
-        :param metadata: Arbitrary key-value metadata to associate with the memory store. Default value
-         is None.
-        :type metadata: dict[str, str]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDetails
-        :rtype: ~azure.ai.agents.types.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": memory_store_definition,
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "updated_at": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @overload
-    def create(
-        self,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDetails:
-        """Create a memory store.
+    def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.AgentThread:
+        """Creates a new thread. Threads contain messages and can be run by agents.
 
         :param body: Required.
         :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreDetails
-        :rtype: ~azure.ai.agents.types.MemoryStoreDetails
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "definition": memory_store_definition,
-                    "name": "str",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": memory_store_definition,
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "updated_at": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
         """
 
     @overload
-    def create(
-        self,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDetails:
-        """Create a memory store.
+    def create(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.AgentThread:
+        """Creates a new thread. Threads contain messages and can be run by agents.
 
         :param body: Required.
         :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreDetails
-        :rtype: ~azure.ai.agents.types.MemoryStoreDetails
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": memory_store_definition,
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "updated_at": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
         """
 
     @distributed_trace
     def create(
         self,
-        name: str = _Unset,
-        definition: _types_models1.MemoryStoreDefinition = _Unset,
         body: Union[JSON, IO[bytes]] = _Unset,
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        messages: Optional[List[_models.ThreadMessageOptions]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _types_models1.MemoryStoreDetails:
-        """Create a memory store.
+    ) -> _models.AgentThread:
+        """Creates a new thread. Threads contain messages and can be run by agents.
 
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param definition: The memory store definition. Required.
-        :type definition: ~azure.ai.agents.types.MemoryStoreDefinition
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :param description: A human-readable description of the memory store. Default value is None.
-        :type description: str
-        :param metadata: Arbitrary key-value metadata to associate with the memory store. Default value
-         is None.
-        :type metadata: dict[str, str]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :return: MemoryStoreDetails
-        :rtype: ~azure.ai.agents.types.MemoryStoreDetails
+        :keyword messages: The initial messages to associate with the new thread. Default value is
+         None.
+        :paramtype messages: list[~azure.ai.agents.models.ThreadMessageOptions]
+        :keyword tool_resources: A set of resources that are made available to the agent's tools in
+         this thread. The resources are specific to the
+         type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
+         the ``file_search`` tool requires
+         a list of vector store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "definition": memory_store_definition,
-                    "name": "str",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": memory_store_definition,
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "updated_at": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -13947,28 +1356,21 @@ class BetaMemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.MemoryStoreDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            if definition is _Unset:
-                raise TypeError("missing required argument: definition")
-            body = {"definition": definition, "description": description, "metadata": metadata, "name": name}
+            body = {"messages": messages, "metadata": metadata, "tool_resources": tool_resources}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _json = None
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _json = body
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_memory_stores_create_request(
-            foundry_features=foundry_features,
+        _request = build_threads_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
-            json=_json,
             content=_content,
             headers=_headers,
             params=_params,
@@ -13978,7 +1380,6 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -13993,457 +1394,13 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update(
-        self,
-        name: str,
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDetails:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param description: A human-readable description of the memory store. Default value is None.
-        :type description: str
-        :param metadata: Arbitrary key-value metadata to associate with the memory store. Default value
-         is None.
-        :type metadata: dict[str, str]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDetails
-        :rtype: ~azure.ai.agents.types.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": memory_store_definition,
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "updated_at": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @overload
-    def update(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDetails:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDetails
-        :rtype: ~azure.ai.agents.types.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": memory_store_definition,
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "updated_at": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @overload
-    def update(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDetails:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDetails
-        :rtype: ~azure.ai.agents.types.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": memory_store_definition,
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "updated_at": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @distributed_trace
-    def update(
-        self,
-        name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDetails:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param description: A human-readable description of the memory store. Default value is None.
-        :type description: str
-        :param metadata: Arbitrary key-value metadata to associate with the memory store. Default value
-         is None.
-        :type metadata: dict[str, str]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :return: MemoryStoreDetails
-        :rtype: ~azure.ai.agents.types.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": memory_store_definition,
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "updated_at": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.MemoryStoreDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"description": description, "metadata": metadata}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        _request = build_beta_memory_stores_update_request(
-            name=name,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-    ) -> _types_models1.MemoryStoreDetails:
-        """Retrieve a memory store.
-
-        :param name: The name of the memory store to retrieve. Required.
-        :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :return: MemoryStoreDetails
-        :rtype: ~azure.ai.agents.types.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": memory_store_definition,
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "updated_at": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.MemoryStoreDetails] = kwargs.pop("cls", None)
-
-        _request = build_beta_memory_stores_get_request(
-            name=name,
-            foundry_features=foundry_features,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.AgentThread, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14454,71 +1411,32 @@ class BetaMemoryStoresOperations:
     def list(
         self,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         limit: Optional[int] = None,
-        order: Optional[types.PageOrder] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> ItemPaged["_types_models1.MemoryStoreDetails"]:
-        """List all memory stores.
+    ) -> ItemPaged["_models.AgentThread"]:
+        """Gets a list of threads that were previously created.
 
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
+         100, and the default is 20. Default value is None.
         :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.agents.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of MemoryStoreDetails
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.MemoryStoreDetails]
+        :return: An iterator like instance of AgentThread
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.models.AgentThread]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "kind":
-
-                # JSON input template for discriminator value "default":
-                memory_store_definition = {
-                    "chat_model": "str",
-                    "embedding_model": "str",
-                    "kind": "default",
-                    "options": {
-                        "chat_summary_enabled": bool,
-                        "user_profile_enabled": bool,
-                        "user_profile_details": "str"
-                    }
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "definition": memory_store_definition,
-                    "id": "str",
-                    "name": "str",
-                    "object": "str",
-                    "updated_at": "2020-02-20 00:00:00",
-                    "description": "str",
-                    "metadata": {
-                        "str": "str"
-                    }
-                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_types_models1.MemoryStoreDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AgentThread]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14530,8 +1448,7 @@ class BetaMemoryStoresOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_memory_stores_list_request(
-                foundry_features=foundry_features,
+            _request = build_threads_list_request(
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -14548,7 +1465,7 @@ class BetaMemoryStoresOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("data", [])
+            list_of_elem = _deserialize(List[_models.AgentThread], deserialized.get("data", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, iter(list_of_elem)
@@ -14564,10 +1481,7 @@ class BetaMemoryStoresOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(
-                    _types_models1.ApiErrorResponse,
-                    pipeline_response,
-                )
+                error = _failsafe_deserialize(_models.AgentV1Error, response)
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -14575,29 +1489,14 @@ class BetaMemoryStoresOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
-    ) -> _types_models1.DeleteMemoryStoreResult:
-        """Delete a memory store.
+    def get(self, thread_id: str, **kwargs: Any) -> _models.AgentThread:
+        """Gets information about an existing thread.
 
-        :param name: The name of the memory store to delete. Required.
-        :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :return: DeleteMemoryStoreResult
-        :rtype: ~azure.ai.agents.types.DeleteMemoryStoreResult
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "deleted": bool,
-                    "name": "str",
-                    "object": "str"
-                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14610,11 +1509,10 @@ class BetaMemoryStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_types_models1.DeleteMemoryStoreResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
 
-        _request = build_beta_memory_stores_delete_request(
-            name=name,
-            foundry_features=foundry_features,
+        _request = build_threads_get_request(
+            thread_id=thread_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -14624,7 +1522,6 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14639,19 +1536,13 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.AgentThread, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14659,113 +1550,104 @@ class BetaMemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    def _search_memories(
+    def update(
         self,
-        name: str,
-        scope: str,
-        items: Optional[List[dict[str, Any]]] = None,
-        previous_search_id: Optional[str] = None,
-        options: Optional[_types_models1.MemorySearchOptions] = None,
+        thread_id: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         content_type: str = "application/json",
+        tool_resources: Optional[_models.ToolResources] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _types_models1.MemoryStoreSearchResult: ...
+    ) -> _models.AgentThread:
+        """Modifies an existing thread.
+
+        :param thread_id: The ID of the thread to modify. Required.
+        :type thread_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword tool_resources: A set of resources that are made available to the agent's tools in
+         this thread. The resources are specific to the
+         type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
+         the ``file_search`` tool requires
+         a list of vector store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.AgentThread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _search_memories(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreSearchResult: ...
+    def update(
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentThread:
+        """Modifies an existing thread.
+
+        :param thread_id: The ID of the thread to modify. Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.AgentThread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    def _search_memories(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreSearchResult: ...
+    def update(
+        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentThread:
+        """Modifies an existing thread.
+
+        :param thread_id: The ID of the thread to modify. Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.AgentThread
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
-    def _search_memories(
+    def update(
         self,
-        name: str,
-        scope: str = _Unset,
+        thread_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
-        items: Optional[List[dict[str, Any]]] = None,
-        previous_search_id: Optional[str] = None,
-        options: Optional[_types_models1.MemorySearchOptions] = None,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        tool_resources: Optional[_models.ToolResources] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _types_models1.MemoryStoreSearchResult:
-        """Search for relevant memories from a memory store based on conversation context.
+    ) -> _models.AgentThread:
+        """Modifies an existing thread.
 
-        :param name: The name of the memory store to search. Required.
-        :type name: str
-        :param scope: The namespace that logically groups and isolates memories, such as a user ID.
-         Required.
-        :type scope: str
+        :param thread_id: The ID of the thread to modify. Required.
+        :type thread_id: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :param items: Items for which to search for relevant memories. Default value is None.
-        :type items: list[dict[str, any]]
-        :param previous_search_id: The unique ID of the previous search request, enabling incremental
-         memory search from where the last operation left off. Default value is None.
-        :type previous_search_id: str
-        :param options: Memory search options. Default value is None.
-        :type options: ~azure.ai.agents.types.MemorySearchOptions
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :return: MemoryStoreSearchResult
-        :rtype: ~azure.ai.agents.types.MemoryStoreSearchResult
+        :keyword tool_resources: A set of resources that are made available to the agent's tools in
+         this thread. The resources are specific to the
+         type of tool. For example, the ``code_interpreter`` tool requires a list of file IDs, while
+         the ``file_search`` tool requires
+         a list of vector store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: AgentThread. The AgentThread is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.AgentThread
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "scope": "str",
-                    "items": [
-                        {
-                            "str": {}
-                        }
-                    ],
-                    "options": {
-                        "max_memories": 0
-                    },
-                    "previous_search_id": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "memories": [
-                        {
-                            "memory_item": memory_item
-                        }
-                    ],
-                    "search_id": "str",
-                    "usage": {
-                        "embedding_tokens": 0,
-                        "input_tokens": 0,
-                        "input_tokens_details": {
-                            "cached_tokens": 0
-                        },
-                        "output_tokens": 0,
-                        "output_tokens_details": {
-                            "reasoning_tokens": 0
-                        },
-                        "total_tokens": 0
-                    }
-                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14779,27 +1661,22 @@ class BetaMemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.MemoryStoreSearchResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentThread] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {"items": items, "options": options, "previous_search_id": previous_search_id, "scope": scope}
+            body = {"metadata": metadata, "tool_resources": tool_resources}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _json = None
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _json = body
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_memory_stores_search_memories_request(
-            name=name,
-            foundry_features=foundry_features,
+        _request = build_threads_update_request(
+            thread_id=thread_id,
             content_type=content_type,
             api_version=self._config.api_version,
-            json=_json,
             content=_content,
             headers=_headers,
             params=_params,
@@ -14809,7 +1686,6 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -14824,37 +1700,220 @@ class BetaMemoryStoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.AgentThread, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    def _update_memories_initial(
+    @distributed_trace
+    def _delete_thread(self, thread_id: str, **kwargs: Any) -> _models._models.ThreadDeletionStatus:
+        """Deletes an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :return: ThreadDeletionStatus. The ThreadDeletionStatus is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models._models.ThreadDeletionStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.ThreadDeletionStatus] = kwargs.pop("cls", None)
+
+        _request = build_threads_delete_thread_request(
+            thread_id=thread_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.ThreadDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class MessagesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.agents.AgentsClient`'s
+        :attr:`messages` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    def create(
         self,
-        name: str,
-        scope: str = _Unset,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        items: Optional[List[dict[str, Any]]] = None,
-        previous_update_id: Optional[str] = None,
-        update_delay: Optional[int] = None,
+        thread_id: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        role: Union[str, _models.MessageRole],
+        content: "_types.MessageInputContent",
+        content_type: str = "application/json",
+        attachments: Optional[List[_models.MessageAttachment]] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> Iterator[bytes]:
+    ) -> _models.ThreadMessage:
+        """Creates a new message on a specified thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :keyword role: The role of the entity that is creating the message. Allowed values include:
+         ``user``, which indicates the message is sent by an actual user (and should be
+         used in most cases to represent user-generated messages), and ``assistant``,
+         which indicates the message is generated by the agent (use this value to insert
+         messages from the agent into the conversation). Known values are: "user" and "assistant".
+         Required.
+        :paramtype role: str or ~azure.ai.agents.models.MessageRole
+        :keyword content: The content of the initial message. This may be a basic string (if you only
+         need text) or an array of typed content blocks (for example, text, image_file,
+         image_url, and so on). Is either a str type or a [MessageInputContentBlock] type. Required.
+        :paramtype content: str or list[~azure.ai.agents.models.MessageInputContentBlock]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword attachments: A list of files attached to the message, and the tools they should be
+         added to. Default value is None.
+        :paramtype attachments: list[~azure.ai.agents.models.MessageAttachment]
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, thread_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadMessage:
+        """Creates a new message on a specified thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, thread_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadMessage:
+        """Creates a new message on a specified thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(
+        self,
+        thread_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        role: Union[str, _models.MessageRole] = _Unset,
+        content: "_types.MessageInputContent" = _Unset,
+        attachments: Optional[List[_models.MessageAttachment]] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ThreadMessage:
+        """Creates a new message on a specified thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword role: The role of the entity that is creating the message. Allowed values include:
+         ``user``, which indicates the message is sent by an actual user (and should be
+         used in most cases to represent user-generated messages), and ``assistant``,
+         which indicates the message is generated by the agent (use this value to insert
+         messages from the agent into the conversation). Known values are: "user" and "assistant".
+         Required.
+        :paramtype role: str or ~azure.ai.agents.models.MessageRole
+        :keyword content: The content of the initial message. This may be a basic string (if you only
+         need text) or an array of typed content blocks (for example, text, image_file,
+         image_url, and so on). Is either a str type or a [MessageInputContentBlock] type. Required.
+        :paramtype content: str or list[~azure.ai.agents.models.MessageInputContentBlock]
+        :keyword attachments: A list of files attached to the message, and the tools they should be
+         added to. Default value is None.
+        :paramtype attachments: list[~azure.ai.agents.models.MessageAttachment]
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -14867,32 +1926,803 @@ class BetaMemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
+            if role is _Unset:
+                raise TypeError("missing required argument: role")
+            if content is _Unset:
+                raise TypeError("missing required argument: content")
+            body = {"attachments": attachments, "content": content, "metadata": metadata, "role": role}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_messages_create_request(
+            thread_id=thread_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ThreadMessage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self,
+        thread_id: str,
+        *,
+        run_id: Optional[str] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.ThreadMessage"]:
+        """Gets a list of messages that exist on a thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :keyword run_id: Filter messages by the run ID that generated them. Default value is None.
+        :paramtype run_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of ThreadMessage
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.models.ThreadMessage]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ThreadMessage]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_messages_list_request(
+                thread_id=thread_id,
+                run_id=run_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ThreadMessage], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get(self, thread_id: str, message_id: str, **kwargs: Any) -> _models.ThreadMessage:
+        """Retrieves an existing message.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
+
+        _request = build_messages_get_request(
+            thread_id=thread_id,
+            message_id=message_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ThreadMessage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update(
+        self,
+        thread_id: str,
+        message_id: str,
+        *,
+        content_type: str = "application/json",
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ThreadMessage:
+        """Modifies an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, thread_id: str, message_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadMessage:
+        """Modifies an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, thread_id: str, message_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadMessage:
+        """Modifies an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(
+        self,
+        thread_id: str,
+        message_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ThreadMessage:
+        """Modifies an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ThreadMessage. The ThreadMessage is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadMessage
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadMessage] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"metadata": metadata}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_messages_update_request(
+            thread_id=thread_id,
+            message_id=message_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ThreadMessage, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="v1",
+        params_added_on={"v1": ["api_version", "thread_id", "message_id", "accept"]},
+        api_versions_list=["v1", "2025-05-15-preview"],
+    )
+    def _delete(self, thread_id: str, message_id: str, **kwargs: Any) -> _models._models.MessageDeletionStatus:
+        """Deletes an existing message on an existing thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param message_id: Identifier of the message. Required.
+        :type message_id: str
+        :return: MessageDeletionStatus. The MessageDeletionStatus is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models._models.MessageDeletionStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.MessageDeletionStatus] = kwargs.pop("cls", None)
+
+        _request = build_messages_delete_request(
+            thread_id=thread_id,
+            message_id=message_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.MessageDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class RunsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.agents.AgentsClient`'s
+        :attr:`runs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    def create(
+        self,
+        thread_id: str,
+        *,
+        agent_id: str,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        content_type: str = "application/json",
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        stream_parameter: Optional[bool] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_prompt_tokens: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        truncation_strategy: Optional[_models.TruncationObject] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Creates a new run for an agent thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content``
+         to fetch the file search result content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword model: The overridden model name that the agent should use to run the thread. Default
+         value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the agent should use to run the
+         thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+         Default value is None.
+        :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessageOptions]
+        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
+         as server-sent events,
+         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
+         value is None.
+        :paramtype stream_parameter: bool
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+         moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
+         AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
+         ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self,
+        thread_id: str,
+        body: JSON,
+        *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Creates a new run for an agent thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content``
+         to fetch the file search result content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self,
+        thread_id: str,
+        body: IO[bytes],
+        *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Creates a new run for an agent thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content``
+         to fetch the file search result content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(
+        self,
+        thread_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        agent_id: str = _Unset,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        additional_instructions: Optional[str] = None,
+        additional_messages: Optional[List[_models.ThreadMessageOptions]] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        stream_parameter: Optional[bool] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_prompt_tokens: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        truncation_strategy: Optional[_models.TruncationObject] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Creates a new run for an agent thread.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword agent_id: The ID of the agent that should run the thread. Required.
+        :paramtype agent_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content``
+         to fetch the file search result content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
+        :keyword model: The overridden model name that the agent should use to run the thread. Default
+         value is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions that the agent should use to run the
+         thread. Default value is None.
+        :paramtype instructions: str
+        :keyword additional_instructions: Additional instructions to append at the end of the
+         instructions for the run. This is useful for modifying the behavior
+         on a per-run basis without overriding other instructions. Default value is None.
+        :paramtype additional_instructions: str
+        :keyword additional_messages: Adds additional messages to the thread before creating the run.
+         Default value is None.
+        :paramtype additional_messages: list[~azure.ai.agents.models.ThreadMessageOptions]
+        :keyword tools: The overridden list of enabled tools that the agent should use to run the
+         thread. Default value is None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: The overridden enabled tool resources that the agent should use to run
+         the thread. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
+         as server-sent events,
+         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
+         value is None.
+        :paramtype stream_parameter: bool
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+         the course of the run. The run will make a best effort
+         to use only the number of completion tokens specified, across multiple turns of the run. If
+         the run exceeds the number of
+         completion tokens specified, the run will end with status ``incomplete``. See
+         ``incomplete_details`` for more info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+         moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
+         AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
+         ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if agent_id is _Unset:
+                raise TypeError("missing required argument: agent_id")
             body = {
-                "items": items,
-                "previous_update_id": previous_update_id,
-                "scope": scope,
-                "update_delay": update_delay,
+                "additional_instructions": additional_instructions,
+                "additional_messages": additional_messages,
+                "assistant_id": agent_id,
+                "instructions": instructions,
+                "max_completion_tokens": max_completion_tokens,
+                "max_prompt_tokens": max_prompt_tokens,
+                "metadata": metadata,
+                "model": model,
+                "parallel_tool_calls": parallel_tool_calls,
+                "response_format": response_format,
+                "stream": stream_parameter,
+                "temperature": temperature,
+                "tool_choice": tool_choice,
+                "tool_resources": tool_resources,
+                "tools": tools,
+                "top_p": top_p,
+                "truncation_strategy": truncation_strategy,
             }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
-        _json = None
         _content = None
         if isinstance(body, (IOBase, bytes)):
             _content = body
         else:
-            _json = body
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_memory_stores_update_memories_request(
-            name=name,
-            foundry_features=foundry_features,
+        _request = build_runs_create_request(
+            thread_id=thread_id,
+            include=include,
             content_type=content_type,
             api_version=self._config.api_version,
-            json=_json,
             content=_content,
             headers=_headers,
             params=_params,
@@ -14902,683 +2732,102 @@ class BetaMemoryStoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
             raise HttpResponseError(response=response, model=error)
 
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ThreadRun, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @overload
-    def _begin_update_memories(
-        self,
-        name: str,
-        scope: str,
-        items: Optional[List[dict[str, Any]]] = None,
-        previous_update_id: Optional[str] = None,
-        update_delay: Optional[int] = None,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_types_models1.MemoryStoreUpdateCompletedResult]: ...
-    @overload
-    def _begin_update_memories(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_types_models1.MemoryStoreUpdateCompletedResult]: ...
-    @overload
-    def _begin_update_memories(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[_types_models1.MemoryStoreUpdateCompletedResult]: ...
-
     @distributed_trace
-    def _begin_update_memories(
+    def list(
         self,
-        name: str,
-        scope: str = _Unset,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        items: Optional[List[dict[str, Any]]] = None,
-        previous_update_id: Optional[str] = None,
-        update_delay: Optional[int] = None,
+        thread_id: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        before: Optional[str] = None,
         **kwargs: Any
-    ) -> LROPoller[_types_models1.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
+    ) -> ItemPaged["_models.ThreadRun"]:
+        """Gets a list of runs for a specified thread.
 
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param scope: The namespace that logically groups and isolates memories, such as a user ID.
-         Required.
-        :type scope: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param items: Conversation items to be stored in memory. Default value is None.
-        :type items: list[dict[str, any]]
-        :param previous_update_id: The unique ID of the previous update request, enabling incremental
-         memory updates from where the last operation left off. Default value is None.
-        :type previous_update_id: str
-        :param update_delay: Timeout period before processing the memory update in seconds.
-         If a new update request is received during this period, it will cancel the current request and
-         reset the timeout.
-         Set to 0 to immediately trigger the update without delay.
-         Defaults to 300 (5 minutes). Default value is None.
-        :type update_delay: int
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :return: An instance of LROPoller that returns MemoryStoreUpdateCompletedResult
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.agents.types.MemoryStoreUpdateCompletedResult]
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of ThreadRun
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.models.ThreadRun]
         :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "scope": "str",
-                    "items": [
-                        {
-                            "str": {}
-                        }
-                    ],
-                    "previous_update_id": "str",
-                    "update_delay": 0
-                }
-
-                # response body for status code(s): 202
-                response == {
-                    "memory_operations": [
-                        {
-                            "kind": "str",
-                            "memory_item": memory_item
-                        }
-                    ],
-                    "usage": {
-                        "embedding_tokens": 0,
-                        "input_tokens": 0,
-                        "input_tokens_details": {
-                            "cached_tokens": 0
-                        },
-                        "output_tokens": 0,
-                        "output_tokens_details": {
-                            "reasoning_tokens": 0
-                        },
-                        "total_tokens": 0
-                    }
-                }
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._update_memories_initial(
-                name=name,
-                scope=scope,
-                body=body,
-                items=items,
-                previous_update_id=previous_update_id,
-                update_delay=update_delay,
-                foundry_features=foundry_features,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
+        cls: ClsType[List[_models.ThreadRun]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_runs_list_request(
+                thread_id=thread_id,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
                 headers=_headers,
                 params=_params,
-                **kwargs
             )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_types_models.MemoryStoreUpdateCompletedResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_types_models.MemoryStoreUpdateCompletedResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @overload
-    def delete_scope(
-        self,
-        name: str,
-        scope: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param scope: The namespace that logically groups and isolates memories to delete, such as a
-         user ID. Required.
-        :type scope: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResult
-        :rtype: ~azure.ai.agents.types.MemoryStoreDeleteScopeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "deleted": bool,
-                    "name": "str",
-                    "object": "str",
-                    "scope": "str"
-                }
-        """
-
-    @overload
-    def delete_scope(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResult
-        :rtype: ~azure.ai.agents.types.MemoryStoreDeleteScopeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "scope": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "deleted": bool,
-                    "name": "str",
-                    "object": "str",
-                    "scope": "str"
-                }
-        """
-
-    @overload
-    def delete_scope(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResult
-        :rtype: ~azure.ai.agents.types.MemoryStoreDeleteScopeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "deleted": bool,
-                    "name": "str",
-                    "object": "str",
-                    "scope": "str"
-                }
-        """
-
-    @distributed_trace
-    def delete_scope(
-        self,
-        name: str,
-        scope: str = _Unset,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _types_models1.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param scope: The namespace that logically groups and isolates memories to delete, such as a
-         user ID. Required.
-        :type scope: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.MEMORY_STORES_V1_PREVIEW
-        :return: MemoryStoreDeleteScopeResult
-        :rtype: ~azure.ai.agents.types.MemoryStoreDeleteScopeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "scope": "str"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "deleted": bool,
-                    "name": "str",
-                    "object": "str",
-                    "scope": "str"
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.MemoryStoreDeleteScopeResult] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {"scope": scope}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        _request = build_beta_memory_stores_delete_scope_request(
-            name=name,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class BetaRedTeamsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`red_teams` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
-    ) -> _types_models1.RedTeam:
-        """Get a redteam by name.
-
-        :param name: Identifier of the red team run. Required.
-        :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.RED_TEAMS_V1_PREVIEW
-        :return: RedTeam
-        :rtype: ~azure.ai.agents.types.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureOpenAIModel":
-                target_config = {
-                    "modelDeploymentName": "str",
-                    "type": "AzureOpenAIModel"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "target": target_config,
-                    "applicationScenario": "str",
-                    "attackStrategies": [
-                        "str"
-                    ],
-                    "displayName": "str",
-                    "numTurns": 0,
-                    "properties": {
-                        "str": "str"
-                    },
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "simulationOnly": bool,
-                    "status": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.RedTeam] = kwargs.pop("cls", None)
-
-        _request = build_beta_red_teams_get_request(
-            name=name,
-            foundry_features=foundry_features,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self, *, foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
-    ) -> ItemPaged["_types_models1.RedTeam"]:
-        """List a redteam by name.
-
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.RED_TEAMS_V1_PREVIEW
-        :return: An iterator like instance of RedTeam
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.RedTeam]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureOpenAIModel":
-                target_config = {
-                    "modelDeploymentName": "str",
-                    "type": "AzureOpenAIModel"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "target": target_config,
-                    "applicationScenario": "str",
-                    "attackStrategies": [
-                        "str"
-                    ],
-                    "displayName": "str",
-                    "numTurns": 0,
-                    "properties": {
-                        "str": "str"
-                    },
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "simulationOnly": bool,
-                    "status": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.RedTeam]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_beta_red_teams_list_request(
-                    foundry_features=foundry_features,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
             return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
+            list_of_elem = _deserialize(List[_models.ThreadRun], deserialized.get("data", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
+            return deserialized.get("last_id") or None, iter(list_of_elem)
 
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -15588,353 +2837,23 @@ class BetaRedTeamsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
-    @overload
-    def create(
-        self,
-        red_team: _types_models1.RedTeam,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.RedTeam:
-        """Creates a redteam run.
-
-        :param red_team: Redteam to be run. Required.
-        :type red_team: ~azure.ai.agents.types.RedTeam
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.RED_TEAMS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RedTeam
-        :rtype: ~azure.ai.agents.types.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "AzureOpenAIModel":
-                target_config = {
-                    "modelDeploymentName": "str",
-                    "type": "AzureOpenAIModel"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                red_team = {
-                    "id": "str",
-                    "target": target_config,
-                    "applicationScenario": "str",
-                    "attackStrategies": [
-                        "str"
-                    ],
-                    "displayName": "str",
-                    "numTurns": 0,
-                    "properties": {
-                        "str": "str"
-                    },
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "simulationOnly": bool,
-                    "status": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureOpenAIModel":
-                target_config = {
-                    "modelDeploymentName": "str",
-                    "type": "AzureOpenAIModel"
-                }
-
-                # response body for status code(s): 201
-                response == {
-                    "id": "str",
-                    "target": target_config,
-                    "applicationScenario": "str",
-                    "attackStrategies": [
-                        "str"
-                    ],
-                    "displayName": "str",
-                    "numTurns": 0,
-                    "properties": {
-                        "str": "str"
-                    },
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "simulationOnly": bool,
-                    "status": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @overload
-    def create(
-        self,
-        red_team: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.RedTeam:
-        """Creates a redteam run.
-
-        :param red_team: Redteam to be run. Required.
-        :type red_team: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.RED_TEAMS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: RedTeam
-        :rtype: ~azure.ai.agents.types.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureOpenAIModel":
-                target_config = {
-                    "modelDeploymentName": "str",
-                    "type": "AzureOpenAIModel"
-                }
-
-                # response body for status code(s): 201
-                response == {
-                    "id": "str",
-                    "target": target_config,
-                    "applicationScenario": "str",
-                    "attackStrategies": [
-                        "str"
-                    ],
-                    "displayName": "str",
-                    "numTurns": 0,
-                    "properties": {
-                        "str": "str"
-                    },
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "simulationOnly": bool,
-                    "status": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-
     @distributed_trace
-    def create(
-        self,
-        red_team: Union[_types_models1.RedTeam, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _types_models1.RedTeam:
-        """Creates a redteam run.
+    def get(self, thread_id: str, run_id: str, **kwargs: Any) -> _models.ThreadRun:
+        """Gets an existing run from an existing thread.
 
-        :param red_team: Redteam to be run. Is either a RedTeam type or a IO[bytes] type. Required.
-        :type red_team: ~azure.ai.agents.types.RedTeam or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.RED_TEAMS_V1_PREVIEW
-        :return: RedTeam
-        :rtype: ~azure.ai.agents.types.RedTeam
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "AzureOpenAIModel":
-                target_config = {
-                    "modelDeploymentName": "str",
-                    "type": "AzureOpenAIModel"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                red_team = {
-                    "id": "str",
-                    "target": target_config,
-                    "applicationScenario": "str",
-                    "attackStrategies": [
-                        "str"
-                    ],
-                    "displayName": "str",
-                    "numTurns": 0,
-                    "properties": {
-                        "str": "str"
-                    },
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "simulationOnly": bool,
-                    "status": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "AzureOpenAIModel":
-                target_config = {
-                    "modelDeploymentName": "str",
-                    "type": "AzureOpenAIModel"
-                }
-
-                # response body for status code(s): 201
-                response == {
-                    "id": "str",
-                    "target": target_config,
-                    "applicationScenario": "str",
-                    "attackStrategies": [
-                        "str"
-                    ],
-                    "displayName": "str",
-                    "numTurns": 0,
-                    "properties": {
-                        "str": "str"
-                    },
-                    "riskCategories": [
-                        "str"
-                    ],
-                    "simulationOnly": bool,
-                    "status": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.RedTeam] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(red_team, (IOBase, bytes)):
-            _content = red_team
-        else:
-            _json = red_team
-
-        _request = build_beta_red_teams_create_request(
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class BetaSchedulesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.agents.AIProjectClient`'s
-        :attr:`schedules` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        schedule_id: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        **kwargs: Any
-    ) -> None:
-        """Delete a schedule.
-
-        :param schedule_id: Identifier of the schedule. Required.
-        :type schedule_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.SCHEDULES_V1_PREVIEW
-        :return: None
-        :rtype: None
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -15948,11 +2867,11 @@ class BetaSchedulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
-        _request = build_beta_schedules_delete_request(
-            schedule_id=schedule_id,
-            foundry_features=foundry_features,
+        _request = build_runs_get_request(
+            thread_id=thread_id,
+            run_id=run_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -15962,130 +2881,6 @@ class BetaSchedulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def get(
-        self,
-        schedule_id: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _types_models1.Schedule:
-        """Get a schedule by id.
-
-        :param schedule_id: Identifier of the schedule. Required.
-        :type schedule_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.SCHEDULES_V1_PREVIEW
-        :return: Schedule
-        :rtype: ~azure.ai.agents.types.Schedule
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "Cron":
-                trigger = {
-                    "expression": "str",
-                    "type": "Cron",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "OneTime":
-                trigger = {
-                    "triggerAt": "2020-02-20 00:00:00",
-                    "type": "OneTime",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Recurrence":
-                trigger = {
-                    "interval": 0,
-                    "schedule": recurrence_schedule,
-                    "type": "Recurrence",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Daily":
-                recurrence_schedule = {
-                    "hours": [
-                        0
-                    ],
-                    "type": "Daily"
-                }
-
-                # JSON input template for discriminator value "Hourly":
-                recurrence_schedule = {
-                    "type": "Hourly"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "enabled": bool,
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "task": schedule_task,
-                    "trigger": trigger,
-                    "description": "str",
-                    "displayName": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "provisioningStatus": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_types_models1.Schedule] = kwargs.pop("cls", None)
-
-        _request = build_beta_schedules_get_request(
-            schedule_id=schedule_id,
-            foundry_features=foundry_features,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16100,814 +2895,114 @@ class BetaSchedulesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.ThreadRun, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def list(
-        self,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        type: Optional[types.ScheduleTaskType] = None,
-        enabled: Optional[bool] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.Schedule"]:
-        """List all schedules.
-
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.SCHEDULES_V1_PREVIEW
-        :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
-         Default value is None.
-        :paramtype type: str or ~azure.ai.agents.models.ScheduleTaskType
-        :keyword enabled: Filter by the enabled status. Default value is None.
-        :paramtype enabled: bool
-        :return: An iterator like instance of Schedule
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.Schedule]
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "Cron":
-                trigger = {
-                    "expression": "str",
-                    "type": "Cron",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "OneTime":
-                trigger = {
-                    "triggerAt": "2020-02-20 00:00:00",
-                    "type": "OneTime",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Recurrence":
-                trigger = {
-                    "interval": 0,
-                    "schedule": recurrence_schedule,
-                    "type": "Recurrence",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Daily":
-                recurrence_schedule = {
-                    "hours": [
-                        0
-                    ],
-                    "type": "Daily"
-                }
-
-                # JSON input template for discriminator value "Hourly":
-                recurrence_schedule = {
-                    "type": "Hourly"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "enabled": bool,
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "task": schedule_task,
-                    "trigger": trigger,
-                    "description": "str",
-                    "displayName": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "provisioningStatus": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_types_models1.Schedule]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_beta_schedules_list_request(
-                    foundry_features=foundry_features,
-                    type=type,
-                    enabled=enabled,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
     @overload
-    def create_or_update(
+    def update(
         self,
-        schedule_id: str,
-        schedule: _types_models1.Schedule,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.Schedule:
-        """Create or update operation template.
-
-        :param schedule_id: Identifier of the schedule. Required.
-        :type schedule_id: str
-        :param schedule: The resource instance. Required.
-        :type schedule: ~azure.ai.agents.types.Schedule
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.SCHEDULES_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Schedule
-        :rtype: ~azure.ai.agents.types.Schedule
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "Cron":
-                trigger = {
-                    "expression": "str",
-                    "type": "Cron",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "OneTime":
-                trigger = {
-                    "triggerAt": "2020-02-20 00:00:00",
-                    "type": "OneTime",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Recurrence":
-                trigger = {
-                    "interval": 0,
-                    "schedule": recurrence_schedule,
-                    "type": "Recurrence",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Daily":
-                recurrence_schedule = {
-                    "hours": [
-                        0
-                    ],
-                    "type": "Daily"
-                }
-
-                # JSON input template for discriminator value "Hourly":
-                recurrence_schedule = {
-                    "type": "Hourly"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                schedule = {
-                    "enabled": bool,
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "task": schedule_task,
-                    "trigger": trigger,
-                    "description": "str",
-                    "displayName": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "provisioningStatus": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "Cron":
-                trigger = {
-                    "expression": "str",
-                    "type": "Cron",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "OneTime":
-                trigger = {
-                    "triggerAt": "2020-02-20 00:00:00",
-                    "type": "OneTime",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Recurrence":
-                trigger = {
-                    "interval": 0,
-                    "schedule": recurrence_schedule,
-                    "type": "Recurrence",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Daily":
-                recurrence_schedule = {
-                    "hours": [
-                        0
-                    ],
-                    "type": "Daily"
-                }
-
-                # JSON input template for discriminator value "Hourly":
-                recurrence_schedule = {
-                    "type": "Hourly"
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "Cron":
-                trigger = {
-                    "expression": "str",
-                    "type": "Cron",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "OneTime":
-                trigger = {
-                    "triggerAt": "2020-02-20 00:00:00",
-                    "type": "OneTime",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Recurrence":
-                trigger = {
-                    "interval": 0,
-                    "schedule": recurrence_schedule,
-                    "type": "Recurrence",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Daily":
-                recurrence_schedule = {
-                    "hours": [
-                        0
-                    ],
-                    "type": "Daily"
-                }
-
-                # JSON input template for discriminator value "Hourly":
-                recurrence_schedule = {
-                    "type": "Hourly"
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "enabled": bool,
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "task": schedule_task,
-                    "trigger": trigger,
-                    "description": "str",
-                    "displayName": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "provisioningStatus": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @overload
-    def create_or_update(
-        self,
-        schedule_id: str,
-        schedule: IO[bytes],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _types_models1.Schedule:
-        """Create or update operation template.
-
-        :param schedule_id: Identifier of the schedule. Required.
-        :type schedule_id: str
-        :param schedule: The resource instance. Required.
-        :type schedule: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.SCHEDULES_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Schedule
-        :rtype: ~azure.ai.agents.types.Schedule
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "Cron":
-                trigger = {
-                    "expression": "str",
-                    "type": "Cron",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "OneTime":
-                trigger = {
-                    "triggerAt": "2020-02-20 00:00:00",
-                    "type": "OneTime",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Recurrence":
-                trigger = {
-                    "interval": 0,
-                    "schedule": recurrence_schedule,
-                    "type": "Recurrence",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Daily":
-                recurrence_schedule = {
-                    "hours": [
-                        0
-                    ],
-                    "type": "Daily"
-                }
-
-                # JSON input template for discriminator value "Hourly":
-                recurrence_schedule = {
-                    "type": "Hourly"
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "Cron":
-                trigger = {
-                    "expression": "str",
-                    "type": "Cron",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "OneTime":
-                trigger = {
-                    "triggerAt": "2020-02-20 00:00:00",
-                    "type": "OneTime",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Recurrence":
-                trigger = {
-                    "interval": 0,
-                    "schedule": recurrence_schedule,
-                    "type": "Recurrence",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Daily":
-                recurrence_schedule = {
-                    "hours": [
-                        0
-                    ],
-                    "type": "Daily"
-                }
-
-                # JSON input template for discriminator value "Hourly":
-                recurrence_schedule = {
-                    "type": "Hourly"
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "enabled": bool,
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "task": schedule_task,
-                    "trigger": trigger,
-                    "description": "str",
-                    "displayName": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "provisioningStatus": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-
-    @distributed_trace
-    def create_or_update(
-        self,
-        schedule_id: str,
-        schedule: Union[_types_models1.Schedule, IO[bytes]],
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        **kwargs: Any
-    ) -> _types_models1.Schedule:
-        """Create or update operation template.
-
-        :param schedule_id: Identifier of the schedule. Required.
-        :type schedule_id: str
-        :param schedule: The resource instance. Is either a Schedule type or a IO[bytes] type.
-         Required.
-        :type schedule: ~azure.ai.agents.types.Schedule or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.SCHEDULES_V1_PREVIEW
-        :return: Schedule
-        :rtype: ~azure.ai.agents.types.Schedule
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "Cron":
-                trigger = {
-                    "expression": "str",
-                    "type": "Cron",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "OneTime":
-                trigger = {
-                    "triggerAt": "2020-02-20 00:00:00",
-                    "type": "OneTime",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Recurrence":
-                trigger = {
-                    "interval": 0,
-                    "schedule": recurrence_schedule,
-                    "type": "Recurrence",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Daily":
-                recurrence_schedule = {
-                    "hours": [
-                        0
-                    ],
-                    "type": "Daily"
-                }
-
-                # JSON input template for discriminator value "Hourly":
-                recurrence_schedule = {
-                    "type": "Hourly"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                schedule = {
-                    "enabled": bool,
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "task": schedule_task,
-                    "trigger": trigger,
-                    "description": "str",
-                    "displayName": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "provisioningStatus": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "Cron":
-                trigger = {
-                    "expression": "str",
-                    "type": "Cron",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "OneTime":
-                trigger = {
-                    "triggerAt": "2020-02-20 00:00:00",
-                    "type": "OneTime",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Recurrence":
-                trigger = {
-                    "interval": 0,
-                    "schedule": recurrence_schedule,
-                    "type": "Recurrence",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Daily":
-                recurrence_schedule = {
-                    "hours": [
-                        0
-                    ],
-                    "type": "Daily"
-                }
-
-                # JSON input template for discriminator value "Hourly":
-                recurrence_schedule = {
-                    "type": "Hourly"
-                }
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "Cron":
-                trigger = {
-                    "expression": "str",
-                    "type": "Cron",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "OneTime":
-                trigger = {
-                    "triggerAt": "2020-02-20 00:00:00",
-                    "type": "OneTime",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Recurrence":
-                trigger = {
-                    "interval": 0,
-                    "schedule": recurrence_schedule,
-                    "type": "Recurrence",
-                    "endTime": "2020-02-20 00:00:00",
-                    "startTime": "2020-02-20 00:00:00",
-                    "timeZone": "str"
-                }
-
-                # JSON input template for discriminator value "Daily":
-                recurrence_schedule = {
-                    "hours": [
-                        0
-                    ],
-                    "type": "Daily"
-                }
-
-                # JSON input template for discriminator value "Hourly":
-                recurrence_schedule = {
-                    "type": "Hourly"
-                }
-
-                # response body for status code(s): 201, 200
-                response == {
-                    "enabled": bool,
-                    "id": "str",
-                    "systemData": {
-                        "str": "str"
-                    },
-                    "task": schedule_task,
-                    "trigger": trigger,
-                    "description": "str",
-                    "displayName": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "provisioningStatus": "str",
-                    "tags": {
-                        "str": "str"
-                    }
-                }
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_types_models1.Schedule] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(schedule, (IOBase, bytes)):
-            _content = schedule
-        else:
-            _json = schedule
-
-        _request = build_beta_schedules_create_or_update_request(
-            schedule_id=schedule_id,
-            foundry_features=foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get_run(
-        self,
-        schedule_id: str,
+        thread_id: str,
         run_id: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
+        content_type: str = "application/json",
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _types_models1.ScheduleRun:
-        """Get a schedule run by id.
+    ) -> _models.ThreadRun:
+        """Modifies an existing thread run.
 
-        :param schedule_id: The unique identifier of the schedule. Required.
-        :type schedule_id: str
-        :param run_id: The unique identifier of the schedule run. Required.
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
         :type run_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.SCHEDULES_V1_PREVIEW
-        :return: ScheduleRun
-        :rtype: ~azure.ai.agents.types.ScheduleRun
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
-        Example:
-            .. code-block:: python
+    @overload
+    def update(
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Modifies an existing thread run.
 
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "scheduleId": "str",
-                    "success": bool,
-                    "error": "str",
-                    "triggerTime": "2020-02-20 00:00:00"
-                }
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Modifies an existing thread run.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(
+        self,
+        thread_id: str,
+        run_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Modifies an existing thread run.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -16917,16 +3012,28 @@ class BetaSchedulesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_types_models1.ScheduleRun] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
 
-        _request = build_beta_schedules_get_run_request(
-            schedule_id=schedule_id,
+        if body is _Unset:
+            body = {"metadata": metadata}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_runs_update_request(
+            thread_id=thread_id,
             run_id=run_id,
-            foundry_features=foundry_features,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -16935,7 +3042,6 @@ class BetaSchedulesOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -16950,19 +3056,186 @@ class BetaSchedulesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _types_models1.ApiErrorResponse,
-                pipeline_response,
-            )
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+            deserialized = response.iter_bytes()
         else:
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
+            deserialized = _deserialize(_models.ThreadRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def submit_tool_outputs(
+        self,
+        thread_id: str,
+        run_id: str,
+        *,
+        content_type: str = "application/json",
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = None,
+        tool_approvals: Optional[List[_models.ToolApproval]] = None,
+        stream_parameter: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Submits outputs from tools as requested by tool calls in a run.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
+         is None.
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
+        :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
+         value is None.
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
+        :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
+         SSE, terminating at ``[DONE]``. Default value is None.
+        :paramtype stream_parameter: bool
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def submit_tool_outputs(
+        self, thread_id: str, run_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Submits outputs from tools as requested by tool calls in a run.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def submit_tool_outputs(
+        self, thread_id: str, run_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Submits outputs from tools as requested by tool calls in a run.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def submit_tool_outputs(
+        self,
+        thread_id: str,
+        run_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        tool_outputs: Optional[List[_models.StructuredToolOutput]] = None,
+        tool_approvals: Optional[List[_models.ToolApproval]] = None,
+        stream_parameter: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Submits outputs from tools as requested by tool calls in a run.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword tool_outputs: A list of tools for which the outputs are being submitted. Default value
+         is None.
+        :paramtype tool_outputs: list[~azure.ai.agents.models.StructuredToolOutput]
+        :keyword tool_approvals: A list of tool approvals allowing data to be sent to tools. Default
+         value is None.
+        :paramtype tool_approvals: list[~azure.ai.agents.models.ToolApproval]
+        :keyword stream_parameter: If true, returns a stream of events that happen during the Run as
+         SSE, terminating at ``[DONE]``. Default value is None.
+        :paramtype stream_parameter: bool
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"stream": stream_parameter, "tool_approvals": tool_approvals, "tool_outputs": tool_outputs}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_runs_submit_tool_outputs_request(
+            thread_id=thread_id,
+            run_id=run_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ThreadRun, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -16970,50 +3243,210 @@ class BetaSchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_runs(
-        self,
-        schedule_id: str,
-        *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
-        type: Optional[types.ScheduleTaskType] = None,
-        enabled: Optional[bool] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_types_models1.ScheduleRun"]:
-        """List all schedule runs.
+    def cancel(self, thread_id: str, run_id: str, **kwargs: Any) -> _models.ThreadRun:
+        """Cancels a run of an in‐progress thread.
 
-        :param schedule_id: Identifier of the schedule. Required.
-        :type schedule_id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. SCHEDULES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.agents.models.SCHEDULES_V1_PREVIEW
-        :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
-         Default value is None.
-        :paramtype type: str or ~azure.ai.agents.models.ScheduleTaskType
-        :keyword enabled: Filter by the enabled status. Default value is None.
-        :paramtype enabled: bool
-        :return: An iterator like instance of ScheduleRun
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.types.ScheduleRun]
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
         :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        Example:
-            .. code-block:: python
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
 
-                # response body for status code(s): 200
-                response == {
-                    "id": "str",
-                    "properties": {
-                        "str": "str"
-                    },
-                    "scheduleId": "str",
-                    "success": bool,
-                    "error": "str",
-                    "triggerTime": "2020-02-20 00:00:00"
-                }
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
+
+        _request = build_runs_cancel_request(
+            thread_id=thread_id,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ThreadRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class RunStepsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.agents.AgentsClient`'s
+        :attr:`run_steps` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(
+        self,
+        thread_id: str,
+        run_id: str,
+        step_id: str,
+        *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        **kwargs: Any
+    ) -> _models.RunStep:
+        """Retrieves a single run step from a thread run.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :param step_id: Identifier of the run step. Required.
+        :type step_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
+        :return: RunStep. The RunStep is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.RunStep
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RunStep] = kwargs.pop("cls", None)
+
+        _request = build_run_steps_get_request(
+            thread_id=thread_id,
+            run_id=run_id,
+            step_id=step_id,
+            include=include,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.RunStep, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self,
+        thread_id: str,
+        run_id: str,
+        *,
+        include: Optional[List[Union[str, _models.RunAdditionalFieldList]]] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.RunStep"]:
+        """Gets a list of run steps from a thread run.
+
+        :param thread_id: Identifier of the thread. Required.
+        :type thread_id: str
+        :param run_id: Identifier of the run. Required.
+        :type run_id: str
+        :keyword include: A list of additional fields to include in the response.
+         Currently the only supported value is
+         ``step_details.tool_calls[*].file_search.results[*].content`` to fetch the file search result
+         content. Default value is None.
+        :paramtype include: list[str or ~azure.ai.agents.models.RunAdditionalFieldList]
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of RunStep
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.models.RunStep]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_types_models1.ScheduleRun]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.RunStep]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -17023,59 +3456,35 @@ class BetaSchedulesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        def prepare_request(_continuation_token=None):
 
-                _request = build_beta_schedules_list_runs_request(
-                    schedule_id=schedule_id,
-                    foundry_features=foundry_features,
-                    type=type,
-                    enabled=enabled,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
+            _request = build_run_steps_list_request(
+                thread_id=thread_id,
+                run_id=run_id,
+                include=include,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
             return _request
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = deserialized.get("value", [])
+            list_of_elem = _deserialize(List[_models.RunStep], deserialized.get("data", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
+            return deserialized.get("last_id") or None, iter(list_of_elem)
 
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
 
             _stream = False
             pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
@@ -17085,8 +3494,2713 @@ class BetaSchedulesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
+
+
+class FilesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.agents.AgentsClient`'s
+        :attr:`files` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self, *, purpose: Optional[Union[str, _models.FilePurpose]] = None, **kwargs: Any
+    ) -> _models.FileListResponse:
+        """Gets a list of previously uploaded files.
+
+        :keyword purpose: The purpose of the file. Known values are: "assistants", "assistants_output",
+         and "vision". Default value is None.
+        :paramtype purpose: str or ~azure.ai.agents.models.FilePurpose
+        :return: FileListResponse. The FileListResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileListResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FileListResponse] = kwargs.pop("cls", None)
+
+        _request = build_files_list_request(
+            purpose=purpose,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.FileListResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _upload_file(self, body: _models._models.UploadFileRequest, **kwargs: Any) -> _models.FileInfo: ...
+    @overload
+    def _upload_file(self, body: JSON, **kwargs: Any) -> _models.FileInfo: ...
+
+    @distributed_trace
+    def _upload_file(self, body: Union[_models._models.UploadFileRequest, JSON], **kwargs: Any) -> _models.FileInfo:
+        """Uploads a file for use by other operations.
+
+        :param body: Multipart body. Is either a UploadFileRequest type or a JSON type. Required.
+        :type body: ~azure.ai.agents.models._models.UploadFileRequest or JSON
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FileInfo] = kwargs.pop("cls", None)
+
+        _body = body.as_dict() if isinstance(body, _Model) else body
+        _file_fields: list[str] = ["file"]
+        _data_fields: list[str] = ["purpose", "filename"]
+        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+
+        _request = build_files_upload_file_request(
+            api_version=self._config.api_version,
+            files=_files,
+            data=_data,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.FileInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _delete_file(self, file_id: str, **kwargs: Any) -> _models._models.FileDeletionStatus:
+        """Delete a previously uploaded file.
+
+        :param file_id: The ID of the file to delete. Required.
+        :type file_id: str
+        :return: FileDeletionStatus. The FileDeletionStatus is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models._models.FileDeletionStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.FileDeletionStatus] = kwargs.pop("cls", None)
+
+        _request = build_files_delete_file_request(
+            file_id=file_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.FileDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get(self, file_id: str, **kwargs: Any) -> _models.FileInfo:
+        """Returns information about a specific file. Does not retrieve file content.
+
+        :param file_id: The ID of the file to retrieve. Required.
+        :type file_id: str
+        :return: FileInfo. The FileInfo is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.FileInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FileInfo] = kwargs.pop("cls", None)
+
+        _request = build_files_get_request(
+            file_id=file_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.FileInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _get_file_content(self, file_id: str, **kwargs: Any) -> Iterator[bytes]:
+        """Retrieves the raw content of a specific file.
+
+        :param file_id: The ID of the file to retrieve. Required.
+        :type file_id: str
+        :return: Iterator[bytes]
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_files_get_file_content_request(
+            file_id=file_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class VectorStoresOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.agents.AgentsClient`'s
+        :attr:`vector_stores` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.VectorStore"]:
+        """Returns a list of vector stores.
+
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VectorStore
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.models.VectorStore]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VectorStore]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_vector_stores_list_request(
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.VectorStore], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def create(
+        self,
+        *,
+        content_type: str = "application/json",
+        file_ids: Optional[List[str]] = None,
+        name: Optional[str] = None,
+        store_configuration: Optional[_models.VectorStoreConfiguration] = None,
+        expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.VectorStore:
+        """Creates a vector store.
+
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword file_ids: A list of file IDs that the vector store should use. Useful for tools like
+         ``file_search`` that can access files. Default value is None.
+        :paramtype file_ids: list[str]
+        :keyword name: The name of the vector store. Default value is None.
+        :paramtype name: str
+        :keyword store_configuration: The vector store configuration, used when vector store is created
+         from Azure asset URIs. Default value is None.
+        :paramtype store_configuration: ~azure.ai.agents.models.VectorStoreConfiguration
+        :keyword expires_after: Details on when this vector store expires. Default value is None.
+        :paramtype expires_after: ~azure.ai.agents.models.VectorStoreExpirationPolicy
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.VectorStore:
+        """Creates a vector store.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.VectorStore:
+        """Creates a vector store.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        file_ids: Optional[List[str]] = None,
+        name: Optional[str] = None,
+        store_configuration: Optional[_models.VectorStoreConfiguration] = None,
+        expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.VectorStore:
+        """Creates a vector store.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword file_ids: A list of file IDs that the vector store should use. Useful for tools like
+         ``file_search`` that can access files. Default value is None.
+        :paramtype file_ids: list[str]
+        :keyword name: The name of the vector store. Default value is None.
+        :paramtype name: str
+        :keyword store_configuration: The vector store configuration, used when vector store is created
+         from Azure asset URIs. Default value is None.
+        :paramtype store_configuration: ~azure.ai.agents.models.VectorStoreConfiguration
+        :keyword expires_after: Details on when this vector store expires. Default value is None.
+        :paramtype expires_after: ~azure.ai.agents.models.VectorStoreExpirationPolicy
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Only applicable if file_ids is non-empty. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {
+                "chunking_strategy": chunking_strategy,
+                "configuration": store_configuration,
+                "expires_after": expires_after,
+                "file_ids": file_ids,
+                "metadata": metadata,
+                "name": name,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_vector_stores_create_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.VectorStore, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get(self, vector_store_id: str, **kwargs: Any) -> _models.VectorStore:
+        """Returns the vector store object matching the specified ID.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
+
+        _request = build_vector_stores_get_request(
+            vector_store_id=vector_store_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.VectorStore, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def modify(
+        self,
+        vector_store_id: str,
+        *,
+        content_type: str = "application/json",
+        name: Optional[str] = None,
+        expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.VectorStore:
+        """Modifies an existing vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword name: The name of the vector store. Default value is None.
+        :paramtype name: str
+        :keyword expires_after: Details on when this vector store expires. Default value is None.
+        :paramtype expires_after: ~azure.ai.agents.models.VectorStoreExpirationPolicy
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def modify(
+        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.VectorStore:
+        """Modifies an existing vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def modify(
+        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.VectorStore:
+        """Modifies an existing vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def modify(
+        self,
+        vector_store_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: Optional[str] = None,
+        expires_after: Optional[_models.VectorStoreExpirationPolicy] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.VectorStore:
+        """Modifies an existing vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: The name of the vector store. Default value is None.
+        :paramtype name: str
+        :keyword expires_after: Details on when this vector store expires. Default value is None.
+        :paramtype expires_after: ~azure.ai.agents.models.VectorStoreExpirationPolicy
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: VectorStore. The VectorStore is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStore
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VectorStore] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"expires_after": expires_after, "metadata": metadata, "name": name}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_vector_stores_modify_request(
+            vector_store_id=vector_store_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.VectorStore, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _delete_vector_store(self, vector_store_id: str, **kwargs: Any) -> _models._models.VectorStoreDeletionStatus:
+        """Deletes the vector store object matching the specified ID.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :return: VectorStoreDeletionStatus. The VectorStoreDeletionStatus is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.agents.models._models.VectorStoreDeletionStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.VectorStoreDeletionStatus] = kwargs.pop("cls", None)
+
+        _request = build_vector_stores_delete_vector_store_request(
+            vector_store_id=vector_store_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.VectorStoreDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class VectorStoreFilesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.agents.AgentsClient`'s
+        :attr:`vector_store_files` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(
+        self,
+        vector_store_id: str,
+        *,
+        filter: Optional[Union[str, _models.VectorStoreFileStatusFilter]] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.VectorStoreFile"]:
+        """Returns a list of vector store files.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :keyword filter: Filter by file status. Known values are: "in_progress", "completed", "failed",
+         and "cancelled". Default value is None.
+        :paramtype filter: str or ~azure.ai.agents.models.VectorStoreFileStatusFilter
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VectorStoreFile
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.models.VectorStoreFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VectorStoreFile]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_vector_store_files_list_request(
+                vector_store_id=vector_store_id,
+                filter=filter,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.VectorStoreFile], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def create(
+        self,
+        vector_store_id: str,
+        *,
+        content_type: str = "application/json",
+        file_id: Optional[str] = None,
+        data_source: Optional[_models.VectorStoreDataSource] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        **kwargs: Any
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword file_id: Identifier of the file. Default value is None.
+        :paramtype file_id: str
+        :keyword data_source: Azure asset ID. Default value is None.
+        :paramtype data_source: ~azure.ai.agents.models.VectorStoreDataSource
+        :keyword chunking_strategy: The chunking strategy used to chunk the file. If not set, uses the
+         auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(
+        self,
+        vector_store_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        file_id: Optional[str] = None,
+        data_source: Optional[_models.VectorStoreDataSource] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        **kwargs: Any
+    ) -> _models.VectorStoreFile:
+        """Create a vector store file by attaching a file to a vector store.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword file_id: Identifier of the file. Default value is None.
+        :paramtype file_id: str
+        :keyword data_source: Azure asset ID. Default value is None.
+        :paramtype data_source: ~azure.ai.agents.models.VectorStoreDataSource
+        :keyword chunking_strategy: The chunking strategy used to chunk the file. If not set, uses the
+         auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"chunking_strategy": chunking_strategy, "data_source": data_source, "file_id": file_id}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_vector_store_files_create_request(
+            vector_store_id=vector_store_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.VectorStoreFile, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get(self, vector_store_id: str, file_id: str, **kwargs: Any) -> _models.VectorStoreFile:
+        """Retrieves a vector store file.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param file_id: Identifier of the file. Required.
+        :type file_id: str
+        :return: VectorStoreFile. The VectorStoreFile is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VectorStoreFile] = kwargs.pop("cls", None)
+
+        _request = build_vector_store_files_get_request(
+            vector_store_id=vector_store_id,
+            file_id=file_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.VectorStoreFile, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _delete_vector_store_file(
+        self, vector_store_id: str, file_id: str, **kwargs: Any
+    ) -> _models._models.VectorStoreFileDeletionStatus:
+        """Deletes a vector store file. This removes the file‐to‐store link (does not delete the file
+        itself).
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param file_id: Identifier of the file. Required.
+        :type file_id: str
+        :return: VectorStoreFileDeletionStatus. The VectorStoreFileDeletionStatus is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.agents.models._models.VectorStoreFileDeletionStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.VectorStoreFileDeletionStatus] = kwargs.pop("cls", None)
+
+        _request = build_vector_store_files_delete_vector_store_file_request(
+            vector_store_id=vector_store_id,
+            file_id=file_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.VectorStoreFileDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class VectorStoreFileBatchesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.agents.AgentsClient`'s
+        :attr:`vector_store_file_batches` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AgentsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    def create(
+        self,
+        vector_store_id: str,
+        *,
+        content_type: str = "application/json",
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        **kwargs: Any
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword file_ids: List of file identifiers. Default value is None.
+        :paramtype file_ids: list[str]
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.agents.models.VectorStoreDataSource]
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, vector_store_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, vector_store_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(
+        self,
+        vector_store_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        file_ids: Optional[List[str]] = None,
+        data_sources: Optional[List[_models.VectorStoreDataSource]] = None,
+        chunking_strategy: Optional[_models.VectorStoreChunkingStrategyRequest] = None,
+        **kwargs: Any
+    ) -> _models.VectorStoreFileBatch:
+        """Create a vector store file batch.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword file_ids: List of file identifiers. Default value is None.
+        :paramtype file_ids: list[str]
+        :keyword data_sources: List of Azure assets. Default value is None.
+        :paramtype data_sources: list[~azure.ai.agents.models.VectorStoreDataSource]
+        :keyword chunking_strategy: The chunking strategy used to chunk the file(s). If not set, will
+         use the auto strategy. Default value is None.
+        :paramtype chunking_strategy: ~azure.ai.agents.models.VectorStoreChunkingStrategyRequest
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"chunking_strategy": chunking_strategy, "data_sources": data_sources, "file_ids": file_ids}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_vector_store_file_batches_create_request(
+            vector_store_id=vector_store_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get(self, vector_store_id: str, batch_id: str, **kwargs: Any) -> _models.VectorStoreFileBatch:
+        """Retrieve a vector store file batch.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param batch_id: Identifier of the file batch. Required.
+        :type batch_id: str
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
+
+        _request = build_vector_store_file_batches_get_request(
+            vector_store_id=vector_store_id,
+            batch_id=batch_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def cancel(self, vector_store_id: str, batch_id: str, **kwargs: Any) -> _models.VectorStoreFileBatch:
+        """Cancel a vector store file batch. This attempts to cancel the processing of files in this batch
+        as soon as possible.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param batch_id: Identifier of the file batch. Required.
+        :type batch_id: str
+        :return: VectorStoreFileBatch. The VectorStoreFileBatch is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.VectorStoreFileBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.VectorStoreFileBatch] = kwargs.pop("cls", None)
+
+        _request = build_vector_store_file_batches_cancel_request(
+            vector_store_id=vector_store_id,
+            batch_id=batch_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.VectorStoreFileBatch, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_files(
+        self,
+        vector_store_id: str,
+        batch_id: str,
+        *,
+        filter: Optional[Union[str, _models.VectorStoreFileStatusFilter]] = None,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.VectorStoreFile"]:
+        """Returns a list of vector store files in a batch.
+
+        :param vector_store_id: Identifier of the vector store. Required.
+        :type vector_store_id: str
+        :param batch_id: Identifier of the file batch. Required.
+        :type batch_id: str
+        :keyword filter: Filter by file status. Known values are: "in_progress", "completed", "failed",
+         and "cancelled". Default value is None.
+        :paramtype filter: str or ~azure.ai.agents.models.VectorStoreFileStatusFilter
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of VectorStoreFile
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.models.VectorStoreFile]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.VectorStoreFile]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_vector_store_file_batches_list_files_request(
+                vector_store_id=vector_store_id,
+                batch_id=batch_id,
+                filter=filter,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.VectorStoreFile], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class _AgentsClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AgentsClientConfiguration]
+):
+
+    @overload
+    def create_agent(
+        self,
+        *,
+        model: str,
+        content_type: str = "application/json",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Creates a new agent.
+
+        :keyword model: The ID of the model to use. Required.
+        :paramtype model: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword name: The name of the new agent. Default value is None.
+        :paramtype name: str
+        :keyword description: The description of the new agent. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The system instructions for the new agent to use. Default value is None.
+        :paramtype instructions: str
+        :keyword tools: The collection of tools to enable for the new agent. Default value is None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
+         are specific to the type of tool. For example, the ``code_interpreter``
+         tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
+         store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
+         ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_agent(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
+        """Creates a new agent.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_agent(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Agent:
+        """Creates a new agent.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_agent(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        model: str = _Unset,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Creates a new agent.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword model: The ID of the model to use. Required.
+        :paramtype model: str
+        :keyword name: The name of the new agent. Default value is None.
+        :paramtype name: str
+        :keyword description: The description of the new agent. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The system instructions for the new agent to use. Default value is None.
+        :paramtype instructions: str
+        :keyword tools: The collection of tools to enable for the new agent. Default value is None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
+         are specific to the type of tool. For example, the ``code_interpreter``
+         tool requires a list of file IDs, while the ``file_search`` tool requires a list of vector
+         store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
+         ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if model is _Unset:
+                raise TypeError("missing required argument: model")
+            body = {
+                "description": description,
+                "instructions": instructions,
+                "metadata": metadata,
+                "model": model,
+                "name": name,
+                "response_format": response_format,
+                "temperature": temperature,
+                "tool_resources": tool_resources,
+                "tools": tools,
+                "top_p": top_p,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_create_agent_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Agent, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_agents(
+        self,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.ListSortOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.Agent"]:
+        """Gets a list of agents that were previously created.
+
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the created_at timestamp of the objects. asc for ascending order
+         and desc for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.agents.models.ListSortOrder
+        :keyword before: A cursor for use in pagination. before is an object ID that defines your place
+         in the list. For instance, if you make a list request and receive 100 objects, ending with
+         obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of
+         the list. Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of Agent
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.agents.models.Agent]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Agent]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agents_list_agents_request(
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Agent], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(_models.AgentV1Error, response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_agent(self, agent_id: str, **kwargs: Any) -> _models.Agent:
+        """Retrieves an existing agent.
+
+        :param agent_id: Identifier of the agent. Required.
+        :type agent_id: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_agent_request(
+            agent_id=agent_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Agent, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update_agent(
+        self,
+        agent_id: str,
+        *,
+        content_type: str = "application/json",
+        model: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword model: The ID of the model to use. Default value is None.
+        :paramtype model: str
+        :keyword name: The modified name for the agent to use. Default value is None.
+        :paramtype name: str
+        :keyword description: The modified description for the agent to use. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The modified system instructions for the new agent to use. Default value
+         is None.
+        :paramtype instructions: str
+        :keyword tools: The modified collection of tools to enable for the agent. Default value is
+         None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
+         are specific to the type of tool. For example,
+         the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
+         requires a list of vector store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
+         ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_agent(
+        self, agent_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_agent(
+        self, agent_id: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_agent(
+        self,
+        agent_id: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        model: Optional[str] = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.Agent:
+        """Modifies an existing agent.
+
+        :param agent_id: The ID of the agent to modify. Required.
+        :type agent_id: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword model: The ID of the model to use. Default value is None.
+        :paramtype model: str
+        :keyword name: The modified name for the agent to use. Default value is None.
+        :paramtype name: str
+        :keyword description: The modified description for the agent to use. Default value is None.
+        :paramtype description: str
+        :keyword instructions: The modified system instructions for the new agent to use. Default value
+         is None.
+        :paramtype instructions: str
+        :keyword tools: The modified collection of tools to enable for the agent. Default value is
+         None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: A set of resources that are used by the agent's tools. The resources
+         are specific to the type of tool. For example,
+         the ``code_interpreter`` tool requires a list of file IDs, while the ``file_search`` tool
+         requires a list of vector store IDs. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output more random,
+         while lower values like 0.2 will make it more focused and deterministic. Default value is
+         None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model considers the results of the tokens with top_p probability mass.
+         So 0.1 means only the tokens comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword response_format: The response format of the tool calls used by this agent. Is one of
+         the following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
+         ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: Agent. The Agent is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.Agent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Agent] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {
+                "description": description,
+                "instructions": instructions,
+                "metadata": metadata,
+                "model": model,
+                "name": name,
+                "response_format": response_format,
+                "temperature": temperature,
+                "tool_resources": tool_resources,
+                "tools": tools,
+                "top_p": top_p,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_update_agent_request(
+            agent_id=agent_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Agent, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def _delete_agent(self, agent_id: str, **kwargs: Any) -> _models._models.AgentDeletionStatus:
+        """Deletes an agent.
+
+        :param agent_id: Identifier of the agent. Required.
+        :type agent_id: str
+        :return: AgentDeletionStatus. The AgentDeletionStatus is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models._models.AgentDeletionStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.AgentDeletionStatus] = kwargs.pop("cls", None)
+
+        _request = build_agents_delete_agent_request(
+            agent_id=agent_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(
+                _models._models.AgentDeletionStatus, response.json()  # pylint: disable=protected-access
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_thread_and_run(
+        self,
+        *,
+        agent_id: str,
+        content_type: str = "application/json",
+        thread: Optional[_models.AgentThreadCreationOptions] = None,
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        stream_parameter: Optional[bool] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_prompt_tokens: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        truncation_strategy: Optional[_models.TruncationObject] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Creates a new agent thread and immediately starts a run using that new thread.
+
+        :keyword agent_id: The ID of the agent for which the thread should be created. Required.
+        :paramtype agent_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword thread: The details used to create the new thread. If no thread is provided, an empty
+         one will be created. Default value is None.
+        :paramtype thread: ~azure.ai.agents.models.AgentThreadCreationOptions
+        :keyword model: The overridden model that the agent should use to run the thread. Default value
+         is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions the agent should use to run the
+         thread. Default value is None.
+        :paramtype instructions: str
+        :keyword tools: The overridden list of enabled tools the agent should use to run the thread.
+         Default value is None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
+         modifying the behavior on a per-run basis. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
+         as server-sent events,
+         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
+         value is None.
+        :paramtype stream_parameter: bool
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+         the course of the run. The run will make a best effort to use only
+         the number of completion tokens specified, across multiple turns of the run. If the run
+         exceeds the number of completion tokens
+         specified, the run will end with status ``incomplete``. See ``incomplete_details`` for more
+         info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+         moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
+         AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
+         ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_thread_and_run(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Creates a new agent thread and immediately starts a run using that new thread.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_thread_and_run(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Creates a new agent thread and immediately starts a run using that new thread.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_thread_and_run(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        agent_id: str = _Unset,
+        thread: Optional[_models.AgentThreadCreationOptions] = None,
+        model: Optional[str] = None,
+        instructions: Optional[str] = None,
+        tools: Optional[List[_models.ToolDefinition]] = None,
+        tool_resources: Optional[_models.ToolResources] = None,
+        stream_parameter: Optional[bool] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_prompt_tokens: Optional[int] = None,
+        max_completion_tokens: Optional[int] = None,
+        truncation_strategy: Optional[_models.TruncationObject] = None,
+        tool_choice: Optional["_types.AgentsToolChoiceOption"] = None,
+        response_format: Optional["_types.AgentsResponseFormatOption"] = None,
+        parallel_tool_calls: Optional[bool] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ThreadRun:
+        """Creates a new agent thread and immediately starts a run using that new thread.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword agent_id: The ID of the agent for which the thread should be created. Required.
+        :paramtype agent_id: str
+        :keyword thread: The details used to create the new thread. If no thread is provided, an empty
+         one will be created. Default value is None.
+        :paramtype thread: ~azure.ai.agents.models.AgentThreadCreationOptions
+        :keyword model: The overridden model that the agent should use to run the thread. Default value
+         is None.
+        :paramtype model: str
+        :keyword instructions: The overridden system instructions the agent should use to run the
+         thread. Default value is None.
+        :paramtype instructions: str
+        :keyword tools: The overridden list of enabled tools the agent should use to run the thread.
+         Default value is None.
+        :paramtype tools: list[~azure.ai.agents.models.ToolDefinition]
+        :keyword tool_resources: Override the tools the agent can use for this run. This is useful for
+         modifying the behavior on a per-run basis. Default value is None.
+        :paramtype tool_resources: ~azure.ai.agents.models.ToolResources
+        :keyword stream_parameter: If ``true``, returns a stream of events that happen during the Run
+         as server-sent events,
+         terminating when the Run enters a terminal state with a ``data: [DONE]`` message. Default
+         value is None.
+        :paramtype stream_parameter: bool
+        :keyword temperature: What sampling temperature to use, between 0 and 2. Higher values like 0.8
+         will make the output
+         more random, while lower values like 0.2 will make it more focused and deterministic. Default
+         value is None.
+        :paramtype temperature: float
+        :keyword top_p: An alternative to sampling with temperature, called nucleus sampling, where the
+         model
+         considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens
+         comprising the top 10% probability mass are considered.
+
+         We generally recommend altering this or temperature but not both. Default value is None.
+        :paramtype top_p: float
+        :keyword max_prompt_tokens: The maximum number of prompt tokens that may be used over the
+         course of the run. The run will make a best effort to use only
+         the number of prompt tokens specified, across multiple turns of the run. If the run exceeds
+         the number of prompt tokens specified,
+         the run will end with status ``incomplete``. See ``incomplete_details`` for more info. Default
+         value is None.
+        :paramtype max_prompt_tokens: int
+        :keyword max_completion_tokens: The maximum number of completion tokens that may be used over
+         the course of the run. The run will make a best effort to use only
+         the number of completion tokens specified, across multiple turns of the run. If the run
+         exceeds the number of completion tokens
+         specified, the run will end with status ``incomplete``. See ``incomplete_details`` for more
+         info. Default value is None.
+        :paramtype max_completion_tokens: int
+        :keyword truncation_strategy: The strategy to use for dropping messages as the context windows
+         moves forward. Default value is None.
+        :paramtype truncation_strategy: ~azure.ai.agents.models.TruncationObject
+        :keyword tool_choice: Controls whether or not and which tool is called by the model. Is one of
+         the following types: str, Union[str, "_models.AgentsToolChoiceOptionMode"],
+         AgentsNamedToolChoice Default value is None.
+        :paramtype tool_choice: str or str or ~azure.ai.agents.models.AgentsToolChoiceOptionMode or
+         ~azure.ai.agents.models.AgentsNamedToolChoice
+        :keyword response_format: Specifies the format that the model must output. Is one of the
+         following types: str, Union[str, "_models.AgentsResponseFormatMode"], AgentsResponseFormat,
+         ResponseFormatJsonSchemaType Default value is None.
+        :paramtype response_format: str or str or ~azure.ai.agents.models.AgentsResponseFormatMode or
+         ~azure.ai.agents.models.AgentsResponseFormat or
+         ~azure.ai.agents.models.ResponseFormatJsonSchemaType
+        :keyword parallel_tool_calls: If ``true`` functions will run in parallel during tool use.
+         Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword metadata: A set of up to 16 key/value pairs that can be attached to an object, used
+         for storing additional information about that object in a structured format. Keys may be up to
+         64 characters in length and values may be up to 512 characters in length. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ThreadRun. The ThreadRun is compatible with MutableMapping
+        :rtype: ~azure.ai.agents.models.ThreadRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ThreadRun] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if agent_id is _Unset:
+                raise TypeError("missing required argument: agent_id")
+            body = {
+                "assistant_id": agent_id,
+                "instructions": instructions,
+                "max_completion_tokens": max_completion_tokens,
+                "max_prompt_tokens": max_prompt_tokens,
+                "metadata": metadata,
+                "model": model,
+                "parallel_tool_calls": parallel_tool_calls,
+                "response_format": response_format,
+                "stream": stream_parameter,
+                "temperature": temperature,
+                "thread": thread,
+                "tool_choice": tool_choice,
+                "tool_resources": tool_resources,
+                "tools": tools,
+                "top_p": top_p,
+                "truncation_strategy": truncation_strategy,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_create_thread_and_run_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(_models.AgentV1Error, response)
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ThreadRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

@@ -6,7 +6,10 @@
 # --------------------------------------------------------------------------
 
 from abc import ABC
-from typing import Generic, TYPE_CHECKING, TypeVar
+import json
+from typing import Any, Generic, IO, Mapping, Optional, TYPE_CHECKING, TypeVar, Union
+
+from .._utils.model_base import Model, SdkJSONEncoder
 
 if TYPE_CHECKING:
     from .serialization import Deserializer, Serializer
@@ -23,3 +26,42 @@ class ClientMixinABC(ABC, Generic[TClient, TConfig]):
     _config: TConfig
     _serialize: "Serializer"
     _deserialize: "Deserializer"
+
+
+# file-like tuple could be `(filename, IO (or bytes))` or `(filename, IO (or bytes), content_type)`
+FileContent = Union[str, bytes, IO[str], IO[bytes]]
+
+FileType = Union[
+    # file (or bytes)
+    FileContent,
+    # (filename, file (or bytes))
+    tuple[Optional[str], FileContent],
+    # (filename, file (or bytes), content_type)
+    tuple[Optional[str], FileContent, Optional[str]],
+]
+
+
+def serialize_multipart_data_entry(data_entry: Any) -> Any:
+    if isinstance(data_entry, (list, tuple, dict, Model)):
+        return json.dumps(data_entry, cls=SdkJSONEncoder, exclude_readonly=True)
+    return data_entry
+
+
+def prepare_multipart_form_data(
+    body: Mapping[str, Any], multipart_fields: list[str], data_fields: list[str]
+) -> tuple[list[FileType], dict[str, Any]]:
+    files: list[FileType] = []
+    data: dict[str, Any] = {}
+    for multipart_field in multipart_fields:
+        multipart_entry = body.get(multipart_field)
+        if isinstance(multipart_entry, list):
+            files.extend([(multipart_field, e) for e in multipart_entry])
+        elif multipart_entry:
+            files.append((multipart_field, multipart_entry))
+
+    for data_field in data_fields:
+        data_entry = body.get(data_field)
+        if data_entry:
+            data[data_field] = serialize_multipart_data_entry(data_entry)
+
+    return files, data
