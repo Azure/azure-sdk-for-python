@@ -21,6 +21,7 @@ from urllib.parse import (
 from wsgiref.handlers import format_date_time
 
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
+from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     HeadersPolicy,
@@ -32,7 +33,6 @@ from azure.core.pipeline.policies import (
 from azure.core.pipeline.transport import (
     HttpRequest as LegacyHttpRequest,
     HttpResponse as LegacyHttpResponse,
-    PipelineRequest,
 )
 from azure.core.rest import HttpRequest, HttpResponse
 
