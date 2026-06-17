@@ -3213,10 +3213,11 @@ class EvaluatorDefinition(_Model):
     """Base evaluator configuration with discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    CodeBasedEvaluatorDefinition, PromptBasedEvaluatorDefinition, RubricBasedEvaluatorDefinition
+    CodeBasedEvaluatorDefinition, EndpointBasedEvaluatorDefinition, PromptBasedEvaluatorDefinition,
+    RubricBasedEvaluatorDefinition
 
     :ivar type: The type of evaluator definition. Required. Known values are: "prompt", "code",
-     "prompt_and_code", "service", "openai_graders", and "rubric".
+     "prompt_and_code", "service", "endpoint", "openai_graders", and "rubric".
     :vartype type: str or ~azure.ai.projects.models.EvaluatorDefinitionType
     :ivar init_parameters: The JSON schema (Draft 2020-12) for the evaluator's input parameters.
      This includes parameters like type, properties, required.
@@ -3231,7 +3232,7 @@ class EvaluatorDefinition(_Model):
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """The type of evaluator definition. Required. Known values are: \"prompt\", \"code\",
-     \"prompt_and_code\", \"service\", \"openai_graders\", and \"rubric\"."""
+     \"prompt_and_code\", \"service\", \"endpoint\", \"openai_graders\", and \"rubric\"."""
     init_parameters: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The JSON schema (Draft 2020-12) for the evaluator's input parameters. This includes parameters
      like type, properties, required."""
@@ -3380,6 +3381,51 @@ class CodeConfiguration(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class EndpointBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="endpoint"):
+    """Endpoint-based evaluator definition that calls an external HTTP endpoint for scoring.
+
+    :ivar init_parameters: The JSON schema (Draft 2020-12) for the evaluator's input parameters.
+     This includes parameters like type, properties, required.
+    :vartype init_parameters: dict[str, any]
+    :ivar data_schema: The JSON schema (Draft 2020-12) for the evaluator's input data. This
+     includes parameters like type, properties, required.
+    :vartype data_schema: dict[str, any]
+    :ivar metrics: List of output metrics produced by this evaluator.
+    :vartype metrics: dict[str, ~azure.ai.projects.models.EvaluatorMetric]
+    :ivar type: Required. Endpoint-based definition.
+    :vartype type: str or ~azure.ai.projects.models.ENDPOINT
+    :ivar connection_name: Name of a workspace connection containing the endpoint URL and
+     credentials. Required.
+    :vartype connection_name: str
+    """
+
+    type: Literal[EvaluatorDefinitionType.ENDPOINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Endpoint-based definition."""
+    connection_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of a workspace connection containing the endpoint URL and credentials. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connection_name: str,
+        init_parameters: Optional[dict[str, Any]] = None,
+        data_schema: Optional[dict[str, Any]] = None,
+        metrics: Optional[dict[str, "_models.EvaluatorMetric"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = EvaluatorDefinitionType.ENDPOINT  # type: ignore
 
 
 class CodeInterpreterTool(Tool, discriminator="code_interpreter"):

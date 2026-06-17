@@ -497,6 +497,8 @@ class EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Prompt & Code Based definition."""
     SERVICE = "service"
     """Service-based evaluator."""
+    ENDPOINT = "endpoint"
+    """Endpoint-based definition."""
     OPENAI_GRADERS = "openai_graders"
     """OpenAI graders."""
     RUBRIC = "rubric"
