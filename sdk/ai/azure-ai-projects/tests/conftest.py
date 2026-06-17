@@ -35,9 +35,9 @@ def pytest_collection_modifyitems(items):
     for item in items:
         path = item.fspath.strpath
         if "tests\\evaluation" in path or "tests/evaluation" in path:
-            # test_human_evaluations.py is a pure unit test with no Microsoft Foundry
-            # dependency, so it must keep running in the PR pipeline.
-            if "test_human_evaluations" in os.path.basename(path):
+            # Pure unit tests with no Microsoft Foundry dependency must keep running in the PR pipeline.
+            basename = os.path.basename(path)
+            if "test_human_evaluations" in basename or "test_endpoint_evaluator_models" in basename:
                 continue
             item.add_marker(
                 pytest.mark.skip(
