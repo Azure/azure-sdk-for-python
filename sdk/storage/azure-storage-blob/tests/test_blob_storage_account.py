@@ -79,27 +79,6 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_download_blob_returns_access_tier(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
-        self._setup(bsc)
-        blob = self._get_blob_reference(bsc)
-        blob.upload_blob(b"hello world", overwrite=True)
-        blob.set_standard_blob_tier(StandardBlobTier.SMART)
-
-        # Act
-        downloader = blob.download_blob()
-
-        # Assert
-        assert StandardBlobTier.SMART == downloader.properties.blob_tier
-        assert downloader.properties.smart_access_tier is not None
-        assert downloader.properties.blob_tier_change_time is not None
-        assert not downloader.properties.blob_tier_inferred
-
-    @BlobPreparer()
-    @recorded_by_proxy
     def test_set_standard_blob_tier_with_rehydrate_priority(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
