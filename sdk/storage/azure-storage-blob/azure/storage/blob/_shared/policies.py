@@ -884,7 +884,7 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTP
         blocked_redirect_headers: Optional[List[str]] = None,
         blocked_query_params: Optional[List[str]] = None,
         disable_redirect_cleanup: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._disable_redirect_cleanup = disable_redirect_cleanup
         self._blocked_redirect_headers = (
@@ -912,7 +912,8 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTP
             # Clean up request query parameters
             parsed = urlparse(request.http_request.url)
             kept = [
-                pair for pair in parsed.query.split("&")
+                pair
+                for pair in parsed.query.split("&")
                 if pair and pair.split("=", 1)[0] not in self._blocked_query_params
             ]
             request.http_request.url = urlunparse(parsed._replace(query="&".join(kept)))
