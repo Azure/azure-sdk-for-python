@@ -6,6 +6,9 @@ parameters:
     type: boolean
     default: false
 
+variables:
+  system.debug: true
+
 trigger:
   branches:
     include:

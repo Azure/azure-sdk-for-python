@@ -1,4 +1,4 @@
-import argparse, sys, os, logging, glob, shutil
+import argparse, sys, os, logging, glob, shutil, shlex, time
 
 from subprocess import run
 
@@ -185,6 +185,35 @@ def cleanup_build_artifacts(build_folder):
         shutil.rmtree(build_path)
 
 
+def _run_build_command(
+    cmd: List[str],
+    cwd: str,
+    check: bool,
+    should_stream_to_console: bool,
+    command_label: str,
+    force_stream_to_console: bool = False,
+):
+    command_text = shlex.join(cmd)
+    logger.info(f"Starting {command_label} command in {cwd}: {command_text}")
+
+    start = time.perf_counter()
+    try:
+        result = run_logged(
+            cmd,
+            cwd=cwd,
+            check=check,
+            should_stream_to_console=should_stream_to_console or force_stream_to_console,
+        )
+    except Exception:
+        elapsed = time.perf_counter() - start
+        logger.error(f"{command_label} command failed after {elapsed:.2f}s: {command_text}")
+        raise
+
+    elapsed = time.perf_counter() - start
+    logger.info(f"Completed {command_label} command in {elapsed:.2f}s (exit={result.returncode})")
+    return result
+
+
 def build_packages(
     targeted_packages: List[str],
     distribution_directory: Optional[str] = None,
@@ -242,13 +271,14 @@ def create_package(
         necessary_install_requirements = [
             req for req in setup_parsed.requires if parse_require(req).name not in pip_output.keys()
         ]
-        run_logged(
+        _run_build_command(
             [sys.executable, "-m", "pip", "install", *necessary_install_requirements],
             cwd=setup_parsed.folder,
             check=False,
             should_stream_to_console=should_log_build_output,
+            command_label="pip install",
         )
-        run_logged(
+        _run_build_command(
             [
                 sys.executable,
                 "-m",
@@ -260,28 +290,40 @@ def create_package(
             cwd=setup_parsed.folder,
             check=True,
             should_stream_to_console=should_log_build_output,
+            command_label="python -m build",
         )
     else:
         if enable_wheel:
             if setup_parsed.ext_modules:
-                run_logged(
+                logger.info(
+                    "cibuildwheel environment: CIBW_BUILD=%s CIBW_ARCHS=%s CIBW_ARCHS_LINUX=%s CIBW_BUILD_VERBOSITY=%s",
+                    os.environ.get("CIBW_BUILD", "<unset>"),
+                    os.environ.get("CIBW_ARCHS", "<unset>"),
+                    os.environ.get("CIBW_ARCHS_LINUX", "<unset>"),
+                    os.environ.get("CIBW_BUILD_VERBOSITY", "<unset>"),
+                )
+                _run_build_command(
                     [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
                     cwd=setup_parsed.folder,
                     check=True,
                     should_stream_to_console=should_log_build_output,
+                    command_label="cibuildwheel",
+                    force_stream_to_console=True,
                 )
             else:
-                run_logged(
+                _run_build_command(
                     [sys.executable, "setup.py", "bdist_wheel", "-d", dist],
                     cwd=setup_parsed.folder,
                     check=True,
                     should_stream_to_console=should_log_build_output,
+                    command_label="setup.py bdist_wheel",
                 )
 
         if enable_sdist:
-            run_logged(
+            _run_build_command(
                 [sys.executable, "setup.py", "sdist", "-d", dist],
                 cwd=setup_parsed.folder,
                 check=True,
                 should_stream_to_console=should_log_build_output,
+                command_label="setup.py sdist",
             )

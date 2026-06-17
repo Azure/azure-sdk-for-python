@@ -124,6 +124,8 @@ steps:
     timeoutInMinutes: 80
     env:
       CIBW_BUILD_VERBOSITY: 3
+      LOGLEVEL: DEBUG
+      PYTHONUNBUFFERED: "1"
 
   - pwsh: |
       which python
