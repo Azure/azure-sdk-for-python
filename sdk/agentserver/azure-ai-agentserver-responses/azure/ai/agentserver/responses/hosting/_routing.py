@@ -538,16 +538,29 @@ class ResponsesAgentServerHost(AgentServerHost):
         """Register a function as the acceptance hook for steerable conversations.
 
         The acceptance hook is called when a new turn is queued on an
-        already-active steerable conversation. It generates the "queued"
-        response returned to the HTTP caller.
+        already-active steerable conversation. It returns the typed
+        ``ResponseObject`` (``status="queued"``) surfaced to the HTTP caller.
 
         Usage::
 
-            @app.response_acceptor
-            def my_acceptor(request, context):
-                return {"status": "queued", "id": context.response_id}
+            from azure.ai.agentserver.responses import (
+                CreateResponse, ResponseContext, ResponseObject,
+            )
 
-        :param fn: A callable accepting (request, context) and returning a dict.
+            @app.response_acceptor
+            def my_acceptor(
+                request: CreateResponse, context: ResponseContext
+            ) -> ResponseObject:
+                return ResponseObject(
+                    {
+                        "id": context.response_id,
+                        "object": "response",
+                        "status": "queued",
+                    }
+                )
+
+        :param fn: A callable accepting ``(request, context)`` and returning a
+            :class:`~azure.ai.agentserver.responses.models.ResponseObject`.
         :type fn: Callable
         :return: The original function (unmodified).
         :rtype: Callable

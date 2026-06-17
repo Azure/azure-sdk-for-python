@@ -19,6 +19,7 @@ import pytest
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
+    ResponseObject,
     ResponsesAgentServerHost,
     ResponsesServerOptions,
 )
@@ -36,8 +37,8 @@ class TestAcceptanceHookRegistration:
         app = ResponsesAgentServerHost(options=options)
 
         @app.response_acceptor
-        def my_acceptor(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
-            return {"status": "queued", "id": context.response_id}
+        def my_acceptor(request: CreateResponse, context: ResponseContext) -> ResponseObject:
+            return ResponseObject({"status": "queued", "id": context.response_id})
 
         assert app._acceptance_hook is not None
         assert app._acceptance_hook is my_acceptor
@@ -53,7 +54,7 @@ class TestDefaultAcceptanceBehavior:
     """Default acceptance creates a queued response envelope."""
 
     def test_default_queued_response_shape(self) -> None:
-        """Default acceptance returns a response with status=queued."""
+        """Default acceptance returns a typed ResponseObject with status=queued."""
         from azure.ai.agentserver.responses.hosting._acceptance import (
             generate_default_acceptance,
         )
@@ -62,6 +63,7 @@ class TestDefaultAcceptanceBehavior:
             response_id="resp_123",
             model="gpt-4o",
         )
+        assert isinstance(response, ResponseObject)
         assert response["id"] == "resp_123"
         assert response["status"] == "queued"
         assert response["object"] == "response"
@@ -85,17 +87,17 @@ class TestCustomAcceptanceHook:
     """Custom acceptance hooks override the default."""
 
     def test_custom_hook_called_with_request_context(self) -> None:
-        """Custom hook receives request and context parameters."""
+        """Custom hook receives request and context; typed return is normalized to a dict."""
         from azure.ai.agentserver.responses.hosting._acceptance import (
             dispatch_acceptance_hook,
         )
 
         captured: dict[str, Any] = {}
 
-        def my_hook(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
+        def my_hook(request: CreateResponse, context: ResponseContext) -> ResponseObject:
             captured["request"] = request
             captured["context"] = context
-            return {"status": "queued", "id": context.response_id, "custom": True}
+            return ResponseObject({"status": "queued", "id": context.response_id, "custom": True})
 
         # Create minimal mock objects
         from unittest.mock import MagicMock
@@ -111,10 +113,33 @@ class TestCustomAcceptanceHook:
             model="gpt-4o",
         )
 
+        # dispatch returns a plain dict for the internal HTTP path.
+        assert isinstance(result, dict)
         assert result["status"] == "queued"
         assert result["custom"] is True
         assert captured["request"] is mock_request
         assert captured["context"] is mock_context
+
+    def test_hook_returning_plain_dict_is_tolerated(self) -> None:
+        """A hook that returns a plain dict (not a ResponseObject) still works."""
+        from azure.ai.agentserver.responses.hosting._acceptance import (
+            dispatch_acceptance_hook,
+        )
+        from unittest.mock import MagicMock
+
+        def dict_hook(request: CreateResponse, context: ResponseContext) -> Any:
+            return {"id": context.response_id}  # no status set
+
+        mock_context = MagicMock(spec=ResponseContext)
+        mock_context.response_id = "resp_dict"
+        result = dispatch_acceptance_hook(
+            hook=dict_hook,
+            request=MagicMock(spec=CreateResponse),
+            context=mock_context,
+            model=None,
+        )
+        assert result["id"] == "resp_dict"
+        assert result["status"] == "queued"  # defaulted
 
     def test_hook_error_falls_back_to_default(self) -> None:
         """If custom hook raises, fall back to default acceptance."""
@@ -123,7 +148,7 @@ class TestCustomAcceptanceHook:
         )
         from unittest.mock import MagicMock
 
-        def bad_hook(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
+        def bad_hook(request: CreateResponse, context: ResponseContext) -> ResponseObject:
             raise RuntimeError("Hook failed")
 
         mock_request = MagicMock(spec=CreateResponse)
@@ -138,6 +163,7 @@ class TestCustomAcceptanceHook:
         )
 
         # Falls back to default
+        assert isinstance(result, dict)
         assert result["status"] == "queued"
         assert result["id"] == "resp_fallback"
         assert result["model"] == "test-model"

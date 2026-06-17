@@ -543,6 +543,9 @@ class ResponseContext:
 
     # Recovery + steering classifiers (see Durability)
     is_recovery: bool                               # True on a crash-recovered re-entry
+    persisted_response: ResponseObject | None       # Entry-only: last durably-persisted snapshot
+                                                    # (last stream.checkpoint(), else created snapshot,
+                                                    # else None). See Durability → persisted_response.
     is_steered_turn: bool                           # True on the drain re-entry that follows a steering input
     pending_input_count: int                        # Live count of queued steering inputs
     conversation_chain_metadata: ConversationChainMetadataNamespace      # Persistent checkpoint store (Mapping + Callable facade)
@@ -1297,7 +1300,7 @@ Three layers, each owning a specific slice of state:
 
 | Layer | Owns | On crash recovery, surfaces / provides |
 |---|---|---|
-| **Library** (this SDK) | Persisted SSE event stream (every event you emitted, in order) — used for client replay via `starting_after=`. The library writes the persisted response *object* exactly twice per response across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts emit `response.created` again but the framework dedups the write (idempotent persistence keyed on `response_id`). It does NOT keep a running snapshot of in-flight state. | Re-invokes the handler. Surfaces `context.is_recovery == True`, `context.is_steered_turn`, `context.pending_input_count`, and `context.conversation_chain_metadata`. Replays persisted events to reconnecting clients. Rebuilds your `ResponseContext` transparently — the handler sees the same `response_id` it had on the first attempt. |
+| **Library** (this SDK) | Persisted SSE event stream (every event you emitted, in order) — used for client replay via `starting_after=`. The library persists the response *object* at the first attempt's `response.created`, at **each successful `yield stream.checkpoint()`**, and at the terminal event; the `response.created` and terminal writes are deduplicated across recovery attempts (idempotent persistence keyed on `response_id`). The last persisted snapshot is exposed on re-entry as `context.persisted_response`. It does NOT keep a *running* snapshot of in-flight state between those persistence points. | Re-invokes the handler. Surfaces `context.is_recovery == True`, `context.persisted_response`, `context.is_steered_turn`, `context.pending_input_count`, and `context.conversation_chain_metadata`. Replays persisted events to reconnecting clients. Rebuilds your `ResponseContext` transparently — the handler sees the same `response_id` it had on the first attempt. |
 | **Handler** (your code) | The "what was safely committed" decision, plus side-effect watermarks in `context.conversation_chain_metadata`. | Decides the resumption point. Constructs the **resumption response**. Emits a fresh `response.in_progress` carrying it. Continues producing new output items. |
 | **Upstream framework** (Copilot SDK, LangGraph, your own LLM client) | The conversational / graph / agent state that has to outlive a process death. | Has its own resume facility (session ID, checkpoint store) that you call from the handler. |
 
@@ -1328,10 +1331,10 @@ is the naive fallback (see below).
 
 ### What the Library Does
 
-- Persists every SSE event in order. No reordering, no deduplication of stream events.
-- Persists the response *object* exactly twice per response_id across the entire recovery lifecycle: once at the first attempt's `response.created` and once at the first attempt that reaches a terminal event. Subsequent attempts' `response.created` and terminal writes are deduplicated by the framework (idempotent persistence keyed on `response_id`); the handler does not need to branch.
+- Persists every SSE event in order. No reordering, no deduplication of stream events — **except** that a recovered handler's re-emitted `response.created` is not re-appended to an already-non-empty durable stream (so a replaying client sees `response.created` exactly once; spec 026).
+- Persists the response *object* at the first attempt's `response.created`, at **each successful `yield stream.checkpoint()`**, and at the terminal event. The `response.created` and terminal writes are deduplicated across recovery attempts (idempotent persistence keyed on `response_id`); the handler does not branch for them. The last persisted snapshot is exposed on re-entry as `context.persisted_response`.
 - Rebuilds your `ResponseContext` transparently on any cross-process recovery — the recovered handler sees the same `response_id`, the same `request`, the same `conversation_chain_id`, and the same cancellation surface (`cancellation_signal` (3rd positional handler arg), `context.shutdown`, `context.client_cancelled`) it had on the first attempt. Id generation is a fresh-entry-only concern.
-- Surfaces flat recovery + steering classifiers on `ResponseContext`: `context.is_recovery`, `context.is_steered_turn`, `context.pending_input_count`, `context.conversation_chain_metadata`. The library does NOT expose a snapshot of the prior attempt — handler must consult its upstream framework for resumption state.
+- Surfaces flat recovery + steering classifiers on `ResponseContext`: `context.is_recovery`, `context.persisted_response`, `context.is_steered_turn`, `context.pending_input_count`, `context.conversation_chain_metadata`. For the framework-checkpoint model, `context.persisted_response` is the last durably-checkpointed snapshot; for upstream-owned recovery, the library holds no useful in-flight snapshot and you consult your upstream framework for resumption state.
 - Treats any `response.in_progress` event after the first one as a snapshot reset.
 - Replays persisted events to reconnecting clients on `starting_after=`. The reset `in_progress` is part of the replay; clients use it as the reconciliation signal.
 - **Surfaces graceful-shutdown recovery via one uniform signal in every handler shape.** The framework leaves the response `in_progress` so the next process lifetime re-invokes your handler with `context.is_recovery=True` when, on `context.shutdown`, the handler calls `await context.exit_for_recovery()`. This single idiom works identically in coroutine/`TextResponse` and streaming async-generator handlers — it raises internally (never returns), so there is no `return <value>` form to trip the async-generator `SyntaxError`. (An implicit fallback also applies: a streaming handler that simply `return`s without a terminal **while `context.shutdown` is set** still recovers — but `await context.exit_for_recovery()` is the recommended explicit idiom. A bare `return` during normal execution still yields the default terminal.)
@@ -1346,7 +1349,7 @@ is the naive fallback (see below).
 - Emits `response.in_progress` early in the recovered path (this is the reset).
 - Uses upstream framework's native resume facility (e.g. session resume, checkpoint replay) — never re-runs a side-effecting upstream call without checking a watermark first.
 - Watermarks any upstream side-effecting call by writing a small marker to `context.conversation_chain_metadata` **before** the call and clearing it **after** the call has been durably committed upstream. Call `await context.conversation_chain_metadata.flush()` between the watermark write and the side effect to ensure the marker survives a crash.
-- For upstream-session-id needs: reads `context.conversation_chain_id` — the framework-computed stable identifier for the current conversation chain. Use this as the session id passed to upstream frameworks (Copilot `session_id`, LangGraph `thread_id`) instead of allocating your own UUID. The value is derived from `conversation_id` if present, else `previous_response_id` in steerable mode, else `response_id` — stable across all attempts of a given task.
+- For upstream-session-id needs: `context.conversation_chain_id` is a derived, stable chain identifier — the framework computes it so every turn of the same conversation resolves to the same value (anchored to the conversation's root: a `conversation_id`, or the head of a `previous_response_id` chain, falling back to a first turn's own `response_id`), stable across all attempts of a turn. It's a convenient session id to pass to upstream frameworks (Copilot `session_id`, LangGraph `thread_id`) — using it avoids allocating and persisting your own UUID, though you may use your own identifier if you prefer.
 
 ### Stream Checkpoints
 
@@ -1605,10 +1608,11 @@ cannot know which of your calls have side effects, so you stamp a marker in
 
 The strict at-most-once pattern is **write → flush → side effect → write →
 flush**. The explicit `await metadata.flush()` ensures the watermark hits
-durable storage before the side effect runs; otherwise the framework's 5s
-auto-flush could leave the watermark in memory only and a crash between
-"side effect issued" and "auto-flush fires" would re-issue the side effect
-on recovery.
+durable storage before the side effect runs; without it, the framework only
+snapshots metadata at durable-task lifecycle boundaries
+(start/suspend/complete/fail/cancel), so a crash between "side effect issued"
+and the next lifecycle boundary would leave the watermark in memory only and
+re-issue the side effect on recovery. The explicit `flush()` is the fence.
 
 ```python
 #flat context surface — no nested durability object
@@ -1650,47 +1654,63 @@ SDK-specific names belong in your sample's docstring.
 
 ### Resumption Response Construction
 
-The resumption response is a small `ResponseObject` containing only the output
-items you are confident were durably committed. A minimal example for a handler
-whose only safe state is "the user message was committed; nothing else":
+The resumption response is the `ResponseObject` you hand to
+`ResponseEventStream(response=…)` on a recovered entry; its `output` is the
+client-visible reset point. How much you build depends on your resume model.
+
+**Simplest case — return the persisted snapshot as-is.** If you used framework
+checkpoints (`stream.checkpoint()`), `context.persisted_response` already holds
+exactly the items that were durably committed at the last checkpoint. You can
+seed straight from it, no construction needed:
 
 ```python
-from azure.ai.agentserver.responses.models._generated import ResponseObject
+if context.is_recovery and context.persisted_response is not None:
+    stream = ResponseEventStream(
+        response=context.persisted_response, response_id=context.response_id,
+    )
+    start_phase = len(stream.response.output)   # resume past committed items
+```
 
+**Involved case — trim items you can't trust.** If the snapshot (or your
+upstream's view) may contain items emitted by work that did NOT durably commit,
+you trim `output` down to only the items you trust, then resume. *What* to trim
+is your decision, and you can drive it from any durable signal you stamped:
 
-def _build_resumption_response(durability, context, request) -> ResponseObject:
+- **An upstream framework's checkpoint state** (which steps it actually saved).
+- **Item-level `internal_metadata`** — tag each emitted item with, say, the step
+  that produced it (`message.internal_metadata["step"] = step_id`); it rides on
+  the persisted item and is stripped before the client ever sees it.
+- **Response-level `internal_metadata`** (`stream.internal_metadata[...]`).
+- **`context.conversation_chain_metadata`** watermarks.
+
+For example: tag each message with the step that emitted it, then on recovery
+keep only items whose step is in your checkpoint store and drop the rest:
+
+```python
+def _build_resumption_response(context, request) -> ResponseObject:
+    snapshot = context.persisted_response
+    committed_steps = upstream.checkpointed_step_ids(context.conversation_chain_id)
+
+    kept = [
+        item for item in (snapshot.output if snapshot else [])
+        # the step tag we stamped on each item when we first emitted it
+        if (item.get("internal_metadata") or {}).get("step") in committed_steps
+    ]
     return ResponseObject({
         "id": context.response_id,
         "object": "response",
         "status": "in_progress",
-        "output": [],   # exclude in-flight items from the crashed attempt
+        "output": kept,          # only items from steps we know were checkpointed
         "model": request.model,
     })
 ```
 
-A handler whose upstream framework checkpoints intermediate state (e.g.
-LangGraph's SqliteSaver) can include the completed output items it can
-reconstruct from that checkpoint:
-
-```python
-def _build_resumption_response(durability, context, request) -> ResponseObject:
-    durable_items = _reconstruct_output_from_upstream_checkpoint(durability)
-    return ResponseObject({
-        "id": context.response_id,
-        "object": "response",
-        "status": "in_progress",
-        "output": durable_items,
-        "model": request.model,
-    })
-```
-
-There is no library-managed snapshot of the prior attempt's in-flight state.
-The library persists the response object exactly once at start (the first
-attempt's `response.created`) and exactly once at end (the first attempt
-that reaches a terminal event). Subsequent attempts re-emit these events
-naturally; the framework dedups the writes keyed on `response_id`. Trust your
-upstream framework (or your own metadata watermarks) as the source of truth
-for what's safely committed.
+The library persists the response object at `response.created`, at **each
+successful `stream.checkpoint()`**, and at the terminal event (the
+`response.created` and terminal writes are deduped across attempts keyed on
+`response_id`). It does not keep a *running* snapshot between those points — so
+for any item whose commit status falls between persistence points, you are the
+source of truth for whether to keep it, via the watermarks above.
 
 ### Recovery × Cancellation Composition
 
@@ -1712,6 +1732,52 @@ See the [Durable Responses Developer Guide](durable-responses-developer-guide.md
 for the configuration matrix (`store` × `background` × `durable_background`),
 the flat `ResponseContext` recovery + steering surface, and client-side
 reconciliation rules.
+
+---
+
+## Steering API
+
+Steering (`steerable_conversations=True`) lets a new turn arrive on an
+already-active conversation: the framework cancels the in-progress turn via
+`cancellation_signal` (see [Cancellation](#cancellation)), then re-invokes the
+handler to drain the queued input. The handler-facing surface:
+
+- **`context.is_steered_turn: bool`** — `True` on the drain re-entry that
+  follows a steering input (not on the turn that was superseded).
+- **`context.pending_input_count: int`** — live count of additional inputs
+  queued behind the current turn; decreases as the framework drains them.
+- **`@app.response_acceptor`** — the hook that produces the `"queued"`
+  `ResponseObject` returned to the POST that was queued onto an
+  **already-active** steerable conversation (never the first turn).
+
+### `@app.response_acceptor`
+
+When a new turn is queued onto an active steerable conversation, the framework
+immediately returns a `status="queued"` response to that POST while the prior
+turn finishes. By default this is a minimal queued envelope; register a hook to
+customize it. The hook is **synchronous**, receives `(request, context)`, and
+returns a strongly-typed `ResponseObject`:
+
+```python
+from azure.ai.agentserver.responses import (
+    CreateResponse, ResponseContext, ResponseObject,
+)
+
+@app.response_acceptor
+def acceptor(request: CreateResponse, context: ResponseContext) -> ResponseObject:
+    return ResponseObject(
+        {
+            "id": context.response_id,
+            "object": "response",
+            "status": "queued",
+        }
+    )
+```
+
+- The framework ensures `status` defaults to `"queued"` if you omit it.
+- If the hook raises, the framework logs a warning and falls back to the
+  default queued envelope — a buggy hook never breaks queueing.
+- The hook is optional; omit it to use the default envelope.
 
 ---
 
@@ -1763,9 +1829,11 @@ Start with `output_item_message()` / `aoutput_item_message()`. Drop down to
 
 ### 7. Let the Library Handle Mode Negotiation
 
-Never branch on `request.stream` or `request.background` in your handler. The
-library handles these — your handler always produces the same event sequence
-regardless of mode.
+You usually don't need to branch on `request.stream` or `request.background` —
+the library negotiates the wire mode and replays the same event sequence for
+streaming, non-streaming, and background callers. Emit one event sequence and
+let the framework adapt it; reach for mode-specific behaviour only if your
+application genuinely needs it.
 
 ```python
 # ❌ Don't do this
@@ -1933,28 +2001,33 @@ yield from stream.output_item_message("Hello!")
 yield stream.emit_completed()
 ```
 
-### Expecting the Library to Hand You a Snapshot of the Prior Attempt
+### Expecting a Running Snapshot of the Prior Attempt's In-Flight State
 
 ```python
-# ❌ The library does NOT keep a running snapshot of in-flight state.
-# It only persists the response object at created and at terminal.
-# No such helper exists on the context.
+# ❌ There is no "running" snapshot of in-flight state, and no such attribute.
+# The library persists the response object at created, at each checkpoint,
+# and at terminal — not continuously.
 stream = ResponseEventStream(
     response_id=context.response_id,
-    response=context.prior_attempt_snapshot,  # AttributeError
+    response=context.prior_attempt_snapshot,  # AttributeError — no such field
 )
 
-# ✅ Build a resumption response from your upstream framework state.
-# Only the upstream knows what was safely committed.
-resumption = _build_resumption_response(context, request)
-stream = ResponseEventStream(
-    response_id=context.response_id,
-    response=resumption,
-)
+# ✅ Use the snapshot that fits your resume model:
+#  - framework-checkpoint: context.persisted_response is the LAST durably
+#    checkpointed snapshot (or the created snapshot, or None).
+if context.is_recovery and context.persisted_response is not None:
+    stream = ResponseEventStream(
+        response_id=context.response_id, response=context.persisted_response,
+    )
+#  - upstream-owned: build a resumption response from your upstream state.
+else:
+    resumption = _build_resumption_response(context, request)
+    stream = ResponseEventStream(response_id=context.response_id, response=resumption)
 ```
 
-See [Durability → Resumption Response Construction](#durability) for what to
-include and what to leave out.
+The library does not keep a *running* snapshot between persistence points — but
+`context.persisted_response` gives you the last checkpointed one. See
+[Durability](#durability) for both resume models.
 
 ### Calling Upstream Side-Effecting APIs on Recovery Without a Watermark
 

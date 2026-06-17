@@ -542,19 +542,31 @@ The recovery contract has three actors:
 
 1. **Framework** — re-invokes the handler with
    `context.is_recovery == True`. Persists every SSE event
-   in order (no dedup). Persists the response envelope exactly once at
-   the first attempt's `response.created` and exactly once at the
-   first attempt that reaches a terminal event — duplicate creates
-   and duplicate terminals from recovered attempts are deduplicated
-   keyed on `response_id` (§9.4).
-2. **Handler** — queries its upstream framework + own metadata
-   watermarks to compute a **resumption point**; builds a resumption
-   response from upstream framework state; constructs
-   `ResponseEventStream(response=resumption_response)`; emits a
-   `response.in_progress` event carrying that resumption response;
-   continues from the resumption point. Watermarks set BEFORE
-   side-effecting upstream calls protect against duplicate side
-   effects across attempts.
+   in order (no dedup, except that a recovered handler's re-emitted
+   `response.created` is not re-appended to a non-empty durable stream —
+   see §8.3). Persists the response **envelope** at the first attempt's
+   `response.created`, at **each successful `stream.checkpoint()`**, and at
+   the terminal event. The `response.created` and terminal writes are
+   **deduplicated** across recovery attempts keyed on `response_id` (§9.4);
+   the last persisted envelope is exposed on re-entry as
+   `context.persisted_response` (§8.4).
+2. **Handler** — computes a **resumption point** and resumes from it. Two
+   shipping models (the handler picks based on where its durable progress
+   state lives, and they compose):
+   - **Framework-checkpoint**: emit one `OutputItem` per phase +
+     `stream.checkpoint()` at each boundary; on recovery seed
+     `ResponseEventStream(response=context.persisted_response)` and resume
+     from `len(stream.response.output)`. The persisted snapshot is the
+     watermark — no separate metadata bookkeeping is required when it is the
+     only durable progress/side-effect boundary.
+   - **Upstream-owned**: query an upstream framework/store + own metadata
+     watermarks; build a resumption `ResponseObject` from that state;
+     construct `ResponseEventStream(response=resumption_response)`.
+   Either way the handler emits a `response.in_progress` event carrying the
+   resumption response and continues from the resumption point. Metadata
+   watermarks set BEFORE non-idempotent side-effecting calls protect against
+   duplicate side effects across attempts (a composable overlay on either
+   model).
 3. **Client** — observes the reset-on-`in_progress` rule (§9.3);
    redraws its local response view from the reset event's payload.
 
