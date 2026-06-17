@@ -139,6 +139,25 @@ class TestCollectFailedToolCalls:
         ]
         assert _collect_failed_tool_calls(msgs) == []
 
+    def test_failed_status_is_case_and_whitespace_insensitive(self):
+        msgs = [
+            _assistant_tool_call("c1", "send_email", {}, status="  FAILED  "),
+            _tool_result("c1", "", status=" InComPlete "),
+        ]
+        assert _collect_failed_tool_calls(msgs) == ["send_email"]
+
+    def test_unknown_runtime_status_logs_warning(self, caplog):
+        caplog.set_level("WARNING")
+        msgs = [
+            _assistant_tool_call("c1", "send_email", {}, status="error"),
+            _tool_result("c1", "", status="cancelled"),
+        ]
+
+        assert _collect_failed_tool_calls(msgs) == []
+        assert "Observed unknown tool runtime status value(s)" in caplog.text
+        assert "cancelled" in caplog.text
+        assert "error" in caplog.text
+
     def test_parallel_calls_one_failed_returns_only_the_failed_name(self):
         msgs = [
             _assistant_parallel_tool_calls(

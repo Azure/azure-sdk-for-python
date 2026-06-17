@@ -306,6 +306,9 @@ def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
 
 
 _FAILED_RUNTIME_STATUSES = frozenset({"failed", "incomplete"})
+# Current ToolCallStatus values per Foundry Conversations API:
+# in_progress, completed, incomplete, failed.
+_KNOWN_RUNTIME_STATUSES = frozenset({"in_progress", "completed", "incomplete", "failed"})
 
 
 def _collect_failed_tool_calls(messages):
@@ -328,6 +331,7 @@ def _collect_failed_tool_calls(messages):
     id_to_name = {}
     failed_ids = []
     failed_names_without_id = []
+    unknown_statuses = set()
 
     for msg in messages:
         if not isinstance(msg, dict) or msg.get("role") != "assistant":
@@ -345,11 +349,14 @@ def _collect_failed_tool_calls(messages):
             if call_id is not None:
                 id_to_name[call_id] = name
             status = content.get("status")
-            if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES:
+            normalized_status = status.strip().lower() if isinstance(status, str) else None
+            if normalized_status in _FAILED_RUNTIME_STATUSES:
                 if call_id is not None:
                     failed_ids.append(call_id)
                 elif name:
                     failed_names_without_id.append(name)
+            elif normalized_status and normalized_status not in _KNOWN_RUNTIME_STATUSES:
+                unknown_statuses.add(normalized_status)
 
     for msg in messages:
         if not isinstance(msg, dict) or msg.get("role") != "tool":
@@ -359,8 +366,18 @@ def _collect_failed_tool_calls(messages):
             if not isinstance(content, dict) or content.get("type") != "tool_result":
                 continue
             status = content.get("status")
-            if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES and call_id is not None:
+            normalized_status = status.strip().lower() if isinstance(status, str) else None
+            if normalized_status in _FAILED_RUNTIME_STATUSES and call_id is not None:
                 failed_ids.append(call_id)
+            elif normalized_status and normalized_status not in _KNOWN_RUNTIME_STATUSES:
+                unknown_statuses.add(normalized_status)
+
+    if unknown_statuses:
+        logger.warning(
+            "Observed unknown tool runtime status value(s): %s. "
+            "If upstream extends ToolCallStatus, update runtime status handling.",
+            ", ".join(sorted(unknown_statuses)),
+        )
 
     ordered = []
     seen = set()

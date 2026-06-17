@@ -27,9 +27,11 @@ to the per-evaluator wiring.
 
 import pytest
 
-from azure.ai.evaluation import ToolCallAccuracyEvaluator
-from azure.ai.evaluation._evaluators._tool_call_success import _ToolCallSuccessEvaluator
-from azure.ai.evaluation._evaluators._tool_input_accuracy import _ToolInputAccuracyEvaluator
+from azure.ai.evaluation import (
+    ToolCallAccuracyEvaluator,
+    _ToolCallSuccessEvaluator,
+    _ToolInputAccuracyEvaluator,
+)
 from azure.ai.evaluation._evaluators._common._validators import (
     ToolCallsValidator,
     ToolDefinitionsValidator,
@@ -76,7 +78,7 @@ def _restricted_tool_definition(tool_name: str):
 @pytest.mark.usefixtures("mock_model_config")
 @pytest.mark.unittest
 class TestRestrictedToolValidationLifted:
-    """Validator should no longer reject restricted tools for these three evaluators."""
+    """Validator should no longer reject restricted tools for ToolCallAccuracy and ToolInputAccuracy."""
 
     @pytest.mark.parametrize("tool_name", RESTRICTED_TOOL_NAMES)
     def test_tool_call_accuracy_accepts_restricted_tool(self, mock_model_config, tool_name):
