@@ -3928,4 +3928,5 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert downloader.properties.blob_tier_change_time is not None
         assert not downloader.properties.blob_tier_inferred
 
+
 # ------------------------------------------------------------------------------
