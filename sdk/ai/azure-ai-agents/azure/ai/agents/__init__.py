@@ -12,7 +12,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._client import AgentsClient  # type: ignore
+from ._client import AIProjectClient  # type: ignore
+from . import types  # type: ignore
 from ._version import VERSION
 
 __version__ = VERSION
@@ -25,7 +26,7 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AgentsClient",
+    "AIProjectClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 
