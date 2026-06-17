@@ -284,8 +284,11 @@ explicitly **rejects** it. The supported mechanism is per-request `tenant_id` in
 ### `additionally_allowed_tenants` allowlist — defending against the confused-deputy risk
 PR [#26133](https://github.com/Azure/azure-sdk-for-python/pull/26133) (2022-09)
 
-Once per-request `tenant_id` was honored unconditionally, a malicious/compromised service
-could return a challenge steering token acquisition to an attacker-controlled tenant. The fix
+The main intention was to constrain multi-tenant authentication by default: if a credential is
+configured for one tenant when constructed, then token requests for another tenant raise an
+error unless explicitly allowed. This also defends against a confused-deputy risk — once
+per-request `tenant_id` was honored unconditionally, a malicious/compromised service could
+return a challenge steering token acquisition to an attacker-controlled tenant. The fix
 (`_internal/utils.py: resolve_tenant`) refuses any tenant not in `additionally_allowed_tenants`
 (or `*`). A carve-out: credentials whose `default_tenant` is `"organizations"` (inherently
 multi-tenant dev tools like `AzureCliCredential`) allow any tenant when no allowlist is set,
@@ -353,17 +356,14 @@ cross-platform. The functionality moved to the opt-in `azure-identity-broker` pa
 extensions). In that package, `allow_broker` defaults to `True` because installing the package
 *is* the opt-in.
 
-### `WorkloadIdentityCredential` and the `FailedDACCredential` placeholder
+### `WorkloadIdentityCredential` can crash DAC construction
 PRs [#28536](https://github.com/Azure/azure-sdk-for-python/pull/28536) (2023-02),
 [#29728](https://github.com/Azure/azure-sdk-for-python/pull/29728) (2023)
 
 `WorkloadIdentityCredential.__init__` raises `ValueError` if its required env vars
 (`AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `AZURE_FEDERATED_TOKEN_FILE`) are missing — which would
-crash DAC on any non-AKS machine. DAC wraps construction in a `try/except ValueError` and
-substitutes a `FailedDACCredential` placeholder that raises `CredentialUnavailableError` on
-`get_token` (chain-continue) while still surfacing the init failure in the final aggregated
-error message. This placeholder pattern exists specifically because this credential fails *by
-design* during construction.
+crash DAC on any non-AKS machine. DAC wraps construction in a `try/except ValueError` so the
+chain can continue.
 
 ### CAE rework: per-request `enable_cae`, and the dual MSAL app / dual cache architecture
 PRs [#29037](https://github.com/Azure/azure-sdk-for-python/pull/29037) (2023-03),
@@ -474,6 +474,15 @@ chain is env-controlled in production). #43080 skips the IMDS probe entirely whe
 `AZURE_TOKEN_CREDENTIALS=ManagedIdentityCredential`, since the user has explicitly chosen MI —
 matching standalone `ManagedIdentityCredential` retry behavior.
 
+### `FailedDACCredential` placeholder for credentials that fail at construction
+PR [#42346](https://github.com/Azure/azure-sdk-for-python/pull/42346) (2025)
+
+When a credential (e.g. `WorkloadIdentityCredential`) raises during construction inside DAC,
+DAC substitutes a `FailedDACCredential` placeholder that raises `CredentialUnavailableError` on
+`get_token` (chain-continue) while still surfacing the init failure in the final aggregated
+error message. This placeholder pattern exists specifically because some credentials fail *by
+design* during construction.
+
 ### `WorkloadIdentityCredential` AKS "binding mode" (FIC-per-MI ceiling workaround)
 PR [#43287](https://github.com/Azure/azure-sdk-for-python/pull/43287) (2025-11)
 
@@ -487,9 +496,11 @@ inside a `ChainedTokenCredential`.
 
 ## Recurring patterns worth internalizing
 
-- **MSAL is the source of truth.** Local workarounds for MSAL gaps are deliberate, time-boxed
-  debt; expect them to be deleted once MSAL ships a real fix (#6176, #11892, #13215, #36225).
-  The custom `AadClient` exists only because MSAL didn't cleanly expose acquisition-without-MSAL-caching (#11466).
+- **MSAL is the source of truth (for most sync credentials).** Local workarounds for MSAL gaps
+  are deliberate, time-boxed debt; expect them to be deleted once MSAL ships a real fix (#6176,
+  #11892, #13215, #36225). The custom `AadClient` exists only because MSAL didn't cleanly expose
+  acquisition-without-MSAL-caching (#11466). Async credentials don't use MSAL underneath (MSAL
+  has no async API) — they only use MSAL's token cache.
 - **`CredentialUnavailableError` vs other errors is the chain contract.** Unavailable →
   continue; anything else → stop. Credentials inside DAC re-classify errors to cooperate
   (#31296, #31824, `within_dac`/`within_credential_chain`).
