@@ -235,7 +235,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -308,7 +311,17 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-09-01", "2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def get(
         self, resource_group_name: str, account_name: str, quota_limit_name: str, **kwargs: Any
@@ -390,7 +403,17 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-08-01", "2025-09-01", "2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     def list(self, resource_group_name: str, account_name: str, **kwargs: Any) -> AsyncItemPaged["_models.QuotaItem"]:
         """Gets a list of quota limits for all quotas that are under account. Currently PoolsPerAccount is
@@ -447,7 +470,10 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1015,7 +1041,10 @@ class VolumeGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1886,7 +1915,10 @@ class BackupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2921,7 +2953,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3068,14 +3103,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.Volume, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3588,14 +3619,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.Volume, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -3898,7 +3925,17 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-09-01", "2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _list_get_group_id_list_for_ldap_user_initial(  # pylint: disable=name-too-long
         self,
@@ -4102,7 +4139,17 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-09-01", "2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_list_get_group_id_list_for_ldap_user(  # pylint: disable=name-too-long
         self,
@@ -4158,17 +4205,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.GetGroupIdListForLDAPUserResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -4904,7 +4944,17 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-09-01", "2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     def list_replications(
         self,
@@ -4990,7 +5040,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7137,7 +7190,15 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _list_quota_report_initial(
         self,
@@ -7342,7 +7403,15 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_list_quota_report(
         self,
@@ -8307,7 +8376,10 @@ class SnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9325,7 +9397,10 @@ class SnapshotPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10223,7 +10298,10 @@ class BackupPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11135,7 +11213,10 @@ class VolumeQuotaRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11210,7 +11291,15 @@ class RansomwareReportsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def get(
         self,
@@ -11316,7 +11405,15 @@ class RansomwareReportsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
@@ -11385,7 +11482,10 @@ class RansomwareReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11441,7 +11541,15 @@ class RansomwareReportsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _clear_suspects_initial(
         self,
@@ -11658,7 +11766,15 @@ class RansomwareReportsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_clear_suspects(
         self,
@@ -12518,7 +12634,10 @@ class BackupVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12593,7 +12712,14 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def get(
         self,
@@ -12697,7 +12823,14 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _create_or_update_initial(
         self,
@@ -12915,7 +13048,14 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_create_or_update(
         self,
@@ -13019,7 +13159,14 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _update_initial(
         self,
@@ -13235,7 +13382,14 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_update(
         self,
@@ -13337,7 +13491,14 @@ class BucketsOperations:
                 "bucket_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _delete_initial(
         self,
@@ -13426,7 +13587,14 @@ class BucketsOperations:
                 "bucket_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_delete(
         self,
@@ -13515,7 +13683,14 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
@@ -13580,7 +13755,10 @@ class BucketsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13755,7 +13933,14 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def generate_credentials(
         self,
@@ -13874,7 +14059,14 @@ class BucketsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _generate_akv_credentials_initial(
         self,
@@ -14085,7 +14277,14 @@ class BucketsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_generate_akv_credentials(
         self,
@@ -14181,7 +14380,14 @@ class BucketsOperations:
                 "bucket_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _refresh_certificate_initial(
         self,
@@ -14269,7 +14475,14 @@ class BucketsOperations:
                 "bucket_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_refresh_certificate(
         self,
@@ -14377,7 +14590,14 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def get(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -14470,7 +14690,14 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _create_or_update_initial(
         self,
@@ -14670,7 +14897,14 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_create_or_update(
         self,
@@ -14768,7 +15002,14 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _update_initial(
         self,
@@ -14969,7 +15210,14 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_update(
         self,
@@ -15065,7 +15313,14 @@ class CachesOperations:
                 "cache_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _delete_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -15143,7 +15398,14 @@ class CachesOperations:
                 "cache_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_delete(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -15222,7 +15484,7 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01"],
+        api_versions_list=["2026-01-01", "2026-01-15-preview", "2026-03-01", "2026-03-15-preview", "2026-04-01"],
     )
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
@@ -15283,7 +15545,10 @@ class CachesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15339,7 +15604,14 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def list_peering_passphrases(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -15433,7 +15705,14 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _pool_change_initial(
         self,
@@ -15525,7 +15804,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -15542,8 +15821,9 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -15558,7 +15838,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -15575,8 +15855,9 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -15591,7 +15872,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -15608,8 +15889,9 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -15628,7 +15910,14 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_pool_change(
         self,
@@ -15638,7 +15927,7 @@ class CachesOperations:
         cache_name: str,
         body: Union[_models.PoolChangeRequest, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -15653,15 +15942,16 @@ class CachesOperations:
         :param body: Move cache to the pool supplied in the body of the operation. Is one of the
          following types: PoolChangeRequest, JSON, IO[bytes] Required.
         :type body: ~azure.mgmt.netapp.models.PoolChangeRequest or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -15681,9 +15971,12 @@ class CachesOperations:
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -15698,13 +15991,15 @@ class CachesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[_models.Cache].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @api_version_validation(
         method_added_on="2025-12-15-preview",
@@ -15719,7 +16014,14 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def _reset_smb_password_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -15798,11 +16100,18 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_reset_smb_password(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    ) -> AsyncLROPoller[_models.Cache]:
         """Resets the SMB password for the cache.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -15814,14 +16123,15 @@ class CachesOperations:
         :type pool_name: str
         :param cache_name: The name of the cache resource. Required.
         :type cache_name: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :return: An instance of AsyncLROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -15839,9 +16149,12 @@ class CachesOperations:
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -15856,13 +16169,15 @@ class CachesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
+            return AsyncLROPoller[_models.Cache].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return AsyncLROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
 
 class NetAppResourceQuotaLimitsOperations:
@@ -16002,7 +16317,10 @@ class NetAppResourceQuotaLimitsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16179,7 +16497,10 @@ class NetAppResourceRegionInfosOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16557,7 +16878,7 @@ class AccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01"],
+        api_versions_list=["2026-01-01", "2026-03-01", "2026-04-01"],
     )
     async def _update_initial(
         self,
@@ -16731,7 +17052,7 @@ class AccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01"],
+        api_versions_list=["2026-01-01", "2026-03-01", "2026-04-01"],
     )
     async def begin_update(
         self,
@@ -16975,7 +17296,10 @@ class AccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17065,7 +17389,10 @@ class AccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18856,7 +19183,10 @@ class PoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20325,7 +20655,10 @@ class SubvolumesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20556,7 +20889,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.ResourceNameAvailabilityRequest
@@ -20577,7 +20910,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: JSON
@@ -20598,7 +20931,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -20619,7 +20952,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Is one of the following types: ResourceNameAvailabilityRequest,
          JSON, IO[bytes] Required.
@@ -20708,7 +21041,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.FilePathAvailabilityRequest
@@ -20729,7 +21062,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: JSON
@@ -20750,7 +21083,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -20771,7 +21104,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Is one of the following types: FilePathAvailabilityRequest,
          JSON, IO[bytes] Required.
@@ -20860,7 +21193,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.QuotaAvailabilityRequest
@@ -20881,7 +21214,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: JSON
@@ -20902,7 +21235,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -20923,7 +21256,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Is one of the following types: QuotaAvailabilityRequest, JSON,
          IO[bytes] Required.
@@ -21005,7 +21338,7 @@ class NetAppResourceOperations:
 
         Provides storage to network proximity and logical zone mapping information.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :return: RegionInfo. The RegionInfo is compatible with MutableMapping
         :rtype: ~azure.mgmt.netapp.models.RegionInfo
@@ -21080,7 +21413,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.QueryNetworkSiblingSetRequest
@@ -21100,7 +21433,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: JSON
@@ -21120,7 +21453,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -21140,7 +21473,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Is one of the following types: QueryNetworkSiblingSetRequest,
          JSON, IO[bytes] Required.
@@ -21298,7 +21631,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.UpdateNetworkSiblingSetRequest
@@ -21319,7 +21652,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: JSON
@@ -21340,7 +21673,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -21361,7 +21694,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Is one of the following types: UpdateNetworkSiblingSetRequest,
          JSON, IO[bytes] Required.
@@ -21393,14 +21726,10 @@ class NetAppResourceOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkSiblingSet, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -21450,7 +21779,7 @@ class NetAppResourceUsagesOperations:
 
         Get current subscription usages.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :return: An iterator like instance of UsageResult
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.netapp.models.UsageResult]
@@ -21497,7 +21826,10 @@ class NetAppResourceUsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
