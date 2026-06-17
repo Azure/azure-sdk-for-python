@@ -585,9 +585,11 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
-        new_blob.upload_blob_from_url(
+        resp = new_blob.upload_blob_from_url(
             source_blob_url, include_source_blob_properties=True, source_content_md5=source_md5
         )
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
         with pytest.raises(HttpResponseError):
             new_blob.upload_blob_from_url(
                 source_blob_url, include_source_blob_properties=False, source_content_md5=bad_source_md5
@@ -718,9 +720,11 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob = self._create_blob()
 
         # Act
-        blob.stage_block(1, b"block", validate_content=True)
+        resp = blob.stage_block(1, b"block", validate_content=True)
 
         # Assert
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
 
     @BlobPreparer()
     @recorded_by_proxy

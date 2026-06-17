@@ -618,9 +618,11 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         new_blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
-        await new_blob.upload_blob_from_url(
+        resp = await new_blob.upload_blob_from_url(
             source_blob_url, include_source_blob_properties=True, source_content_md5=source_md5
         )
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
         with pytest.raises(HttpResponseError):
             await new_blob.upload_blob_from_url(
                 source_blob_url, include_source_blob_properties=False, source_content_md5=bad_source_md5
@@ -803,9 +805,11 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob = await self._create_blob()
 
         # Act
-        await blob.stage_block(1, b"block", validate_content=True)
+        resp = await blob.stage_block(1, b"block", validate_content=True)
 
         # Assert
+        assert resp.get("content_md5") is not None
+        assert resp.get("content_crc64") is not None
 
     @BlobPreparer()
     @recorded_by_proxy_async

@@ -924,6 +924,9 @@ class BlockBlobOperations:
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
@@ -1181,6 +1184,9 @@ class BlockBlobOperations:
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
         response_headers["x-ms-client-request-id"] = self._deserialize(
             "str", response.headers.get("x-ms-client-request-id")
         )
