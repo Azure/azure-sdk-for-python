@@ -1,8 +1,10 @@
 from datetime import datetime
 
 import pytest
+from marshmallow import ValidationError
 from test_utilities.utils import verify_entity_load_and_dump
 
+from azure.ai.ml._schema.core.fields import NO_SUCH_FILE_OR_DIRECTORY_ERROR
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities import CronTrigger, JobSchedule, PipelineJob, RecurrencePattern, RecurrenceTrigger
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
@@ -189,3 +191,15 @@ class TestScheduleEntity:
         test_path = "./tests/test_configs/schedule/out_of_box_monitoring.yaml"
         schedule = load_schedule(test_path)
         assert "genai_app_monitoring", schedule.name
+
+    def test_load_schedule_with_nonexistent_pipeline_file_reference(self):
+        test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
+        params_override = [{"create_job.job": "../pipeline_jobs/not_exists_pipeline.yml"}]
+
+        with pytest.raises(ValidationError) as e:
+            load_schedule(test_path, params_override=params_override)
+
+        message = str(e.value)
+        assert NO_SUCH_FILE_OR_DIRECTORY_ERROR in message
+        assert message.count(NO_SUCH_FILE_OR_DIRECTORY_ERROR) == 1
+        assert "Not supporting non file for create_job" not in message
