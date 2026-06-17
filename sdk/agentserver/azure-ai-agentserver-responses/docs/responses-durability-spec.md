@@ -260,11 +260,18 @@ wrapper.
 | `response_id` | The chain's response id stamp (informational; useful for operator triage) | First entry of the task body | Operators (logs / dumps) |
 | `background` | The original `background` request flag at first entry | First entry of the task body | Recovery dispatch (secondary signal; `disposition` is primary) |
 | `disposition` | `"re-invoke"` (Row 1) or `"mark-failed"` (Rows 2, 3) | First entry of the task body, flushed durably before any subsequent await | Recovery dispatch (§7) |
-| `last_sequence_number` | The highest sequence number persisted to the stream event store for this chain (most recent turn) | Stream pipeline, after each event persist | Reconnection bookkeeping |
 
 A port MAY add additional reserved keys under `_responses` provided
-they do not collide with the four above and are documented as
+they do not collide with the three above and are documented as
 framework-internal.
+
+> **Note — no `last_sequence_number` key.** Earlier drafts reserved a
+> `_responses.last_sequence_number` metadata watermark for streaming
+> reconnection bookkeeping. The implementation does **not** maintain it:
+> the highest persisted sequence number is derived directly from the
+> durable **stream event store's cursor** (`last_cursor()`), which is the
+> single source of truth — a separate metadata watermark could diverge
+> from the events actually persisted. See §9.1.
 
 ### §5.2 — Persistence ordering rule
 
@@ -675,6 +682,15 @@ recovery attempts: if the handler emits `output_item.added(idx=0)`
 twice (once in the pre-crash attempt, once in the recovered attempt),
 both events are persisted, both have distinct sequence numbers, both
 are delivered to reconnecting clients.
+
+On a recovered entry the framework MUST seed the next sequence number
+from the durable stream event store's cursor — `next_seq = last_cursor() + 1`
+(or `0` when the log is empty) — so the recovered attempt's events
+carry sequence numbers strictly succeeding the pre-crash events. The
+stream-store cursor is the single source of truth for "how far the
+stream got"; the framework MUST NOT maintain a parallel
+`last_sequence_number` watermark in task metadata (which could diverge
+from the events actually persisted).
 
 ### §9.2 — Reconnection (`starting_after=`)
 
@@ -1149,8 +1165,8 @@ chain id to handlers per §4.3.
 
 The handler-facing metadata API MUST reject keys and namespace names
 starting with `_` per §5. The framework's `_responses` namespace MUST
-hold at least `response_id`, `background`, `disposition`, and
-`last_sequence_number` per §5.1. The `disposition` write at first
+hold at least `response_id`, `background`, and `disposition` per §5.1.
+The `disposition` write at first
 entry MUST be durably flushed before any subsequent interruptible
 await per §5.2.
 
@@ -1320,7 +1336,6 @@ T=3   handler:   emit response.in_progress (seq=2)
       framework: stream_store.append(seq=3, ...)
       handler:   emit output_item.delta(idx=0, "Hel")
       framework: stream_store.append(seq=4, ...)
-      framework: _responses.last_sequence_number = 4
 
 T=4   ═══════ SIGKILL ═══════
       
@@ -1346,7 +1361,11 @@ T=7   handler:   is_recovery == True
       handler:   emit response.created
       framework: response_store.create({...}) → ResponseAlreadyExistsError
       framework: log INFO "_persist_create dedup'd on recovery"; continue
-      framework: stream_store.append(seq=5, event=response.created)
+      framework: response.created GATED — the durable stream is non-empty
+                 (seq 1-4 survived the crash), so the provider append is
+                 SUPPRESSED (spec 026 empty-stream gate). seq=5 is consumed
+                 but never stream-visible; the recovered handler's
+                 response.in_progress (next) is its first stream event.
 
 T=8   handler:   emit response.in_progress (carries resumption_response)
       framework: stream_store.append(seq=6, event=response.in_progress)
@@ -1361,7 +1380,6 @@ T=9   handler:   emit output_item.added(idx=0, content=<new attempt>)
       handler:   emit response.completed (seq=K)
       framework: response_store.update({id: resp_1, status: "completed", ...})
       framework: stream_store.append(seq=K, event=response.completed)
-      framework: _responses.last_sequence_number = K
 
 T=10  task body returns Suspended (steerable_conversations=true)
       primitive: task → status="suspended", awaiting next input
