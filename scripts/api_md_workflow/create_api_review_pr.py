@@ -564,16 +564,6 @@ def parse_simple_yaml(text: str) -> dict[str, str]:
     return result
 
 
-def write_simple_yaml(file_path: Path, metadata: dict[str, str]) -> None:
-    existing_text = file_path.read_text(encoding="utf-8") if file_path.exists() else ""
-    line_ending = "\r\n" if "\r\n" in existing_text else "\n"
-    file_path.write_text(
-        line_ending.join(f"{key}: {metadata[key]}" for key in sorted(metadata))
-        + line_ending,
-        encoding="utf-8",
-    )
-
-
 def package_version_major_minor(package_version: str) -> str:
     match = re.match(r"^(\d+)(?:\.(\d+))?", package_version.strip())
     if not match:
@@ -650,7 +640,7 @@ def ensure_azsdk_find_work_item_available() -> None:
     )
 
 
-def package_work_item_id(package_name: str, package_version: str) -> int | None:
+def package_work_item_id(package_name: str, package_version: str) -> int | str:
     package_version_major_minor_value = package_version_major_minor(package_version)
     result = run(
         [
@@ -672,19 +662,19 @@ def package_work_item_id(package_name: str, package_version: str) -> int | None:
     if result.status != 0:
         log_warning(
             f"WARNING: failed to resolve package work item ID for {package_name} {package_version_major_minor_value}. "
-            "PR body sync metadata will omit packageWorkItemId."
+            "PR body sync metadata will set packageWorkItemId to ERROR."
             + (f"\n{output}" if output else "")
         )
-        return None
+        return "ERROR"
 
     work_item_id = parse_package_work_item_id(result.stdout)
     if work_item_id is None:
         log_warning(
             f"WARNING: azsdk package find-work-item completed for {package_name} {package_version_major_minor_value} "
-            "but did not return a work item ID. PR body sync metadata will omit packageWorkItemId."
+            "but did not return a work item ID. PR body sync metadata will set packageWorkItemId to NONE."
             + (f"\n{output}" if output else "")
         )
-        return None
+        return "NONE"
     return work_item_id
 
 
@@ -695,19 +685,86 @@ def metadata_sha_or_none(metadata_bytes: bytes | None) -> str | None:
     return metadata.get("apiMdSha256")
 
 
+def _codeowners_segment_match(
+    path_segments: list[str], pattern_segments: list[str]
+) -> bool:
+    memo: dict[tuple[int, int], bool] = {}
+
+    def match(path_index: int, pattern_index: int) -> bool:
+        key = (path_index, pattern_index)
+        if key in memo:
+            return memo[key]
+
+        # Base case: pattern exhausted
+        if pattern_index >= len(pattern_segments):
+            result = path_index >= len(path_segments)
+        # Pattern segment is **
+        elif pattern_segments[pattern_index] == "**":
+            next_pattern_index = pattern_index
+            while (
+                next_pattern_index + 1 < len(pattern_segments)
+                and pattern_segments[next_pattern_index + 1] == "**"
+            ):
+                next_pattern_index += 1
+            if next_pattern_index + 1 >= len(pattern_segments):
+                result = True
+            else:
+                result = any(
+                    match(next_path_index, next_pattern_index + 1)
+                    for next_path_index in range(path_index, len(path_segments) + 1)
+                )
+        # Path exhausted but pattern remains
+        elif path_index >= len(path_segments):
+            result = False
+        # Segment doesn't match
+        elif not fnmatch.fnmatchcase(
+            path_segments[path_index], pattern_segments[pattern_index]
+        ):
+            result = False
+        # Recurse to next segments
+        else:
+            result = match(path_index + 1, pattern_index + 1)
+
+        memo[key] = result
+        return result
+
+    return match(0, 0)
+
+
 def codeowners_style_pattern_matches(pattern: str, path: str) -> bool:
     normalized_path = path.replace("\\", "/").strip("/")
     normalized_pattern = pattern.replace("\\", "/").strip()
     if not normalized_pattern or normalized_pattern.startswith("!"):
         return False
-    if normalized_pattern.startswith("/"):
+
+    is_anchored = normalized_pattern.startswith("/")
+    if is_anchored:
         normalized_pattern = normalized_pattern[1:]
+
     if normalized_pattern.endswith("/"):
-        directory_pattern = normalized_pattern.rstrip("/")
-        return normalized_path == directory_pattern or normalized_path.startswith(
-            f"{directory_pattern}/"
+        normalized_pattern = normalized_pattern.rstrip("/")
+        normalized_pattern = f"{normalized_pattern}/**" if normalized_pattern else "**"
+
+    if not normalized_pattern:
+        return False
+
+    path_segments = [segment for segment in normalized_path.split("/") if segment]
+
+    if "/" not in normalized_pattern:
+        return any(
+            fnmatch.fnmatchcase(segment, normalized_pattern)
+            for segment in path_segments
         )
-    return fnmatch.fnmatchcase(normalized_path, normalized_pattern)
+
+    pattern_segments = [segment for segment in normalized_pattern.split("/") if segment]
+
+    if is_anchored:
+        return _codeowners_segment_match(path_segments, pattern_segments)
+
+    for start_index in range(0, len(path_segments) + 1):
+        if _codeowners_segment_match(path_segments[start_index:], pattern_segments):
+            return True
+    return False
 
 
 def github_user_from_owner(owner: str) -> str | None:
@@ -930,7 +987,7 @@ def build_sync_metadata_object(
     base_branch: str,
     review_branch: str,
     head_selector: str,
-    package_work_item_id_value: int | None = None,
+    package_work_item_id_value: int | str | None = None,
 ) -> dict[str, Any] | None:
     working_branch = sync_working_branch_info(head_selector, package_name)
     if not working_branch:
@@ -952,7 +1009,7 @@ def build_sync_metadata_object(
         if working_pr and isinstance(working_pr.get("number"), int)
         else None
     )
-    if package_work_item_id_value:
+    if package_work_item_id_value is not None:
         metadata["packageWorkItemId"] = package_work_item_id_value
     return metadata
 
@@ -1257,7 +1314,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv or sys.argv[1:])
-    ensure_azsdk_find_work_item_available()
+    if sync_working_branch_info(args.target or "main", args.package_name):
+        ensure_azsdk_find_work_item_available()
 
     package_dir = find_package_dir(args.package_name)
     log_info(f"Found package at: {package_dir}")
@@ -1379,11 +1437,19 @@ def main(argv: list[str] | None = None) -> int:
         working_selector = args.target or "main"
         working_reference = target_reference_info(working_selector, args.package_name)
         baseline_ref = baseline_reference_markdown(args.base)
-        package_work_item_id_value = None
+        package_work_item_id_value: int | str | None = None
         if sync_working_branch_info(working_selector, args.package_name):
-            package_work_item_id_value = package_work_item_id(
-                args.package_name, target_version
-            )
+            try:
+                package_work_item_id_value = package_work_item_id(
+                    args.package_name, target_version
+                )
+            except Exception as error:  # pylint: disable=broad-except
+                package_work_item_id_value = "ERROR"
+                log_warning(
+                    "WARNING: failed to resolve package work item ID. "
+                    "PR body sync metadata will set packageWorkItemId to ERROR."
+                    + (f"\n{error}" if str(error) else "")
+                )
         sync_metadata = build_sync_metadata_object(
             package_name=args.package_name,
             package_dir=package_dir,
