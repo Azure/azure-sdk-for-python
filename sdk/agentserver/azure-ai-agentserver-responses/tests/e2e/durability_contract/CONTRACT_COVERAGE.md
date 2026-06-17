@@ -58,7 +58,18 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 
 ---
 
-## Recovery handler entry contract (§ Per-row contracts → Row 1)
+## Recovery stream gating & drop precondition (Spec 026 — § Streaming sub-contract clause 5 + § Recovery precondition)
+
+| Clause | Test | Dimension |
+|---|---|---|
+| **Single `response.created` per durable stream** — `response.created` is appended to the durable stream provider only when the stream is empty; a recovered handler that re-emits `response.created` has it suppressed at the provider write, so a replaying client observes `response.created` exactly once | `test_streaming_recovery_continuity.py::test_pre_crash_deltas_survive_recovery` (asserts the fully-assembled `starting_after=0` stream contains exactly one `response.created`) + `tests/unit/test_spec026_created_gate.py` (unit: `last_cursor() is None` gates the append — permits on empty, suppresses once non-empty) | event sequence; single-created |
+| **Recovered handler emits `response.in_progress` reset as first recovered event** (NOT a second `response.created`) | `test_streaming_recovery_continuity.py::test_pre_crash_deltas_survive_recovery` (asserts post-recovery `response.in_progress` with seq > pre-crash max) | event sequence |
+| **Recovery precondition (persisted response required)** — the framework re-invokes the handler only if the response was durably created; a definitively-absent response (typed not-found) is dropped (no re-invocation, no `response.*` events, no terminal); transient/ambiguous store errors are NOT dropped | `test_recovery_drop_when_unpersisted.py` (real SIGKILL in the pre-create window → restart → asserts handler NOT re-invoked + `GET` 404) | recovery drop |
+| Drop **gate** runs before the stream-vs-non-stream dispatch (applies to both modes) | Code-position verified; conformance-tested via `stream=False` (the bg+streaming path persists the response early at `POST` for reconnect, so its never-persisted window is not deterministically reproducible) | recovery drop |
+
+---
+
+
 
 | Clause | Test | Dimension |
 |---|---|---|
