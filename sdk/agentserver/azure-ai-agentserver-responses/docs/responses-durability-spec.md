@@ -384,6 +384,24 @@ a reset `response.in_progress` event (§8). The framework does NOT
 re-execute the handler from a checkpoint; it re-invokes the whole
 handler body.
 
+**Recovery precondition — the response must have been durably created.**
+Before re-invoking, the framework reads the response from the response
+store. If the response is **definitively absent** (a typed not-found:
+`KeyError` from the in-memory / file providers, `FoundryResourceNotFoundError`
+mapped from the hosted store's HTTP 404), the original `POST /responses`
+disconnected before any `response.created` was persisted, so no client ever
+received a response id to fetch or poll. The framework MUST **drop** the
+recovery — do NOT re-invoke the handler, emit no `response.*` events, write
+no terminal — and settle the task so the recovery scanner does not re-select
+it. This gate applies to **both `stream=false` and `stream=true`** durable
+background recovery: it runs on the shared recovered-entry path *before* the
+stream-vs-non-stream dispatch, so a non-streaming response with no persisted
+snapshot is dropped identically to a streaming one. A transient/ambiguous
+store error (`FoundryBadRequestError`, `FoundryApiError`,
+`ServiceRequestError` / `ServiceResponseError` / `OSError`, or any other
+class) is NOT a definitive absence and MUST NOT trigger a drop — recovery
+proceeds with `persisted_response = None`.
+
 The handler-facing `context.conversation_chain_metadata` carries whatever
 watermarks the previous attempt persisted (the framework auto-flushes
 the metadata namespaces it owns at lifecycle boundaries — start /
@@ -516,10 +534,15 @@ A handler that does nothing recovery-specific MUST still produce a
 correct response. The fallback shape is:
 
 1. Handler runs from scratch on every recovery.
-2. Emits `response.created` (the framework deduplicates against the
-   first-attempt persist).
+2. Emits `response.created`. On a recovered entry the framework does NOT
+   re-append `response.created` to the durable stream — it appends it only
+   when the stream is empty, and a recovered stream already carries the
+   pre-crash `response.created`. The re-emitted event still seeds the
+   handler's in-memory stream and satisfies the first-event validator, but a
+   reconnecting/replaying client observes `response.created` exactly once.
 3. Emits `response.in_progress` with an empty `response.output` (this
-   serves as the implicit snapshot reset for clients).
+   serves as the implicit snapshot reset for clients, and is the first
+   stream-visible event of the recovered lifetime).
 4. Re-streams the whole turn.
 5. Emits its terminal event (the framework deduplicates against the
    first terminal that lands).
