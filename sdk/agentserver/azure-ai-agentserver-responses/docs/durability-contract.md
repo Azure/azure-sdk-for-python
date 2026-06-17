@@ -8,6 +8,17 @@ to the design source-of-truth `docs/responses-durability-spec.md`: where that
 document explains *why* and *how* durability works, this one states the
 precise, testable promises and binds each to its conformance test.
 
+**Normative ownership (single edit point).** This document is the **single
+normative source** for the dispatch matrix and its per-cell dispositions, the
+streaming sub-contract, the recovered-entry precondition, and the
+handler/framework obligations — they are parsed by the conformance meta-tests
+and pinned by the Constitution. `responses-durability-spec.md` may summarize
+these clauses for readability, but the normative edit for any of them is made
+**here**; on conflict, this contract is authoritative. The design spec is
+authoritative for everything this contract does not carry (terminology, chain
+identity, the reserved metadata namespace, perpetual-task internals,
+cancellation, steering, and the worked sequences).
+
 **Audience**: Framework maintainers, handler authors, SDK reviewers, and the
 conformance meta-test.
 

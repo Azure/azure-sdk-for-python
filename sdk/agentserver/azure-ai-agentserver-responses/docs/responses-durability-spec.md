@@ -1,7 +1,21 @@
 # Responses Durability — Authoritative Specification
 
-> **Status**: Living specification. Source of truth for the responses
-> durability surface.
+> **Status**: Living specification. Authoritative **design** reference for the
+> responses durability surface — the full mental model, internals, cancellation,
+> steering, worked sequences, and the conformance-item index.
+>
+> **Normative ownership (single edit point).** The machine-verified
+> **conformance contract** — the dispatch matrix and its per-cell dispositions,
+> the streaming sub-contract, the recovered-entry precondition, and the
+> handler/framework obligations — is owned by
+> [`durability-contract.md`](durability-contract.md). That doc is parsed by the
+> conformance meta-tests and pinned by the Constitution. Where this spec restates
+> any of those clauses it is a **non-normative summary for readability**; on any
+> conflict, `durability-contract.md` is authoritative, and the normative edit is
+> made there. This spec is authoritative for everything the contract does NOT
+> carry (terminology, chain identity, the reserved metadata namespace, the
+> perpetual-task internals, cancellation §10, steering §11, the worked sequences
+> §12–13, and the C-* conformance index §14).
 >
 > **Audience**: Library implementers porting this contract to another
 > language; framework reviewers verifying behavior against the
@@ -93,6 +107,10 @@ The developer sets `durable_background` and `steerable_conversations`
 on `ResponsesServerOptions`. End-users CANNOT override developer
 decisions; developers CANNOT override end-user request flags. This
 separation is normative.
+
+> **Normative source:** the four rows and their per-cell dispositions are the
+> matrix in [`durability-contract.md` § The matrix](durability-contract.md). The
+> table below is a readability summary; the contract is authoritative.
 
 | # | `store` | `background` | `durable_background` | Behaviour |
 |---|---|---|---|---|
@@ -373,6 +391,11 @@ also get distinct task_ids when they should.
 
 ## §7 — Recovery dispatch
 
+> **Normative source:** the per-row recovery dispositions and the
+> recovered-entry precondition (drop when the response was never durably
+> created) are owned by [`durability-contract.md`](durability-contract.md)
+> (§ Recovered entry, Per-row contracts). This section is the design detail.
+
 The recovered entry of any durable task body inspects the
 `_responses.disposition` key and routes:
 
@@ -633,6 +656,12 @@ flush-controlled — §8.1). Rule of thumb: cross-turn state →
 ---
 
 ## §9 — Stream contract
+
+> **Normative source:** the streaming sub-contract — event-persistence
+> ordering, `starting_after=` reconnect, the single-`response.created`
+> per-stream rule, and the `response.in_progress` reset — is owned by
+> [`durability-contract.md` § Streaming sub-contract](durability-contract.md).
+> This section is the design detail; the contract is authoritative.
 
 For every `stream=true` request with `store=true`:
 
