@@ -667,6 +667,13 @@
       ]
     },
     {
+      "filename": "sdk/identity/azure-identity/design-decisions.md",
+      "words": [
+        "nocae",
+        "ROPC"
+      ]
+    },
+    {
       "filename": "sdk/identity/azure-identity-broker/tests/*.py",
       "words": [
         "signin"
