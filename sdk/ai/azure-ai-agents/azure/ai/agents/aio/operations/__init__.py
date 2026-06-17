@@ -12,29 +12,27 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import ThreadsOperations  # type: ignore
-from ._operations import MessagesOperations  # type: ignore
-from ._operations import RunsOperations  # type: ignore
-from ._operations import RunStepsOperations  # type: ignore
-from ._operations import FilesOperations  # type: ignore
-from ._operations import VectorStoresOperations  # type: ignore
-from ._operations import VectorStoreFilesOperations  # type: ignore
-from ._operations import VectorStoreFileBatchesOperations  # type: ignore
-from ._operations import _AgentsClientOperationsMixin  # type: ignore # pylint: disable=unused-import
+from ._operations import BetaOperations  # type: ignore
+from ._operations import AgentsOperations  # type: ignore
+from ._operations import EvaluationRulesOperations  # type: ignore
+from ._operations import ConnectionsOperations  # type: ignore
+from ._operations import DatasetsOperations  # type: ignore
+from ._operations import DeploymentsOperations  # type: ignore
+from ._operations import IndexesOperations  # type: ignore
+from ._operations import _AIProjectClientOperationsMixin  # type: ignore # pylint: disable=unused-import
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ThreadsOperations",
-    "MessagesOperations",
-    "RunsOperations",
-    "RunStepsOperations",
-    "FilesOperations",
-    "VectorStoresOperations",
-    "VectorStoreFilesOperations",
-    "VectorStoreFileBatchesOperations",
+    "BetaOperations",
+    "AgentsOperations",
+    "EvaluationRulesOperations",
+    "ConnectionsOperations",
+    "DatasetsOperations",
+    "DeploymentsOperations",
+    "IndexesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -7,64 +7,76 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
-from typing_extensions import Self
+import sys
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import AgentsClientConfiguration
+from ._configuration import AIProjectClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
-    FilesOperations,
-    MessagesOperations,
-    RunStepsOperations,
-    RunsOperations,
-    ThreadsOperations,
-    VectorStoreFileBatchesOperations,
-    VectorStoreFilesOperations,
-    VectorStoresOperations,
-    _AgentsClientOperationsMixin,
+    AgentsOperations,
+    BetaOperations,
+    ConnectionsOperations,
+    DatasetsOperations,
+    DeploymentsOperations,
+    EvaluationRulesOperations,
+    IndexesOperations,
+    _AIProjectClientOperationsMixin,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AgentsClient(_AgentsClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
-    """AgentsClient.
+class AIProjectClient(_AIProjectClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+    """AIProjectClient.
 
-    :ivar threads: ThreadsOperations operations
-    :vartype threads: azure.ai.agents.operations.ThreadsOperations
-    :ivar messages: MessagesOperations operations
-    :vartype messages: azure.ai.agents.operations.MessagesOperations
-    :ivar runs: RunsOperations operations
-    :vartype runs: azure.ai.agents.operations.RunsOperations
-    :ivar run_steps: RunStepsOperations operations
-    :vartype run_steps: azure.ai.agents.operations.RunStepsOperations
-    :ivar files: FilesOperations operations
-    :vartype files: azure.ai.agents.operations.FilesOperations
-    :ivar vector_stores: VectorStoresOperations operations
-    :vartype vector_stores: azure.ai.agents.operations.VectorStoresOperations
-    :ivar vector_store_files: VectorStoreFilesOperations operations
-    :vartype vector_store_files: azure.ai.agents.operations.VectorStoreFilesOperations
-    :ivar vector_store_file_batches: VectorStoreFileBatchesOperations operations
-    :vartype vector_store_file_batches: azure.ai.agents.operations.VectorStoreFileBatchesOperations
-    :param endpoint: Project endpoint in the form of:
-     https://<aiservices-id>.services.ai.azure.com/api/projects/<project-name>. Required.
+    :ivar beta: BetaOperations operations
+    :vartype beta: azure.ai.agents.operations.BetaOperations
+    :ivar agents: AgentsOperations operations
+    :vartype agents: azure.ai.agents.operations.AgentsOperations
+    :ivar evaluation_rules: EvaluationRulesOperations operations
+    :vartype evaluation_rules: azure.ai.agents.operations.EvaluationRulesOperations
+    :ivar connections: ConnectionsOperations operations
+    :vartype connections: azure.ai.agents.operations.ConnectionsOperations
+    :ivar datasets: DatasetsOperations operations
+    :vartype datasets: azure.ai.agents.operations.DatasetsOperations
+    :ivar deployments: DeploymentsOperations operations
+    :vartype deployments: azure.ai.agents.operations.DeploymentsOperations
+    :ivar indexes: IndexesOperations operations
+    :vartype indexes: azure.ai.agents.operations.IndexesOperations
+    :param endpoint: Foundry Project endpoint in the form
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
+     only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
+     the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-05-15-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :param allow_preview: Whether to enable preview features. Must be specified and set to True to
+     enable preview features. Default value is None.
+    :type allow_preview: bool
+    :keyword api_version: The API version to use for this operation. Known values are "v1" and
+     None. Default value is None. If not set, the operation's default API version will be used. Note
+     that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: "TokenCredential", allow_preview: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
-        self._config = AgentsClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = AIProjectClientConfiguration(
+            endpoint=endpoint, credential=credential, allow_preview=allow_preview, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
@@ -88,18 +100,15 @@ class AgentsClient(_AgentsClientOperationsMixin):  # pylint: disable=too-many-in
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.threads = ThreadsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.messages = MessagesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.runs = RunsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.run_steps = RunStepsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.files = FilesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vector_stores = VectorStoresOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.vector_store_files = VectorStoreFilesOperations(
+        self.beta = BetaOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.evaluation_rules = EvaluationRulesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.vector_store_file_batches = VectorStoreFileBatchesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
