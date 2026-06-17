@@ -243,7 +243,6 @@ def _reconstruct_from_params(
 
 
 _RESP_RESPONSE_ID = "response_id"
-_RESP_LAST_SEQ = "last_sequence_number"
 _RESP_BACKGROUND = "background"
 # (Spec 014 FR-003 / FR-004 — Phase 4) Per-task disposition tells the recovery
 # scanner what to do on the next-lifetime recovered entry:
@@ -465,8 +464,7 @@ class DurableResponseOrchestrator:
            ``context.shutdown`` Event respectively. The two surfaces
            are independent — shutdown does not fire the cancel signal.
         3. Delegates to _run_background_non_stream (existing pipeline).
-        4. Persists last_sequence_number to metadata.
-        5. Suspends (task stays alive for next turn).
+        4. Suspends (task stays alive for next turn).
         """
         # Import here to avoid circular imports
         from ._orchestrator import (
@@ -648,8 +646,7 @@ class DurableResponseOrchestrator:
                     return
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.debug(
-                        "persisted_response pre-fetch failed for %s "
-                        "(recovery, transient — not dropping)",
+                        "persisted_response pre-fetch failed for %s " "(recovery, transient — not dropping)",
                         context.response_id,
                         exc_info=True,
                     )
