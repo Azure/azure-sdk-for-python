@@ -818,7 +818,7 @@
 /.github/CODEOWNERS                                                  @lmazuel @kashifkhan @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
 /.github/prompts/                                                    @mccoyp @l0lawrence @benbp
-/.github/skills/                                                     @mccoyp @l0lawrence @benbp
+/.github/skills/                                                     @mccoyp @l0lawrence @benbp @Azure/azsdk-cli
 /sdk/pullrequest.yml                                                 @danieljurek @mikeharder @benbp
 
 /.config/1espt/                                                      @benbp @mikeharder
