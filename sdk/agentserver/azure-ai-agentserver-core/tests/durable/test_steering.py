@@ -814,3 +814,66 @@ class TestSteeringCrossProcessDrainRecovery:
         finally:
             await manager.shutdown()
             mgr_mod._manager = None
+
+
+class TestSteeringDrainStatusTransition:
+    """Spec 031 (hosted re-test finding) — the steering drain MUST transition
+    the record from `suspended` (written by the multi-turn turn that just
+    ended) back to `in_progress` in its PATCH. The hosted task store rejects a
+    lease *renewal* on a non-in_progress task, so without the status flip the
+    drain PATCH 409s ("lease renewal is only supported for in_progress tasks")
+    and the steered turn never runs. The local provider now enforces the same
+    rule (faithful double), so this is exercised end-to-end."""
+
+    async def _setup(self, provider):
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+        import azure.ai.agentserver.core.durable._manager as mgr_mod
+
+        config = type("C", (), {"agent_name": "a", "session_id": "s", "agent_version": "1.0.0", "is_hosted": False})()
+        manager = TaskManager(config=config, provider=provider)
+        mgr_mod._manager = manager
+        await manager.startup()
+        return manager, mgr_mod
+
+    @pytest.mark.asyncio
+    async def test_drain_patch_flips_status_to_in_progress(self, tmp_path):
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from .conftest import CapturingProvider
+
+        provider = CapturingProvider(LocalFileTaskProvider(Path(str(tmp_path))))
+        manager, mgr_mod = await self._setup(provider)
+        try:
+            ran: list[str] = []
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                msg = ctx.input.get("msg", "?")
+                if msg == "A":
+                    for _ in range(300):
+                        if ctx.cancel.is_set():
+                            return None
+                        await asyncio.sleep(0.01)
+                    return None
+                ran.append(msg)
+                return {"msg": msg}
+
+            run1 = await chat.start(task_id="t1", input={"msg": "A"})
+            await asyncio.sleep(0.05)
+            run_b = await chat.start(task_id="t1", input={"msg": "B"})
+            await asyncio.wait_for(run_b.result(), timeout=5.0)
+
+            assert "B" in ran, f"steered turn B must run; ran={ran}"
+            # Find the drain PATCH: the one carrying _steering.active_input set.
+            drain_patches = [
+                p
+                for (_tid, p, _im) in provider.update_calls
+                if (getattr(p, "payload", None) or {}).get("_steering", {}).get("active_input") is not None
+            ]
+            assert drain_patches, "no drain PATCH observed"
+            assert drain_patches[0].status == "in_progress", (
+                "drain PATCH MUST flip status to in_progress (suspended->in_progress claim); "
+                f"got status={drain_patches[0].status!r}"
+            )
+        finally:
+            await manager.shutdown()
+            mgr_mod._manager = None
