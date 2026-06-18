@@ -1,11 +1,12 @@
 # Durable Research Agent — Demo
 
-> **▶ Run it locally (recommended for this preview):** the hosted task API is
-> currently returning **403**, which blocks deployed crash-recovery. Use the
-> verified local kit in **[`local/`](local/README.md)** to see the full
-> run → crash → recover → verify flow on your machine
-> (`cd local && ./setup.sh && ./run.sh`). The rest of this README covers the
-> azd-deployed flow for when the hosted task API is available again.
+> **▶ Deploy it (hosted, recommended):** `azd deploy` this sample, then drive it
+> with **[`demo-client.sh`](demo-client.sh)** (it auto-resolves the endpoint from
+> your azd env). Validated end-to-end on a hosted Foundry deployment — run,
+> stream, reconnect, and steer all work against the hosted task API. Prefer an
+> offline run? The verified local kit in **[`local/`](local/README.md)**
+> exercises the same run → crash → recover → verify flow file-backed
+> (`cd local && ./setup.sh && ./run.sh`).
 
 A `@multi_turn_task`-decorated long-running research agent that demonstrates two
 platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
@@ -52,10 +53,10 @@ of each pause so the terminal shows a low-key
 `...cooling down 30s (between subcalls) — next: subcall 3/4 in phase 2/15`
 line instead of going silent.
 
-## Run locally (recommended for this preview)
+## Run locally (offline alternative)
 
-Because the hosted task API returns 403, the durable crash-recovery flow is
-exercised **locally** — file-backed task store, no hosted dependency. A
+For an offline run with no hosted dependency, the durable crash-recovery flow
+can also be exercised **locally** — file-backed task store. A
 ready-to-run, verified kit lives in [`local/`](local/README.md):
 
 ```bash
