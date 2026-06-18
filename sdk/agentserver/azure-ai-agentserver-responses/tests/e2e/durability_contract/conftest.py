@@ -91,6 +91,7 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
         emit_metadata_watermark: bool = False,
         explicit_exit_for_recovery: bool = False,
         shutdown_grace_seconds: int = LONG_GRACE_S,
+        keep_alive_seconds: int | None = None,
         readiness_timeout: float = 15.0,
     ) -> CrashHarness:
         env = {
@@ -112,6 +113,13 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
             # runs so test output stays focused on failures.
             "LOGLEVEL": os.environ.get("LOGLEVEL", "WARNING"),
         }
+        # Optionally enable SSE keep-alive (the platform sets this on hosted
+        # via ``SSE_KEEPALIVE_INTERVAL``). The conformance app leaves
+        # ``sse_keep_alive_interval_seconds`` unset, so the env var is merged
+        # into the runtime options by the routing layer. Durability MUST hold
+        # identically whether or not keep-alive is enabled.
+        if keep_alive_seconds is not None:
+            env["SSE_KEEPALIVE_INTERVAL"] = str(keep_alive_seconds)
         return CrashHarness(
             sample_module=_TEST_HANDLER_MODULE,
             tmp_path=tmp_path,
