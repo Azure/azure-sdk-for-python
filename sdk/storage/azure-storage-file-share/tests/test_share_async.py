@@ -945,8 +945,6 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             share = await self._create_share(prefix + str(i))
             share_names.append(share.share_name)
 
-        share_names.sort()
-
         # Act
         generator1 = self.fsc.list_shares(prefix, results_per_page=2).by_page()
         shares1 = []

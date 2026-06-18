@@ -935,8 +935,6 @@ class TestStorageShare(StorageRecordedTestCase):
         for i in range(0, 4):
             share_names.append(self._create_share(prefix + str(i)).share_name)
 
-        # share_names.sort()
-
         # Act
         generator1 = self.fsc.list_shares(prefix, results_per_page=2).by_page()
         shares1 = list(next(generator1))
