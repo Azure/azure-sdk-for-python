@@ -370,19 +370,9 @@ class ApiReviewPrTests(unittest.TestCase):
             json.loads(json_text), {"schemaVersion": 1, "workingPrNumber": None}
         )
 
-    def test_parse_pending_api_review_urls_splits_and_trims_lines(self):
-        markdown = "\nhttps://contoso/review/1\n  https://contoso/review/2  \n\n"
-        self.assertEqual(
-            workflow.parse_pending_api_review_urls(markdown),
-            ["https://contoso/review/1", "https://contoso/review/2"],
-        )
-
-    def test_get_package_work_item_parses_pending_api_review_field(self):
+    def test_get_package_work_item_parses_id(self):
         payload = {
             "id": 12345,
-            "fields": {
-                "Custom.PendingAPIReviews": "https://contoso/review/1\nhttps://contoso/review/2\n"
-            },
         }
 
         with patch.object(
@@ -393,10 +383,6 @@ class ApiReviewPrTests(unittest.TestCase):
             item = workflow.get_package_work_item("azure-example")
 
         self.assertEqual(item.id, 12345)
-        self.assertEqual(
-            item.pending_api_review_urls,
-            ["https://contoso/review/1", "https://contoso/review/2"],
-        )
         run_mock.assert_called_once_with(
             [
                 "azsdk",
@@ -411,7 +397,7 @@ class ApiReviewPrTests(unittest.TestCase):
             capture=True,
         )
 
-    def test_ensure_azsdk_work_item_commands_available_checks_get_and_update(self):
+    def test_ensure_azsdk_work_item_commands_available_checks_get(self):
         with patch.object(workflow, "resolve_azsdk_executable", return_value="azsdk"):
             with patch.object(
                 workflow,
@@ -427,56 +413,19 @@ class ApiReviewPrTests(unittest.TestCase):
                     ["azsdk", "package", "get-work-item", "--help"],
                     check=False,
                     capture=True,
-                ),
-                unittest.mock.call(
-                    ["azsdk", "package", "update-work-item", "--help"],
-                    check=False,
-                    capture=True,
-                ),
+                )
             ],
         )
 
-    def test_ensure_azsdk_work_item_commands_available_reports_missing_update(self):
-        def run_stub(args, **_kwargs):
-            if args[2] == "update-work-item":
-                return workflow.CommandResult(1, "", "missing command")
-            return workflow.CommandResult(0, "", "")
-
+    def test_ensure_azsdk_work_item_commands_available_reports_missing_get(self):
         with patch.object(workflow, "resolve_azsdk_executable", return_value="azsdk"):
-            with patch.object(workflow, "run", side_effect=run_stub):
-                with self.assertRaisesRegex(RuntimeError, "package update-work-item"):
+            with patch.object(
+                workflow,
+                "run",
+                return_value=workflow.CommandResult(1, "", "missing command"),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "package get-work-item"):
                     workflow.ensure_azsdk_work_item_commands_available()
-
-    def test_update_package_pending_reviews_is_idempotent(self):
-        with patch.object(workflow, "update_package_pending_api_reviews") as update_mock:
-            workflow.update_package_pending_reviews(
-                workflow.PackageWorkItem(
-                    id=54321,
-                    pending_api_review_urls=[
-                        "https://github.com/Azure/azure-sdk-for-python/pull/10"
-                    ],
-                ),
-                "https://github.com/Azure/azure-sdk-for-python/pull/10",
-            )
-
-        update_mock.assert_not_called()
-
-    def test_update_package_pending_reviews_appends_new_url(self):
-        with patch.object(workflow, "update_package_pending_api_reviews") as update_mock:
-            workflow.update_package_pending_reviews(
-                workflow.PackageWorkItem(
-                    id=54321,
-                    pending_api_review_urls=[
-                        "https://github.com/Azure/azure-sdk-for-python/pull/10"
-                    ],
-                ),
-                "https://github.com/Azure/azure-sdk-for-python/pull/11",
-            )
-
-        update_mock.assert_called_once_with(
-            54321,
-            "https://github.com/Azure/azure-sdk-for-python/pull/10\nhttps://github.com/Azure/azure-sdk-for-python/pull/11",
-        )
 
 
 if __name__ == "__main__":

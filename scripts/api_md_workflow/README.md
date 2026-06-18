@@ -11,7 +11,7 @@ This folder contains the standalone helper used to create API review pull reques
 3. Creating or reusing a draft GitHub PR with the `api.md` diff.
 4. Assigning the PR to API review architects resolved from `.github/ARCHITECTS`.
 5. Updating PR body sync metadata so future automation can identify branch relationships.
-6. Updating the package ADO work item `Custom.PendingAPIReviews` field with the review PR URL.
+6. Letting the API review pending workflow update the package ADO work item from PR events.
 
 The API consistency workflow helpers live under `.github/workflows/src/api-md-consistency`.
 
@@ -36,7 +36,7 @@ Primary output:
 
 Secondary output:
 
-- `Custom.PendingAPIReviews` on the package work item is updated to include the PR URL (idempotent append).
+- PR body sync metadata includes the package work item ID when available, so `.github/workflows/api-review-pending.yml` can synchronize `Custom.PendingAPIReviews` on PR open, close, and reopen events.
 - Matching API review architects are requested as GitHub reviewers when a PR number is available.
 
 ## High-Level Flow
@@ -49,12 +49,11 @@ Secondary output:
 4. Capture target `api.md` + `api.metadata.yml` from resolved target ref.
 5. Exit early if baseline and target `api.md` are identical.
 6. Resolve branch reuse or branch creation for baseline and review branches.
-7. Fetch the package work item once for working-branch sync flows.
+7. Fetch the package work item ID for working-branch sync metadata.
 8. Create or reuse PR between baseline and review branches.
 9. Ensure PR sync metadata block in PR body.
 10. Request API review architects as PR reviewers.
-11. Update package work item `Custom.PendingAPIReviews` with PR URL.
-12. Restore original local branch.
+11. Restore original local branch.
 
 ## Detailed Decision Paths
 
@@ -156,9 +155,9 @@ Behavior:
 - Existing stale sync block is replaced.
 - Block is omitted for target-tag flows (no working branch to track).
 
-## ADO Package Work Item Update Flow
+## ADO Package Work Item Sync Flow
 
-For working-branch sync flows, the script fetches the package work item once before creating or reusing the API review PR:
+For working-branch sync flows, the script fetches the package work item before creating or reusing the API review PR:
 
 1. Fetch package work item via:
 
@@ -166,18 +165,11 @@ For working-branch sync flows, the script fetches the package work item once bef
 azsdk package get-work-item --package-name <package-name> -o json
 ```
 
-2. Extract:
+2. Extract the work item `id` and write it to PR body sync metadata as `packageWorkItemId`.
 
-- work item id: `id`
-- pending review markdown field: `fields.Custom.PendingAPIReviews`
+The `.github/workflows/api-review-pending.yml` workflow owns `Custom.PendingAPIReviews` updates. On API review PR `opened` or `reopened`, it appends the PR URL if missing. On `closed`, it removes the PR URL.
 
-The same fetched work item is reused for both PR body sync metadata (`packageWorkItemId`) and the later pending-review update. After a PR URL is available (created or reused), the script:
-
-3. Parses the existing pending review field value as a newline-separated URL list.
-
-4. Appends the PR URL only when missing (idempotent behavior).
-
-5. Joins the list with newlines and updates the work item:
+The workflow updates the work item with:
 
 ```bash
 azsdk package update-work-item \
@@ -188,9 +180,8 @@ azsdk package update-work-item \
 
 Failure policy:
 
-- Work item fetch failures set sync metadata `packageWorkItemId` to `ERROR` and skip the pending-review update.
-- Work item update failures are logged as warnings.
-- PR flow still succeeds (best-effort work item synchronization).
+- Work item fetch failures set sync metadata `packageWorkItemId` to `ERROR`.
+- PR flow still succeeds; the event-driven workflow skips the package work item update when `packageWorkItemId` is unavailable.
 
 ## Error Handling Strategy
 

@@ -2,7 +2,6 @@
 
 const { execFileSync } = require("child_process");
 const fs = require("fs");
-const path = require("path");
 
 const DEFAULT_METADATA_MARKER = "api-md-review-sync";
 const DEFAULT_PENDING_REVIEWS_FIELD = "Custom.PendingAPIReviews";
@@ -88,40 +87,20 @@ function normalizeUrlList(value) {
   return urls;
 }
 
-function packageNameFromMetadata(metadata) {
-  if (typeof metadata.packageName === "string" && metadata.packageName.trim()) {
-    return metadata.packageName.trim();
-  }
-
-  if (typeof metadata.packageDir === "string" && metadata.packageDir.trim()) {
-    return path.basename(metadata.packageDir.replace(/\\/g, "/"));
-  }
-
-  return "";
-}
-
 function getPackageWorkItem(metadata) {
   const rawWorkItemId = metadata.packageWorkItemId;
-  if (rawWorkItemId !== undefined && rawWorkItemId !== null && rawWorkItemId !== "" && rawWorkItemId !== "ERROR") {
-    const workItemId = Number(rawWorkItemId);
-    if (!Number.isInteger(workItemId)) {
-      throw new Error(`Invalid packageWorkItemId in API review metadata: ${rawWorkItemId}`);
-    }
-
-    return parseJson(
-      runAzsdkCli(["package", "get-work-item", "--work-item-id", String(workItemId), "-o", "json"]),
-      `package work item ${workItemId}`
-    );
+  if (rawWorkItemId === undefined || rawWorkItemId === null || rawWorkItemId === "" || rawWorkItemId === "ERROR") {
+    return null;
   }
 
-  const packageName = packageNameFromMetadata(metadata);
-  if (!packageName) {
-    throw new Error("API review metadata must include packageWorkItemId, packageName, or packageDir.");
+  const workItemId = Number(rawWorkItemId);
+  if (!Number.isInteger(workItemId)) {
+    throw new Error(`Invalid packageWorkItemId in API review metadata: ${rawWorkItemId}`);
   }
 
   return parseJson(
-    runAzsdkCli(["package", "get-work-item", "--package-name", packageName, "-o", "json"]),
-    `package work item for ${packageName}`
+    runAzsdkCli(["package", "get-work-item", "--work-item-id", String(workItemId), "-o", "json"]),
+    `package work item ${workItemId}`
   );
 }
 
@@ -151,7 +130,7 @@ function updatePendingReviews(workItem, fieldName, urls) {
 }
 
 function updatedUrlsForAction(action, urls, prUrl) {
-  if (action === "reopened") {
+  if (action === "opened" || action === "reopened") {
     return urls.includes(prUrl) ? urls : [...urls, prUrl];
   }
 
@@ -182,7 +161,7 @@ function main() {
     return;
   }
 
-  if (action !== "closed" && action !== "reopened") {
+  if (action !== "opened" && action !== "closed" && action !== "reopened") {
     warn(`Pull request action ${action} does not affect pending API reviews; skipping.`);
     return;
   }
@@ -204,6 +183,11 @@ function main() {
   }
 
   const workItem = getPackageWorkItem(metadata);
+  if (!workItem) {
+    warn("API review metadata does not contain a packageWorkItemId; skipping package work item update.");
+    return;
+  }
+
   const existingUrls = pendingReviewUrls(workItem, fieldName);
   const nextUrls = updatedUrlsForAction(action, existingUrls, prUrl);
 

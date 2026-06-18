@@ -71,7 +71,6 @@ class ArchitectReviewers:
 @dataclass
 class PackageWorkItem:
     id: int
-    pending_api_review_urls: list[str]
 
 
 GitRunner = Callable[[list[str], bool], CommandResult]
@@ -623,7 +622,7 @@ def ensure_azsdk_work_item_commands_available() -> None:
     azsdk_executable = resolve_azsdk_executable()
     missing_commands: list[str] = []
     command_details: list[str] = []
-    for command_name in ["get-work-item", "update-work-item"]:
+    for command_name in ["get-work-item"]:
         result = run(
             [azsdk_executable, "package", command_name, "--help"],
             check=False,
@@ -794,24 +793,6 @@ def architects_for_package(
     return matching_architects
 
 
-def parse_pending_api_review_urls(markdown_urls: str | None) -> list[str]:
-    if not markdown_urls:
-        return []
-    return [line.strip() for line in markdown_urls.splitlines() if line.strip()]
-
-
-def dedupe_preserve_order(values: list[str]) -> list[str]:
-    seen: set[str] = set()
-    deduped: list[str] = []
-    for value in values:
-        cleaned = value.strip()
-        if not cleaned or cleaned in seen:
-            continue
-        seen.add(cleaned)
-        deduped.append(cleaned)
-    return deduped
-
-
 def get_package_work_item(package_name: str) -> PackageWorkItem:
     result = run(
         [
@@ -850,75 +831,7 @@ def get_package_work_item(package_name: str) -> PackageWorkItem:
             f"Invalid package work item id: {raw_work_item_id}"
         ) from error
 
-    fields = data.get("fields") if isinstance(data, dict) else None
-    pending_reviews_markdown = ""
-    if isinstance(fields, dict):
-        pending_reviews_markdown = str(fields.get("Custom.PendingAPIReviews") or "")
-
-    return PackageWorkItem(
-        id=work_item_id,
-        pending_api_review_urls=parse_pending_api_review_urls(pending_reviews_markdown),
-    )
-
-
-def update_package_pending_api_reviews(
-    work_item_id: int, api_reviews_string: str
-) -> None:
-    result = run(
-        [
-            "azsdk",
-            "package",
-            "update-work-item",
-            "--work-item-id",
-            str(work_item_id),
-            "--field",
-            f"Custom.PendingAPIReviews={api_reviews_string}",
-            "--multiline-fields-format",
-            "Custom.PendingAPIReviews=markdown",
-        ],
-        check=False,
-        capture=True,
-    )
-    if result.status != 0:
-        raise RuntimeError(
-            f"Failed to update package work item {work_item_id} Pending API Reviews field."
-            + (f"\n  stderr: {result.stderr.strip()}" if result.stderr.strip() else "")
-        )
-
-
-def update_package_pending_reviews(
-    package_work_item: PackageWorkItem | None, pr_url: str
-) -> None:
-    if not pr_url.strip():
-        log_warning("WARNING: empty PR URL; skipping package work item update.")
-        return
-    if package_work_item is None:
-        log_warning(
-            "WARNING: package work item is unavailable; skipping Pending API Reviews update."
-        )
-        return
-
-    try:
-        updated_urls = dedupe_preserve_order(
-            [*package_work_item.pending_api_review_urls, pr_url]
-        )
-        if updated_urls == package_work_item.pending_api_review_urls:
-            log_info(
-                f"Package work item {package_work_item.id} already contains API review PR URL; no update needed."
-            )
-            return
-
-        api_reviews_string = "\n".join(updated_urls)
-        update_package_pending_api_reviews(package_work_item.id, api_reviews_string)
-        log_info(
-            f"Updated package work item {package_work_item.id} with API review PR URL."
-        )
-    except Exception as error:  # pylint: disable=broad-except
-        details = str(error)
-        log_warning(
-            "WARNING: failed to update package work item Pending API Reviews."
-            + (f"\n  {details}" if details else "")
-        )
+    return PackageWorkItem(id=work_item_id)
 
 
 def branch_remote_ref(branch: str) -> str:
@@ -1553,7 +1466,6 @@ def main(argv: list[str] | None = None) -> int:
         working_reference = target_reference_info(working_selector, args.package_name)
         baseline_ref = baseline_reference_markdown(args.base)
         work_item_metadata_value: int | str | None = None
-        package_work_item: PackageWorkItem | None = None
         if sync_working_branch_info(working_selector, args.package_name):
             try:
                 package_work_item = get_package_work_item(args.package_name)
@@ -1594,9 +1506,6 @@ def main(argv: list[str] | None = None) -> int:
                     existing_pr.get("authorLogin"),
                     architect_reviewers,
                 )
-                update_package_pending_reviews(
-                    package_work_item, str(existing_pr["url"])
-                )
                 log_info(f"\n=== Reusing existing PR #{existing_pr['number']} ===")
                 log_info(existing_pr["url"])
                 return 0
@@ -1613,9 +1522,6 @@ def main(argv: list[str] | None = None) -> int:
             )
             if pr_create.get("url"):
                 log_info(pr_create["url"])
-                update_package_pending_reviews(
-                    package_work_item, str(pr_create["url"])
-                )
         else:
             existing_pr = find_open_pr_for_branches(base_branch, review_branch)
             if existing_pr:
@@ -1625,9 +1531,6 @@ def main(argv: list[str] | None = None) -> int:
                     package_dir,
                     existing_pr.get("authorLogin"),
                     architect_reviewers,
-                )
-                update_package_pending_reviews(
-                    package_work_item, str(existing_pr["url"])
                 )
                 log_info(f"\n=== Reusing existing PR #{existing_pr['number']} ===")
                 log_info(existing_pr["url"])

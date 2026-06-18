@@ -3,7 +3,7 @@ name: API Review Pending Work Item Sync
 on:
   pull_request_target:
     # Merged pull requests are delivered as the closed action with pull_request.merged == true.
-    types: [closed, reopened]
+    types: [opened, closed, reopened]
   workflow_call:
     inputs:
       event-path:
