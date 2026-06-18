@@ -6,6 +6,7 @@
 
 ### Bugs Fixed
 
+- Fixed `BatchEndpoint` defaults serialization regression where `deployment_name` was sent to the service as snake_case instead of camelCase (`deploymentName`), causing `begin_create_or_update` to fail with "Could not find member 'deployment_name' on object of type 'BatchEndpointDefaults'". `BatchEndpoint.defaults` is now consistently exposed as a snake_case dict to users and converted to the correct wire format on serialization.
 - Fixed cross-tenant registry endpoint resolution for deployment template operations by using the registry discovery API instead of ARM calls.
 - Fixed deployment template update failing with immutable field errors by ensuring `allowedInstanceType` and `allowedEnvironmentVariableOverrides` are properly round-tripped during serialization.
 
