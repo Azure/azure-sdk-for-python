@@ -282,7 +282,10 @@ class ChangeFeed:
         while not start_year or start_year <= cur_year:
             paths = self.client.list_blobs(name_starts_with=SEGMENT_COMMON_PATH + str(start_year))
             for path in paths:
-                yield path.name
+                # Skip directory marker blobs that does not conform to the expected segment path shape.
+                # Azure Storage can return zero-length directory markers that are not real segment files.
+                if self._is_valid_segment_path(path.name):
+                    yield path.name
 
             # if not searching by prefix, all paths would have been iterated already, so it"s time to yield None
             if not start_year:
@@ -290,6 +293,23 @@ class ChangeFeed:
             # search the segment prefixed with next year.
             start_year += 1
         yield None
+
+    @staticmethod
+    def _is_valid_segment_path(segment_path):
+        # A valid segment path is of the form "idx/segments/YYYY/MM/DD/HHMM/<file>".
+        # Directory marker blobs (e.g. "idx/segments/2026/02/20") have too few tokens to
+        # represent a segment and must be skipped to avoid an IndexError while parsing.
+        path_tokens = segment_path.split(PATH_DELIMITER)
+        if len(path_tokens) < 6:
+            return False
+        try:
+            int(path_tokens[2])  # year
+            int(path_tokens[3])  # month
+            int(path_tokens[4])  # day
+            int(path_tokens[5][:2])  # hour (from HHMM)
+        except (ValueError, IndexError):
+            return False
+        return True
 
     @staticmethod
     def _parse_datetime_from_segment_path(segment_path):
