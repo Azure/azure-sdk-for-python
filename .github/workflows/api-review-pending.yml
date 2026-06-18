@@ -1,0 +1,65 @@
+name: API Review Pending Work Item Sync
+
+on:
+  pull_request_target:
+    # Merged pull requests are delivered as the closed action with pull_request.merged == true.
+    types: [closed, reopened]
+  workflow_call:
+    inputs:
+      event-path:
+        description: Path to a GitHub pull_request event payload.
+        required: false
+        type: string
+      metadata-marker:
+        description: Hidden PR body metadata marker.
+        required: false
+        type: string
+        default: api-md-review-sync
+      pending-reviews-field:
+        description: ADO work item field containing pending API review PR URLs.
+        required: false
+        type: string
+        default: Custom.PendingAPIReviews
+    secrets:
+      AZURE_DEVOPS_EXT_PAT:
+        required: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  sync-pending-review:
+    name: Sync Pending API Review Work Item Field
+    if: >-
+      ${{
+        github.event_name == 'workflow_call' ||
+        contains(github.event.pull_request.body || '', 'api-md-review-sync') ||
+        startsWith(github.event.pull_request.title || '', '[API Review]') ||
+        startsWith(github.event.pull_request.head.ref || '', 'apireview/review')
+      }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            eng/common
+
+      - name: Install azsdk-cli
+        shell: pwsh
+        run: |
+          $installDir = Join-Path $env:RUNNER_TEMP 'azsdk-cli'
+          ./eng/common/mcp/azure-sdk-mcp.ps1 -InstallDirectory $installDir
+          $azsdkCli = Join-Path $installDir "azsdk$(if ($IsWindows) { '.exe' } else { '' })"
+          "AZSDK_CLI=$azsdkCli" | Out-File -FilePath $env:GITHUB_ENV -Append
+          Write-Host "Installed azsdk-cli at $azsdkCli"
+
+      - name: Sync pending API review URL
+        shell: bash
+        env:
+          AZURE_DEVOPS_EXT_PAT: ${{ secrets.AZURE_DEVOPS_EXT_PAT }}
+          API_REVIEW_EVENT_PATH: ${{ inputs['event-path'] }}
+          API_REVIEW_METADATA_MARKER: ${{ inputs['metadata-marker'] || 'api-md-review-sync' }}
+          PENDING_API_REVIEWS_FIELD: ${{ inputs['pending-reviews-field'] || 'Custom.PendingAPIReviews' }}
+        run: node eng/common/scripts/sync-api-review-pending.js
