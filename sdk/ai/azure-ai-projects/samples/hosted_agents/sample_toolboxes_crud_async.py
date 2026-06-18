@@ -13,15 +13,12 @@ DESCRIPTION:
     `require_approval` values, switches the default version, and prints the
     MCP `require_approval` setting from the fetched default version.
 
-    Toolboxes are currently a preview feature. In the Python SDK, you access
-    these operations via `project_client.toolboxes`.
-
 USAGE:
     python sample_toolboxes_crud_async.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.3.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview

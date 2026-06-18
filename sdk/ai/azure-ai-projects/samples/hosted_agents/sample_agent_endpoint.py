@@ -13,16 +13,12 @@ DESCRIPTION:
 
     Sessions only work with Hosted Agents.
 
-    Session and Agent endpoint operations are currently preview features.
-    In the Python SDK, you access these operations via
-    `project_client.beta.agents`.
-
 USAGE:
     python sample_agent_endpoint.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv
+    pip install "azure-ai-projects>=2.3.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -59,7 +55,6 @@ with (
     AIProjectClient(
         endpoint=endpoint,
         credential=credential,
-        allow_preview=True,
     ) as project_client,
 ):
 

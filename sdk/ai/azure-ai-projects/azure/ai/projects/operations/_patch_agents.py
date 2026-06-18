@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+from pathlib import Path
 from typing import Union, Optional, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace

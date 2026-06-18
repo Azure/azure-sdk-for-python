@@ -17,16 +17,15 @@ DESCRIPTION:
     context, so when asked a shipping-cost question the agent answers directly
     using the skill's formula.
 
-    Skills and Toolboxes are currently preview features. In the Python SDK,
-    you access these operations via `project_client.beta.skills` and
-    `project_client.toolboxes`.
+    Skills are currently a preview features. In the Python SDK,
+    you access these operations via `project_client.beta.skills`.
 
 USAGE:
     python sample_skill_in_toolbox.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv openai
+    pip install "azure-ai-projects>=2.3.0" python-dotenv openai
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the

@@ -24,7 +24,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv openai
+    pip install "azure-ai-projects>=2.3.0" python-dotenv openai
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -36,12 +36,8 @@ USAGE:
 """
 
 import os
-
 from dotenv import load_dotenv
-
-from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
-
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     MCPTool,
