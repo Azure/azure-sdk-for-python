@@ -4,7 +4,8 @@
 
 ### Features Added
 
-* Hosted agents are now stable. There is need to set `allow_preview=True` on the `AIProjectClient` constructor to create a Hosted agent.
+* Two new methods `enable` and `disable` on the `.agents` subclient.
+* Hosted agents are now stable. There is no need to set `allow_preview=True` on the `AIProjectClient` constructor to create a Hosted agent.
 * Toolboxes operations are now stable. The have moved from `.beta.toolboxes` subclient to the `.toolboxes` subclient.
 * Session and Session files operations are now stable. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
 * Agent code operations are now stable. This includes `create_version_from_code` and `download_code`. They have moved from the `.beta.agents` subclient to the `.agents` subclient.

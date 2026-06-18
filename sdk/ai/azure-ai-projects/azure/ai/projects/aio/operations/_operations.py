@@ -45,10 +45,10 @@ from ...operations._operations import (
     build_agents_delete_session_file_request,
     build_agents_delete_session_request,
     build_agents_delete_version_request,
-    build_agents_disable_agent_request,
+    build_agents_disable_request,
     build_agents_download_code_request,
     build_agents_download_session_file_request,
-    build_agents_enable_agent_request,
+    build_agents_enable_request,
     build_agents_get_request,
     build_agents_get_session_log_stream_request,
     build_agents_get_session_request,
@@ -1543,7 +1543,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def enable_agent(self, agent_name: str, **kwargs: Any) -> None:
+    async def enable(self, agent_name: str, **kwargs: Any) -> None:
         """Enable an agent.
 
         Enables the specified agent, allowing it to accept new sessions and process requests. This
@@ -1569,7 +1569,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_agents_enable_agent_request(
+        _request = build_agents_enable_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1599,7 +1599,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def disable_agent(self, agent_name: str, **kwargs: Any) -> None:
+    async def disable(self, agent_name: str, **kwargs: Any) -> None:
         """Disable an agent.
 
         Disables the specified agent, preventing it from accepting new sessions or processing requests.
@@ -1626,7 +1626,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_agents_disable_agent_request(
+        _request = build_agents_disable_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
             headers=_headers,

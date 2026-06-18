@@ -251,7 +251,7 @@ namespace azure.ai.projects.aio.operations
             ) -> DeleteAgentVersionResponse: ...
 
         @distributed_trace_async
-        async def disable_agent(
+        async def disable(
                 self, 
                 agent_name: str, 
                 **kwargs: Any
@@ -278,7 +278,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
-        async def enable_agent(
+        async def enable(
                 self, 
                 agent_name: str, 
                 **kwargs: Any
@@ -9297,7 +9297,7 @@ namespace azure.ai.projects.operations
             ) -> DeleteAgentVersionResponse: ...
 
         @distributed_trace
-        def disable_agent(
+        def disable(
                 self, 
                 agent_name: str, 
                 **kwargs: Any
@@ -9324,7 +9324,7 @@ namespace azure.ai.projects.operations
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
-        def enable_agent(
+        def enable(
                 self, 
                 agent_name: str, 
                 **kwargs: Any

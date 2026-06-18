@@ -368,7 +368,7 @@ def build_agents_download_code_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_enable_agent_request(agent_name: str, **kwargs: Any) -> HttpRequest:
+def build_agents_enable_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -386,7 +386,7 @@ def build_agents_enable_agent_request(agent_name: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_agents_disable_agent_request(agent_name: str, **kwargs: Any) -> HttpRequest:
+def build_agents_disable_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
@@ -4996,7 +4996,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def enable_agent(self, agent_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def enable(self, agent_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Enable an agent.
 
         Enables the specified agent, allowing it to accept new sessions and process requests. This
@@ -5022,7 +5022,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_agents_enable_agent_request(
+        _request = build_agents_enable_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5052,7 +5052,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def disable_agent(self, agent_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    def disable(self, agent_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Disable an agent.
 
         Disables the specified agent, preventing it from accepting new sessions or processing requests.
@@ -5079,7 +5079,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_agents_disable_agent_request(
+        _request = build_agents_disable_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
             headers=_headers,
