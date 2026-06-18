@@ -333,7 +333,7 @@ rationale is at <https://aka.ms/azsdk/blog/multi-tenant-guidance>.
 
 ### `WorkloadIdentityCredential` can crash DAC construction
 PRs [#28536](https://github.com/Azure/azure-sdk-for-python/pull/28536) (2023-02),
-[#29728](https://github.com/Azure/azure-sdk-for-python/pull/29728) (2023)
+[#29728](https://github.com/Azure/azure-sdk-for-python/pull/29728) (2023-04)
 
 `WorkloadIdentityCredential.__init__` raises `ValueError` if its required env vars
 (`AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, `AZURE_FEDERATED_TOKEN_FILE`) are missing — which would
@@ -507,7 +507,7 @@ tokens silently landed in the non-CAE cache and never hit on lookup. A pure foll
 from the #30777 dual-cache design.
 
 ### `FailedDACCredential` placeholder for credentials that fail at construction
-PR [#42346](https://github.com/Azure/azure-sdk-for-python/pull/42346) (2025)
+PR [#42346](https://github.com/Azure/azure-sdk-for-python/pull/42346) (2025-08)
 
 When a credential (e.g. `WorkloadIdentityCredential`) raises during construction inside DAC,
 DAC substitutes a `FailedDACCredential` placeholder that raises `CredentialUnavailableError` on
