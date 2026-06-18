@@ -31,10 +31,11 @@ set -uo pipefail
 
 # ── Config ────────────────────────────────────────────────────────────────────
 
-# Point at your own hosted deployment. After `azd ai agent run`, the
-# endpoint is printed in the deploy output (…/agents/<name>/endpoint/protocols),
-# or read it from your azd env (AGENT_*_INVOCATIONS_ENDPOINT). Override via
-# the ENDPOINT env var instead of editing this default.
+# Point at your own hosted deployment. After `azd deploy`, this script
+# AUTO-RESOLVES the endpoint from your azd env
+# (AGENT_DURABLE_RESEARCH_AGENT_INVOCATIONS_ENDPOINT) when run from the demo
+# directory — no manual setup needed. To override (e.g. a different project or
+# a local server), export the ENDPOINT env var instead of editing this default.
 ENDPOINT="${ENDPOINT:-https://<account>.services.ai.azure.com/api/projects/<project>/agents/durable-research-agent/endpoint/protocols}"
 API_VERSION="v1"
 SESSION_FILE=".demo-session"
@@ -69,12 +70,37 @@ save_session() {
 }
 
 ensure_token() {
+    ensure_endpoint
     if [[ -z "${TOKEN:-}" ]]; then
         TOKEN=$(az account get-access-token --resource https://ai.azure.com --query accessToken -o tsv 2>/dev/null)
         if [[ -z "$TOKEN" ]]; then
             echo -e "${RED}Failed to get Azure token. Run 'az login' first.${RESET}" >&2
             exit 1
         fi
+    fi
+}
+
+# Resolve ENDPOINT. If the caller did not override it via the ENDPOINT env
+# var (so it is still the <account>/<project> placeholder), auto-resolve it
+# from the azd environment that `azd deploy` populates. The azd value
+# AGENT_DURABLE_RESEARCH_AGENT_INVOCATIONS_ENDPOINT looks like
+#   .../agents/<name>/endpoint/protocols/invocations?api-version=...
+# and this script appends `/invocations?api-version=$API_VERSION` itself, so
+# we strip the `/invocations?...` tail to recover the protocols base.
+ensure_endpoint() {
+    if [[ "$ENDPOINT" == *"<account>"* || "$ENDPOINT" == *"<project>"* ]]; then
+        local azd_inv
+        azd_inv="$(azd env get-value AGENT_DURABLE_RESEARCH_AGENT_INVOCATIONS_ENDPOINT 2>/dev/null || true)"
+        if [[ "$azd_inv" == http* ]]; then
+            ENDPOINT="${azd_inv%%/invocations*}"
+        fi
+    fi
+    if [[ "$ENDPOINT" == *"<account>"* || "$ENDPOINT" == *"<project>"* ]]; then
+        echo -e "${RED}ENDPOINT is not configured.${RESET}" >&2
+        echo -e "${DIM}Run this from the demo dir after 'azd deploy' (auto-resolves from the azd env)," >&2
+        echo -e "or set it explicitly, e.g.:${RESET}" >&2
+        echo -e "  export ENDPOINT=\"https://<account>.services.ai.azure.com/api/projects/<project>/agents/durable-research-agent/endpoint/protocols\"" >&2
+        exit 1
     fi
 }
 

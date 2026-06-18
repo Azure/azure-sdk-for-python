@@ -25,6 +25,21 @@ required.
 Only **durable** samples are included; the internal source-of-truth specs
 are intentionally omitted.
 
+## Latest refresh
+
+The bundled wheels carry the current durable + responses fixes:
+
+- **core** — steering fixes: `ctx.pending_input_count` now reflects the live
+  queued-input count (was always `0`); the steering drain transitions the
+  record `suspended→in_progress` so the steered turn runs on hosted (was
+  failing with "lease renewal is only supported for in_progress tasks");
+  plus write-serialization hardening (read-inside-lock, lock-held update
+  primitive, no blind writes). Validated end-to-end on a hosted deployment.
+- **responses** — durable stored streams are created under SSE keep-alive
+  (hosted responses no longer hang `in_progress`).
+- **invocations sample** — `durable-agent-demo` uses `gpt-4o`; `demo-client.sh`
+  auto-resolves the endpoint from your azd env after `azd deploy`.
+
 ## Install
 
 ```bash
@@ -33,9 +48,12 @@ pip install wheels/*.whl
 
 ## Run the crash → recover demo locally
 
-The hosted task API is currently returning 403, so durability is exercised
-**locally** — the task store + response store are file-backed, no hosted
-dependency. A ready-to-run, verified kit lives at
+The durable demos run end-to-end against a **hosted** Foundry deployment
+(`azd deploy` the sample, then drive it with `demo-client.sh` — the client
+auto-resolves the endpoint from your azd env). An equivalent **local**,
+file-backed kit (task store + response store on disk, no hosted dependency)
+is also provided for offline experimentation. A ready-to-run, verified kit
+lives at
 **[`azure-ai-agentserver-responses/samples/durable-responses-agent-demo/local/`](azure-ai-agentserver-responses/samples/durable-responses-agent-demo/local/README.md)**:
 
 ```bash

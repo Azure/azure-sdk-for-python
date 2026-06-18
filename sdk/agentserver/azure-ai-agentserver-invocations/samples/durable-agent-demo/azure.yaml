@@ -19,11 +19,11 @@ services:
             deployments:
                 - model:
                     format: OpenAI
-                    name: gpt-4.1-mini
-                    version: "2025-04-14"
-                  name: gpt-4.1-mini
+                    name: gpt-4o
+                    version: "2024-11-20"
+                  name: gpt-4o
                   sku:
-                    capacity: 1053
+                    capacity: 50
                     name: GlobalStandard
             startupCommand: python app.py
 infra:
