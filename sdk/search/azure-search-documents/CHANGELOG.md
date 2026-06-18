@@ -1,5 +1,20 @@
 # Release History
 
+## 12.1.0 (Unreleased)
+
+### Features Added
+
+- Added `azure.search.documents.models.DebugInfo` model for search debug information.
+- Added the following knowledge base activity record models for detailed retrieval activity tracking:
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseAzureBlobActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseAzureBlobActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedOneLakeActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedOneLakeActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseWebActivityArguments`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseWebActivityRecord`
+
 ## 12.0.0 (2026-04-01)
 
 ### Features Added
