@@ -2300,6 +2300,66 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         return self._live_stream(ctx)
 
+    async def _relay_durable_stream(self, wire_stream: EventStream) -> AsyncIterator[str]:
+        """Relay a durable response's per-response wire stream to the client.
+
+        Subscribes to ``wire_stream`` and yields each event as an encoded SSE
+        chunk. When SSE keep-alive is enabled, periodic keep-alive comments are
+        interleaved (via a shared queue) so the connection stays warm while the
+        durable body runs.
+
+        This relay is connection-scoped only: the durable body executes in its
+        own task, so a client / proxy disconnect that stops this relay does NOT
+        cancel the durable execution.
+
+        :param wire_stream: The per-response stream the durable body emits to.
+        :returns: Async iterator of encoded SSE strings.
+        :rtype: AsyncIterator[str]
+        """
+        if not self._runtime_options.sse_keep_alive_enabled:
+            try:
+                async for event in wire_stream.subscribe(after=None):
+                    yield encode_sse_any_event(event)
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # wire dropped; durable body continues
+            return
+
+        sentinel = object()
+        queue: asyncio.Queue[object] = asyncio.Queue()
+
+        async def _pump_events() -> None:
+            try:
+                async for event in wire_stream.subscribe(after=None):
+                    await queue.put(encode_sse_any_event(event))
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # wire dropped; durable body continues
+            finally:
+                await queue.put(sentinel)
+
+        async def _pump_keep_alive(interval: int) -> None:
+            try:
+                while True:
+                    await asyncio.sleep(interval)
+                    await queue.put(encode_keep_alive_comment())
+            except asyncio.CancelledError:
+                return
+
+        events_task = asyncio.create_task(_pump_events())
+        keep_alive_task = asyncio.create_task(
+            _pump_keep_alive(self._runtime_options.sse_keep_alive_interval_seconds)  # type: ignore[arg-type]
+        )
+        try:
+            while True:
+                item = await queue.get()
+                if item is sentinel:
+                    break
+                yield item  # type: ignore[misc]
+        finally:
+            # Connection-scoped relay — stopping it does not affect the durable
+            # body, which runs in its own task.
+            keep_alive_task.cancel()
+            events_task.cancel()
+
     async def _live_stream(self, ctx: _ExecutionContext) -> AsyncIterator[str]:
         """Drive the SSE streaming pipeline using the shared event pipeline.
 
@@ -2348,179 +2408,94 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         async def _finalize() -> None:
             await self._finalize_stream(ctx, state)
 
-        # --- Fast path: no keep-alive ---
-        if not self._runtime_options.sse_keep_alive_enabled:
-            if not ctx.store:
-                # Row 4 stream — no store, no durable task. Inline pipeline.
-                # (Spec 024 Phase 2) — pre-Phase-2 this branch also covered
-                # Row 3 stream via inline handler; that's now part of the
-                # unified durable+wire_stream path below.
-                _stream_completed = False
+        # Stored responses (background / durable) ALWAYS run via the durable
+        # task + per-response wire stream, regardless of SSE keep-alive. The
+        # durable body runs in its own task, independent of the client
+        # connection, so the response survives a client / proxy disconnect and
+        # stays recoverable.
+        #
+        # (Spec 024 Phase 2) Unified stream-path for ALL ``store=True`` streams:
+        # Row 1 (durable_bg+bg+store), Row 2 (non-durable_bg+bg+store) and
+        # Row 3 (fg+store) all run the handler inside the durable task body and
+        # subscribe the wire iterator to the per-response stream via the
+        # registry. Disposition is selected per row (re-invoke for Row 1,
+        # mark-failed for Row 2/3). ``_durable_stream_fallback`` is the
+        # in-process fallback if the durable start cannot proceed (e.g. a test
+        # client without a TaskManager).
+        if ctx.store:
+            # Bind the per-response stream up front. The registry returns the
+            # same instance for the same id, so the durable body's
+            # ``_register_bg_execution`` gets back this exact stream — every
+            # emit fans out to the wire iterator below.
+            wire_stream = await streams.get_or_create(ctx.response_id)
+
+            async def _durable_stream_fallback() -> None:
+                # In-process fallback if ``_start_durable_background`` cannot
+                # start a durable task. Runs the same ``_process_handler_events``
+                # pipeline as the durable body so events still reach the
+                # per-response wire stream this connection subscribes to.
                 try:
-                    async for event in self._process_handler_events(ctx, state, handler_iterator):
-                        yield encode_sse_any_event(event)
-                    _stream_completed = True
-                    # Persist-then-yield: resolve the buffered terminal event
-                    if state.pending_terminal is not None:
-                        record = state.bg_record or _make_ephemeral_record(ctx, state)
-                        resolved = await self._persist_and_resolve_terminal(ctx, state, record)
-                        yield encode_sse_any_event(resolved)
-                finally:
-                    # B17: If the stream did not complete naturally (e.g. client
-                    # disconnect → CancelledError), mark it as interrupted.
-                    if not _stream_completed:
-                        state.stream_interrupted = True
-                    # B17: When store=true and stream was interrupted by client
-                    # disconnect, we must persist the cancelled response. Use
-                    # asyncio.shield so the finalize coroutine survives task
-                    # cancellation (Hypercorn cancels the generator task on
-                    # client disconnect).
-                    if not _stream_completed and ctx.store:
-                        try:
-                            await asyncio.shield(_finalize())
-                        except asyncio.CancelledError:
-                            pass  # finalize continues in shielded task
-                    else:
-                        await _finalize()
-                return
-
-            # Background+stream without keep-alive: run the handler as an independent
-            # asyncio.Task so that finalization (including subject.close()) is
-            # guaranteed to run even when the original SSE connection is dropped before
-            # all events are delivered.  Without this, _live_stream can be abandoned
-            # mid-iteration by Starlette (the async-generator finalizer may not fire
-            # promptly), leaving GET-replay subscribers blocked on await forever.
-            #
-            # (Spec 024 Phase 2) Unified stream-path for ALL store=True
-            # streams. Row 1 (durable_bg+bg+store), Row 2 (non-durable_bg+bg+store),
-            # and Row 3 (fg+store) all run the handler inside the durable
-            # task body; the wire iterator subscribes to the per-response
-            # stream via the registry. Disposition is selected per row
-            # (re-invoke for Row 1, mark-failed for Row 2/3). The
-            # downstream `_durable_stream_fallback` is the in-process
-            # fallback if the durable start can't proceed (e.g. test
-            # client without a TaskManager).
-            if ctx.store:
-                # Bind the per-response stream up front. The registry guarantees
-                # the same instance for the same id, so the durable body's
-                # ``_register_bg_execution`` (and any future caller) gets back
-                # this exact stream — every emit fans out to the wire iterator
-                # below.
-                wire_stream = await streams.get_or_create(ctx.response_id)
-
-                async def _durable_stream_fallback() -> None:
-                    # Non-durable fallback runner if _start_durable_background's
-                    # internal try/except falls through. Uses the same
-                    # _process_handler_events pipeline as the durable body so
-                    # events still reach the per-response stream the live wire
-                    # iterator on this side is subscribed to.
-                    try:
-                        async for _event in self._process_handler_events(ctx, state, handler_iterator):
-                            pass
-                        if state.pending_terminal is not None:
-                            r = state.bg_record or _make_ephemeral_record(ctx, state)
-                            await self._persist_and_resolve_terminal(ctx, state, r)
-                            # ``_persist_and_resolve_terminal`` emits the
-                            # resolved terminal to the per-response stream
-                            # (the same instance as ``wire_stream`` by
-                            # registry identity) when ``ctx.background
-                            # and ctx.store``, so we do not re-emit here.
-                    finally:
-                        await self._finalize_stream(ctx, state)
-                        # The wire stream may already be closed via
-                        # state.bg_record (record.subject is wire_stream).
-                        # ``_safe_close`` is idempotent.
-                        await self._safe_close(wire_stream)
-
-                # Construct a minimal record only for _start_durable_background's
-                # parameter shape. This record is NOT added to runtime_state —
-                # the durable body (or fallback) will create the canonical
-                # record via _register_bg_execution.
-                start_record = ResponseExecution(
-                    response_id=ctx.response_id,
-                    mode_flags=ResponseModeFlags(stream=True, store=True, background=ctx.background),
-                    status="in_progress",
-                    input_items=deepcopy(ctx.input_items),
-                    previous_response_id=ctx.previous_response_id,
-                    cancel_signal=ctx.cancellation_signal,
-                    response_context=ctx.context,
-                    agent_session_id=ctx.agent_session_id,
-                    conversation_id=ctx.conversation_id,
-                    chat_isolation_key=ctx.chat_isolation_key,
-                    initial_model=ctx.model,
-                    initial_agent_reference=ctx.agent_reference,
-                )
-                start_record.subject = wire_stream
-
-                await self._start_durable_background(
-                    ctx,
-                    start_record,
-                    _durable_stream_fallback,
-                    disposition=_unified_disposition,
-                )
-
-                try:
-                    async for event in wire_stream.subscribe(after=None):
-                        yield encode_sse_any_event(event)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    pass  # wire dropped; durable body continues
-                return
-
-            _SENTINEL_BG = object()
-            bg_queue: asyncio.Queue[object] = asyncio.Queue()
-
-            async def _bg_producer_inner() -> None:
-                try:
-                    async for event in self._process_handler_events(ctx, state, handler_iterator):
-                        await bg_queue.put(encode_sse_any_event(event))
-                    # Persist-then-yield: resolve the buffered terminal event
-                    if state.pending_terminal is not None:
-                        record = state.bg_record or _make_ephemeral_record(ctx, state)
-                        resolved = await self._persist_and_resolve_terminal(ctx, state, record)
-                        await bg_queue.put(encode_sse_any_event(resolved))
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    logger.error(
-                        "Background stream producer failed (response_id=%s)",
-                        ctx.response_id,
-                        exc_info=exc,
-                    )
-                    state.captured_error = exc
-                finally:
-                    # Always finalize (includes subject.close()) — this runs even if
-                    # the original POST SSE connection was dropped and _live_stream is
-                    # never properly closed by Starlette.
-                    await _finalize()
-                    await bg_queue.put(_SENTINEL_BG)
-
-            async def _bg_producer() -> None:
-                try:
-                    #: Shield the inner producer via asyncio.shield so
-                    # that Starlette's anyio cancel-scope cancellation (triggered
-                    # by client disconnect) does NOT propagate into the handler.
-                    # asyncio.shield() creates a new inner Task whose cancellation
-                    # is independent of the outer task.
-                    await asyncio.shield(_bg_producer_inner())
-                except asyncio.CancelledError:
-                    pass  # outer task cancelled by scope; inner task continues
-
-            bg_task = asyncio.create_task(_bg_producer())
-            try:
-                while True:
-                    item = await bg_queue.get()
-                    if item is _SENTINEL_BG:
-                        break
-                    yield item  # type: ignore[misc]
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass  # SSE connection dropped; bg_task continues independently
-            finally:
-                # Wait for the handler task so _finalize() has run before we exit.
-                # Do NOT cancel it — background+stream must reach a terminal state
-                # regardless of client connectivity.
-                if not bg_task.done():
-                    try:
-                        await bg_task
-                    except Exception:  # pylint: disable=broad-exception-caught
+                    async for _event in self._process_handler_events(ctx, state, handler_iterator):
                         pass
+                    if state.pending_terminal is not None:
+                        r = state.bg_record or _make_ephemeral_record(ctx, state)
+                        await self._persist_and_resolve_terminal(ctx, state, r)
+                finally:
+                    await self._finalize_stream(ctx, state)
+                    await self._safe_close(wire_stream)
+
+            # Minimal record only for ``_start_durable_background``'s parameter
+            # shape. It is NOT added to runtime_state — the durable body (or the
+            # fallback) creates the canonical record via ``_register_bg_execution``.
+            start_record = ResponseExecution(
+                response_id=ctx.response_id,
+                mode_flags=ResponseModeFlags(stream=True, store=True, background=ctx.background),
+                status="in_progress",
+                input_items=deepcopy(ctx.input_items),
+                previous_response_id=ctx.previous_response_id,
+                cancel_signal=ctx.cancellation_signal,
+                response_context=ctx.context,
+                agent_session_id=ctx.agent_session_id,
+                conversation_id=ctx.conversation_id,
+                chat_isolation_key=ctx.chat_isolation_key,
+                initial_model=ctx.model,
+                initial_agent_reference=ctx.agent_reference,
+            )
+            start_record.subject = wire_stream
+
+            await self._start_durable_background(
+                ctx,
+                start_record,
+                _durable_stream_fallback,
+                disposition=_unified_disposition,
+            )
+
+            # Relay the durable wire stream to this client, interleaving
+            # keep-alive comments when enabled. The durable body runs in its own
+            # task — dropping this client never cancels it.
+            async for chunk in self._relay_durable_stream(wire_stream):
+                yield chunk
+            return
+
+        # --- Ephemeral (non-stored) responses: no durable task ---
+        if not self._runtime_options.sse_keep_alive_enabled:
+            # Row 4 stream — no store, no durable task. Inline pipeline.
+            _stream_completed = False
+            try:
+                async for event in self._process_handler_events(ctx, state, handler_iterator):
+                    yield encode_sse_any_event(event)
+                _stream_completed = True
+                # Persist-then-yield: resolve the buffered terminal event.
+                if state.pending_terminal is not None:
+                    record = state.bg_record or _make_ephemeral_record(ctx, state)
+                    resolved = await self._persist_and_resolve_terminal(ctx, state, record)
+                    yield encode_sse_any_event(resolved)
+            finally:
+                # If the stream did not complete naturally (e.g. client
+                # disconnect -> CancelledError), mark it interrupted.
+                if not _stream_completed:
+                    state.stream_interrupted = True
+                await _finalize()
             return
 
         # --- Keep-alive path: merge handler events with periodic keep-alive comments ---

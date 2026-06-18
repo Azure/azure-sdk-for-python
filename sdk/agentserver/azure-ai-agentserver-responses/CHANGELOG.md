@@ -75,6 +75,19 @@
   Copilot SDK, LangGraph) and durable streaming / steering / multi-turn
   patterns.
 
+### Bugs Fixed
+
+- **Durable background streaming responses now engage durability even when SSE
+  keep-alive is enabled.** Previously the durable task was created only on the
+  no-keep-alive streaming path, so when SSE keep-alive was enabled (e.g. the
+  hosted platform sets `SSE_KEEPALIVE_INTERVAL`), a `store=true`,
+  `background=true`, `stream=true` response ran the handler inline on the
+  request connection and never created a durable task. Such responses could
+  hang `in_progress` on a client/proxy disconnect and were not recoverable.
+  Stored responses now always run via the durable task; keep-alive comments are
+  interleaved into the wire stream while the durable body runs independently of
+  the client connection.
+
 ## 1.0.0b5 (2026-04-22)
 
 ### Features Added

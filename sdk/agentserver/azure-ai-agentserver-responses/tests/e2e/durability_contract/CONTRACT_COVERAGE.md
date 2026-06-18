@@ -29,6 +29,7 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 | Row 1 Path B (stream=T): pre-crash events survive in `GET ?stream=true&starting_after=0` | `test_streaming_recovery_continuity.py::test_pre_crash_deltas_survive_recovery` | event sequence; event content; seq monotonicity |
 | Row 1 Path C: next lifetime re-invokes with `entry_mode="recovered"` | `test_row_1_path_c.py::test_row_1_path_c` (stream=F/T) | response.status |
 | Row 1 Path C (stream=T): pre-crash events survive cross-attempt assembly | `test_streaming_recovery_continuity.py` | event content; seq monotonicity |
+| Row 1 Path C with SSE keep-alive enabled: a durable task MUST still be created and recovery MUST succeed regardless of `SSE_KEEPALIVE_INTERVAL` (the hosted condition); the recovered lifetime produces the terminal | `test_row_1_keep_alive.py::test_row_1_keep_alive_path_c` (stream=F/T) | response.status; response.output content (recovered `L1_done`) |
 | Row 2 Path A: handler completes within grace | `test_row_2_path_a.py::test_row_2_path_a` (stream=F/T) | response.status |
 | Row 2 Path B: in-process shutdown loop marks failed with `code=server_error`; respond to waiting clients | `test_row_2_path_b.py::test_row_2_path_b` (stream=F/T) | response.status; response.error.code |
 | Row 2 Path C: next-lifetime mark-failed with `code=server_error` | `test_row_2_path_c.py::test_row_2_path_c` (stream=F/T) | response.status; response.error.code |
