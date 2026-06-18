@@ -21,7 +21,6 @@ from urllib.parse import (
 from wsgiref.handlers import format_date_time
 
 from azure.core.exceptions import AzureError, ServiceRequestError, ServiceResponseError
-from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     HeadersPolicy,
@@ -30,7 +29,7 @@ from azure.core.pipeline.policies import (
     RequestHistory,
     SansIOHTTPPolicy,
 )
-from azure.core.pipeline.transport import (
+from azure.core.pipeline.transport import (  # pylint: disable=no-legacy-azure-core-http-response-import
     HttpRequest as LegacyHttpRequest,
     HttpResponse as LegacyHttpResponse,
 )
@@ -855,7 +854,7 @@ class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         return True
 
 
-class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
+class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
     """A simple policy that cleans up sensitive headers
 
     :keyword list[str] blocked_redirect_headers: The headers to clean up when redirecting to another domain.
@@ -863,7 +862,10 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTP
     """
 
     DEFAULT_SENSITIVE_HEADERS = {
-        "Authorization", "x-ms-authorization-auxiliary", "x-ms-copy-source", "x-ms-copy-source-authorization",
+        "Authorization",
+        "x-ms-authorization-auxiliary",
+        "x-ms-copy-source",
+        "x-ms-copy-source-authorization",
         "x-ms-rename-source"
     }
 
@@ -873,7 +875,7 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTP
         self,  # pylint: disable=unused-argument
         *,
         blocked_redirect_headers: Optional[List[str]] = None,
-        blocked_query_params: Optional[List[str]] = None,
+        blocked_redirect_query_params: Optional[List[str]] = None,
         disable_redirect_cleanup: bool = False,
         **kwargs: Any,
     ) -> None:
@@ -885,11 +887,11 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTP
         )
         self._blocked_query_params = (
             StorageSensitiveHeaderCleanupPolicy.DEFAULT_SENSITIVE_QUERY_PARAMS
-            if blocked_query_params is None
-            else blocked_query_params
+            if blocked_redirect_query_params is None
+            else blocked_redirect_query_params
         )
 
-    def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
+    def on_request(self, request: "PipelineRequest") -> None:
         """This is executed before sending the request to the next policy.
 
         :param request: The PipelineRequest object.
@@ -903,9 +905,9 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTP
             # Clean up request query parameters
             parsed = urlparse(request.http_request.url)
             kept = [
-                f"{k}={v}"
-                for k, v in parse_qsl(parsed.query, keep_blank_values=True)
-                if k and k not in self._blocked_query_params
+                pair
+                for pair in parsed.query.split("&")
+                if pair and pair.split("=", 1)[0] not in self._blocked_query_params
             ]
             request.http_request.url = urlunparse(parsed._replace(query="&".join(kept)))
 
