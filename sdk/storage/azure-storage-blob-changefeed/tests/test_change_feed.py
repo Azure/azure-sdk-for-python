@@ -8,6 +8,8 @@ import json
 from datetime import datetime, timedelta
 from math import ceil
 from time import sleep
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 
@@ -23,10 +25,79 @@ from settings.testcase import ChangeFeedPreparer
 # Then uncomment this import and comment out the other.
 # from changefeed import ChangeFeedClient
 from azure.storage.blob.changefeed import ChangeFeedClient
+from azure.storage.blob.changefeed._models import ChangeFeed
+
+
+def _container_client_returning(blob_names):
+        """A mock ContainerClient whose list_blobs() yields blobs with the given names."""
+        client = Mock()
+        client.list_blobs.return_value = [SimpleNamespace(name=name) for name in blob_names]
+        return client
 
 
 @pytest.mark.playback_test_only
 class TestStorageChangeFeed(StorageRecordedTestCase):
+
+    @pytest.mark.parametrize(
+        "segment_path",
+        [
+            "idx/segments/2026/02/20/0000/meta.json",
+            "idx/segments/2022/11/28/2300/meta.json",
+            "idx/segments/1601/01/01/0000/meta.json",
+        ],
+    )
+    def test_valid_segment_path_is_accepted(self, segment_path):
+        assert ChangeFeed._is_valid_segment_path(segment_path) is True
+
+    @pytest.mark.parametrize(
+        "segment_path",
+        [
+            "idx/segments/2026/02/20",        # day-level directory marker (the reported crash)
+            "idx/segments/2026/02/20/0000",   # minute-level directory marker
+            "idx/segments/2026/02",           # month-level directory marker
+            "idx/segments/2026",              # year-level directory marker
+            "idx/segments",                   # prefix only
+            "idx/segments/2026/02/20/0000/",  # trailing slash -> empty file token
+            "idx/segments/abcd/02/20/0000/meta.json",  # non-numeric year
+        ],
+    )
+    def test_directory_marker_or_malformed_path_is_rejected(self, segment_path):
+        assert ChangeFeed._is_valid_segment_path(segment_path) is False
+
+    def test_parse_datetime_from_valid_segment_path(self):
+        assert ChangeFeed._parse_datetime_from_segment_path(
+            "idx/segments/2026/02/20/0000/meta.json"
+        ) == datetime(2026, 2, 20, 0)
+
+    def test_get_segment_paths_skips_directory_markers(self):
+        blob_names = [
+            "idx/segments/2026/02/20",                 # day-level marker
+            "idx/segments/2026/02/20/0000",            # minute-level marker
+            "idx/segments/2026/02/20/0000/meta.json",  # real segment
+            "idx/segments/2026/02/20/0100/meta.json",  # real segment
+        ]
+        change_feed = ChangeFeed.__new__(ChangeFeed)
+        change_feed.client = _container_client_returning(blob_names)
+        change_feed.end_time = None
+
+        results = list(change_feed._get_segment_paths(start_year=""))
+
+        # The generator yields a trailing None sentinel to signal "no more segments".
+        assert results[-1] is None
+        yielded_segments = [path for path in results if path is not None]
+        assert yielded_segments == [
+            "idx/segments/2026/02/20/0000/meta.json",
+            "idx/segments/2026/02/20/0100/meta.json",
+        ]
+
+    def test_get_segment_paths_does_not_raise_on_directory_markers(self):
+        blob_names = ["idx/segments/2026/02/20", "idx/segments/2026/02/20/0000/meta.json"]
+        change_feed = ChangeFeed.__new__(ChangeFeed)
+        change_feed.client = _container_client_returning(blob_names)
+        change_feed.end_time = None
+
+        yielded_segments = [path for path in change_feed._get_segment_paths(start_year="") if path]
+        assert yielded_segments == ["idx/segments/2026/02/20/0000/meta.json"]
 
     # --Test cases for change feed -----------------------------------------
     @ChangeFeedPreparer()
