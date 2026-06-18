@@ -812,9 +812,14 @@ class Task(Generic[Input, Output]):
                     ),
                 )
                 manager._note_lease_refreshed(task_id)  # pylint: disable=protected-access
-                # Signal the running task's cancel event so it can short-circuit
+                # Signal the running task's cancel event so it can short-circuit.
+                # Spec 031 / FR-001a + SOT §13 ordering invariant: record the
+                # live pending count BEFORE setting cancel, so a handler that
+                # observes ``ctx.cancel.is_set()`` already sees
+                # ``ctx.pending_input_count >= 1``.
                 active = manager._active_tasks.get(task_id)  # pylint: disable=protected-access  # noqa: SLF001
                 if active and hasattr(active, "context") and active.context is not None:
+                    active._pending_input_count = len(pending)  # pylint: disable=protected-access  # noqa: SLF001
                     active.context.cancel.set()
                 return
             except _HostedConflict as exc:

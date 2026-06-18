@@ -695,7 +695,16 @@ On a steering-driven re-entry, `TaskContext` exposes:
 - `ctx.pending_input_count: int` — live count of currently queued
   steering inputs. Reads as 0 for non-steerable chains. Useful for
   "I am three turns behind, I should short-circuit even harder"
-  decisions.
+  decisions. It is derived from the **in-process observed** steering
+  state (the property is synchronous — it does NOT issue a store read
+  per access), and is **failure-tolerant** (any compute failure reads
+  as 0). It is recorded *before* `ctx.cancel` is set (see §13 ordering
+  invariant) by both the same-process enqueue and the cross-process
+  steering poll, and is decremented as the drain consumes inputs, so a
+  handler that observes `ctx.cancel.is_set()` for a steering cause
+  already sees `pending_input_count >= 1`. It must be backed by a
+  settable runtime field (historically it was read from an attribute
+  that was never storable, so it was stuck at 0).
 
 #### Force delete
 
@@ -1511,6 +1520,13 @@ response. `delete()` is the only operation that MUST NOT carry
 `if_match` — deletion is intentionally unconditional and tolerates
 a concurrent winner.
 
+**No blind writes.** This applies to *every* PATCH-issuing site,
+including those that hold the per-task write lock and call the
+provider directly to avoid re-entrant lock acquisition (e.g. the
+queued-steering-cancel path): such sites MUST go through the
+lock-held update helper that selects `If-Match` from the tracked
+etag, never a bare `provider.update` with no `if_match`.
+
 The service-returned `etag` value is passed verbatim as `If-Match`
 on the next PATCH. The framework does NOT strip surrounding quotes,
 normalize whitespace, or otherwise rewrite it.
@@ -1529,6 +1545,19 @@ The framework MUST serialize these writes through a **per-task
 asyncio lock** held for the read-state + compute-PATCH + apply
 cycle. Reads (e.g., `Task.get(task_id)`) do NOT take this lock —
 they're snapshot operations that don't move the etag.
+
+The read MUST happen **inside** the lock for any read-modify-write
+sequence (steering drain, queued-steering-cancel, etc.), so the
+record read and the PATCH are atomic with respect to other
+in-process writers (notably the lease-renewal heartbeat). A site
+that reads the record (or pins an etag) *before* acquiring the lock
+can have its etag invalidated by the heartbeat between the read and
+the write, which under contention starves the retry budget. Because
+the per-task lock is a **non-reentrant** `asyncio.Lock`, the
+framework provides two helpers: a lock-acquiring update (for callers
+that do not hold the lock) and a lock-held update (for callers that
+already hold it, e.g. the drain); both select `If-Match` from the
+tracked etag and refresh it on success.
 
 Lock lifecycle:
 
