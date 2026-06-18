@@ -9,8 +9,8 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2025_01_01_preview.models import CommandJob as RestCommandJob
-from azure.ai.ml._restclient.v2025_01_01_preview.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import CommandJob as RestCommandJob
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._utils.utils import map_single_brackets_and_warn
 from azure.ai.ml.constants import JobType
@@ -175,8 +175,11 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             limits=self.limits._to_rest_object() if self.limits else None,
             services=JobServiceBase._to_rest_job_services(self.services),
             queue_settings=self.queue_settings._to_rest_object() if self.queue_settings else None,
-            parent_job_name=self.parent_job_name,
         )
+        # parentJobName is part of the 2025-01-01-preview wire contract but is not a constructor
+        # field on the shared arm_ml_service CommandJob model, so set it on the wire directly.
+        if self.parent_job_name is not None:
+            properties["parentJobName"] = self.parent_job_name
         result = JobBase(properties=properties)
         result.name = self.name
         return result
@@ -218,7 +221,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
             queue_settings=QueueSettings._from_rest_object(rest_command_job.queue_settings),
-            parent_job_name=rest_command_job.parent_job_name,
+            parent_job_name=rest_command_job.get("parentJobName"),
         )
         # Handle special case of local job
         if (
