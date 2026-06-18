@@ -872,7 +872,7 @@ class StorageSensitiveHeaderCleanupPolicy(SansIOHTTPPolicy):
         "x-ms-authorization-auxiliary",
         "x-ms-copy-source",
         "x-ms-copy-source-authorization",
-        "x-ms-rename-source"
+        "x-ms-rename-source",
     }
 
     DEFAULT_SENSITIVE_QUERY_PARAMS = {"sig"}
