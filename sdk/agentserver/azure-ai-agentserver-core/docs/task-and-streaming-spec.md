@@ -1603,6 +1603,19 @@ tick is computed dynamically from the per-task last-refresh time
 (NOT a fixed cadence), so a PATCH within the last `interval`
 seconds fully shadows the next heartbeat. See §56.
 
+**Lease renewal requires `in_progress`.** The task store accepts the
+lease-extension trio as a *renewal* only when the record is already
+`in_progress`, and as a *claim* only when the same PATCH transitions
+the record INTO `in_progress` (e.g. reclaim, or the steering-drain
+Phase-1 PATCH per §52). A PATCH that carries the lease trio against a
+`suspended`/`pending`/terminal record WITHOUT a status flip to
+`in_progress` is rejected ("lease renewal is only supported for
+in_progress tasks"). Therefore any framework path that writes to a
+record left `suspended` by a prior turn (notably the steering drain)
+MUST set `status='in_progress'` in the same PATCH. The local provider
+enforces this same rule so the conflict is reproducible without a
+hosted deployment.
+
 ### §26. Recovery — internal lifecycle, no public HTTP endpoint
 
 There is no HTTP route for resume. Resume is initiated from
@@ -3111,8 +3124,18 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
  11. steering['cancel_requested']  = len(pending) > 0     # more pending => keep advisory
  12. payload['_steering']          = steering
  13. payload['_turn_started_at']   = utc_now_iso()        # fresh turn-start boundary
- 14. PATCH(task_id, payload=payload, attachments=attachments_patch,
-        lease piggyback, if_match=etag)
+ 14. PATCH(task_id, status='in_progress', payload=payload,
+        attachments=attachments_patch, lease piggyback, if_match=etag)
+
+     [NB: status MUST be set to 'in_progress' in this PATCH. The turn-end
+      boundary that triggered the drain already wrote status='suspended'
+      (multi-turn return/raise => suspended; see §12). The drain starts a
+      NEW turn, so it reclaims the record suspended->in_progress. This is
+      ALSO required for correctness of the lease piggyback: the task store
+      rejects a lease *renewal* on a non-in_progress task ("lease renewal is
+      only supported for in_progress tasks") but ACCEPTS lease params as part
+      of a suspended->in_progress *claim*. Omitting the status flip makes the
+      Phase-1 PATCH 409 and the steered turn never runs.]
 
      [NB: Phase 1 does NOT set payload['input'] or write a ref/attachment
       for active_input. Only the in-memory ctx receives the value (Phase 2).
