@@ -231,8 +231,12 @@ async def handler(
     """
     topic = (await context.get_input_text()) or ""
 
-    # Demo-only crash trigger.
-    if DEMO_MODE and topic.strip().lower() in ("crash", "kill", "💥"):
+    # Demo-only crash trigger. Guarded by ``not context.is_recovery`` so the
+    # crash fires exactly once: on the recovered re-invocation the same
+    # (durably re-delivered) "crash" input is ignored and the handler resumes
+    # to completion — i.e. a crash-recovery demo that crashes once and then
+    # recovers, instead of crash-looping forever.
+    if DEMO_MODE and not context.is_recovery and topic.strip().lower() in ("crash", "kill", "💥"):
         logger.critical("CRASH triggered via input=%r — exiting in 300ms", topic)
 
         async def _crash() -> None:
