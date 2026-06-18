@@ -588,33 +588,6 @@ def parse_simple_yaml(text: str) -> dict[str, str]:
     return result
 
 
-def package_version_major_minor(package_version: str) -> str:
-    match = re.match(r"^(\d+)(?:\.(\d+))?", package_version.strip())
-    if not match:
-        raise RuntimeError(
-            f"ERROR: could not derive major/minor version from package version '{package_version}'."
-        )
-    major = match.group(1)
-    minor = match.group(2) or "0"
-    return f"{major}.{minor}"
-
-
-def parse_package_work_item_id(output: str) -> int | None:
-    try:
-        parsed = json.loads(output)
-        if isinstance(parsed, dict):
-            value = parsed.get("work_item_id") or parsed.get("workItemId")
-            if isinstance(value, int):
-                return value
-            if isinstance(value, str) and value.isdigit():
-                return int(value)
-    except json.JSONDecodeError:
-        pass
-
-    match = re.search(r"Work Item ID:\s*(\d+)", output)
-    return int(match.group(1)) if match else None
-
-
 def find_azsdk_executable() -> str | None:
     azsdk_from_path = shutil.which("azsdk")
     if azsdk_from_path:
@@ -646,60 +619,30 @@ def resolve_azsdk_executable() -> str:
     )
 
 
-def ensure_azsdk_find_work_item_available() -> None:
+def ensure_azsdk_work_item_commands_available() -> None:
     azsdk_executable = resolve_azsdk_executable()
-    result = run(
-        [azsdk_executable, "package", "find-work-item", "--help"],
-        check=False,
-        capture=True,
-    )
-    if result.status == 0:
-        return
-
-    details = combined_command_output(result)
-    raise RuntimeError(
-        "ERROR: azsdk CLI is installed, but the 'package find-work-item' command is unavailable. "
-        f"Update it by running 'pwsh {AZSDK_INSTALL_SCRIPT}'."
-        + (f"\n{details}" if details else "")
-    )
-
-
-def package_work_item_id(package_name: str, package_version: str) -> int | str:
-    package_version_major_minor_value = package_version_major_minor(package_version)
-    result = run(
-        [
-            resolve_azsdk_executable(),
-            "package",
-            "find-work-item",
-            "--package-name",
-            package_name,
-            "--package-version",
-            package_version_major_minor_value,
-            "--language",
-            "Python",
-        ],
-        check=False,
-        capture=True,
-    )
-    output = combined_command_output(result)
-
-    if result.status != 0:
-        log_warning(
-            f"WARNING: failed to resolve package work item ID for {package_name} {package_version_major_minor_value}. "
-            "PR body sync metadata will set packageWorkItemId to ERROR."
-            + (f"\n{output}" if output else "")
+    missing_commands: list[str] = []
+    command_details: list[str] = []
+    for command_name in ["get-work-item", "update-work-item"]:
+        result = run(
+            [azsdk_executable, "package", command_name, "--help"],
+            check=False,
+            capture=True,
         )
-        return "ERROR"
+        if result.status == 0:
+            continue
 
-    work_item_id = parse_package_work_item_id(result.stdout)
-    if work_item_id is None:
-        log_warning(
-            f"WARNING: azsdk package find-work-item completed for {package_name} {package_version_major_minor_value} "
-            "but did not return a work item ID. PR body sync metadata will set packageWorkItemId to NONE."
-            + (f"\n{output}" if output else "")
+        missing_commands.append(f"package {command_name}")
+        details = combined_command_output(result)
+        if details:
+            command_details.append(f"{command_name}:\n{details}")
+
+    if missing_commands:
+        raise RuntimeError(
+            "ERROR: azsdk CLI is installed, but the following commands are unavailable: "
+            f"{', '.join(missing_commands)}. Update it by running 'pwsh {AZSDK_INSTALL_SCRIPT}'."
+            + (f"\n{chr(10).join(command_details)}" if command_details else "")
         )
-        return "NONE"
-    return work_item_id
 
 
 def metadata_sha_or_none(metadata_bytes: bytes | None) -> str | None:
@@ -943,13 +886,19 @@ def update_package_pending_api_reviews(
         )
 
 
-def sync_package_pending_api_review_pr_url(package_name: str, pr_url: str) -> None:
+def update_package_pending_reviews(
+    package_work_item: PackageWorkItem | None, pr_url: str
+) -> None:
     if not pr_url.strip():
         log_warning("WARNING: empty PR URL; skipping package work item update.")
         return
+    if package_work_item is None:
+        log_warning(
+            "WARNING: package work item is unavailable; skipping Pending API Reviews update."
+        )
+        return
 
     try:
-        package_work_item = get_package_work_item(package_name)
         updated_urls = dedupe_preserve_order(
             [*package_work_item.pending_api_review_urls, pr_url]
         )
@@ -1147,7 +1096,7 @@ def build_sync_metadata_object(
     base_branch: str,
     review_branch: str,
     head_selector: str,
-    package_work_item_id_value: int | str | None = None,
+    work_item_metadata_value: int | str | None = None,
 ) -> dict[str, Any] | None:
     working_branch = sync_working_branch_info(head_selector, package_name)
     if not working_branch:
@@ -1169,8 +1118,8 @@ def build_sync_metadata_object(
         if working_pr and isinstance(working_pr.get("number"), int)
         else None
     )
-    if package_work_item_id_value is not None:
-        metadata["packageWorkItemId"] = package_work_item_id_value
+    if work_item_metadata_value is not None:
+        metadata["packageWorkItemId"] = work_item_metadata_value
     return metadata
 
 
@@ -1481,7 +1430,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> int:
     args = parse_args(argv or sys.argv[1:])
     if sync_working_branch_info(args.target or "main", args.package_name):
-        ensure_azsdk_find_work_item_available()
+        ensure_azsdk_work_item_commands_available()
 
     package_dir = find_package_dir(args.package_name)
     log_info(f"Found package at: {package_dir}")
@@ -1603,16 +1552,17 @@ def main(argv: list[str] | None = None) -> int:
         working_selector = args.target or "main"
         working_reference = target_reference_info(working_selector, args.package_name)
         baseline_ref = baseline_reference_markdown(args.base)
-        package_work_item_id_value: int | str | None = None
+        work_item_metadata_value: int | str | None = None
+        package_work_item: PackageWorkItem | None = None
         if sync_working_branch_info(working_selector, args.package_name):
             try:
-                package_work_item_id_value = package_work_item_id(
-                    args.package_name, target_version
-                )
+                package_work_item = get_package_work_item(args.package_name)
+                work_item_metadata_value = package_work_item.id
             except Exception as error:  # pylint: disable=broad-except
-                package_work_item_id_value = "ERROR"
+                work_item_metadata_value = "ERROR"
                 log_warning(
-                    "WARNING: failed to resolve package work item ID. "
+                    "WARNING: failed to get package work item via "
+                    "`azsdk package get-work-item -o json`. "
                     "PR body sync metadata will set packageWorkItemId to ERROR."
                     + (f"\n{error}" if str(error) else "")
                 )
@@ -1622,7 +1572,7 @@ def main(argv: list[str] | None = None) -> int:
             base_branch=base_branch,
             review_branch=review_branch,
             head_selector=working_selector,
-            package_work_item_id_value=package_work_item_id_value,
+            work_item_metadata_value=work_item_metadata_value,
         )
         sync_metadata_block = build_sync_metadata_block(sync_metadata)
         body = build_review_pr_body(
@@ -1644,8 +1594,8 @@ def main(argv: list[str] | None = None) -> int:
                     existing_pr.get("authorLogin"),
                     architect_reviewers,
                 )
-                sync_package_pending_api_review_pr_url(
-                    args.package_name, str(existing_pr["url"])
+                update_package_pending_reviews(
+                    package_work_item, str(existing_pr["url"])
                 )
                 log_info(f"\n=== Reusing existing PR #{existing_pr['number']} ===")
                 log_info(existing_pr["url"])
@@ -1663,8 +1613,8 @@ def main(argv: list[str] | None = None) -> int:
             )
             if pr_create.get("url"):
                 log_info(pr_create["url"])
-                sync_package_pending_api_review_pr_url(
-                    args.package_name, str(pr_create["url"])
+                update_package_pending_reviews(
+                    package_work_item, str(pr_create["url"])
                 )
         else:
             existing_pr = find_open_pr_for_branches(base_branch, review_branch)
@@ -1676,8 +1626,8 @@ def main(argv: list[str] | None = None) -> int:
                     existing_pr.get("authorLogin"),
                     architect_reviewers,
                 )
-                sync_package_pending_api_review_pr_url(
-                    args.package_name, str(existing_pr["url"])
+                update_package_pending_reviews(
+                    package_work_item, str(existing_pr["url"])
                 )
                 log_info(f"\n=== Reusing existing PR #{existing_pr['number']} ===")
                 log_info(existing_pr["url"])

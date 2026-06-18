@@ -9,8 +9,9 @@ This folder contains the standalone helper used to create API review pull reques
 1. Generating baseline and target API markdown snapshots.
 2. Creating or reusing dedicated baseline/review branches.
 3. Creating or reusing a draft GitHub PR with the `api.md` diff.
-4. Updating PR body sync metadata so future automation can identify branch relationships.
-5. Updating the package ADO work item `Custom.PendingAPIReviews` field with the review PR URL.
+4. Assigning the PR to API review architects resolved from `.github/ARCHITECTS`.
+5. Updating PR body sync metadata so future automation can identify branch relationships.
+6. Updating the package ADO work item `Custom.PendingAPIReviews` field with the review PR URL.
 
 The API consistency workflow helpers live under `.github/workflows/src/api-md-consistency`.
 
@@ -36,6 +37,7 @@ Primary output:
 Secondary output:
 
 - `Custom.PendingAPIReviews` on the package work item is updated to include the PR URL (idempotent append).
+- Matching API review architects are requested as GitHub reviewers when a PR number is available.
 
 ## High-Level Flow
 
@@ -47,10 +49,12 @@ Secondary output:
 4. Capture target `api.md` + `api.metadata.yml` from resolved target ref.
 5. Exit early if baseline and target `api.md` are identical.
 6. Resolve branch reuse or branch creation for baseline and review branches.
-7. Create or reuse PR between baseline and review branches.
-8. Ensure PR sync metadata block in PR body.
-9. Update package work item `Custom.PendingAPIReviews` with PR URL.
-10. Restore original local branch.
+7. Fetch the package work item once for working-branch sync flows.
+8. Create or reuse PR between baseline and review branches.
+9. Ensure PR sync metadata block in PR body.
+10. Request API review architects as PR reviewers.
+11. Update package work item `Custom.PendingAPIReviews` with PR URL.
+12. Restore original local branch.
 
 ## Detailed Decision Paths
 
@@ -122,6 +126,20 @@ Otherwise:
 - If fallback PR exists, reuse it.
 - If no PR is found, log manual compare URL and diagnostics.
 
+Whenever a PR is created or reused, the script attempts to request API review from matching architects before updating the package work item.
+
+### 6) API Review Architect Assignment
+
+The script resolves API review architects from `.github/ARCHITECTS` using the package directory path and CODEOWNERS-style matching.
+
+Behavior:
+
+- Matching `@user` owners are requested as GitHub reviewers.
+- Matching `@org/team` owners are requested as GitHub team reviewers using the team slug.
+- The PR author is removed from direct user reviewer requests because GitHub rejects self-review requests.
+- If no architects match, or all direct reviewers resolve to the PR author, reviewer assignment is skipped with diagnostics.
+- GitHub reviewer request failures are warnings; branch/PR creation and work-item sync continue.
+
 ## PR Body Sync Metadata
 
 The PR body can include a hidden metadata block (`api-md-review-sync`) with:
@@ -130,7 +148,8 @@ The PR body can include a hidden metadata block (`api-md-review-sync`) with:
 - package name and dir,
 - baseline/review branch names,
 - working branch owner/name,
-- optional working PR number.
+- optional working PR number,
+- optional package work item id.
 
 Behavior:
 
@@ -139,7 +158,7 @@ Behavior:
 
 ## ADO Package Work Item Update Flow
 
-After a PR URL is available (created or reused), the script updates the package work item:
+For working-branch sync flows, the script fetches the package work item once before creating or reusing the API review PR:
 
 1. Fetch package work item via:
 
@@ -152,11 +171,13 @@ azsdk package get-work-item --package-name <package-name> -o json
 - work item id: `id`
 - pending review markdown field: `fields.Custom.PendingAPIReviews`
 
-3. Parse existing field value as newline-separated URL list.
+The same fetched work item is reused for both PR body sync metadata (`packageWorkItemId`) and the later pending-review update. After a PR URL is available (created or reused), the script:
 
-4. Append PR URL only when missing (idempotent behavior).
+3. Parses the existing pending review field value as a newline-separated URL list.
 
-5. Join list with newlines and update work item:
+4. Appends the PR URL only when missing (idempotent behavior).
+
+5. Joins the list with newlines and updates the work item:
 
 ```bash
 azsdk package update-work-item \
@@ -167,6 +188,7 @@ azsdk package update-work-item \
 
 Failure policy:
 
+- Work item fetch failures set sync metadata `packageWorkItemId` to `ERROR` and skip the pending-review update.
 - Work item update failures are logged as warnings.
 - PR flow still succeeds (best-effort work item synchronization).
 
@@ -182,7 +204,9 @@ Hard failures:
 
 Soft failures (warning and continue):
 
+- inability to request API review architects as PR reviewers,
 - inability to update PR body sync metadata,
+- inability to fetch package work item details,
 - inability to update package work item pending review URLs,
 - draft PR creation failure when existing PR fallback succeeds.
 
