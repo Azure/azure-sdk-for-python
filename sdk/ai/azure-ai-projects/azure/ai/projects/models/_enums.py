@@ -146,6 +146,15 @@ class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Session TTL exceeded (30 days from last activity)."""
 
 
+class AgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operational state of an agent."""
+
+    ENABLED = "enabled"
+    """Agent endpoint accepts requests. This is the default state on creation."""
+    DISABLED = "disabled"
+    """Agent endpoint rejects all requests."""
+
+
 class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning status of an agent version."""
 

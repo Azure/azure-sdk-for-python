@@ -45,8 +45,10 @@ from ...operations._operations import (
     build_agents_delete_session_file_request,
     build_agents_delete_session_request,
     build_agents_delete_version_request,
+    build_agents_disable_agent_request,
     build_agents_download_code_request,
     build_agents_download_session_file_request,
+    build_agents_enable_agent_request,
     build_agents_get_request,
     build_agents_get_session_log_stream_request,
     build_agents_get_session_request,
@@ -1540,6 +1542,119 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    async def enable_agent(self, agent_name: str, **kwargs: Any) -> None:
+        """Enable an agent.
+
+        Enables the specified agent, allowing it to accept new sessions and process requests. This
+        operation is idempotent — enabling an already-enabled agent returns success with no side
+        effects.
+
+        :param agent_name: The name of the agent to enable. Required.
+        :type agent_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_enable_agent_request(
+            agent_name=agent_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def disable_agent(self, agent_name: str, **kwargs: Any) -> None:
+        """Disable an agent.
+
+        Disables the specified agent, preventing it from accepting new sessions or processing requests.
+        Existing active sessions are allowed to drain gracefully but no new sessions can be created.
+        This operation is idempotent — disabling an already-disabled agent returns success with no side
+        effects.
+
+        :param agent_name: The name of the agent to disable. Required.
+        :type agent_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_disable_agent_request(
+            agent_name=agent_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
     @overload
     async def create_session(
         self,
@@ -2052,23 +2167,29 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         Each SSE frame contains:
 
         * `event`: always `"log"`
-        * `data`: a plain-text log line (currently JSON-formatted, but the schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+        is not contractual and may include additional keys or change format
+        over time — clients should treat it as an opaque string)
 
         Example SSE frames:
 
         .. code-block::
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting FoundryCBAgent server on port 8088"}
+           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting
+        FoundryCBAgent server on port 8088"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application startup complete."}
+           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application
+        startup complete."}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+        connected to container"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since last 60 seconds"}
+           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since
+        last 60 seconds"}
 
         The stream remains open until the client disconnects or the server
         terminates the connection. Clients should handle reconnection as needed.
@@ -2110,7 +2231,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -9338,11 +9459,6 @@ class BetaMemoryStoresOperations:
             304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
-        if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {"scope": scope}
-            body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -9351,6 +9467,12 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
+            if body is _Unset:
+                if scope is _Unset:
+                    raise TypeError("missing required argument: scope")
+                body = {"scope": scope}
+                body = {k: v for k, v in body.items() if v is not None}
+
             _request = build_beta_memory_stores_list_memories_request(
                 name=name,
                 kind=kind,

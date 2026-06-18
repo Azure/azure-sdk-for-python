@@ -577,6 +577,9 @@ class AgentDetails(_Model):
     :vartype id: str
     :ivar name: The name of the agent. Required.
     :vartype name: str
+    :ivar state: The operational state of the agent. Controls whether the agent endpoint accepts or
+     rejects requests. Required. Known values are: "enabled" and "disabled".
+    :vartype state: str or ~azure.ai.projects.models.AgentState
     :ivar versions: The latest version of the agent. Required.
     :vartype versions: ~azure.ai.projects.models.AgentObjectVersions
     :ivar agent_endpoint: The endpoint configuration for the agent.
@@ -597,6 +600,9 @@ class AgentDetails(_Model):
     """The unique identifier of the agent. Required."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the agent. Required."""
+    state: Union[str, "_models.AgentState"] = rest_field(visibility=["read"])
+    """The operational state of the agent. Controls whether the agent endpoint accepts or rejects
+     requests. Required. Known values are: \"enabled\" and \"disabled\"."""
     versions: "_models.AgentObjectVersions" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The latest version of the agent. Required."""
     agent_endpoint: Optional["_models.AgentEndpointConfig"] = rest_field(
@@ -10011,8 +10017,6 @@ class ModelSourceData(_Model):
 class ModelVersion(_Model):
     """Model Version Definition.
 
-    :ivar system_data: System related metadata.
-    :vartype system_data: ~azure.ai.projects.models.SystemDataV3
     :ivar blob_uri: URI of the model artifact in blob storage. Required.
     :vartype blob_uri: str
     :ivar weight_type: The weight type of the model. Known values are: "FullWeight", "LoRA", and
@@ -10042,8 +10046,6 @@ class ModelVersion(_Model):
     :vartype tags: dict[str, str]
     """
 
-    system_data: Optional["_models.SystemDataV3"] = rest_field(name="systemData", visibility=["read"])
-    """System related metadata."""
     blob_uri: str = rest_field(name="blobUri", visibility=["read", "create", "update", "delete", "query"])
     """URI of the model artifact in blob storage. Required."""
     weight_type: Optional[Union[str, "_models.FoundryModelWeightType"]] = rest_field(
@@ -12699,10 +12701,12 @@ class SessionLogEvent(_Model):
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}.
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -13258,55 +13262,6 @@ class StructuredOutputDefinition(_Model):
         description: str,
         schema: dict[str, Any],
         strict: bool,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SystemDataV3(_Model):
-    """System metadata for a resource.
-
-    :ivar created_at: Timestamp of resource creation.
-    :vartype created_at: ~datetime.datetime
-    :ivar created_by: Identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: Type of identity that created the resource.
-    :vartype created_by_type: str
-    :ivar last_modified_at: Timestamp of last resource modification.
-    :vartype last_modified_at: ~datetime.datetime
-    """
-
-    created_at: Optional[datetime.datetime] = rest_field(
-        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
-    )
-    """Timestamp of resource creation."""
-    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
-    """Identity that created the resource."""
-    created_by_type: Optional[str] = rest_field(
-        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Type of identity that created the resource."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
-    )
-    """Timestamp of last resource modification."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_at: Optional[datetime.datetime] = None,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[str] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -13929,7 +13884,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      or a Literal["required"] type.
     :vartype mode: str or str
     :ivar tools: A list of tool definitions that the model should be allowed to call. For the
-     Responses API, the list of tool definitions might look like the following. Required.
+     Responses API, the list of tool definitions might look like:
 
      .. code-block:: json
 
@@ -13937,7 +13892,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
           { "type": "function", "name": "get_weather" },
           { "type": "mcp", "server_label": "deepwiki" },
           { "type": "image_generation" }
-        ]
+        ]. Required.
     :vartype tools: list[dict[str, any]]
     """
 
@@ -13950,7 +13905,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      Literal[\"required\"] type."""
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of tool definitions that the model should be allowed to call. For the Responses API, the
-     list of tool definitions might look like the following. Required.
+     list of tool definitions might look like:
      
      .. code-block:: json
      
@@ -13958,7 +13913,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
           { \"type\": \"function\", \"name\": \"get_weather\" },
           { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
           { \"type\": \"image_generation\" }
-        ]"""
+        ]. Required."""
 
     @overload
     def __init__(
