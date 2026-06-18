@@ -532,3 +532,186 @@ class TestContextFieldsContract:
         assert (
             "generation" not in TaskContext.__slots__
         ), "Old field name 'generation' must be removed (no deprecation alias)."
+
+
+class TestPendingInputCount:
+    """Spec 031 / FR-001..002 — `ctx.pending_input_count` reflects the live
+    queued-steering-input count through REAL framework wiring (no mocking,
+    no monkeypatching, no direct `_ActiveTask` mutation). These tests encode
+    the SOT contract at task-and-streaming-spec.md §12 (:695-696), §13
+    (:719) and the §13 ordering invariant (:724-727 — the steering cause is
+    observable BEFORE `ctx.cancel`)."""
+
+    async def _setup_manager(self, tmp_path):
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+        import azure.ai.agentserver.core.durable._manager as mgr_mod
+
+        provider = LocalFileTaskProvider(Path(str(tmp_path)))
+        config = type(
+            "C",
+            (),
+            {
+                "agent_name": "test-agent",
+                "session_id": "test-session",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
+            },
+        )()
+        manager = TaskManager(config=config, provider=provider)
+        mgr_mod._manager = manager
+        await manager.startup()
+        return manager, mgr_mod
+
+    async def _teardown_manager(self, manager, mgr_mod):
+        await manager.shutdown()
+        mgr_mod._manager = None
+
+    @pytest.mark.asyncio
+    async def test_same_process_enqueue_count_visible_at_cancel(self, tmp_path):
+        """FR-001a + §13 ordering invariant: when a steering input is appended
+        in the SAME process, the next read of `ctx.pending_input_count` in the
+        running turn is >= 1 AND it is already >= 1 at the moment the handler
+        observes `ctx.cancel.is_set()` (cause set before cancel)."""
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            observed: dict[str, Any] = {}
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                if ctx.input.get("msg") == "A":
+                    for _ in range(300):
+                        if ctx.cancel.is_set():
+                            observed["count_at_cancel"] = ctx.pending_input_count
+                            observed["cancel_requested"] = ctx.cancel_requested
+                            return None
+                        await asyncio.sleep(0.01)
+                    observed["count_at_cancel"] = "never-cancelled"
+                    return None
+                return {"msg": ctx.input.get("msg", "?")}
+
+            run1 = await chat.start(task_id="t1", input={"msg": "A"})
+            await asyncio.sleep(0.05)
+            run_b = await chat.start(task_id="t1", input={"msg": "B"})
+            await asyncio.wait_for(run_b.result(), timeout=5.0)
+
+            assert observed.get("count_at_cancel") != "never-cancelled", observed
+            assert observed.get("count_at_cancel", 0) >= 1, (
+                "pending_input_count MUST be >= 1 at the steering-cancel boundary "
+                f"(SOT §13 ordering invariant); observed={observed}"
+            )
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_non_steerable_reads_zero(self, tmp_path):
+        """FR-001: a non-steerable task reads pending_input_count == 0."""
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            observed: dict[str, Any] = {}
+
+            @task(name="oneshot")
+            async def oneshot(ctx: TaskContext[dict]) -> dict:
+                observed["count"] = ctx.pending_input_count
+                return {"ok": True}
+
+            run = await oneshot.start(task_id="t1", input={"msg": "A"})
+            await asyncio.wait_for(run.result(), timeout=5.0)
+            assert observed.get("count") == 0, observed
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
+    async def test_count_zero_with_no_queued_inputs(self, tmp_path):
+        """FR-001: a steerable turn with nothing queued reads 0."""
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+            observed: dict[str, Any] = {}
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                observed["count"] = ctx.pending_input_count
+                return {"msg": ctx.input.get("msg", "?")}
+
+            run1 = await chat.start(task_id="t1", input={"msg": "A"})
+            await asyncio.wait_for(run1.result(), timeout=5.0)
+            assert observed.get("count") == 0, observed
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+
+class TestSteeringWriteSerialization:
+    """Spec 031 / FR-004..006 + SOT §25.1/§25.2 — steering writes are
+    serialized and carry If-Match (no blind writes), and a steered turn
+    drains and runs through REAL framework wiring."""
+
+    async def _setup_manager_capturing(self, tmp_path):
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+        import azure.ai.agentserver.core.durable._manager as mgr_mod
+        from .conftest import CapturingProvider
+
+        delegate = LocalFileTaskProvider(Path(str(tmp_path)))
+        provider = CapturingProvider(delegate)
+        config = type(
+            "C",
+            (),
+            {
+                "agent_name": "test-agent",
+                "session_id": "test-session",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
+            },
+        )()
+        manager = TaskManager(config=config, provider=provider)
+        mgr_mod._manager = manager
+        await manager.startup()
+        return manager, mgr_mod, provider
+
+    async def _teardown_manager(self, manager, mgr_mod):
+        await manager.shutdown()
+        mgr_mod._manager = None
+
+    @pytest.mark.asyncio
+    async def test_steer_drain_runs_steered_turn_and_no_blind_writes(self, tmp_path):
+        """A steerable turn cancels on a queued input, drains it, and the
+        steered turn executes — and every PATCH after the first carries a
+        non-None If-Match (SOT §25.1: no blind writes)."""
+        manager, mgr_mod, provider = await self._setup_manager_capturing(tmp_path)
+        try:
+            ran: list[str] = []
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                msg = ctx.input.get("msg", "?")
+                if msg == "A":
+                    for _ in range(300):
+                        if ctx.cancel.is_set():
+                            return None
+                        await asyncio.sleep(0.01)
+                    return None
+                ran.append(msg)
+                return {"msg": msg}
+
+            run1 = await chat.start(task_id="t1", input={"msg": "A"})
+            await asyncio.sleep(0.05)
+            run_b = await chat.start(task_id="t1", input={"msg": "B"})
+            result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
+
+            # Drain succeeded and the steered turn B executed.
+            assert "B" in ran, f"steered turn B must run; ran={ran}"
+            assert result_b == {"msg": "B"}, result_b
+
+            # No blind writes: every PATCH after the very first one carries
+            # a non-None If-Match. (The first PATCH after create may legitimately
+            # have None if it precedes any tracked etag; all subsequent must not.)
+            if_matches = [im for (_tid, _patch, im) in provider.update_calls]
+            assert len(if_matches) >= 2, if_matches
+            blind = [i for i, im in enumerate(if_matches) if im is None]
+            # At most the first update may be unconditioned; none after.
+            assert all(idx == 0 for idx in blind), (
+                "SOT §25.1 violated — blind PATCH(es) with no If-Match at "
+                f"update indexes {blind}; if_matches={if_matches}"
+            )
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
