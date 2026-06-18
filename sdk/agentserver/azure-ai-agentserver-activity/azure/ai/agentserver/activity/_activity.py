@@ -48,31 +48,129 @@ _chat_isolation_key_var: contextvars.ContextVar[str] = contextvars.ContextVar("a
 _protocol_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_protocol", default=ActivityConstants.PROTOCOL)
 
 
+def _enrich_record(record: logging.LogRecord) -> None:
+    """Populate activity scope fields on a log record from the current context."""
+    if not hasattr(record, "SessionId"):
+        record.SessionId = _session_id_var.get("")  # type: ignore[attr-defined]
+    if not hasattr(record, "UserIsolationKey"):
+        record.UserIsolationKey = _user_isolation_key_var.get("")  # type: ignore[attr-defined]
+    if not hasattr(record, "ChatIsolationKey"):
+        record.ChatIsolationKey = _chat_isolation_key_var.get("")  # type: ignore[attr-defined]
+    if not hasattr(record, "Protocol"):
+        record.Protocol = _protocol_var.get(ActivityConstants.PROTOCOL)  # type: ignore[attr-defined]
+
+
 class _ActivityLogFilter(logging.Filter):
-    """Attach per-turn structured scope fields to activity log records."""
+    """Attach per-turn structured scope fields to a log record (legacy filter).
+
+    Retained for backwards compatibility. The primary enrichment mechanism is
+    the global log-record factory installed by :func:`_ensure_log_enrichment`,
+    which guarantees that records emitted by *any* logger (not just this
+    package's logger) carry the activity scope fields.
+    """
 
     def filter(self, record: logging.LogRecord) -> bool:
-        record.SessionId = _session_id_var.get("")  # type: ignore[attr-defined]
-        record.UserIsolationKey = _user_isolation_key_var.get("")  # type: ignore[attr-defined]
-        record.ChatIsolationKey = _chat_isolation_key_var.get("")  # type: ignore[attr-defined]
-        record.Protocol = _protocol_var.get(ActivityConstants.PROTOCOL)  # type: ignore[attr-defined]
+        _enrich_record(record)
         return True
 
 
-_log_filter_lock = threading.Lock()
-_log_filter_installed = False
+_log_enrichment_lock = threading.Lock()
+_log_enrichment_installed = False
+_base_record_factory: Optional[Callable[..., logging.LogRecord]] = None
 
 
-def _ensure_log_filter() -> None:
-    """Install activity log scope filter once."""
-    global _log_filter_installed  # pylint: disable=global-statement
-    if _log_filter_installed:
+def _ensure_log_enrichment() -> None:
+    """Install a global log-record factory once.
+
+    Ensures every log record (regardless of which logger emits it) carries the
+    activity scope fields read from the current context. This provides session /
+    isolation / protocol correlation across the app logger, the M365 SDK
+    loggers, azure.identity, connector clients, etc. — not just this package's
+    own logger.
+    """
+    global _log_enrichment_installed, _base_record_factory  # pylint: disable=global-statement
+    if _log_enrichment_installed:
         return
-    with _log_filter_lock:
-        if _log_filter_installed:
+    with _log_enrichment_lock:
+        if _log_enrichment_installed:
             return
-        logger.addFilter(_ActivityLogFilter())
-        _log_filter_installed = True
+        _base_record_factory = logging.getLogRecordFactory()
+
+        def _factory(*args: Any, **kwargs: Any) -> logging.LogRecord:
+            record = _base_record_factory(*args, **kwargs)  # type: ignore[misc]
+            _enrich_record(record)
+            return record
+
+        logging.setLogRecordFactory(_factory)
+        _log_enrichment_installed = True
+
+
+try:  # SDK SpanProcessor provides the full interface (incl. _on_ending) the SDK calls.
+    from opentelemetry.sdk.trace import SpanProcessor as _OtelSpanProcessor
+except Exception:  # pylint: disable=broad-exception-caught
+    _OtelSpanProcessor = object  # type: ignore[assignment, misc]
+
+
+class _BaggageSpanProcessor(_OtelSpanProcessor):  # type: ignore[valid-type, misc]
+    """SpanProcessor that copies OTel baggage entries onto every span at start.
+
+    Baggage propagates request-scoped correlation values (session_id,
+    conversation_id, activity_id, isolation keys, x_request_id, plus the
+    platform-provided user / agent / tenant ids) through the context, but those
+    values are *not* automatically recorded as span attributes. This processor
+    promotes them so every child span produced during a turn (auth, connector,
+    send-activity, GenAI, etc.) is filterable by the same correlation keys.
+
+    Subclasses the SDK ``SpanProcessor`` so the full processor interface
+    (``on_start``, ``on_end``, ``_on_ending``, ``shutdown``, ``force_flush``)
+    is satisfied; the SDK invokes ``_on_ending`` on every registered processor
+    during ``span.end()``.
+    """
+
+    def on_start(self, span: Any, parent_context: Optional[Any] = None) -> None:
+        try:
+            ctx = parent_context if parent_context is not None else _otel_context.get_current()
+            for key, value in _otel_baggage.get_all(ctx).items():
+                if value is not None:
+                    span.set_attribute(key, value)
+        except Exception:  # pylint: disable=broad-exception-caught
+            pass
+
+    def on_end(self, span: Any) -> None:
+        pass
+
+    def shutdown(self) -> None:
+        pass
+
+    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
+        return True
+
+
+_baggage_processor_lock = threading.Lock()
+_baggage_processor_installed = False
+
+
+def _ensure_baggage_span_processor() -> None:
+    """Register the baggage->span-attribute processor on the tracer provider once.
+
+    Safe to call repeatedly; if the provider is not yet an SDK provider (e.g.
+    still the API default at first request), installation is retried on a later
+    call.
+    """
+    global _baggage_processor_installed  # pylint: disable=global-statement
+    if _baggage_processor_installed:
+        return
+    with _baggage_processor_lock:
+        if _baggage_processor_installed:
+            return
+        try:
+            provider = _otel_trace.get_tracer_provider()
+            add_span_processor = getattr(provider, "add_span_processor", None)
+            if callable(add_span_processor):
+                add_span_processor(_BaggageSpanProcessor())
+                _baggage_processor_installed = True
+        except Exception:  # pylint: disable=broad-exception-caught
+            pass
 
 
 def _apply_error_source_headers(
@@ -298,7 +396,26 @@ class ActivityAgentServerHost(AgentServerHost):
             return f"handle_activity {agent_name}"
         return "handle_activity"
 
-    def _apply_trace_tags(self, span: Any, session_id: str) -> None:
+    def _apply_trace_tags(
+        self,
+        span: Any,
+        session_id: str,
+        activity_id: str = "",
+        conversation_id: str = "",
+        user_isolation_key: str = "",
+        chat_isolation_key: str = "",
+        request_trace_id: str = "",
+    ) -> None:
+        """Apply OTel span attributes and baggage for Activity protocol tracing.
+
+        :param span: The active OTel span to set attributes on.
+        :param session_id: Resolved session identifier.
+        :param activity_id: Activity-specific ID (channel-assigned message ID).
+        :param conversation_id: Conversation/thread ID from Activity payload.
+        :param user_isolation_key: User partition key from x-agent-user-isolation-key header.
+        :param chat_isolation_key: Chat partition key from x-agent-chat-isolation-key header.
+        :param request_trace_id: Request trace ID from x-request-id header.
+        """
         agent_name = (self.config.agent_name or "").strip()
         agent_version = (self.config.agent_version or "").strip()
         if agent_name and agent_version:
@@ -308,6 +425,7 @@ class ActivityAgentServerHost(AgentServerHost):
         else:
             agent_id = ""
 
+        # Required GenAI convention tags (per spec 3.2)
         span.set_attribute("service.name", "azure.ai.agentserver")
         span.set_attribute("gen_ai.provider.name", "AzureAI Hosted Agents")
         span.set_attribute("gen_ai.operation.name", "handle_activity")
@@ -316,90 +434,202 @@ class ActivityAgentServerHost(AgentServerHost):
             span.set_attribute("gen_ai.agent.name", agent_name)
         if agent_version:
             span.set_attribute("gen_ai.agent.version", agent_version)
-        if session_id:
-            span.set_attribute("gen_ai.conversation.id", session_id)
+        # Use conversation_id if available, else session_id as fallback
+        effective_conversation_id = conversation_id or session_id
+        if effective_conversation_id:
+            span.set_attribute("gen_ai.conversation.id", effective_conversation_id)
+        if activity_id:
+            span.set_attribute("gen_ai.response.id", activity_id)
 
+        # Required namespaced tags (per spec 3.2)
         span.set_attribute(ActivityConstants.ATTR_SPAN_SESSION_ID, session_id or "")
         span.set_attribute(ActivityConstants.ATTR_SPAN_PROTOCOL, ActivityConstants.PROTOCOL)
+        if conversation_id:
+            span.set_attribute("azure.ai.agentserver.activity.conversation_id", conversation_id)
+        if activity_id:
+            span.set_attribute("azure.ai.agentserver.activity.activity_id", activity_id)
+        if user_isolation_key:
+            span.set_attribute("azure.ai.agentserver.user_isolation_key", user_isolation_key)
+        if chat_isolation_key:
+            span.set_attribute("azure.ai.agentserver.chat_isolation_key", chat_isolation_key)
+        if request_trace_id:
+            span.set_attribute("azure.ai.agentserver.x_request_id", request_trace_id)
         span.set_attribute("microsoft.foundry.project.id", os.environ.get("FOUNDRY_PROJECT_ARM_ID", ""))
 
     def _add_required_response_headers(self, response: Response, session_id: str) -> None:
         response.headers[ActivityConstants.SESSION_ID_HEADER] = session_id
 
+    @staticmethod
+    def _response_body_preview(response: Response, limit: int = 1024) -> str:
+        """Return a truncated text preview of a response body for logging."""
+        body = getattr(response, "body", None)
+        if not body:
+            return ""
+        try:
+            if isinstance(body, (bytes, bytearray)):
+                text = bytes(body).decode("utf-8", errors="replace")
+            else:
+                text = str(body)
+        except Exception:  # pylint: disable=broad-exception-caught
+            return ""
+        return text[:limit]
+
     async def _create_activity_endpoint(self, request: Request) -> Response:
         """Handle inbound POST to /activity/messages or /api/messages."""
-        logger.debug(
-            "Activity endpoint hit | method=%s | path=%s | query=%s | content-type=%s",
-            request.method, request.url.path, str(request.query_params),
-            request.headers.get("content-type", ""),
-        )
-        logger.debug("Activity endpoint headers: %s", dict(request.headers))
-
+        # Resolve correlation identifiers from headers up-front so that every
+        # log line and span produced during this turn carries the values.
         inbound_conversation_id = request.headers.get(ActivityConstants.CONVERSATION_ID_HEADER, "")
         inbound_user_isolation_key = request.headers.get(USER_ISOLATION_KEY, "")
         inbound_chat_isolation_key = request.headers.get(CHAT_ISOLATION_KEY, "")
-
-        try:
-            payload = await request.json()
-        except Exception:  # pylint: disable=broad-exception-caught
-            response = create_error_response(
-                "invalid_request",
-                "Request body must be valid JSON",
-                status_code=400,
-                headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
-            )
-            self._add_required_response_headers(response, "")
-            return response
-
-        if not isinstance(payload, dict):
-            response = create_error_response(
-                "invalid_request",
-                "Activity payload must be a JSON object",
-                status_code=400,
-                headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
-            )
-            self._add_required_response_headers(response, "")
-            return response
-
-        activity_id = payload.get("id", "") if isinstance(payload.get("id"), str) else ""
-        if not activity_id.strip():
-            activity_id = str(uuid.uuid4())
-        else:
-            activity_id = _sanitize_id(activity_id)
-
         session_id = _sanitize_id(self._resolve_session_id(request))
+        request_trace_id = request.headers.get("x-request-id", "").strip()
 
-        logger.debug(
-            "Activity parsed | type=%s | activity_id=%s | session_id=%s | text=%s | serviceUrl=%s | channelId=%s",
-            payload.get("type", "?"), activity_id, session_id,
-            str(payload.get("text", ""))[:100], payload.get("serviceUrl", ""), payload.get("channelId", ""),
-        )
-
-        request.state.activity = payload
-        request.state.activity_id = activity_id
-        request.state.session_id = session_id
-        request.state.user_isolation_key = inbound_user_isolation_key
-        request.state.chat_isolation_key = inbound_chat_isolation_key
-
-        _ensure_log_filter()
+        # Install global log/trace enrichment once, then bind the context vars so
+        # the scope fields are populated for the very first log line of the turn.
+        _ensure_log_enrichment()
+        _ensure_baggage_span_processor()
         session_token = _session_id_var.set(session_id)
         user_token = _user_isolation_key_var.set(inbound_user_isolation_key)
         chat_token = _chat_isolation_key_var.set(inbound_chat_isolation_key)
         protocol_token = _protocol_var.set(ActivityConstants.PROTOCOL)
-
-        tracer = _otel_trace.get_tracer(self._INSTRUMENTATION_SCOPE)
-        baggage_ctx = _otel_context.get_current()
-        baggage_ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", session_id or "", context=baggage_ctx
-        )
-        baggage_ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.protocol", ActivityConstants.PROTOCOL, context=baggage_ctx
-        )
-        baggage_token = _otel_context.attach(baggage_ctx)
+        baggage_token: Optional[object] = None
 
         try:
+            logger.debug(
+                "Activity endpoint hit | method=%s | path=%s | query=%s | content-type=%s",
+                request.method, request.url.path, str(request.query_params),
+                request.headers.get("content-type", ""),
+            )
+            logger.debug("Activity endpoint headers: %s", dict(request.headers))
+
+            try:
+                payload = await request.json()
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning(
+                    "Activity request rejected | reason=invalid_json | session_id=%s", session_id
+                )
+                response = create_error_response(
+                    "invalid_request",
+                    "Request body must be valid JSON",
+                    status_code=400,
+                    headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
+                )
+                self._add_required_response_headers(response, session_id)
+                return response
+
+            if not isinstance(payload, dict):
+                logger.warning(
+                    "Activity request rejected | reason=non_object_payload | session_id=%s", session_id
+                )
+                response = create_error_response(
+                    "invalid_request",
+                    "Activity payload must be a JSON object",
+                    status_code=400,
+                    headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
+                )
+                self._add_required_response_headers(response, session_id)
+                return response
+
+            activity_id = payload.get("id", "") if isinstance(payload.get("id"), str) else ""
+            if not activity_id.strip():
+                activity_id = str(uuid.uuid4())
+            else:
+                activity_id = _sanitize_id(activity_id)
+
+            # Extract conversation ID from Activity payload (Bot Framework schema),
+            # falling back to the inbound conversation header if absent.
+            conversation_obj = payload.get("conversation", {})
+            conversation_id = ""
+            if isinstance(conversation_obj, dict):
+                conversation_id = conversation_obj.get("id", "")
+            if conversation_id and isinstance(conversation_id, str):
+                conversation_id = conversation_id.strip()
+            if not conversation_id and inbound_conversation_id:
+                conversation_id = inbound_conversation_id.strip()
+
+            # Pull common request details for logging / span events.
+            from_obj = payload.get("from", {})
+            from_id = from_obj.get("id", "") if isinstance(from_obj, dict) else ""
+            recipient_obj = payload.get("recipient", {})
+            recipient_id = recipient_obj.get("id", "") if isinstance(recipient_obj, dict) else ""
+            activity_type = payload.get("type", "") or ""
+            channel_id = payload.get("channelId", "") or ""
+            service_url = payload.get("serviceUrl", "") or ""
+            locale = payload.get("locale", "") or ""
+            request_text = str(payload.get("text", "") or "")
+
+            request.state.activity = payload
+            request.state.activity_id = activity_id
+            request.state.session_id = session_id
+            request.state.user_isolation_key = inbound_user_isolation_key
+            request.state.chat_isolation_key = inbound_chat_isolation_key
+
+            logger.info(
+                "Activity request received | type=%s | activity_id=%s | conversation_id=%s | "
+                "session_id=%s | from=%s | recipient=%s | channelId=%s | serviceUrl=%s | "
+                "locale=%s | x_request_id=%s | text=%s",
+                activity_type, activity_id, conversation_id, session_id, from_id, recipient_id,
+                channel_id, service_url, locale, request_trace_id, request_text[:512],
+            )
+
+            tracer = _otel_trace.get_tracer(self._INSTRUMENTATION_SCOPE)
+            baggage_ctx = _otel_context.get_current()
+            # Set all required baggage keys per spec section 3.3.
+            baggage_ctx = _otel_baggage.set_baggage(
+                "azure.ai.agentserver.session_id", session_id or "", context=baggage_ctx
+            )
+            baggage_ctx = _otel_baggage.set_baggage(
+                "azure.ai.agentserver.protocol", ActivityConstants.PROTOCOL, context=baggage_ctx
+            )
+            if conversation_id:
+                baggage_ctx = _otel_baggage.set_baggage(
+                    "azure.ai.agentserver.conversation_id", conversation_id, context=baggage_ctx
+                )
+            if activity_id:
+                baggage_ctx = _otel_baggage.set_baggage(
+                    "azure.ai.agentserver.activity_id", activity_id, context=baggage_ctx
+                )
+            if inbound_user_isolation_key:
+                baggage_ctx = _otel_baggage.set_baggage(
+                    "azure.ai.agentserver.user_isolation_key", inbound_user_isolation_key, context=baggage_ctx
+                )
+            if inbound_chat_isolation_key:
+                baggage_ctx = _otel_baggage.set_baggage(
+                    "azure.ai.agentserver.chat_isolation_key", inbound_chat_isolation_key, context=baggage_ctx
+                )
+            if request_trace_id:
+                baggage_ctx = _otel_baggage.set_baggage(
+                    "azure.ai.agentserver.x_request_id", request_trace_id, context=baggage_ctx
+                )
+            baggage_token = _otel_context.attach(baggage_ctx)
+
             with tracer.start_as_current_span(self._build_span_name()) as span:
-                self._apply_trace_tags(span, session_id)
+                self._apply_trace_tags(
+                    span,
+                    session_id,
+                    activity_id=activity_id,
+                    conversation_id=conversation_id,
+                    user_isolation_key=inbound_user_isolation_key,
+                    chat_isolation_key=inbound_chat_isolation_key,
+                    request_trace_id=request_trace_id,
+                )
+                # Record the inbound request as a span event with full values.
+                span.add_event(
+                    "activity.request",
+                    {
+                        "activity.type": activity_type,
+                        "activity.id": activity_id,
+                        "activity.conversation_id": conversation_id,
+                        "activity.from_id": from_id,
+                        "activity.recipient_id": recipient_id,
+                        "activity.channel_id": channel_id,
+                        "activity.service_url": service_url,
+                        "activity.locale": locale,
+                        "azure.ai.agentserver.session_id": session_id,
+                        "azure.ai.agentserver.x_request_id": request_trace_id,
+                        "activity.text": request_text[:1024],
+                    },
+                )
                 try:
                     if self._handler is None:
                         raise NotImplementedError(
@@ -410,12 +640,37 @@ class ActivityAgentServerHost(AgentServerHost):
 
                     response.headers[ActivityConstants.ACTIVITY_ID_HEADER] = activity_id
                     self._add_required_response_headers(response, session_id)
+
+                    # Record the outbound response on the span and logs.
+                    status_code = getattr(response, "status_code", 0)
+                    response_text = self._response_body_preview(response)
+                    span.set_attribute("activity.response.status_code", status_code)
+                    span.set_attribute("http.response.status_code", status_code)
+                    span.add_event(
+                        "activity.response",
+                        {
+                            "http.status_code": status_code,
+                            "activity.id": activity_id,
+                            "activity.conversation_id": conversation_id,
+                            "azure.ai.agentserver.session_id": session_id,
+                            "activity.response.body": response_text,
+                        },
+                    )
+                    logger.info(
+                        "Activity response sent | status_code=%s | activity_id=%s | "
+                        "conversation_id=%s | session_id=%s | body=%s",
+                        status_code, activity_id, conversation_id, session_id, response_text,
+                    )
                     return response
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     error_source, error_detail = _classify_error(exc)
-                    logger.error("Error processing activity %s: %s", activity_id, exc, exc_info=True)
+                    logger.error(
+                        "Activity request failed | activity_id=%s | conversation_id=%s | "
+                        "session_id=%s | error_source=%s | error=%s",
+                        activity_id, conversation_id, session_id, error_source, exc, exc_info=True,
+                    )
 
-                    # Record error on the span (still inside `with` block)
+                    # Record error on the span (still inside `with` block).
                     if span.is_recording():
                         span.set_status(_OtelStatus(_OtelStatusCode.ERROR, str(exc)))
                         span.record_exception(exc)
@@ -423,6 +678,16 @@ class ActivityAgentServerHost(AgentServerHost):
                         span.set_attribute("otel.status.description", str(exc))
                         span.set_attribute(ActivityConstants.ATTR_SPAN_ERROR_CODE, type(exc).__name__)
                         span.set_attribute(ActivityConstants.ATTR_SPAN_ERROR_MESSAGE, str(exc))
+                        span.add_event(
+                            "activity.error",
+                            {
+                                "error.type": type(exc).__name__,
+                                "error.message": str(exc),
+                                "error.source": error_source,
+                                "activity.id": activity_id,
+                                "azure.ai.agentserver.session_id": session_id,
+                            },
+                        )
 
                     response = create_error_response(
                         "internal_error",
@@ -441,7 +706,8 @@ class ActivityAgentServerHost(AgentServerHost):
             _user_isolation_key_var.reset(user_token)
             _chat_isolation_key_var.reset(chat_token)
             _protocol_var.reset(protocol_token)
-            try:
-                _otel_context.detach(baggage_token)
-            except ValueError:
-                pass
+            if baggage_token is not None:
+                try:
+                    _otel_context.detach(baggage_token)
+                except ValueError:
+                    pass
