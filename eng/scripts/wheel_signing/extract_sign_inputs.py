@@ -102,6 +102,9 @@ def main() -> None:
     reset_dir(payload_dir)
 
     wheels = collect_wheels(wheels_dir)
+    print(f"Platform: {args.platform}")
+    print(f"Input wheels dir: {wheels_dir}")
+    print(f"Work dir: {work_dir}")
 
     manifest: Dict[str, object] = {
         "platform": args.platform,
@@ -115,6 +118,7 @@ def main() -> None:
         unpack_dir_name = wheel_path.name[:-4]
         unpacked_wheel_dir = unpack_root / unpack_dir_name
         unpacked_wheel_dir.mkdir(parents=True, exist_ok=True)
+        print(f"[EXTRACT] wheel={wheel_path.name} unpack_dir={unpacked_wheel_dir}")
 
         with zipfile.ZipFile(wheel_path, "r") as archive:
             archive.extractall(unpacked_wheel_dir)
@@ -127,12 +131,22 @@ def main() -> None:
         )
 
         signable_files = collect_signable_files(unpacked_wheel_dir)
+        print(f"[EXTRACT] wheel={wheel_path.name} signable_count={len(signable_files)}")
         for signable_file in signable_files:
             relative_path = signable_file.relative_to(unpacked_wheel_dir).as_posix()
             payload_name = f"{payload_index:05d}__{signable_file.name}"
             payload_index += 1
 
-            shutil.copy2(signable_file, payload_dir / payload_name)
+            payload_path = payload_dir / payload_name
+            shutil.copy2(signable_file, payload_path)
+            print(
+                "[MAP_EXTRACT] "
+                f"payload={payload_name} "
+                f"source_wheel={wheel_path.name} "
+                f"source_relative_path={relative_path} "
+                f"source_file={signable_file} "
+                f"payload_file={payload_path}"
+            )
 
             manifest["entries"].append(
                 {

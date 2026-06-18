@@ -126,6 +126,10 @@ def main() -> None:
     if not unpack_root.is_dir():
         raise FileNotFoundError(f"Unpacked wheel directory not found: {unpack_root}")
 
+    print(f"Platform: {args.platform}")
+    print(f"Work dir: {work_dir}")
+    print(f"Manifest: {manifest_path}")
+
     with tempfile.TemporaryDirectory(prefix="signed-binaries-") as tmpdir:
         if args.platform == "mac":
             signed_payload_dir = Path(tmpdir) / "signed-payload"
@@ -135,12 +139,15 @@ def main() -> None:
                 raise FileNotFoundError(f"Signed payload zip not found: {signed_zip}")
             with zipfile.ZipFile(signed_zip, "r") as archive:
                 archive.extractall(signed_payload_dir)
+            print(f"Signed payload zip: {signed_zip}")
         else:
             signed_payload_dir = Path(args.signed_input_dir).resolve()
             if not signed_payload_dir.is_dir():
                 raise FileNotFoundError(f"Signed payload directory not found: {signed_payload_dir}")
+            print(f"Signed payload dir: {signed_payload_dir}")
 
         for entry in manifest.get("entries", []):
+            wheel_filename = entry["wheel_filename"]
             unpack_dir = entry["unpack_dir"]
             relative_path = entry["relative_path"]
             payload_name = entry["payload_name"]
@@ -154,6 +161,14 @@ def main() -> None:
                 raise FileNotFoundError(f"Target binary missing in unpacked wheel: {target_binary}")
 
             shutil.copy2(source_signed_binary, target_binary)
+            print(
+                "[MAP_REPACKAGE] "
+                f"payload={payload_name} "
+                f"target_wheel={wheel_filename} "
+                f"target_relative_path={relative_path} "
+                f"signed_source={source_signed_binary} "
+                f"target_file={target_binary}"
+            )
 
     reset_dir(output_wheels_dir)
 
@@ -166,7 +181,14 @@ def main() -> None:
         if not unpacked_wheel_dir.is_dir():
             raise FileNotFoundError(f"Unpacked wheel directory missing: {unpacked_wheel_dir}")
 
-        build_wheel(unpacked_wheel_dir, output_wheels_dir / wheel_filename)
+        output_wheel_path = output_wheels_dir / wheel_filename
+        print(
+            "[REBUILD] "
+            f"wheel={wheel_filename} "
+            f"unpacked_dir={unpacked_wheel_dir} "
+            f"output_wheel={output_wheel_path}"
+        )
+        build_wheel(unpacked_wheel_dir, output_wheel_path)
         rebuilt_count += 1
 
     print(f"Wheels rebuilt: {rebuilt_count}")
