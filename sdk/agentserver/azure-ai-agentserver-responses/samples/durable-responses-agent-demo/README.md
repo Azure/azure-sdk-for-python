@@ -1,11 +1,11 @@
 # Durable Responses Research Agent — Demo
 
-> **▶ Run it locally (recommended for this preview):** the hosted task API is
-> currently returning **403**, which blocks deployed crash-recovery. Use the
-> verified local kit in **[`local/`](local/README.md)** to see the full
-> stream → crash → recover → verify flow on your machine
-> (`cd local && ./setup.sh && ./run.sh`). The rest of this README covers the
-> azd-deployed flow for when the hosted task API is available again.
+> **▶ Deploy it (hosted, recommended):** `azd deploy` this sample and drive it
+> against the hosted Foundry deployment — durable stream → reconnect → recover
+> works against the hosted task API. Prefer an offline run? The verified local
+> kit in **[`local/`](local/README.md)** exercises the same
+> stream → crash → recover → verify flow file-backed on your machine
+> (`cd local && ./setup.sh && ./run.sh`).
 
 A `ResponsesAgentServerHost`-decorated long-running research agent
 that demonstrates four platform capabilities of the Azure AI Hosted
