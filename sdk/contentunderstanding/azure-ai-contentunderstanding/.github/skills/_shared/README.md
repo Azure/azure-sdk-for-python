@@ -1,7 +1,7 @@
 # `_shared/` — library, not a skill
 
 Pure-Python helpers imported by the authoring skill scripts under
-`.github/skills/cu-sdk-generate-analyzer*/scripts/`.
+`.github/skills/cu-sdk-author-analyzer*/scripts/`.
 
 The leading underscore marks this as a **library directory**, not a skill. It
 is intentionally excluded from the Copilot skill picker.

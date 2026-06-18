@@ -1,5 +1,22 @@
 # Release History
 
+## 1.2.0b2 (Unreleased)
+
+### Other Changes
+
+- Added GitHub Copilot skills under `.github/skills/` to help users
+  iteratively author custom analyzers in VS Code with Copilot:
+  - **`cu-sdk-author-analyzer`** — author and refine a custom analyzer
+    for a single document type (layout extraction → schema drafting →
+    validation → batch test → agent review → refine cycle). Document
+    modality only in this release; audio, video, and image are planned
+    for a later release.
+  - **`cu-sdk-author-analyzer-classify-route`** — author and refine a
+    classify-and-route pipeline for mixed-document packets (e.g. invoice
+    + bank statement + loan application in one PDF), with per-category
+    review of both the outer classifier descriptions and each inner
+    schema's field descriptions.
+
 ## 1.2.0b1 (2026-04-28)
 
 ### Features Added

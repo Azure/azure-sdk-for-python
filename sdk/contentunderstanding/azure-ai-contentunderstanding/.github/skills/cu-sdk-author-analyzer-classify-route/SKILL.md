@@ -1,9 +1,9 @@
 ---
-name: cu-sdk-generate-analyzer-classify-route
+name: cu-sdk-author-analyzer-classify-route
 description: Create and test a classify-and-route Azure AI Content Understanding pipeline for packets that contain multiple document types (e.g. invoice + bank statement + loan application in one PDF). Walks per-type schema authoring → outer classifier wiring → batch test → category-aware stdout summary using the typed ContentUnderstandingClient. Use when the user has mixed-document packets.
 ---
 
-# Generate a Classify-and-Route Analyzer (mixed document packets)
+# Author a Classify-and-Route Analyzer (mixed document packets)
 
 Build a classify-and-route pipeline: one **outer classifier analyzer** that
 segments and labels a multi-document packet, plus one **inner extractor
@@ -11,10 +11,26 @@ analyzer per document type**. The packet flows through the outer analyzer
 once; each segment is automatically routed to the matching inner analyzer
 for field extraction.
 
+**This is an iterative, human-in-the-loop workflow.** You will typically run
+the schema → test → review cycle multiple times to refine both the outer
+classifier descriptions and each inner schema's field descriptions before
+you're happy with both classification accuracy and extraction quality.
+
 > **[USE INSTEAD]:** If every page in the user's documents is the **same
 > type** (only invoices, only contracts, etc.), use
-> [`cu-sdk-generate-analyzer`](../cu-sdk-generate-analyzer/SKILL.md) instead.
+> [`cu-sdk-author-analyzer`](../cu-sdk-author-analyzer/SKILL.md) instead.
 > Classify-and-route is for **mixed** packets.
+
+> **[ASK USER] Modality check (first thing to confirm):**
+>
+> "Are you working with **document** files — PDFs or images of pages? This
+> skill currently supports document modalities only. Audio, video, and
+> image classifiers are planned for a future update."
+>
+> - If the user says **document** → continue with this skill.
+> - If the user says **audio**, **video**, or **image** → stop this skill.
+>   Audio/video classify-and-route is on the roadmap; for now point them at
+>   the [REST tutorial](https://learn.microsoft.com/azure/ai-services/content-understanding/tutorial/create-custom-analyzer).
 
 > **[COPILOT INTERACTION MODEL]:** At each step marked with **[ASK USER]**,
 > pause execution and prompt the user before proceeding.
@@ -45,7 +61,7 @@ run once for this resource. Full setup lives in [`cu-sdk-setup`](../cu-sdk-setup
 > Never ask the user to paste an endpoint or API key into chat — they edit `.env` directly or run `az login`.
 
 > **[ASK USER] Packet check:**
-> 1. "Does each document in your packet contain more than one type of form (e.g. an invoice page followed by a bank statement page)?" — if no, route to `cu-sdk-generate-analyzer`.
+> 1. "Does each document in your packet contain more than one type of form (e.g. an invoice page followed by a bank statement page)?" — if no, route to `cu-sdk-author-analyzer`.
 > 2. "What types of documents appear in your packets?" — capture as the list of inner analyzers.
 
 ## Architecture
@@ -90,7 +106,7 @@ sdk/contentunderstanding/azure-ai-contentunderstanding
 ## Scripts and templates
 
 ```
-.github/skills/cu-sdk-generate-analyzer-classify-route/
+.github/skills/cu-sdk-author-analyzer-classify-route/
 ├── scripts/
 │   ├── create_and_test_router.py
 │   └── create_and_test_router.sh
@@ -106,14 +122,32 @@ Run layout extraction (same as the single-type skill) on a representative
 packet to see the section headings:
 
 ```bash
-python .github/skills/cu-sdk-generate-analyzer/scripts/extract_layout.py \
+python .github/skills/cu-sdk-author-analyzer/scripts/extract_layout.py \
     --input <packet.pdf> \
     --output .local_only/layout/
 ```
 
-> **[ASK USER]** "Looking at `.local_only/layout/<packet>.layout.md`, what discrete
-> document types do you see? List them in plain English (e.g. invoice, bank
-> statement, loan application)."
+> **[COPILOT]** Read `.local_only/layout/<packet>.layout.md` **yourself** and
+> identify section headings, page breaks, and content shifts that suggest
+> different document types. Then present your analysis to the user for
+> confirmation — do **not** ask the user to read the layout cold.
+>
+> Example presentation:
+>
+> > "Based on the layout in `<packet>.layout.md` I see these document types:
+> >
+> > - **Pages 1–2** — appears to be an *invoice* (top heading 'Invoice',
+> >   contains 'Invoice #' label and a line-item table)
+> > - **Pages 3–4** — appears to be a *bank statement* (top heading
+> >   'Account Statement', contains account number and a transaction table)
+> > - **Page 5** — appears to be a *loan application* (top heading 'Loan
+> >   Application', applicant fields)
+> >
+> > Does this look right? Anything to add, remove, or rename before I
+> > draft schemas?"
+>
+> Only fall back to a blank `[ASK USER]` ("What types do you see?") if the
+> layout is too ambiguous to suggest types confidently.
 
 ### Step 2 — Draft one inner schema per type
 
@@ -123,8 +157,21 @@ the table in
 then add `fieldSchema.fields`). Field descriptions follow the
 [two-stage pipeline rule](../cu-sdk-common-knowledge/SKILL.md#field-description-rule-the-two-stage-pipeline)
 — reference text and structure, never visual appearance. See
-[`cu-sdk-generate-analyzer`](../cu-sdk-generate-analyzer/SKILL.md) Step 2 for
+[`cu-sdk-author-analyzer`](../cu-sdk-author-analyzer/SKILL.md) Step 2 for
 the full field-schema walkthrough.
+
+> **[COPILOT] Read best practices before drafting fields.** Before writing
+> any field description (in any inner schema or the outer classifier's
+> category descriptions), fetch the official CU best-practices page and
+> apply its guidance:
+>
+> 🔗 https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/best-practices
+>
+> The same key principles apply here as in
+> [`cu-sdk-author-analyzer`](../cu-sdk-author-analyzer/SKILL.md#step-2--draft-a-json-field-schema):
+> be specific and concrete, use text anchors (not visual cues), include
+> alternative labels and format examples, prefer `extract` for verbatim
+> values, and keep the field count focused.
 
 > **Reference**:
 > [`samples/sample_create_classifier.py`](../../../samples/sample_create_classifier.py)
@@ -138,11 +185,13 @@ Start from the template:
 
 ```bash
 mkdir -p .local_only/schemas
-cp .github/skills/cu-sdk-generate-analyzer-classify-route/templates/classifier_template.json \
+cp .github/skills/cu-sdk-author-analyzer-classify-route/templates/classifier_template.json \
    .local_only/schemas/<name>_classifier_v1.json
 ```
 
-Example after editing:
+Example after editing (descriptions intentionally generic so they survive
+minor wording variants — see the **Category description rule** below the
+example for guidance on writing your own):
 ```json
 {
   "baseAnalyzerId": "prebuilt-document",
@@ -152,15 +201,15 @@ Example after editing:
     "omitContent": true,
     "contentCategories": {
       "invoice": {
-        "description": "Pages whose top heading is 'Invoice'; contain an Invoice # label and a line-item table.",
+        "description": "A commercial invoice. Look for an invoice / bill heading or label, an invoice number, line-item table with quantities and prices, and a total amount.",
         "analyzerId": "invoice"
       },
       "bank_statement": {
-        "description": "Pages whose top heading is 'Bank Statement' or 'Account Statement'; contain Account Number and Statement Period labels.",
+        "description": "A bank or account statement. Look for an account-statement heading, an account number, a statement period or date range, and a transaction table with running balance.",
         "analyzerId": "bank_statement"
       },
       "loan_application": {
-        "description": "Pages whose top heading is 'Loan Application'; contain Applicant Name and Loan Amount labels.",
+        "description": "A loan or credit application form. Look for an application heading, applicant or borrower fields, requested loan amount, and applicant signature.",
         "analyzerId": "loan_application"
       }
     }
@@ -187,14 +236,33 @@ pass. Two exceptions skip alias resolution:
 > entry has no category, no fields, and shows up in the summary as a
 > confusing `(uncategorized)` row. Setting `omitContent: true` removes it.
 
-> **Category description rule:** describe each category in terms of text
-> anchors (headings, labels) — never visual cues. Same reason as the
-> field-description rule.
+> **Category description rule — the example values above are demo-specific.**
+>
+> The category descriptions in the JSON above are tied to the demo packet
+> `samples/sample_files/mixed_financial_docs.pdf` (which uses the literal
+> headings `Invoice`, `Bank Statement`, `Loan Application`). **Do not copy
+> them verbatim.** When authoring for the user's own packet, write
+> descriptions based on what you observed in **the user's** layout output
+> from Step 1 — use the actual headings, labels, and structural markers
+> from their documents.
+>
+> Keep descriptions:
+>
+> - **Generic over surface form** — describe the *kind* of content
+>   ("contains a transaction table with running balance") rather than
+>   hardcoding one specific header string, so minor wording variants still
+>   classify correctly.
+> - **Concrete enough to be discriminative** — include at least one anchor
+>   that distinguishes this category from the others in the packet.
+> - **Text-anchored, not visual** — reference headings, labels, and
+>   neighbouring text, never colour / font / position-without-text. Same
+>   reason as the field-description rule in
+>   [`cu-sdk-common-knowledge`](../cu-sdk-common-knowledge/SKILL.md#field-description-rule-the-two-stage-pipeline).
 
 ### Step 4 — Validate, create, and batch-test
 
 ```bash
-python .github/skills/cu-sdk-generate-analyzer-classify-route/scripts/create_and_test_router.py \
+python .github/skills/cu-sdk-author-analyzer-classify-route/scripts/create_and_test_router.py \
     --outer-schema .local_only/schemas/classifier.json \
     --inner-schema invoice=.local_only/schemas/invoice.json \
     --inner-schema bank_statement=.local_only/schemas/bank_statement.json \
@@ -282,7 +350,61 @@ For each input document the script writes two files into `--output`:
 > `create_and_test_router.py` prints a `[WARN]` per inner schema that is
 > missing it, before any service call.
 
-### Step 6 — Clean up (optional)
+### Step 6 — Agent review and iterate
+
+> **[COPILOT]** After the category-aware summary prints, do the following
+> **automatically** before asking the user anything:
+>
+> 1. For each entry in `result.contents[]` in `<doc>.json`, verify the
+>    assigned `category` matches what the page actually is. Use
+>    `.local_only/layout/<doc>.layout.md` as ground truth.
+>    - **Misclassified segment** → the **outer classifier's**
+>      `contentCategories.<key>.description` needs strengthening, not the
+>      inner schema. Add a discriminating anchor from the layout to the
+>      category description and recreate the outer classifier.
+> 2. For each correctly-classified segment, compare extracted field values
+>    against the layout the same way as the single-type skill (see
+>    [`cu-sdk-author-analyzer`](../cu-sdk-author-analyzer/SKILL.md#step-5--agent-review-and-iterate)).
+>    Flag fields where:
+>    - The extracted value looks wrong or is `null` when a value should be present
+>    - Confidence is below 0.7
+>    - The grounding location is unexpected
+> 3. Present a per-category diff to the user:
+>    - "In the `invoice` segment, field `TotalAmount` extracted `'1234'` —
+>      I see `'$1,234.56'` near the 'Total' label. Should I tighten the
+>      description?"
+>    - "Page 5 was classified as `loan_application` but the heading is
+>      actually 'Borrower Agreement' — should I add that wording to the
+>      `loan_application` category description?"
+> 4. Record user-confirmed corrections in per-category ground-truth files
+>    (`.local_only/ground_truth_<category>.json`) so the agent remembers
+>    correct answers across iterations:
+>    ```json
+>    [
+>      { "doc": "mixed_packet_1.pdf", "segment": 0, "field": "TotalAmount", "correct_value": "1234.56" }
+>    ]
+>    ```
+> 5. Update the affected schema(s) — outer classifier for classification
+>    fixes, inner schemas for field fixes — as a new version
+>    (`*_v2.json`).
+> 6. Re-run Step 4 with the new schemas. `--reuse` rebuilds only the
+>    analyzers whose schema hash changed.
+>
+> Repeat until every category has:
+>
+> - All segments classified correctly
+> - Key fields **fill rate ≥ 80%** and **avg confidence ≥ 0.85** (computed
+>   per-category, as the summary already does)
+>
+> Stop and report to the user when any of:
+>
+> - All targets met (success).
+> - Three consecutive iterations show no improvement on a given category
+>   (escalate — may need a different `baseAnalyzerId`, schema redesign, or
+>   a different category split).
+> - The user signals they're done.
+
+### Step 7 — Clean up (optional)
 
 By default the script leaves both the outer classifier **and** all inner
 analyzers in your resource so you can re-use them. Pass `--ephemeral` to
@@ -298,7 +420,7 @@ delete all of them at the end of the run.
 
 ## Related skills
 
-- [`cu-sdk-generate-analyzer`](../cu-sdk-generate-analyzer/SKILL.md) — single doc type.
+- [`cu-sdk-author-analyzer`](../cu-sdk-author-analyzer/SKILL.md) — single doc type.
 - [`cu-sdk-common-knowledge`](../cu-sdk-common-knowledge/SKILL.md) — service concepts, two-stage pipeline, `baseAnalyzerId` table, classify-and-route rules.
 - [`cu-sdk-sample-run`](../cu-sdk-sample-run/SKILL.md) — run individual SDK samples (e.g. `sample_create_classifier.py`) for deeper reference.
 - [`cu-sdk-setup`](../cu-sdk-setup/SKILL.md) — install the SDK, configure env.

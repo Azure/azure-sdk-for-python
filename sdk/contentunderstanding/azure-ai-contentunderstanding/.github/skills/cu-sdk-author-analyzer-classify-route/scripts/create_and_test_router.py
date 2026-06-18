@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Classify-and-route: create N inner analyzers + 1 outer classifier, batch-test.
 
-This is the multi-doc-type analogue of ``../cu-sdk-generate-analyzer/scripts/
+This is the multi-doc-type analogue of ``../cu-sdk-author-analyzer/scripts/
 create_and_test.py``. Use it when a single input file (or folder) contains
 mixed document types — for example, an invoice + bank statement + loan
 application in one PDF.
@@ -67,7 +67,7 @@ _HERE = Path(__file__).resolve().parent
 _SHARED_DIR = _HERE.parent.parent / "_shared"
 _SIBLING_CREATE_AND_TEST = (
     _HERE.parent.parent
-    / "cu-sdk-generate-analyzer"
+    / "cu-sdk-author-analyzer"
     / "scripts"
     / "create_and_test.py"
 )

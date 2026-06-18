@@ -29,5 +29,5 @@ tests/recordings/
 *.log
 logs/
 
-# Local files (per-user scratch — also used by cu-sdk-generate-analyzer skill workflow)
+# Local files
 .local_only/

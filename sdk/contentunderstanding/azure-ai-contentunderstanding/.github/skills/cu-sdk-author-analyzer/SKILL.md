@@ -1,13 +1,17 @@
 ---
-name: cu-sdk-generate-analyzer
-description: Create and test a custom Azure AI Content Understanding analyzer for a folder of documents of a single type. Walks layout extraction → schema authoring → validation → batch test → stdout summary using the typed ContentUnderstandingClient. Use when the user wants to author a custom analyzer for invoices, contracts, forms, or any other single-type document set.
+name: cu-sdk-author-analyzer
+description: Iteratively author and test a custom Azure AI Content Understanding analyzer for a folder of **document** files (PDFs, page images) of a single type. Walks layout extraction → schema authoring → validation → batch test → agent review → refine cycle using the typed ContentUnderstandingClient. Document modality only — audio, video, and image analyzers are planned for a later update. Use when the user wants to author a custom analyzer for invoices, contracts, forms, or any other single-type document set.
 ---
 
-# Generate a Custom Analyzer (single document type)
+# Author a Custom Analyzer (single document type)
 
 Author a custom Content Understanding analyzer for one document type
 end-to-end: extract layout, draft a field schema, validate locally, create the
 analyzer, batch-test it on sample files, and read a quality summary.
+
+**This is an iterative, human-in-the-loop workflow.** You will typically run
+the schema → test → review cycle multiple times to refine field descriptions
+before you're happy with the extraction quality.
 
 The workflow uses the typed `ContentUnderstandingClient` shipped in this
 package — the same client `samples/sample_create_analyzer.py` and
@@ -21,8 +25,21 @@ package — the same client `samples/sample_create_analyzer.py` and
 > **[USE INSTEAD]:** If the user's packet contains **multiple different
 > document types** (for example, an invoice, a bank statement, and a loan
 > application in one PDF), route them to the
-> [`cu-sdk-generate-analyzer-classify-route`](../cu-sdk-generate-analyzer-classify-route/SKILL.md)
+> [`cu-sdk-author-analyzer-classify-route`](../cu-sdk-author-analyzer-classify-route/SKILL.md)
 > skill instead. This skill assumes one document type per analyzer.
+
+> **[ASK USER] Modality check (first thing to confirm):**
+>
+> "Are you working with **document** files — PDFs or images of pages? This
+> skill currently supports document modalities only. Audio, video, and
+> image analyzers are planned for a future update."
+>
+> - If the user says **document** → continue with this skill.
+> - If the user says **audio**, **video**, or **image** → stop this skill and
+>   point them at the matching SDK sample
+>   ([`samples/sample_create_analyzer.py`](../../../samples/sample_create_analyzer.py)
+>   with `prebuilt-audio` / `prebuilt-video` / `prebuilt-imageAnalyzer`) or the
+>   [REST tutorial](https://learn.microsoft.com/azure/ai-services/content-understanding/tutorial/create-custom-analyzer).
 
 ## Prerequisites
 
@@ -60,7 +77,7 @@ sdk/contentunderstanding/azure-ai-contentunderstanding
 ## Scripts and templates
 
 ```
-.github/skills/cu-sdk-generate-analyzer/
+.github/skills/cu-sdk-author-analyzer/
 ├── scripts/
 │   ├── extract_layout.py     # Stage 1
 │   ├── extract_layout.sh
@@ -88,7 +105,7 @@ anchor your field descriptions to.
 Run:
 
 ```bash
-python .github/skills/cu-sdk-generate-analyzer/scripts/extract_layout.py \
+python .github/skills/cu-sdk-author-analyzer/scripts/extract_layout.py \
     --input <path-to-folder-or-file> \
     --output .local_only/layout/
 ```
@@ -108,7 +125,7 @@ Start from the template instead of writing from scratch:
 
 ```bash
 mkdir -p .local_only/schemas
-cp .github/skills/cu-sdk-generate-analyzer/templates/schema_template.json \
+cp .github/skills/cu-sdk-author-analyzer/templates/schema_template.json \
    .local_only/schemas/<name>_v1.json
 ```
 
@@ -118,6 +135,29 @@ with two required top-level keys:
 
 - `baseAnalyzerId` — which prebuilt analyzer your custom analyzer extends. Use the table below.
 - `fieldSchema.fields` — the named fields you want to extract.
+
+> **[COPILOT] Read best practices before drafting fields.** Before writing
+> any field description, fetch the official CU best-practices page and apply
+> its guidance:
+>
+> 🔗 https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/best-practices
+>
+> Key principles that affect schema quality:
+>
+> - Be specific and concrete in field descriptions — vague descriptions
+>   produce vague extractions.
+> - Use **text anchors** (labels, headings, neighbouring fields) — never
+>   visual cues like colour, font, or position-without-text-context. This
+>   matches the two-stage pipeline rule in
+>   [`cu-sdk-common-knowledge`](../cu-sdk-common-knowledge/SKILL.md#field-description-rule-the-two-stage-pipeline).
+> - Include **format examples** and **alternative label names** when a value
+>   can appear in multiple wordings or formats.
+> - Prefer `"method": "extract"` when the value appears verbatim; use
+>   `"generate"` only when the model needs to synthesise (summary,
+>   classification label) and `"classify"` for fixed enumerations.
+> - Keep the field count focused on what the user actually needs. Extra
+>   fields cost tokens and can dilute extraction quality on the fields that
+>   matter.
 
 The template demonstrates **all three extraction methods** (`extract`,
 `generate`, `classify`) plus the **nested object** and **array of objects**
@@ -192,7 +232,7 @@ The local validator (Step 3) rejects any value not on that list.
 ### Step 3 — Validate the schema locally
 
 ```bash
-python .github/skills/cu-sdk-generate-analyzer/scripts/create_and_test.py \
+python .github/skills/cu-sdk-author-analyzer/scripts/create_and_test.py \
     --schema .local_only/schemas/invoice_v1.json \
     --input samples/sample_files/sample_invoice.pdf \
     --output .local_only/test_results/v1
@@ -231,13 +271,56 @@ For each input document the script writes two files into `--output`:
   Drop this straight into an LLM prompt, or skim it in VS Code for a fast
   human review.
 
-### Step 5 — Clean up (optional)
+### Step 5 — Agent review and iterate
+
+> **[COPILOT]** After the summary prints, do the following **automatically**
+> before asking the user anything:
+>
+> 1. Open each `<doc>.llm.md` (and the underlying `<doc>.json` for grounding)
+>    in `.local_only/test_results/` and compare extracted field values
+>    against the source content. Use `.local_only/layout/<doc>.layout.md`
+>    as ground truth — it shows the text the model actually saw.
+> 2. Flag any field where:
+>    - The extracted value looks wrong or is `null` when a value should be present
+>    - Confidence is below 0.7
+>    - The grounding location is unexpected
+> 3. Present findings to the user with concrete diffs:
+>    - "Field `invoiceNumber` extracted `'INV-001'` — does this look correct?"
+>    - "Field `totalAmount` was empty, but I see `'$1,234.56'` near the
+>      'Total' label in the layout — should I tighten the description?"
+> 4. For each correction the user confirms, append to
+>    `.local_only/ground_truth_<schema-name>.json`:
+>    ```json
+>    [
+>      { "doc": "invoice_001.pdf", "field": "totalAmount", "correct_value": "1234.56" },
+>      { "doc": "invoice_002.pdf", "field": "invoiceDate", "correct_value": "2026-01-15" }
+>    ]
+>    ```
+>    This file is the agent's memory of correct answers across iterations.
+> 5. Use the corrections to refine the field descriptions in a new schema
+>    version (`.local_only/schemas/<name>_v2.json`).
+> 6. Re-run Step 3–4 with the new schema. The `--reuse` flag in
+>    `create_and_test.py` names analyzers by schema hash, so unchanged
+>    schemas are a no-op on the create side and a changed schema gets a
+>    fresh analyzer automatically.
+>
+> Repeat until all key fields reach **fill rate ≥ 80%** and
+> **avg confidence ≥ 0.85**, or the user is satisfied.
+>
+> Stop and report to the user when any of:
+> - Targets are met (success).
+> - Three consecutive iterations show no improvement (need a different
+>   approach — different `baseAnalyzerId`, different `method`, or schema
+>   redesign — escalate to the user).
+> - The user signals they're done.
+
+### Step 6 — Clean up (optional)
 
 By default the analyzer is kept in your resource so you can re-use it. Pass
 `--ephemeral` to delete it at the end of a run:
 
 ```bash
-python .github/skills/cu-sdk-generate-analyzer/scripts/create_and_test.py \
+python .github/skills/cu-sdk-author-analyzer/scripts/create_and_test.py \
     --schema .local_only/schemas/invoice_v1.json \
     --input samples/sample_files/sample_invoice.pdf \
     --output .local_only/test_results/v1 \
@@ -270,4 +353,4 @@ and
 - [`cu-sdk-setup`](../cu-sdk-setup/SKILL.md) — install the SDK, configure env.
 - [`cu-sdk-sample-run`](../cu-sdk-sample-run/SKILL.md) — run one reference sample.
 - [`cu-sdk-common-knowledge`](../cu-sdk-common-knowledge/SKILL.md) — service concepts and field-description rules.
-- [`cu-sdk-generate-analyzer-classify-route`](../cu-sdk-generate-analyzer-classify-route/SKILL.md) — multi-doc-type packets.
+- [`cu-sdk-author-analyzer-classify-route`](../cu-sdk-author-analyzer-classify-route/SKILL.md) — multi-doc-type packets.

@@ -23,7 +23,7 @@ _SCRIPT_PATH = (
     _HERE.parent
     / ".github"
     / "skills"
-    / "cu-sdk-generate-analyzer-classify-route"
+    / "cu-sdk-author-analyzer-classify-route"
     / "scripts"
     / "create_and_test_router.py"
 )

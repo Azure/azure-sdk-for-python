@@ -144,7 +144,7 @@ def _parse_args(argv: List[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
             "Extract document layout (.layout.json + .layout.md) for each "
-            "input file. Stage 1 of the cu-sdk-generate-analyzer workflow."
+            "input file. Stage 1 of the cu-sdk-author-analyzer workflow."
         )
     )
     parser.add_argument(

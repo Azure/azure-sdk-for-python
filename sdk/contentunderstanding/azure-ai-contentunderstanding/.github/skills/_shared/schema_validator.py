@@ -27,21 +27,17 @@ import json
 from pathlib import Path
 from typing import Any, List, Mapping, Optional, Tuple, Union
 
-#: Known ``baseAnalyzerId`` values shipped by the service. Sourced from the
-#: Content Understanding documentation; update when the service adds new
-#: prebuilt analyzers.
+#: Valid ``baseAnalyzerId`` values for custom analyzers. Only modality-level
+#: prebuilts are accepted by the service for ``baseAnalyzerId``; ``*Search``
+#: variants and task-specific prebuilts (``prebuilt-invoice``,
+#: ``prebuilt-receipt``) return ``InvalidBaseAnalyzerId`` if used here. See
+#: https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/analyzer-reference#baseanalyzerid
 KNOWN_BASE_ANALYZER_IDS = frozenset(
     {
         "prebuilt-document",
-        "prebuilt-documentSearch",
         "prebuilt-audio",
-        "prebuilt-audioSearch",
         "prebuilt-video",
-        "prebuilt-videoSearch",
-        "prebuilt-invoice",
-        "prebuilt-receipt",
-        "prebuilt-imageAnalyzer",
-        "prebuilt-layout",
+        "prebuilt-image",
     }
 )
 

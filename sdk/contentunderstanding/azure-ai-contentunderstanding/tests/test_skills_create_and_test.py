@@ -25,7 +25,7 @@ _SCRIPT_PATH = (
     _HERE.parent
     / ".github"
     / "skills"
-    / "cu-sdk-generate-analyzer"
+    / "cu-sdk-author-analyzer"
     / "scripts"
     / "create_and_test.py"
 )

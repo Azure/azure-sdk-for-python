@@ -1,4 +1,4 @@
-# `cu-sdk-generate-analyzer/scripts/` — quick reference
+# `cu-sdk-author-analyzer/scripts/` — quick reference
 
 Two scripts that implement the create-an-analyzer loop using the typed
 ``ContentUnderstandingClient``. See [`../SKILL.md`](../SKILL.md) for the

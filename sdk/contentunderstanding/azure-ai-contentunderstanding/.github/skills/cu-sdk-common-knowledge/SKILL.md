@@ -66,33 +66,38 @@ Good description:
 > May also be labelled 'Invoice Date', 'Date', or 'Issued'. Format is
 > usually MM/DD/YYYY. Examples: '01/15/2024', 'January 15, 2024'."
 
-Used by [`cu-sdk-generate-analyzer`](../cu-sdk-generate-analyzer/SKILL.md)
-and [`cu-sdk-generate-analyzer-classify-route`](../cu-sdk-generate-analyzer-classify-route/SKILL.md).
+Used by [`cu-sdk-author-analyzer`](../cu-sdk-author-analyzer/SKILL.md)
+and [`cu-sdk-author-analyzer-classify-route`](../cu-sdk-author-analyzer-classify-route/SKILL.md).
 
 ## Choosing `baseAnalyzerId`
 
 Every custom analyzer extends a built-in prebuilt analyzer via
-`baseAnalyzerId`. Pick the row that matches the content you're analyzing
-(documents, audio, video, image) and whether you also need rich semantic
-search content. Typos here are a common first-time error; the local schema
-validator (in [`_shared/schema_validator.py`](../_shared/)) rejects any
-value not in this table.
+`baseAnalyzerId`. Pick the row that matches the **modality** of the content
+you're analyzing (documents, audio, video, image). Typos here are a common
+first-time error; the local schema validator (in
+[`_shared/schema_validator.py`](../_shared/)) rejects any value not in this
+table.
 
 | Content type | `baseAnalyzerId` |
 |---|---|
 | Documents (PDF, image of a page) | `prebuilt-document` |
-| Documents needing rich semantic search content | `prebuilt-documentSearch` |
 | Audio (mp3, wav, m4a) | `prebuilt-audio` |
-| Audio needing semantic search | `prebuilt-audioSearch` |
 | Video (mp4, mov) | `prebuilt-video` |
-| Video needing semantic search | `prebuilt-videoSearch` |
-| Image-only analyzer | `prebuilt-imageAnalyzer` |
-| Invoices (built-in fields) | `prebuilt-invoice` |
-| Receipts (built-in fields) | `prebuilt-receipt` |
+| Image-only analyzer | `prebuilt-image` |
 
-Used by [`cu-sdk-generate-analyzer`](../cu-sdk-generate-analyzer/SKILL.md)
+> ⚠️ **Only modality-level prebuilts are valid as `baseAnalyzerId` for
+> custom analyzers.** `*Search` variants (`prebuilt-documentSearch`,
+> `prebuilt-audioSearch`, `prebuilt-videoSearch`), task-specific prebuilts
+> (`prebuilt-invoice`, `prebuilt-receipt`, `prebuilt-idDocument`), and
+> `prebuilt-layout` are **not** accepted here — the service returns
+> `InvalidBaseAnalyzerId`. Those prebuilts can still be called directly as
+> standalone analyzers via
+> `client.begin_analyze(analyzer_id="prebuilt-invoice", ...)`. See the
+> [analyzer-reference docs](https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/analyzer-reference#baseanalyzerid).
+
+Used by [`cu-sdk-author-analyzer`](../cu-sdk-author-analyzer/SKILL.md)
 (custom analyzer) and
-[`cu-sdk-generate-analyzer-classify-route`](../cu-sdk-generate-analyzer-classify-route/SKILL.md)
+[`cu-sdk-author-analyzer-classify-route`](../cu-sdk-author-analyzer-classify-route/SKILL.md)
 (both inner extractors and the outer classifier).
 
 ## Classify-and-route rule
@@ -114,11 +119,11 @@ packets:
    analyzer's job is classification + routing only; field extraction
    belongs in the inner analyzers.
 
-Used by [`cu-sdk-generate-analyzer-classify-route`](../cu-sdk-generate-analyzer-classify-route/SKILL.md).
+Used by [`cu-sdk-author-analyzer-classify-route`](../cu-sdk-author-analyzer-classify-route/SKILL.md).
 
 ## Related Skills
 
 - `cu-sdk-setup` — Set up Python environment and run samples
 - `cu-sdk-sample-run` — Run specific samples interactively
-- `cu-sdk-generate-analyzer` — Author + test a custom analyzer for one document type
-- `cu-sdk-generate-analyzer-classify-route` — Author + test a classify-and-route pipeline for mixed-document packets
+- `cu-sdk-author-analyzer` — Author + test a custom analyzer for one document type
+- `cu-sdk-author-analyzer-classify-route` — Author + test a classify-and-route pipeline for mixed-document packets
