@@ -1,10 +1,10 @@
 # AIProjectClient Subclients
 
-This document lists all sub-clients available on `AIProjectClient` and their public method counts. Overload methods are not counted. Only synchronous methods are counted (but each one has an equivalent asynchronous method).
+This document lists all methods available on `AIProjectClient` and its sub-clients. Overload methods are not counted. Only synchronous methods are counted (but each one has an equivalent asynchronous method).
 
 ## Summary
 
-There are a total of 134 unique public methods across all sub-clients.
+There are a total of 135 unique public methods (1 on the client, 134 across all sub-clients).
 
 ### Top-level Sub-clients (stable operations)
 
@@ -36,7 +36,15 @@ There are a total of 134 unique public methods across all sub-clients.
 | `beta.skills` | BetaSkillsOperations | 11 |
 
 
-## Stable methods
+## Stable methods on the client
+
+An asterisk at the end of the method name means is a hand-written method.
+
+```
+.get_openai_client*
+```
+
+## Stable methods on sub clients
 
 Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
@@ -103,7 +111,7 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .toolboxes.update
 ```
 
-## Beta methods
+## Beta methods on sub-clients
 
 Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
