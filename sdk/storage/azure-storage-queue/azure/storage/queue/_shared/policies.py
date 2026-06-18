@@ -11,7 +11,7 @@ import re
 import uuid
 from io import BytesIO, SEEK_SET, UnsupportedOperation
 from time import time
-from typing import Any, Dict, List, Optional, TypeVar, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 from urllib.parse import (
     parse_qsl,
     urlencode,
@@ -29,11 +29,6 @@ from azure.core.pipeline.policies import (
     RequestHistory,
     SansIOHTTPPolicy,
 )
-from azure.core.pipeline.transport import (  # pylint: disable=no-legacy-azure-core-http-response-import
-    HttpRequest as LegacyHttpRequest,
-    HttpResponse as LegacyHttpResponse,
-)
-from azure.core.rest import HttpRequest, HttpResponse
 
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE, DATA_BLOCK_SIZE
@@ -57,10 +52,6 @@ if TYPE_CHECKING:
         PipelineRequest,
         PipelineResponse,
     )
-
-
-HTTPResponseType = TypeVar("HTTPResponseType", HttpResponse, LegacyHttpResponse)
-HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
 
 
 _LOGGER = logging.getLogger(__name__)
