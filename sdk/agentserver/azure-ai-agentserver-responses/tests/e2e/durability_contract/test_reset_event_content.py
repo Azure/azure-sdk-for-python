@@ -97,10 +97,16 @@ async def test_reset_event_carries_corrected_output_items(
         await harness.kill()
         await harness.restart()
 
-        terminal = await poll_until_terminal(harness.client, response_id, timeout_seconds=30.0)
+        terminal = await poll_until_terminal(
+            harness.client, response_id, timeout_seconds=30.0
+        )
         assert terminal["status"] == "completed", terminal
         # Recovery resumed correctly (sanity): final output is the full plan.
-        assert output_text_markers(terminal) == ["L0_phase0", "L0_phase1", "L1_phase2"], terminal
+        assert output_text_markers(terminal) == [
+            "L0_phase0",
+            "L0_phase1",
+            "L1_phase2",
+        ], terminal
 
         events = await _full_stream(harness.client, response_id)
 

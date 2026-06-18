@@ -47,10 +47,14 @@ async def _wait_marker_lines(marker: Path, n: int, timeout: float = 20.0) -> str
             if len(lines) >= n:
                 return lines[0].split("\t")[1]
         await asyncio.sleep(0.1)
-    raise AssertionError(f"marker never reached {n} line(s): {marker.read_text() if marker.exists() else '<missing>'}")
+    raise AssertionError(
+        f"marker never reached {n} line(s): {marker.read_text() if marker.exists() else '<missing>'}"
+    )
 
 
-async def _wait_persisted(base_url: str, response_id: str, timeout: float = 20.0) -> None:
+async def _wait_persisted(
+    base_url: str, response_id: str, timeout: float = 20.0
+) -> None:
     """Poll GET until the response is durably persisted (200)."""
     deadline = asyncio.get_event_loop().time() + timeout
     async with httpx.AsyncClient(base_url=base_url, timeout=10.0) as c:
@@ -82,7 +86,13 @@ async def test_recovery_proceeds_on_transient_store_error(tmp_path: Path) -> Non
     )
     await harness.start()
     try:
-        body = {"model": "conformance-test", "input": "hi", "store": True, "background": True, "stream": False}
+        body = {
+            "model": "conformance-test",
+            "input": "hi",
+            "store": True,
+            "background": True,
+            "stream": False,
+        }
         post_task = asyncio.create_task(_fire_post(harness.base_url, body))
 
         # Lifetime 0 entered + persisted the response (emit_created), then parks.
@@ -118,7 +128,9 @@ async def test_recovery_proceeds_on_transient_store_error(tmp_path: Path) -> Non
             terminal = None
             while asyncio.get_event_loop().time() < deadline:
                 r = await c.get(f"/responses/{response_id}")
-                assert r.status_code == 200, f"transient recovery must NOT drop (got {r.status_code})"
+                assert (
+                    r.status_code == 200
+                ), f"transient recovery must NOT drop (got {r.status_code})"
                 body_json = r.json()
                 if body_json.get("status") in ("completed", "failed", "cancelled"):
                     terminal = body_json

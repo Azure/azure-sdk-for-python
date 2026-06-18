@@ -99,7 +99,9 @@ options = ResponsesServerOptions(
     shutdown_grace_period_seconds=_SHUTDOWN_GRACE_S,
 )
 _inner_store = FileResponseStore(storage_dir=resolve_durable_subdir("responses"))
-app = ResponsesAgentServerHost(options=options, store=_TransientOnceStore(_inner_store, _ARM_MARKER))
+app = ResponsesAgentServerHost(
+    options=options, store=_TransientOnceStore(_inner_store, _ARM_MARKER)
+)
 
 
 @app.response_handler

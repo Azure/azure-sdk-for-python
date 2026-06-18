@@ -64,7 +64,8 @@ def test_every_row_has_a_test_module_per_applicable_path() -> None:
                 )
     assert not missing, (
         "durability-contract.md § The matrix declares rows/paths that have "
-        "no paired test module in tests/e2e/durability_contract/:\n  " + "\n  ".join(missing)
+        "no paired test module in tests/e2e/durability_contract/:\n  "
+        + "\n  ".join(missing)
     )
 
 
@@ -99,7 +100,9 @@ def test_every_row_module_parametrizes_on_stream() -> None:
             # with two boolean values, or for both `stream=True` and
             # `stream=False` literals in the test body.
             has_both = bool(
-                re.search(r"parametrize\([^)]*['\"]stream['\"]", source) and "True" in source and "False" in source
+                re.search(r"parametrize\([^)]*['\"]stream['\"]", source)
+                and "True" in source
+                and "False" in source
             ) or ("stream=True" in source and "stream=False" in source)
             if not has_both:
                 missing.append(
@@ -139,10 +142,9 @@ def test_no_synthetic_crash_shortcuts_in_suite() -> None:
         for pattern, label in banned_patterns:
             if re.search(pattern, text):
                 findings.append(f"{module_file.name}: {label}")
-    assert (
-        not findings
-    ), "Constitution Principle X violation — conformance tests must use " "real signals only:\n  " + "\n  ".join(
-        findings
+    assert not findings, (
+        "Constitution Principle X violation — conformance tests must use "
+        "real signals only:\n  " + "\n  ".join(findings)
     )
 
 
@@ -242,7 +244,9 @@ def test_per_cell_tests_assert_more_than_just_status() -> None:
         text = module_file.read_text(encoding="utf-8")
         # If the test asserts only on terminal["status"] and nothing
         # else from the assertion vocabulary, flag it.
-        has_status_assertion = 'terminal["status"]' in text or "terminal['status']" in text
+        has_status_assertion = (
+            'terminal["status"]' in text or "terminal['status']" in text
+        )
         if not has_status_assertion:
             continue  # not a status-style test; out of scope
         has_other_depth_signal = any(s in text for s in permissible_depth_signals)

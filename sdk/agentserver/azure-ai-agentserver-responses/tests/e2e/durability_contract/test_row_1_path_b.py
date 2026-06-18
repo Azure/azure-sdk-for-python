@@ -45,7 +45,9 @@ from tests.e2e.durability_contract.conftest import (
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("stream", [False, True], ids=["stream=False", "stream=True"])
-async def test_row_1_path_b(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
+async def test_row_1_path_b(
+    make_harness: Callable[..., CrashHarness], stream: bool
+) -> None:
     """Row 1 Path B: graceful shutdown, grace exhausted, framework hand-off + recovery."""
     harness = make_harness(
         durable_background=True,
@@ -83,7 +85,9 @@ async def test_row_1_path_b(make_harness: Callable[..., CrashHarness], stream: b
 
 
 @pytest.mark.asyncio
-async def test_row_1_path_b_graceful_exit_not_sigkill(make_harness: Callable[..., CrashHarness]) -> None:
+async def test_row_1_path_b_graceful_exit_not_sigkill(
+    make_harness: Callable[..., CrashHarness],
+) -> None:
     """Spec 032 / B6 — Path B proves the GRACEFUL shutdown path ran, distinct
     from a Path-C SIGKILL.
 
@@ -126,7 +130,9 @@ async def test_row_1_path_b_graceful_exit_not_sigkill(make_harness: Callable[...
         )
 
         await harness.restart()
-        terminal = await poll_until_terminal(harness.client, response_id, timeout_seconds=30.0)
+        terminal = await poll_until_terminal(
+            harness.client, response_id, timeout_seconds=30.0
+        )
         # Graceful Path B hands off to recovery (MUST NOT mark failed).
         assert terminal["status"] == "completed", terminal
     finally:

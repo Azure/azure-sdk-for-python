@@ -29,7 +29,9 @@ from tests.e2e.durability_contract.conftest import (
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("stream", [False, True], ids=["stream=False", "stream=True"])
-async def test_row_1_path_a(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
+async def test_row_1_path_a(
+    make_harness: Callable[..., CrashHarness], stream: bool
+) -> None:
     """Row 1 Path A: durable+bg handler completes naturally within grace."""
     harness = make_harness(
         durable_background=True,
@@ -51,7 +53,9 @@ async def test_row_1_path_a(make_harness: Callable[..., CrashHarness], stream: b
         # not just a terminal status. The conformance handler tags its final
         # text ``L0_done|…``.
         markers = output_text_markers(terminal)
-        assert markers, f"Row 1 Path A response.output must carry content; got: {terminal.get('output')!r}"
+        assert (
+            markers
+        ), f"Row 1 Path A response.output must carry content; got: {terminal.get('output')!r}"
         assert markers[-1].startswith(
             "L0_done"
         ), f"Row 1 Path A response.output must reflect the fresh handler (L0_done…); got: {markers!r}"
