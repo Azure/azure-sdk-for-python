@@ -8,8 +8,7 @@ import json
 from datetime import datetime, timedelta
 from math import ceil
 from time import sleep
-from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -28,11 +27,15 @@ from azure.storage.blob.changefeed import ChangeFeedClient
 from azure.storage.blob.changefeed._models import ChangeFeed
 
 
-def _container_client_returning(blob_names):
-        """A mock ContainerClient whose list_blobs() yields blobs with the given names."""
-        client = Mock()
-        client.list_blobs.return_value = [SimpleNamespace(name=name) for name in blob_names]
-        return client
+def _build_change_feed(blob_names):
+    """Build a ChangeFeed backed by a mock client, skipping the network-bound _initialize()."""
+    blobs = [Mock() for _ in blob_names]
+    for blob, name in zip(blobs, blob_names):
+        blob.name = name
+    client = Mock()
+    client.list_blobs.return_value = blobs
+    with patch.object(ChangeFeed, "_initialize"):
+        return ChangeFeed(client, page_size=100)
 
 
 @pytest.mark.playback_test_only
@@ -76,9 +79,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
             "idx/segments/2026/02/20/0000/meta.json",  # real segment
             "idx/segments/2026/02/20/0100/meta.json",  # real segment
         ]
-        change_feed = ChangeFeed.__new__(ChangeFeed)
-        change_feed.client = _container_client_returning(blob_names)
-        change_feed.end_time = None
+        change_feed = _build_change_feed(blob_names)
 
         results = list(change_feed._get_segment_paths(start_year=""))
 
@@ -92,9 +93,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
 
     def test_get_segment_paths_does_not_raise_on_directory_markers(self):
         blob_names = ["idx/segments/2026/02/20", "idx/segments/2026/02/20/0000/meta.json"]
-        change_feed = ChangeFeed.__new__(ChangeFeed)
-        change_feed.client = _container_client_returning(blob_names)
-        change_feed.end_time = None
+        change_feed = _build_change_feed(blob_names)
 
         yielded_segments = [path for path in change_feed._get_segment_paths(start_year="") if path]
         assert yielded_segments == ["idx/segments/2026/02/20/0000/meta.json"]
