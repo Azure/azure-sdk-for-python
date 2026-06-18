@@ -7,9 +7,9 @@ import yaml
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_batch_endpoint, load_online_endpoint
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthKeys as RestEndpointAuthKeys
-from azure.ai.ml._restclient.v2022_02_01_preview.models import EndpointAuthToken as RestEndpointAuthToken
-from azure.ai.ml._restclient.v2022_02_01_preview.models import OnlineEndpointData
+from azure.ai.ml._restclient.arm_ml_service.models import EndpointAuthKeys as RestEndpointAuthKeys
+from azure.ai.ml._restclient.arm_ml_service.models import EndpointAuthToken as RestEndpointAuthToken
+from azure.ai.ml._restclient.arm_ml_service.models import OnlineEndpoint as OnlineEndpointData
 from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpoint as BatchEndpointData
 from azure.ai.ml._restclient.arm_ml_service._utils.model_base import _deserialize
 from azure.ai.ml.entities import (
@@ -59,7 +59,7 @@ class TestOnlineEndpointYAML:
 
     def test_from_rest_object_kubenetes(self) -> None:
         with open(TestOnlineEndpointYAML.ONLINE_ENDPOINT_REST, "r") as f:
-            online_deployment_rest = OnlineEndpointData.deserialize(json.load(f))
+            online_deployment_rest = _deserialize(OnlineEndpointData, json.load(f))
             online_endpoint = OnlineEndpoint._from_rest_object(online_deployment_rest)
             assert isinstance(online_endpoint, KubernetesOnlineEndpoint)
             assert online_endpoint.name == online_deployment_rest.name
@@ -74,7 +74,7 @@ class TestOnlineEndpointYAML:
 
     def test_from_rest_object_managed(self) -> None:
         with open(TestOnlineEndpointYAML.ONLINE_ENDPOINT_REST, "r") as f:
-            online_deployment_rest = OnlineEndpointData.deserialize(json.load(f))
+            online_deployment_rest = _deserialize(OnlineEndpointData, json.load(f))
             online_deployment_rest.properties.compute = None
             online_endpoint = OnlineEndpoint._from_rest_object(online_deployment_rest)
             assert isinstance(online_endpoint, ManagedOnlineEndpoint)
