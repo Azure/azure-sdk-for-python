@@ -25,7 +25,7 @@
   - Added model `InterconnectBlockUpdate`
   - Added model `InterconnectGroupProfile`
   - Added model `InterconnectInstanceView`
-  - Added model `InterconnectBlocksOperations`
+  - Added operation group `InterconnectBlocksOperations`
 
 ## 38.0.0 (2026-04-21)
 
