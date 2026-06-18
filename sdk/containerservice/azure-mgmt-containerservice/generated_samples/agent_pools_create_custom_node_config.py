@@ -73,6 +73,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-02-preview/AgentPoolsCreate_CustomNodeConfig.json
+# x-ms-original-file: 2026-04-02-preview/AgentPoolsCreate_CustomNodeConfig.json
 if __name__ == "__main__":
     main()

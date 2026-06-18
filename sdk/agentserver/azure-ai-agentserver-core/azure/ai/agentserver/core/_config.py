@@ -345,6 +345,15 @@ def resolve_project_id() -> str:
     return os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, "")
 
 
+def resolve_session_id() -> str:
+    """Resolve the default session ID from the ``FOUNDRY_AGENT_SESSION_ID`` environment variable.
+
+    :return: The default session ID, or an empty string if not set.
+    :rtype: str
+    """
+    return os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, "")
+
+
 def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
     """Resolve the SSE keep-alive interval from argument, env var, or default.
 

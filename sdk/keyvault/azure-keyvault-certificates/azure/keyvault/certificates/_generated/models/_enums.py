@@ -66,13 +66,13 @@ class DeletionRecoveryLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class JsonWebKeyCurveName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Elliptic curve name. For valid values, see JsonWebKeyCurveName."""
 
-    P_256 = "P-256"
+    P256 = "P-256"
     """The NIST P-256 elliptic curve, AKA SECG curve SECP256R1."""
-    P_384 = "P-384"
+    P384 = "P-384"
     """The NIST P-384 elliptic curve, AKA SECG curve SECP384R1."""
-    P_521 = "P-521"
+    P521 = "P-521"
     """The NIST P-521 elliptic curve, AKA SECG curve SECP521R1."""
-    P_256K = "P-256K"
+    P256_K = "P-256K"
     """The SECG SECP256K1 elliptic curve."""
 
 

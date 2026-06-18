@@ -27,6 +27,7 @@ from .operations import (
     LoadBalancersOperations,
     MachinesOperations,
     MaintenanceConfigurationsOperations,
+    MaintenanceWindowsOperations,
     ManagedClusterSnapshotsOperations,
     ManagedClustersOperations,
     ManagedNamespacesOperations,
@@ -62,6 +63,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
     :ivar maintenance_configurations: MaintenanceConfigurationsOperations operations
     :vartype maintenance_configurations:
      azure.mgmt.containerservice.aio.operations.MaintenanceConfigurationsOperations
+    :ivar maintenance_windows: MaintenanceWindowsOperations operations
+    :vartype maintenance_windows:
+     azure.mgmt.containerservice.aio.operations.MaintenanceWindowsOperations
     :ivar managed_namespaces: ManagedNamespacesOperations operations
     :vartype managed_namespaces:
      azure.mgmt.containerservice.aio.operations.ManagedNamespacesOperations
@@ -117,7 +121,7 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-03-02-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-04-02-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -179,6 +183,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.maintenance_configurations = MaintenanceConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.maintenance_windows = MaintenanceWindowsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_namespaces = ManagedNamespacesOperations(
