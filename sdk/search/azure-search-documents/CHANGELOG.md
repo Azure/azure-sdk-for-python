@@ -4,7 +4,6 @@
 
 ### Features Added
 
-- Added `azure.search.documents.models.DebugInfo` model for search debug information.
 - Added the following knowledge base activity record models for detailed retrieval activity tracking:
   - `azure.search.documents.knowledgebases.models.KnowledgeBaseAzureBlobActivityArguments`
   - `azure.search.documents.knowledgebases.models.KnowledgeBaseAzureBlobActivityRecord`
@@ -14,6 +13,10 @@
   - `azure.search.documents.knowledgebases.models.KnowledgeBaseSearchIndexActivityRecord`
   - `azure.search.documents.knowledgebases.models.KnowledgeBaseWebActivityArguments`
   - `azure.search.documents.knowledgebases.models.KnowledgeBaseWebActivityRecord`
+
+### Other Changes
+
+- Internalized `DebugInfo` model (empty in this API version; no longer part of the public API surface)
 
 ## 12.0.0 (2026-04-01)
 
