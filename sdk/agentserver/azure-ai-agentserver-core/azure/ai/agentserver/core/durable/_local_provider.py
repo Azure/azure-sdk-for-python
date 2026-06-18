@@ -394,7 +394,7 @@ class LocalFileTaskProvider:
         if status_change and task.status == "in_progress" and target_status == "pending":
             if not LocalFileTaskProvider._lease_matches(task.lease, owner, instance_id):
                 _lease_held(task.id)
-        if not status_change and duration_seconds > 0 and task.status not in {"in_progress", "suspended"}:
+        if not status_change and duration_seconds > 0 and task.status != "in_progress":
             _invalid_request(
                 "Lease renewal is only allowed when current status is in_progress.",
                 task.id,
