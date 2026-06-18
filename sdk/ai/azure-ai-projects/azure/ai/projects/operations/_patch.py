@@ -19,8 +19,8 @@ from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
-from ._patch_sessions import BetaAgentsOperations
 from ._operations import (
+    BetaAgentsOperations,
     BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,

@@ -41,24 +41,24 @@ There are a total of 134 unique public methods across all sub-clients.
 Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
 ```
+.agents.create_session
 .agents.create_version
+.agents.create_version_from_code
 .agents.create_version_from_manifest
 .agents.delete
-.agents.delete_version
-.agents.get
-.agents.get_version
-.agents.list
-.agents.list_versions
-.agents.create_session
-.agents.create_version_from_code
 .agents.delete_session
 .agents.delete_session_file
+.agents.delete_version
 .agents.download_code
 .agents.download_session_file
+.agents.get
 .agents.get_session
 .agents.get_session_log_stream
+.agents.get_version
+.agents.list
 .agents.list_session_files
 .agents.list_sessions
+.agents.list_versions
 .agents.patch_agent_details
 .agents.stop_session
 .agents.upload_session_file*
