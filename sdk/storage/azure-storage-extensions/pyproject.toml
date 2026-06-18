@@ -26,6 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 requires-python = ">=3.10"
+dependencies = []
 keywords = ["azure", "azure sdk"]
 dynamic = ["version", "readme"]
 
@@ -64,17 +65,16 @@ suppressed_skip_warnings = ["*"]
 in_bundle = false
 
 [tool.cibuildwheel]
-build = ["cp310*", "pp310*", "pp311*"]
+build = "cp310*"
 test-requires = "pytest"
 test-command = "pytest {project}/tests"
-test-skip = "*-macosx_arm64"
 environment = "CFLAGS='-Wno-implicit-function-declaration'"
 
 [tool.cibuildwheel.linux]
 archs = "x86_64 aarch64"
 
 [tool.cibuildwheel.macos]
-archs = "x86_64 arm64"
+archs = "arm64"
 
 [tool.cibuildwheel.windows]
-archs = "AMD64"
+archs = "AMD64 ARM64"
