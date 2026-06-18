@@ -975,7 +975,7 @@ class TestStatsbeatMetrics(unittest.TestCase):
 
 # pylint: disable=protected-access
 class TestAdditionalObservationCallbacks(unittest.TestCase):
-    """Tests for StatsbeatManager._additional_callbacks and the _get_additional_observations helper."""
+    """Tests for statsbeat callback registration and _get_additional_observations."""
 
     def setUp(self):
         _REQUESTS_MAP.clear()
@@ -989,7 +989,7 @@ class TestAdditionalObservationCallbacks(unittest.TestCase):
 
     @staticmethod
     def _register(metric_name, callback):
-        StatsbeatManager()._additional_callbacks.setdefault(metric_name, []).append(callback)
+        StatsbeatManager().add_additional_metric_callbacks(metric_name, callback)
 
     def _make_metric(self):
         return _StatsbeatMetrics(

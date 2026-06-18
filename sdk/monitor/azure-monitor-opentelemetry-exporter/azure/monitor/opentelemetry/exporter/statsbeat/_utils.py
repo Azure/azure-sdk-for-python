@@ -172,9 +172,8 @@ def _get_additional_observations(metric_name: str, options: CallbackOptions) -> 
     """Return observations contributed by extra callbacks registered on :class:`StatsbeatManager`.
 
     Invoked by the built-in ``_StatsbeatMetrics`` callbacks at collection time.
-    Reads ``StatsbeatManager()._additional_callbacks`` (a live mutable dict on the
-    singleton instance), which SDKs/distros populate directly. Exceptions raised by
-    individual callbacks are caught, logged, and skipped.
+    Reads callbacks registered on the singleton :class:`StatsbeatManager`.
+    Exceptions raised by individual callbacks are caught, logged, and skipped.
 
     :param metric_name: Name of the built-in statsbeat metric being collected.
     :type metric_name: str
@@ -188,7 +187,7 @@ def _get_additional_observations(metric_name: str, options: CallbackOptions) -> 
         StatsbeatManager,
     )
 
-    callbacks = StatsbeatManager()._additional_callbacks.get(metric_name, ())  # pylint: disable=protected-access
+    callbacks = StatsbeatManager().get_additional_metric_callbacks(metric_name)
 
     observations: List[Observation] = []
     iter_logger = logging.getLogger(__name__)
