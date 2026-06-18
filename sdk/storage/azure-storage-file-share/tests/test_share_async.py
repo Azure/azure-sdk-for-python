@@ -816,7 +816,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         lease = await share.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         resp = []
         async for s in self.fsc.list_shares():
-            if s.name == share.name:
+            if s.name == share.share_name:
                 resp.append(s)
 
         # Assert

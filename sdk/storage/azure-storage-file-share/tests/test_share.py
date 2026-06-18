@@ -814,7 +814,7 @@ class TestStorageShare(StorageRecordedTestCase):
 
         # Act
         lease = share.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
-        resp = [s for s in list(self.fsc.list_shares()) if s.name == share.name]
+        resp = [s for s in list(self.fsc.list_shares()) if s.name == share.share_name]
 
         # Assert
         assert resp is not None
