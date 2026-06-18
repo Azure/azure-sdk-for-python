@@ -108,7 +108,10 @@ jobs:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        ${{ if eq(parameters.ServiceDirectory, 'storage') }}:
+          AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)" --max-parallel=2'
+        ${{ else }}:
+          AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         CheckEnv: $(checks)
