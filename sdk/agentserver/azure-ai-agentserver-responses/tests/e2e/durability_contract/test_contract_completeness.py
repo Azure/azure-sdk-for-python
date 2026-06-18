@@ -64,7 +64,8 @@ def test_every_row_has_a_test_module_per_applicable_path() -> None:
                 )
     assert not missing, (
         "durability-contract.md § The matrix declares rows/paths that have "
-        "no paired test module in tests/e2e/durability_contract/:\n  " + "\n  ".join(missing)
+        "no paired test module in tests/e2e/durability_contract/:\n  "
+        + "\n  ".join(missing)
     )
 
 
@@ -99,7 +100,9 @@ def test_every_row_module_parametrizes_on_stream() -> None:
             # with two boolean values, or for both `stream=True` and
             # `stream=False` literals in the test body.
             has_both = bool(
-                re.search(r"parametrize\([^)]*['\"]stream['\"]", source) and "True" in source and "False" in source
+                re.search(r"parametrize\([^)]*['\"]stream['\"]", source)
+                and "True" in source
+                and "False" in source
             ) or ("stream=True" in source and "stream=False" in source)
             if not has_both:
                 missing.append(
@@ -139,10 +142,9 @@ def test_no_synthetic_crash_shortcuts_in_suite() -> None:
         for pattern, label in banned_patterns:
             if re.search(pattern, text):
                 findings.append(f"{module_file.name}: {label}")
-    assert (
-        not findings
-    ), "Constitution Principle X violation — conformance tests must use " "real signals only:\n  " + "\n  ".join(
-        findings
+    assert not findings, (
+        "Constitution Principle X violation — conformance tests must use "
+        "real signals only:\n  " + "\n  ".join(findings)
     )
 
 
@@ -223,6 +225,8 @@ def test_per_cell_tests_assert_more_than_just_status() -> None:
         "response.error",
         "error.code",
         "error_code",
+        '.get("error")',  # failed-row idiom: error = terminal.get("error"); error.get("code")
+        ".get('error')",
         "output_text.delta",
         "response.output_item",
         "output[0]",
@@ -230,43 +234,40 @@ def test_per_cell_tests_assert_more_than_just_status() -> None:
         "output_text.done",
         "response.in_progress",
         "sequence_number",
+        "_final_text_from_snapshot",  # response.output content helper
+        "output_text_markers",  # Row 11 / per-lifetime response.output content helper
         "_get_full_stream",  # caller of the GET-replay helper
         "GET ?stream=true",
-        "output_text_markers",  # Row 11 per-lifetime response.output content helper
     )
     findings: list[str] = []
     for module_file in _HERE.glob("test_row_*_path_*.py"):
         text = module_file.read_text(encoding="utf-8")
         # If the test asserts only on terminal["status"] and nothing
         # else from the assertion vocabulary, flag it.
-        has_status_assertion = 'terminal["status"]' in text or "terminal['status']" in text
+        has_status_assertion = (
+            'terminal["status"]' in text or "terminal['status']" in text
+        )
         if not has_status_assertion:
             continue  # not a status-style test; out of scope
         has_other_depth_signal = any(s in text for s in permissible_depth_signals)
         if not has_other_depth_signal:
             findings.append(module_file.name)
-    # NOTE: This is a SHOULD, not a MUST. We log the recommendation but
-    # don't fail unless the suite grows to where this matters. Comment
-    # out the assertion if it starts surfacing legitimate single-axis
-    # tests; the goal is to prompt depth additions, not block legit
-    # status-shape tests for the failed-row paths.
-    if findings:
-        # Soft pass — emit a warning via pytest's recording mechanism so
-        # CI surfaces the recommendation without hard-failing.
-        import warnings  # pylint: disable=import-outside-toplevel
-
-        warnings.warn(
-            "Per-cell tests SHOULD assert on more than terminal['status'] "
-            "alone (event content, response.output, sequence numbers, etc.) "
-            "to be sensitive to drift beyond shape. Candidates needing "
-            f"depth additions: {findings}. See "
-            "tests/e2e/durability_contract/CONTRACT_COVERAGE.md for the "
-            "per-clause matrix. (This is a SHOULD per Spec 014 Phase 9 "
-            "reflection; the cross-cutting tests in T-173 deliver the "
-            "depth — extending per-cell tests is optional belt-and-"
-            "suspenders.)",
-            stacklevel=1,
-        )
+    # Spec 032 / FR-001 — HARD GATE (was a soft ``warnings.warn`` per Spec 014
+    # Phase 9, which let terminal-status-only per-cell tests pass and allowed
+    # depth coverage to silently rot). Per Constitution Principle XI, a per-cell
+    # test MUST verify the row's contract surface, not just terminal status.
+    # The detector above recognizes both the completed-row content idioms
+    # (response.output / output_text / _final_text_from_snapshot / markers) and
+    # the failed-row error idioms (``terminal.get("error")`` / ``error.get("code")``),
+    # so legitimate tests are not false-flagged.
+    assert not findings, (
+        "Per-cell durability tests MUST assert on more than terminal['status'] "
+        "alone — verify the row's contract surface (response.output content, "
+        "event content, sequence numbers, or the failed-row error payload). "
+        f"Shape-only modules needing depth assertions: {findings}. See "
+        "tests/e2e/durability_contract/CONTRACT_COVERAGE.md for the per-clause "
+        "matrix and the permissible_depth_signals vocabulary in this gate."
+    )
 
 
 if __name__ == "__main__":

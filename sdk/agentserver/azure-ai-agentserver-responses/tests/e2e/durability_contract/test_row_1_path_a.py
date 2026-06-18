@@ -21,6 +21,7 @@ import pytest
 from tests.e2e._crash_harness import CrashHarness
 from tests.e2e.durability_contract.conftest import (
     LONG_GRACE_S,
+    output_text_markers,
     poll_until_terminal,
     post_and_get_response_id,
 )
@@ -28,7 +29,9 @@ from tests.e2e.durability_contract.conftest import (
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("stream", [False, True], ids=["stream=False", "stream=True"])
-async def test_row_1_path_a(make_harness: Callable[..., CrashHarness], stream: bool) -> None:
+async def test_row_1_path_a(
+    make_harness: Callable[..., CrashHarness], stream: bool
+) -> None:
     """Row 1 Path A: durable+bg handler completes naturally within grace."""
     harness = make_harness(
         durable_background=True,
@@ -45,5 +48,16 @@ async def test_row_1_path_a(make_harness: Callable[..., CrashHarness], stream: b
         )
         terminal = await poll_until_terminal(harness.client, response_id)
         assert terminal["status"] == "completed", terminal
+        # Spec 032 / FR-001 depth: the polled response.output is the contract
+        # surface — assert it reflects the fresh (lifetime-0) handler's content,
+        # not just a terminal status. The conformance handler tags its final
+        # text ``L0_done|…``.
+        markers = output_text_markers(terminal)
+        assert (
+            markers
+        ), f"Row 1 Path A response.output must carry content; got: {terminal.get('output')!r}"
+        assert markers[-1].startswith(
+            "L0_done"
+        ), f"Row 1 Path A response.output must reflect the fresh handler (L0_done…); got: {markers!r}"
     finally:
         await harness.close()

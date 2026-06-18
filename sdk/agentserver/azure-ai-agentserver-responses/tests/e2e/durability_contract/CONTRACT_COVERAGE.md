@@ -51,11 +51,11 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 | Server rule 2: `GET /responses/{id}?stream=true&starting_after=<event_id>` returns events strictly after `<event_id>` then live-tails | `test_streaming_recovery_continuity.py` (uses starting_after=0) | event sequence |
 | Server rule 2: GET-reconnect for Row 2 stream=T | n/a — Row 2 has no durable stream provider (durable_background=False short-circuits the FileStreamProvider auto-compose in `_routing.py`), so Row 2's stream events are within-process best-effort only. Cross-lifetime stream survival is NOT a Row 2 promise (the contract surface for Row 2 Path C is the response-store `failed` snapshot, not the persisted stream). | n/a |
 | Server rule 3: recovered handler emits `response.in_progress` reset event as first event | `test_streaming_recovery_continuity.py::test_pre_crash_deltas_survive_recovery` (asserts post-recovery in_progress with seq > pre-crash max) | event sequence |
-| Server rule 3: reset event carries corrected output_items reflecting post-recovery state | **GAP** — no test asserts on the response payload of the reset event | event content |
+| Server rule 3: reset event carries corrected output_items reflecting post-recovery state | `test_reset_event_content.py::test_reset_event_carries_corrected_output_items` (Spec 032 B1 — real crash; asserts the post-recovery `response.in_progress` event's `response.output` carries the seeded/corrected items) | event content |
 | Server rule 4: event ids stable across recovery; recovered events get fresh monotonic ids picking up after last pre-crash id | `test_streaming_recovery_continuity.py` (asserts strict monotonic seq across attempts) | seq monotonicity |
 | Client-side rule: client MUST reset accumulator on every `response.in_progress` after the first | n/a (client library concern; not framework-side) | n/a |
 | Reconnection semantics: client resumes from last-seen event id without missing/duplicating events | `test_streaming_recovery_continuity.py` (verified via GET starting_after=0 returning the full assembled stream with no duplicates) | event sequence; seq monotonicity |
-| **NEW (T-173):** Output_item slot reuse on recovery — recovered handler's `output_item.added` at a previously-used `output_index` correctly triggers snapshot replacement semantics | `test_output_item_slot_reconciliation.py` (TO BE ADDED, T-173) | event content; response.output content |
+| **NEW (T-173):** Output_item slot reuse on recovery — recovered handler's `output_item.added` at a previously-used `output_index` correctly triggers snapshot replacement semantics | `test_output_item_slot_reconciliation.py` | event content; response.output content |
 
 ---
 
@@ -76,14 +76,14 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 |---|---|---|
 | Recovered handler sees `context.durability.entry_mode == "recovered"` | Implicit via `test_row_1_path_b/c` (recovery happens → terminal `completed`); per-lifetime tag in `_test_handler.py` derives lifetime from `entry_mode` | meta |
 | `context.durability.is_recovery == True` on recovery | Same as above (convenience alias of entry_mode) | meta |
-| `context.durability.metadata` contents from prior invocations survive crash (when paired with flush) | **GAP** — no test asserts metadata round-trip across recovery | metadata |
-| `metadata[key] = value` plus `await metadata.flush()` makes the key visible to recovered invocation | **GAP** — same as above | metadata |
+| `context.durability.metadata` contents from prior invocations survive crash (when paired with flush) | `test_metadata_survives_recovery.py::test_metadata_visited_marker_survives_recovery` (real crash; visited=[0,1] round-trip) | metadata |
+| `metadata[key] = value` plus `await metadata.flush()` makes the key visible to recovered invocation | `test_metadata_survives_recovery.py` (same test — visited list proves the flushed key is visible to the recovered lifetime) | metadata |
 | Keys with `_framework.` prefix are not visible to handler code | `tests/unit/test_durability_context.py::test_filtered_metadata_hides_framework_keys` (helper-internal unit) | meta |
 | Framework does NOT impose a watermark schema | n/a (negative claim — no test required) | n/a |
 | Recovered handler emits `response.in_progress` reset as first event | `test_streaming_recovery_continuity.py` | event sequence |
-| At-most-once side effects via metadata + flush + dedup token check | **GAP** — no e2e test exercises this pattern | metadata |
+| At-most-once side effects via metadata + flush + dedup token check | `test_metadata_survives_recovery.py` (Spec 032 B5: the framework guarantee — a flushed metadata key survives crash and serves as a dedup fence — IS the visited=[0,1] proof; external side-effect at-most-once is a handler/guide concern, not a framework contract) | metadata |
 | `run_attempt` is per-process retry counter; does NOT survive recovery (see backlog B10) | **DOC-ONLY** — no behavioural test (and current behaviour is acknowledged-broken pending B10) | meta |
-| **NEW (T-173):** `context.conversation_chain_id` is stable across attempts | `test_conversation_chain_id_stability.py` (TO BE ADDED, T-173) | chain id |
+| **NEW (T-173):** `context.conversation_chain_id` is stable across attempts | `test_conversation_chain_id_stability.py` | chain id |
 | **NEW (Spec 025 §A.4):** `await context.exit_for_recovery()` (unified recovery primitive) leaves the response `in_progress` for next-lifetime recovery — works in any handler shape; the orchestrator translates `ResponseExitForRecovery` to the core sentinel | `test_explicit_exit_for_recovery.py::test_explicit_exit_for_recovery_recovers` (stream=F/T) | response.status (post-restart `completed`) |
 
 ---
@@ -93,8 +93,8 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 | Clause | Test | Dimension |
 |---|---|---|
 | `durable_background=True` + non-persistent `store` (explicit `InMemoryResponseProvider`) → startup error | `tests/unit/test_composition_guard.py::*` (5 tests) + `tests/integration/test_startup_composition_guard.py::*` (2 tests) | composition guard |
-| `store=true` requests accepted without ResponseStore → startup error | **GAP** — current implementation always provides InMemoryResponseProvider as fallback; the negative test would need a way to force the missing-provider state | composition guard |
-| `stream=true` requests accepted without streaming-capable transport → startup error | **GAP** — same as above | composition guard |
+| `store=true` requests accepted without ResponseStore → startup error | n/a — UNREACHABLE by construction (Spec 032 B2): `store=None` always resolves to a persistent `FileResponseStore` (`_routing.py` `store=None` branch); there is no missing-`ResponseStore` state to guard. The only reachable missing-provider case (explicit non-durable store + durable_background) IS guarded + tested above. | composition guard |
+| `stream=true` requests accepted without streaming-capable transport → startup error | n/a — UNREACHABLE by construction (Spec 032 B2): the streams registry is auto-configured at startup (`_configure_streams_registry`); there is no missing-transport state to guard. | composition guard |
 | `durable_background=True` without DurableStreamProviderProtocol for streamed durable responses → startup error | Implicit via the responses package's auto-compose in `_routing.py` (FileStreamProvider when needed). Negative test absent. | composition guard |
 
 ---
@@ -106,8 +106,8 @@ A clause may have MULTIPLE rows if it spans dimensions; a test may appear in MUL
 | Every (row × applicable path) cell has a paired conformance test | `test_contract_completeness.py::test_every_row_path_combination_has_test` | meta |
 | Conformance tests use real signals (no synthetic-crash shortcuts) | `test_contract_completeness.py` (filename + handler-import audit) | meta |
 | **NEW (Spec 024 Phase 1 step 7):** No race window on fast-handler completion (Rows 2/3 unified durable-task path) | `test_no_fast_handler_race.py::test_no_fast_handler_race_row_2`, `::test_no_fast_handler_race_row_3` | race-guard |
-| **NEW (T-174):** Per-cell tests verify the row's full contract surface — events + content + response.output as applicable, not just terminal status | `test_contract_completeness.py::test_per_cell_tests_assert_contract_surface` (TO BE ADDED, T-174) | meta |
-| **NEW (T-174):** Every contract clause in `durability-contract.md` has an entry in CONTRACT_COVERAGE.md | `test_contract_completeness.py::test_contract_coverage_matrix_complete` (TO BE ADDED, T-174) | meta |
+| **NEW (T-174):** Per-cell tests verify the row's full contract surface — events + content + response.output as applicable, not just terminal status | `test_contract_completeness.py::test_per_cell_tests_assert_more_than_just_status` (Spec 032 FR-001 — now a HARD gate, not a soft warning) | meta |
+| **NEW (T-174):** Every contract clause in `durability-contract.md` has an entry in CONTRACT_COVERAGE.md | `test_contract_completeness.py::test_contract_coverage_matrix_exists_and_is_non_trivial` | meta |
 
 ---
 
@@ -144,13 +144,13 @@ The contract doesn't enumerate response.output content as a separate clause — 
 | Row 1 stream=F Path C: response.output reflects recovered handler's intent | **GAP** | response.output content |
 | Row 2 stream=F Path A: response.output reflects fresh handler's intent | **GAP** | response.output content |
 | Row 3 stream=F Path A: response.output reflects fresh handler's intent | **GAP** | response.output content |
-| Covered en masse | `test_response_output_content_correctness.py` (TO BE ADDED, T-173) | response.output content |
+| Covered en masse | `test_response_output_content_correctness.py` | response.output content |
 
 ---
 
 ## Gaps summary (drives T-173)
 
-The cells marked **GAP** above all need new tests. T-173 adds 4 new conformance test files to fill these:
+**Status (post Spec 032):** the T-173 cross-cutting tests below now EXIST, and the Spec 032 audit closed the remaining genuine recovery gaps (see the Spec 032 section). The historical T-173 plan is retained for provenance:
 
 1. **`test_streaming_recovery_continuity.py`** (already exists — T-170 baseline). Generalize to Row 2 in T-172 if scope permits.
 2. **`test_metadata_survives_recovery.py`** (NEW T-173) — covers the recovery-handler-entry metadata clauses + the at-most-once side-effect pattern.
@@ -174,3 +174,22 @@ When `durability-contract.md` changes:
 ---
 
 *Authored during Spec 014 Phase 9 follow-up (T-171). Reflection that motivated this matrix: `~/.copilot/session-state/.../files/conformance_gap_analysis.md`.*
+
+---
+
+## Spec 032 — Conformance audit additions (depth-gate + recovery gaps)
+
+This section records the Spec 032 reconciliation: the Principle XI depth gate is
+now a HARD gate (`test_per_cell_tests_assert_more_than_just_status`), the stale
+`**GAP**`/`TO BE ADDED` markers above were corrected to the tests that already
+closed them, and the remaining genuine recovery gaps were filled.
+
+| Clause | Test | Dimension |
+|---|---|---|
+| Reset event carries corrected output items after recovery (streaming clause 3, payload) | `test_reset_event_content.py` (B1 — real crash) | event content |
+| Recovery precondition: a TRANSIENT store error during the recovery pre-fetch MUST NOT drop (proceed with `persisted_response=None`) | `test_recovery_precondition_transient.py` (B7 — real crash + fault-injecting store) | recovery gate |
+| Client cancel DURING a recovered invocation settles to `cancelled` (client_cancelled cause, real signal) | `test_client_cancel_during_recovery.py` (B3 — real crash + real cancel endpoint) | response.status; cause |
+| Path B proves the GRACEFUL grace-exhaustion handoff distinct from a Path-C SIGKILL fallback | `test_row_1_path_b.py::test_row_1_path_b_graceful_exit_not_sigkill` (B6 — clean exit, not SIGKILL) | shutdown path |
+| `context.persisted_response` is seeded on recovery | Proven-by-consequence (B4): `test_row_11_path_c.py` resume markers + `test_reset_event_content.py` both FAIL if seeding is broken | recovery seeding |
+| `response.created` idempotency across real crash recovery (single created per durable stream) | `test_streaming_recovery_continuity.py` (B8 — asserts exactly one `response.created` after recovery) + `tests/e2e/test_recovery_idempotent_create.py` (provider layer) | event sequence |
+| Per-cell tests MUST verify the row's contract surface, not terminal status alone | `test_contract_completeness.py::test_per_cell_tests_assert_more_than_just_status` (Spec 032 FR-001 — HARD gate) | meta |
