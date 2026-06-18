@@ -13,8 +13,8 @@
   - Added model `SetMemberCapOverridesResult`
   - Added model `SharedLimitCap`
   - Added model `SharedLimitCapProperties`
-  - Added model `MemberCapOverridesOperations`
-  - Added model `SharedLimitCapsOperations`
+  - Added operation group `MemberCapOverridesOperations`
+  - Added operation group `SharedLimitCapsOperations`
 
 ## 1.1.0 (2026-05-26)
 
