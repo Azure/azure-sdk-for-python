@@ -120,7 +120,9 @@ _REF_KEYS = frozenset(
 )
 
 
-def _split_runtime_refs(ctx_params: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+def _split_runtime_refs(
+    ctx_params: dict[str, Any],
+) -> tuple[dict[str, Any], dict[str, Any]]:
     """Split ``ctx_params`` into refs (memory-only) and persisted params.
 
     :param ctx_params: The orchestrator's combined params dict.
@@ -137,6 +139,29 @@ def _split_runtime_refs(ctx_params: dict[str, Any]) -> tuple[dict[str, Any], dic
             refs[k] = v
         else:
             persisted[k] = v
+    # The hosted gateway injects ``agent_reference`` as an ``AgentReference``
+    # model. That model is a Mapping but is NOT ``json.dumps``-serializable, so
+    # if it leaks into the persisted durable-task input the underlying
+    # ``create_and_start`` -> ``_resolve_input_storage`` size check raises
+    # ``TypeError`` and the whole durable start silently falls back to a
+    # non-durable ``asyncio.create_task`` (no crash recovery). Normalize it to a
+    # plain dict here: the durable input must be JSON-serializable AND survive
+    # cross-process recovery, and every consumer accepts ``AgentReference | dict``
+    # (and reads it as a mapping). Absent agent_reference is the ``{}`` sentinel,
+    # which is already serializable.
+    agent_reference = persisted.get("agent_reference")
+    if agent_reference is not None and not isinstance(agent_reference, dict):
+        if hasattr(agent_reference, "as_dict"):
+            persisted["agent_reference"] = agent_reference.as_dict()
+        else:
+            try:
+                persisted["agent_reference"] = dict(agent_reference)
+            except (TypeError, ValueError):
+                persisted["agent_reference"] = {
+                    "type": getattr(agent_reference, "type", "agent_reference"),
+                    "name": getattr(agent_reference, "name", None),
+                    "version": getattr(agent_reference, "version", None),
+                }
     return refs, persisted
 
 
@@ -160,7 +185,9 @@ def _reconstruct_parsed_from_params(params: dict[str, Any]) -> Any:
             "missing. Ensure the orchestrator stamps it at fresh-entry."
         )
     # Late import to avoid circular dependency on hosting/_request_parsing.
-    from ..models._generated import CreateResponse  # pylint: disable=import-outside-toplevel
+    from ..models._generated import (
+        CreateResponse,
+    )  # pylint: disable=import-outside-toplevel
 
     if isinstance(payload, dict):
         return CreateResponse(payload)
@@ -196,8 +223,14 @@ def _reconstruct_from_params(
     :rtype: tuple[ResponseExecution, ResponseContext]
     """
     # Late imports to avoid module-level circular dependencies.
-    from .._response_context import IsolationContext, ResponseContext  # pylint: disable=import-outside-toplevel
-    from ..models.runtime import ResponseExecution, ResponseModeFlags  # pylint: disable=import-outside-toplevel
+    from .._response_context import (
+        IsolationContext,
+        ResponseContext,
+    )  # pylint: disable=import-outside-toplevel
+    from ..models.runtime import (
+        ResponseExecution,
+        ResponseModeFlags,
+    )  # pylint: disable=import-outside-toplevel
 
     parsed = _reconstruct_parsed_from_params(params)
 
@@ -226,7 +259,9 @@ def _reconstruct_from_params(
         input_items=record.input_items,
         previous_response_id=record.previous_response_id,
         conversation_id=record.conversation_id,
-        history_limit=int(params.get("history_limit", runtime_options.default_fetch_history_count)),
+        history_limit=int(
+            params.get("history_limit", runtime_options.default_fetch_history_count)
+        ),
         # Client headers / query params are not preserved across recovery
         # — they were specific to the original HTTP request and are not
         # meaningful for the recovered handler.
@@ -509,7 +544,9 @@ class DurableResponseOrchestrator:
         # next-lifetime recovery can dispatch correctly without needing to
         # reconstruct the routing decisions from input params.
         if _RESP_DISPOSITION not in responses_ns:
-            responses_ns[_RESP_DISPOSITION] = params.get("disposition", DISPOSITION_REINVOKE)
+            responses_ns[_RESP_DISPOSITION] = params.get(
+                "disposition", DISPOSITION_REINVOKE
+            )
             # Force-flush so the disposition is durable BEFORE the body
             # could be killed — without an explicit flush the recovered
             # task would default to ``re-invoke`` and skip the mark-failed
@@ -581,8 +618,12 @@ class DurableResponseOrchestrator:
                 runtime_state=self._runtime_state,
                 runtime_options=self._options,
             )
-            assert record is not None, "_reconstruct_from_params guarantees non-None record"
-            assert self._runtime_state is not None, "runtime_state always wired at orchestrator init"
+            assert (
+                record is not None
+            ), "_reconstruct_from_params guarantees non-None record"
+            assert (
+                self._runtime_state is not None
+            ), "runtime_state always wired at orchestrator init"
             await self._runtime_state.add(record)
 
         # After the reconstruction block, context and record are both
@@ -646,7 +687,8 @@ class DurableResponseOrchestrator:
                     return
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.debug(
-                        "persisted_response pre-fetch failed for %s " "(recovery, transient — not dropping)",
+                        "persisted_response pre-fetch failed for %s "
+                        "(recovery, transient — not dropping)",
                         context.response_id,
                         exc_info=True,
                     )
@@ -772,7 +814,11 @@ class DurableResponseOrchestrator:
             # mid-handler with grace exhausted) silently loses the
             # response because the one-shot ephemeral record is deleted
             # on cancel.
-            if ctx.shutdown.is_set() and record is not None and record.status in {"queued", "in_progress"}:
+            if (
+                ctx.shutdown.is_set()
+                and record is not None
+                and record.status in {"queued", "in_progress"}
+            ):
                 logger.info(
                     "Response %s handler returned during shutdown without "
                     "terminal; calling ctx.exit_for_recovery() so task stays "
@@ -950,11 +996,16 @@ class DurableResponseOrchestrator:
         # happened after terminal persistence, and overwriting would corrupt
         # the result.
         try:
-            existing = await self._provider.get_response(response_id, isolation=isolation)
+            existing = await self._provider.get_response(
+                response_id, isolation=isolation
+            )
             existing_status = getattr(existing, "status", None) or (
                 existing.get("status") if isinstance(existing, dict) else None
             )
-            if isinstance(existing_status, str) and existing_status in _TERMINAL_STATUSES:
+            if (
+                isinstance(existing_status, str)
+                and existing_status in _TERMINAL_STATUSES
+            ):
                 logger.info(
                     "_persist_crash_failed: response %s already terminal "
                     "(status=%s) — skipping overwrite (race avoidance)",
@@ -977,7 +1028,9 @@ class DurableResponseOrchestrator:
         )
 
         try:
-            await self._provider.update_response(ResponseObject(failed_response), isolation=isolation)
+            await self._provider.update_response(
+                ResponseObject(failed_response), isolation=isolation
+            )
         except KeyError:
             # Response was never persisted at response.created — try
             # create instead so the failed terminal still lands.

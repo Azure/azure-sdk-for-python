@@ -13,6 +13,7 @@ import pytest
 from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
     DurableResponseOrchestrator,
     _is_recovered_entry,
+    _split_runtime_refs,
 )
 
 
@@ -162,7 +163,9 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
-        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
+        ctx.pending_input_count = (
+            0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
+        )
         ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
@@ -195,7 +198,9 @@ class TestDurableOrchestratorExecuteInTask:
         assert kwargs["model"] == "gpt-4o"
 
     @pytest.mark.asyncio
-    async def test_recovery_and_steering_fields_flattened_on_response_context(self) -> None:
+    async def test_recovery_and_steering_fields_flattened_on_response_context(
+        self,
+    ) -> None:
         """(Spec 024 Phase 5 — Proposal #10/#13) Recovery + steering
         classifiers land directly on ``ResponseContext`` flat fields.
         The pre-Phase-5 ``DurabilityContext`` indirection is deleted —
@@ -210,7 +215,10 @@ class TestDurableOrchestratorExecuteInTask:
             options=MagicMock(steerable_conversations=False),
         )
 
-        from azure.ai.agentserver.responses._response_context import IsolationContext, ResponseContext
+        from azure.ai.agentserver.responses._response_context import (
+            IsolationContext,
+            ResponseContext,
+        )
         from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
         real_context = ResponseContext(
@@ -250,9 +258,13 @@ class TestDurableOrchestratorExecuteInTask:
         assert real_context.pending_input_count == 2
         assert not hasattr(real_context, "durability")
         # The metadata facade was swapped in to back the task metadata.
-        from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
+        from azure.ai.agentserver.responses._durability_context import (
+            _DeveloperMetadataFacade,
+        )
 
-        assert isinstance(real_context.conversation_chain_metadata, _DeveloperMetadataFacade)
+        assert isinstance(
+            real_context.conversation_chain_metadata, _DeveloperMetadataFacade
+        )
 
     @pytest.mark.asyncio
     async def test_steerable_returns_none_for_implicit_suspend(self) -> None:
@@ -270,7 +282,9 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
-        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
+        ctx.pending_input_count = (
+            0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
+        )
         ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
@@ -310,7 +324,9 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
-        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
+        ctx.pending_input_count = (
+            0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
+        )
         ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
@@ -350,7 +366,9 @@ class TestDurableOrchestratorCancellationBridge:
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
-        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
+        ctx.pending_input_count = (
+            0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
+        )
         ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
@@ -441,8 +459,12 @@ class TestPrimitiveSelectionMatrix:
         )
 
         # Both primitives must exist (precondition for the matrix).
-        assert hasattr(orch, "_one_shot_task_fn"), f"{case_id}: orchestrator must register a one-shot primitive."
-        assert hasattr(orch, "_multi_turn_task_fn"), f"{case_id}: orchestrator must register a multi-turn primitive."
+        assert hasattr(
+            orch, "_one_shot_task_fn"
+        ), f"{case_id}: orchestrator must register a one-shot primitive."
+        assert hasattr(
+            orch, "_multi_turn_task_fn"
+        ), f"{case_id}: orchestrator must register a multi-turn primitive."
 
         ctx_params = {
             "response_id": "resp_test",
@@ -472,7 +494,11 @@ class TestOrchestratorConstructionValidation:
         deployment that mis-imports the core wheel fails fast at
         server startup instead of per-request.
         """
-        opts = MagicMock(steerable_conversations=False, max_pending=10, default_fetch_history_count=100)
+        opts = MagicMock(
+            steerable_conversations=False,
+            max_pending=10,
+            default_fetch_history_count=100,
+        )
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
@@ -480,14 +506,19 @@ class TestOrchestratorConstructionValidation:
         )
 
         # Both registrations are present.
-        assert hasattr(orch, "_one_shot_task_fn"), "Construction must register the one-shot primitive."
-        assert hasattr(orch, "_multi_turn_task_fn"), "Construction must register the multi-turn primitive."
+        assert hasattr(
+            orch, "_one_shot_task_fn"
+        ), "Construction must register the one-shot primitive."
+        assert hasattr(
+            orch, "_multi_turn_task_fn"
+        ), "Construction must register the multi-turn primitive."
 
         # Names are distinct and well-formed.
         one_shot_name = orch._one_shot_task_fn._opts.name
         multi_turn_name = orch._multi_turn_task_fn._opts.name
         assert one_shot_name != multi_turn_name, (
-            f"Primitives must have distinct registration names " f"(both got {one_shot_name!r})."
+            f"Primitives must have distinct registration names "
+            f"(both got {one_shot_name!r})."
         )
         assert (
             "one_shot" in one_shot_name or "oneshot" in one_shot_name
@@ -499,13 +530,18 @@ class TestOrchestratorConstructionValidation:
         # The multi-turn primitive's steerable flag MUST match the
         # deployment's steerable_conversations option (per SOT §6.6).
         assert orch._multi_turn_task_fn._opts.steerable is False, (
-            "Multi-turn primitive's steerable flag must match " "options.steerable_conversations."
+            "Multi-turn primitive's steerable flag must match "
+            "options.steerable_conversations."
         )
 
     def test_orchestrator_multi_turn_steerable_flag_propagated(self) -> None:
         """With ``steerable_conversations=True``, the multi-turn primitive
         is registered with ``steerable=True``."""
-        opts = MagicMock(steerable_conversations=True, max_pending=10, default_fetch_history_count=100)
+        opts = MagicMock(
+            steerable_conversations=True,
+            max_pending=10,
+            default_fetch_history_count=100,
+        )
         orch = DurableResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
@@ -514,3 +550,66 @@ class TestOrchestratorConstructionValidation:
         assert (
             orch._multi_turn_task_fn._opts.steerable is True
         ), "Steerable flag must propagate from options to multi-turn primitive."
+
+
+class TestSplitRuntimeRefsSerializable:
+    """The persisted durable-task input MUST be JSON-serializable.
+
+    Regression for the hosted bug where the gateway-injected
+    ``agent_reference`` (an ``AgentReference`` model — a Mapping but not
+    ``json.dumps``-serializable) leaked into the persisted params, making
+    ``create_and_start`` raise ``TypeError`` and silently degrade the durable
+    background run to a non-durable ``asyncio.create_task`` (no crash recovery).
+    """
+
+    def test_persisted_params_json_serializable_with_agent_reference_model(
+        self,
+    ) -> None:
+        import json
+
+        from azure.ai.agentserver.responses.models import AgentReference
+
+        ctx_params = {
+            "response_id": "caresp_abc",
+            "agent_name": "durable-responses-agent-demo",
+            "session_id": "sess_1",
+            "agent_reference": AgentReference(
+                name="durable-responses-agent-demo", version="29"
+            ),
+            # a runtime-only object ref that must be stripped, never persisted
+            "_record_ref": object(),
+        }
+
+        refs, persisted = _split_runtime_refs(ctx_params)
+
+        # refs hold the non-serializable object reference; not persisted
+        assert "_record_ref" in refs
+        assert "_record_ref" not in persisted
+
+        # agent_reference survives in the persisted input (needed across
+        # cross-process recovery) but normalized to a plain dict
+        assert isinstance(persisted["agent_reference"], dict)
+        assert (
+            persisted["agent_reference"].get("name") == "durable-responses-agent-demo"
+        )
+        assert persisted["agent_reference"].get("version") == "29"
+
+        # the whole persisted input must JSON-serialize (this is what the
+        # core durable-task size check does and what previously raised)
+        json.dumps(persisted)  # must not raise
+
+    def test_empty_agent_reference_sentinel_passthrough(self) -> None:
+        import json
+
+        # absent agent_reference is the ``{}`` sentinel — already serializable
+        _, persisted = _split_runtime_refs({"response_id": "r", "agent_reference": {}})
+        assert persisted["agent_reference"] == {}
+        json.dumps(persisted)
+
+    def test_dict_agent_reference_unchanged(self) -> None:
+        import json
+
+        ar = {"type": "agent_reference", "name": "x", "version": "1"}
+        _, persisted = _split_runtime_refs({"response_id": "r", "agent_reference": ar})
+        assert persisted["agent_reference"] == ar
+        json.dumps(persisted)
