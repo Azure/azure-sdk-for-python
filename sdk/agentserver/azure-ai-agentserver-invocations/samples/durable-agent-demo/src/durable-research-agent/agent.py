@@ -67,7 +67,7 @@ _endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT")
 if not _endpoint:
     raise EnvironmentError("FOUNDRY_PROJECT_ENDPOINT is required.")
 
-_model = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4.1-mini")
+_model = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
 _credential = DefaultAzureCredential()
 _project_client = AIProjectClient(endpoint=_endpoint, credential=_credential)
 _openai_client = _project_client.get_openai_client()

@@ -34,7 +34,7 @@ platform capabilities of the Azure AI Hosted Agent + durable-task primitive:
 
 What the agent actually does: 15 logical research phases on whatever
 topic the caller supplies. Each phase runs a small agent loop
-(research → critique → refine → synthesize) against `gpt-4.1-mini`,
+(research → critique → refine → synthesize) against `gpt-4o`,
 streaming every token to the consumer. The handler checkpoints to
 `ctx.metadata` and flushes **after each subcall** — so a crash
 mid-phase recovers at the next un-finished subcall (worst case: the
@@ -383,7 +383,7 @@ the deploy. Override by editing `agent.yaml` and re-deploying.
 | Variable | Default (hosted) | Default (`agent.py`) | Description |
 |---|---|---|---|
 | `FOUNDRY_PROJECT_ENDPOINT` | (required, set by platform) | — | Foundry project endpoint. |
-| `AZURE_AI_MODEL_DEPLOYMENT_NAME` | `gpt-4.1-mini` | `gpt-4.1-mini` | Responses-API model deployment name. |
+| `AZURE_AI_MODEL_DEPLOYMENT_NAME` | `gpt-4o` | `gpt-4o` | Responses-API model deployment name. |
 | `DEMO_MODE` | `1` (in the demo image) | unset | Enables the `{"message": "crash"}` sentinel on `POST /invocations`. A production image would leave this off. |
 | `NUM_PHASES` | `15` | `15` | Number of research phases. |
 | `CALLS_PER_PHASE` | `4` | `4` | Sub-calls per phase (research, critique, refine, synthesize). |
