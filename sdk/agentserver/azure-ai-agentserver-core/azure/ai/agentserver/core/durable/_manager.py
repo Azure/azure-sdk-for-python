@@ -303,6 +303,14 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         # Refreshed from every GET/CREATE/PATCH response. Used as
         # ``if_match`` on every subsequent PATCH.
         "current_etag",
+        # Spec 031 / FR-002 — live count of queued steering inputs as
+        # observed by THIS process. Read by ``_make_pending_count_provider``
+        # to back ``ctx.pending_input_count``. Written (before ``ctx.cancel``
+        # is set, per SOT §13 ordering invariant) by the same-process
+        # steering enqueue and by the cross-process steering poll. Must be a
+        # slot or it is unsettable (the historic bug: it was read but never
+        # storable).
+        "_pending_input_count",
     )
 
     def __init__(
@@ -344,6 +352,9 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         # store interaction (create response, get response, update response).
         # Used as ``if_match`` on subsequent PATCHes.
         self.current_etag: str | None = None
+        # Spec 031 / FR-002 — see __slots__ note. Live in-process count of
+        # queued steering inputs backing ``ctx.pending_input_count``.
+        self._pending_input_count: int = 0
 
 
 class TaskManager:  # pylint: disable=too-many-instance-attributes
@@ -655,9 +666,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             steering["cancel_requested"] = len(new_pending) > 0
             payload_patch: dict[str, Any] = {"_steering": steering}
             try:
-                # The outer lock is already held, so call the provider
-                # directly to avoid re-entrant lock acquisition.
-                await self._provider.update(
+                # Spec 031 / FR-005a+b: the outer lock is already held, so use
+                # the lock-held update primitive (avoids re-entrant lock
+                # acquisition) which carries the tracked ``if_match`` — no blind
+                # writes (SOT §25.1). ``task_info`` was read inside this same
+                # lock above, so the tracked etag is current.
+                await self._provider_update_lock_held(
                     task_id,
                     TaskPatchRequest(
                         payload=payload_patch,
@@ -1074,7 +1088,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 if info is None or not info.payload:
                     return
                 st = info.payload.get("_steering", {})
-                if st.get("pending_inputs"):
+                pending = st.get("pending_inputs") or []
+                if pending:
+                    # Spec 031 / FR-002 + SOT §13: record the cross-process
+                    # observed count BEFORE setting cancel.
+                    active._pending_input_count = len(pending)
                     active.context.cancel.set()
 
             steering_poll_cb_cs = _steering_poll_cs
@@ -1496,7 +1514,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 if info is None or not info.payload:
                     return
                 st = info.payload.get("_steering", {})
-                if st.get("pending_inputs"):
+                pending = st.get("pending_inputs") or []
+                if pending:
+                    # Spec 031 / FR-002 + SOT §13: record the cross-process
+                    # observed count BEFORE setting cancel.
+                    active._pending_input_count = len(pending)
                     active.context.cancel.set()
 
             steering_poll_cb = _steering_poll
@@ -2275,95 +2297,93 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             forever.
         :return: New context for the drained generation, or None.
         """
-        task_info = await self._provider_get_tracked(task_id)
-        if task_info is None:
-            return None
+        # Spec 031 / FR-005 + SOT §25.2 — the read-state + compute-PATCH +
+        # apply cycle MUST be atomic under the per-task write lock so the
+        # in-process lease heartbeat (and any other in-process writer) cannot
+        # bump the etag between our read and our write. Previously the read
+        # was lock-free and the write pinned that lock-free etag, which let
+        # the heartbeat invalidate the pinned etag and (under contention)
+        # starve the drain's retry budget. We still pin the freshly-read etag
+        # (detect-not-clobber) so a genuine cross-process write is detected;
+        # cross-process conflicts retry OUTSIDE the lock via the recursion
+        # below (the per-task ``asyncio.Lock`` is non-reentrant).
+        drain_conflict: BaseException | None = None
+        async with self._get_task_write_lock(task_id):
+            task_info = await self._provider_get_tracked(task_id)
+            if task_info is None:
+                return None
 
-        payload = dict(task_info.payload) if task_info.payload else {}
-        steering = dict(payload.get("_steering", {}))
-        pending: list[Any] = list(steering.get("pending_inputs", []))
+            payload = dict(task_info.payload) if task_info.payload else {}
+            steering = dict(payload.get("_steering", {}))
+            pending = list(steering.get("pending_inputs", []))
 
-        if not pending:
-            return None
+            if not pending:
+                return None
 
-        # Pop the next input from the queue.: the entry may be
-        # either a raw inline value (≤ 20 KiB at append) or a ref slot
-        # pointing into ``task_info.attachments``. Resolve uniformly via
-        # ``_read_input_value``; if it was a ref, the same drain PATCH
-        # MUST also delete the attachment (C-9 /).
-        next_entry = pending.pop(0)
-        attachments_patch: dict[str, Any] = {}
-        if _is_ref(next_entry):
-            attachments_patch[_ref_key(next_entry)] = None
-        next_input_raw = _read_input_value(next_entry, task_info.attachments)
+            # Pop the next input from the queue.: the entry may be
+            # either a raw inline value (≤ 20 KiB at append) or a ref slot
+            # pointing into ``task_info.attachments``. Resolve uniformly via
+            # ``_read_input_value``; if it was a ref, the same drain PATCH
+            # MUST also delete the attachment (C-9 /).
+            next_entry = pending.pop(0)
+            attachments_patch = {}
+            if _is_ref(next_entry):
+                attachments_patch[_ref_key(next_entry)] = None
+            next_input_raw = _read_input_value(next_entry, task_info.attachments)
 
-        # Update steering state. (: previous_input is
-        # no longer mirrored into _steering; only the active input + queue
-        # state need to survive a crash mid-drain.)
-        steering["active_input"] = next_input_raw
-        steering["pending_inputs"] = pending
-        #   SOT: internal
-        # _steering["generation"] writes removed. The drain transition
-        # IS the generation advance — no separate counter needed.
-        steering["cancel_requested"] = len(pending) > 0
-        steering["drain_in_progress"] = True
-        #: the steering drain re-entry is a NEW
-        # turn-start boundary — write a fresh _turn_started_at so the
-        # respawned watchdog computes a full per-turn budget.
-        payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
+            # Update steering state. (: previous_input is
+            # no longer mirrored into _steering; only the active input + queue
+            # state need to survive a crash mid-drain.)
+            steering["active_input"] = next_input_raw
+            steering["pending_inputs"] = pending
+            #   SOT: internal
+            # _steering["generation"] writes removed. The drain transition
+            # IS the generation advance — no separate counter needed.
+            steering["cancel_requested"] = len(pending) > 0
+            steering["drain_in_progress"] = True
+            #: the steering drain re-entry is a NEW
+            # turn-start boundary — write a fresh _turn_started_at so the
+            # respawned watchdog computes a full per-turn budget.
+            payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
+            payload["_steering"] = steering
+            # SOT §11/§20: the framework does not write payload["output"];
+            # no clear is needed at the drain transition.
 
-        # (scenario 11) Previously this site captured handler output
-        # into `_steering["generation_results"]` as forward-compat durable backup
-        # for in-process superseded-result delivery (see `_manager.py:1386`
-        # `TaskResult(output=partial_output, status="superseded")`). Removed
-        # because no consumer existed anywhere in the codebase — `partial_output`
-        # is consumed at line 1386 for in-process delivery only. If durable
-        # replay of superseded results becomes a requirement in the future,
-        # restore the write here with a corresponding recovery-side read path
-        # that pumps stored output into the in-memory result_futures.
-
-        payload["_steering"] = steering
-        # SOT §11/§20: the framework does not write payload["output"];
-        # no clear is needed at the drain transition.
-
-        try:
-            etag = getattr(task_info, "etag", None) or None
-            await self._provider_update_locked(
-                task_id,
-                TaskPatchRequest(
-                    payload=payload,
-                    attachments=attachments_patch,
-                    if_match=etag,
-                    **self._lease_ext_kwargs(task_id),
-                ),
-            )
-        except _HostedConflict as exc:
-            translated = _translate_hosted_conflict(exc, task_id=task_id)
-            if translated is None:
-                if _conflict_attempt >= 5:
-                    raise RuntimeError(
-                        f"Steering drain for {task_id!r} did not converge " "after 5 etag-conflict retries"
-                    ) from exc
-                logger.warning(
-                    "Provider write conflict during steering drain for %s, retrying " "(attempt %d)",
+            try:
+                etag = getattr(task_info, "etag", None) or None
+                await self._provider_update_lock_held(
                     task_id,
-                    _conflict_attempt + 1,
+                    TaskPatchRequest(
+                        payload=payload,
+                        attachments=attachments_patch,
+                        if_match=etag,
+                        **self._lease_ext_kwargs(task_id),
+                    ),
                 )
-                return await self._try_drain_steering(
-                    task_id=task_id,
-                    ctx=ctx,
-                    opts=opts,
-                    result_future=result_future,
-                    _conflict_attempt=_conflict_attempt + 1,
-                )
-            raise translated from exc
-        except (ValueError, TransportClassifiedError) as exc:
-            if isinstance(exc, TransportClassifiedError) and getattr(exc, "classification", None) != "conflict":
-                raise
+                # Spec 031 / FR-002 — the drain consumed the head; the steered
+                # turn's live backlog is the remaining ``pending``. Keep
+                # ``ctx.pending_input_count`` in sync for the new turn.
+                active_now = self._active_tasks.get(task_id)
+                if active_now is not None:
+                    active_now._pending_input_count = len(pending)
+            except _HostedConflict as exc:
+                translated = _translate_hosted_conflict(exc, task_id=task_id)
+                if translated is not None:
+                    raise translated from exc
+                drain_conflict = exc
+            except (ValueError, TransportClassifiedError) as exc:
+                if isinstance(exc, TransportClassifiedError) and getattr(exc, "classification", None) != "conflict":
+                    raise
+                drain_conflict = exc
+
+        # Lock released — a genuine (cross-process) conflict retries here,
+        # re-reading the NEW state under a fresh lock acquisition. Bounded so
+        # the hosted store's etag comparator cannot loop forever.
+        if drain_conflict is not None:
             if _conflict_attempt >= 5:
                 raise RuntimeError(
                     f"Steering drain for {task_id!r} did not converge " "after 5 etag-conflict retries"
-                ) from exc
+                ) from drain_conflict
             logger.warning(
                 "Etag conflict during steering drain for %s, retrying " "(attempt %d)",
                 task_id,
@@ -3086,6 +3106,36 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             self._track_etag(task_id, getattr(info, "etag", None))
         return info
 
+    async def _provider_update_lock_held(
+        self,
+        task_id: str,
+        patch: TaskPatchRequest,
+        *,
+        force_if_match: bool = True,
+    ) -> Any:
+        """Spec 031 / FR-005a — apply a PATCH while the per-task write lock
+        is ALREADY held by the caller.
+
+        The per-task lock is a non-reentrant ``asyncio.Lock``; callers that
+        already hold it (e.g. ``_cancel_queued_steering_input``, the steering
+        drain) MUST use this variant rather than :meth:`_provider_update_locked`
+        to avoid self-deadlock. It selects ``if_match`` from the tracked etag
+        when the caller has not set one (no blind writes — SOT §25.1),
+        refreshes the tracked etag from the response, and bumps the
+        lease-last-refresh when the PATCH piggybacked the lease.
+
+        The caller is responsible for holding ``_get_task_write_lock(task_id)``.
+        """
+        if force_if_match and patch.if_match is None:
+            patch.if_match = self._get_tracked_etag(task_id)
+        result = await self._provider.update(task_id, patch)
+        etag = getattr(result, "etag", None)
+        if etag:
+            self._track_etag(task_id, etag)
+        if patch.lease_owner is not None:
+            self._note_lease_refreshed(task_id)
+        return result
+
     async def _provider_update_locked(
         self,
         task_id: str,
@@ -3106,20 +3156,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         Does NOT implement the  RE-READ-AND-DECIDE policy —
         that lives in :meth:`_terminal_write_locked` for the terminal
-        suspend/complete/fail sites.
+        suspend/complete/fail sites. Delegates the actual write to
+        :meth:`_provider_update_lock_held` (Spec 031 / FR-005a) so the
+        lock-held and lock-acquiring paths share one implementation.
         """
         async with self._get_task_write_lock(task_id):
-            if force_if_match and patch.if_match is None:
-                patch.if_match = self._get_tracked_etag(task_id)
-            result = await self._provider.update(task_id, patch)
-            etag = getattr(result, "etag", None)
-            if etag:
-                self._track_etag(task_id, etag)
-            # If the PATCH piggybacked the lease, the renewal loop's
-            # next tick is pushed out.
-            if patch.lease_owner is not None:
-                self._note_lease_refreshed(task_id)
-            return result
+            return await self._provider_update_lock_held(task_id, patch, force_if_match=force_if_match)
 
     async def _terminal_write_locked(
         self,
