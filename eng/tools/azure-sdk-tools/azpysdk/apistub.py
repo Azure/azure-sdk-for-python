@@ -81,12 +81,26 @@ class apistub(Check):
             dest="install_deps",
             default=False,
             action="store_true",
-            help=(
-                "Install dev requirements and apiview dependencies before running. "
-                "Skipped by default for faster local iteration."
-            ),
+            help="Install target package dev requirements before running.",
         )
         p.set_defaults(func=self.run)
+
+    def ensure_apistub_dependencies(self, executable: str, package_dir: str, staging_directory: str) -> None:
+        try:
+            self.run_venv_command(executable, ["-c", "import apistub"], cwd=staging_directory, check=True)
+            return
+        except CalledProcessError:
+            logger.info("apistub module is not installed. Installing APIView dependencies.")
+
+        install_into_venv(
+            executable,
+            [
+                "-r",
+                os.path.join(REPO_ROOT, "eng", "apiview_reqs.txt"),
+                "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+            ],
+            package_dir,
+        )
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the apistub check command."""
@@ -121,19 +135,11 @@ class apistub(Check):
                 # install dependencies
                 self.install_dev_reqs(executable, args, package_dir)
 
-                try:
-                    install_into_venv(
-                        executable,
-                        [
-                            "-r",
-                            os.path.join(REPO_ROOT, "eng", "apiview_reqs.txt"),
-                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
-                        ],
-                        package_dir,
-                    )
-                except CalledProcessError as e:
-                    logger.error(f"Failed to install dependencies: {e}")
-                    return e.returncode
+            try:
+                self.ensure_apistub_dependencies(executable, package_dir, staging_directory)
+            except (CalledProcessError, RuntimeError) as e:
+                logger.error(f"Failed to install APIView dependencies: {e}")
+                return getattr(e, "returncode", 1)
 
             if not os.getenv("PREBUILT_WHEEL_DIR"):
                 create_package_and_install(
