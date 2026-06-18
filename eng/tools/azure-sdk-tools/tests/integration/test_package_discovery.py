@@ -70,6 +70,22 @@ def test_discovery_single_package():
     ]
 
 
+def test_discovery_single_package_from_sdk_root():
+    results = discover_targeted_packages("azure-template", sdk_root, filter_type="Build")
+
+    assert [os.path.basename(result) for result in results] == [
+        "azure-template",
+    ]
+
+
+def test_discovery_single_package_from_repo_root():
+    results = discover_targeted_packages("azure-template", repo_root, filter_type="Build")
+
+    assert [os.path.basename(result) for result in results] == [
+        "azure-template",
+    ]
+
+
 def test_discovery_omit_regression():
     results = discover_targeted_packages("*", core_service_root, filter_type="Regression")
 

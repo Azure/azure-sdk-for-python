@@ -335,8 +335,6 @@ def main(generate_input, generate_output):
                     cmds = [
                         "azpysdk",
                         "apistub",
-                        "--md",
-                        "--extract-metadata",
                         package_name,
                         "--dest-dir",
                         package_path.absolute().as_posix(),
