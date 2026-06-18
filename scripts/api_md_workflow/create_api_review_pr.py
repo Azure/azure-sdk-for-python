@@ -68,6 +68,12 @@ class ArchitectReviewers:
     teams: list[str]
 
 
+@dataclass
+class PackageWorkItem:
+    id: int
+    pending_api_review_urls: list[str]
+
+
 GitRunner = Callable[[list[str], bool], CommandResult]
 _git_runner: GitRunner | None = None
 _github_api: "GitHubApi | None" = None
@@ -176,7 +182,7 @@ def normalize_pull_request(pr: dict[str, Any] | None) -> dict[str, Any] | None:
             pr["head"].get("repo") if isinstance(pr["head"].get("repo"), dict) else {}
         )
         owner = repo.get("owner") if isinstance(repo.get("owner"), dict) else {}
-        owner_login = owner.get("login")
+        owner_login = owner.get("login") if isinstance(owner, dict) else None
     if isinstance(pr.get("author"), dict):
         author_login = pr["author"].get("login")
     elif isinstance(pr.get("user"), dict):
@@ -843,6 +849,127 @@ def architects_for_package(
         f"API review architect diagnostics: resolved architects={matching_architects}"
     )
     return matching_architects
+
+
+def parse_pending_api_review_urls(markdown_urls: str | None) -> list[str]:
+    if not markdown_urls:
+        return []
+    return [line.strip() for line in markdown_urls.splitlines() if line.strip()]
+
+
+def dedupe_preserve_order(values: list[str]) -> list[str]:
+    seen: set[str] = set()
+    deduped: list[str] = []
+    for value in values:
+        cleaned = value.strip()
+        if not cleaned or cleaned in seen:
+            continue
+        seen.add(cleaned)
+        deduped.append(cleaned)
+    return deduped
+
+
+def get_package_work_item(package_name: str) -> PackageWorkItem:
+    result = run(
+        [
+            "azsdk",
+            "package",
+            "get-work-item",
+            "--package-name",
+            package_name,
+            "-o",
+            "json",
+        ],
+        check=False,
+        capture=True,
+    )
+    if result.status != 0:
+        raise RuntimeError(
+            "Failed to get package work item via `azsdk package get-work-item -o json`."
+            + (f"\n  stderr: {result.stderr.strip()}" if result.stderr.strip() else "")
+        )
+
+    try:
+        data = json.loads(result.stdout)
+    except json.JSONDecodeError as error:
+        raise RuntimeError(
+            f"Failed to parse package work item JSON: {error}"
+        ) from error
+
+    raw_work_item_id = data.get("id")
+    if raw_work_item_id is None:
+        raise RuntimeError("Package work item response did not contain an 'id'.")
+
+    try:
+        work_item_id = int(raw_work_item_id)
+    except (TypeError, ValueError) as error:
+        raise RuntimeError(
+            f"Invalid package work item id: {raw_work_item_id}"
+        ) from error
+
+    fields = data.get("fields") if isinstance(data, dict) else None
+    pending_reviews_markdown = ""
+    if isinstance(fields, dict):
+        pending_reviews_markdown = str(fields.get("Custom.PendingAPIReviews") or "")
+
+    return PackageWorkItem(
+        id=work_item_id,
+        pending_api_review_urls=parse_pending_api_review_urls(pending_reviews_markdown),
+    )
+
+
+def update_package_pending_api_reviews(
+    work_item_id: int, api_reviews_string: str
+) -> None:
+    result = run(
+        [
+            "azsdk",
+            "package",
+            "update-work-item",
+            "--work-item-id",
+            str(work_item_id),
+            "--field",
+            f"Custom.PendingAPIReviews={api_reviews_string}",
+            "--multiline-fields-format",
+            "Custom.PendingAPIReviews=markdown",
+        ],
+        check=False,
+        capture=True,
+    )
+    if result.status != 0:
+        raise RuntimeError(
+            f"Failed to update package work item {work_item_id} Pending API Reviews field."
+            + (f"\n  stderr: {result.stderr.strip()}" if result.stderr.strip() else "")
+        )
+
+
+def sync_package_pending_api_review_pr_url(package_name: str, pr_url: str) -> None:
+    if not pr_url.strip():
+        log_warning("WARNING: empty PR URL; skipping package work item update.")
+        return
+
+    try:
+        package_work_item = get_package_work_item(package_name)
+        updated_urls = dedupe_preserve_order(
+            [*package_work_item.pending_api_review_urls, pr_url]
+        )
+        if updated_urls == package_work_item.pending_api_review_urls:
+            log_info(
+                f"Package work item {package_work_item.id} already contains API review PR URL; no update needed."
+            )
+            return
+
+        api_reviews_string = "\n".join(updated_urls)
+        update_package_pending_api_reviews(package_work_item.id, api_reviews_string)
+        log_info(
+            f"Updated package work item {package_work_item.id} with API review PR URL."
+        )
+    except Exception as error:  # pylint: disable=broad-except
+        details = str(error)
+        log_warning(
+            "WARNING: failed to update package work item Pending API Reviews."
+            + (f"\n  {details}" if details else "")
+        )
 
 
 def branch_remote_ref(branch: str) -> str:
@@ -1517,6 +1644,9 @@ def main(argv: list[str] | None = None) -> int:
                     existing_pr.get("authorLogin"),
                     architect_reviewers,
                 )
+                sync_package_pending_api_review_pr_url(
+                    args.package_name, str(existing_pr["url"])
+                )
                 log_info(f"\n=== Reusing existing PR #{existing_pr['number']} ===")
                 log_info(existing_pr["url"])
                 return 0
@@ -1533,6 +1663,9 @@ def main(argv: list[str] | None = None) -> int:
             )
             if pr_create.get("url"):
                 log_info(pr_create["url"])
+                sync_package_pending_api_review_pr_url(
+                    args.package_name, str(pr_create["url"])
+                )
         else:
             existing_pr = find_open_pr_for_branches(base_branch, review_branch)
             if existing_pr:
@@ -1542,6 +1675,9 @@ def main(argv: list[str] | None = None) -> int:
                     package_dir,
                     existing_pr.get("authorLogin"),
                     architect_reviewers,
+                )
+                sync_package_pending_api_review_pr_url(
+                    args.package_name, str(existing_pr["url"])
                 )
                 log_info(f"\n=== Reusing existing PR #{existing_pr['number']} ===")
                 log_info(existing_pr["url"])

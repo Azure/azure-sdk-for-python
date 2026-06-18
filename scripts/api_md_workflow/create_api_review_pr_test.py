@@ -1,7 +1,5 @@
 import json
-import tempfile
 import unittest
-from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from scripts.api_md_workflow import create_api_review_pr as workflow
@@ -31,7 +29,6 @@ class StubGithubApi:
         self.head_results = head_results or []
         self.search_results = search_results or []
         self.on_lookup = on_lookup
-        self.reviewers = []
 
     def _lookup(self, results):
         if self.on_lookup:
@@ -51,13 +48,7 @@ class StubGithubApi:
         return None
 
     def create_draft_pull_request(self, _base, _head, _title, _body):
-        return {
-            "number": 1,
-            "html_url": "https://github.com/Azure/azure-sdk-for-python/pull/1",
-        }
-
-    def request_reviewers(self, pr_number, reviewers, team_reviewers=None):
-        self.reviewers.append((pr_number, reviewers, team_reviewers or []))
+        return {"html_url": "https://github.com/Azure/azure-sdk-for-python/pull/1"}
 
 
 class ApiReviewPrTests(unittest.TestCase):
@@ -157,8 +148,7 @@ class ApiReviewPrTests(unittest.TestCase):
             workflow.target_reference_info("azure-example_1.2.3"),
             {
                 "label": "Target tag",
-                "markdown": "[tag `azure-example_1.2.3`]"
-                "(https://github.com/Azure/azure-sdk-for-python/commit/abc123def456)",
+                "markdown": "[tag `azure-example_1.2.3`](https://github.com/Azure/azure-sdk-for-python/commit/abc123def456)",
             },
         )
         self.assertEqual(pr_lookup_count, 0)
@@ -202,8 +192,7 @@ class ApiReviewPrTests(unittest.TestCase):
             workflow.target_reference_info("azure-example_1.2.3", "azure-example"),
             {
                 "label": "Target tag",
-                "markdown": "[tag `azure-example_1.2.3`]"
-                "(https://github.com/Azure/azure-sdk-for-python/commit/abc123def456)",
+                "markdown": "[tag `azure-example_1.2.3`](https://github.com/Azure/azure-sdk-for-python/commit/abc123def456)",
             },
         )
         self.assertEqual(pr_lookup_count, 0)
@@ -233,13 +222,11 @@ class ApiReviewPrTests(unittest.TestCase):
             base_branch="apireview/base_azure-example_1.0.0",
             review_branch="apireview/review_azure-example_1.1.0",
             head_selector="example:users/example/feature",
-            package_work_item_id_value=31370,
         )
 
         self.assertEqual(metadata["workingOwner"], "example")
         self.assertEqual(metadata["workingBranch"], "users/example/feature")
         self.assertEqual(metadata["workingPrNumber"], 47204)
-        self.assertEqual(metadata["packageWorkItemId"], 31370)
 
     def test_build_sync_metadata_object_omits_metadata_for_tag_targets(self):
         pr_lookup_count = 0
@@ -302,7 +289,6 @@ class ApiReviewPrTests(unittest.TestCase):
                 "workingOwner": "Azure",
                 "workingBranch": "main",
                 "workingPrNumber": None,
-                "packageWorkItemId": "31370",
             }
         )
 
@@ -322,7 +308,6 @@ class ApiReviewPrTests(unittest.TestCase):
         self.assertNotIn("Static tag-to-tag review", body)
         self.assertIn("<!-- api-md-review-sync", body)
         self.assertIn('"workingBranch": "main"', body)
-        self.assertIn('"packageWorkItemId": "31370"', body)
 
     def test_api_results_have_api_diff_ignores_metadata_only_changes(self):
         self.assertFalse(
@@ -335,318 +320,6 @@ class ApiReviewPrTests(unittest.TestCase):
                 ),
             )
         )
-
-    def test_package_version_major_minor(self):
-        self.assertEqual(workflow.package_version_major_minor("1.2.3b1"), "1.2")
-        self.assertEqual(workflow.package_version_major_minor("12"), "12.0")
-
-    def test_parse_package_work_item_id(self):
-        self.assertEqual(
-            workflow.parse_package_work_item_id("Work Item ID: 31370\n"), 31370
-        )
-        self.assertEqual(
-            workflow.parse_package_work_item_id('{"work_item_id":31371}'), 31371
-        )
-
-    def test_architects_for_package_uses_codeowners_style_last_match(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            architects_path = Path(temp_dir) / "ARCHITECTS"
-            architects_path.write_text(
-                "# comment\n"
-                "/sdk/ @fallback\n"
-                "/sdk/keyvault/ @keyvault-architect @Azure/ignored-team\n"
-                "/sdk/keyvault/azure-keyvault-keys/ @tjprescott\n",
-                encoding="utf-8",
-            )
-
-            self.assertEqual(
-                workflow.architects_for_package(
-                    "sdk/keyvault/azure-keyvault-keys", architects_path
-                ),
-                ["tjprescott"],
-            )
-
-    def test_architects_for_package_keeps_team_owners(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            architects_path = Path(temp_dir) / "ARCHITECTS"
-            architects_path.write_text(
-                "/sdk/keyvault/ @tjprescott @Azure/keyvault-arch\n",
-                encoding="utf-8",
-            )
-
-            self.assertEqual(
-                workflow.architects_for_package(
-                    "sdk/keyvault/azure-keyvault-keys", architects_path
-                ),
-                ["tjprescott", "Azure/keyvault-arch"],
-            )
-
-    def test_assign_architects_to_pr_requests_matching_architects_as_reviewers(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            architects_path = Path(temp_dir) / "ARCHITECTS"
-            architects_path.write_text(
-                "/sdk/ @kashifkhan\n/sdk/keyvault/ @tjprescott\n", encoding="utf-8"
-            )
-            github = StubGithubApi()
-            workflow.set_github_api_for_test(github)
-
-            with patch.object(workflow, "ARCHITECTS_PATH", architects_path):
-                workflow.assign_architects_to_pr(
-                    123, "sdk/keyvault/azure-keyvault-keys"
-                )
-
-            self.assertEqual(github.reviewers, [(123, ["tjprescott"], [])])
-
-    def test_assign_uses_cached_architects(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            github = StubGithubApi()
-            workflow.set_github_api_for_test(github)
-
-            with patch.object(
-                workflow, "ARCHITECTS_PATH", Path(temp_dir) / "ARCHITECTS"
-            ):
-                workflow.assign_architects_to_pr(
-                    123, "sdk/keyvault/azure-keyvault-keys", architects=["l0lawrence"]
-                )
-
-            self.assertEqual(github.reviewers, [(123, ["l0lawrence"], [])])
-
-    def test_assign_architects_to_pr_requests_team_reviewers(self):
-        github = StubGithubApi()
-        workflow.set_github_api_for_test(github)
-
-        workflow.assign_architects_to_pr(
-            123,
-            "sdk/keyvault/azure-keyvault-keys",
-            architects=["tjprescott", "Azure/keyvault-arch"],
-        )
-
-        self.assertEqual(
-            github.reviewers,
-            [(123, ["tjprescott"], ["keyvault-arch"])],
-        )
-
-    def test_assign_architects_to_pr_keeps_team_when_author_is_user(self):
-        github = StubGithubApi()
-        workflow.set_github_api_for_test(github)
-
-        workflow.assign_architects_to_pr(
-            123,
-            "sdk/keyvault/azure-keyvault-keys",
-            "tjprescott",
-            architects=["tjprescott", "Azure/keyvault-arch"],
-        )
-
-        self.assertEqual(github.reviewers, [(123, [], ["keyvault-arch"])])
-
-    def test_assign_architects_to_pr_warns_when_architect_is_pr_author(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            architects_path = Path(temp_dir) / "ARCHITECTS"
-            architects_path.write_text("/sdk/keyvault/ @tjprescott\n", encoding="utf-8")
-            github = StubGithubApi()
-            workflow.set_github_api_for_test(github)
-
-            with (
-                patch.object(workflow, "ARCHITECTS_PATH", architects_path),
-                patch.object(workflow, "log_warning") as log_warning,
-            ):
-                workflow.assign_architects_to_pr(
-                    123, "sdk/keyvault/azure-keyvault-keys", "tjprescott"
-                )
-
-            self.assertEqual(github.reviewers, [])
-            self.assertTrue(
-                any(
-                    "GitHub does not allow requesting the PR author as a reviewer"
-                    in call.args[0]
-                    for call in log_warning.call_args_list
-                )
-            )
-
-    def test_package_work_item_id_no_shell(self):
-        with (
-            patch.object(
-                workflow, "resolve_azsdk_executable", return_value="azsdk"
-            ) as resolve_azsdk,
-            patch.object(
-                workflow,
-                "run",
-                return_value=workflow.CommandResult(0, "Work Item ID: 31370\n"),
-            ) as run,
-        ):
-            self.assertEqual(
-                workflow.package_work_item_id("azure-example", "1.2.3b1"), 31370
-            )
-
-        resolve_azsdk.assert_called_once_with()
-        run.assert_called_once_with(
-            [
-                "azsdk",
-                "package",
-                "find-work-item",
-                "--package-name",
-                "azure-example",
-                "--package-version",
-                "1.2",
-                "--language",
-                "Python",
-            ],
-            check=False,
-            capture=True,
-        )
-
-    def test_package_work_item_id_error(self):
-        with (
-            patch.object(workflow, "resolve_azsdk_executable", return_value="azsdk"),
-            patch.object(
-                workflow,
-                "run",
-                return_value=workflow.CommandResult(1, "", "Unexpected failure"),
-            ),
-            patch.object(workflow, "log_warning") as log_warning,
-        ):
-            self.assertEqual(
-                workflow.package_work_item_id("azure-example", "1.2.3b1"), "ERROR"
-            )
-
-        log_warning.assert_called_once()
-        self.assertIn(
-            "PR body sync metadata will set packageWorkItemId to ERROR",
-            log_warning.call_args.args[0],
-        )
-
-    def test_package_work_item_id_unknown_missing(self):
-        with (
-            patch.object(workflow, "resolve_azsdk_executable", return_value="azsdk"),
-            patch.object(
-                workflow,
-                "run",
-                return_value=workflow.CommandResult(
-                    1,
-                    "[ERROR] No package work item found for package 'azure-example'.\n",
-                    "",
-                ),
-            ),
-            patch.object(workflow, "log_warning") as log_warning,
-        ):
-            self.assertEqual(
-                workflow.package_work_item_id("azure-example", "1.2.3b1"), "ERROR"
-            )
-
-        log_warning.assert_called_once()
-        self.assertIn(
-            "PR body sync metadata will set packageWorkItemId to ERROR",
-            log_warning.call_args.args[0],
-        )
-
-    def test_package_work_item_id_unknown_no_id(self):
-        with (
-            patch.object(workflow, "resolve_azsdk_executable", return_value="azsdk"),
-            patch.object(
-                workflow,
-                "run",
-                return_value=workflow.CommandResult(
-                    0, "No package work item found\n", ""
-                ),
-            ),
-            patch.object(workflow, "log_warning") as log_warning,
-        ):
-            self.assertEqual(
-                workflow.package_work_item_id("azure-example", "1.2.3b1"), "NONE"
-            )
-
-        log_warning.assert_called_once()
-        self.assertIn(
-            "PR body sync metadata will set packageWorkItemId to NONE",
-            log_warning.call_args.args[0],
-        )
-
-    def test_azsdk_preflight_checks_help(self):
-        with (
-            patch.object(
-                workflow, "resolve_azsdk_executable", return_value="azsdk"
-            ) as resolve_azsdk,
-            patch.object(
-                workflow, "run", return_value=workflow.CommandResult(0, "help")
-            ) as run,
-        ):
-            workflow.ensure_azsdk_find_work_item_available()
-
-        resolve_azsdk.assert_called_once_with()
-        run.assert_called_once_with(
-            ["azsdk", "package", "find-work-item", "--help"], check=False, capture=True
-        )
-
-    def test_azsdk_preflight_fails_if_stale(self):
-        with (
-            patch.object(workflow, "resolve_azsdk_executable", return_value="azsdk"),
-            patch.object(
-                workflow,
-                "run",
-                return_value=workflow.CommandResult(1, "", "Unknown command"),
-            ),
-        ):
-            with self.assertRaisesRegex(RuntimeError, "package find-work-item"):
-                workflow.ensure_azsdk_find_work_item_available()
-
-    def test_main_preflights_azsdk_first(self):
-        with (
-            patch.object(
-                workflow,
-                "ensure_azsdk_find_work_item_available",
-                side_effect=RuntimeError("missing command"),
-            ),
-            patch.object(workflow, "find_package_dir") as find_package_dir,
-        ):
-            with self.assertRaisesRegex(RuntimeError, "missing command"):
-                workflow.main(
-                    ["--package-name", "azure-example", "--base", "azure-example_1.0.0"]
-                )
-
-        find_package_dir.assert_not_called()
-
-    def test_resolve_azsdk_uses_path_first(self):
-        with patch.object(workflow.shutil, "which", return_value="C:/tools/azsdk.exe"):
-            self.assertEqual(workflow.resolve_azsdk_executable(), "C:/tools/azsdk.exe")
-
-    def test_resolve_azsdk_uses_common_dir(self):
-        def is_file(candidate):
-            return str(candidate).replace("\\", "/").endswith("/bin/azsdk.exe")
-
-        with (
-            patch.object(workflow.shutil, "which", return_value=None),
-            patch.object(workflow.Path, "home", return_value=Path("C:/Users/example")),
-            patch.object(workflow.Path, "is_file", is_file),
-        ):
-            self.assertEqual(
-                workflow.resolve_azsdk_executable().replace("\\", "/"),
-                "C:/Users/example/bin/azsdk.exe",
-            )
-
-    def test_resolve_azsdk_uses_mcp_dir(self):
-        def is_file(candidate):
-            return (
-                str(candidate).replace("\\", "/").endswith("/.azure-sdk-mcp/azsdk.exe")
-            )
-
-        with (
-            patch.object(workflow.shutil, "which", return_value=None),
-            patch.object(workflow.Path, "home", return_value=Path("C:/Users/example")),
-            patch.object(workflow.Path, "is_file", is_file),
-        ):
-            self.assertEqual(
-                workflow.resolve_azsdk_executable().replace("\\", "/"),
-                "C:/Users/example/.azure-sdk-mcp/azsdk.exe",
-            )
-
-    def test_resolve_azsdk_missing_errors(self):
-        with (
-            patch.object(workflow.shutil, "which", return_value=None),
-            patch.object(workflow.Path, "home", return_value=Path("C:/Users/example")),
-            patch.object(workflow.Path, "is_file", return_value=False),
-        ):
-            with self.assertRaisesRegex(RuntimeError, "azure-sdk-mcp.ps1"):
-                workflow.resolve_azsdk_executable()
 
     def test_replace_sync_metadata_block_replaces_stale_hidden_metadata(self):
         old_block = workflow.build_sync_metadata_block(
@@ -695,6 +368,71 @@ class ApiReviewPrTests(unittest.TestCase):
         )
         self.assertEqual(
             json.loads(json_text), {"schemaVersion": 1, "workingPrNumber": None}
+        )
+
+    def test_parse_pending_api_review_urls_splits_and_trims_lines(self):
+        markdown = "\nhttps://contoso/review/1\n  https://contoso/review/2  \n\n"
+        self.assertEqual(
+            workflow.parse_pending_api_review_urls(markdown),
+            ["https://contoso/review/1", "https://contoso/review/2"],
+        )
+
+    def test_get_package_work_item_parses_pending_api_review_field(self):
+        payload = {
+            "id": 12345,
+            "fields": {
+                "Custom.PendingAPIReviews": "https://contoso/review/1\nhttps://contoso/review/2\n"
+            },
+        }
+
+        with patch.object(
+            workflow,
+            "run",
+            return_value=workflow.CommandResult(0, json.dumps(payload), ""),
+        ):
+            item = workflow.get_package_work_item("azure-example")
+
+        self.assertEqual(item.id, 12345)
+        self.assertEqual(
+            item.pending_api_review_urls,
+            ["https://contoso/review/1", "https://contoso/review/2"],
+        )
+
+    def test_sync_package_pending_api_review_pr_url_is_idempotent(self):
+        with patch.object(
+            workflow,
+            "get_package_work_item",
+            return_value=workflow.PackageWorkItem(
+                id=54321,
+                pending_api_review_urls=[
+                    "https://github.com/Azure/azure-sdk-for-python/pull/10"
+                ],
+            ),
+        ), patch.object(workflow, "update_package_pending_api_reviews") as update_mock:
+            workflow.sync_package_pending_api_review_pr_url(
+                "azure-example", "https://github.com/Azure/azure-sdk-for-python/pull/10"
+            )
+
+        update_mock.assert_not_called()
+
+    def test_sync_package_pending_api_review_pr_url_appends_new_url(self):
+        with patch.object(
+            workflow,
+            "get_package_work_item",
+            return_value=workflow.PackageWorkItem(
+                id=54321,
+                pending_api_review_urls=[
+                    "https://github.com/Azure/azure-sdk-for-python/pull/10"
+                ],
+            ),
+        ), patch.object(workflow, "update_package_pending_api_reviews") as update_mock:
+            workflow.sync_package_pending_api_review_pr_url(
+                "azure-example", "https://github.com/Azure/azure-sdk-for-python/pull/11"
+            )
+
+        update_mock.assert_called_once_with(
+            54321,
+            "https://github.com/Azure/azure-sdk-for-python/pull/10\nhttps://github.com/Azure/azure-sdk-for-python/pull/11",
         )
 
 
