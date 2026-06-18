@@ -43,7 +43,8 @@ class Configuration(Generic[HTTPRequestType, HTTPResponseType]):  # pylint: disa
     """Provides the home for all of the configurable policies in the pipeline.
 
     A new Configuration object provides no default policies and does not specify in what
-    order the policies will be added to the pipeline. The SDK developer must specify each
+    order the policies will be added to the pipeline. Policies can be added after
+    construction. The SDK developer must specify each
     of the policy defaults as required by the service and use the policies in the
     Configuration to construct the pipeline correctly, as well as inserting any
     unexposed/non-configurable policies.
