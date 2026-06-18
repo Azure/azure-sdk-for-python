@@ -251,6 +251,13 @@ namespace azure.ai.projects.aio.operations
             ) -> DeleteAgentVersionResponse: ...
 
         @distributed_trace_async
+        async def disable_agent(
+                self, 
+                agent_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
         async def download_code(
                 self, 
                 agent_name: str, 
@@ -269,6 +276,13 @@ namespace azure.ai.projects.aio.operations
                 user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def enable_agent(
+                self, 
+                agent_name: str, 
+                **kwargs: Any
+            ) -> None: ...
 
         @distributed_trace_async
         async def get(
@@ -2504,6 +2518,7 @@ namespace azure.ai.projects.models
         instance_identity: Optional[AgentIdentity]
         name: str
         object: Literal[AgentObjectType.AGENT]
+        state: Union[str, AgentState]
         versions: AgentObjectVersions
 
         @overload
@@ -2672,6 +2687,11 @@ namespace azure.ai.projects.models
         FAILED = "failed"
         IDLE = "idle"
         UPDATING = "updating"
+
+
+    class azure.ai.projects.models.AgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "disabled"
+        ENABLED = "enabled"
 
 
     class azure.ai.projects.models.AgentTaxonomyInput(EvaluationTaxonomyInput, discriminator='agent'):
@@ -6599,7 +6619,6 @@ namespace azure.ai.projects.models
         lora_config: Optional[LoraConfig]
         name: str
         source: Optional[ModelSourceData]
-        system_data: Optional[SystemDataV3]
         tags: Optional[dict[str, str]]
         version: str
         warnings: Optional[list[FoundryModelWarning]]
@@ -8087,26 +8106,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.SystemDataV3(_Model):
-        created_at: Optional[datetime]
-        created_by: Optional[str]
-        created_by_type: Optional[str]
-        last_modified_at: Optional[datetime]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                created_at: Optional[datetime] = ..., 
-                created_by: Optional[str] = ..., 
-                created_by_type: Optional[str] = ..., 
-                last_modified_at: Optional[datetime] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.TargetCompletionEvalRunDataSource(TypedDict, total=False):
         key "input_messages": Required[InputMessagesItemReference]
         key "source": Required[Union[SourceFileContent, SourceFileID]]
@@ -9298,6 +9297,13 @@ namespace azure.ai.projects.operations
             ) -> DeleteAgentVersionResponse: ...
 
         @distributed_trace
+        def disable_agent(
+                self, 
+                agent_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
         def download_code(
                 self, 
                 agent_name: str, 
@@ -9316,6 +9322,13 @@ namespace azure.ai.projects.operations
                 user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def enable_agent(
+                self, 
+                agent_name: str, 
+                **kwargs: Any
+            ) -> None: ...
 
         @distributed_trace
         def get(

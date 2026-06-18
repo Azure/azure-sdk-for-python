@@ -117,13 +117,9 @@ git push -u origin <topic-branch>
 
 ## Step 7: Run post-emitter fixes
 
-After a successful emit, run the post-emitter fix script located in the `sdk/ai/azure-ai-projects` folder:
+After a successful emit, run the PowerShell script named `PostEmitter.ps1` located in the `sdk/ai/azure-ai-projects` folder.
 
-```
-post-emitter-fixes.cmd
-```
-
-This script applies azure-ai-projects-specific corrections to the emitted code (restores `pyproject.toml`, fixes enum names, patches Sphinx doc-string issues, and runs `black` formatting).
+This script applies azure-ai-projects specific corrections to the emitted code (restores `pyproject.toml`, fixes enum names, patches Sphinx doc-string issues, and runs `black` formatting).
 
 **If the script fails**, stop and report the error to the user. Do not continue. Do not attempt to analyze the script failures and fix them with Copilot. The script should be fixed by the engineering team if it is not working.
 
@@ -174,7 +170,20 @@ In the folder `sdk\ai\azure-ai-projects`, run `pip install -e .` to install the 
 
 ---
 
-## Step 12: Commit and push
+## Step 12: Update api.md and api.metadata.yml files
+
+In the root of the `azure-sdk-for-python` folder run the following commands
+
+```
+azpysdk apistub --md --extract-metadata azure-ai-projects --dest-dir .
+```
+
+This will update the `api.md` and `api.metadata.yml` files under in the package folder `sdk\ai\azure-ai-projects`. Now change directory
+back to the package folder.
+
+---
+
+## Step 13: Commit and push
 
 Stage all changes (excluding file names that start with `.env`), commit, and push the topic branch:
 
@@ -188,7 +197,7 @@ git push -u origin <topic-branch>
 
 ---
 
-## Step 13: Create a Pull Request
+## Step 14: Create a Pull Request
 
 Create a draft PR from the **topic branch** to the **base branch** (recorded in Step 2):
 
@@ -205,7 +214,7 @@ Open a new tab in the default browser and navigate to the PR URL.
 
 ---
 
-## Step 14: Optionally run tests locally
+## Step 15: Optionally run tests locally
 
 Prompt the user with this message: "Tests will run as part of the Pull Request. However, you can optionally run tests locally in a Python virtual environment, right now. It will take a few minutes. Do you want to run tests locally? (yes/no)"
 
