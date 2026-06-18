@@ -193,3 +193,17 @@ closed them, and the remaining genuine recovery gaps were filled.
 | `context.persisted_response` is seeded on recovery | Proven-by-consequence (B4): `test_row_11_path_c.py` resume markers + `test_reset_event_content.py` both FAIL if seeding is broken | recovery seeding |
 | `response.created` idempotency across real crash recovery (single created per durable stream) | `test_streaming_recovery_continuity.py` (B8 — asserts exactly one `response.created` after recovery) + `tests/e2e/test_recovery_idempotent_create.py` (provider layer) | event sequence |
 | Per-cell tests MUST verify the row's contract surface, not terminal status alone | `test_contract_completeness.py::test_per_cell_tests_assert_more_than_just_status` (Spec 032 FR-001 — HARD gate) | meta |
+
+---
+
+## Conformance gap closure — request-carried `agent_reference` (hosted-shaped input)
+
+| Clause | Test | Dimension |
+|---|---|---|
+| Row 1 Path C with a request-carried `agent_reference` (the hosted gateway-injected `AgentReference` model): durable start MUST still create a durable task and recover after SIGKILL — i.e. the model-typed `agent_reference` must not break durable-input serialization and silently degrade to a non-durable `asyncio.create_task` | `test_recovery_with_agent_reference.py::test_row_1_path_c_recovers_with_agent_reference` (stream=F/T) | recovery; durable-input serialization |
+
+This closes the gap that let the hosted `TypeError: Object of type AgentReference
+is not JSON serializable` durable-start failure ship: every other durability
+test sends no `agent_reference` (`{}` sentinel) or a plain string, so none
+exercised the model form through the (provider-agnostic) durable-input
+serialization. Unit-level guard: `tests/unit/test_durable_orchestrator.py::TestSplitRuntimeRefsSerializable`.
