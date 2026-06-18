@@ -182,6 +182,14 @@ CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
     ),
     "task_streams_terminal_412_reread_lease_ours_retries": ("test_etag_cas.py::test_terminal_412_lease_ours_retries"),
     "task_streams_reclaim_both_sites_carry_if_match": ("test_etag_cas.py::test_both_reclaim_sites_carry_if_match"),
+    # Spec 031 — public-surface conformance + write-serialization hardening
+    "spec031_pending_input_count_live_count": ("test_steering.py::test_same_process_enqueue_count_visible_at_cancel"),
+    "spec031_no_blind_writes_steer_drain": ("test_steering.py::test_steer_drain_runs_steered_turn_and_no_blind_writes"),
+    "spec031_drain_recovers_cross_process_conflict": (
+        "test_steering.py::test_drain_recovers_from_cross_process_conflict"
+    ),
+    "spec031_local_provider_hosted_parity": ("test_local_provider.py::test_stale_if_match_classified_like_hosted"),
+    "spec031_local_provider_lease_only_bumps_etag": ("test_local_provider.py::test_lease_only_update_bumps_etag"),
     #  (source_type filter on recovery scan)
     "task_streams_recovery_scan_filters_source_type": (
         "test_recovery_filter.py::test_recovery_scan_passes_source_type"

@@ -1132,3 +1132,84 @@ class TestLocalProviderListParity:
         # Today both are required positional args — RED via TypeError.
         results = await provider.list()  # type: ignore[call-arg]
         assert len(results) >= 2
+
+
+class TestLocalProviderHostedParity:
+    """Spec 031 / FR-008 — the local/file provider is a faithful double for
+    the hosted store's If-Match optimistic concurrency: a stale-if_match write
+    is classified IDENTICALLY to the hosted ``etag_mismatch``/412, and EVERY
+    successful update (including lease-only) bumps the etag. Pins existing
+    behavior so the framework's conflict handling stays provider-agnostic."""
+
+    @pytest.mark.asyncio
+    async def test_stale_if_match_classified_like_hosted(
+        self, provider: LocalFileTaskProvider, sample_create_request: TaskCreateRequest
+    ) -> None:
+        task_record = await provider.create(sample_create_request)
+        patch = TaskPatchRequest(status="in_progress", if_match="stale-etag")
+        with pytest.raises(_HostedConflict) as ei:
+            await provider.update(task_record.id, patch)
+        exc = ei.value
+        # Hosted-identical classification: a _HostedConflict that ALSO behaves
+        # as a ValueError (so callers catching either type converge), carrying
+        # the hosted error code + 412 status.
+        assert isinstance(exc, ValueError)
+        assert getattr(exc, "_code", None) == "etag_mismatch"
+        assert getattr(exc, "status_code", None) == 412
+
+    @pytest.mark.asyncio
+    async def test_lease_only_update_bumps_etag(
+        self, provider: LocalFileTaskProvider, sample_create_request: TaskCreateRequest
+    ) -> None:
+        task_record = await provider.create(sample_create_request)
+        # Lease renewal is only valid on an in_progress task — move it there first.
+        moved = await provider.update(task_record.id, TaskPatchRequest(status="in_progress", if_match=task_record.etag))
+        before = moved.etag
+        # A lease-only PATCH (no status/payload change) MUST still move the etag,
+        # exactly like the hosted store — otherwise a concurrent pinned-etag
+        # writer would not detect the heartbeat's write.
+        patch = TaskPatchRequest(
+            lease_owner=moved.lease.owner if moved.lease else "owner-x",
+            lease_instance_id=moved.lease.instance_id if moved.lease else "inst-x",
+            lease_duration_seconds=60,
+            if_match=before,
+        )
+        updated = await provider.update(task_record.id, patch)
+        assert updated.etag and updated.etag != before, "lease-only update MUST bump the etag (hosted parity)"
+
+    @pytest.mark.asyncio
+    async def test_two_managers_one_store_cross_process_conflict(self, tmp_path: Path) -> None:
+        """FR-009 — two independent providers bound to ONE store directory
+        contend exactly as two hosted workers would: the second pinned-etag
+        write loses with a hosted-identical conflict (deterministic, no OS
+        write-atomicity reliance — the operations are sequenced)."""
+        store = tmp_path / "shared"
+        worker_a = LocalFileTaskProvider(base_dir=store)
+        worker_b = LocalFileTaskProvider(base_dir=store)
+
+        created = await worker_a.create(
+            TaskCreateRequest(
+                agent_name="a",
+                session_id="s",
+                status="in_progress",
+                title="t",
+                payload={"input": {"n": 0}},
+            )
+        )
+        tid, etag0 = created.id, created.etag
+
+        # Both workers read the same etag, then both try to write pinned to it.
+        a_view = await worker_a.get(tid)
+        b_view = await worker_b.get(tid)
+        assert a_view.etag == b_view.etag == etag0
+
+        # Worker A writes first -> wins, etag advances.
+        await worker_a.update(tid, TaskPatchRequest(payload={"a": 1}, if_match=a_view.etag))
+        # Worker B writes pinned to the now-stale etag -> hosted-identical conflict.
+        with pytest.raises(_HostedConflict) as ei:
+            await worker_b.update(tid, TaskPatchRequest(payload={"b": 1}, if_match=b_view.etag))
+        assert getattr(ei.value, "_code", None) == "etag_mismatch"
+        # B recovers by re-reading the NEW state and retrying (optimistic concurrency).
+        b_fresh = await worker_b.get(tid)
+        recovered = await worker_b.update(tid, TaskPatchRequest(payload={"b": 1}, if_match=b_fresh.etag))
+        assert recovered.payload.get("a") == 1 and recovered.payload.get("b") == 1
