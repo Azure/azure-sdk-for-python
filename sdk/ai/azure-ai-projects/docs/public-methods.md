@@ -41,7 +41,7 @@ There are a total of 141 unique public methods:
 
 ## Stable methods on the client
 
-An asterisk at the end of the method name means is a hand-written method.
+Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
 ```
 .__enter__
