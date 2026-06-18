@@ -15,6 +15,8 @@ dependencies = [
     "azure-ai-agents>=1.0.0",
     "azure-identity>=1.17.0",
     "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+    "rich>=13.7.0",
 ]
 
 [project.scripts]

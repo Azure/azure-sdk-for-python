@@ -3,4 +3,5 @@ azure-ai-agents==1.1.0
 azure-identity==1.20.0
 requests==2.28.1
 python-dotenv==1.0.1
+rich==13.7.1
 
