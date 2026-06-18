@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable
 
 """
 FILE: blob_samples_container_async.py
@@ -23,7 +22,8 @@ import asyncio
 from datetime import datetime, timedelta
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
+SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
+
 
 class ContainerSamplesAsync(object):
     connection_string = os.getenv("STORAGE_CONNECTION_STRING")
@@ -32,13 +32,17 @@ class ContainerSamplesAsync(object):
 
     async def container_sample_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: container_sample_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: container_sample_async"
+            )
             sys.exit(1)
 
         # [START create_container_client_from_service]
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         # Instantiate a ContainerClient
@@ -49,7 +53,11 @@ class ContainerSamplesAsync(object):
             # [START create_container_client_sasurl]
             from azure.storage.blob.aio import ContainerClient
 
-            sas_url = sas_url = "https://account.blob.core.windows.net/mycontainer?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+            sas_url = (
+                "https://account.blob.core.windows.net/mycontainer?sv=2015-04-05&"
+                "st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&"
+                "sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
+            )
             container = ContainerClient.from_container_url(sas_url)
             # [END create_container_client_sasurl]
 
@@ -69,12 +77,16 @@ class ContainerSamplesAsync(object):
 
     async def acquire_lease_on_container_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: acquire_lease_on_container_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: acquire_lease_on_container_async"
+            )
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -94,12 +106,16 @@ class ContainerSamplesAsync(object):
 
     async def set_metadata_on_container_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: set_metadata_on_container_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: set_metadata_on_container_async"
+            )
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -112,7 +128,7 @@ class ContainerSamplesAsync(object):
 
                 # [START set_container_metadata]
                 # Create key, value pairs for metadata
-                metadata = {'type': 'test'}
+                metadata = {"type": "test"}
 
                 # Set metadata on the container
                 await container_client.set_container_metadata(metadata=metadata)
@@ -127,19 +143,24 @@ class ContainerSamplesAsync(object):
 
     async def container_access_policy_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: container_access_policy_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: container_access_policy_async"
+            )
             sys.exit(1)
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
             # Instantiate a ContainerClient
             container_client = blob_service_client.get_container_client("myaccesscontainerasync")
             if container_client.account_name is None:
-                print("Connection string did not provide an account name." + '\n' +
-                      "Test: container_access_policy_async")
+                print(
+                    "Connection string did not provide an account name." + "\n" + "Test: container_access_policy_async"
+                )
                 sys.exit(1)
 
             try:
@@ -149,11 +170,14 @@ class ContainerSamplesAsync(object):
                 # [START set_container_access_policy]
                 # Create access policy
                 from azure.storage.blob import AccessPolicy, ContainerSasPermissions
-                access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                            expiry=datetime.utcnow() + timedelta(hours=1),
-                                            start=datetime.utcnow() - timedelta(minutes=1))
 
-                identifiers = {'my-access-policy-id': access_policy}
+                access_policy = AccessPolicy(
+                    permission=ContainerSasPermissions(read=True),
+                    expiry=datetime.utcnow() + timedelta(hours=1),
+                    start=datetime.utcnow() - timedelta(minutes=1),
+                )
+
+                identifiers = {"my-access-policy-id": access_policy}
 
                 # Set the access policy on the container
                 await container_client.set_container_access_policy(signed_identifiers=identifiers)
@@ -171,13 +195,14 @@ class ContainerSamplesAsync(object):
                     container_client.account_name,
                     container_client.container_name,
                     account_key=container_client.credential.account_key,
-                    policy_id='my-access-policy-id'
+                    policy_id="my-access-policy-id",
                 )
                 # [END generate_sas_token]
 
                 # Use the sas token to authenticate a new client
                 # [START create_container_client_sastoken]
                 from azure.storage.blob.aio import ContainerClient
+
                 container = ContainerClient.from_container_url(
                     container_url="https://account.blob.core.windows.net/mycontainerasync",
                     credential=sas_token,
@@ -190,12 +215,16 @@ class ContainerSamplesAsync(object):
 
     async def list_blobs_in_container_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: list_blobs_in_container_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: list_blobs_in_container_async"
+            )
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -223,12 +252,16 @@ class ContainerSamplesAsync(object):
 
     async def get_blob_client_from_container_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: get_blob_client_from_container_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: get_blob_client_from_container_async"
+            )
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
+
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
 
         async with blob_service_client:
@@ -246,28 +279,6 @@ class ContainerSamplesAsync(object):
             # Delete container
             await container_client.delete_container()
 
-    async def get_container_client_from_blob_client_async(self):
-        if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: get_container_client_from_blob_client_async")
-            sys.exit(1)
-        # Instantiate a BlobServiceClient using a connection string
-        from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
-
-        async with blob_service_client:
-            # [START get_container_client_from_blob_client]
-            container_client1 = blob_service_client.get_container_client("blobcontainer1async")
-            await container_client1.create_container()
-            print(await container_client1.get_container_properties())
-            blob_client1 = container_client1.get_blob_client("blob1")
-            await blob_client1.upload_blob("hello")
-
-            container_client2 = blob_client1._get_container_client()
-            print(await container_client2.get_container_properties())
-            await container_client2.delete_container()
-            # [END get_container_client_from_blob_client]
-
 
 async def main():
     sample = ContainerSamplesAsync()
@@ -277,7 +288,7 @@ async def main():
     await sample.container_access_policy_async()
     await sample.list_blobs_in_container_async()
     await sample.get_blob_client_from_container_async()
-    await sample.get_container_client_from_blob_client_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

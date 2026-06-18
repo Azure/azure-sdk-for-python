@@ -218,7 +218,7 @@ class TestActualThresholdBehavior:
 
         # The score should be > 0.5 and result should be "pass"
         assert result["meteor_score"] > 0.5
-        assert result["meteor_result"] == "pass"
+        assert result["meteor_passed"] is True
         assert result["meteor_threshold"] == 0.5
 
     def test_bleu_score_decimal_threshold_behavior(self):
@@ -231,7 +231,7 @@ class TestActualThresholdBehavior:
 
         # The score should be > 0.1 and result should be "pass"
         assert result["bleu_score"] > 0.1
-        assert result["bleu_result"] == "pass"
+        assert result["bleu_passed"] is True
         assert result["bleu_threshold"] == 0.1
 
     def test_meteor_score_threshold_boundary_cases(self):
@@ -240,10 +240,10 @@ class TestActualThresholdBehavior:
         evaluator_low = MeteorScoreEvaluator(threshold=0.1)
         result_low = evaluator_low(ground_truth="Hello world", response="Hello world")
         assert result_low["meteor_score"] > 0.1
-        assert result_low["meteor_result"] == "pass"
+        assert result_low["meteor_passed"] is True
 
         # Test where threshold is set very high - should fail
         evaluator_high = MeteorScoreEvaluator(threshold=1.0)
         result_high = evaluator_high(ground_truth="Hello world", response="Hello world")
         assert result_high["meteor_score"] < 1.0
-        assert result_high["meteor_result"] == "fail"
+        assert result_high["meteor_passed"] is False

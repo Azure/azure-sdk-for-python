@@ -6,10 +6,7 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
 import uuid
-from typing import (
-    Union, Optional, Any,
-    TYPE_CHECKING
-)
+from typing import Union, Optional, Any, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core.tracing.decorator import distributed_trace
@@ -49,16 +46,17 @@ class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         This will be `None` if no lease has yet been acquired or modified."""
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
-        self, client: Union["FileSystemClient", "DataLakeDirectoryClient", "DataLakeFileClient"],
-        lease_id: Optional[str] = None
+        self,
+        client: Union["FileSystemClient", "DataLakeDirectoryClient", "DataLakeFileClient"],
+        lease_id: Optional[str] = None,
     ) -> None:
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
         self.etag = None
 
-        if hasattr(client, '_blob_client'):
+        if hasattr(client, "_blob_client"):
             _client = client._blob_client
-        elif hasattr(client, '_container_client'):
+        elif hasattr(client, "_container_client"):
             _client = client._container_client
         else:
             raise TypeError("Lease must use any of FileSystemClient, DataLakeDirectoryClient, or DataLakeFileClient.")

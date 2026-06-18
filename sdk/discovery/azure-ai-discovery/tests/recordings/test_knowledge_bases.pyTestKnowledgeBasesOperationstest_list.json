@@ -1,0 +1,394 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://test-bookshelf.bookshelf.discovery.azure.com/knowledgeBases?api-version=2026-02-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-discovery/1.0.0b1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 15 May 2026 23:58:35 GMT",
+        "mise-correlation-id": "00000000-0000-0000-0000-000000000000",
+        "Server": "Kestrel",
+        "Transfer-Encoding": "chunked",
+        "x-ms-build-version": "1",
+        "x-ms-correlation-request-id": "00000000-0000-0000-0000-000000000000"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "Sanitized",
+            "name": "pfaskb1",
+            "version": "v1",
+            "knowledgeBaseUrl": "test-dbtst-0000000000.database.windows.net",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-03-25T17:22:12.2459663Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-04-21T15:54:17.187051Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "Succeeded",
+            "tags": [
+              {
+                "key": "type",
+                "value": "testgs"
+              },
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "PFAS introduction",
+            "copilotInstruction": "PFAS introduction",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "test-kb",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-10T02:52:11.2547143Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-15T23:57:02.558517Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "Running",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "Use this tool to query information about immersion cooling systems or liquid cooling technologies.",
+            "copilotInstruction": "Use this tool to query information about immersion cooling systems or liquid cooling technologies.",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "cskbcreate",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-12T01:56:58.7277836Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-12T02:20:28.0110259Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "NotStarted",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "Test KB version",
+            "copilotInstruction": "Test instruction",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "kbcrtpt1kr2mg",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-12T03:01:18.9910452Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-12T03:01:18.9910452Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "NotStarted",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "Test KB version",
+            "copilotInstruction": "Test instruction",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "kbopsiyosjjai",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-12T03:01:43.5456071Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-12T03:11:35.5684625Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "Failed",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "KB version for GetOperationStatus test",
+            "copilotInstruction": "Test instruction",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "kbcrtkbnmr7a9",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-12T03:02:09.0842156Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-12T03:02:09.0842156Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "NotStarted",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "Test KB version",
+            "copilotInstruction": "Test instruction",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "kbopsslh0nfdz",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-12T03:02:34.4373269Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-12T03:13:36.6348633Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "Failed",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "KB version for GetOperationStatus test",
+            "copilotInstruction": "Test instruction",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "jkbcreate",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-13T23:34:31.145588Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-15T01:31:07.8484567Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "NotStarted",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "Java SDK test KB version",
+            "copilotInstruction": "Test instruction",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "jkbops881840e",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-15T00:11:52.8607075Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-15T00:51:39.8661754Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "Failed",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "KB version for getOperationStatus test",
+            "copilotInstruction": "Test instruction",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "jkbops5598541",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-15T00:14:09.2972247Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-15T01:15:19.5513896Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "Failed",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "KB version for getOperationStatus test",
+            "copilotInstruction": "Test instruction",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "jkbops661028e",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-15T00:36:42.4338408Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-15T01:16:25.4421724Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "Failed",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "KB version for getOperationStatus test",
+            "copilotInstruction": "Test instruction",
+            "apiVersion": "2026-02-01-preview"
+          },
+          {
+            "id": "Sanitized",
+            "name": "jkbops12648f9",
+            "version": "v1",
+            "knowledgeBaseUrl": "",
+            "bookshelfName": "test-bkshlf",
+            "createdAt": "2026-05-15T01:30:53.2496395Z",
+            "createdBy": "Sanitized",
+            "createdByType": "User",
+            "lastModifiedAt": "2026-05-15T01:40:10.9709743Z",
+            "lastModifiedBy": "Sanitized",
+            "lastModifiedByType": "User",
+            "storageAssetReferences": [
+              {
+                "id": "Sanitized",
+                "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/test-mi"
+              }
+            ],
+            "provisioningState": "Succeeded",
+            "status": "Failed",
+            "tags": [
+              {
+                "key": "indexerType",
+                "value": "LGR"
+              }
+            ],
+            "description": "KB version for getOperationStatus test",
+            "copilotInstruction": "Test instruction",
+            "apiVersion": "2026-02-01-preview"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

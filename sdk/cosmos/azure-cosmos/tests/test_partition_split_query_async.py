@@ -14,6 +14,7 @@ from azure.cosmos import PartitionKey
 from azure.cosmos import http_constants
 from azure.cosmos import _base
 from azure.cosmos.aio import CosmosClient, DatabaseProxy, ContainerProxy
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 async def run_queries(container, iterations):
     ret_list = []
@@ -32,10 +33,17 @@ async def run_queries(container, iterations):
 
 
 @pytest.mark.cosmosSplit
+@pytest.mark.cosmosAADSplit
 class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
+    # AAD client/database  -  data-plane (create_item, query_items, _routing_map_provider introspection)
     database: DatabaseProxy = None
     container: ContainerProxy = None
     client: CosmosClient = None
+    # Key-auth client/database  -  control-plane (create_container, delete_container, replace_throughput,
+    # get_throughput, read_offer)
+    key_client: CosmosClient = None
+    key_database: DatabaseProxy = None
+    key_container: ContainerProxy = None
     configs = test_config.TestConfig
     host = configs.host
     masterKey = configs.masterKey
@@ -54,20 +62,27 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
-        await self.client.__aenter__()
-        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
-        self.container = await self.created_database.create_container(
+        # Control-plane: key-auth (container lifecycle + replace_throughput/get_throughput)
+        self.key_client = CosmosClient(self.host, self.masterKey)
+        await self.key_client.__aenter__()
+        self.key_database = self.key_client.get_database_client(self.TEST_DATABASE_ID)
+        self.key_container = await self.key_database.create_container(
             id=self.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/id"),
             offer_throughput=self.throughput)
+        # Data-plane: AAD
+        self.client = test_config.TestConfig.create_data_client_async()
+        await self.client.__aenter__()
+        self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.container = self.created_database.get_container_client(self.TEST_CONTAINER_ID)
 
     async def asyncTearDown(self):
         try:
-            await self.created_database.delete_container(self.TEST_CONTAINER_ID)
+            await self.key_database.delete_container(self.TEST_CONTAINER_ID)
         except Exception:
             pass  # Container might not exist if test failed early
         await self.client.close()
+        await self.key_client.close()
 
     async def test_partition_split_query_async(self):
         for i in range(100):
@@ -76,7 +91,8 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         start_time = time.time()
         print("created items, changing offer to 11k and starting queries")
-        await self.container.replace_throughput(11000)
+        # Control-plane: replace_throughput via key-auth key_container
+        await self.key_container.replace_throughput(11000)
         offer_time = time.time()
         print("changed offer to 11k")
         print("--------------------------------")
@@ -84,13 +100,15 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         await run_queries(self.container, 100)  # initial check for queries before partition split
         print("initial check succeeded, now reading offer until replacing is done")
-        offer = await self.container.get_throughput()
+        # Control-plane: get_throughput via key-auth key_container
+        offer = await self.key_container.get_throughput()
         while True:
             if time.time() - start_time > self.MAX_TIME:  # timeout test at 10 minutes
                 self.skipTest("Partition split didn't complete in time.")
             if offer.properties['content'].get('isOfferReplacePending', False):
-                time.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
-                offer = await self.container.get_throughput()
+                # Keep the event loop responsive while waiting.
+                await asyncio.sleep(30)  # wait for the offer to be replaced, check every 30 seconds
+                offer = await self.key_container.get_throughput()
             else:
                 print("offer replaced successfully, took around {} seconds".format(time.time() - offer_time))
                 await run_queries(self.container, 100)  # check queries work post partition split
@@ -125,14 +143,9 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         # Force initial routing map cache by running a query
         await run_queries(self.container, 1)
 
-        # Trigger split (1 -> 2 partitions)
-        await self.container.replace_throughput(11000)
-        pending = True
-        while pending:
-            offer = await self.container.get_throughput()
-            pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-            if pending:
-                await asyncio.sleep(5)
+        # Trigger split via the shared bounded helper (timeout + SkipTest)
+        # instead of an unbounded polling loop.
+        await test_config.TestConfig.trigger_split_async(self.key_container, 11000)
 
         # Run queries to trigger routing map refresh
         await run_queries(self.container, 1)
@@ -167,8 +180,8 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         print(f"Validated: Single partition split into {len(child_partitions)} children")
 
-        # Verify final throughput
-        final_offer = await self.container.get_throughput()
+        # Verify final throughput  -  control-plane
+        final_offer = await self.key_container.get_throughput()
         assert final_offer.offer_throughput == 11000
 
     async def test_incremental_merge_handles_split_partitions_async(self):
@@ -186,11 +199,15 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         - Handles new child partitions (with parent references)
         - Preserves unchanged partitions (without parent references)
         """
-        new_container = await self.created_database.create_container(
-            id='partial_split_test_' + str(uuid.uuid4()),
+        new_container_id = 'partial_split_test_' + str(uuid.uuid4())
+        # Control-plane: create via key-auth key_database
+        new_setup_container = await self.key_database.create_container(
+            id=new_container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=11000  # 2 physical partitions
         )
+        # Data-plane: re-bind via AAD database
+        new_container = self.created_database.get_container_client(new_container_id)
         try:
             # Insert data
             for i in range(200):
@@ -208,14 +225,9 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             # Force initial routing map cache
             await run_queries(new_container, 1)
 
-            # Trigger split (2 -> 3 partitions: 1 stable + 2 from split)
-            await new_container.replace_throughput(25000)
-            pending = True
-            while pending:
-                offer = await new_container.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    await asyncio.sleep(5)
+            # Trigger split via the shared bounded helper (timeout + SkipTest)
+            # instead of an unbounded polling loop.
+            await test_config.TestConfig.trigger_split_async(new_setup_container, 25000)
 
             # Run queries to trigger routing map refresh
             await run_queries(new_container, 1)
@@ -256,12 +268,12 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
             print(f"Validated: {len(stable_partitions)} stable + {len(child_partitions)} split partitions")
 
-            # Verify final throughput
-            final_offer = await new_container.get_throughput()
+            # Verify final throughput  -  control-plane
+            final_offer = await new_setup_container.get_throughput()
             assert final_offer.offer_throughput == 25000
 
         finally:
-            await self.created_database.delete_container(new_container.id)
+            await self.key_database.delete_container(new_container_id)
 
     async def test_incremental_change_feed_only_affects_target_collection_async(self):
         """
@@ -277,17 +289,22 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
           2. container_B's routing map is unchanged (1 partition)
           3. container_B's cache is NOT invalidated
         """
-        container_a = await self.created_database.create_container(
-            id='container_a_async_' + str(uuid.uuid4()),
+        container_a_id = 'container_a_async_' + str(uuid.uuid4())
+        container_b_id = 'container_b_async_' + str(uuid.uuid4())
+        # Control-plane: create via key-auth key_database
+        key_container_a = await self.key_database.create_container(
+            id=container_a_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
-
-        container_b = await self.created_database.create_container(
-            id='container_b_async_' + str(uuid.uuid4()),
+        await self.key_database.create_container(
+            id=container_b_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        # Data-plane: re-bind via AAD database
+        container_a = self.created_database.get_container_client(container_a_id)
+        container_b = self.created_database.get_container_client(container_b_id)
 
         try:
             # Insert data into both containers
@@ -323,14 +340,8 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print(f"Before split - Container B: {len(ranges_b_before)} partitions")
             print(f"Container B routing map object ID: {map_b_object_id}")
 
-            # SPLIT ONLY CONTAINER A
-            await container_a.replace_throughput(11000)
-            pending = True
-            while pending:
-                offer = await container_a.get_throughput()
-                pending = offer.properties.get('content', {}).get('isOfferReplacePending', False)
-                if pending:
-                    await asyncio.sleep(5)
+            # Split only Container A via the shared bounded helper.
+            await test_config.TestConfig.trigger_split_async(key_container_a, 11000)
 
             # Wait for physical partition ranges to reflect the split.
             split_convergence_deadline = time.time() + 300
@@ -404,19 +415,21 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print("Container B's routing map remained untouched (same object reference)")
 
         finally:
-            await self.created_database.delete_container(container_a.id)
-            await self.created_database.delete_container(container_b.id)
+            await self.key_database.delete_container(container_a_id)
+            await self.key_database.delete_container(container_b_id)
 
     async def test_routing_map_provider_fallback_on_incomplete_merge_async(self):
         """
         Validates that routing_map_provider falls back to full refresh
         when incremental merge produces incomplete range coverage.
         """
-        container = await self.created_database.create_container(
-            id='test_fallback_async_' + str(uuid.uuid4()),
+        container_id = 'test_fallback_async_' + str(uuid.uuid4())
+        await self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.created_database.get_container_client(container_id)
 
         try:
             # Insert data
@@ -505,7 +518,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print("Validated: Queries work correctly after fallback")
 
         finally:
-            await self.created_database.delete_container(container.id)
+            await self.key_database.delete_container(container_id)
 
     async def test_is_cache_stale_etag_comparison_async(self):
         """
@@ -517,11 +530,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         """
         from unittest.mock import MagicMock
 
-        container = await self.created_database.create_container(
-            id='test_stale_etag_async_' + str(uuid.uuid4()),
+        container_id = 'test_stale_etag_async_' + str(uuid.uuid4())
+        await self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.created_database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -561,20 +576,23 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print("Validated: _is_cache_stale ETag comparison logic works correctly")
 
         finally:
-            await self.created_database.delete_container(container.id)
+            await self.key_database.delete_container(container_id)
 
-    async def test_full_load_with_incomplete_ranges_returns_none_async(self):
+    async def test_full_load_with_incomplete_ranges_surfaces_503_async(self):
         """
-        Validates that a full load with incomplete ranges returns None immediately.
+        Validates that a full load with incomplete ranges surfaces a retryable
+        HTTP 503 after exhausting the bounded retry budget.
         When a full load is performed (previous_routing_map=None) and the service
-        returns gapped ranges, _fetch_routing_map should return None without retrying —
-        there is no incremental state to fall back from.
+        returns gapped ranges, _fetch_routing_map should not leak internal
+        map-construction failures to callers.
         """
-        container = await self.created_database.create_container(
-            id='test_fallback_guard_async_' + str(uuid.uuid4()),
+        container_id = 'test_fallback_guard_async_' + str(uuid.uuid4())
+        await self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.created_database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -594,6 +612,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             }
 
             async def mock_read_ranges(*args, **kwargs):
+                # Mirror the production wire-up: _asynchronous_request populates
+                # this sidecar with the real HTTP status. Without it, the drain
+                # loop's status==304 termination contract can't trip and the
+                # loop would run unbounded (OOM in CI).
+                status_capture = kwargs.get('_internal_response_status_capture')
+                if status_capture is not None:
+                    status_capture[0] = http_constants.StatusCodes.NOT_MODIFIED
                 yield incomplete_range
 
             with patch.object(
@@ -601,22 +626,23 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                     '_ReadPartitionKeyRanges',
                     side_effect=mock_read_ranges
             ):
-                # Full load with incomplete ranges should return None immediately
-                result = await provider._fetch_routing_map(
-                    collection_link=collection_link,
-                    collection_id=collection_id,
-                    previous_routing_map=None,
-                    feed_options={},
-                )
+                async def _no_sleep(_seconds):
+                    return None
 
-                # Should return None instead of recursing infinitely
-                assert result is None, \
-                    "_fetch_routing_map should return None when full load produces incomplete ranges"
+                with patch('azure.cosmos._routing.aio.routing_map_provider.asyncio.sleep', new=_no_sleep):
+                    with self.assertRaises(CosmosHttpResponseError) as ctx:
+                        await provider._fetch_routing_map(
+                            collection_link=collection_link,
+                            collection_id=collection_id,
+                            previous_routing_map=None,
+                            feed_options={},
+                        )
+                self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
 
-            print("Validated: full load with incomplete ranges returns None without recursion")
+            print("Validated: full load with incomplete ranges surfaces retryable HTTP 503")
 
         finally:
-            await self.created_database.delete_container(container.id)
+            await self.key_database.delete_container(container_id)
 
     async def test_internal_pk_range_fetch_flag_is_set_async(self):
         """
@@ -624,11 +650,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         in the options passed to _ReadPartitionKeyRanges. This flag prevents
         infinite recursion when the PK range fetch itself gets a 410.
         """
-        container = await self.created_database.create_container(
-            id='test_pk_flag_async_' + str(uuid.uuid4()),
+        container_id = 'test_pk_flag_async_' + str(uuid.uuid4())
+        await self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.created_database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -665,7 +693,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print("Validated: _internal_pk_range_fetch flag is correctly set")
 
         finally:
-            await self.created_database.delete_container(container.id)
+            await self.key_database.delete_container(container_id)
 
     async def test_lock_free_fast_path_async(self):
         """
@@ -673,11 +701,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         When the cache is populated and no force_refresh is requested,
         the map should be returned without acquiring the collection lock.
         """
-        container = await self.created_database.create_container(
-            id='test_fast_path_async_' + str(uuid.uuid4()),
+        container_id = 'test_fast_path_async_' + str(uuid.uuid4())
+        await self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.created_database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -703,7 +733,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 return await original_get_lock(*args, **kwargs)
 
             with patch.object(provider, '_get_lock_for_collection', side_effect=spy_get_lock):
-                # This should hit the fast path — no lock acquisition
+                # This should hit the fast path  -  no lock acquisition
                 result = await provider.get_routing_map(
                     collection_link=collection_link,
                     feed_options={}
@@ -728,7 +758,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print("Validated: Lock-free fast path works correctly")
 
         finally:
-            await self.created_database.delete_container(container.id)
+            await self.key_database.delete_container(container_id)
 
     async def test_response_hook_chaining_async(self):
         """
@@ -736,11 +766,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         alongside _fetch_routing_map's internal capture_response_hook.
         Both hooks should receive the response headers.
         """
-        container = await self.created_database.create_container(
-            id='test_hook_chain_async_' + str(uuid.uuid4()),
+        container_id = 'test_hook_chain_async_' + str(uuid.uuid4())
+        await self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.created_database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -778,7 +810,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print("Validated: response_hook chaining works correctly")
 
         finally:
-            await self.created_database.delete_container(container.id)
+            await self.key_database.delete_container(container_id)
 
     async def test_if_none_match_header_cleanup_on_fallback_async(self):
         """
@@ -789,11 +821,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         This test forces both incremental attempts to be incomplete, then
         verifies the final full-load call drops IfNoneMatch.
         """
-        container = await self.created_database.create_container(
-            id='test_etag_cleanup_async_' + str(uuid.uuid4()),
+        container_id = 'test_etag_cleanup_async_' + str(uuid.uuid4())
+        await self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.created_database.get_container_client(container_id)
 
         try:
             for i in range(10):
@@ -824,7 +858,14 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
                 if call_count['count'] <= 2:
                     # First two calls are incremental attempts; return a child
                     # with a missing parent so merge is incomplete and fallback
-                    # path is exercised.
+                    # path is exercised. Mirror the production wire-up:
+                    # _asynchronous_request populates this sidecar with the real
+                    # HTTP status. Without it, the drain loop's status==304
+                    # termination contract can't trip and evaluate_drain_page
+                    # raises RuntimeError.
+                    status_capture = kwargs.get('_internal_response_status_capture')
+                    if status_capture is not None:
+                        status_capture[0] = http_constants.StatusCodes.NOT_MODIFIED
                     fake_child = {
                         'id': f'child_{call_count["count"]}',
                         'minInclusive': '',
@@ -852,20 +893,33 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
 
                 assert result is not None
 
-                # Verify 3 calls: incremental + incremental retry + full fallback.
-                assert call_count['count'] == 3, \
-                    f"Expected 3 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
+                # Expected call sequence:
+                #   1. incremental attempt        (IfNoneMatch = stale etag)
+                #   2. incremental retry          (IfNoneMatch = stale etag)
+                #   3. full-load fallback page 1  (no IfNoneMatch -- the cleanup we are testing)
+                #   4. full-load fallback page 2  (IfNoneMatch = FRESH etag from page 1,
+                #                                  to receive the 304 terminator that ends
+                #                                  the drain loop -- peer-SDK parity)
+                stale_etag = cached_map.change_feed_etag
+                assert call_count['count'] >= 3, \
+                    f"Expected at least 3 calls to _ReadPartitionKeyRanges, got {call_count['count']}"
 
-                # First two calls should be incremental and include IfNoneMatch.
+                # First two calls should be incremental and carry the stale IfNoneMatch.
                 first_headers = captured_headers_list[0]
-                assert http_constants.HttpHeaders.IfNoneMatch in first_headers, \
-                    "First call (incremental) should have IfNoneMatch header"
+                assert first_headers.get(http_constants.HttpHeaders.IfNoneMatch) == stale_etag, \
+                    "First call (incremental) should have stale IfNoneMatch header"
 
                 second_headers = captured_headers_list[1]
-                assert http_constants.HttpHeaders.IfNoneMatch in second_headers, \
-                    "Second call (incremental retry) should have IfNoneMatch header"
+                assert second_headers.get(http_constants.HttpHeaders.IfNoneMatch) == stale_etag, \
+                    "Second call (incremental retry) should have stale IfNoneMatch header"
 
-                # Third call is full-load fallback and should drop IfNoneMatch.
+                # Third call is full-load fallback and MUST drop IfNoneMatch -- this is
+                # the bug fix's whole point. Any post-fallback drain pages (call 4+)
+                # legitimately reuse the etag returned by call 3 as their If-None-Match
+                # to receive the 304 terminator; that fresh etag may coincidentally equal
+                # the original stale etag if nothing changed server-side between caching
+                # and fallback, so we cannot assert "!= stale_etag" on those drain pages.
+                # The call-3 assertion is the actual production contract.
                 third_headers = captured_headers_list[2]
                 assert http_constants.HttpHeaders.IfNoneMatch not in third_headers, \
                     "Third call (full load fallback) should NOT have IfNoneMatch header"
@@ -873,7 +927,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print("Validated: IfNoneMatch header is correctly cleaned up on fallback")
 
         finally:
-            await self.created_database.delete_container(container.id)
+            await self.key_database.delete_container(container_id)
 
     async def test_force_refresh_with_stale_previous_routing_map_async(self):
         """
@@ -881,11 +935,13 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
         correctly refreshes the cache and queries continue working.
         This tests the targeted refresh path used by the 410 retry policy.
         """
-        container = await self.created_database.create_container(
-            id='test_force_refresh_async_' + str(uuid.uuid4()),
+        container_id = 'test_force_refresh_async_' + str(uuid.uuid4())
+        await self.key_database.create_container(
+            id=container_id,
             partition_key=PartitionKey(path="/pk"),
             offer_throughput=400
         )
+        container = self.created_database.get_container_client(container_id)
 
         try:
             for i in range(20):
@@ -903,7 +959,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             assert stale_map is not None
             original_etag = stale_map.change_feed_etag
 
-            # Force refresh with the stale map — simulates what the gone retry policy does
+            # Force refresh with the stale map  -  simulates what the gone retry policy does
             refreshed_map = await provider.get_routing_map(
                 collection_link=collection_link,
                 feed_options={},
@@ -924,9 +980,10 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
             print("Validated: Force refresh with previous_routing_map works correctly")
 
         finally:
-            await self.created_database.delete_container(container.id)
+            await self.key_database.delete_container(container_id)
 
 
 if __name__ == '__main__':
     unittest.main()
+
 

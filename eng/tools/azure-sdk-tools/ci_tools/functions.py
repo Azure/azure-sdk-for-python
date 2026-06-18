@@ -68,18 +68,7 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 PATHS_EXCLUDED_FROM_DISCOVERY = []
 
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
-TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
-    "azure-storage-blob": "pypy",
-    "azure-storage-queue": "pypy",
-    "azure-storage-file-datalake": "pypy",
-    "azure-storage-file-share": "pypy",
-    "azure-eventhub": "pypy",
-    "azure-servicebus": "pypy",
-    "azure-ai-projects": "pypy",
-    "azure-ai-agents": "pypy",
-    "azure-identity-broker": "pypy",
-    "azure-storage-extensions": "pypy",
-}
+TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {}
 
 omit_regression = (
     lambda x: "nspkg" not in x
@@ -370,7 +359,7 @@ def get_package_from_repo_or_folder(req: str, prebuilt_wheel_dir: Optional[str] 
     attempts to find the package within the repo to install directly from path on disk.
 
     During a CI build, it is preferred that the package is installed from a prebuilt wheel directory, as multiple CI environments attempting to install the relative
-    req can cause inconsistent installation issues during parallel tox environment execution.
+    req can cause inconsistent installation issues during parallel check execution.
     """
 
     local_package = get_package_from_repo(req)
@@ -380,7 +369,7 @@ def get_package_from_repo_or_folder(req: str, prebuilt_wheel_dir: Optional[str] 
         if prebuilt_package:
             # return the first package found, there should only be a single one matching given that our prebuilt wheel directory
             # is populated by the replacement of dev_reqs.txt with the prebuilt wheels
-            # ref tox_harness replace_dev_reqs() calls
+            # ref replace_dev_reqs() calls
             return os.path.join(prebuilt_wheel_dir, prebuilt_package[0])
 
     if local_package:
