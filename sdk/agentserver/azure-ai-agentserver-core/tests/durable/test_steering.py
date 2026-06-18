@@ -715,3 +715,102 @@ class TestSteeringWriteSerialization:
             )
         finally:
             await self._teardown_manager(manager, mgr_mod)
+
+
+class TestSteeringCrossProcessDrainRecovery:
+    """Spec 031 / FR-006 + SOT §25.3 — a steering drain recovers from a
+    genuine (cross-process) etag conflict landing on its write: it re-reads
+    the new state under a fresh lock acquisition and re-applies, so the
+    steered turn still runs. Reproduced deterministically in one process via
+    a content-aware provider wrapper that bumps the etag exactly once on the
+    drain's pop-transition PATCH (simulating another worker's write)."""
+
+    async def _setup_manager(self, provider):
+        from azure.ai.agentserver.core.durable._manager import TaskManager
+        import azure.ai.agentserver.core.durable._manager as mgr_mod
+
+        config = type(
+            "C",
+            (),
+            {
+                "agent_name": "test-agent",
+                "session_id": "test-session",
+                "agent_version": "1.0.0",
+                "is_hosted": False,
+            },
+        )()
+        manager = TaskManager(config=config, provider=provider)
+        mgr_mod._manager = manager
+        await manager.startup()
+        return manager, mgr_mod
+
+    @pytest.mark.asyncio
+    async def test_drain_recovers_from_cross_process_conflict(self, tmp_path):
+        from azure.ai.agentserver.core.durable._local_provider import LocalFileTaskProvider
+        from azure.ai.agentserver.core.durable._models import TaskPatchRequest
+        from azure.ai.agentserver.core.durable._exceptions import EtagConflict
+
+        class DrainConflictOnceProvider:
+            """Bumps the etag + raises EtagConflict exactly once on the FIRST
+            PATCH that pops a steering input (``_steering.active_input`` set),
+            simulating a concurrent cross-process write at the drain boundary."""
+
+            def __init__(self, delegate):
+                self._delegate = delegate
+                self._armed = True
+                self.drain_conflicts = 0
+
+            async def create(self, request):
+                return await self._delegate.create(request)
+
+            async def get(self, task_id):
+                return await self._delegate.get(task_id)
+
+            async def list(self, **kwargs):
+                return await self._delegate.list(**kwargs)
+
+            async def delete(self, task_id, *, force=False, cascade=False):
+                await self._delegate.delete(task_id, force=force, cascade=cascade)
+
+            def _is_drain_patch(self, patch):
+                payload = getattr(patch, "payload", None) or {}
+                steering = payload.get("_steering") or {}
+                return "active_input" in steering and steering.get("active_input") is not None
+
+            async def update(self, task_id, patch):
+                if self._armed and self._is_drain_patch(patch):
+                    self._armed = False
+                    self.drain_conflicts += 1
+                    # Concurrent worker bumped the record (harmless tag write).
+                    await self._delegate.update(task_id, TaskPatchRequest(tags={"_other_worker": "x"}))
+                    raise EtagConflict(task_id, message="injected cross-process drain conflict")
+                return await self._delegate.update(task_id, patch)
+
+        provider = DrainConflictOnceProvider(LocalFileTaskProvider(Path(str(tmp_path))))
+        manager, mgr_mod = await self._setup_manager(provider)
+        try:
+            ran: list[str] = []
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                msg = ctx.input.get("msg", "?")
+                if msg == "A":
+                    for _ in range(300):
+                        if ctx.cancel.is_set():
+                            return None
+                        await asyncio.sleep(0.01)
+                    return None
+                ran.append(msg)
+                return {"msg": msg}
+
+            run1 = await chat.start(task_id="t1", input={"msg": "A"})
+            await asyncio.sleep(0.05)
+            run_b = await chat.start(task_id="t1", input={"msg": "B"})
+            result_b = await asyncio.wait_for(run_b.result(), timeout=5.0)
+
+            assert provider.drain_conflicts == 1, "the drain write must have hit the injected conflict"
+            assert "B" in ran, f"steered turn B must still run after drain recovers; ran={ran}"
+            assert result_b == {"msg": "B"}, result_b
+        finally:
+            await manager.shutdown()
+            mgr_mod._manager = None

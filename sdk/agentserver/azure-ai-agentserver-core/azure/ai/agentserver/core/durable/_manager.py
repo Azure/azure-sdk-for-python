@@ -2371,8 +2371,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 if translated is not None:
                     raise translated from exc
                 drain_conflict = exc
-            except (ValueError, TransportClassifiedError) as exc:
+            except (EtagConflict, ValueError, TransportClassifiedError) as exc:
                 if isinstance(exc, TransportClassifiedError) and getattr(exc, "classification", None) != "conflict":
+                    raise
+                if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
                     raise
                 drain_conflict = exc
 
@@ -3411,13 +3413,37 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             # write queue and use the tracked etag as if_match. The
             # helper refreshes the etag from the response and bumps
             # lease-last-refresh (cadence shadow).
-            await self._provider_update_locked(
-                task_id,
-                TaskPatchRequest(
-                    payload={slot: data},
-                    **self._lease_ext_kwargs(task_id),
-                ),
-            )
+            #
+            # Spec 031 / FR-006 + SOT §25.3 — on a genuine (cross-process)
+            # etag conflict, re-read to refresh the tracked etag and retry.
+            # The patch addresses only this namespace's slot and the provider
+            # shallow-merges, so last-write-wins on the slot is correct (no
+            # logical re-merge of OTHER namespaces is needed). Bounded so the
+            # store's etag comparator cannot loop forever. A translated
+            # conflict (lease lost / already terminal) is NOT retried — the
+            # owner changed, so persisting our metadata would clobber theirs.
+            for attempt in range(5):
+                try:
+                    await self._provider_update_locked(
+                        task_id,
+                        TaskPatchRequest(
+                            payload={slot: data},
+                            **self._lease_ext_kwargs(task_id),
+                        ),
+                    )
+                    return
+                except _HostedConflict as exc:
+                    if _translate_hosted_conflict(exc, task_id=task_id) is not None or attempt == 4:
+                        raise
+                    await self._provider_get_tracked(task_id)
+                except (EtagConflict, ValueError, TransportClassifiedError) as exc:
+                    if isinstance(exc, TransportClassifiedError) and getattr(exc, "classification", None) != "conflict":
+                        raise
+                    if isinstance(exc, ValueError) and "etag" not in str(exc).lower():
+                        raise
+                    if attempt == 4:
+                        raise
+                    await self._provider_get_tracked(task_id)
 
         return _flush
 
