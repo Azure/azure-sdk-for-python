@@ -47,7 +47,7 @@ function formatIssueSection(title, apiFiles) {
     lines.push(styleLog(`PACKAGE: ${packageName}`, ANSI.bold, ANSI.cyan));
     lines.push(`PATH:    ${packageDir}`);
     lines.push(`API FILE: ${apiFile}`);
-    lines.push(styleLog(`Regenerate from the ${packageName} pacakge root:`, ANSI.bold, ANSI.yellow));
+    lines.push(styleLog(`Regenerate from the ${packageName} package root:`, ANSI.bold, ANSI.yellow));
     lines.push(styleLog(`  azpysdk apistub .`, ANSI.bold, ANSI.yellow));
     lines.push("============================================================");
   }

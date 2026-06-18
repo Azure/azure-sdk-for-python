@@ -336,8 +336,6 @@ def main(generate_input, generate_output):
                         "azpysdk",
                         "apistub",
                         package_name,
-                        "--dest-dir",
-                        package_path.absolute().as_posix(),
                     ]
                     _LOGGER.info(f"generate apiview file for package {package_name}")
                     check_call(

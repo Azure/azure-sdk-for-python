@@ -71,11 +71,10 @@ class TestGetPackageWheelPath:
 
 
 class TestRunOutputDirectory:
-    """Verify that dest_dir controls where the output token path ends up."""
+    """Verify apistub output directory behavior."""
 
     def _make_args(
         self,
-        dest_dir=None,
         token_file=False,
         isolate=False,
         install_deps=False,
@@ -85,7 +84,6 @@ class TestRunOutputDirectory:
             isolate=isolate,
             command="apistub",
             service=None,
-            dest_dir=dest_dir,
             token_file=token_file,
             install_deps=install_deps,
         )
@@ -225,67 +223,10 @@ class TestRunOutputDirectory:
     @patch("azpysdk.apistub.create_package_and_install")
     @patch("azpysdk.apistub.install_into_venv")
     @patch("azpysdk.apistub.set_envvar_defaults")
-    def test_dest_dir_uses_destination_directory(
+    def test_outputs_use_package_directory(
         self, _env, _install, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
     ):
-        """When --dest-dir is given, output should go directly to <dest_dir>/."""
-        monkeypatch.chdir(os.getcwd())
-        dest = tmp_path / "output"
-        dest.mkdir()
-
-        stub = apistub()
-        staging = str(tmp_path / "staging")
-        os.makedirs(staging, exist_ok=True)
-        fake_parsed = MagicMock()
-        fake_parsed.folder = str(tmp_path)
-        fake_parsed.name = "azure-core"
-
-        def fake_apistub_run(exe, cmds, **kwargs):
-            # Simulate apistub generating the token JSON
-            out_idx = cmds.index("--out-path")
-            out_dir = cmds[out_idx + 1]
-            os.makedirs(out_dir, exist_ok=True)
-            open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
-
-        def fake_pwsh(cmd, **kwargs):
-            out_idx = cmd.index("-OutputPath")
-            out_dir = cmd[out_idx + 1]
-            if "Extract-APIViewMetadata-Python.ps1" in cmd[1]:
-                open(os.path.join(out_dir, "api.metadata.yml"), "w").close()
-            else:
-                open(os.path.join(out_dir, "api.md"), "w").close()
-            return MagicMock(returncode=0)
-
-        with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
-            stub, "get_executable", return_value=(sys.executable, staging)
-        ), patch.object(stub, "install_dev_reqs"), patch.object(stub, "pip_freeze"), patch.object(
-            stub, "ensure_apistub_dependencies"
-        ), patch.object(
-            stub, "run_venv_command", side_effect=fake_apistub_run
-        ), patch(
-            "azpysdk.apistub.run", side_effect=fake_pwsh
-        ):
-
-            stub.run(self._make_args(dest_dir=str(dest)))
-
-        expected_out = str(dest)
-        assert os.path.isdir(expected_out)
-        assert os.path.exists(os.path.join(expected_out, "api.md"))
-        assert os.path.exists(os.path.join(expected_out, "api.metadata.yml"))
-        assert os.path.exists(os.path.join(expected_out, "azure-core_python.json"))
-
-    @patch(
-        "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
-    )
-    @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
-    @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
-    @patch("azpysdk.apistub.create_package_and_install")
-    @patch("azpysdk.apistub.install_into_venv")
-    @patch("azpysdk.apistub.set_envvar_defaults")
-    def test_no_dest_dir_uses_package_directory(
-        self, _env, _install, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
-    ):
-        """When --dest-dir is not given, output should go to the package directory."""
+        """Output should go to the package directory."""
         monkeypatch.chdir(os.getcwd())
         stub = apistub()
         staging = str(tmp_path / "staging")
@@ -321,7 +262,7 @@ class TestRunOutputDirectory:
             "azpysdk.apistub.run", side_effect=fake_pwsh
         ):
 
-            stub.run(self._make_args(dest_dir=None))
+            stub.run(self._make_args())
 
         # The --out-path passed to apistub should be the package directory
         assert len(captured_cmds) == 1
@@ -413,7 +354,9 @@ class TestRunOutputDirectory:
             stub, "ensure_apistub_dependencies"
         ), patch.object(
             stub, "run_venv_command", side_effect=fake_apistub_run
-        ), patch("azpysdk.apistub.run") as pwsh_run:
+        ), patch(
+            "azpysdk.apistub.run"
+        ) as pwsh_run:
             stub.run(self._make_args(token_file=True))
 
         assert len(captured_cmds) == 1

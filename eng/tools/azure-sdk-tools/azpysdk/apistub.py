@@ -57,12 +57,6 @@ class apistub(Check):
             "apistub", parents=parents, help="Run the apistub check to generate an API stub for a package"
         )
         p.add_argument(
-            "--dest-dir",
-            dest="dest_dir",
-            default=None,
-            help="Destination directory for generated API stub token files. Defaults to the package directory.",
-        )
-        p.add_argument(
             "--token-file",
             dest="token_file",
             default=False,
@@ -152,11 +146,7 @@ class apistub(Check):
             pkg_path = get_package_wheel_path(package_dir)
             pkg_path = os.path.abspath(pkg_path)
 
-            dest_dir = getattr(args, "dest_dir", None)
-            if dest_dir:
-                out_token_path = os.path.abspath(dest_dir)
-            else:
-                out_token_path = os.path.abspath(package_dir)
+            out_token_path = os.path.abspath(package_dir)
             os.makedirs(out_token_path, exist_ok=True)
 
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
