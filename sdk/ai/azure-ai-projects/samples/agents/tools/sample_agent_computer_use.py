@@ -63,9 +63,7 @@ with (
         print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
         exit(1)  # pylint: disable=consider-using-sys-exit
 
-    # [START tool_declaration]
     tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
-    # [END tool_declaration]
 
     agent = project_client.agents.create_version(
         agent_name="MyAgent",

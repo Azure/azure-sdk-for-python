@@ -51,9 +51,6 @@ SUPPORTED_OTEL_SAMPLERS = (
     PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
 )
 
-# Distro version
-AZURE_MONITOR_DISTRO_VERSION = "AZURE_MONITOR_DISTRO_VERSION"
-
 # --------------------Autoinstrumentation Configuration------------------------------------------
 
 LOG_EXPORTER_NAMES_ARG = "log_exporter_names"
@@ -92,3 +89,8 @@ _ALL_SUPPORTED_INSTRUMENTED_LIBRARIES = _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES 
 
 _AZURE_APP_SERVICE_RESOURCE_DETECTOR_NAME = "azure_app_service"
 _AZURE_VM_RESOURCE_DETECTOR_NAME = "azure_vm"
+
+# --------------------Browser SDK snippet injection------------------------------
+
+_BROWSER_SDK_MAX_COMPRESSED_BYTES = 1 * 1024 * 1024  # 1 MiB on the wire
+_BROWSER_SDK_MAX_DECOMPRESSED_BYTES = 5 * 1024 * 1024  # 5 MiB after decompression
