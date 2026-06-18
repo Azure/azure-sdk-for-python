@@ -216,7 +216,6 @@ class AgentsOperations(GeneratedAgentsOperations):
                         raise new_exc from exc
             raise
 
-
     @distributed_trace
     def upload_session_file(  # type: ignore[override]
         self,
