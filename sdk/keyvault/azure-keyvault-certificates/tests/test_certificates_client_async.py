@@ -215,6 +215,16 @@ class TestCertificateClient(KeyVaultTestCase):
             if not hasattr(ex, "message") or "not found" not in ex.message.lower():
                 raise ex
 
+    # An async E2E test for PlatformManaged is intentionally omitted: the async
+    # ``create_certificate`` awaits the LRO to completion, whereas the sync
+    # ``begin_create_certificate`` returns a poller without blocking. PlatformManaged
+    # uses an asynchronous OneCert backend whose issuer registration is not always
+    # available in test environments, so awaiting completion is not reliable. The
+    # wrapper round-trip (CertificatePolicy.platform_managed -> bundle -> policy)
+    # is identical between sync and async and is covered by tests in
+    # test_platform_managed.py, and the sync E2E in test_certificates_client.py
+    # confirms the service request shape.
+
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", all_api_versions)
     @AsyncCertificatesClientPreparer()
