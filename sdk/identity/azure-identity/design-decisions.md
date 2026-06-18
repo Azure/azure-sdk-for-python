@@ -5,8 +5,10 @@ life of `azure-identity`, in chronological order, with citations to the pull
 requests (and, where relevant, the review discussions) that introduced them.
 
 It is **not** a changelog and **not** a substitute for the user docs
-([`README.md`](README.md), [`TOKEN_CACHING.md`](TOKEN_CACHING.md),
-[`TROUBLESHOOTING.md`](TROUBLESHOOTING.md), [`BREAKING_CHANGES.md`](BREAKING_CHANGES.md)).
+([`README.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/README.md),
+[`TOKEN_CACHING.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TOKEN_CACHING.md),
+[`TROUBLESHOOTING.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md),
+[`BREAKING_CHANGES.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/BREAKING_CHANGES.md)).
 Those explain *what* the library does today and *how* to use it. This file explains *why*
 the codebase looks the way it does — the constraints, debates, rejected alternatives, and
 deliberate trade-offs that a new developer or agent would otherwise have to reconstruct from
@@ -31,7 +33,7 @@ trust the timeline:
 - **An entry may cite later follow-up PRs** (fixes, reworks) inside its body; placement is still
   governed by the *introducing* PR's date, not the follow-ups.
 - **Keep the Table of Contents in sync** when you add or rename a year section.
-- Add the year subheading-style date line (e.g. `PR [#12345](...) (2026-01)`) immediately under
+- Add the year subheading-style date line (e.g. `PR [#12345](https://github.com/Azure/azure-sdk-for-python/pull/12345) (2026-01)`) immediately under
   every `###` entry title so placement is auditable.
 
 ## Table of contents
@@ -322,7 +324,7 @@ return a challenge steering token acquisition to an attacker-controlled tenant. 
 (or `*`). A carve-out: credentials whose `default_tenant` is `"organizations"` (inherently
 multi-tenant dev tools like `AzureCliCredential`) allow any tenant when no allowlist is set,
 so developers using the CLI across subscriptions aren't broken. This is a **breaking
-behavioral change** documented in [`BREAKING_CHANGES.md`](BREAKING_CHANGES.md) (1.11.0); the
+behavioral change** documented in [`BREAKING_CHANGES.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/BREAKING_CHANGES.md) (1.11.0); the
 rationale is at <https://aka.ms/azsdk/blog/multi-tenant-guidance>.
 
 ---
