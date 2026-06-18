@@ -2351,9 +2351,20 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
             try:
                 etag = getattr(task_info, "etag", None) or None
+                # Spec 031 (hosted re-test finding) — the multi-turn turn that
+                # just ended already wrote ``status="suspended"`` (see
+                # ``_handle_multi_turn_success``). The drain starts a NEW turn,
+                # so it MUST transition the record back to ``in_progress`` in
+                # this same PATCH. This is also REQUIRED for the lease-extension
+                # piggyback to be valid: the hosted task store rejects lease
+                # *renewal* on a non-in_progress task ("lease renewal is only
+                # supported for in_progress tasks"), but ACCEPTS lease params as
+                # part of a suspended→in_progress *claim*. Without the status
+                # flip the drain PATCH 409s and the steered turn never runs.
                 await self._provider_update_lock_held(
                     task_id,
                     TaskPatchRequest(
+                        status="in_progress",
                         payload=payload,
                         attachments=attachments_patch,
                         if_match=etag,
