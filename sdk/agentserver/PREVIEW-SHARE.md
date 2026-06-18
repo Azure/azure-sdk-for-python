@@ -17,13 +17,12 @@ required.
 |------|----------|
 | [`wheels/`](wheels/) | Pre-built `core` / `invocations` / `responses` wheels. Install these. |
 | [`skills/`](skills/) | 4 standalone Copilot skills (durable-task, streaming, invocations, responses). Drop next to your code. |
-| [`azure-ai-agentserver-core/docs/`](azure-ai-agentserver-core/docs/) | Durable-task + streaming developer guides. |
-| [`azure-ai-agentserver-responses/docs/`](azure-ai-agentserver-responses/docs/) | Responses durability + handler-implementation guides. |
+| [`azure-ai-agentserver-core/docs/`](azure-ai-agentserver-core/docs/) | Durable-task + streaming developer guides + the `task-and-streaming-spec.md` source-of-truth spec. |
+| [`azure-ai-agentserver-responses/docs/`](azure-ai-agentserver-responses/docs/) | Responses durability + handler-implementation guides + the `responses-durability-spec.md` SOT spec and `durability-contract.md` contract matrix. |
 | `azure-ai-agentserver-responses/samples/` | Durable Responses samples + the `durable-responses-agent-demo`. |
 | `azure-ai-agentserver-invocations/samples/` | Durable Invocations samples + the `durable-agent-demo`. |
 
-Only **durable** samples are included; the internal source-of-truth specs
-are intentionally omitted.
+Only **durable** samples are included.
 
 ## Latest refresh
 
