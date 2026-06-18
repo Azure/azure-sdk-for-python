@@ -98,7 +98,7 @@ subscriber both call it with the same id and get the **same**
 |---|---|---|---|
 | `use_in_memory_live()` *(default)* | Single subscriber attaches before the producer; lowest memory. | No — late subscribers miss earlier events. | No. |
 | `use_in_memory_replay(cursor_fn=..., ttl_seconds=...)` | Late subscribers / disconnect+reconnect within the same process; cursor-based catch-up. | Yes, up to TTL. | No. |
-| `use_file_backed_replay(root=..., cursor_fn=...)` | `@task` handler that can crash and recover; subscribers need monotonic event continuity across the crash boundary. | Yes, across process restarts for the same stream id + on-disk dir. | Yes. |
+| `use_file_backed_replay(storage_dir=..., cursor_fn=...)` | `@task` handler that can crash and recover; subscribers need monotonic event continuity across the crash boundary. | Yes, across process restarts for the same stream id + on-disk dir. | Yes. |
 
 Call exactly **one** configurator at app startup. Don't switch
 backings mid-process.
@@ -178,7 +178,7 @@ every event in your producer.
 
 The streaming registry is the natural pair for `@task`. The recipe:
 
-1. At app startup, call `streams.use_file_backed_replay(root=...,
+1. At app startup, call `streams.use_file_backed_replay(storage_dir=...,
    cursor_fn=lambda ev: ev["sequence_number"])`.
 2. Producer (inside your `@task` handler) stamps every event with a
    monotonically increasing `sequence_number`. After a crash, the

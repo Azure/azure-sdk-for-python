@@ -72,8 +72,8 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponseContext,
     TextResponse,
+    CreateResponse,
 )
-from azure.ai.agentserver.responses.models._generated import CreateResponse
 
 app = ResponsesAgentServerHost()
 
@@ -102,7 +102,7 @@ streaming partials, structured outputs), use `ResponseEventStream` and
 yield events directly:
 
 ```python
-from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+from azure.ai.agentserver.responses import ResponseEventStream
 
 @app.response_handler
 async def my_handler(request, context, cancellation_signal):
@@ -163,7 +163,7 @@ When opted in, the handler also sees:
 | `context.is_recovery: bool` | `True` on a crash-recovered re-entry |
 | `context.is_steered_turn: bool` | `True` on the drain re-entry that follows a steering input |
 | `context.pending_input_count: int` | Live count of queued steering inputs |
-| `context.durable_metadata: DurableMetadataNamespace` | `MutableMapping` for handler-managed checkpoint state (small — watermarks, dedup tokens, NOT full conversation history). `await context.durable_metadata.flush()` for at-most-once side-effect fencing before an upstream call with observable side effects |
+| `context.conversation_chain_metadata: ConversationChainMetadataNamespace` | `MutableMapping` for handler-managed checkpoint state (small — watermarks, dedup tokens, NOT full conversation history). `await context.conversation_chain_metadata.flush()` for at-most-once side-effect fencing before an upstream call with observable side effects |
 | `await context.exit_for_recovery()` | Recovery primitive — `return await context.exit_for_recovery()` to leave the response `in_progress` so the next-lifetime recovery scanner picks it up |
 
 ## Hosted vs local
@@ -231,4 +231,4 @@ in working code.
 | OpenAI Chat Completions API endpoint | ❌ | Different protocol — use a different host. |
 | Free-form invocations-protocol agent | ❌ | Use the `agentserver-durable-tasks` + `agentserver-streaming` skills directly. |
 | Server-to-server background job with no HTTP surface | ❌ | Use the `@task` primitive directly. |
-| Persist conversation history in `context.durable_metadata` | ❌ | Wrong — `durable_metadata` is for small watermarks. Use your own DB or framework store (LangGraph SqliteSaver, etc.) for content. |
+| Persist conversation history in `context.conversation_chain_metadata` | ❌ | Wrong — `conversation_chain_metadata` is for small watermarks. Use your own DB or framework store (LangGraph SqliteSaver, etc.) for content. |

@@ -62,7 +62,7 @@ Use `@task` when **any** of these apply:
 ## Minimal pattern
 
 ```python
-from azure.ai.agentserver.core.durable import task, TaskContext, Suspended
+from azure.ai.agentserver.core.durable import task, TaskContext
 
 @task(name="my_agent", steerable=True)
 async def my_agent(ctx: TaskContext[dict]) -> dict:
@@ -152,9 +152,10 @@ In hosted environments (`FOUNDRY_HOSTING_ENVIRONMENT` set by the platform)
 task-storage API automatically — no opt-in env var required.
 
 In local development (no `FOUNDRY_HOSTING_ENVIRONMENT`) `@task` uses
-`LocalFileTaskProvider` rooted at `~/.durable-tasks/` (override with
-`AGENTSERVER_DURABLE_TASKS_PATH` for tests). No service dependency for
-local iteration.
+`LocalFileTaskProvider` rooted at `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/tasks/`
+(override the root with `AGENTSERVER_DURABLE_ROOT`). No service dependency for
+local iteration. To force the local backend even when hosted-detection would
+otherwise pick the hosted provider, set `AGENTSERVER_TASKS_BACKEND=local`.
 
 ## Packaging — private preview wheels
 
@@ -183,7 +184,7 @@ Consume the checked-in wheels per:
 | LangGraph integration | [`samples/durable_langgraph/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_langgraph) |
 
 Read the developer guide first — it covers `EntryMode`, retry semantics,
-`Suspended`, steering queue backpressure, cancel-cause booleans
+multi-turn suspend/resume, steering queue backpressure, cancel-cause booleans
 (`timeout_exceeded`, `cancel_requested`, `pending_input_count`), shutdown
 via `ctx.exit_for_recovery()`, and the patterns referenced above. The
 samples ground the API in working code.
