@@ -613,3 +613,61 @@ class TestSplitRuntimeRefsSerializable:
         _, persisted = _split_runtime_refs({"response_id": "r", "agent_reference": ar})
         assert persisted["agent_reference"] == ar
         json.dumps(persisted)
+
+
+class TestPersistCrashFailedRecovery:
+    """``_persist_crash_failed`` runs on cross-process recovery of a
+    ``mark-failed`` task. Regression for two bugs that combined to leave a
+    Foundry-backed, isolation-partitioned response with no client-visible
+    terminal after a crash-before-terminal:
+
+    1. The update-not-found fallback only caught ``KeyError``, but the Foundry
+       store raises ``FoundryResourceNotFoundError`` — so ``create_response``
+       (which actually lands the failed terminal) was never attempted.
+    2. ``isolation`` was read from the runtime-only ``_context_ref`` (stripped
+       from the persisted input, hence always ``None`` on recovery), so the
+       marker was written to the default partition the client never queries.
+    """
+
+    @pytest.mark.asyncio
+    async def test_foundry_notfound_falls_back_to_create_with_persisted_isolation(self) -> None:
+        from unittest.mock import AsyncMock, MagicMock
+
+        from azure.ai.agentserver.responses.store._foundry_errors import (
+            FoundryResourceNotFoundError,
+        )
+
+        provider = MagicMock()
+        # Foundry raises FoundryResourceNotFoundError (NOT KeyError) for missing.
+        provider.get_response = AsyncMock(side_effect=FoundryResourceNotFoundError("nf"))
+        provider.update_response = AsyncMock(side_effect=FoundryResourceNotFoundError("nf"))
+        provider.create_response = AsyncMock()
+
+        orch = DurableResponseOrchestrator(
+            create_fn=AsyncMock(),
+            provider=provider,
+            options=MagicMock(steerable_conversations=False),
+        )
+
+        params = {
+            # Persisted isolation keys (what _start_durable_background stamps).
+            "user_isolation_key": "user-123",
+            "chat_isolation_key": "chat-456",
+            # No "_context_ref": it is stripped from the durable input, so the
+            # old code's isolation derivation always yielded None here.
+        }
+
+        await orch._persist_crash_failed("caresp_x", params)
+
+        # Bug 1: the create fallback MUST run despite Foundry raising
+        # FoundryResourceNotFoundError (not KeyError) on update.
+        provider.create_response.assert_awaited_once()
+
+        # Bug 2: every store call must target the client's partition built from
+        # the persisted isolation keys.
+        create_iso = provider.create_response.call_args.kwargs["isolation"]
+        assert create_iso.user_key == "user-123"
+        assert create_iso.chat_key == "chat-456"
+        get_iso = provider.get_response.call_args.kwargs["isolation"]
+        assert get_iso.user_key == "user-123"
+        assert get_iso.chat_key == "chat-456"
