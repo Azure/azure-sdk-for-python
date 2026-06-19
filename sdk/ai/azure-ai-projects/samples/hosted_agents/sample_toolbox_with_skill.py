@@ -25,7 +25,7 @@ DESCRIPTION:
         samples/hosted_agents/sample_create_hosted_agent.py
 
 USAGE:
-    python sample_hosted_agent_toolbox_mcp_skills.py
+    python sample_toolbox_with_skill.py
 
     Before running the sample:
 
@@ -70,7 +70,6 @@ from azure.ai.projects.models import (
     ToolboxSkillReference,
 )
 
-
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
@@ -93,10 +92,7 @@ def _build_code_zip(source_dir: Path) -> tuple[bytes, str]:
                 zf.write(file_path, file_path.relative_to(source_dir))
     zip_bytes = buf.getvalue()
     zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
-    print(
-        f"Built code zip from {source_dir}: "
-        f"{len(zip_bytes)} bytes, sha256={zip_sha256}"
-    )
+    print(f"Built code zip from {source_dir}: " f"{len(zip_bytes)} bytes, sha256={zip_sha256}")
     return zip_bytes, zip_sha256
 
 
@@ -108,7 +104,7 @@ def main() -> None:
     ):
 
         try:
-            project_client.beta.toolboxes.delete(TOOLBOX_NAME)
+            project_client.toolboxes.delete(TOOLBOX_NAME)
         except ResourceNotFoundError:
             pass
 
@@ -132,7 +128,7 @@ def main() -> None:
         )
         print(f"Created skill: {skill_version.name} version={skill_version.version}")
 
-        toolbox_version = project_client.beta.toolboxes.create_version(
+        toolbox_version = project_client.toolboxes.create_version(
             name=TOOLBOX_NAME,
             description="Toolbox exposing a shipping-cost skill.",
             tools=[ToolboxSearchPreviewTool()],
@@ -167,7 +163,7 @@ def main() -> None:
             code=(zip_filename, zip_bytes, "application/zip"),
         )
 
-        created = project_client.beta.agents.create_version_from_code(
+        created = project_client.agents.create_version_from_code(
             agent_name=agent_name,
             content=content,
             code_zip_sha256=zip_sha256,
@@ -197,7 +193,7 @@ def main() -> None:
 
         project_client.agents.delete_version(agent_name=agent_name, agent_version=created.version, force=True)
         print(f"Agent version {created.version} deleted")
-        project_client.beta.toolboxes.delete(TOOLBOX_NAME)
+        project_client.toolboxes.delete(TOOLBOX_NAME)
         print("Toolbox deleted")
         project_client.beta.skills.delete(SKILL_NAME)
         print("Skill deleted")

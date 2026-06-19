@@ -51,7 +51,7 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 download_folder = Path(tempfile.gettempdir()).resolve()
 skill_name = "canvas-design"
-skill_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "assets/canvas-design.zip"))
+skill_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../hosted_agents/assets/canvas-design.zip"))
 
 
 async def main() -> None:

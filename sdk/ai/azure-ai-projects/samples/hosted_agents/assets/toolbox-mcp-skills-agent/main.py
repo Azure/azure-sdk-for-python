@@ -5,13 +5,16 @@ import os
 from collections.abc import Callable, Generator
 
 import httpx
-from agent_framework import Agent, MCPSkillsSource, SkillsProvider
+from typing import Any, cast
+from agent_framework import Agent, SkillsProvider
 from agent_framework.foundry import FoundryChatClient
-from agent_framework_foundry_hosting import ResponsesHostServer
+from agent_framework_foundry_hosting import ResponsesHostServer  # type: ignore[import-untyped]
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from dotenv import load_dotenv
 from mcp.client.session import ClientSession
 from mcp.client.streamable_http import streamable_http_client
+
+MCPSkillsSource = cast(Any, __import__("agent_framework", fromlist=["MCPSkillsSource"]).MCPSkillsSource)
 
 load_dotenv()
 
