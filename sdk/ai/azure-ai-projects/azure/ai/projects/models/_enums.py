@@ -14,14 +14,8 @@ from azure.core import CaseInsensitiveEnumMeta
 class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Feature opt-in keys for agent definition operations supporting hosted or workflow agents."""
 
-    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
-    """HOSTED_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
-    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
-    """AGENT_ENDPOINT_V1_PREVIEW."""
-    CODE_AGENTS_V1_PREVIEW = "CodeAgents=V1Preview"
-    """CODE_AGENTS_V1_PREVIEW."""
     EXTERNAL_AGENTS_V1_PREVIEW = "ExternalAgents=V1Preview"
     """EXTERNAL_AGENTS_V1_PREVIEW."""
 
@@ -41,8 +35,6 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
     ROUTINES_V1_PREVIEW = "Routines=V1Preview"
     """ROUTINES_V1_PREVIEW."""
-    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
-    """TOOLBOXES_V1_PREVIEW."""
     SKILLS_V1_PREVIEW = "Skills=V1Preview"
     """SKILLS_V1_PREVIEW."""
     DATA_GENERATION_JOBS_V1_PREVIEW = "DataGenerationJobs=V1Preview"
@@ -152,6 +144,15 @@ class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Session has been explicitly deleted."""
     EXPIRED = "expired"
     """Session TTL exceeded (30 days from last activity)."""
+
+
+class AgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operational state of an agent."""
+
+    ENABLED = "enabled"
+    """Agent endpoint accepts requests. This is the default state on creation."""
+    DISABLED = "disabled"
+    """Agent endpoint rejects all requests."""
 
 
 class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1137,6 +1138,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FABRIC_IQ_PREVIEW."""
     TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
     """TOOLBOX_SEARCH_PREVIEW."""
+    REMINDER_PREVIEW = "reminder_preview"
+    """REMINDER_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
