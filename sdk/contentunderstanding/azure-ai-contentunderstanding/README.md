@@ -670,8 +670,7 @@ Recent highlights:
   analyzers. See the [GitHub Copilot Skills](#github-copilot-skills) section
   below.
 - **`to_llm_input` helper** for converting `AnalysisResult` into
-  LLM-friendly Markdown with YAML front matter. See
-  [`samples/sample_create_classifier.py`](samples/sample_create_classifier.py).
+  LLM-friendly Markdown with YAML front matter. See [`sample_create_classifier.py`][python_cu_sample_create_classifier].
 
 ## GitHub Copilot Skills
 
@@ -736,6 +735,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python_cu_product_docs]: https://learn.microsoft.com/azure/ai-services/content-understanding/
 [python_cu_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples
 [python_cu_sample_to_llm_input]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_to_llm_input.py
+[python_cu_sample_create_classifier]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_create_classifier.py
 [azure_sub]: https://azure.microsoft.com/free/
 [cu_quickstart]: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api?tabs=portal%2Cdocument
 [cu_region_support]: https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support
