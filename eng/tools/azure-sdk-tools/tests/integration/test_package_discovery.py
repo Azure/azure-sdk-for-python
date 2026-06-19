@@ -3,7 +3,6 @@ import os
 from ci_tools.parsing import ParsedSetup
 from ci_tools.functions import discover_targeted_packages
 
-
 repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "..", ".."))
 sdk_root = os.path.join(repo_root, "sdk")
 core_service_root = os.path.join(sdk_root, "core")
@@ -67,6 +66,22 @@ def test_discovery_single_package():
 
     assert [os.path.basename(result) for result in results] == [
         "azure-core",
+    ]
+
+
+def test_discovery_single_package_from_sdk_root():
+    results = discover_targeted_packages("azure-template", sdk_root, filter_type="Build")
+
+    assert [os.path.basename(result) for result in results] == [
+        "azure-template",
+    ]
+
+
+def test_discovery_single_package_from_repo_root():
+    results = discover_targeted_packages("azure-template", repo_root, filter_type="Build")
+
+    assert [os.path.basename(result) for result in results] == [
+        "azure-template",
     ]
 
 

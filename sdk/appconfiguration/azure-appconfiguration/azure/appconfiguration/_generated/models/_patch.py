@@ -32,6 +32,8 @@ class KeyValue(_model_base.Model):
     :vartype last_modified: ~datetime.datetime
     :ivar tags: The tags of the key-value.
     :vartype tags: dict[str, str]
+    :ivar description: The description of the key-value.
+    :vartype description: str
     :ivar locked: Indicates whether the key-value is locked.
     :vartype locked: bool
     :ivar etag: A value representing the current state of the resource.
@@ -50,6 +52,8 @@ class KeyValue(_model_base.Model):
     """A date representing the last time the key-value was modified."""
     tags: Optional[Dict[str, str]] = rest_field()
     """The tags of the key-value."""
+    description: Optional[str] = rest_field()
+    """The description of the key-value."""
     locked: Optional[bool] = rest_field()
     """Indicates whether the key-value is locked."""
     etag: Optional[str] = rest_field()
@@ -65,6 +69,7 @@ class KeyValue(_model_base.Model):
         value: Optional[str] = None,
         last_modified: Optional[datetime.datetime] = None,
         tags: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
         locked: Optional[bool] = None,
         etag: Optional[str] = None,
     ) -> None: ...

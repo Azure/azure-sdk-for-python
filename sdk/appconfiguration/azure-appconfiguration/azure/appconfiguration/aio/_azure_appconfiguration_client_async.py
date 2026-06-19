@@ -690,6 +690,7 @@ class AzureAppConfigurationClient:
         composition_type: Optional[Union[str, SnapshotComposition]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncLROPoller[ConfigurationSnapshot]:
         """Create a snapshot of the configuration settings.
@@ -711,13 +712,19 @@ class AzureAppConfigurationClient:
         :paramtype retention_period: int or None
         :keyword tags: The tags of the configuration snapshot.
         :paramtype tags: dict[str, str] or None
+        :keyword description: The description of the configuration snapshot.
+        :paramtype description: str or None
         :return: A poller for create configuration snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         snapshot = ConfigurationSnapshot(
-            filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
+            filters=filters,
+            composition_type=composition_type,
+            retention_period=retention_period,
+            tags=tags,
+            description=description,
         )
         return cast(
             AsyncLROPoller[ConfigurationSnapshot],

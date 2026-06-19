@@ -269,7 +269,7 @@ class TestHeaders(unittest.TestCase):
     def test_container_delete_all_items_by_partition_key_throughput_bucket(self):
         # Control-plane container creation.
         created_collection_ref = self.database.create_container(
-            id='test_delete_all_items_by_partition_key ' + str(uuid.uuid4()),
+            id='test_delete_all_items_by_partition_key_' + str(uuid.uuid4()),
             partition_key=PartitionKey(path='/pk', kind='Hash'))
         data_collection = self.data_database.get_container_client(created_collection_ref.id)
 
