@@ -267,6 +267,7 @@
         "azure.ai.projects.models.Reasoning": "OpenAI.Reasoning",
         "azure.ai.projects.models.RecurrenceTrigger": "Azure.AI.Projects.RecurrenceTrigger",
         "azure.ai.projects.models.RedTeam": "Azure.AI.Projects.RedTeam",
+        "azure.ai.projects.models.ReminderPreviewTool": "Azure.AI.Projects.ReminderPreviewTool",
         "azure.ai.projects.models.ResponseUsageInputTokensDetails": "OpenAI.ResponseUsageInputTokensDetails",
         "azure.ai.projects.models.ResponseUsageOutputTokensDetails": "OpenAI.ResponseUsageOutputTokensDetails",
         "azure.ai.projects.models.Routine": "Azure.AI.Projects.Routine",
@@ -525,5 +526,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "5905bb1cfb97"
+    "CrossLanguageVersion": "623ba64ba559"
 }
