@@ -650,6 +650,24 @@ class FileBackedReplayEventStream(_BaseEventStream):
                     tmp.write(self._serialize_terminal(time.time()))
             # Atomic replace (POSIX guarantees atomicity on same fs).
             os.replace(tmp_path, self._path)
+            # ``os.replace`` swapped ``self._path`` to a brand-new inode; our
+            # ``self._file`` handle still points at the old (now-unlinked)
+            # inode, so every subsequent ``emit``/``close`` write would land in
+            # the orphaned file and be lost on the next process lifetime (and
+            # the single-writer ``flock`` would be held on the dead inode).
+            # Reopen against the live path and re-acquire the lock. Open + lock
+            # the new handle BEFORE closing the old one so the single-writer
+            # guarantee is never released across the swap.
+            old_file = self._file
+            new_file = open(self._path, "a+b")  # pylint: disable=consider-using-with
+            if _HAS_FCNTL:
+                fcntl.flock(new_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            new_file.seek(0, os.SEEK_END)
+            self._file = new_file
+            try:
+                old_file.close()
+            except Exception:  # pylint: disable=broad-except
+                pass
         except Exception:  # pylint: disable=broad-except
             try:
                 tmp_path.unlink(missing_ok=True)

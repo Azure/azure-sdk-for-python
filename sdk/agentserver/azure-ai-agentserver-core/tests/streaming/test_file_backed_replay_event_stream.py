@@ -322,3 +322,50 @@ class TestTaskStreamsFileBackedCloseClock:
             f"MUST be deleted when the close-clock tombstone fires; "
             f"{file_path} still exists."
         )
+
+
+# ----------------------------------------------------------------
+# Rule 30 — lazy compaction must NOT lose post-compaction writes
+# (regression: stale file descriptor after os.replace)
+# ----------------------------------------------------------------
+
+
+class TestCompactionPreservesPostCompactionWrites:
+    """After an on-disk compaction swaps the file via ``os.replace``, the
+    stream must keep writing to the LIVE file — not the orphaned pre-swap
+    inode. Regression for the stale-``self._file`` data-loss bug where every
+    ``emit``/``close`` after the first compaction was written to an unlinked
+    inode and lost on the next process lifetime.
+    """
+
+    async def test_emit_after_compaction_persists_to_live_file(self, tmp_path: Path) -> None:
+        p = tmp_path / "fb-compact.jsonl"
+        s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600)
+        await s.emit({"n": 1})
+        await s.emit({"n": 2})
+        # Force a compaction (in real runs this fires once the eviction
+        # interval is crossed; calling it directly is the accepted
+        # intra-process construction-recovery pattern for this suite).
+        s._compact_on_disk()
+        await s.emit({"n": 3})  # post-compaction write — must NOT be lost
+        await s.close()  # terminal — must NOT be lost
+
+        content = p.read_text()
+        assert '"n": 3' in content, f"post-compaction emit lost to orphaned inode; file={content!r}"
+        assert "__terminal__" in content, f"post-compaction terminal lost; file={content!r}"
+
+    async def test_rehydrate_after_compaction_sees_post_compaction_event(self, tmp_path: Path) -> None:
+        p = tmp_path / "fb-compact-rehydrate.jsonl"
+        s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600)
+        await s.emit({"n": 1})
+        s._compact_on_disk()
+        await s.emit({"n": 2})
+        s._cleanup_locks()  # simulate crash: release lock, keep the file
+        del s
+
+        # A new lifetime rehydrating from the same path MUST see the
+        # post-compaction event (it was written to the live file).
+        s2 = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600)
+        cursors = [e.payload["n"] for e in s2._buffer]
+        assert 2 in cursors, f"post-compaction event missing after rehydrate; buffer={cursors}"
+        await s2._on_delete()
