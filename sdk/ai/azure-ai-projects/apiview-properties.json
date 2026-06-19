@@ -267,6 +267,7 @@
         "azure.ai.projects.models.Reasoning": "OpenAI.Reasoning",
         "azure.ai.projects.models.RecurrenceTrigger": "Azure.AI.Projects.RecurrenceTrigger",
         "azure.ai.projects.models.RedTeam": "Azure.AI.Projects.RedTeam",
+        "azure.ai.projects.models.ReminderPreviewTool": "Azure.AI.Projects.ReminderPreviewTool",
         "azure.ai.projects.models.ResponseUsageInputTokensDetails": "OpenAI.ResponseUsageInputTokensDetails",
         "azure.ai.projects.models.ResponseUsageOutputTokensDetails": "OpenAI.ResponseUsageOutputTokensDetails",
         "azure.ai.projects.models.Routine": "Azure.AI.Projects.Routine",
@@ -291,7 +292,6 @@
         "azure.ai.projects.models.SpecificFunctionShellParam": "OpenAI.SpecificFunctionShellParam",
         "azure.ai.projects.models.StructuredInputDefinition": "Azure.AI.Projects.StructuredInputDefinition",
         "azure.ai.projects.models.StructuredOutputDefinition": "Azure.AI.Projects.StructuredOutputDefinition",
-        "azure.ai.projects.models.SystemDataV3": "Azure.AI.Projects.SystemDataV3",
         "azure.ai.projects.models.TaxonomyCategory": "Azure.AI.Projects.TaxonomyCategory",
         "azure.ai.projects.models.TaxonomySubCategory": "Azure.AI.Projects.TaxonomySubCategory",
         "azure.ai.projects.models.TelemetryConfig": "Azure.AI.Projects.TelemetryConfig",
@@ -400,6 +400,7 @@
         "azure.ai.projects.models.DataGenerationJobOutputType": "Azure.AI.Projects.DataGenerationJobOutputType",
         "azure.ai.projects.models.OptimizationDatasetInputType": "Azure.AI.Projects.OptimizationDatasetInputType",
         "azure.ai.projects.models.AgentObjectType": "Azure.AI.Projects.AgentObjectType",
+        "azure.ai.projects.models.AgentState": "Azure.AI.Projects.AgentState",
         "azure.ai.projects.models.AgentKind": "Azure.AI.Projects.AgentKind",
         "azure.ai.projects.models.AgentProtocol": "Azure.AI.Projects.AgentProtocol",
         "azure.ai.projects.models.CodeDependencyResolution": "Azure.AI.Projects.CodeDependencyResolution",
@@ -448,6 +449,10 @@
         "azure.ai.projects.aio.operations.AgentsOperations.create_version_from_code": "Azure.AI.Projects.Agents.createAgentVersionFromCode",
         "azure.ai.projects.operations.AgentsOperations.download_code": "Azure.AI.Projects.Agents.downloadAgentCode",
         "azure.ai.projects.aio.operations.AgentsOperations.download_code": "Azure.AI.Projects.Agents.downloadAgentCode",
+        "azure.ai.projects.operations.AgentsOperations.enable": "Azure.AI.Projects.Agents.enableAgent",
+        "azure.ai.projects.aio.operations.AgentsOperations.enable": "Azure.AI.Projects.Agents.enableAgent",
+        "azure.ai.projects.operations.AgentsOperations.disable": "Azure.AI.Projects.Agents.disableAgent",
+        "azure.ai.projects.aio.operations.AgentsOperations.disable": "Azure.AI.Projects.Agents.disableAgent",
         "azure.ai.projects.operations.AgentsOperations.create_session": "Azure.AI.Projects.Agents.createSession",
         "azure.ai.projects.aio.operations.AgentsOperations.create_session": "Azure.AI.Projects.Agents.createSession",
         "azure.ai.projects.operations.AgentsOperations.get_session": "Azure.AI.Projects.Agents.getSession",
@@ -521,5 +526,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "a252b3ce0280"
+    "CrossLanguageVersion": "623ba64ba559"
 }

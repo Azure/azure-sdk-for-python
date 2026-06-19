@@ -146,6 +146,15 @@ class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Session TTL exceeded (30 days from last activity)."""
 
 
+class AgentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operational state of an agent."""
+
+    ENABLED = "enabled"
+    """Agent endpoint accepts requests. This is the default state on creation."""
+    DISABLED = "disabled"
+    """Agent endpoint rejects all requests."""
+
+
 class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning status of an agent version."""
 
@@ -1129,6 +1138,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FABRIC_IQ_PREVIEW."""
     TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
     """TOOLBOX_SEARCH_PREVIEW."""
+    REMINDER_PREVIEW = "reminder_preview"
+    """REMINDER_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"

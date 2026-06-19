@@ -4,20 +4,20 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 139 unique public methods:
+There are a total of 141 unique public methods:
 - 5 stable methods on the client
-- 53 stable methods on top-level sub-clients
+- 55 stable methods on top-level sub-clients
 - 81 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `agents` | AgentsOperations | 21 |
-| `evaluation_rules` | EvaluationRulesOperations | 4 |
+| `agents` | AgentsOperations | 23 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 9 |
 | `deployments` | DeploymentsOperations | 2 |
+| `evaluation_rules` | EvaluationRulesOperations | 4 |
 | `indexes` | IndexesOperations | 5 |
 | `telemetry` | TelemetryOperations | 1 |
 | `toolboxes` | ToolboxesOperations | 8 |
@@ -41,7 +41,7 @@ There are a total of 139 unique public methods:
 
 ## Stable methods on the client
 
-An asterisk at the end of the method name means is a hand-written method.
+Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
 ```
 .__enter__
@@ -64,8 +64,10 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .agents.delete_session
 .agents.delete_session_file
 .agents.delete_version
+.agents.disable
 .agents.download_code
 .agents.download_session_file
+.agents.enable
 .agents.get
 .agents.get_session
 .agents.get_session_log_stream

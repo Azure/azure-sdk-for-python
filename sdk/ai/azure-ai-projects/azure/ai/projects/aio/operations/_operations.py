@@ -45,8 +45,10 @@ from ...operations._operations import (
     build_agents_delete_session_file_request,
     build_agents_delete_session_request,
     build_agents_delete_version_request,
+    build_agents_disable_request,
     build_agents_download_code_request,
     build_agents_download_session_file_request,
+    build_agents_enable_request,
     build_agents_get_request,
     build_agents_get_session_log_stream_request,
     build_agents_get_session_request,
@@ -1539,6 +1541,119 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def enable(self, agent_name: str, **kwargs: Any) -> None:
+        """Enable an agent.
+
+        Enables the specified agent, allowing it to accept new sessions and process requests. This
+        operation is idempotent — enabling an already-enabled agent returns success with no side
+        effects.
+
+        :param agent_name: The name of the agent to enable. Required.
+        :type agent_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_enable_request(
+            agent_name=agent_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def disable(self, agent_name: str, **kwargs: Any) -> None:
+        """Disable an agent.
+
+        Disables the specified agent, preventing it from accepting new sessions or processing requests.
+        Existing active sessions are allowed to drain gracefully but no new sessions can be created.
+        This operation is idempotent — disabling an already-disabled agent returns success with no side
+        effects.
+
+        :param agent_name: The name of the agent to disable. Required.
+        :type agent_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_disable_request(
+            agent_name=agent_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     async def create_session(
