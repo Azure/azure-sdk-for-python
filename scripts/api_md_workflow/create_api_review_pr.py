@@ -521,8 +521,6 @@ def generate_api_for_package(
                 "-m",
                 "azpysdk.main",
                 "apistub",
-                "--md",
-                "--extract-metadata",
                 "--dest-dir",
                 str(package_dir),
                 package_name,
@@ -535,8 +533,6 @@ def generate_api_for_package(
         [
             "azpysdk",
             "apistub",
-            "--md",
-            "--extract-metadata",
             "--dest-dir",
             str(package_dir),
             package_name,
