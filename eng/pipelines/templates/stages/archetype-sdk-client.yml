@@ -147,7 +147,6 @@ extends:
         parameters:
           DependsOn: "Build"
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          SkipPrValidation: ${{ parameters.SkipPrValidation }}
           Artifacts: ${{ parameters.Artifacts }}
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
