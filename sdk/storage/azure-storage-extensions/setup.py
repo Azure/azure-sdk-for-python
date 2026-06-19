@@ -23,7 +23,7 @@ setup(
         Extension(
             "crc64",
             ["azure/storage/extensions/checksums/crc64/crc64module.c"],
-            define_macros=[("Py_LIMITED_API", "3")],
+            define_macros=[("Py_LIMITED_API", "0x030A0000")],
             py_limited_api=True,
         ),
     ],
