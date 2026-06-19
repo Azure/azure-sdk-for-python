@@ -147,17 +147,165 @@ extends:
           - template: /eng/pipelines/templates/variables/globals.yml
           - template: /eng/pipelines/templates/variables/image.yml
 
-      - template: archetype-python-release.yml
-        parameters:
-          DependsOn: "Build"
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          Artifacts: ${{ parameters.Artifacts }}
-          ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-            TestPipeline: true
-          ArtifactName: packages_extended
-          DocArtifact: documentation
-          TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
-          TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
-          DevFeedName: ${{ parameters.DevFeedName }}
-          PublicFeed: ${{ parameters.PublicFeed }}
-          PublicPublishEnvironment: ${{ parameters.PublicPublishEnvironment }}
+      - ${{ if eq(parameters.ServiceDirectory, 'storage') }}:
+        - stage: Sign_Binaries
+          displayName: Sign Extension Wheels
+          dependsOn: Build
+          condition: succeeded()
+          jobs:
+            - job: Sign_macOS
+              displayName: Sign macOS Wheels
+              pool:
+                name: $(WINDOWSPOOL)
+                image: $(WINDOWSVMIMAGE)
+                os: windows
+              steps:
+                - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+
+                - task: UsePythonVersion@0
+                  displayName: "Use Python $(PythonVersion)"
+                  inputs:
+                    versionSpec: $(PythonVersion)
+
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: packages_mac
+                    targetPath: $(Build.ArtifactStagingDirectory)/packages_mac
+
+                - pwsh: |
+                    python eng/scripts/wheel_signing/extract_sign_inputs.py `
+                      --platform mac `
+                      --wheels-dir "$(Build.ArtifactStagingDirectory)/packages_mac" `
+                      --work-dir "$(Build.ArtifactStagingDirectory)/mac-sign-work" `
+                      --sign-input-zip "$(Build.ArtifactStagingDirectory)/mac-sign-input.zip"
+                  displayName: Extract mac wheel binaries
+
+                - template: pipelines/steps/azd-cli-mac-signing.yml@azure-sdk-build-tools
+                  parameters:
+                    MacPath: "$(Build.ArtifactStagingDirectory)"
+                    MacPattern: "mac-sign-input.zip"
+                    Notarize: false
+
+                - pwsh: |
+                    python eng/scripts/wheel_signing/repackage_signed_wheels.py `
+                      --platform mac `
+                      --work-dir "$(Build.ArtifactStagingDirectory)/mac-sign-work" `
+                      --signed-input-zip "$(Build.ArtifactStagingDirectory)/mac-sign-input.zip" `
+                      --output-wheels-dir "$(Build.ArtifactStagingDirectory)/mac-wheels-signed"
+                  displayName: Repackage mac wheels
+
+                - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+                  parameters:
+                    ArtifactPath: '$(Build.ArtifactStagingDirectory)/mac-wheels-signed'
+                    ArtifactName: 'packages_mac_signed'
+
+            - job: Sign_Windows
+              displayName: Sign Windows Wheels
+              pool:
+                name: $(WINDOWSPOOL)
+                image: $(WINDOWSVMIMAGE)
+                os: windows
+              steps:
+                - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+
+                - task: UsePythonVersion@0
+                  displayName: "Use Python $(PythonVersion)"
+                  inputs:
+                    versionSpec: $(PythonVersion)
+
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: packages_windows
+                    targetPath: $(Build.ArtifactStagingDirectory)/packages_windows
+
+                - pwsh: |
+                    python eng/scripts/wheel_signing/extract_sign_inputs.py `
+                      --platform windows `
+                      --wheels-dir "$(Build.ArtifactStagingDirectory)/packages_windows" `
+                      --work-dir "$(Build.ArtifactStagingDirectory)/win-sign-work" `
+                      --sign-input-dir "$(Build.ArtifactStagingDirectory)/win-sign-input"
+                  displayName: Extract windows wheel binaries
+
+                - template: pipelines/steps/azd-cli-win-signing.yml@azure-sdk-build-tools
+                  parameters:
+                    WinPath: "$(Build.ArtifactStagingDirectory)/win-sign-input"
+                    WinPattern: '*.pyd'
+
+                - pwsh: |
+                    python eng/scripts/wheel_signing/repackage_signed_wheels.py `
+                      --platform windows `
+                      --work-dir "$(Build.ArtifactStagingDirectory)/win-sign-work" `
+                      --signed-input-dir "$(Build.ArtifactStagingDirectory)/win-sign-input" `
+                      --output-wheels-dir "$(Build.ArtifactStagingDirectory)/win-wheels-signed"
+                  displayName: Repackage windows wheels
+
+                - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+                  parameters:
+                    ArtifactPath: '$(Build.ArtifactStagingDirectory)/win-wheels-signed'
+                    ArtifactName: 'packages_win_signed'
+
+            - job: Consolidate_Wheels
+              displayName: Consolidate Wheels
+              dependsOn:
+                - Sign_macOS
+                - Sign_Windows
+              pool:
+                name: $(LINUXPOOL)
+                image: $(LINUXVMIMAGE)
+                os: linux
+              steps:
+                - checkout: none
+
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: packages_linux
+                    targetPath: $(Build.ArtifactStagingDirectory)/packages_linux
+
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: packages_mac_signed
+                    targetPath: $(Build.ArtifactStagingDirectory)/packages_mac
+
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: packages_win_signed
+                    targetPath: $(Build.ArtifactStagingDirectory)/packages_windows
+
+                - pwsh: |
+                    $allWheelsDir = "$(Build.ArtifactStagingDirectory)/all_wheels"
+                    New-Item -ItemType Directory -Path $allWheelsDir -Force | Out-Null
+
+                    Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_linux" -Recurse -Filter "*.whl" |
+                      Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
+
+                    Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_mac" -Recurse -Filter "*.whl" |
+                      Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
+
+                    Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_windows" -Recurse -Filter "*.whl" |
+                      Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
+                  displayName: Consolidate signed wheels
+
+                - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+                  parameters:
+                    ArtifactPath: '$(Build.ArtifactStagingDirectory)/all_wheels'
+                    ArtifactName: 'packages_all_signed'
+
+          variables:
+            - template: /eng/pipelines/templates/variables/globals.yml
+            - template: /eng/pipelines/templates/variables/image.yml
+
+      # Release stage intentionally disabled for first cut while build/signing are validated.
+      # - template: archetype-python-release.yml
+      #   parameters:
+      #     DependsOn: "Sign_Wheels"
+      #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      #     Artifacts: ${{ parameters.Artifacts }}
+      #     ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+      #       TestPipeline: true
+      #     ArtifactName: packages_all_signed
+      #     DocArtifact: documentation
+      #     TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
+      #     TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
+      #     DevFeedName: ${{ parameters.DevFeedName }}
+      #     PublicFeed: ${{ parameters.PublicFeed }}
+      #     PublicPublishEnvironment: ${{ parameters.PublicPublishEnvironment }}
