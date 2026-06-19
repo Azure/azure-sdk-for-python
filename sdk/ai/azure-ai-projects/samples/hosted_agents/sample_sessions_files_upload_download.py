@@ -70,7 +70,7 @@ with (
             agent_name=agent_name,
             session_id=session.agent_session_id,
             file_path=data_file1,
-            path=remote_file_path1,
+            remote_path=remote_file_path1,
         )
 
         print(f"Uploading session file: {data_file2} -> {remote_file_path2}")
@@ -78,7 +78,7 @@ with (
             agent_name=agent_name,
             session_id=session.agent_session_id,
             file_path=data_file2,
-            path=remote_file_path2,
+            remote_path=remote_file_path2,
         )
 
         print("Listing session files for the session at path '.'...")

@@ -208,7 +208,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         session_id: str,
         *,
         content: bytes,
-        path: str,
+        remote_path: str,
         user_isolation_key: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.SessionFileWriteResult:
@@ -220,9 +220,9 @@ class AgentsOperations(GeneratedAgentsOperations):
         :type session_id: str
         :keyword content: The binary content to upload. Required.
         :paramtype content: bytes
-        :keyword path: The destination file path within the sandbox, relative to the session home
+        :keyword remote_path: The destination file path within the sandbox, relative to the session home
          directory. Required.
-        :paramtype path: str
+        :paramtype remote_path: str
         :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
          (responses, conversations, sessions) to a specific end user. Default value is None.
         :paramtype user_isolation_key: str
@@ -239,7 +239,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         session_id: str,
         *,
         file_path: Union[str, "os.PathLike[str]"],
-        path: str,
+        remote_path: str,
         user_isolation_key: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.SessionFileWriteResult:
@@ -251,9 +251,9 @@ class AgentsOperations(GeneratedAgentsOperations):
         :type session_id: str
         :keyword file_path: The full path to a local file whose contents should be uploaded. Required.
         :paramtype file_path: str or os.PathLike[str]
-        :keyword path: The destination file path within the sandbox, relative to the session home
+        :keyword remote_path: The destination file path within the sandbox, relative to the session home
          directory. Required.
-        :paramtype path: str
+        :paramtype remote_path: str
         :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
          (responses, conversations, sessions) to a specific end user. Default value is None.
         :paramtype user_isolation_key: str
@@ -272,7 +272,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         *,
         content: Optional[bytes] = None,
         file_path: Optional[Union[str, "os.PathLike[str]"]] = None,
-        path: str,
+        remote_path: str,
         user_isolation_key: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.SessionFileWriteResult:
@@ -292,9 +292,9 @@ class AgentsOperations(GeneratedAgentsOperations):
         :keyword file_path: The full path to a local file whose contents should be uploaded.
          Mutually exclusive with *content*.
         :paramtype file_path: str or os.PathLike[str]
-        :keyword path: The destination file path within the sandbox, relative to the session home
+        :keyword remote_path: The destination file path within the sandbox, relative to the session home
          directory. Required.
-        :paramtype path: str
+        :paramtype remote_path: str
         :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
          (responses, conversations, sessions) to a specific end user. Default value is None.
         :paramtype user_isolation_key: str
@@ -321,5 +321,5 @@ class AgentsOperations(GeneratedAgentsOperations):
         assert content is not None  # Guaranteed by validation above
 
         return await super()._upload_session_file(
-            agent_name, session_id, content, path=path, user_isolation_key=user_isolation_key, **kwargs
+            agent_name, session_id, content, path=remote_path, user_isolation_key=user_isolation_key, **kwargs
         )
