@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a bug where messages returned by `receive_deferred_messages` had a `lock_token` of `None`, which prevented settling (completing, abandoning, dead-lettering, deferring) or renewing the lock on a deferred message in `PEEK_LOCK` mode. The lock token is now read from the `lock-token` field of the management-link response for deferred messages. ([#42454](https://github.com/Azure/azure-sdk-for-python/issues/42454))
+
 ### Other Changes
 
 ## 7.14.2 (2025-04-09)
