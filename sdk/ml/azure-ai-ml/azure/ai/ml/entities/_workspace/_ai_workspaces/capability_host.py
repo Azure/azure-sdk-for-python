@@ -137,7 +137,7 @@ class CapabilityHost(Resource):
         :param cls: Indicates that this is a class method.
         :type cls: class
         :param rest_obj: The REST object to convert.
-        :type rest_obj: ~azure.ai.ml._restclient.v2024_10_01_preview_tsp.models._models_py3.CapabilityHost
+        :type rest_obj: ~azure.ai.ml._restclient.arm_ml_service.models.CapabilityHost
         :return: CapabilityHost object.
         :rtype: ~azure.ai.ml.entities._workspace._ai_workspaces.capability_host.CapabilityHost
         """
@@ -161,7 +161,7 @@ class CapabilityHost(Resource):
         Convert the CapabilityHost instance to a RestCapabilityHost object.
 
         :return: A RestCapabilityHost object representing the capability host for a Hub or Project workspace.
-        :rtype: azure.ai.ml._restclient.v2024_10_01_preview_tsp.models._models_py3.CapabilityHost
+        :rtype: azure.ai.ml._restclient.arm_ml_service.models.CapabilityHost
         """
 
         properties = RestCapabilityHostProperties(

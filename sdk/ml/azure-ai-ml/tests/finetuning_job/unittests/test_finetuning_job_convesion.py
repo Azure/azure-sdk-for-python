@@ -1,7 +1,7 @@
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from typing import Optional, Dict
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     UriFileJobInput,
     MLFlowModelJobInput,
 )
