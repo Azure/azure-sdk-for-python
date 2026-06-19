@@ -41,10 +41,7 @@ USAGE:
        and project are deployed.
 """
 
-import hashlib
-import io
 import os
-import zipfile
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -60,7 +57,7 @@ from azure.ai.projects.models import (
     ProtocolVersionRecord,
 )
 
-from hosted_agents_util import wait_for_agent_version_active
+from hosted_agents_util import build_code_zip, wait_for_agent_version_active
 from rbac_util import ensure_agent_identity_rbac
 
 from azure.core.exceptions import ResourceNotFoundError
@@ -81,19 +78,6 @@ _HOSTED_AGENT_SOURCE_DIR = Path(__file__).parent / "assets" / "toolbox-mcp-skill
 
 SKILL_NAME = "shipping-cost-skill"
 TOOLBOX_NAME = "toolbox_with_skill"
-
-
-def _build_code_zip(source_dir: Path) -> tuple[bytes, str]:
-    """Zip all files in *source_dir* and return ``(zip_bytes, sha256_hex)``."""
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as zf:
-        for file_path in sorted(source_dir.rglob("*")):
-            if file_path.is_file():
-                zf.write(file_path, file_path.relative_to(source_dir))
-    zip_bytes = buf.getvalue()
-    zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
-    print(f"Built code zip from {source_dir}: " f"{len(zip_bytes)} bytes, sha256={zip_sha256}")
-    return zip_bytes, zip_sha256
 
 
 def main() -> None:
@@ -138,7 +122,7 @@ def main() -> None:
 
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
 
-        zip_bytes, zip_sha256 = _build_code_zip(_HOSTED_AGENT_SOURCE_DIR)
+        zip_bytes, zip_sha256 = build_code_zip(_HOSTED_AGENT_SOURCE_DIR)
         zip_filename = "hosted-toolbox-mcp-skills-agent.zip"
 
         content = CreateAgentVersionFromCodeContent(
