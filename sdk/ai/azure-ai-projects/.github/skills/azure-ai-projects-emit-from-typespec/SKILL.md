@@ -170,7 +170,7 @@ In the folder `sdk\ai\azure-ai-projects`, run `pip install -e .` to install the 
 
 ---
 
-## Step 12: Update api.md and api.metadata.yml files
+## Step 12: Run `apiview-stub-generator` to update api.md and api.metadata.yml files
 
 In the root of the `azure-sdk-for-python` folder run the following commands
 
