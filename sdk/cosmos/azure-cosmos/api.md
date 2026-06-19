@@ -646,6 +646,7 @@ namespace azure.cosmos
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[False] = False, 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -668,6 +669,7 @@ namespace azure.cosmos
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[True], 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -690,6 +692,7 @@ namespace azure.cosmos
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[False] = False, 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -712,6 +715,7 @@ namespace azure.cosmos
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[True], 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -838,6 +842,7 @@ namespace azure.cosmos
                 analytical_storage_ttl: Optional[int] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[False] = False, 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -857,6 +862,7 @@ namespace azure.cosmos
                 analytical_storage_ttl: Optional[int] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[True], 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -890,6 +896,19 @@ namespace azure.cosmos
                 response_hook: Optional[Callable] = ..., 
                 **kwargs: Any
             ) -> UserProxy: ...
+
+
+    class azure.cosmos.GlobalSecondaryIndexDefinition:
+        property definition: str    # Read-only
+        property source_container_id: str    # Read-only
+        property source_container_rid: Optional[str]    # Read-only
+        property status: Optional[str]    # Read-only
+
+        def __init__(
+                self, 
+                source_container_id: str, 
+                definition: str
+            ): ...
 
 
     class azure.cosmos.IndexKind:
@@ -1830,6 +1849,7 @@ namespace azure.cosmos.aio
                 conflict_resolution_policy: Optional[dict[str, str]] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 indexing_policy: Optional[dict[str, str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
@@ -1851,6 +1871,7 @@ namespace azure.cosmos.aio
                 conflict_resolution_policy: Optional[dict[str, str]] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 indexing_policy: Optional[dict[str, str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
@@ -1872,6 +1893,7 @@ namespace azure.cosmos.aio
                 conflict_resolution_policy: Optional[dict[str, str]] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 indexing_policy: Optional[dict[str, str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
@@ -1893,6 +1915,7 @@ namespace azure.cosmos.aio
                 conflict_resolution_policy: Optional[dict[str, str]] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 indexing_policy: Optional[dict[str, str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 offer_throughput: Optional[Union[int, ThroughputProperties]] = ..., 
@@ -2004,6 +2027,7 @@ namespace azure.cosmos.aio
                 conflict_resolution_policy: Optional[dict[str, str]] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 indexing_policy: Optional[dict[str, str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[False] = False, 
@@ -2022,6 +2046,7 @@ namespace azure.cosmos.aio
                 conflict_resolution_policy: Optional[dict[str, str]] = ..., 
                 default_ttl: Optional[int] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 indexing_policy: Optional[dict[str, str]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[True], 
@@ -2909,6 +2934,7 @@ namespace azure.cosmos.database
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[False] = False, 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -2931,6 +2957,7 @@ namespace azure.cosmos.database
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[True], 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -2953,6 +2980,7 @@ namespace azure.cosmos.database
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[False] = False, 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -2975,6 +3003,7 @@ namespace azure.cosmos.database
                 change_feed_policy: Optional[dict[str, Any]] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[True], 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -3101,6 +3130,7 @@ namespace azure.cosmos.database
                 analytical_storage_ttl: Optional[int] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[False] = False, 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 
@@ -3120,6 +3150,7 @@ namespace azure.cosmos.database
                 analytical_storage_ttl: Optional[int] = ..., 
                 computed_properties: Optional[list[dict[str, str]]] = ..., 
                 full_text_policy: Optional[dict[str, Any]] = ..., 
+                global_secondary_index_definition: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = ..., 
                 initial_headers: Optional[dict[str, str]] = ..., 
                 return_properties: Literal[True], 
                 vector_embedding_policy: Optional[dict[str, Any]] = ..., 

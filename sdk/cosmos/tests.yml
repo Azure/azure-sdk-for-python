@@ -16,3 +16,6 @@ extends:
       MaxParallel: 8
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos
+      EnvVars:
+        GSI_ACCOUNT_HOST: $(gsi-pipeline-uri)
+        GSI_ACCOUNT_KEY: $(gsi-pipeline-key)
