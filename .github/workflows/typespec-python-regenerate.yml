@@ -130,17 +130,47 @@ jobs:
         run: |
           npm run regenerate
 
+      - name: Stage regenerated tests
+        run: |
+          set -euo pipefail
+          GENERATED_STAGE_DIR="${RUNNER_TEMP}/typespec-python-generated"
+          rm -rf "$GENERATED_STAGE_DIR"
+          mkdir -p "$GENERATED_STAGE_DIR"
+          cp -r "_typespec/packages/http-client-python/tests/generated/azure" "$GENERATED_STAGE_DIR/azure"
+          cp -r "_typespec/packages/http-client-python/tests/generated/unbranded" "$GENERATED_STAGE_DIR/unbranded"
+          echo "GENERATED_STAGE_DIR=$GENERATED_STAGE_DIR" >> "$GITHUB_ENV"
+
+      - name: Checkout generated tests source branch
+        run: |
+          set -euo pipefail
+          TARGET_BRANCH="typespec-python-generated-tests"
+          PR_NUMBER="${{ steps.typespec-info.outputs.typespec_pr_number }}"
+          if [ -n "$PR_NUMBER" ]; then
+            SOURCE_BRANCH="regen/typespec-python-pr-${PR_NUMBER}"
+          else
+            SOURCE_BRANCH="regen/typespec-python-main"
+          fi
+          if ! git fetch --no-tags --depth=1 origin "$TARGET_BRANCH" 2>/dev/null; then
+            echo "::error::Branch $TARGET_BRANCH not found. Initialize it from the generated-tests history so eng/tools/azure-sdk-tools/emitter/generated/template/README.md is present before rerunning this workflow."
+            exit 1
+          fi
+          git checkout -B "$SOURCE_BRANCH" "origin/$TARGET_BRANCH"
+
       - name: Copy regenerated tests
         run: |
           set -euo pipefail
           TARGET="eng/tools/azure-sdk-tools/emitter/generated"
           rm -rf "$TARGET/azure" "$TARGET/unbranded"
           mkdir -p "$TARGET"
-          cp -r "_typespec/packages/http-client-python/tests/generated/azure" "$TARGET/azure"
-          cp -r "_typespec/packages/http-client-python/tests/generated/unbranded" "$TARGET/unbranded"
+          cp -r "$GENERATED_STAGE_DIR/azure" "$TARGET/azure"
+          cp -r "$GENERATED_STAGE_DIR/unbranded" "$TARGET/unbranded"
 
       - name: Clean up typespec checkout
-        run: rm -rf "_typespec"
+        run: |
+          rm -rf "_typespec"
+          if [ -n "${GENERATED_STAGE_DIR:-}" ]; then
+            rm -rf "$GENERATED_STAGE_DIR"
+          fi
 
       - name: Apply README template to generated test packages
         run: |
@@ -187,32 +217,6 @@ jobs:
             SOURCE_LABEL="microsoft/typespec@main"
             SOURCE_BRANCH="regen/typespec-python-main"
           fi
-
-          # Save regenerated files to a temp dir before switching branches,
-          # since they are untracked and would be lost on checkout.
-          TMPDIR=$(mktemp -d)
-          cp -r "$GENERATED_DIR"/. "$TMPDIR"
-
-          # Ensure the target branch exists; create from origin/main if not.
-          git fetch --no-tags --depth=1 origin main
-          if ! git fetch --no-tags --depth=1 origin "$TARGET_BRANCH" 2>/dev/null; then
-            git push origin "origin/main:refs/heads/$TARGET_BRANCH"
-            git fetch --no-tags --depth=1 origin "$TARGET_BRANCH"
-          fi
-
-          # Clean up untracked generated files so checkout doesn't conflict.
-          rm -rf "$GENERATED_DIR"
-
-          # Create source branch based on the target branch.
-          git checkout -B "$SOURCE_BRANCH" "origin/$TARGET_BRANCH"
-
-          # Restore regenerated files from the temp dir.
-          mkdir -p "$GENERATED_DIR"
-          # Use ${var:?} so that if GENERATED_DIR is empty, the command aborts
-          # instead of expanding to "rm -rf /*" and deleting the filesystem.
-          rm -rf "${GENERATED_DIR:?}"/*
-          cp -r "$TMPDIR"/. "$GENERATED_DIR"
-          rm -rf "$TMPDIR"
           git add -f "$GENERATED_DIR"/
 
           if git diff --cached --quiet; then
