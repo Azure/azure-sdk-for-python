@@ -72,6 +72,8 @@ environment = "CFLAGS='-Wno-implicit-function-declaration'"
 
 [tool.cibuildwheel.linux]
 archs = "x86_64 aarch64"
+musllinux-x86_64-image = "musllinux_1_2"
+musllinux-aarch64-image = "musllinux_1_2"
 
 [tool.cibuildwheel.macos]
 archs = "arm64"
