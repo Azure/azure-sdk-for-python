@@ -334,6 +334,8 @@ class AgentsOperations(GeneratedAgentsOperations):
             with open(file_path, "rb") as f:
                 content = f.read()
 
+        assert content is not None  # Guaranteed by validation above
+
         return super()._upload_session_file(
             agent_name, session_id, content, path=path, user_isolation_key=user_isolation_key, **kwargs
         )

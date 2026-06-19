@@ -67,11 +67,11 @@ async def main():
         )
         print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
         try:
-            # Upload and list session files
+            print(f"Uploading session file: {data_file1} -> {remote_file_path1}")
             await project_client.agents.upload_session_file(
                 agent_name=agent_name,
                 session_id=session.agent_session_id,
-                content_or_file_path=data_file1,
+                file_path=data_file1,
                 path=remote_file_path1,
             )
 
@@ -79,7 +79,7 @@ async def main():
             await project_client.agents.upload_session_file(
                 agent_name=agent_name,
                 session_id=session.agent_session_id,
-                content_or_file_path=data_file2,
+                file_path=data_file2,
                 path=remote_file_path2,
             )
 
