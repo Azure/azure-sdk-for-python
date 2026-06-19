@@ -1349,7 +1349,7 @@ jobs:
           GH_AW_MAX_TURNS: ${{ vars.GH_AW_DEFAULT_MAX_TURNS || '' }}
           GH_AW_PHASE: detection
           GH_AW_PROMPT: /tmp/gh-aw/aw-prompts/prompt.txt
-          GH_AW_TIMEOUT_MINUTES: 20
+          GH_AW_TIMEOUT_MINUTES: 25
           GH_AW_VERSION: v0.79.8
           GITHUB_API_URL: ${{ github.api_url }}
           GITHUB_AW: true
