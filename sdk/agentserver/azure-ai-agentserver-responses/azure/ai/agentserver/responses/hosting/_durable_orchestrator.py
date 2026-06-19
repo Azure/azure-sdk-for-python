@@ -983,13 +983,26 @@ class DurableResponseOrchestrator:
         from ..models._generated import (
             ResponseObject,
         )  # pylint: disable=import-outside-toplevel
+        from .._response_context import (
+            IsolationContext,
+        )  # pylint: disable=import-outside-toplevel
+        from ..store._foundry_errors import (
+            FoundryResourceNotFoundError,
+        )  # pylint: disable=import-outside-toplevel
 
         _TERMINAL_STATUSES = {"completed", "failed", "cancelled", "incomplete"}
 
-        isolation = None
-        context = params.get("_context_ref")
-        if context is not None:
-            isolation = getattr(context, "isolation", None)
+        # ``_context_ref`` is a runtime-only object reference that
+        # ``_split_runtime_refs`` strips from the persisted task input, so it is
+        # ALWAYS absent here on the cross-process recovery this method serves.
+        # Rebuild the isolation context from the persisted isolation keys (same
+        # as ``_reconstruct_from_params``) so the idempotency read and the
+        # failed-marker write both target the client's partition — otherwise the
+        # marker lands in the default/unscoped partition the client never sees.
+        isolation = IsolationContext(
+            user_key=params.get("user_isolation_key"),
+            chat_key=params.get("chat_isolation_key"),
+        )
 
         # (Spec 014 T-066) Race-safe idempotent check. If the store already
         # holds a terminal response for this id, leave it alone — the crash
@@ -1031,9 +1044,12 @@ class DurableResponseOrchestrator:
             await self._provider.update_response(
                 ResponseObject(failed_response), isolation=isolation
             )
-        except KeyError:
+        except (KeyError, FoundryResourceNotFoundError):
             # Response was never persisted at response.created — try
-            # create instead so the failed terminal still lands.
+            # create instead so the failed terminal still lands. The Foundry
+            # store raises FoundryResourceNotFoundError (NOT a KeyError) for the
+            # missing-response case, so both must be caught here or the create
+            # fallback would be skipped on the production store.
             try:
                 await self._provider.create_response(
                     ResponseObject(failed_response),
