@@ -18,8 +18,6 @@ from collections.abc import Awaitable, Callable
 from typing import Any, Optional
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace as _otel_trace
-from opentelemetry.trace import Status as _OtelStatus
-from opentelemetry.trace import StatusCode as _OtelStatusCode
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
@@ -387,75 +385,6 @@ class ActivityAgentServerHost(AgentServerHost):
 
         return str(uuid.uuid4())
 
-    def _build_span_name(self) -> str:
-        agent_name = (self.config.agent_name or "").strip()
-        agent_version = (self.config.agent_version or "").strip()
-        if agent_name and agent_version:
-            return f"handle_activity {agent_name}:{agent_version}"
-        if agent_name:
-            return f"handle_activity {agent_name}"
-        return "handle_activity"
-
-    def _apply_trace_tags(
-        self,
-        span: Any,
-        session_id: str,
-        activity_id: str = "",
-        conversation_id: str = "",
-        user_isolation_key: str = "",
-        chat_isolation_key: str = "",
-        request_trace_id: str = "",
-    ) -> None:
-        """Apply OTel span attributes and baggage for Activity protocol tracing.
-
-        :param span: The active OTel span to set attributes on.
-        :param session_id: Resolved session identifier.
-        :param activity_id: Activity-specific ID (channel-assigned message ID).
-        :param conversation_id: Conversation/thread ID from Activity payload.
-        :param user_isolation_key: User partition key from x-agent-user-isolation-key header.
-        :param chat_isolation_key: Chat partition key from x-agent-chat-isolation-key header.
-        :param request_trace_id: Request trace ID from x-request-id header.
-        """
-        agent_name = (self.config.agent_name or "").strip()
-        agent_version = (self.config.agent_version or "").strip()
-        if agent_name and agent_version:
-            agent_id = f"{agent_name}:{agent_version}"
-        elif agent_name:
-            agent_id = agent_name
-        else:
-            agent_id = ""
-
-        # Required GenAI convention tags (per spec 3.2)
-        span.set_attribute("service.name", "azure.ai.agentserver")
-        span.set_attribute("gen_ai.provider.name", "AzureAI Hosted Agents")
-        span.set_attribute("gen_ai.operation.name", "handle_activity")
-        span.set_attribute("gen_ai.agent.id", agent_id)
-        if agent_name:
-            span.set_attribute("gen_ai.agent.name", agent_name)
-        if agent_version:
-            span.set_attribute("gen_ai.agent.version", agent_version)
-        # Use conversation_id if available, else session_id as fallback
-        effective_conversation_id = conversation_id or session_id
-        if effective_conversation_id:
-            span.set_attribute("gen_ai.conversation.id", effective_conversation_id)
-        if activity_id:
-            span.set_attribute("gen_ai.response.id", activity_id)
-
-        # Required namespaced tags (per spec 3.2)
-        span.set_attribute(ActivityConstants.ATTR_SPAN_SESSION_ID, session_id or "")
-        span.set_attribute(ActivityConstants.ATTR_SPAN_PROTOCOL, ActivityConstants.PROTOCOL)
-        if conversation_id:
-            span.set_attribute("azure.ai.agentserver.activity.conversation_id", conversation_id)
-        if activity_id:
-            span.set_attribute("azure.ai.agentserver.activity.activity_id", activity_id)
-        if user_isolation_key:
-            span.set_attribute("azure.ai.agentserver.user_isolation_key", user_isolation_key)
-        if chat_isolation_key:
-            span.set_attribute("azure.ai.agentserver.chat_isolation_key", chat_isolation_key)
-        if request_trace_id:
-            span.set_attribute("azure.ai.agentserver.x_request_id", request_trace_id)
-        span.set_attribute("microsoft.foundry.project.id", os.environ.get("FOUNDRY_PROJECT_ARM_ID", ""))
-
     def _add_required_response_headers(self, response: Response, session_id: str) -> None:
         response.headers[ActivityConstants.SESSION_ID_HEADER] = session_id
 
@@ -572,7 +501,6 @@ class ActivityAgentServerHost(AgentServerHost):
                 channel_id, service_url, locale, request_trace_id, request_text[:512],
             )
 
-            tracer = _otel_trace.get_tracer(self._INSTRUMENTATION_SCOPE)
             baggage_ctx = _otel_context.get_current()
             # Set all required baggage keys per spec section 3.3.
             baggage_ctx = _otel_baggage.set_baggage(
@@ -603,104 +531,47 @@ class ActivityAgentServerHost(AgentServerHost):
                 )
             baggage_token = _otel_context.attach(baggage_ctx)
 
-            with tracer.start_as_current_span(self._build_span_name()) as span:
-                self._apply_trace_tags(
-                    span,
-                    session_id,
-                    activity_id=activity_id,
-                    conversation_id=conversation_id,
-                    user_isolation_key=inbound_user_isolation_key,
-                    chat_isolation_key=inbound_chat_isolation_key,
-                    request_trace_id=request_trace_id,
+
+            try:
+                if self._handler is None:
+                    raise NotImplementedError(
+                        "No activity handler registered. Use the @app.activity() decorator "
+                        "or pass a handler= callable to ActivityAgentServerHost()."
+                    )
+                response = await self._handler(request)
+
+                response.headers[ActivityConstants.ACTIVITY_ID_HEADER] = activity_id
+                self._add_required_response_headers(response, session_id)
+
+                # Record the outbound response as a structured log.
+                status_code = getattr(response, "status_code", 0)
+                response_text = self._response_body_preview(response)
+                logger.info(
+                    "Activity response sent | status_code=%s | activity_id=%s | "
+                    "conversation_id=%s | session_id=%s | body=%s",
+                    status_code, activity_id, conversation_id, session_id, response_text,
                 )
-                # Record the inbound request as a span event with full values.
-                span.add_event(
-                    "activity.request",
-                    {
-                        "activity.type": activity_type,
-                        "activity.id": activity_id,
-                        "activity.conversation_id": conversation_id,
-                        "activity.from_id": from_id,
-                        "activity.recipient_id": recipient_id,
-                        "activity.channel_id": channel_id,
-                        "activity.service_url": service_url,
-                        "activity.locale": locale,
-                        "azure.ai.agentserver.session_id": session_id,
-                        "azure.ai.agentserver.x_request_id": request_trace_id,
-                        "activity.text": request_text[:1024],
-                    },
+                return response
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                error_source, error_detail = _classify_error(exc)
+                logger.error(
+                    "Activity request failed | activity_id=%s | conversation_id=%s | "
+                    "session_id=%s | error_source=%s | error=%s",
+                    activity_id, conversation_id, session_id, error_source, exc, exc_info=True,
                 )
-                try:
-                    if self._handler is None:
-                        raise NotImplementedError(
-                            "No activity handler registered. Use the @app.activity() decorator "
-                            "or pass a handler= callable to ActivityAgentServerHost()."
-                        )
-                    response = await self._handler(request)
 
-                    response.headers[ActivityConstants.ACTIVITY_ID_HEADER] = activity_id
-                    self._add_required_response_headers(response, session_id)
-
-                    # Record the outbound response on the span and logs.
-                    status_code = getattr(response, "status_code", 0)
-                    response_text = self._response_body_preview(response)
-                    span.set_attribute("activity.response.status_code", status_code)
-                    span.set_attribute("http.response.status_code", status_code)
-                    span.add_event(
-                        "activity.response",
-                        {
-                            "http.status_code": status_code,
-                            "activity.id": activity_id,
-                            "activity.conversation_id": conversation_id,
-                            "azure.ai.agentserver.session_id": session_id,
-                            "activity.response.body": response_text,
-                        },
-                    )
-                    logger.info(
-                        "Activity response sent | status_code=%s | activity_id=%s | "
-                        "conversation_id=%s | session_id=%s | body=%s",
-                        status_code, activity_id, conversation_id, session_id, response_text,
-                    )
-                    return response
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    error_source, error_detail = _classify_error(exc)
-                    logger.error(
-                        "Activity request failed | activity_id=%s | conversation_id=%s | "
-                        "session_id=%s | error_source=%s | error=%s",
-                        activity_id, conversation_id, session_id, error_source, exc, exc_info=True,
-                    )
-
-                    # Record error on the span (still inside `with` block).
-                    if span.is_recording():
-                        span.set_status(_OtelStatus(_OtelStatusCode.ERROR, str(exc)))
-                        span.record_exception(exc)
-                        span.set_attribute("error.type", type(exc).__name__)
-                        span.set_attribute("otel.status.description", str(exc))
-                        span.set_attribute(ActivityConstants.ATTR_SPAN_ERROR_CODE, type(exc).__name__)
-                        span.set_attribute(ActivityConstants.ATTR_SPAN_ERROR_MESSAGE, str(exc))
-                        span.add_event(
-                            "activity.error",
-                            {
-                                "error.type": type(exc).__name__,
-                                "error.message": str(exc),
-                                "error.source": error_source,
-                                "activity.id": activity_id,
-                                "azure.ai.agentserver.session_id": session_id,
-                            },
-                        )
-
-                    response = create_error_response(
-                        "internal_error",
-                        "Internal server error",
-                        status_code=500,
-                        headers=_apply_error_source_headers(
-                            {ActivityConstants.ACTIVITY_ID_HEADER: activity_id},
-                            error_source,
-                            error_detail,
-                        ),
-                    )
-                    self._add_required_response_headers(response, session_id)
-                    return response
+                response = create_error_response(
+                    "internal_error",
+                    "Internal server error",
+                    status_code=500,
+                    headers=_apply_error_source_headers(
+                        {ActivityConstants.ACTIVITY_ID_HEADER: activity_id},
+                        error_source,
+                        error_detail,
+                    ),
+                )
+                self._add_required_response_headers(response, session_id)
+                return response
         finally:
             _session_id_var.reset(session_token)
             _user_isolation_key_var.reset(user_token)
