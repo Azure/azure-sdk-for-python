@@ -3,6 +3,7 @@ parameters:
   TestPipeline: false
   ArtifactName: 'not-specified'
   ServiceDirectory: 'not-specified'
+  SkipPrValidation: false
   DependsOn: Build
   DocArtifact: 'documentation'
   DevFeedName: 'public/azure-sdk-for-python'
@@ -20,7 +21,7 @@ stages:
         dependsOn: ${{parameters.DependsOn}}
         variables:
           - template: /eng/pipelines/templates/variables/image.yml
-        condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+        condition: and(succeeded(), not(and(eq(${{ parameters.SkipPrValidation }}, true), eq(variables['Build.Reason'], 'Manual'))), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
         jobs:
           - job: TagRepository
             displayName: "Create release tag"

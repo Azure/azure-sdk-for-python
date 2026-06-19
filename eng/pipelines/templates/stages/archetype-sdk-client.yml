@@ -143,18 +143,18 @@ extends:
           - template: /eng/pipelines/templates/variables/globals.yml
           - template: /eng/pipelines/templates/variables/image.yml
 
-      - ${{ if not(and(eq(parameters.SkipPrValidation, true), eq(variables['Build.Reason'], 'Manual'))) }}:
-        - template: archetype-python-release.yml
-          parameters:
-            DependsOn: "Build"
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            Artifacts: ${{ parameters.Artifacts }}
-            ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-              TestPipeline: true
-            ArtifactName: packages_extended
-            DocArtifact: documentation
-            TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
-            TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
-            DevFeedName: ${{ parameters.DevFeedName }}
-            PublicFeed: ${{ parameters.PublicFeed }}
-            PublicPublishEnvironment: ${{ parameters.PublicPublishEnvironment }}
+      - template: archetype-python-release.yml
+        parameters:
+          DependsOn: "Build"
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          SkipPrValidation: ${{ parameters.SkipPrValidation }}
+          Artifacts: ${{ parameters.Artifacts }}
+          ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+            TestPipeline: true
+          ArtifactName: packages_extended
+          DocArtifact: documentation
+          TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
+          TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
+          DevFeedName: ${{ parameters.DevFeedName }}
+          PublicFeed: ${{ parameters.PublicFeed }}
+          PublicPublishEnvironment: ${{ parameters.PublicPublishEnvironment }}
