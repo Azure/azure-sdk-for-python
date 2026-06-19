@@ -214,11 +214,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-    import sys
-
-    models_module = sys.modules[__name__.rsplit(".", 1)[0]]
-    # DebugInfo is an empty model in the 2026-04-01 API and should not be
-    # part of the public API surface.
-    all_list = getattr(models_module, "__all__", None)
-    if all_list is not None and "DebugInfo" in all_list:
-        all_list.remove("DebugInfo")

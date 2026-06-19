@@ -49,10 +49,6 @@ class AutocompleteResult(_Model):
     """The list of returned Autocompleted items. Required."""
 
 
-class DebugInfo(_Model):
-    """Contains debugging information that can be used to further explore your search results."""
-
-
 class DocumentDebugInfo(_Model):
     """Contains debugging information that can be used to further explore your search results.
 

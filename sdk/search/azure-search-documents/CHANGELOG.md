@@ -16,7 +16,7 @@
 
 ### Other Changes
 
-- Internalized `DebugInfo` model (empty in this API version; no longer part of the public API surface)
+- Removed `DebugInfo` model (empty in this API version; no longer part of the public API surface)
 
 ## 12.0.0 (2026-04-01)
 

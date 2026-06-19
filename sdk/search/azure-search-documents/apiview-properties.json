@@ -56,7 +56,6 @@
         "azure.search.documents.indexes.models.DataChangeDetectionPolicy": "Search.DataChangeDetectionPolicy",
         "azure.search.documents.indexes.models.DataDeletionDetectionPolicy": "Search.DataDeletionDetectionPolicy",
         "azure.search.documents.indexes.models.DataSourceCredentials": "Search.DataSourceCredentials",
-        "azure.search.documents.models.DebugInfo": "Search.DebugInfo",
         "azure.search.documents.indexes.models.DefaultCognitiveServicesAccount": "Search.DefaultCognitiveServicesAccount",
         "azure.search.documents.indexes.models.DictionaryDecompounderTokenFilter": "Search.DictionaryDecompounderTokenFilter",
         "azure.search.documents.indexes.models.ScoringFunction": "Search.ScoringFunction",
