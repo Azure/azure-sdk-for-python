@@ -13,6 +13,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
+
 @pytest.mark.live_test_only
 class TestQumuloMgmtFileSystemsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
@@ -26,4 +27,3 @@ class TestQumuloMgmtFileSystemsOperationsAsync(AzureMgmtRecordedTestCase):
         )
         result = [r async for r in response]
         assert result == []
-        
