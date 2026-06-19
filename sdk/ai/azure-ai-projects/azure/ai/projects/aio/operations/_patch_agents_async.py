@@ -208,6 +208,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         content_or_file_path: "bytes | str",
         *,
         path: str,
+        user_isolation_key: Optional[str] = None,        
         **kwargs: Any,
     ) -> _models.SessionFileWriteResult:
         """Upload a file to the session sandbox.
@@ -227,6 +228,9 @@ class AgentsOperations(GeneratedAgentsOperations):
         :keyword path: The destination file path within the sandbox, relative to the session home
          directory. Required.
         :paramtype path: str
+        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
+         (responses, conversations, sessions) to a specific end user. Default value is None.
+        :paramtype user_isolation_key: str        
         :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with
          MutableMapping
         :rtype: ~azure.ai.projects.models.SessionFileWriteResult
@@ -246,4 +250,4 @@ class AgentsOperations(GeneratedAgentsOperations):
         else:
             content = content_or_file_path
 
-        return await super()._upload_session_file(agent_name, session_id, content, path=path, **kwargs)
+        return await super()._upload_session_file(agent_name, session_id, content, path=path, user_isolation_key=user_isolation_key, **kwargs)
