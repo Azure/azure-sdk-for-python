@@ -122,7 +122,7 @@ extends:
           - template: /eng/pipelines/templates/variables/image.yml
 
       - ${{ if eq(parameters.ServiceDirectory, 'storage') }}:
-        - stage: Sign_Wheels
+        - stage: Sign_Binaries
           displayName: Sign Extension Wheels
           dependsOn: Build
           condition: succeeded()
@@ -152,9 +152,11 @@ extends:
                       --sign-input-zip "$(Build.ArtifactStagingDirectory)/mac-sign-input.zip"
                   displayName: Extract mac wheel binaries
 
-                - pwsh: |
-                    Write-Host "NOOP signing step for mac binaries."
-                  displayName: Sign mac binaries (NOOP)
+                - template: pipelines/steps/azd-cli-mac-signing.yml@azure-sdk-build-tools
+                  parameters:
+                    MacPath: "$(Build.ArtifactStagingDirectory)"
+                    MacPattern: "mac-sign-input.zip"
+                    Notarize: false
 
                 - pwsh: |
                     python eng/scripts/wheel_signing/repackage_signed_wheels.py `
@@ -167,7 +169,7 @@ extends:
                 - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
                   parameters:
                     ArtifactPath: '$(Build.ArtifactStagingDirectory)/mac-wheels-signed'
-                    ArtifactName: 'mac_packages_signed'
+                    ArtifactName: 'packages_mac_signed'
 
             - job: Sign_Windows
               displayName: Sign Windows Wheels
@@ -194,9 +196,10 @@ extends:
                       --sign-input-dir "$(Build.ArtifactStagingDirectory)/win-sign-input"
                   displayName: Extract windows wheel binaries
 
-                - pwsh: |
-                    Write-Host "NOOP signing step for windows binaries."
-                  displayName: Sign windows binaries (NOOP)
+                - template: pipelines/steps/azd-cli-win-signing.yml@azure-sdk-build-tools
+                  parameters:
+                    WinPath: "$(Build.ArtifactStagingDirectory)/win-sign-input"
+                    WinPattern: '*.pyd'
 
                 - pwsh: |
                     python eng/scripts/wheel_signing/repackage_signed_wheels.py `
@@ -209,7 +212,7 @@ extends:
                 - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
                   parameters:
                     ArtifactPath: '$(Build.ArtifactStagingDirectory)/win-wheels-signed'
-                    ArtifactName: 'win_packages_signed'
+                    ArtifactName: 'packages_win_signed'
 
             - job: Consolidate_Wheels
               displayName: Consolidate Wheels
@@ -228,12 +231,12 @@ extends:
 
                 - task: DownloadPipelineArtifact@2
                   inputs:
-                    artifactName: mac_packages_signed
+                    artifactName: packages_mac_signed
                     targetPath: $(Build.ArtifactStagingDirectory)/packages_mac
 
                 - task: DownloadPipelineArtifact@2
                   inputs:
-                    artifactName: win_packages_signed
+                    artifactName: packages_win_signed
                     targetPath: $(Build.ArtifactStagingDirectory)/packages_windows
 
                 - pwsh: |
