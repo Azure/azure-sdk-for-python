@@ -6,6 +6,7 @@
 # cSpell:disable
 import json
 import io
+import openai
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
@@ -141,7 +142,15 @@ class TestAgentCrud(TestBase):
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
-        openai_client = project_client.get_openai_client()
+        # Intentionally use Agent Endpoint here for Responses calls (by giving `agent_name`). Async tests will use Project
+        # endpoint instead, so we cover both endpoint.
+        openai_client = project_client.get_openai_client(agent_name=agent_name)
+
+        # Delete any existing agent from previous test runs (ignore failures)
+        try:
+            project_client.agents.delete(agent_name=agent_name)
+        except Exception:
+            pass
 
         # Create an Agent
         agent = project_client.agents.create_version(
@@ -173,17 +182,16 @@ class TestAgentCrud(TestBase):
         print(f"Agent disabled")
 
         # Verify requests fail when agent is disabled
-        # TODO: Why does this call succeed, even though the Agent is disabled?
-        # error_raised = False
-        # try:
-        #     _ = openai_client.responses.create(
-        #         conversation=conversation.id,
-        #         extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        #     )
-        # except Exception as e:
-        #     error_raised = True
-        #     print(f"Expected error when calling disabled agent: {e}")
-        # assert error_raised, "Expected an error when calling a disabled agent"
+        error_raised = False
+        try:
+            _ = openai_client.responses.create(
+                conversation=conversation.id,
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+            )
+        except openai.PermissionDeniedError as e:
+            error_raised = True
+            print(f"Expected error when calling disabled agent: {e}")
+        assert error_raised, "Expected an error when calling a disabled agent"
 
         # Enable the agent
         project_client.agents.enable(agent_name=agent_name)

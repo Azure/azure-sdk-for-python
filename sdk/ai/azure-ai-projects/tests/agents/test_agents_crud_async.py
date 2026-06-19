@@ -6,6 +6,7 @@
 # cSpell:disable
 import json
 import io
+import openai
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
@@ -131,9 +132,18 @@ class TestAgentCrudAsync(TestBase):
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
+        # Intentionally use Project Endpoint here for Responses calls (by not giving `agent_name`). Sync tests will use Agent
+        # endpoint instead, so we cover both endpoint.
         openai_client = project_client.get_openai_client()
 
         async with project_client:
+
+            # Delete any existing agent from previous test runs (ignore failures)
+            try:
+                await project_client.agents.delete(agent_name=agent_name)
+            except Exception:
+                pass
+
             # Create an Agent
             agent = await project_client.agents.create_version(
                 agent_name=agent_name,
@@ -164,17 +174,16 @@ class TestAgentCrudAsync(TestBase):
             print("Agent disabled")
 
             # Verify requests fail when agent is disabled
-            # TODO: Why does this call succeed, even though the Agent is disabled?
-            # error_raised = False
-            # try:
-            #     _ = await openai_client.responses.create(
-            #         conversation=conversation.id,
-            #         extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-            #     )
-            # except Exception as e:
-            #     error_raised = True
-            #     print(f"Expected error when calling disabled agent: {e}")
-            # assert error_raised, "Expected an error when calling a disabled agent"
+            error_raised = False
+            try:
+                _ = await openai_client.responses.create(
+                    conversation=conversation.id,
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+                )
+            except openai.PermissionDeniedError as e:
+                error_raised = True
+                print(f"Expected error when calling disabled agent: {e}")
+            assert error_raised, "Expected an error when calling a disabled agent"
 
             # Enable the agent
             await project_client.agents.enable(agent_name=agent_name)
