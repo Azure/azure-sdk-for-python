@@ -47,9 +47,9 @@ with (
     # ------------------------------------------------------------------
     print("Listing optimization jobs (limit=10):")
     count = 0
-    for job in project_client.beta.agents.list_optimization_jobs(limit=10):
-        agent_str = job.agent.agent_name if job.agent else "?"
-        print(f"  {job.id} | status={job.status} | agent={agent_str}")
+    for job_list_item in project_client.beta.agents.list_optimization_jobs(limit=10):
+        agent_str = job_list_item.agent.agent_name if job_list_item.agent else "?"
+        print(f"  {job_list_item.id} | status={job_list_item.status} | agent={agent_str}")
         count += 1
     print(f"  ({count} jobs listed)\n")
 
@@ -59,8 +59,8 @@ with (
     if agent_name:
         print(f"Listing jobs for agent '{agent_name}' (limit=10):")
         count = 0
-        for job in project_client.beta.agents.list_optimization_jobs(agent_name=agent_name, limit=10):
-            print(f"  {job.id} | status={job.status}")
+        for job_list_item in project_client.beta.agents.list_optimization_jobs(agent_name=agent_name, limit=10):
+            print(f"  {job_list_item.id} | status={job_list_item.status}")
             count += 1
         print(f"  ({count} jobs)\n")
 
@@ -69,8 +69,8 @@ with (
     # ------------------------------------------------------------------
     print(f"Listing succeeded jobs (limit=5):")
     count = 0
-    for job in project_client.beta.agents.list_optimization_jobs(status=JobStatus.SUCCEEDED, limit=5):
-        print(f"  {job.id}")
+    for job_list_item in project_client.beta.agents.list_optimization_jobs(status=JobStatus.SUCCEEDED, limit=5):
+        print(f"  {job_list_item.id}")
         count += 1
     print(f"  ({count} succeeded jobs)\n")
 
