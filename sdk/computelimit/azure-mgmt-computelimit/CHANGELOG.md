@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0 (2026-06-17)
+## 1.2.0 (2026-06-20)
 
 ### Features Added
 
@@ -13,8 +13,8 @@
   - Added model `SetMemberCapOverridesResult`
   - Added model `SharedLimitCap`
   - Added model `SharedLimitCapProperties`
-  - Added operation group `MemberCapOverridesOperations`
-  - Added operation group `SharedLimitCapsOperations`
+  - Added model `MemberCapOverridesOperations`
+  - Added model `SharedLimitCapsOperations`
 
 ## 1.1.0 (2026-05-26)
 

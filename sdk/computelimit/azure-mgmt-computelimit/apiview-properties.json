@@ -81,5 +81,5 @@
         "azure.mgmt.computelimit.operations.MemberCapOverridesOperations.list_by_parent": "Microsoft.ComputeLimit.MemberCapOverrides.listByParent",
         "azure.mgmt.computelimit.aio.operations.MemberCapOverridesOperations.list_by_parent": "Microsoft.ComputeLimit.MemberCapOverrides.listByParent"
     },
-    "CrossLanguageVersion": "716dbef7fdca"
+    "CrossLanguageVersion": "93dafd596341"
 }
