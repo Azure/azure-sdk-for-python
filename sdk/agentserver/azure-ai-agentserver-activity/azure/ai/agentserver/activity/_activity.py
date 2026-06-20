@@ -17,10 +17,12 @@ import uuid
 from collections.abc import Awaitable, Callable
 from typing import Any, Optional
 
-from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace as _otel_trace
+from opentelemetry import baggage as _otel_baggage
+from opentelemetry import context as _otel_context
+from opentelemetry import trace as _otel_trace
 from opentelemetry.context import Token
 from starlette.requests import Request
-from starlette.responses import JSONResponse, Response
+from starlette.responses import Response
 from starlette.routing import Route
 
 from azure.ai.agentserver.core import AgentServerHost, create_error_response
@@ -48,7 +50,10 @@ _protocol_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_pr
 
 
 def _enrich_record(record: logging.LogRecord) -> None:
-    """Populate activity scope fields on a log record from the current context."""
+    """Populate activity scope fields on a log record from the current context.
+
+    :param record: The log record to enrich.
+    """
     if not hasattr(record, "SessionId"):
         record.SessionId = _session_id_var.get("")  # type: ignore[attr-defined]
     if not hasattr(record, "UserIsolationKey"):
@@ -199,6 +204,10 @@ def _sanitize_id(value: str) -> str:
 
     Accepts alphanumeric characters plus ``-_.:`` up to 256 characters.
     Returns a fallback UUID for invalid or oversized values.
+
+    :param value: The ID value to sanitize.
+    :return: A sanitized ID or a UUID string.
+    :rtype: str
     """
     if not value or len(value) > _MAX_ID_LENGTH or not _SAFE_ID_PATTERN.match(value):
         return str(uuid.uuid4())
@@ -206,7 +215,12 @@ def _sanitize_id(value: str) -> str:
 
 
 def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
-    """Classify an exception: platform-tagged -> (platform, detail), else -> (upstream, None)."""
+    """Classify an exception: platform-tagged -> (platform, detail), else -> (upstream, None).
+
+    :param exc: The exception to classify.
+    :return: A tuple of (source, detail) where source is 'platform' or 'upstream'.
+    :rtype: tuple[str, Optional[str]]
+    """
     if getattr(exc, PLATFORM_ERROR_TAG, False) is True:
         detail = f"{type(exc).__name__}: {exc}"
         if len(detail) > MAX_ERROR_DETAIL_LENGTH:
@@ -341,6 +355,8 @@ class ActivityAgentServerHost(AgentServerHost):
 
         :param activity_type: The activity type to handle (e.g., "message", "invoke").
         :type activity_type: str
+        :return: A decorator function.
+        :rtype: Callable
         """
         def decorator(fn):
             from ._m365_bridge import _get_or_create_lazy_app
@@ -363,6 +379,9 @@ class ActivityAgentServerHost(AgentServerHost):
                 await context.send_activity(f"Error: {error}")
 
         :param fn: Async error handler function.
+        :type fn: Callable
+        :return: The error handler function.
+        :rtype: Callable
         """
         from ._m365_bridge import _get_or_create_lazy_app
         lazy_app = _get_or_create_lazy_app()
@@ -391,7 +410,15 @@ class ActivityAgentServerHost(AgentServerHost):
 
     @staticmethod
     def _response_body_preview(response: Response, limit: int = 1024) -> str:
-        """Return a truncated text preview of a response body for logging."""
+        """Return a truncated text preview of a response body for logging.
+
+        :param response: The response object.
+        :type response: Response
+        :param limit: Maximum number of characters to return.
+        :type limit: int
+        :return: A text preview of the response body.
+        :rtype: str
+        """
         body = getattr(response, "body", None)
         if not body:
             return ""
@@ -405,7 +432,16 @@ class ActivityAgentServerHost(AgentServerHost):
         return text[:limit]
 
     async def _create_activity_endpoint(self, request: Request) -> Response:
-        """Handle inbound POST to /activity/messages or /api/messages."""
+        """Handle inbound POST to /activity/messages or /api/messages.
+
+        Processes activity protocol requests, manages context variables,
+        ensures logging enrichment, and orchestrates the activity handler.
+
+        :param request: The inbound HTTP request.
+        :type request: Request
+        :return: The HTTP response.
+        :rtype: Response
+        """
         # Resolve correlation identifiers from headers up-front so that every
         # log line and span produced during this turn carries the values.
         inbound_conversation_id = request.headers.get(ActivityConstants.CONVERSATION_ID_HEADER, "")
