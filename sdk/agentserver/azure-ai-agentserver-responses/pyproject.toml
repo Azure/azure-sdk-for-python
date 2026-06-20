@@ -69,3 +69,4 @@ azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
 [tool.azure-sdk-build]
 verifytypes = false
 latestdependency = false
+mindependency = false
