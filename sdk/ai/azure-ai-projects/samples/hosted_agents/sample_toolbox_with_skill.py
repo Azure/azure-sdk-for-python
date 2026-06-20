@@ -42,7 +42,12 @@ USAGE:
 """
 
 import os
+import sys
 from pathlib import Path
+
+_SAMPLES_DIR = Path(__file__).resolve().parents[1]
+if str(_SAMPLES_DIR) not in sys.path:
+    sys.path.insert(0, str(_SAMPLES_DIR))
 
 from dotenv import load_dotenv
 
@@ -57,8 +62,9 @@ from azure.ai.projects.models import (
     ProtocolVersionRecord,
 )
 
-from hosted_agents_util import build_code_zip, wait_for_agent_version_active
+from hosted_agents_util import wait_for_agent_version_active
 from rbac_util import ensure_agent_identity_rbac
+from util import build_skill_zip
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
@@ -122,8 +128,8 @@ def main() -> None:
 
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
 
-        zip_bytes, zip_sha256 = build_code_zip(_HOSTED_AGENT_SOURCE_DIR)
         zip_filename = "hosted-toolbox-mcp-skills-agent.zip"
+        zip_bytes, zip_sha256, _ = build_skill_zip(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
 
         content = CreateAgentVersionFromCodeContent(
             metadata=CreateAgentVersionFromCodeMetadata(

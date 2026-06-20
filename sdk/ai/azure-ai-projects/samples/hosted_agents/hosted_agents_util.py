@@ -1,10 +1,15 @@
 import asyncio
 import hashlib
-import io
+import sys
 import time
-import zipfile
 from pathlib import Path
 from typing import Tuple
+
+_SAMPLES_DIR = Path(__file__).resolve().parents[1]
+if str(_SAMPLES_DIR) not in sys.path:
+    sys.path.insert(0, str(_SAMPLES_DIR))
+
+from util import build_skill_zip
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
@@ -35,7 +40,7 @@ def select_echo_agent_code_zip(
 
     if use_remote_build:
         zip_filename = "echo-agent.zip"
-        zip_bytes, zip_sha256 = build_code_zip(_ASSETS_DIR / "echo-agent")
+        zip_bytes, zip_sha256, _ = build_skill_zip(_ASSETS_DIR / "echo-agent", zip_filename)
     else:
         zip_filename = "echo-agent-prebuilt.zip"
         zip_path = _ASSETS_DIR / zip_filename
@@ -47,23 +52,6 @@ def select_echo_agent_code_zip(
         )
 
     return dependency_resolution, zip_filename, zip_bytes, zip_sha256
-
-
-def build_code_zip(source_dir: Path) -> Tuple[bytes, str]:
-    """Zip all files in *source_dir* deterministically and return ``(zip_bytes, sha256_hex)``."""
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_STORED) as zf:
-        for file_path in sorted(source_dir.rglob("*")):
-            if file_path.is_file():
-                arcname = file_path.relative_to(source_dir).as_posix()
-                zip_info = zipfile.ZipInfo(arcname, date_time=(1980, 1, 1, 0, 0, 0))
-                zip_info.compress_type = zipfile.ZIP_STORED
-                zip_info.external_attr = 0o644 << 16
-                zf.writestr(zip_info, file_path.read_bytes())
-    zip_bytes = buf.getvalue()
-    zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
-    print(f"Built code zip from {source_dir}: " f"{len(zip_bytes)} bytes, sha256={zip_sha256}")
-    return zip_bytes, zip_sha256
 
 
 def wait_for_agent_version_active(
