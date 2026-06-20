@@ -21,37 +21,43 @@ def select_echo_agent_code_zip(
 ) -> Tuple[CodeDependencyResolution, str, bytes, str]:
     """Pick the dependency-resolution mode and matching echo-agent zip, and load it.
 
-    When ``use_remote_build`` is ``True``, returns REMOTE_BUILD with
-    ``assets/echo-agent.zip``; otherwise BUNDLED with
-    ``assets/echo-agent-prebuilt.zip``.
+    When ``use_remote_build`` is ``True``, returns REMOTE_BUILD with a zip
+    built from ``assets/echo-agent/``; otherwise BUNDLED with
+    the checked-in ``assets/echo-agent-prebuilt.zip``.
 
-    Reads the zip bytes, computes its SHA-256, and prints a one-line summary.
+    Computes the zip SHA-256 and prints a one-line summary.
 
     Returns ``(dependency_resolution, zip_filename, zip_bytes, zip_sha256)``.
     """
     dependency_resolution = (
         CodeDependencyResolution.REMOTE_BUILD if use_remote_build else CodeDependencyResolution.BUNDLED
     )
-    zip_filename = "echo-agent.zip" if use_remote_build else "echo-agent-prebuilt.zip"
-    zip_path = _ASSETS_DIR / zip_filename
-    zip_bytes = zip_path.read_bytes()
-    zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
-    print(
-        f"Loaded code zip from {zip_path} (dependency_resolution={dependency_resolution.value}): "
-        f"{len(zip_bytes)} bytes, sha256={zip_sha256}"
-    )
+
+    if use_remote_build:
+        zip_filename = "echo-agent.zip"
+        zip_bytes, zip_sha256 = build_code_zip(_ASSETS_DIR / "echo-agent")
+    else:
+        zip_filename = "echo-agent-prebuilt.zip"
+        zip_path = _ASSETS_DIR / zip_filename
+        zip_bytes = zip_path.read_bytes()
+        zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
+        print(
+            f"Loaded code zip from {zip_path} (dependency_resolution={dependency_resolution.value}): "
+            f"{len(zip_bytes)} bytes, sha256={zip_sha256}"
+        )
+
     return dependency_resolution, zip_filename, zip_bytes, zip_sha256
 
 
 def build_code_zip(source_dir: Path) -> Tuple[bytes, str]:
     """Zip all files in *source_dir* deterministically and return ``(zip_bytes, sha256_hex)``."""
     buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+    with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_STORED) as zf:
         for file_path in sorted(source_dir.rglob("*")):
             if file_path.is_file():
                 arcname = file_path.relative_to(source_dir).as_posix()
                 zip_info = zipfile.ZipInfo(arcname, date_time=(1980, 1, 1, 0, 0, 0))
-                zip_info.compress_type = zipfile.ZIP_DEFLATED
+                zip_info.compress_type = zipfile.ZIP_STORED
                 zip_info.external_attr = 0o644 << 16
                 zf.writestr(zip_info, file_path.read_bytes())
     zip_bytes = buf.getvalue()

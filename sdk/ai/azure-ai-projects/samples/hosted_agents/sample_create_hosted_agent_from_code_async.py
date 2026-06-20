@@ -13,12 +13,12 @@ DESCRIPTION:
     The dependency resolution mode is selected via the
     `FOUNDRY_HOSTED_AGENT_REMOTE_BUILD` environment variable (default: `false`):
 
-    * `false` (BUNDLED) — uploads `assets/echo-agent-prebuilt.zip`, which
-      bundles the agent source plus a `packages/` folder with Linux-built
-      dependencies, so the service skips pip entirely.
-    * `true` (REMOTE_BUILD) — uploads `assets/echo-agent.zip`, which contains
-      only the agent source plus `requirements.txt`; the service resolves
-      dependencies remotely from the public package index.
+        * `false` (BUNDLED) — uploads `assets/echo-agent-prebuilt.zip`, which
+            bundles the agent source plus a `packages/` folder with Linux-built
+            dependencies, so the service skips pip entirely.
+        * `true` (REMOTE_BUILD) — zips and uploads `assets/echo-agent/`, which
+            contains only the agent source plus `requirements.txt`; the service
+            resolves dependencies remotely from the public package index.
 
     The agent must already exist; create it with
     `samples/hosted_agents/sample_create_hosted_agent_async.py`.
