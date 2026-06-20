@@ -18,6 +18,7 @@ from collections.abc import Awaitable, Callable
 from typing import Any, Optional
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace as _otel_trace
+from opentelemetry.context import Token
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
@@ -421,7 +422,7 @@ class ActivityAgentServerHost(AgentServerHost):
         user_token = _user_isolation_key_var.set(inbound_user_isolation_key)
         chat_token = _chat_isolation_key_var.set(inbound_chat_isolation_key)
         protocol_token = _protocol_var.set(ActivityConstants.PROTOCOL)
-        baggage_token: Optional[object] = None
+        baggage_token: Optional[Token[Any]] = None
 
         try:
             logger.debug(
@@ -538,7 +539,7 @@ class ActivityAgentServerHost(AgentServerHost):
                         "No activity handler registered. Use the @app.activity() decorator "
                         "or pass a handler= callable to ActivityAgentServerHost()."
                     )
-                response = await self._handler(request)
+                response: Response = await self._handler(request)  # type: ignore[assignment]
 
                 response.headers[ActivityConstants.ACTIVITY_ID_HEADER] = activity_id
                 self._add_required_response_headers(response, session_id)
