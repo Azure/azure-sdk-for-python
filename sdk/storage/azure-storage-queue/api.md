@@ -35,7 +35,7 @@ namespace azure.storage.queue
         ) -> str: ...
 
 
-    class azure.storage.queue.AccessPolicy(GenAccessPolicy):
+    class azure.storage.queue.AccessPolicy(_BackCompatMixin):
         expiry: Optional[Union[datetime, str]]
         permission: Optional[Union[QueueSasPermissions, str]]
         start: Optional[Union[datetime, str]]
@@ -171,7 +171,7 @@ namespace azure.storage.queue
         def encode(self, content: bytes) -> str: ...
 
 
-    class azure.storage.queue.CorsRule(GeneratedCorsRule):
+    class azure.storage.queue.CorsRule(_BackCompatMixin):
         allowed_headers: str
         allowed_methods: str
         allowed_origins: str
@@ -305,7 +305,7 @@ namespace azure.storage.queue
         SECONDARY = secondary
 
 
-    class azure.storage.queue.Metrics(GeneratedMetrics):
+    class azure.storage.queue.Metrics(_BackCompatMixin):
         enabled: bool = False
         include_apis: Optional[bool]
         retention_policy: RetentionPolicy
@@ -362,7 +362,7 @@ namespace azure.storage.queue
             ) -> JSON: ...
 
 
-    class azure.storage.queue.QueueAnalyticsLogging(GeneratedLogging):
+    class azure.storage.queue.QueueAnalyticsLogging(_BackCompatMixin):
         delete: bool = False
         read: bool = False
         retention_policy: RetentionPolicy
@@ -725,7 +725,7 @@ namespace azure.storage.queue
                 process: bool = False
             ) -> None: ...
 
-        def __str__(self): ...
+        def __str__(self) -> str: ...
 
         @classmethod
         def from_string(cls, permission: str) -> Self: ...
@@ -859,7 +859,7 @@ namespace azure.storage.queue
         def from_string(cls, string: str) -> ResourceTypes: ...
 
 
-    class azure.storage.queue.RetentionPolicy(GeneratedRetentionPolicy):
+    class azure.storage.queue.RetentionPolicy(_BackCompatMixin):
         days: Optional[int]
         enabled: bool = False
 

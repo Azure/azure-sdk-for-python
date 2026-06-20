@@ -78,6 +78,7 @@ class TestRunOutputDirectory:
         token_file=False,
         isolate=False,
         install_deps=False,
+        dest_dir=None,
     ):
         return argparse.Namespace(
             target=".",
@@ -86,6 +87,7 @@ class TestRunOutputDirectory:
             service=None,
             token_file=token_file,
             install_deps=install_deps,
+            dest_dir=dest_dir,
         )
 
     @patch(
@@ -272,6 +274,59 @@ class TestRunOutputDirectory:
         assert os.path.exists(os.path.join(str(tmp_path), "api.md"))
         assert os.path.exists(os.path.join(str(tmp_path), "api.metadata.yml"))
         assert os.path.exists(os.path.join(str(tmp_path), "azure-core_python.json"))
+
+    @patch(
+        "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    )
+    @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
+    @patch("azpysdk.apistub.get_package_wheel_path", return_value="/fake/pkg.whl")
+    @patch("azpysdk.apistub.create_package_and_install")
+    @patch("azpysdk.apistub.install_into_venv")
+    @patch("azpysdk.apistub.set_envvar_defaults")
+    def test_outputs_use_custom_destination_directory(
+        self, _env, _install, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
+    ):
+        """When --dest-dir is passed, generated files should go to that directory."""
+        monkeypatch.chdir(os.getcwd())
+        stub = apistub()
+        staging = str(tmp_path / "staging")
+        dest_dir = tmp_path / "artifacts"
+        os.makedirs(staging, exist_ok=True)
+        fake_parsed = MagicMock()
+        fake_parsed.folder = str(tmp_path)
+        fake_parsed.name = "azure-core"
+
+        captured_cmds = []
+
+        def fake_apistub_run(exe, cmds, **kwargs):
+            captured_cmds.append(cmds)
+            out_idx = cmds.index("--out-path")
+            out_dir = cmds[out_idx + 1]
+            open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
+
+        def fake_pwsh(cmd, **kwargs):
+            out_idx = cmd.index("-OutputPath")
+            out_dir = cmd[out_idx + 1]
+            open(os.path.join(out_dir, "api.md"), "w").close()
+            return MagicMock(returncode=0)
+
+        with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
+            stub, "get_executable", return_value=(sys.executable, staging)
+        ), patch.object(stub, "install_dev_reqs"), patch.object(stub, "pip_freeze"), patch.object(
+            stub, "ensure_apistub_dependencies"
+        ), patch.object(
+            stub, "run_venv_command", side_effect=fake_apistub_run
+        ), patch(
+            "azpysdk.apistub.run", side_effect=fake_pwsh
+        ):
+            stub.run(self._make_args(dest_dir=str(dest_dir)))
+
+        assert len(captured_cmds) == 1
+        cmds = captured_cmds[0]
+        out_idx = cmds.index("--out-path")
+        assert cmds[out_idx + 1] == os.path.abspath(str(dest_dir))
+        assert os.path.exists(os.path.join(str(dest_dir), "api.md"))
+        assert os.path.exists(os.path.join(str(dest_dir), "azure-core_python.json"))
 
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
