@@ -27,7 +27,7 @@ def _make_async_proxy(rid="rid-cached"):
     cc._container_properties_cache = cache
     cc.container_properties_cache = cache
 
-    cc._rust_backend = None
+    cc._backend = None
     cc.DeleteItem = AsyncMock(return_value=None)
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -88,7 +88,7 @@ class TestAsyncContainerDeleteItemRouting(unittest.IsolatedAsyncioTestCase):
         existing client is not called and the call returns nothing."""
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
-        cc._rust_backend = backend
+        cc._backend = backend
 
         result = await proxy.delete_item("delete_item", "a")
 

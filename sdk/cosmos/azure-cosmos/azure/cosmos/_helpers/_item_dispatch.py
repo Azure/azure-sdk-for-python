@@ -13,7 +13,7 @@ the two helpers cannot drift. Nothing here performs I/O.
 from __future__ import annotations
 
 import warnings
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, cast
 
 from .._availability_strategy_config import _validate_request_hedging_strategy
 from .._backend.base import CosmosBackend
@@ -67,7 +67,7 @@ def merge_create_item_explicit_kwargs(
 
 
 def pick_backend(client_connection: Any) -> Optional[CosmosBackend]:
-    """Return the wired Rust backend, or ``None`` for the legacy path.
+    """Return the wired backend, or ``None`` for the legacy path.
 
     A ``None`` return is the signal for the helper to fall through to
     the legacy client-connection method (``CreateItem`` / ``ReadItem``
@@ -75,11 +75,14 @@ def pick_backend(client_connection: Any) -> Optional[CosmosBackend]:
     decision is made once at client construction and never reconsidered
     per call.
 
-    :param client_connection: The connection that owns the
-        ``_rust_backend`` attribute. Missing attribute is tolerated.
-    :returns: The Rust backend instance, or ``None``.
+    :param client_connection: The connection that owns the ``_backend``
+        attribute. A missing attribute is tolerated.
+    :returns: The backend instance, or ``None``.
     """
-    return getattr(client_connection, "_rust_backend", None)
+    connection_dict = getattr(client_connection, "__dict__", None)
+    if isinstance(connection_dict, dict):
+        return cast(Optional[CosmosBackend], connection_dict.get("_backend"))
+    return cast(Optional[CosmosBackend], getattr(client_connection, "_backend", None))
 
 
 def build_create_item_request_options(
@@ -394,5 +397,3 @@ def build_patch_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     request_options = build_options(kwargs)
     request_options["disableAutomaticIdGeneration"] = True
     return request_options
-
-

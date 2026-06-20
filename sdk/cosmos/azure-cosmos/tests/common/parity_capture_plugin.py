@@ -49,7 +49,7 @@ the relevant ``ContainerProxy`` class (sync at
   3. Snapshots ``container.client_connection.last_response_headers``
      post-call.
   4. Reads the backend label from
-     ``container.client_connection._rust_backend`` (``None`` →
+     ``container.client_connection._backend`` (``None`` →
      ``core-python``, else → ``rust``).
   5. Emits one ``===PARITY-CAPTURE-START===\\n{json}\\n===PARITY-CAPTURE-END===``
      fenced block to ``sys.stdout``.
@@ -331,7 +331,7 @@ _STATE = _CaptureState()
 # ---------------------------------------------------------------------------
 
 def _infer_backend_label(container_self: Any) -> str:
-    """Read ``_rust_backend`` off the live client_connection.
+    """Read ``_backend`` off the live client_connection.
 
     ``None`` → ``"core-python"``, anything else → ``"rust"``. If the
     env-var override is set, it wins (used by integration tests of the
@@ -343,8 +343,8 @@ def _infer_backend_label(container_self: Any) -> str:
         cc = getattr(container_self, "client_connection", None)
         if cc is None:
             return "unknown"
-        rust = getattr(cc, "_rust_backend", None)
-        return "rust" if rust is not None else "core-python"
+        backend = getattr(cc, "_backend", None)
+        return "rust" if backend is not None else "core-python"
     except Exception:  # pylint: disable=broad-except
         return "unknown"
 

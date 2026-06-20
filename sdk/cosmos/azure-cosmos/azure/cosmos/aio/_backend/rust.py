@@ -14,16 +14,14 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import threading
 from typing import Any, Optional
 
 from azure.cosmos._backend.base import (
-    OP_CREATE_ITEM,
-    OP_DELETE_ITEM,
-    OP_PATCH_ITEM,
-    OP_READ_ITEM,
-    OP_REPLACE_ITEM,
-    OP_UPSERT_ITEM,
-    normalize_response_headers,
+    OP_TO_BINDING_METHOD,
+    PreparedClientConfig,
+    build_backend_response,
+    init_client_args,
 )
 from azure.cosmos._backend.constants import BACKEND_NAME_RUST
 
@@ -43,6 +41,7 @@ except ImportError:
     )
 
 
+
 class AsyncRustBackend(AsyncCosmosBackend):
     """Sends async operations to the Rust driver.
 
@@ -54,63 +53,93 @@ class AsyncRustBackend(AsyncCosmosBackend):
 
     name = BACKEND_NAME_RUST
 
-    def __init__(self, endpoint: str, master_key: str) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        master_key: Optional[str] = None,
+        client_config: Optional[PreparedClientConfig] = None,
+        token_credential: Optional[Any] = None,
+    ) -> None:
         self._endpoint = endpoint
         self._master_key = master_key
-        # A "handle" is the ID the Rust driver hands back from init_client().
-        # It stands for the real Cosmos client that lives *inside* the Rust
-        # module -- the object that actually owns the HTTPS connection pool,
-        # the signed master-key auth state, and the endpoint/region routing.
-        # Python cannot hold that Rust object directly across the language
-        # boundary, so it keeps this token instead and passes it back into
-        # Rust on every call (read/create/replace/...). It is critical because
-        # every operation must run against that *one* already-built client:
-        # init_client() does the expensive setup (open connections, prepare
-        # auth) once, and handing the same handle back is what lets later calls
-        # skip all of that. None means "not built yet" -- _ensure_handle()
-        # creates it lazily on the first operation, under a lock so two
-        # first-callers don't each build (and then leak) a separate client.
+        # A synchronous token credential (e.g. an azure-identity credential),
+        # or ``None`` for master-key auth. Exactly one of ``master_key`` /
+        # ``token_credential`` is set by the factory. When present it is handed
+        # to init_client, which wraps it so the Rust driver can call its
+        # ``get_token`` during request signing. (The factory rejects async
+        # credentials, so this is always synchronous.)
+        self._token_credential = token_credential
+        # Client-construction settings (e.g. preferred_locations) carried into
+        # the driver on the first init_client call. ``None`` means "nothing to
+        # carry" -- init_client then behaves exactly as the two-argument form.
+        self._client_config = client_config
+        # Opaque token from init_client() that names the live Rust-side client
+        # (it owns the connection pool, auth, and routing). Built lazily on the
+        # first operation and reused; None means "not built yet". The lock is a
+        # thread lock (not asyncio) because init runs on an executor thread, and
+        # it keeps the first concurrent caller the only one that builds.
         self._handle: Optional[str] = None
-        # An asyncio lock is tied to the event loop it is first used on,
-        # so the lock is created later, on the running loop, instead of
-        # here where there may be no loop yet.
-        self._handle_lock: Optional[asyncio.Lock] = None
-        self._handle_lock_loop: Optional[asyncio.AbstractEventLoop] = None
+        self._handle_lock = threading.Lock()
 
-    def _handle_lock_for_loop(self) -> asyncio.Lock:
-        """Return a lock tied to the running event loop.
-
-        An asyncio lock is tied to the first loop that uses it, so a
-        single lock made in the constructor would break if this backend
-        were ever used from a second loop. Making it on the running loop,
-        and keyed by that loop, avoids that.
-        """
-        loop = asyncio.get_running_loop()
-        if self._handle_lock is None or self._handle_lock_loop is not loop:
-            self._handle_lock = asyncio.Lock()
-            self._handle_lock_loop = loop
-        return self._handle_lock
-
-    async def _ensure_handle(self) -> str:
-        # If the handle is already built, return it without locking.
-        handle = self._handle
-        if handle is not None:
-            return handle
+    def _init_handle_with_lock(self) -> str:
         if _rust_module is None:
             raise NotImplementedError(
                 "AsyncRustBackend: the compiled azure.cosmos._rust "
                 "module is not present in this environment. Build it "
                 "with `maturin develop` from the repo root."
             )
-        # Build it once. The lock, with a second check inside, keeps
-        # concurrent first callers from each building one.
-        async with self._handle_lock_for_loop():
+        with self._handle_lock:
             if self._handle is None:
-                loop = asyncio.get_running_loop()
-                self._handle = await loop.run_in_executor(
-                    None, _rust_module.init_client, self._endpoint, self._master_key
+                self._handle = _rust_module.init_client(
+                    *init_client_args(
+                        self._endpoint,
+                        self._master_key,
+                        self._client_config,
+                        self._token_credential,
+                    )
                 )
             return self._handle
+
+    def _take_handle_for_close(self) -> Optional[str]:
+        with self._handle_lock:
+            handle = self._handle
+            self._handle = None
+            return handle
+
+    async def _ensure_handle(self) -> str:
+        # If the handle is already built, return it without locking.
+        handle = self._handle
+        if handle is not None:
+            return handle
+        loop = asyncio.get_running_loop()
+        return await loop.run_in_executor(None, self._init_handle_with_lock)
+
+    async def close(self) -> None:
+        """Release the Rust client handle from the process cache."""
+        handle = self._take_handle_for_close()
+        if handle is None or _rust_module is None:
+            return
+        close_client = getattr(_rust_module, "close_client", None)
+        if close_client is None:
+            return
+        loop = asyncio.get_running_loop()
+        try:
+            await loop.run_in_executor(None, close_client, handle)
+        except Exception:  # pylint: disable=broad-except
+            _LOGGER.debug("AsyncRustBackend.close failed for handle=%s", handle, exc_info=True)
+
+    def __del__(self) -> None:
+        try:
+            handle = self._take_handle_for_close()
+            if handle is None or _rust_module is None:
+                return
+            close_client = getattr(_rust_module, "close_client", None)
+            if close_client is None:
+                return
+            close_client(handle)
+        except Exception:  # pylint: disable=broad-except
+            # Never raise from object finalization.
+            pass
 
     async def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
         """Entry point every point operation (read/create/upsert/replace/delete/patch) goes through to reach the Rust driver."""
@@ -126,39 +155,11 @@ class AsyncRustBackend(AsyncCosmosBackend):
 
         handle = await self._ensure_handle()
         loop = asyncio.get_running_loop()
-        if prepared.op == OP_CREATE_ITEM:
-            status_code, sub_status, headers, body = await loop.run_in_executor(
-                None, _rust_module.create_item, handle, prepared
-            )
-        elif prepared.op == OP_UPSERT_ITEM:
-            status_code, sub_status, headers, body = await loop.run_in_executor(
-                None, _rust_module.upsert_item, handle, prepared
-            )
-        elif prepared.op == OP_REPLACE_ITEM:
-            status_code, sub_status, headers, body = await loop.run_in_executor(
-                None, _rust_module.replace_item, handle, prepared
-            )
-        elif prepared.op == OP_DELETE_ITEM:
-            status_code, sub_status, headers, body = await loop.run_in_executor(
-                None, _rust_module.delete_item, handle, prepared
-            )
-        elif prepared.op == OP_READ_ITEM:
-            status_code, sub_status, headers, body = await loop.run_in_executor(
-                None, _rust_module.read_item, handle, prepared
-            )
-        elif prepared.op == OP_PATCH_ITEM:
-            status_code, sub_status, headers, body = await loop.run_in_executor(
-                None, _rust_module.patch_item, handle, prepared
-            )
-        else:
+        binding_method = OP_TO_BINDING_METHOD.get(prepared.op)
+        if binding_method is None:
             raise NotImplementedError(
                 "AsyncRustBackend.execute does not yet support op={!r}.".format(prepared.op)
             )
-
-        return BackendResponse(
-            status_code=int(status_code),
-            sub_status=int(sub_status),
-            headers=normalize_response_headers(headers),
-            body=bytes(body) if body else b"",
-            diagnostics=None,
-        )
+        dispatch = getattr(_rust_module, binding_method)
+        result = await loop.run_in_executor(None, dispatch, handle, prepared)
+        return build_backend_response(*result)

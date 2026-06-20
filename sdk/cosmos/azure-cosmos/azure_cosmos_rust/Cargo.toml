@@ -35,6 +35,11 @@ azure_data_cosmos_driver = { path = "../../../../../azure-sdk-for-rust/sdk/cosmo
 # what bridges Python's sync call into Rust's async world.
 tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
 
+# `async-trait` is required to implement the driver/azure_core `TokenCredential`
+# trait (an `async fn` trait method) for the Python-backed credential bridge.
+async-trait = { workspace = true }
+
+# Parsing the account endpoint when constructing AccountReference.
 # Parsing the account endpoint when constructing AccountReference.
 url = { workspace = true }
 

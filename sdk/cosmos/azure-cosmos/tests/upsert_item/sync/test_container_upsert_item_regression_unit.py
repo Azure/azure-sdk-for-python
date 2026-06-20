@@ -13,7 +13,7 @@ moved the last three steps into ``ItemHelper`` (the same path
 backends share the prep code.
 
 These tests pin the **core-python fall-through path**: with no rust
-backend wired (``_rust_backend = None``), the helper builds the
+backend wired (``_backend = None``), the helper builds the
 options, stamps the rid, and calls ``client_connection.UpsertItem`` --
 exactly the path the default (v4) client takes. The rust backend now
 has its own ``upsert_item`` entry point; that dispatch path is covered
@@ -62,9 +62,9 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc._container_properties_cache = cache
     cc.container_properties_cache = cache  # legacy alias used by the proxy
 
-    # No rust backend wired -- absence of ``_rust_backend`` makes the
+    # No rust backend wired -- absence of ``_backend`` makes the
     # dispatch fall through to ``client_connection.UpsertItem``.
-    cc._rust_backend = None
+    cc._backend = None
     cc.UpsertItem = MagicMock(return_value={"id": "x", "_rid": rid})
 
     proxy = ContainerProxy(cc, "dbs/db", "c")

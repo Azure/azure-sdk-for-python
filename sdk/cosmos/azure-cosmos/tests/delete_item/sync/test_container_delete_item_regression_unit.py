@@ -42,7 +42,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc.container_properties_cache = cache  # the container also reads the cache under this name
 
     # No Rust backend, so the delete goes to the existing client.
-    cc._rust_backend = None
+    cc._backend = None
     cc.DeleteItem = MagicMock(return_value=None)
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -181,7 +181,7 @@ class TestContainerDeleteItemBackendRouting(unittest.TestCase):
         existing client is not called and the call returns nothing."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
-        cc._rust_backend = backend
+        cc._backend = backend
 
         result = proxy.delete_item("delete_item", "a")
 

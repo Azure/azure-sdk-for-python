@@ -5,19 +5,40 @@
 # -------------------------------------------------------------------------
 """Abstract async backend type plus re-exports of the data classes.
 
-Same shape as the sync ABC, except ``execute`` is a coroutine so the
-async container can ``await`` it without bridging threads.
-``PreparedRequest`` and ``BackendResponse`` are shared with the sync
-side (they carry pure data with no I/O).
+Same as the sync ``CosmosBackend``, except ``execute`` is a coroutine so the
+async container can ``await`` it without bridging threads. ``execute_pages``
+and ``execute_batch`` are reserved here too and raise ``NotImplementedError``
+until the query and batch operations are added.
+
+``PreparedRequest`` / ``BackendResponse`` and the reserved ``PreparedQuery`` /
+``QueryPage`` / ``PreparedBatch`` / ``BatchResponse`` are defined on the sync
+side (they carry pure data with no I/O) and re-exported here.
 """
 from __future__ import annotations
 
 import abc
-from typing import Optional
+from typing import AsyncIterator, Optional
 
-from azure.cosmos._backend.base import BackendResponse, PreparedRequest
+from azure.cosmos._backend.base import (
+    BackendReply,
+    BackendResponse,
+    BatchResponse,
+    PreparedBatch,
+    PreparedQuery,
+    PreparedRequest,
+    QueryPage,
+)
 
-__all__ = ["AsyncCosmosBackend", "PreparedRequest", "BackendResponse"]
+__all__ = [
+    "AsyncCosmosBackend",
+    "BackendReply",
+    "BackendResponse",
+    "BatchResponse",
+    "PreparedBatch",
+    "PreparedQuery",
+    "PreparedRequest",
+    "QueryPage",
+]
 
 
 class AsyncCosmosBackend(abc.ABC):
@@ -46,4 +67,34 @@ class AsyncCosmosBackend(abc.ABC):
         the caller parse the result.
         """
         ...
+
+    # --- Reserved methods for the query and batch operations ---------------
+    #
+    # Concrete (not abstract) so today's async backends stay valid without
+    # implementing them. A backend adds query or batch support by overriding
+    # the method; this class does not change.
+
+    def execute_pages(self, prepared: PreparedQuery) -> AsyncIterator[QueryPage]:
+        """Return a query (or read-many) result one ``QueryPage`` at a time.
+
+        Reserved: the query operations are not implemented yet, so this raises.
+        A backend that supports them overrides it as an async iterator of
+        ``QueryPage`` (using ``QUERY_TO_BINDING_METHOD``).
+        """
+        raise NotImplementedError(
+            "execute_pages is reserved for the query and read-many operations "
+            "and is not implemented yet."
+        )
+
+    async def execute_batch(self, prepared: PreparedBatch) -> BatchResponse:
+        """Run a transactional batch and return one result per operation.
+
+        Reserved: the batch operation is not implemented yet, so this raises.
+        A backend that supports it overrides it (using
+        ``BATCH_TO_BINDING_METHOD``).
+        """
+        raise NotImplementedError(
+            "execute_batch is reserved for the transactional-batch operation "
+            "and is not implemented yet."
+        )
 

@@ -50,7 +50,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc.container_properties_cache = cache  # the container also reads the cache under this name
 
     # No Rust backend, so the patch goes to the existing client.
-    cc._rust_backend = None
+    cc._backend = None
     cc.PatchItem = MagicMock(return_value={"id": "patch_item", "_rid": rid})
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -220,7 +220,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         """
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
-        cc._rust_backend = backend
+        cc._backend = backend
 
         proxy.patch_item("patch_item", "a", _OPERATIONS)
 
@@ -244,7 +244,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         can't apply it). It goes to the existing client, which can."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
-        cc._rust_backend = backend
+        cc._backend = backend
 
         proxy.patch_item(
             "patch_item", "a", _OPERATIONS,
@@ -263,7 +263,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         backend. It goes to the existing client, which applies the guard."""
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
-        cc._rust_backend = backend
+        cc._backend = backend
 
         proxy.patch_item(
             "patch_item", "a", _OPERATIONS,

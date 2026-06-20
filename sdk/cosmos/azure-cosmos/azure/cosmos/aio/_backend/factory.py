@@ -17,10 +17,14 @@ helper treats absence of a backend as the signal to use the legacy
 """
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Optional, Sequence
 
 from azure.cosmos._backend.constants import BACKEND_NAME_RUST
-from azure.cosmos._backend.factory import _master_key_or_raise, resolve_backend_name
+from azure.cosmos._backend.factory import (
+    _resolve_credential,
+    build_client_config,
+    resolve_backend_name,
+)
 
 from .base import AsyncCosmosBackend
 from .rust import AsyncRustBackend
@@ -31,12 +35,19 @@ def make_async_backend(
     *,
     url: Optional[str] = None,
     credential: Any = None,
+    preferred_locations: Optional[Sequence[str]] = None,
+    excluded_locations: Optional[Sequence[str]] = None,
+    throttling_max_retry_count: Optional[int] = None,
+    throttling_max_retry_wait_time_seconds: Optional[float] = None,
+    availability_strategy: Any = None,
 ) -> Optional[AsyncCosmosBackend]:
     """Build the backend instance an async ``CosmosClient`` will hold.
 
     Returns an :class:`AsyncRustBackend` when Rust is selected, or
-    ``None`` when core-python is selected. ``url`` and ``credential``
-    are only consulted for the Rust branch.
+    ``None`` when core-python is selected. The keyword settings are only
+    consulted for the Rust branch, where they are folded into the client
+    config (via the shared :func:`build_client_config`) the backend carries
+    to the driver.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:
@@ -44,7 +55,19 @@ def make_async_backend(
             raise ValueError(
                 "_backend='rust' requires the account endpoint URL."
             )
-        return AsyncRustBackend(endpoint=url, master_key=_master_key_or_raise(credential))
+        master_key, token_credential = _resolve_credential(credential)
+        return AsyncRustBackend(
+            endpoint=url,
+            master_key=master_key,
+            token_credential=token_credential,
+            client_config=build_client_config(
+                preferred_locations,
+                excluded_locations=excluded_locations,
+                throttling_max_retry_count=throttling_max_retry_count,
+                throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
+                availability_strategy=availability_strategy,
+            ),
+        )
     return None
 
 

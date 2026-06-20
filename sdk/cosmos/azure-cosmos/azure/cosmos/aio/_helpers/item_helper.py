@@ -33,6 +33,7 @@ from ..._helpers._request_prep import (
 from ..._helpers._response_parse import parse_backend_response
 from ...partition_key import _Empty
 from .._backend.base import AsyncCosmosBackend
+from ._metadata_provider import AsyncContainerMetadataProvider
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -63,7 +64,11 @@ class AsyncItemHelper:
         """
         self._backend = backend
         self.client_connection = client_connection
-        self._ensure_container_cached = ensure_container_cached
+        # Reads the container rid and partition-key definition off one container
+        # read (async version of the sync provider), instead of calling the
+        # connection's ``_container_properties_cache`` / ``_AddPartitionKey``
+        # directly.
+        self._metadata = AsyncContainerMetadataProvider(client_connection, ensure_container_cached)
 
     async def _resolve_container_rid(
         self,
@@ -75,17 +80,11 @@ class AsyncItemHelper:
         Async version of the sync method. Best-effort: if the id cannot be
         found the request still goes out, just without the header that
         guards against a recreated container. On success the id is stored
-        in the options and returned.
+        in the options and returned. The lookup is delegated to the async
+        metadata provider; the best-effort policy stays here.
         """
         try:
-            if self._ensure_container_cached is not None:
-                await self._ensure_container_cached(request_options)
-            else:
-                cache = self.client_connection._container_properties_cache
-                if container_link not in cache:
-                    await self.client_connection._refresh_container_properties_cache(container_link)
-            cached = self.client_connection._container_properties_cache[container_link]
-            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            rid_value = await self._metadata.container_rid(container_link, request_options)
             if isinstance(rid_value, str):
                 request_options[Constants.ContainerRID] = rid_value
                 return rid_value
@@ -164,22 +163,13 @@ class AsyncItemHelper:
         request_options: Dict[str, Any],
     ) -> Any:
         """Find the partition-key value to send. Async version of the sync method."""
-        if "partitionKey" in request_options:
-            return request_options["partitionKey"]
         try:
-            new_options = await self.client_connection._AddPartitionKey(
-                container_link, body, request_options
-            )
-            if isinstance(new_options, dict):
-                request_options.update(new_options)
-                return new_options.get("partitionKey", _Empty())
+            return await self._metadata.extract_partition_key(container_link, body, request_options)
         except (AttributeError, TypeError):
-            # Only the stub connections used in unit tests reach here (no
-            # extraction method, or a stub that is not callable). A real
-            # extraction error is left to propagate so a wrong partition
-            # key fails loudly instead of writing to the wrong place.
-            pass
-        return _Empty()
+            # Only the stub connections used in unit tests reach here. A real
+            # extraction error is left to propagate so a wrong partition key
+            # fails loudly instead of writing to the wrong place.
+            return _Empty()
 
     async def delete_item(
         self,

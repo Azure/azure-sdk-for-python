@@ -33,7 +33,7 @@ def _make_async_proxy(rid="rid-cached"):
     cc._container_properties_cache = cache
     cc.container_properties_cache = cache
 
-    cc._rust_backend = None
+    cc._backend = None
     cc.PatchItem = AsyncMock(return_value={"id": "patch_item", "_rid": rid})
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -82,7 +82,7 @@ class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
         not called."""
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
-        cc._rust_backend = backend
+        cc._backend = backend
 
         await proxy.patch_item("patch_item", "a", _OPERATIONS)
 
@@ -96,7 +96,7 @@ class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
         backend."""
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
-        cc._rust_backend = backend
+        cc._backend = backend
 
         await proxy.patch_item(
             "patch_item", "a", _OPERATIONS,

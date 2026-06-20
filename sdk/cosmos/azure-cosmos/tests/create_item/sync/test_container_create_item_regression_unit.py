@@ -65,9 +65,9 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc.container_properties_cache = cache  # legacy alias used by the proxy
 
     # No rust backend wired in this test fixture — the absence of
-    # ``_rust_backend`` is the signal for the dispatch site to fall
+    # ``_backend`` is the signal for the dispatch site to fall
     # through to ``client_connection.CreateItem`` directly.
-    cc._rust_backend = None
+    cc._backend = None
     cc.CreateItem = MagicMock(return_value={"id": "x", "_rid": rid})
 
     proxy = ContainerProxy(cc, "dbs/db", "c")

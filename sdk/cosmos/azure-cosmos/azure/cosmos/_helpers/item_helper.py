@@ -26,6 +26,7 @@ from ._item_dispatch import (
     build_read_item_request_options,
     build_upsert_item_request_options,
 )
+from ._metadata_provider import ContainerMetadataProvider
 from ._request_prep import (
     build_create_item_prepared,
     build_delete_item_prepared,
@@ -66,7 +67,11 @@ class ItemHelper:
         """
         self._backend = backend
         self.client_connection = client_connection
-        self._ensure_container_cached = ensure_container_cached
+        # Reads the two container facts the request prep needs (the rid and the
+        # partition-key definition) off one container read, instead of calling
+        # the connection's ``_container_properties_cache`` / ``_AddPartitionKey``
+        # directly.
+        self._metadata = ContainerMetadataProvider(client_connection, ensure_container_cached)
 
     def _resolve_container_rid(
         self,
@@ -78,17 +83,12 @@ class ItemHelper:
         Shared by every operation. Best-effort: if the id cannot be found
         the request still goes out, just without the header that guards
         against a recreated container. On success the id is stored in the
-        options and returned.
+        options and returned. The lookup itself is delegated to the
+        metadata provider; this method keeps the best-effort policy
+        (logging a miss, stamping the header).
         """
         try:
-            if self._ensure_container_cached is not None:
-                self._ensure_container_cached(request_options)
-            else:
-                cache = self.client_connection._container_properties_cache
-                if container_link not in cache:
-                    self.client_connection._refresh_container_properties_cache(container_link)
-            cached = self.client_connection._container_properties_cache[container_link]
-            rid_value = cached.get("_rid") if isinstance(cached, dict) else None
+            rid_value = self._metadata.container_rid(container_link, request_options)
             if isinstance(rid_value, str):
                 request_options[Constants.ContainerRID] = rid_value
                 return rid_value
@@ -170,26 +170,20 @@ class ItemHelper:
         """Find the partition-key value to send.
 
         Order of preference: the value the caller already set, then the
-        value taken from the body, then an empty placeholder when the
-        connection cannot extract one (the stub connections used in unit
-        tests).
+        value the metadata provider digs out of the body (using the
+        container's partition-key definition), then an empty placeholder
+        when the connection cannot provide a definition (the stub
+        connections used in unit tests). Replaces the old direct borrow of
+        the connection's ``_AddPartitionKey``.
         """
-        if "partitionKey" in request_options:
-            return request_options["partitionKey"]
         try:
-            new_options = self.client_connection._AddPartitionKey(
-                container_link, body, request_options
-            )
-            if isinstance(new_options, dict):
-                request_options.update(new_options)
-                return new_options.get("partitionKey", _Empty())
+            return self._metadata.extract_partition_key(container_link, body, request_options)
         except (AttributeError, TypeError):
             # Only the stub connections used in unit tests reach here (no
-            # extraction method, or a stub that is not callable). A real
+            # cache/read method, or a stub that is not callable). A real
             # extraction error is left to propagate so a wrong partition
             # key fails loudly instead of writing to the wrong place.
-            pass
-        return _Empty()
+            return _Empty()
 
     def delete_item(
         self,

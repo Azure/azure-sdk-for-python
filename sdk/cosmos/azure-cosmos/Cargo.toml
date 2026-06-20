@@ -33,16 +33,20 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(test_category, values("emu
 # Workspace-level dependencies. Used by the binding crate (azure_cosmos_rust)
 # via `.workspace = true`.
 #
-# IMPORTANT: `azure_core` and `azure_identity` MUST resolve to the same crate
-# instances the external driver uses, otherwise types like `azure_core::Result`
-# and `azure_core::Error` end up duplicated and the binding fails to compile
-# with "expected struct `azure_core::Error`, found struct `azure_core::Error`".
-# Both repos are expected to live side-by-side under the same parent directory
-# (e.g. ~/source/repos/). If you keep them elsewhere, edit these paths.
+# IMPORTANT: `azure_core` MUST resolve to the same crate instance the external
+# driver uses, otherwise azure_core-native types (e.g. `TokenCredential`,
+# `AccessToken`, `azure_core::Error`) end up duplicated and the binding fails to
+# compile with "two different versions of crate `azure_core`". The driver
+# (azure_data_cosmos_driver) depends on the published `azure_core 1.0.0` from
+# crates.io, so the binding pins the same published version here rather than the
+# sibling clone's unpublished path version (which is a different version and
+# would not unify). azure_identity is only needed by the driver's own dev-tests,
+# not the binding, so it stays a path dep.
 # -----------------------------------------------------------------------------
 [workspace.dependencies]
-# --- azure-sdk-for-rust crates, sourced from the sibling clone ---
-azure_core     = { path = "../../../../azure-sdk-for-rust/sdk/core/azure_core" }
+# --- azure-sdk-for-rust crates ---
+# azure_core pinned to the driver's published version so the two unify.
+azure_core     = "1.0.0"
 azure_identity = { path = "../../../../azure-sdk-for-rust/sdk/identity/azure_identity" }
 
 # --- crates.io deps the binding uses ---

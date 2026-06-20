@@ -31,8 +31,8 @@ from azure.core.paging import ItemPaged
 from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
 
+from ._backend.base import CosmosBackend, raise_account_read_unsupported
 from ._backend.factory import make_backend
-from ._backend.rust import RustBackend
 from ._base import build_options, _set_throughput_options
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
@@ -244,10 +244,28 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # ``None`` for ``core-python`` — ``None`` is the signal that
         # container methods should use the legacy ``CreateItem`` path.
         backend_choice = kwargs.pop("_backend", None)
-        chosen = make_backend(backend_choice, url=url, credential=credential)
-        self._rust_backend: Optional[RustBackend] = (
-            chosen if isinstance(chosen, RustBackend) else None
+        # Read (don't pop) the startup settings the Rust backend can carry to the
+        # driver; the legacy connection policy still receives them via **kwargs
+        # below. The retry dials mirror _build_connection_policy's precedence
+        # (retry_throttle_* wins over the generic retry_* knob via `or`), and map
+        # to the driver's throttle-retry caps. ``availability_strategy`` is read
+        # as-is: ``None`` (absent) carries nothing, ``False`` disables hedging,
+        # ``True``/dict carry the hedge threshold.
+        chosen = make_backend(
+            backend_choice,
+            url=url,
+            credential=credential,
+            preferred_locations=kwargs.get("preferred_locations"),
+            excluded_locations=kwargs.get("excluded_locations"),
+            throttling_max_retry_count=(
+                kwargs.get("retry_throttle_total") or kwargs.get("retry_total")
+            ),
+            throttling_max_retry_wait_time_seconds=(
+                kwargs.get("retry_throttle_backoff_max") or kwargs.get("retry_backoff_max")
+            ),
+            availability_strategy=kwargs.get("availability_strategy"),
         )
+        self._backend: Optional[CosmosBackend] = chosen
         logging.getLogger(__name__).info(
             "Cosmos client constructed with default backend=%s",
             chosen.name if chosen is not None else "core-python",
@@ -266,7 +284,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         # Expose the chosen backend on client_connection so Container
         # methods can dispatch on it (they only see client_connection).
-        self.client_connection._rust_backend = self._rust_backend  # pylint: disable=protected-access
+        self.client_connection._backend = self._backend  # pylint: disable=protected-access
 
     def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
@@ -279,6 +297,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         try:
             return self.client_connection.pipeline_client.__exit__(*args)
         finally:
+            try:
+                backend = getattr(self.client_connection, "_backend", None)
+                close_backend = getattr(backend, "close", None)
+                if callable(close_backend):
+                    close_backend()
+            except Exception:  # pylint: disable=broad-except
+                pass
             try:
                 self.client_connection._routing_map_provider.release()  # pylint: disable=protected-access
             except Exception:  # pylint: disable=broad-except
@@ -807,6 +832,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
         :rtype: ~azure.cosmos.DatabaseAccount
         """
+        # On a Rust-backed client, fail loudly instead of silently using the
+        # legacy core-python connection -- the Rust path doesn't surface the
+        # account read yet (a tracked gap).
+        raise_account_read_unsupported(self._backend)
         result = self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)

@@ -31,7 +31,7 @@ def _make_async_proxy(rid="rid-cached"):
     cc._container_properties_cache = cache
     cc.container_properties_cache = cache
 
-    cc._rust_backend = None
+    cc._backend = None
     cc.ReadItem = AsyncMock(return_value={"id": "read_item", "_rid": rid})
 
     proxy = ContainerProxy(cc, "dbs/db", "c")
@@ -92,7 +92,7 @@ class TestAsyncContainerReadItemRouting(unittest.IsolatedAsyncioTestCase):
         client is not called."""
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
-        cc._rust_backend = backend
+        cc._backend = backend
 
         result = await proxy.read_item("read_item", "a")
 
