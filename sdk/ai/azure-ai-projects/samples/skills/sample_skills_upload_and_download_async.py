@@ -29,7 +29,7 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
 
-    This sample builds and uploads `samples/hosted_agents/assets/canvas-design/`.
+    This sample builds and uploads `samples/skills/assets/canvas-design/`.
 """
 
 import asyncio
@@ -59,7 +59,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 download_folder = Path(tempfile.gettempdir()).resolve()
 skill_name = "canvas-design"
 skill_zip_filename = "canvas-design.zip"
-skill_source_dir = Path(__file__).parent / "../hosted_agents/assets/canvas-design"
+skill_source_dir = Path(__file__).parent / "assets/canvas-design"
 
 
 async def main() -> None:
