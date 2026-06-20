@@ -20,8 +20,8 @@ classifiers = [
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b4",
-    "azure-ai-agentserver-responses>=1.0.0b1",
+    "azure-ai-agentserver-core>=2.0.0a1",
+    "azure-ai-agentserver-responses>=1.0.0a1",
     "github-copilot-sdk>=0.2.0,<0.3.0",
     "azure-identity",
     "httpx>=0.24.0",
