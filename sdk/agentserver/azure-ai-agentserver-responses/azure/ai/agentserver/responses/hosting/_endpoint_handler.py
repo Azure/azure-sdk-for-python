@@ -661,7 +661,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         str_token = _streaming_var.set(str(ctx.stream).lower())
         # Bind platform context so handler/tool code making raw outbound 1P calls
         # can forward the per-request call ID and user ID (protocol 2.0.0).
-        pctx_token = set_request_context(
+        platform_ctx_token = set_request_context(
             RequestContext(
                 call_id=ctx.call_id or None,
                 user_id=ctx.user_id or None,
@@ -766,7 +766,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _response_id_var.reset(rid_token)
             _conversation_id_var.reset(cid_token)
             _streaming_var.reset(str_token)
-            reset_request_context(pctx_token)
+            reset_request_context(platform_ctx_token)
             # Flush pending spans before the response is sent.
             # BatchSpanProcessor exports on a timer; in hosted sandboxes
             # the platform may freeze the process after the HTTP response,
