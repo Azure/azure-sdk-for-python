@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Container protocol version `2.0.0` support: the per-request call ID (`x-agent-foundry-call-id`) and global user ID (`x-agent-user-id`) are read from inbound requests, exposed on `ResponseContext.platform_context`, and forwarded as headers on all outbound Foundry Storage calls. The call ID is also bound to the request-scoped platform context so handler/tool code making raw outbound calls can forward it.
+- Container protocol version `2.0.0` support: the per-request call ID (`x-agent-foundry-call-id`) and global user ID (`x-agent-user-id`) are read from inbound requests and exposed on `ResponseContext.platform_context`. The per-request call ID is forwarded on all outbound Foundry Storage calls and bound to the request-scoped platform context so handler/tool code making raw outbound calls can forward it; `x-agent-user-id` is used only for container-side partitioning and is not forwarded to 1P services.
 
 ### Breaking Changes
 

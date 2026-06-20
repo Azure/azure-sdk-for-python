@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from contextvars import ContextVar, Token
 
-from ._platform_headers import FOUNDRY_CALL_ID, USER_ID
+from ._platform_headers import FOUNDRY_CALL_ID
 
 __all__ = [
     "RequestContext",
@@ -71,17 +71,19 @@ class RequestContext:
     def platform_headers(self) -> dict[str, str]:
         """Build the platform identity headers to forward on outbound 1P calls.
 
-        Only headers whose source value is present (non-``None``) are included.
-        The managed-identity ``Authorization`` header is unaffected — these are
-        **additional** headers for caller-identity context and data partitioning.
+        Only ``x-agent-foundry-call-id`` is forwarded: 1P services resolve the
+        caller context server-side from the opaque call ID. ``x-agent-user-id``
+        is **not** forwarded — it is not accepted/trusted by 1P services and is
+        only consumed container-side for per-user state partitioning. The call ID
+        is included only when present (non-``None``). The managed-identity
+        ``Authorization`` header is unaffected — this is an **additional** header
+        for caller-identity context.
 
         :return: A mapping of header name to value, suitable for merging into an
             outbound request's headers.
         :rtype: dict[str, str]
         """
         headers: dict[str, str] = {}
-        if self.user_id is not None:
-            headers[USER_ID] = self.user_id
         if self.call_id is not None:
             headers[FOUNDRY_CALL_ID] = self.call_id
         return headers

@@ -162,17 +162,14 @@ async def test_logging_policy_logs_platform_header_presence(caplog: pytest.LogCa
     policy.next = next_policy
 
     request = _make_request("GET", "https://storage.example.com/responses/r1")
-    request.http_request.headers["x-agent-user-id"] = "secret-user-id"
     request.http_request.headers["x-agent-foundry-call-id"] = "secret-call-id"
 
     with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
         await policy.send(request)
 
     msg = caplog.records[0].message
-    assert "has_user_id=True" in msg
     assert "has_call_id=True" in msg
     # Values must never appear
-    assert "secret-user-id" not in msg
     assert "secret-call-id" not in msg
 
 
@@ -191,7 +188,6 @@ async def test_logging_policy_logs_platform_header_absence(caplog: pytest.LogCap
         await policy.send(request)
 
     msg = caplog.records[0].message
-    assert "has_user_id=False" in msg
     assert "has_call_id=False" in msg
 
 

@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Container protocol version `2.0.0` support: reads `x-agent-user-id` and `x-agent-foundry-call-id` from inbound requests and binds them to the request-scoped platform context so they are forwarded on outbound Foundry platform calls. The values are also exposed on `request.state.user_id` and `request.state.call_id`.
+- Container protocol version `2.0.0` support: reads `x-agent-user-id` and `x-agent-foundry-call-id` from inbound requests and binds them to the request-scoped platform context so the per-request call ID is forwarded on outbound Foundry 1P calls (`x-agent-user-id` is not forwarded to 1P). The values are also exposed on `request.state.user_id` and `request.state.call_id`.
 
 ### Breaking Changes
 

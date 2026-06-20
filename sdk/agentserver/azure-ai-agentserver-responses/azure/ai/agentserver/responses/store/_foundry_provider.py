@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Callable, Iterable
 from urllib.parse import quote as _url_quote
 
-from azure.ai.agentserver.core._platform_headers import FOUNDRY_CALL_ID, PLATFORM_ERROR_TAG, USER_ID  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core._platform_headers import FOUNDRY_CALL_ID, PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
@@ -69,21 +69,21 @@ def _encode(value: str) -> str:
 
 
 def _apply_platform_headers(request: HttpRequest, context: PlatformContext | None) -> None:
-    """Forward platform identity headers on an outbound HTTP request when present.
+    """Forward the per-request call ID on an outbound HTTP request when present.
 
-    On protocol version ``2.0.0`` the container is responsible for forwarding the
-    per-request call ID (``x-agent-foundry-call-id``) and the global user ID
-    (``x-agent-user-id``) on all outbound calls to Foundry platform services.
+    On protocol version ``2.0.0`` the container forwards the per-request call ID
+    (``x-agent-foundry-call-id``) on outbound calls to Foundry platform services;
+    the storage service resolves the caller context server-side from it. The
+    ``x-agent-user-id`` header is **not** forwarded — it is not accepted/trusted
+    by 1P services and is used only for container-side state partitioning.
 
     :param request: The outbound HTTP request to modify.
     :type request: ~azure.core.rest.HttpRequest
-    :param context: Platform context containing the user ID / call ID, or ``None``.
+    :param context: Platform context containing the call ID, or ``None``.
     :type context: ~azure.ai.agentserver.responses.PlatformContext | None
     """
     if context is None:
         return
-    if context.user_id_key is not None:
-        request.headers[USER_ID] = context.user_id_key
     if context.call_id is not None:
         request.headers[FOUNDRY_CALL_ID] = context.call_id
 

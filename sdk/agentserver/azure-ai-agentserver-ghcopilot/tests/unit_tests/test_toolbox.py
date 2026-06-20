@@ -349,7 +349,7 @@ class TestMakeCopilotTools:
 class TestMcpBridgePlatformHeaders:
     """The MCP bridge forwards the inbound call ID / user ID on outbound calls."""
 
-    def test_request_headers_forward_platform_context(self):
+    def test_request_headers_forward_call_id(self):
         from azure.ai.agentserver.core import (
             RequestContext,
             reset_request_context,
@@ -363,8 +363,9 @@ class TestMcpBridgePlatformHeaders:
         finally:
             reset_request_context(token)
 
+        # Only the call ID is forwarded to 1P; user_id is not accepted/trusted by 1P.
         assert headers["x-agent-foundry-call-id"] == "call-123"
-        assert headers["x-agent-user-id"] == "user-abc"
+        assert "x-agent-user-id" not in headers
         assert headers["X-Static"] == "1"
 
     def test_request_headers_omit_platform_context_when_absent(self):

@@ -35,15 +35,17 @@ class TestRequestContext:
             reset_request_context(token)
         assert get_request_context().call_id is None
 
-    def test_platform_headers_includes_present_values(self) -> None:
+    def test_platform_headers_includes_call_id(self) -> None:
         ctx = RequestContext(call_id="cid", user_id="uid")
         headers = ctx.platform_headers()
-        assert headers[USER_ID] == "uid"
-        assert headers[FOUNDRY_CALL_ID] == "cid"
+        # Only the call ID is forwarded to 1P services; user_id is not.
+        assert headers == {FOUNDRY_CALL_ID: "cid"}
+        assert USER_ID not in headers
 
     def test_platform_headers_omits_absent_values(self) -> None:
         assert RequestContext().platform_headers() == {}
-        assert RequestContext(user_id="uid").platform_headers() == {USER_ID: "uid"}
+        # user_id alone never produces an outbound header.
+        assert RequestContext(user_id="uid").platform_headers() == {}
         assert RequestContext(call_id="cid").platform_headers() == {FOUNDRY_CALL_ID: "cid"}
 
     def test_context_propagates_into_child_task(self) -> None:

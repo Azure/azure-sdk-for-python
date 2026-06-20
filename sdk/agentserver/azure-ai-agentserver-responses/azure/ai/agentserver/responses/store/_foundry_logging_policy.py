@@ -21,7 +21,6 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
     FOUNDRY_CALL_ID,
     REQUEST_ID,
     TRACEPARENT,
-    USER_ID,
 )
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
@@ -95,7 +94,6 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
 
         client_request_id = http_request.headers.get(CLIENT_REQUEST_ID, "")
         traceparent = http_request.headers.get(TRACEPARENT, "")
-        has_user_id = USER_ID in http_request.headers
         has_call_id = FOUNDRY_CALL_ID in http_request.headers
 
         logger.debug(
@@ -136,7 +134,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
             "Foundry storage %s %s -> %d (%.1fms, "
             "x-ms-client-request-id=%s, traceparent=%s, "
             "x-request-id=%s, apim-request-id=%s, "
-            "has_user_id=%s, has_call_id=%s)",
+            "has_call_id=%s)",
             method,
             url,
             status_code,
@@ -145,7 +143,6 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
             traceparent,
             x_request_id,
             apim_request_id,
-            has_user_id,
             has_call_id,
         )
 
