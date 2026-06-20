@@ -15,8 +15,10 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
     add_uri_string_sanitizer,
-    test_proxy
+    add_uri_regex_sanitizer,
+    test_proxy,
 )
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
@@ -33,3 +35,7 @@ def add_sanitizers(test_proxy):
     add_body_regex_sanitizer(regex=r"<ClientIp>.*?</ClientIp>", value="<ClientIp>0.0.0.0:0</ClientIp>")
 
     add_uri_string_sanitizer(target=".preprod.", value=".")
+    add_uri_regex_sanitizer(
+        regex=r"(?<=[?&]sktid=)[^&#]+",
+        value="00000000-0000-0000-0000-000000000000",
+    )

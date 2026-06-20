@@ -1,0 +1,632 @@
+#!/usr/bin/env python
+# pylint: disable=line-too-long,useless-suppression
+
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
+"""
+FILE: agent_v2_sample.py
+
+DESCRIPTION:
+    This sample demonstrates how to connect to an Azure AI Foundry agent using
+    flattened connect() keyword arguments. Instead of configuring the agent as a
+    tool in the session, the agent is specified at connection time through
+    connect(). This allows the agent to be the primary responder for the voice
+    session.
+
+    The Foundry-specific connect() keyword arguments used here are:
+    - agent_name (required): The name of the agent in Azure AI Foundry
+    - project_name (required): The name of the Foundry project containing the agent
+    - agent_version (optional): The version of the agent to use
+    - conversation_id (optional): ID to continue an existing conversation
+    - authentication_identity_client_id (optional): Client ID for authentication
+    - foundry_resource_override (optional): Override for the Foundry resource URL
+
+    This sample also demonstrates:
+    - Callback-based audio streaming for efficient capture and playback
+    - Sequence number based audio packet system for proper interrupt handling
+    - Conversation logging through the standard logger
+    - Proper audio device validation
+
+USAGE:
+    python agent_v2_sample.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_VOICELIVE_ENDPOINT - The Azure VoiceLive endpoint
+    2) AGENT_NAME - The name of your Azure AI Foundry agent
+    3) AGENT_PROJECT_NAME - The name of the Foundry project containing the agent
+
+    Optional environment variables:
+    - AZURE_VOICELIVE_USE_API_KEY - Set to "true" to use AZURE_VOICELIVE_API_KEY instead of Entra ID
+    - AZURE_VOICELIVE_API_KEY - VoiceLive API key used when AZURE_VOICELIVE_USE_API_KEY is enabled
+    - AGENT_VERSION - The version of the agent (if not specified, uses latest)
+    - AGENT_CONVERSATION_ID - Existing conversation ID to continue
+    - AGENT_VOICE - Voice to use (default: en-US-Ava:DragonHDLatestNeural)
+    - AZURE_VOICELIVE_API_VERSION - VoiceLive API version to use for the agent connection
+        (default: 2026-04-10)
+    - FOUNDRY_RESOURCE_OVERRIDE - Override for the Foundry resource URL
+    - AGENT_AUTH_IDENTITY_CLIENT_ID - Client ID for agent authentication
+"""
+
+from __future__ import annotations
+
+import asyncio
+import base64
+import logging
+import os
+import queue
+import signal
+import sys
+from typing import Optional, Union, cast
+
+# Audio processing imports
+try:
+    import pyaudio
+except ImportError:
+    print("This sample requires pyaudio. Install with:")
+    print("  Linux: sudo apt-get install -y portaudio19-dev libasound2-dev && pip install pyaudio")
+    print("  macOS: brew install portaudio && pip install pyaudio")
+    print("  Windows: pip install pyaudio")
+    sys.exit(1)
+
+# Environment variable loading
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv()
+except ImportError:
+    print("Note: python-dotenv not installed. Using existing environment variables.")
+
+# Azure VoiceLive SDK imports
+from azure.ai.voicelive._types import InterimResponseConfig
+from azure.ai.voicelive.aio import VoiceLiveConnection, connect
+from azure.ai.voicelive.models import (
+    AudioEchoCancellation,
+    AudioNoiseReduction,
+    AzureStandardVoice,
+    InputAudioFormat,
+    # LlmInterimResponseConfig,
+    Modality,
+    OutputAudioFormat,
+    RequestSession,
+    ServerEventType,
+    ServerVad,
+)
+from azure.core.credentials import AzureKeyCredential
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.identity.aio import DefaultAzureCredential
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+
+
+# Configuration from environment variables
+endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT")
+agent_name = os.environ.get("AGENT_NAME")
+agent_project_name = os.environ.get("AGENT_PROJECT_NAME")
+
+# Optional configuration
+agent_version = os.environ.get("AGENT_VERSION")  # Optional
+agent_conversation_id = os.environ.get("AGENT_CONVERSATION_ID")  # Optional
+agent_voice = os.environ.get("AGENT_VOICE", "en-US-Ava:DragonHDLatestNeural")
+agent_api_version = os.environ.get("AZURE_VOICELIVE_API_VERSION", "2026-04-10")
+foundry_resource_override = os.environ.get("FOUNDRY_RESOURCE_OVERRIDE")  # Optional
+agent_auth_identity_client_id = os.environ.get("AGENT_AUTH_IDENTITY_CLIENT_ID")  # Optional
+
+
+class AudioProcessor:
+    """
+    Handles real-time audio capture and playback for the voice assistant.
+
+    Uses callback-based audio streaming for efficient capture and playback.
+    Implements sequence number based audio packet system for proper interrupt handling.
+
+    Threading Architecture:
+    - Main thread: Event loop and UI
+    - PyAudio callback threads: Handle audio I/O in real-time
+    """
+
+    loop: asyncio.AbstractEventLoop
+
+    class AudioPlaybackPacket:
+        """Represents a packet that can be sent to the audio playback queue."""
+
+        def __init__(self, seq_num: int, data: Optional[bytes]):
+            self.seq_num = seq_num
+            self.data = data
+
+    def __init__(self, connection: VoiceLiveConnection):
+        self.connection = connection
+        self.audio = pyaudio.PyAudio()
+
+        # Audio configuration - PCM16, 24kHz, mono
+        self.format = pyaudio.paInt16
+        self.channels = 1
+        self.rate = 24000
+        self.chunk_size = 1200  # 50ms chunks
+
+        # Capture and playback state
+        self.input_stream: Optional[pyaudio.Stream] = None
+
+        # Playback with sequence numbers for interrupt handling
+        self.playback_queue: queue.Queue[AudioProcessor.AudioPlaybackPacket] = queue.Queue()
+        self.playback_base = 0
+        self.next_seq_num = 0
+        self.output_stream: Optional[pyaudio.Stream] = None
+
+        logger.info("AudioProcessor initialized with 24kHz PCM16 mono audio")
+
+    def start_capture(self):
+        """Start capturing audio from microphone using callback."""
+
+        def _capture_callback(
+            in_data, _frame_count, _time_info, _status_flags  # data  # number of frames  # dictionary
+        ):
+            """Audio capture callback - runs in PyAudio thread."""
+            audio_base64 = base64.b64encode(in_data).decode("utf-8")
+            future = asyncio.run_coroutine_threadsafe(
+                self.connection.input_audio_buffer.append(audio=audio_base64), self.loop
+            )
+            future.add_done_callback(
+                lambda f: logger.error("Error in audio buffer append: %s", f.exception()) if f.exception() else None
+            )
+            return (None, pyaudio.paContinue)
+
+        if self.input_stream:
+            return
+
+        # Store the current event loop for use in callbacks
+        self.loop = asyncio.get_running_loop()
+
+        try:
+            self.input_stream = self.audio.open(
+                format=self.format,
+                channels=self.channels,
+                rate=self.rate,
+                input=True,
+                frames_per_buffer=self.chunk_size,
+                stream_callback=_capture_callback,
+            )
+            logger.info("Started audio capture")
+
+        except Exception:
+            logger.exception("Failed to start audio capture")
+            raise
+
+    def start_playback(self):
+        """Initialize audio playback system using callback."""
+        if self.output_stream:
+            return
+
+        remaining = bytes()
+
+        def _playback_callback(_in_data, frame_count, _time_info, _status_flags):
+            nonlocal remaining
+            frame_count *= pyaudio.get_sample_size(pyaudio.paInt16)
+
+            out = remaining[:frame_count]
+            remaining = remaining[frame_count:]
+
+            while len(out) < frame_count:
+                try:
+                    packet = self.playback_queue.get_nowait()
+                except queue.Empty:
+                    out = out + bytes(frame_count - len(out))
+                    continue
+                except Exception:
+                    logger.exception("Error in audio playback")
+                    raise
+
+                if not packet or not packet.data:
+                    # None packet indicates end of stream
+                    logger.info("End of playback queue.")
+                    break
+
+                if packet.seq_num < self.playback_base:
+                    # Skip requested - ignore skipped packet and clear remaining
+                    if len(remaining) > 0:
+                        remaining = bytes()
+                    continue
+
+                num_to_take = frame_count - len(out)
+                out = out + packet.data[:num_to_take]
+                remaining = packet.data[num_to_take:]
+
+            if len(out) >= frame_count:
+                return (out, pyaudio.paContinue)
+            else:
+                return (out, pyaudio.paComplete)
+
+        try:
+            self.output_stream = self.audio.open(
+                format=self.format,
+                channels=self.channels,
+                rate=self.rate,
+                output=True,
+                frames_per_buffer=self.chunk_size,
+                stream_callback=_playback_callback,
+            )
+            logger.info("Audio playback system ready")
+        except Exception:
+            logger.exception("Failed to initialize audio playback")
+            raise
+
+    def _get_and_increase_seq_num(self):
+        seq = self.next_seq_num
+        self.next_seq_num += 1
+        return seq
+
+    def queue_audio(self, audio_data: Optional[bytes]) -> None:
+        """Queue audio data for playback."""
+        self.playback_queue.put(
+            AudioProcessor.AudioPlaybackPacket(seq_num=self._get_and_increase_seq_num(), data=audio_data)
+        )
+
+    def skip_pending_audio(self):
+        """Skip current audio in playback queue (used during interrupts)."""
+        self.playback_base = self._get_and_increase_seq_num()
+
+    def shutdown(self):
+        """Clean up audio resources."""
+        if self.input_stream:
+            self.input_stream.stop_stream()
+            self.input_stream.close()
+            self.input_stream = None
+
+        logger.info("Stopped audio capture")
+
+        # Inform thread to complete
+        if self.output_stream:
+            self.skip_pending_audio()
+            self.queue_audio(None)
+            self.output_stream.stop_stream()
+            self.output_stream.close()
+            self.output_stream = None
+
+        logger.info("Stopped audio playback")
+
+        if self.audio:
+            self.audio.terminate()
+
+        logger.info("Audio processor cleaned up")
+
+
+class AgentV2VoiceAssistant:
+    """
+    Voice assistant using Azure AI Foundry agent with flattened connect() keywords.
+
+    This demonstrates the new pattern where the agent is configured at
+    connection time using connect() keyword arguments, rather than as a tool in the session.
+    This sample also logs user and agent interactions through the standard logger.
+    """
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        api_version: str,
+        agent_name: str,
+        project_name: str,
+        agent_version: Optional[str],
+        conversation_id: Optional[str],
+        foundry_resource_override: Optional[str],
+        authentication_identity_client_id: Optional[str],
+        voice: str,
+    ) -> None:
+        self.endpoint = endpoint
+        self.credential = credential
+        self.api_version = api_version
+        self.agent_name = agent_name
+        self.project_name = project_name
+        self.agent_version = agent_version
+        self.conversation_id = conversation_id
+        self.foundry_resource_override = foundry_resource_override
+        self.authentication_identity_client_id = authentication_identity_client_id
+        self.voice = voice
+        self.connection: Optional[VoiceLiveConnection] = None
+        self.audio_processor: Optional[AudioProcessor] = None
+        self.session_ready = False
+
+    async def _run_connected_session(self, connection: VoiceLiveConnection):
+        conn = connection
+        self.connection = conn
+
+        # Initialize audio processor
+        ap = AudioProcessor(conn)
+        self.audio_processor = ap
+
+        # Configure session for voice conversation
+        await self._setup_session()
+
+        # Start audio systems
+        ap.start_playback()
+
+        logger.info("Voice assistant ready! Start speaking...")
+        print("\n" + "=" * 60)
+        print("🎤 AGENT V2 VOICE ASSISTANT READY")
+        print(f"Agent: {self.agent_name}")
+        print(f"Project: {self.project_name}")
+        print(f"API version: {self.api_version}")
+        if self.agent_version:
+            print(f"Version: {self.agent_version}")
+        if self.conversation_id:
+            print(f"Conversation: {self.conversation_id}")
+        print("Start speaking to begin conversation")
+        print("Press Ctrl+C to exit")
+        print("=" * 60 + "\n")
+
+        # Process events
+        await self._process_events()
+
+    async def start(self):
+        """Start the voice assistant session."""
+        try:
+            logger.info(
+                "Connecting to VoiceLive API with agent %s for project %s using API version %s",
+                self.agent_name,
+                self.project_name,
+                self.api_version,
+            )
+
+            async with connect(
+                endpoint=self.endpoint,
+                credential=self.credential,
+                api_version=self.api_version,
+                agent_name=self.agent_name,
+                project_name=self.project_name,
+                agent_version=self.agent_version,
+                conversation_id=self.conversation_id,
+                foundry_resource_override=self.foundry_resource_override,
+                authentication_identity_client_id=self.authentication_identity_client_id,
+            ) as connection:
+                await self._run_connected_session(connection)
+        except Exception:
+            logger.exception("Voice assistant encountered an error")
+            raise
+        finally:
+            if self.audio_processor:
+                self.audio_processor.shutdown()
+
+    async def _setup_session(self):
+        """Configure the VoiceLive session for audio conversation."""
+        logger.info("Setting up voice conversation session...")
+
+        voice_config = AzureStandardVoice(name=self.voice)
+
+        # Create turn detection configuration
+        turn_detection_config = ServerVad(
+            threshold=0.5,
+            prefix_padding_ms=300,
+            silence_duration_ms=500,
+        )
+
+        # Set up interim response configuration
+        interim_response_config: InterimResponseConfig | None = None
+        # Uncomment to get interim responses based on latency thresholds
+        # interim_response_config = LlmInterimResponseConfig(latency_threshold_ms=300)
+
+        # Create session configuration
+        session_config = RequestSession(
+            modalities=[Modality.TEXT, Modality.AUDIO],
+            voice=voice_config,
+            input_audio_format=InputAudioFormat.PCM16,
+            output_audio_format=OutputAudioFormat.PCM16,
+            turn_detection=turn_detection_config,
+            input_audio_echo_cancellation=AudioEchoCancellation(),
+            input_audio_noise_reduction=AudioNoiseReduction(type="azure_deep_noise_suppression"),
+            interim_response=interim_response_config,
+        )
+
+        conn = self.connection
+        assert conn is not None, "Connection must be established before setting up session"
+        await conn.session.update(session=session_config)
+
+        logger.info("Session configuration sent")
+
+    async def _process_events(self):
+        """Process events from the VoiceLive connection."""
+        try:
+            conn = self.connection
+            assert conn is not None, "Connection must be established before processing events"
+            async for event in conn:
+                await self._handle_event(event)
+        except Exception:
+            logger.exception("Error processing events")
+            raise
+
+    async def _handle_event(self, event):
+        """Handle different types of events from VoiceLive."""
+        logger.debug("Received event: %s", event.type)
+        ap = self.audio_processor
+        assert ap is not None, "AudioProcessor must be initialized"
+
+        if event.type == ServerEventType.SESSION_UPDATED:
+            logger.info("Session ready: %s", event.session.id)
+            await write_conversation_log(f"SessionID: {event.session.id}")
+            await write_conversation_log(f"Model: {event.session.model}")
+            await write_conversation_log(f"Voice: {event.session.voice}")
+            await write_conversation_log("")
+            self.session_ready = True
+
+            # Start audio capture once session is ready
+            ap.start_capture()
+
+        elif event.type == ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED:
+            user_transcript = f'User Input:\t{event.get("transcript", "")}'
+            print("👤 You said: ", user_transcript)
+            await write_conversation_log(user_transcript)
+
+        elif event.type == ServerEventType.RESPONSE_TEXT_DONE:
+            agent_text = f'Agent Text Response:\t{event.get("text", "")}'
+            print("🤖 Agent responded with text: ", agent_text)
+            await write_conversation_log(agent_text)
+
+        elif event.type == ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE:
+            agent_audio = f'Agent Audio Response:\t{event.get("transcript", "")}'
+            print("🤖 Agent responded with audio transcript: ", agent_audio)
+            await write_conversation_log(agent_audio)
+
+        elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED:
+            logger.info("User started speaking - stopping playback")
+            print("🎤 Listening...")
+
+            # Skip queued audio
+            ap.skip_pending_audio()
+
+        elif event.type == ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED:
+            logger.info("🎤 User stopped speaking")
+            print("🤔 Processing...")
+
+        elif event.type == ServerEventType.RESPONSE_CREATED:
+            logger.info("🤖 Assistant response created")
+
+        elif event.type == ServerEventType.RESPONSE_AUDIO_DELTA:
+            # Stream audio response to speakers
+            logger.debug("Received audio delta")
+            ap.queue_audio(event.delta)
+
+        elif event.type == ServerEventType.RESPONSE_AUDIO_DONE:
+            logger.info("🤖 Assistant finished speaking")
+
+        elif event.type == ServerEventType.RESPONSE_DONE:
+            logger.info("✅ Response complete")
+            print("🎤 Ready for next input...")
+
+        elif event.type == ServerEventType.ERROR:
+            logger.error("❌ VoiceLive error: %s", event.error.message)
+            print(f"Service returns error: {event.error}")
+
+        elif event.type == ServerEventType.WARNING:
+            logger.warning("⚠️ VoiceLive warning: %s", event.warning.message)
+            print(f"Service returns warning: {event.warning}")
+
+        elif event.type == ServerEventType.CONVERSATION_ITEM_CREATED:
+            logger.debug("Conversation item created: %s", event.item.id)
+
+        else:
+            logger.debug("Unhandled event type: %s", event.type)
+
+
+async def write_conversation_log(message: str) -> None:
+    """Log a conversation message without writing to disk."""
+    logger.info("%s", message)
+
+
+async def run_assistant():
+    """Run the voice assistant."""
+    missing = []
+    if not endpoint:
+        missing.append("AZURE_VOICELIVE_ENDPOINT")
+    if not agent_name:
+        missing.append("AGENT_NAME")
+    if not agent_project_name:
+        missing.append("AGENT_PROJECT_NAME")
+
+    if missing:
+        print("❌ Error: Missing required environment variables")
+        for name in missing:
+            print(f"Please set the {name} environment variable.")
+        sys.exit(1)
+
+    use_api_key = os.environ.get("AZURE_VOICELIVE_USE_API_KEY", "").strip().lower() in {"1", "true", "yes"}
+    api_key = os.environ.get("AZURE_VOICELIVE_API_KEY")
+
+    credential: Union[AzureKeyCredential, AsyncTokenCredential]
+    if use_api_key:
+        if not api_key:
+            print("❌ Error: No API key provided")
+            print("Please set the AZURE_VOICELIVE_API_KEY environment variable.")
+            sys.exit(1)
+        credential = AzureKeyCredential(api_key)
+        logger.info("Using API key credential")
+    else:
+        credential = DefaultAzureCredential()
+        logger.info("Using DefaultAzureCredential")
+
+    try:
+        assistant = AgentV2VoiceAssistant(
+            endpoint=cast(str, endpoint),
+            credential=credential,
+            api_version=agent_api_version,
+            agent_name=cast(str, agent_name),
+            project_name=cast(str, agent_project_name),
+            agent_version=agent_version,
+            conversation_id=agent_conversation_id,
+            foundry_resource_override=foundry_resource_override,
+            authentication_identity_client_id=agent_auth_identity_client_id,
+            voice=agent_voice,
+        )
+
+        await assistant.start()
+    finally:
+        if isinstance(credential, AsyncTokenCredential):
+            await credential.close()
+
+
+def main():
+    """Main function."""
+
+    # Setup signal handlers for graceful shutdown
+    def signal_handler(_sig, _frame):
+        logger.info("Received shutdown signal")
+        raise KeyboardInterrupt()
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    # Start the assistant
+    try:
+        asyncio.run(run_assistant())
+    except KeyboardInterrupt:
+        print("\n👋 Voice assistant shut down. Goodbye!")
+    except Exception as e:
+        print("Fatal Error: ", e)
+
+
+if __name__ == "__main__":
+    # Check audio system
+    try:
+        p = pyaudio.PyAudio()
+        # Check for input devices
+        input_devices = [
+            i
+            for i in range(p.get_device_count())
+            if cast(Union[int, float], p.get_device_info_by_index(i).get("maxInputChannels", 0) or 0) > 0
+        ]
+        # Check for output devices
+        output_devices = [
+            i
+            for i in range(p.get_device_count())
+            if cast(Union[int, float], p.get_device_info_by_index(i).get("maxOutputChannels", 0) or 0) > 0
+        ]
+        p.terminate()
+
+        if not input_devices:
+            print("❌ No audio input devices found. Please check your microphone.")
+            sys.exit(1)
+        if not output_devices:
+            print("❌ No audio output devices found. Please check your speakers.")
+            sys.exit(1)
+
+    except Exception as e:
+        print(f"❌ Audio system check failed: {e}")
+        sys.exit(1)
+
+    print("🎙️  Agent V2 Voice Assistant with Azure VoiceLive SDK")
+    print("=" * 50)
+    print(f"Agent: {agent_name}")
+    print(f"Project: {agent_project_name}")
+    print(f"API version: {agent_api_version}")
+    if agent_version:
+        print(f"Version: {agent_version}")
+    if agent_conversation_id:
+        print(f"Conversation: {agent_conversation_id}")
+    print("Using flattened connect() keyword arguments for agent configuration")
+    print("=" * 50)
+
+    # Run the assistant
+    main()

@@ -25,7 +25,7 @@ class ChainedTokenCredential(AsyncContextManager):
     https://aka.ms/azsdk/python/identity/credential-chains#chainedtokencredential-overview.
 
     :param credentials: credential instances to form the chain
-    :type credentials: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credentials: ~azure.core.credentials_async.AsyncTokenProvider
 
     .. admonition:: Example:
 

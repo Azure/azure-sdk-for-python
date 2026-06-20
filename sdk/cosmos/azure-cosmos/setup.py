@@ -55,14 +55,13 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -72,9 +71,18 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
-    python_requires=">=3.8",
+    package_data={
+        "azure.cosmos": ["py.typed"],
+        "azure.cosmos._query_advisor": ["query_advice_rules.json"],
+    },
+    python_requires=">=3.9",
     install_requires=[
         "azure-core>=1.30.0",
         "typing-extensions>=4.6.0"
     ],
+    extras_require={
+        "aio": [
+            "azure-core[aio]>=1.30.0",
+        ],
+    },
 )

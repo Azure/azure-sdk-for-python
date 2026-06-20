@@ -47,11 +47,7 @@ class TestAccessControl(KeyVaultTestCase):
 
         permissions = [KeyVaultPermission(data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         created_definition = client.set_role_definition(
-            scope=scope,
-            name=definition_name,
-            role_name=role_name,
-            description="test",
-            permissions=permissions
+            scope=scope, name=definition_name, role_name=role_name, description="test", permissions=permissions
         )
         assert "/" in created_definition.assignable_scopes
         assert created_definition.role_name == role_name
@@ -61,9 +57,7 @@ class TestAccessControl(KeyVaultTestCase):
         assert created_definition.permissions[0].data_actions == [KeyVaultDataAction.READ_HSM_KEY]
         assert created_definition.assignable_scopes == [KeyVaultRoleScope.GLOBAL]
         # update custom role definition
-        permissions = [
-            KeyVaultPermission(data_actions=[], not_data_actions=[KeyVaultDataAction.READ_HSM_KEY])
-        ]
+        permissions = [KeyVaultPermission(data_actions=[], not_data_actions=[KeyVaultDataAction.READ_HSM_KEY])]
         role_name2 = self.get_resource_name("role-name2")
         updated_definition = client.set_role_definition(
             scope=scope, name=definition_name, role_name=role_name2, permissions=permissions
@@ -106,14 +100,14 @@ class TestAccessControl(KeyVaultTestCase):
 
         created = client.create_role_assignment(scope, definition.id, principal_id, name=name)
         assert created.name == name
-        #assert created.properties.principal_id == principal_id
+        # assert created.properties.principal_id == principal_id
         assert created.properties.role_definition_id == definition.id
         assert created.properties.scope == scope
 
         # should be able to get the new assignment
         got = client.get_role_assignment(scope, name)
         assert got.name == name
-        #assert got.properties.principal_id == principal_id
+        # assert got.properties.principal_id == principal_id
         assert got.properties.role_definition_id == definition.id
         assert got.properties.scope == scope
 

@@ -157,14 +157,16 @@ class PhoneNumberIdentifier:
         is_anonymous: bool
 
         if raw_id is not None:
-            phone_number = raw_id[len(PHONE_NUMBER_PREFIX):]
+            phone_number = raw_id[len(PHONE_NUMBER_PREFIX) :]
             is_anonymous = phone_number == PHONE_NUMBER_ANONYMOUS_SUFFIX
             asserted_id_index = -1 if is_anonymous else phone_number.rfind("_") + 1
             has_asserted_id = 0 < asserted_id_index < len(phone_number)
-            props = {"value": value, "is_anonymous": is_anonymous}
             if has_asserted_id:
-                props["asserted_id"] = phone_number[asserted_id_index:]
-            self.properties = PhoneNumberProperties(**props)  # type: ignore
+                self.properties = PhoneNumberProperties(
+                    value=value, is_anonymous=is_anonymous, asserted_id=phone_number[asserted_id_index:]
+                )
+            else:
+                self.properties = PhoneNumberProperties(value=value, is_anonymous=is_anonymous)
         else:
             self.properties = PhoneNumberProperties(value=value)
         self.raw_id = raw_id if raw_id is not None else self._format_raw_id(self.properties)
@@ -182,6 +184,7 @@ class PhoneNumberIdentifier:
         # validation should only happen server-side, not client-side.
         value = properties["value"]
         return f"{PHONE_NUMBER_PREFIX}{value}"
+
 
 class UnknownIdentifier:
     """Represents an identifier of an unknown type.
@@ -242,7 +245,7 @@ class MicrosoftTeamsUserIdentifier:
         :param str user_id: Microsoft Teams user id.
         :keyword bool is_anonymous: `True` if the identifier is anonymous. Default value is `False`.
         :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
-        :paramtype cloud: str or ~azure.communication.callautomation.CommunicationCloudEnvironment
+        :paramtype cloud: str or :class:`~.CommunicationCloudEnvironment`
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed from
          the other properties.
         """
@@ -313,7 +316,7 @@ class MicrosoftTeamsAppIdentifier:
         """
         :param str app_id: Microsoft Teams application id.
         :keyword cloud: Cloud environment that the application belongs to. Default value is `PUBLIC`.
-        :paramtype cloud: str or ~azure.communication.callautomation.CommunicationCloudEnvironment
+        :paramtype cloud: str or :class:`~.CommunicationCloudEnvironment`
         :keyword str raw_id: The raw ID of the identifier. If not specified, this value will be constructed
          from the other properties.
         """
@@ -357,7 +360,7 @@ class _MicrosoftBotIdentifier(MicrosoftTeamsAppIdentifier):
         :keyword bool is_resource_account_configured: `False` if the identifier is global.
          Default value is `True` for tennantzed bots.
         :keyword cloud: Cloud environment that the bot belongs to. Default value is `PUBLIC`.
-        :paramtype cloud: str or ~azure.communication.callautomation.CommunicationCloudEnvironment
+        :paramtype cloud: str or :class:`~.CommunicationCloudEnvironment`
         """
         warnings.warn(
             "The MicrosoftBotIdentifier is deprecated and has been replaced by MicrosoftTeamsAppIdentifier.",
@@ -389,20 +392,13 @@ class TeamsExtensionUserIdentifier:
     raw_id: str
     """The raw ID of the identifier."""
 
-    def __init__(
-        self,
-        *,
-        user_id: str,
-        tenant_id: str,
-        resource_id: str,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, user_id: str, tenant_id: str, resource_id: str, **kwargs: Any) -> None:
         """
         :param str user_id: Teams extension user id.
         :param str tenant_id: Tenant id associated with the user.
         :param str resource_id: The Communication Services resource id.
         :keyword cloud: Cloud environment that the user belongs to. Default value is `PUBLIC`.
-        :paramtype cloud: str or ~azure.communication.callautomation.CommunicationCloudEnvironment
+        :paramtype cloud: str or :class:`~.CommunicationCloudEnvironment`
         :keyword str raw_id: The raw ID of the identifier.
          If not specified, this value will be constructed from the other properties.
         """
@@ -434,6 +430,7 @@ class TeamsExtensionUserIdentifier:
             prefix = ACS_USER_PREFIX
         return f"{prefix}{properties['resource_id']}_{properties['tenant_id']}_{properties['user_id']}"
 
+
 def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsExtensionUserIdentifier]:
     segments = suffix.split("_")
     if len(segments) != 3:
@@ -449,6 +446,7 @@ def try_create_teams_extension_user(prefix: str, suffix: str) -> Optional[TeamsE
         raise ValueError("Invalid MRI")
     return TeamsExtensionUserIdentifier(user_id=user_id, tenant_id=tenant_id, resource_id=resource_id, cloud=cloud)
 
+
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: disable=too-many-return-statements
     """
     Creates a CommunicationIdentifier from a given raw ID.
@@ -457,7 +455,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:  # pylint: d
 
     :param str raw_id: A raw ID to construct the CommunicationIdentifier from.
     :return: The CommunicationIdentifier parsed from the raw_id.
-    :rtype: CommunicationIdentifier
+    :rtype: :class:`~.CommunicationIdentifier`
     """
     if raw_id.startswith(PHONE_NUMBER_PREFIX):
         return PhoneNumberIdentifier(value=raw_id[len(PHONE_NUMBER_PREFIX) :], raw_id=raw_id)

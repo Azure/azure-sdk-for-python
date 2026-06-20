@@ -18,20 +18,27 @@ from azure.ai.agents.models import AgentRunStream, AsyncAgentRunStream, RunStepM
 from azure.ai.agents.models._enums import (
     AgentsResponseFormatMode,
     MessageRole,
+    MessageStatus,
     RunStepStatus,
+    RunStepType,
 )
 from azure.ai.agents.models import (
     MessageAttachment,
     MessageDeltaChunk,
     MessageIncompleteDetails,
+    MessageInputContentBlock,
+    MessageInputTextBlock,
     RunStep,
     RunStepDeltaChunk,
     RunStepError,
     RunStepFunctionToolCall,
+    RunStepMcpToolCall,
+    RunStepOpenAPIToolCall,
     RunStepToolCallDetails,
     RunStepCodeInterpreterToolCall,
     RunStepBingGroundingToolCall,
     ThreadMessage,
+    ThreadMessageOptions,
     ThreadRun,
     ToolDefinition,
     ToolOutput,
@@ -127,13 +134,16 @@ class AIAgentsInstrumentor:
         :param enable_content_recording: Whether content recording is enabled as part
           of the traces or not. Content in this context refers to chat message content
           and function call tool related function names, function parameter names and
-          values. True will enable content recording, False will disable it. If no value
-          is provided, then the value read from environment variable
-          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
-          is not found, then the value will default to False. Please note that successive calls
+          values. `True` will enable content recording, `False` will disable it. If no value
+          is provided, then the value read from environment variables
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT and
+          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. The latter is supported
+          for legacy reasons. Applications are encouraged to use the former, which is defined by OTEL.
+          If the environment variable is not found, then the value will default to `False`.
+          Please note that successive calls
           to instrument will always apply the content recording value provided with the most
           recent call to instrument (including applying the environment variable if no value is
-          provided and defaulting to false if the environment variable is not found), even if
+          provided and defaulting to `False` if the environment variable is not found), even if
           instrument was already previously called without uninstrument being called in between
           the instrument calls.
         :type enable_content_recording: bool, optional
@@ -187,18 +197,47 @@ class _AIAgentsInstrumentorPreview:
         Enable trace instrumentation for AI Agents.
 
         :param enable_content_recording: Whether content recording is enabled as part
-        of the traces or not. Content in this context refers to chat message content
-        and function call tool related function names, function parameter names and
-        values. True will enable content recording, False will disable it. If no value
-        is provided, then the value read from environment variable
-        AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. If the environment variable
-        is not found, then the value will default to False.
-
+          of the traces or not. Content in this context refers to chat message content
+          and function call tool related function names, function parameter names and
+          values. `True` will enable content recording, `False` will disable it. If no value
+          is provided, then the value read from environment variables
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT and
+          AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED is used. The latter is supported
+          for legacy reasons. Applications are encouraged to use the former, which is defined by OTEL.
+          If the environment variable is not found, then the value will default to `False`.
+          Please note that successive calls
+          to instrument will always apply the content recording value provided with the most
+          recent call to instrument (including applying the environment variable if no value is
+          provided and defaulting to `False` if the environment variable is not found), even if
+          instrument was already previously called without uninstrument being called in between
+          the instrument calls.
         :type enable_content_recording: bool, optional
+
         """
         if enable_content_recording is None:
-            var_value = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+
+            # AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED was introduced before the standard
+            # OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT was defined by OTEL. Support both
+            # of them moving forward, but only document the standard one.
+            var_value_new = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT")
+            var_value_old = os.environ.get("AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED")
+            var_value: Optional[str] = None
+
+            if var_value_new and var_value_old and var_value_new != var_value_old:
+                logger.error(
+                    "Environment variables OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT "
+                    "and AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED are both set, and "
+                    "their values differ. Message content recording in this run will be disabled "
+                    "as a result. Please set OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT only."
+                )
+                var_value = None
+            elif var_value_new:
+                var_value = var_value_new
+            elif var_value_old:
+                var_value = var_value_old
+
             enable_content_recording = self._str_to_bool(var_value)
+
         if not self.is_instrumented():
             self._instrument_agents(enable_content_recording)
         else:
@@ -333,31 +372,42 @@ class _AIAgentsInstrumentorPreview:
     def add_thread_message_event(
         self,
         span,
-        message: ThreadMessage,
+        message: Union[ThreadMessage, ThreadMessageOptions],
         usage: Optional[_models.RunStepCompletionUsage] = None,
     ) -> None:
-        content_body = {}
+
+        content_body: Optional[Union[str, Dict[str, Any]]] = None
         if _trace_agents_content:
-            for content in message.content:
-                typed_content = content.get(content.type, None)
-                if typed_content:
-                    content_details = {"value": self._get_field(typed_content, "value")}
-                    annotations = self._get_field(typed_content, "annotations")
-                    if annotations:
-                        content_details["annotations"] = [a.as_dict() for a in annotations]
-                    content_body[content.type] = content_details
+            if isinstance(message, ThreadMessage):
+                for content in message.content:
+                    typed_content = content.get(content.type, None)
+                    if typed_content:
+                        content_details = {"value": self._get_field(typed_content, "value")}
+                        annotations = self._get_field(typed_content, "annotations")
+                        if annotations:
+                            content_details["annotations"] = [a.as_dict() for a in annotations]
+                        content_body = {}
+                        content_body[content.type] = content_details
+            elif isinstance(message, ThreadMessageOptions):
+                if isinstance(message.content, str):
+                    content_body = message.content
+                elif isinstance(message.content, List):
+                    for block in message.content:
+                        if isinstance(block, MessageInputTextBlock):
+                            content_body = block.text
+                            break
 
         self._add_message_event(
             span,
             self._get_role(message.role),
             content_body,
-            attachments=message.attachments,
-            thread_id=message.thread_id,
-            agent_id=message.agent_id,
-            message_id=message.id,
-            thread_run_id=message.run_id,
-            message_status=message.status,
-            incomplete_details=message.incomplete_details,
+            attachments=getattr(message, "attachments", None),
+            thread_id=getattr(message, "thread_id", None),
+            agent_id=getattr(message, "agent_id", None),
+            message_id=getattr(message, "id", None),
+            thread_run_id=getattr(message, "run_id", None),
+            message_status=getattr(message, "status", None),
+            incomplete_details=getattr(message, "incomplete_details", None),
             usage=usage,
         )
 
@@ -407,7 +457,19 @@ class _AIAgentsInstrumentorPreview:
                     "type": t.type,
                     t.type: t.bing_grounding,
                 }
+            elif isinstance(t, RunStepOpenAPIToolCall):
+                tool_call = {"id": t.id, "type": t.type, "function": t.as_dict().get("function", {})}
+            elif isinstance(t, RunStepMcpToolCall):
+                tool_call = {
+                    "id": t.id,
+                    "type": t.type,
+                    "arguments": t.arguments,
+                    "name": t.name,
+                    "output": t.output,
+                    "server_label": t.server_label or "",
+                }
             else:
+                # Works for Deep research
                 tool_details = t.as_dict()[t.type]
 
                 tool_call = {
@@ -511,7 +573,7 @@ class _AIAgentsInstrumentorPreview:
         self,
         span,
         role: str,
-        content: Any,
+        content: Optional[Union[str, dict[str, Any], List[MessageInputContentBlock]]] = None,
         attachments: Any = None,  # Optional[List[MessageAttachment]] or dict
         thread_id: Optional[str] = None,
         agent_id: Optional[str] = None,
@@ -523,9 +585,15 @@ class _AIAgentsInstrumentorPreview:
     ) -> None:
         # TODO document new fields
 
-        event_body = {}
+        event_body: dict[str, Any] = {}
         if _trace_agents_content:
-            event_body["content"] = content
+            if isinstance(content, List):
+                for block in content:
+                    if isinstance(block, MessageInputTextBlock):
+                        event_body["content"] = block.text
+                        break
+            else:
+                event_body["content"] = content
             if attachments:
                 event_body["attachments"] = []
                 for attachment in attachments:
@@ -757,7 +825,7 @@ class _AIAgentsInstrumentorPreview:
     def start_create_thread_span(
         self,
         server_address: Optional[str] = None,
-        messages: Optional[List[ThreadMessage]] = None,
+        messages: Optional[Union[List[ThreadMessage], List[ThreadMessageOptions]]] = None,
         _tool_resources: Optional[ToolResources] = None,
     ) -> "Optional[AbstractSpan]":
         span = start_span(OperationName.CREATE_THREAD, server_address=server_address)
@@ -1435,7 +1503,7 @@ class _AIAgentsInstrumentorPreview:
         self,
         server_address: Optional[str] = None,
         thread_id: Optional[str] = None,
-        content: Optional[str] = None,
+        content: Optional[Union[str, List[MessageInputContentBlock]]] = None,
         role: Optional[Union[str, MessageRole]] = None,
         attachments: Optional[List[MessageAttachment]] = None,
     ) -> "Optional[AbstractSpan]":
@@ -1486,15 +1554,15 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("MessagesOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_message(function, *args, **kwargs)
+            if class_function_name.startswith("RunsOperations.create_and_process"):
+                kwargs.setdefault("merge_span", True)
+                return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.START_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.get"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_get_run(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
-            if class_function_name.startswith("RunsOperations.create_and_process"):
-                kwargs.setdefault("merge_span", True)
-                return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsClient.create_thread_and_run"):
                 kwargs.setdefault("merge_span", True)
                 return self.trace_create_run(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
@@ -1549,7 +1617,7 @@ class _AIAgentsInstrumentorPreview:
         async def inner(*args, **kwargs):  # pylint: disable=R0911
             span_impl_type = settings.tracing_implementation()  # pylint: disable=E1102
             if span_impl_type is None:
-                return function(*args, **kwargs)
+                return await function(*args, **kwargs)
 
             class_function_name = function.__qualname__
 
@@ -1562,15 +1630,15 @@ class _AIAgentsInstrumentorPreview:
             if class_function_name.startswith("MessagesOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_message_async(function, *args, **kwargs)
+            if class_function_name.startswith("RunsOperations.create_and_process"):
+                kwargs.setdefault("merge_span", True)
+                return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.create"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.START_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("RunsOperations.get"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_get_run_async(OperationName.GET_THREAD_RUN, function, *args, **kwargs)
-            if class_function_name.startswith("RunsOperations.create_and_process"):
-                kwargs.setdefault("merge_span", True)
-                return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
             if class_function_name.startswith("AgentsClient.create_thread_and_run"):
                 kwargs.setdefault("merge_span", True)
                 return await self.trace_create_run_async(OperationName.PROCESS_THREAD_RUN, function, *args, **kwargs)
@@ -2025,7 +2093,13 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
         else:
             retval = super().on_thread_message(message)  # pylint: disable=assignment-from-none # type: ignore
 
-        if message.status in {"completed", "incomplete"}:
+        # TODO: Workaround for issue where message.status may be IN_PROGRESS even after a thread.message.completed event has arrived.
+        # See work item 4636616 and 4636299 for details.
+        # When the work item is resolved, change this code back to:
+        # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
+        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (
+            message.status == MessageStatus.IN_PROGRESS and message.content
+        ):
             self.last_message = message
 
         return retval  # type: ignore
@@ -2049,14 +2123,14 @@ class _AgentEventHandlerTraceWrapper(AgentEventHandler):
             retval = super().on_run_step(step)  # pylint: disable=assignment-from-none # type: ignore
 
         if (
-            step.type == "tool_calls"
+            step.type == RunStepType.TOOL_CALLS
             and isinstance(step.step_details, RunStepToolCallDetails)
             and step.status == RunStepStatus.COMPLETED
         ):
             self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
                 self.span, step
             )
-        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+        elif step.type == RunStepType.MESSAGE_CREATION and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             if (
                 self.span
@@ -2162,7 +2236,13 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
         else:
             retval = await super().on_thread_message(message)  # type: ignore
 
-        if message.status in {"completed", "incomplete"}:
+        # TODO: Workaround for issue where message.status may be IN_PROGRESS even after a thread.message.completed event has arrived.
+        # See work item 4636616 and 4636299 for details.
+        # When the work item is resolved, change this code back to:
+        # if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE}
+        if message.status in {MessageStatus.COMPLETED, MessageStatus.INCOMPLETE} or (
+            message.status == MessageStatus.IN_PROGRESS and message.content
+        ):
             self.last_message = message
 
         return retval  # type: ignore
@@ -2186,14 +2266,14 @@ class _AsyncAgentEventHandlerTraceWrapper(AsyncAgentEventHandler):
             retval = await super().on_run_step(step)  # type: ignore
 
         if (
-            step.type == "tool_calls"
+            step.type == RunStepType.TOOL_CALLS
             and isinstance(step.step_details, RunStepToolCallDetails)
             and step.status == RunStepStatus.COMPLETED
         ):
             self.instrumentor._add_tool_assistant_message_event(  # pylint: disable=protected-access # pyright: ignore [reportFunctionMemberAccess]
                 self.span, step
             )
-        elif step.type == "message_creation" and step.status == RunStepStatus.COMPLETED:
+        elif step.type == RunStepType.MESSAGE_CREATION and step.status == RunStepStatus.COMPLETED:
             self.instrumentor.add_thread_message_event(self.span, cast(ThreadMessage, self.last_message), step.usage)
             if (
                 self.span

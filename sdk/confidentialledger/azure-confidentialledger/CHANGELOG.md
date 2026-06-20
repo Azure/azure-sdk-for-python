@@ -1,14 +1,41 @@
 # Release History
 
-## 1.2.0b2 (Unreleased)
+## 2.0.0b3 (2026-06-05)
 
 ### Features Added
 
-### Breaking Changes
+- Added redirect URL caching for write operations (POST/PUT/PATCH/DELETE). After the first redirect from the load balancer, subsequent writes go directly to the primary node, significantly reducing latency.
+- Enforced a stricter redirect destination policy: redirects are only followed when the target uses HTTPS, has the same effective port, and the host is the original ledger host or one of its subdomains (e.g. an individual node). Redirects that downgrade to HTTP, change the port, or point to sibling ledgers, parent domains, unrelated hosts, or look-alike suffix domains are now rejected and never followed or cached.
 
 ### Bugs Fixed
 
+- Fixed missing `disable_redirect_cleanup=True` in the async client, which could cause authentication failures on redirects.
+- Replaced `assert` statements in receipt verification with explicit checks raising `ValueError`. This prevents validation from being silently skipped when Python is run with the `-O` (optimize) flag, which strips `assert` statements.
+
+## 2.0.0b2 (2026-01-29)
+
+### Bugs Fixed
+
+- Fixed authentication failure on HTTP redirects by preserving sensitive headers during service-managed redirects within the Confidential Ledger endpoint.
+
+## 2.0.0b1 (2025-10-20)
+
+### Features Added
+
+- Added models.
+
+### Breaking Changes
+
+- Changed the input parameter on `create_user_defined_role` from a list of roles to a `Roles` model.
+- Changed the input parameter on `update_user_defined_role` from a list of roles to a `Roles` model.
+- `get_user_defined_role()` returns a `Roles` model instead of a list of roles.
+- Removed the `azure.confidentialledger.certificate` namespace and the `ConfidentialLedgerCertificateClient` (see the `azure-confidentialledger-certificate` package to access client).
+
 ### Other Changes
+
+- Added new dependency `azure-confidentialledger-certificate`.
+
+**The `ConfidentialLedgerCertificateClient` can now be used through the `azure-confidentialledger-certificate` package.**
 
 ## 1.2.0b1 (2025-04-23)
 

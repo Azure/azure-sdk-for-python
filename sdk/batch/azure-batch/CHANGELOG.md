@@ -1,5 +1,194 @@
 # Release History
 
+## 15.1.0 (2026-03-06)
+
+### Other Changes
+
+- This is the GA release of the features introduced in the 15.0.0 and 15.1.0 beta versions, including LRO support, job-level FIFO scheduling, CMK support on pools, IPv6 support, metadata security protocol support, IP tag support, and confidential VM enhancements.
+
+### Breaking Changes
+
+- Renamed `BatchNodeUserUpdateOptions` to `BatchNodeUserReplaceOptions`.
+- Renamed `OutputFileUploadConfig` to `OutputFileUploadConfiguration`.
+
+- Removed Models:
+  - Removed `AuthenticationTokenSettings`
+
+- NameSpace changed `azure.batch.models._models`:
+  - `BatchJobTerminateOptions`
+  - `BatchNodeDeallocateOptions`
+  - `BatchNodeRebootOptions`
+  - `BatchNodeReimageOptions`
+
+- Removed Enums:
+  - Removed `BatchAccessScope`
+
+- NameSpace changed `azure.batch.models._enums`:
+  - `BatchNodeDeallocateOption`
+  - `BatchNodeRebootKind`
+  - `BatchNodeReimageOption`
+
+- Renamed public methods:
+  - `list_sub_tasks` -> `list_subtasks`
+  - `get_task_file` -> `download_task_file`
+  - `get_node_file` -> `download_node_file`
+  
+- Renamed parameters across all operation methods:
+  - `timeout` -> `service_timeout`
+  - `ocpdate` -> `ocp_date`
+  - `starttime` -> `start_time`
+  - `endtime` -> `end_time`
+  - `concurrencies` -> `max_concurrency`
+
+- Renamed properties in models:
+  - `e_tag` -> `etag` in `BatchJob`, `BatchJobSchedule`, `BatchPool`, `BatchTask`, and `BatchTaskCreateResult`
+  - `values_property` -> `error_values` in `AutoScaleRunError`, `BatchError`, and `ResizeError`
+  - `values_property` -> `result_values` in `CollectionResult`
+  - `values_property` -> `task_values` in `BatchTaskGroup`
+  - `avg_memory_gi_b` -> `avg_memory_gib`, `peak_memory_gi_b` -> `peak_memory_gib`, `avg_disk_gi_b` -> `avg_disk_gib`, `peak_disk_gi_b` -> `peak_disk_gib`, `disk_read_gi_b` -> `disk_read_gib`, `disk_write_gi_b` -> `disk_write_gib`, `network_read_gi_b` -> `network_read_gib`, `network_write_gi_b` -> `network_write_gib` in `BatchPoolResourceStatistics`
+
+- Removed Properties:
+  - Removed `authentication_token_settings` from `BatchJobManagerTask`, `BatchStartTask`, and `BatchTask`
+  - Removed `access` from `AuthenticationTokenSettings`
+
+## 15.1.0b3 (2026-02-05)
+
+### Other Changes
+
+- Minor parameter renaming: `read_io_gi_b` to `read_io_gib`, `write_io_gi_b` to `write_io_gib`, and `v_tpm_enabled` to `vtpm_enabled`.
+
+## 15.1.0b2 (2025-11-20)
+
+### Features Added
+
+- **Job level FIFO**
+  - Added `BatchJobDefaultOrder` types.
+  - Extended `BatchTaskSchedulingPolicy` with a new `jobDefaultOrder` property to support job-level FIFO scheduling.
+
+- **CMK support on Pools**
+  - Added `DiskCustomerManagedKey` and `DiskEncryptionSetParameters` for customer-managed key (CMK) support on pools.
+  - Extended `DiskEncryptionConfiguration` with a new `customerManagedKey` property.
+  - Extended `ManagedDisk` with a new `diskEncryptionSet` property.
+  - Added `BatchPoolIdentityReference` for referencing managed identities in disk encryption scenarios.
+
+- **IPv6 support on Pools**
+  - Added `ipv6Address` to `BatchNode`.
+  - Added `ipv6RemoteLoginIPAddress` and `ipv6RemoteLoginPort` to `BatchNodeRemoteLoginSettings`.
+
+- **Metadata Security Protocol Support on Pools**
+  - Added `HostEndpointSettings` and `HostEndpointSettingsModeTypes`.
+  - Added `ProxyAgentSettings`.
+  - Extended `SecurityProfile` with a new `proxyAgentSettings` property for metadata security protocol support.
+
+- **IP Tag Support**
+  - Added `IPFamily` and `IPTag` types.
+  - Extended `BatchPublicIpAddressConfiguration` with new `ipFamilies` and `ipTags` properties for IP tag support.
+
+### Breaking Changes
+
+- Removed all Certifcate API's
+  - Removed `create_certificate`
+  - Removed `get_certificate`
+  - Removed `list_certificates`
+  - Removed `cancel_certificate_deletion`
+  - Removed `begin_delete_certificate`
+
+- Removed Models:
+  - Removed `BatchCertificate`
+  - Removed `BatchCertificateDeleteError`
+  - Removed `BatchCertificateFormat`
+  - Removed `BatchCertificateReference`
+  - Removed `BatchCertificateState`
+  - Removed `BatchCertificateStoreLocation`
+  - Removed `BatchCertificateVisibility`
+  - Removed `BatchNodeCommunicationMode`
+
+- Removed Properties:
+  - Removed `CertificateReferences` from `BatchNode`
+  - Removed `ResourceTags` and `CertificateReferences` from `BatchPool`
+  - Removed `CertificateReferences`, `ResourceTags`, and `TargetNodeCommunicationMode` from `BatchPoolCreateOptions`
+  - Removed `CertificateReferences` and `TargetNodeCommunicationMode` from `BatchPoolReplaceOptions`
+  - Removed `CertificateReferences`, `ResourceTags`, and `TargetNodeCommunicationMode` from `BatchPoolSpecifications`
+  - Removed `CertificateReferences`, `ResourceTags`, and `TargetNodeCommunicationMode` from `BatchPoolUpdateOptions`
+  - Removed `CertificateReferences`, `ResourceTags`, and `TargetNodeCommunicationMode` from `ComputeBatchModelFactory`
+
+## 15.1.0b1 (2025-10-01)
+
+### Features Added
+
+- Added Long Running Operation (LRO) support for the following operation methods:
+  - `delete_job` -> `begin_delete_job`
+  - `disable_job` -> `begin_disable_job`
+  - `enable_job` -> `begin_enable_job`
+  - `delete_job_schedule` -> `begin_delete_job_schedule`
+  - `delete_pool` -> `begin_delete_pool`
+  - `delete_certificate` -> `begin_delete_certificate`
+  - `deallocate_node` -> `begin_deallocate_node`
+  - `reboot_node` -> `begin_reboot_node`
+  - `reimage_node` -> `begin_reimage_node`
+  - `remove_nodes` -> `begin_remove_nodes`
+  - `resize_pool` -> `begin_resize_pool`
+  - `start_node` -> `begin_start_node`
+  - `stop_pool_resize` -> `begin_stop_pool_resize`
+  - `terminate_job` -> `begin_terminate_job`
+  - `terminate_job_schedule` -> `begin_terminate_job_schedule`
+
+### Breaking Changes
+
+- Renamed the following models. These name changes include several models with the suffix `Content` being renamed to have the suffix `Options`.
+  - `AccessScope` -> `BatchAccessScope`
+  - `AffinityInfo` -> `BatchAffinityInfo`
+  - `BatchJobAction` -> `BatchJobActionKind`
+  - `BatchJobCreateContent` -> `BatchJobCreateOptions`
+  - `BatchJobDisableContent` -> `BatchJobDisableOptions`
+  - `BatchJobScheduleCreateContent` -> `BatchJobScheduleCreateOptions`
+  - `BatchJobScheduleUpdateContent` -> `BatchJobScheduleUpdateOptions`
+  - `BatchJobTerminateContent` -> `BatchJobTerminateOptions`
+  - `BatchJobUpdateContent` -> `BatchJobUpdateOptions`
+  - `BatchNodeDeallocateContent` -> `BatchNodeDeallocateOptions`
+  - `BatchNodeDisableSchedulingContent` -> `BatchNodeDisableSchedulingOptions`
+  - `BatchNodeRebootContent` -> `BatchNodeRebootOptions`
+  - `BatchNodeRebootOption` -> `BatchNodeRebootKind`
+  - `BatchNodeReimageContent` -> `BatchNodeReimageOptions`
+  - `BatchNodeRemoveContent` -> `BatchNodeRemoveOptions`
+  - `BatchNodeUserCreateContent` -> `BatchNodeUserCreateOptions`
+  - `BatchNodeUserUpdateContent` -> `BatchNodeUserUpdateOptions`
+  - `BatchPoolCreateContent` -> `BatchPoolCreateOptions`
+  - `BatchPoolEnableAutoScaleContent` -> `BatchPoolEnableAutoScaleOptions`
+  - `BatchPoolEvaluateAutoScaleContent` -> `BatchPoolEvaluateAutoScaleOptions`
+  - `BatchPoolReplaceContent` -> `BatchPoolReplaceOptions`
+  - `BatchPoolResizeContent` -> `BatchPoolResizeOptions`
+  - `BatchPoolUpdateContent` -> `BatchPoolUpdateOptions`
+  - `BatchTaskCreateContent` -> `BatchTaskCreateOptions`
+  - `ContainerConfiguration` -> `BatchContainerConfiguration`
+  - `ContainerConfigurationUpdate` -> `BatchContainerConfigurationUpdate`
+  - `DeleteBatchCertificateError` -> `BatchCertificateDeleteError`
+  - `DiffDiskSettings` -> `BatchDiffDiskSettings`
+  - `ErrorCategory` -> `BatchErrorSourceCategory`
+  - `HttpHeader` -> `OutputFileUploadHeader`
+  - `ImageReference` -> `BatchVmImageReference`
+  - `OSDisk` -> `BatchOsDisk`
+  - `OnAllBatchTasksComplete` -> `BatchAllTasksCompleteMode`
+  - `OnBatchTaskFailure` -> `BatchAllTasksCompleteMode`
+  - `PublicIpAddressConfiguration` -> `BatchPublicIpAddressConfiguration`
+  - `UefiSettings` -> `BatchUefiSettings`
+  - `UploadBatchServiceLogsContent` -> `UploadBatchServiceLogsOptions`
+  - `VMDiskSecurityProfile` -> `BatchVMDiskSecurityProfile`
+
+- Renamed parameters in the following operation methods:
+  - `begin_disable_job` changed `content` parameter to `disable_options`
+  - `begin_deallocate_node` changed `parameters` parameter to `options`
+  - `begin_remove_nodes` changed `content` parameter to `remove_options`.
+  - `begin_resize_pool` changed `content` parameter to `resize_options`.
+  - `begin_terminate_job` changed `parameters` parameter to `options`.
+  - `begin_reboot_node` changed `parameters` parameter to `options`.
+  - `begin_reimage_node` changed `parameters` parameter to `options`.
+  - `disable_node_scheduling` changed `parameters` parameter to `options`.
+  - `enable_pool_auto_scale` changed `content` parameter to `enable_auto_scale_options`.
+  - `evaluate_pool_auto_scale` changed `content` parameter to `evaluate_auto_scale_options`.
+  - `upload_node_logs` changed `content` parameter to `upload_options`.
+  - `replace_node_user` changed `content` parameter to `update_options`.
+
 ## 15.0.0b2 (2025-03-01)
 
 ### Features Added

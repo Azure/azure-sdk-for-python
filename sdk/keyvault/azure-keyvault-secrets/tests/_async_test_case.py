@@ -18,9 +18,24 @@ class AsyncSecretsClientPreparer(AzureRecordedTestCase):
 
         self.is_logging_enabled = kwargs.pop("logging_enable", True)
         if is_live():
-            os.environ["AZURE_TENANT_ID"] = os.getenv("KEYVAULT_TENANT_ID", "")  # empty in pipelines
-            os.environ["AZURE_CLIENT_ID"] = os.getenv("KEYVAULT_CLIENT_ID", "")  # empty in pipelines
-            os.environ["AZURE_CLIENT_SECRET"] = os.getenv("KEYVAULT_CLIENT_SECRET", "")  # empty for user-based auth
+            keyvault_tenant_id = os.getenv("KEYVAULT_TENANT_ID")
+            keyvault_client_id = os.getenv("KEYVAULT_CLIENT_ID")
+            keyvault_client_secret = os.getenv("KEYVAULT_CLIENT_SECRET")
+
+            if keyvault_tenant_id:
+                os.environ["AZURE_TENANT_ID"] = keyvault_tenant_id
+            else:
+                os.environ.pop("AZURE_TENANT_ID", None)
+
+            if keyvault_client_id:
+                os.environ["AZURE_CLIENT_ID"] = keyvault_client_id
+            else:
+                os.environ.pop("AZURE_CLIENT_ID", None)
+
+            if keyvault_client_secret:
+                os.environ["AZURE_CLIENT_SECRET"] = keyvault_client_secret
+            else:
+                os.environ.pop("AZURE_CLIENT_SECRET", None)
 
     def __call__(self, fn):
         async def _preparer(test_class, api_version, **kwargs):

@@ -78,6 +78,7 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
                     "enableNodePublicIP": bool,
                     "enableNodePublicIPv6": bool,
                     "enableOverProvisioning": bool,
+                    "enableResilientEphemeralOsDisk": bool,
                     "ephemeralPorts": {"endPort": 0, "startPort": 0},
                     "evictionPolicy": "str",
                     "frontendConfigurations": [
@@ -89,6 +90,7 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
                         }
                     ],
                     "hostGroupId": "str",
+                    "isOutboundOnly": bool,
                     "isSpotVM": bool,
                     "isStateless": bool,
                     "multiplePlacementGroups": bool,
@@ -114,6 +116,14 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperations(AzureMgmtRec
                     ],
                     "placementProperties": {"str": "str"},
                     "provisioningState": "str",
+                    "proxyAgentSettings": {
+                        "addProxyAgentExtension": bool,
+                        "enabled": bool,
+                        "imds": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                        "keyIncarnationId": 0,
+                        "wireServer": {"inVMAccessControlProfileReferenceId": "str", "mode": "str"},
+                    },
+                    "scaleInPolicy": {"mode": "str"},
                     "secureBootEnabled": bool,
                     "securityEncryptionType": "str",
                     "securityType": "str",

@@ -9,17 +9,17 @@
       "macos-latest": { "OSVmImage": "env:MACVMIMAGE", "Pool": "env:MACPOOL" },
       "ubuntu-24.04": { "OSVmImage": "env:LINUXVMIMAGE", "Pool": "env:LINUXPOOL" }
     },
-    "PythonVersion": [ "3.9", "3.11", "3.10" ],
+    "PythonVersion": [ "3.11", "3.10" ],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },
   "include": [
     {
       "CoverageConfig": {
-        "ubuntu2404_39_coverage": {
+        "ubuntu2404_310_coverage": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "3.9",
+          "PythonVersion": "3.10",
           "CoverageArg": "",
           "TestSamples": "false"
         }
@@ -45,20 +45,31 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "InjectedPackages": "semantic-kernel",
-          "UnsupportedToxEnvironments": "sdist,depends,latestdependency,mindependency,whl_no_aio"
+          "UnsupportedChecks": "sdist,depends,latestdependency,mindependency,whl_no_aio"
         }
       }
     },
     {
       "Config": {
-        "pyrit_Ubuntu2404_310": {
+        "Ubuntu2404_313": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
+    },
+    {
+      "Config": {
+        "redteam_Ubuntu2404_310": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.10",
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
-          "InjectedPackages": "pyrit==0.8.1",
-          "UnsupportedToxEnvironments": "sdist,depends,latestdependency,mindependency,whl_no_aio"
+          "InjectedPackages": "pyrit==0.11.0 !promptflow-devkit !promptflow-core",
+          "UnsupportedChecks": "sdist,depends,latestdependency,mindependency,whl_no_aio,pylint,mypy,pyright,black,verifytypes,apistub,samples"
         }
       }
     }

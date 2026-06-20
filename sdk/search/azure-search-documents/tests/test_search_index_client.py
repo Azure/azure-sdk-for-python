@@ -2,129 +2,186 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+"""Unit tests for ``SearchIndexClient`` preview list-paging kwargs."""
 
-import pytest
+from __future__ import annotations
+
 from unittest import mock
 
+import pytest
+
 from azure.core.credentials import AzureKeyCredential
-from azure.search.documents import SearchClient, ApiVersion
-from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
-from azure.search.documents.indexes.models import (
-    SearchIndexerDataContainer,
-    SearchIndexerDataSourceConnection,
-)
+from azure.core.paging import ItemPaged
 
-CREDENTIAL = AzureKeyCredential(key="test_api_key")
+from azure.search.documents.indexes import SearchIndexClient
+from azure.search.documents.indexes.models import SearchIndex
+
+from _capabilities import require_capability
+
+ENDPOINT = "https://my-search-service.search.windows.net"
+KEY = "fake-api-key"
 
 
-class TestSearchIndexClient:
-    def test_index_init(self):
-        client = SearchIndexClient("endpoint", CREDENTIAL)
-        assert client._headers == {
-            "api-key": "test_api_key",
-            "Accept": "application/json;odata.metadata=minimal",
-        }
+def _client() -> SearchIndexClient:
+    return SearchIndexClient(ENDPOINT, AzureKeyCredential(KEY))
 
-    def test_index_credential_roll(self):
-        credential = AzureKeyCredential(key="old_api_key")
-        client = SearchIndexClient("endpoint", credential, retry_backoff_factor=60)
-        assert client._headers == {
-            "api-key": "old_api_key",
-            "Accept": "application/json;odata.metadata=minimal",
-        }
-        credential.update("new_api_key")
-        assert client._headers == {
-            "api-key": "new_api_key",
-            "Accept": "application/json;odata.metadata=minimal",
-        }
 
-    def test_get_search_client(self):
-        credential = AzureKeyCredential(key="old_api_key")
-        client = SearchIndexClient("endpoint", credential)
-        search_client = client.get_search_client("index")
-        assert isinstance(search_client, SearchClient)
+def _empty_pager(*_args, **_kwargs):
+    pager = mock.MagicMock(spec=ItemPaged)
+    pager.__iter__.return_value = iter([])
+    return pager
 
-    def test_get_search_client_inherit_api_version(self):
-        credential = AzureKeyCredential(key="old_api_key")
-        client = SearchIndexClient("endpoint", credential, api_version=ApiVersion.V2020_06_30)
-        search_client = client.get_search_client("index")
-        assert isinstance(search_client, SearchClient)
-        assert search_client._api_version == ApiVersion.V2020_06_30
 
+def _index_response_stub(name="hotels"):
+    response = mock.Mock()
+    response.name = name
+    response.fields = []
+    response.description = None
+    response.scoring_profiles = None
+    response.default_scoring_profile = None
+    response.cors_options = None
+    response.suggesters = None
+    response.analyzers = None
+    response.tokenizers = None
+    response.token_filters = None
+    response.char_filters = None
+    response.normalizers = None
+    response.encryption_key = None
+    response.similarity = None
+    response.semantic_search = None
+    response.vector_search = None
+    response.permission_filter_option = None
+    response.purview_enabled = None
+    response.e_tag = '"etag"'
+    return response
+
+
+class TestListIndexes:
     @mock.patch(
-        "azure.search.documents.indexes._generated.operations._search_service_client_operations.SearchServiceClientOperationsMixin.get_service_statistics"
+        "azure.search.documents.indexes._operations._operations._SearchIndexClientOperationsMixin._list_indexes",
+        side_effect=_empty_pager,
     )
-    def test_get_service_statistics(self, mock_get_stats):
-        client = SearchIndexClient("endpoint", CREDENTIAL)
-        client.get_service_statistics()
-        assert mock_get_stats.called
-        assert mock_get_stats.call_args[0] == ()
-        assert mock_get_stats.call_args[1] == {"headers": client._headers}
-
-    @mock.patch(
-        "azure.search.documents.indexes._generated.operations._search_service_client_operations.SearchServiceClientOperationsMixin.get_service_statistics"
-    )
-    def test_get_service_statistics_v2020_06_30(self, mock_get_stats):
-        client = SearchIndexClient("endpoint", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
-        client.get_service_statistics()
-        assert mock_get_stats.called
-        assert mock_get_stats.call_args[0] == ()
-        assert mock_get_stats.call_args[1] == {"headers": client._headers}
-
-    def test_index_endpoint_https(self):
-        credential = AzureKeyCredential(key="old_api_key")
-        client = SearchIndexClient("endpoint", credential)
-        assert client._endpoint.startswith("https")
-
-        client = SearchIndexClient("https://endpoint", credential)
-        assert client._endpoint.startswith("https")
-
-        with pytest.raises(ValueError):
-            client = SearchIndexClient("http://endpoint", credential)
-
-        with pytest.raises(ValueError):
-            client = SearchIndexClient(12345, credential)
-
-
-class TestSearchIndexerClient:
-    def test_indexer_init(self):
-        client = SearchIndexerClient("endpoint", CREDENTIAL)
-        assert client._headers == {
-            "api-key": "test_api_key",
-            "Accept": "application/json;odata.metadata=minimal",
-        }
-
-    def test_indexer_credential_roll(self):
-        credential = AzureKeyCredential(key="old_api_key")
-        client = SearchIndexerClient("endpoint", credential)
-        assert client._headers == {
-            "api-key": "old_api_key",
-            "Accept": "application/json;odata.metadata=minimal",
-        }
-        credential.update("new_api_key")
-        assert client._headers == {
-            "api-key": "new_api_key",
-            "Accept": "application/json;odata.metadata=minimal",
-        }
-
-    def test_indexer_endpoint_https(self):
-        credential = AzureKeyCredential(key="old_api_key")
-        client = SearchIndexerClient("endpoint", credential)
-        assert client._endpoint.startswith("https")
-
-        client = SearchIndexerClient("https://endpoint", credential)
-        assert client._endpoint.startswith("https")
-
-        with pytest.raises(ValueError):
-            client = SearchIndexerClient("http://endpoint", credential)
-
-        with pytest.raises(ValueError):
-            client = SearchIndexerClient(12345, credential)
-
-    def test_datasource_with_empty_connection_string(self):
-        container = SearchIndexerDataContainer(name="searchcontainer")
-        data_source_connection = SearchIndexerDataSourceConnection(
-            name="test", type="azureblob", connection_string="", container=container
+    def test_list_indexes_forwards_top_skip_count(self, mock_list):
+        require_capability(
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.top",
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.skip",
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.count",
         )
-        packed_data_source_connection = data_source_connection._to_generated()
-        assert packed_data_source_connection.credentials.connection_string == "<unchanged>"
+
+        list(_client().list_indexes(top=10, skip=5, count=True))
+
+        mock_list.assert_called_once()
+        kwargs = mock_list.call_args.kwargs
+        assert kwargs["top"] == 10
+        assert kwargs["skip"] == 5
+        assert kwargs["count"] is True
+
+    @mock.patch(
+        "azure.search.documents.indexes._operations._operations."
+        "_SearchIndexClientOperationsMixin._list_indexes_with_selected_properties",
+        side_effect=_empty_pager,
+    )
+    def test_list_indexes_with_select_forwards_paging_kwargs(self, mock_list_select):
+        require_capability(
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.top",
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.skip",
+            "azure.search.documents.indexes.SearchIndexClient.list_indexes.count",
+            "azure.search.documents.indexes.models.SearchIndex.cors_options",
+            "azure.search.documents.indexes.models.SearchIndex.permission_filter_option",
+            "azure.search.documents.indexes.models.SearchIndex.purview_enabled",
+        )
+
+        list(_client().list_indexes(select=["name"], top=3, skip=1, count=False))
+
+        mock_list_select.assert_called_once()
+        kwargs = mock_list_select.call_args.kwargs
+        assert kwargs["select"] == ["name"]
+        assert kwargs["top"] == 3
+        assert kwargs["skip"] == 1
+        assert kwargs["count"] is False
+        converted = kwargs["cls"]([_index_response_stub()])
+        assert isinstance(converted[0], SearchIndex)
+        assert converted[0].name == "hotels"
+
+
+class TestListIndexNames:
+    @mock.patch(
+        "azure.search.documents.indexes._operations._operations._SearchIndexClientOperationsMixin._list_indexes",
+        side_effect=_empty_pager,
+    )
+    def test_list_index_names_forwards_top_skip_count(self, mock_list):
+        require_capability(
+            "azure.search.documents.indexes.SearchIndexClient.list_index_names.top",
+            "azure.search.documents.indexes.SearchIndexClient.list_index_names.skip",
+            "azure.search.documents.indexes.SearchIndexClient.list_index_names.count",
+        )
+
+        list(_client().list_index_names(top=20, skip=0, count=True))
+
+        mock_list.assert_called_once()
+        kwargs = mock_list.call_args.kwargs
+        assert kwargs["top"] == 20
+        assert kwargs["skip"] == 0
+        assert kwargs["count"] is True
+        # The names projection passes a `cls` callback that maps to .name strings.
+        assert callable(kwargs["cls"])
+
+
+class TestKnowledgeSourceFileOperations:
+    @mock.patch(
+        "azure.search.documents.indexes._operations._operations."
+        "_SearchIndexClientOperationsMixin._upload_knowledge_source_file"
+    )
+    def test_upload_knowledge_source_file_forwards_content(self, mock_upload):
+        require_capability("azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file")
+
+        _client().upload_knowledge_source_file(
+            "files-source",
+            b"content",
+            content_type="application/octet-stream",
+            content_disposition='attachment; filename="content.bin"',
+        )
+
+        mock_upload.assert_called_once()
+        kwargs = mock_upload.call_args.kwargs
+        assert kwargs["name"] == "files-source"
+        assert kwargs["file"] == b"content"
+        assert kwargs["content_type"] == "application/octet-stream"
+        assert kwargs["content_disposition"] == 'attachment; filename="content.bin"'
+
+    @mock.patch(
+        "azure.search.documents.indexes._operations._operations."
+        "_SearchIndexClientOperationsMixin._upload_knowledge_source_file"
+    )
+    def test_upload_knowledge_source_file_builds_content_disposition_from_filename(self, mock_upload):
+        require_capability("azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file")
+
+        _client().upload_knowledge_source_file(
+            "files-source",
+            b"content",
+            filename="installation-guide.pdf",
+        )
+
+        mock_upload.assert_called_once()
+        kwargs = mock_upload.call_args.kwargs
+        assert kwargs["content_disposition"] == 'attachment; filename="installation-guide.pdf"'
+
+    def test_upload_knowledge_source_file_requires_filename_or_content_disposition(self):
+        require_capability("azure.search.documents.indexes.SearchIndexClient.upload_knowledge_source_file")
+
+        with pytest.raises(ValueError, match="filename"):
+            _client().upload_knowledge_source_file("files-source", b"content")
+
+    @mock.patch(
+        "azure.search.documents.indexes._operations._operations."
+        "_SearchIndexClientOperationsMixin._delete_knowledge_source_file"
+    )
+    def test_delete_knowledge_source_file_forwards_file_id(self, mock_delete):
+        require_capability("azure.search.documents.indexes.SearchIndexClient.delete_knowledge_source_file")
+
+        _client().delete_knowledge_source_file("files-source", "file-1")
+
+        mock_delete.assert_called_once()
+        kwargs = mock_delete.call_args.kwargs
+        assert kwargs["name"] == "files-source"
+        assert kwargs["file_id"] == "file-1"

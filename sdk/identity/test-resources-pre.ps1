@@ -52,7 +52,9 @@ Start-Sleep -s 45
 $az_version = az version
 Write-Host "Azure CLI version: $az_version"
 az cloud set --name $Environment
-az login --service-principal -u $TestApplicationId --tenant $TenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN
+if ($CI) {
+    az login --service-principal -u $TestApplicationId --tenant $TenantId --allow-no-subscriptions --federated-token $env:ARM_OIDC_TOKEN
+}
 az account set --subscription $SubscriptionId
 $versions = az aks get-versions -l $Location -o json | ConvertFrom-Json
 Write-Host "AKS versions for ${Location}: $($versions | ConvertTo-Json -Depth 100)"

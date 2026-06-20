@@ -53,6 +53,10 @@ from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import StorageAccountHostsMixin
 
 class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
+    container_name: str
+    blob_name: str
+    snapshot: Optional[str]
+    version_id: Optional[str]
     def __init__(
         self,
         account_url: str,
@@ -151,6 +155,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         content_settings: Optional[ContentSettings] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         standard_blob_tier: Optional[StandardBlobTier] = None,
         source_authorization: Optional[str] = None,
@@ -168,7 +173,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         tags: Optional[Dict[str, str]] = None,
         overwrite: bool = False,
         content_settings: Optional[ContentSettings] = None,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[BlobLeaseClient] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -180,7 +185,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         legal_hold: Optional[bool] = None,
         standard_blob_tier: Optional[StandardBlobTier] = None,
         maxsize_condition: Optional[int] = None,
-        max_concurrency: int = 1,
+        max_concurrency: Optional[int] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         encoding: str = "UTF-8",
@@ -195,7 +200,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -203,9 +208,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
-        max_concurrency: int = 1,
+        max_concurrency: Optional[int] = None,
         encoding: str,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[str]: ...
@@ -216,7 +222,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -224,9 +230,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
-        max_concurrency: int = 1,
+        max_concurrency: Optional[int] = None,
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]: ...
@@ -237,7 +244,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: bool = False,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -245,9 +252,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
-        max_concurrency: int = 1,
+        max_concurrency: Optional[int] = None,
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...
@@ -283,6 +291,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
+        access_tier_if_modified_since: Optional[datetime] = None,
+        access_tier_if_unmodified_since: Optional[datetime] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
@@ -473,10 +483,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def stage_block(
         self,
         block_id: str,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         *,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         encoding: Optional[str] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
@@ -495,6 +505,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         *,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
         source_token_intent: Optional[Literal["backup"]] = None,
@@ -553,6 +564,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         validate_content: Optional[bool] = None,
         if_tags_match_condition: Optional[str] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -563,6 +578,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         version_id: Optional[str] = None,
         if_tags_match_condition: Optional[str] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
+        if_modified_since: Optional[datetime] = None,
+        if_unmodified_since: Optional[datetime] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, str]: ...
@@ -652,7 +671,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         length: int,
         *,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         if_sequence_number_lte: Optional[int] = None,
         if_sequence_number_lt: Optional[int] = None,
         if_sequence_number_eq: Optional[int] = None,
@@ -690,6 +709,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
         source_token_intent: Optional[Literal["backup"]] = None,
@@ -718,10 +738,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     @distributed_trace
     def append_block(
         self,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         *,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         maxsize_condition: Optional[int] = None,
         appendpos_condition: Optional[int] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
@@ -757,6 +777,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         source_etag: Optional[str] = None,
         source_match_condition: Optional[MatchConditions] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
         source_token_intent: Optional[Literal["backup"]] = None,

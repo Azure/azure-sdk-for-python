@@ -22,9 +22,6 @@ class TestHDInsightManagementOperationsAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_list(self, resource_group):
-        response = self.client.operations.list(
-            api_version="2024-08-01-preview",
-        )
+        response = self.client.operations.list()
         result = [r async for r in response]
         assert result
-        

@@ -97,7 +97,7 @@ class PipelineContext(Dict[str, Any]):
     def clear(self) -> None:  # pylint: disable=docstring-missing-return, docstring-missing-rtype
         """Context objects cannot be cleared.
 
-        :raises: TypeError
+        :raises TypeError: If context objects cannot be cleared.
         """
         raise TypeError("Context objects cannot be cleared.")
 
@@ -106,7 +106,7 @@ class PipelineContext(Dict[str, Any]):
     ) -> None:
         """Context objects cannot be updated.
 
-        :raises: TypeError
+        :raises TypeError: If context objects cannot be updated.
         """
         raise TypeError("Context objects cannot be updated.")
 

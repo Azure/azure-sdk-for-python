@@ -7,7 +7,7 @@
 import json
 import logging
 import os
-from functools import singledispatch
+from functools import partial, singledispatch
 from itertools import product
 from pathlib import Path
 from typing import Any, Optional, Tuple, TypeVar, Union
@@ -21,29 +21,23 @@ from azure.ai.ml._azure_environments import (
     _set_cloud,
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
 from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2023_04_01 import AzureMachineLearningWorkspaces as ServiceClient042023
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
 from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-
-# Same object, but was renamed starting in v2023_08_01_preview
-from azure.ai.ml._restclient.v2023_10_01 import AzureMachineLearningServices as ServiceClient102023
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
-from azure.ai.ml._restclient.v2024_07_01_preview import AzureMachineLearningWorkspaces as ServiceClient072024Preview
-from azure.ai.ml._restclient.v2024_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102024Preview
-from azure.ai.ml._restclient.v2025_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012025Preview
-from azure.ai.ml._restclient.workspace_dataplane import (
-    AzureMachineLearningWorkspaces as ServiceClientWorkspaceDataplane,
+from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
+    MachineLearningServicesMgmtClient as ServiceClient102024PreviewTsp,
 )
+from azure.ai.ml._restclient.v2025_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012025Preview
+from azure.ai.ml._restclient.workspace_dataplane import WorkspaceDataplaneClient as ServiceClientWorkspaceDataplane
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import configure_appinsights_logging
 from azure.ai.ml._user_agent import USER_AGENT
@@ -59,6 +53,7 @@ from azure.ai.ml.entities import (
     Component,
     Compute,
     Datastore,
+    DeploymentTemplate,
     Environment,
     Index,
     Job,
@@ -84,6 +79,7 @@ from azure.ai.ml.operations import (
     ComputeOperations,
     DataOperations,
     DatastoreOperations,
+    DeploymentTemplateOperations,
     EnvironmentOperations,
     EvaluatorOperations,
     IndexOperations,
@@ -108,6 +104,11 @@ from azure.ai.ml.operations._schedule_operations import ScheduleOperations
 from azure.ai.ml.operations._workspace_outbound_rule_operations import WorkspaceOutboundRuleOperations
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
+
+ServiceClient052022 = partial(MachineLearningServicesMgmtClient, api_version="2022-05-01")
+ServiceClient102022 = partial(MachineLearningServicesMgmtClient, api_version="2022-10-01")
+ServiceClient042023 = partial(MachineLearningServicesMgmtClient, api_version="2023-04-01")
+ServiceClient102023 = partial(MachineLearningServicesMgmtClient, api_version="2023-10-01")
 
 module_logger = logging.getLogger(__name__)
 
@@ -377,18 +378,7 @@ class MLClient:
             **kwargs,
         )
 
-        self._service_client_07_2024_preview = ServiceClient072024Preview(
-            credential=self._credential,
-            subscription_id=(
-                self._ws_operation_scope._subscription_id
-                if registry_reference
-                else self._operation_scope._subscription_id
-            ),
-            base_url=base_url,
-            **kwargs,
-        )
-
-        self._service_client_10_2024_preview = ServiceClient102024Preview(
+        self._service_client_10_2024_preview_tsp = ServiceClient102024PreviewTsp(
             credential=self._credential,
             subscription_id=(
                 self._ws_operation_scope._subscription_id
@@ -507,7 +497,7 @@ class MLClient:
 
         self._workspaces = WorkspaceOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
-            self._service_client_10_2024_preview,
+            self._service_client_10_2024_preview_tsp,
             self._operation_container,
             self._credential,
             requests_pipeline=self._requests_pipeline,
@@ -517,7 +507,7 @@ class MLClient:
 
         self._workspace_outbound_rules = WorkspaceOutboundRuleOperations(
             self._operation_scope,
-            self._service_client_10_2024_preview,
+            self._service_client_10_2024_preview_tsp,
             self._operation_container,
             self._credential,
             **kwargs,
@@ -565,7 +555,7 @@ class MLClient:
         self._datastores = DatastoreOperations(
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
-            serviceclient_2024_07_01_preview=self._service_client_07_2024_preview,
+            serviceclient_2024_10_01_preview=self._service_client_10_2024_preview_tsp,
             serviceclient_2024_01_01_preview=self._service_client_01_2024_preview,
             **ops_kwargs,  # type: ignore[arg-type]
         )
@@ -668,6 +658,15 @@ class MLClient:
         )
         self._operation_container.add(AzureMLResourceType.ONLINE_DEPLOYMENT, self._online_deployments)
         self._operation_container.add(AzureMLResourceType.BATCH_DEPLOYMENT, self._batch_deployments)
+
+        self._deployment_templates = DeploymentTemplateOperations(
+            self._operation_scope,
+            self._operation_config,
+            credential=self._credential,
+            _service_client_kwargs=kwargs,
+            **ops_kwargs,
+        )
+
         self._data = DataOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
@@ -697,7 +696,7 @@ class MLClient:
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
             service_client_01_2024_preview=self._service_client_01_2024_preview,
-            service_client_10_2024_preview=self._service_client_10_2024_preview,
+            service_client_10_2024_preview=self._service_client_10_2024_preview_tsp,
             service_client_01_2025_preview=self._service_client_01_2025_preview,
             **ops_kwargs,
         )
@@ -744,7 +743,7 @@ class MLClient:
 
         self._featurestores = FeatureStoreOperations(
             self._operation_scope,
-            self._service_client_10_2024_preview,
+            self._service_client_10_2024_preview_tsp,
             self._operation_container,
             self._credential,
         )
@@ -1073,6 +1072,16 @@ class MLClient:
         :rtype: ~azure.ai.ml.operations.BatchDeploymentOperations
         """
         return self._batch_deployments
+
+    @property
+    @experimental
+    def deployment_templates(self) -> DeploymentTemplateOperations:
+        """A collection of deployment template related operations.
+
+        :return: Deployment Template operations.
+        :rtype: ~azure.ai.ml.operations.DeploymentTemplateOperations
+        """
+        return self._deployment_templates
 
     @property
     def datastores(self) -> DatastoreOperations:
@@ -1454,3 +1463,10 @@ def _(entity: ServerlessEndpoint, operations, *args, **kwargs):
 def _(entity: MarketplaceSubscription, operations, *args, **kwargs):
     module_logger.debug("Creating or updating marketplace subscriptions")
     return operations[AzureMLResourceType.MARKETPLACE_SUBSCRIPTION].begin_create_or_update(entity, **kwargs)
+
+
+@_begin_create_or_update.register(DeploymentTemplate)
+def _(entity: DeploymentTemplate, operations, *args, **kwargs):
+    module_logger.debug("Creating or updating capability hosts")
+
+    return operations[AzureMLResourceType.DEPLOYMENT_TEMPLATE].begin_create_or_update(entity, **kwargs)

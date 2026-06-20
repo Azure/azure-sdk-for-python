@@ -8,6 +8,7 @@ pytest-custom-exit-code==0.3.0
 pytest-xdist==3.2.1
 coverage==7.2.5
 bandit==1.6.2
+stevedore==5.4.1
 protobuf==3.17.3; python_version == '2.7'
 chardet>=2.0,<5.0
 cmarkgfm<0.7.0

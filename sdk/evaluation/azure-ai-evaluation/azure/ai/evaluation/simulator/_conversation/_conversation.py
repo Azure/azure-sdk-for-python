@@ -11,7 +11,7 @@ from azure.ai.evaluation.simulator._constants import SupportedLanguages
 from azure.ai.evaluation.simulator._helpers._language_suffix_mapping import SUPPORTED_LANGUAGES_MAPPING
 from ..._http_utils import AsyncHttpPipeline
 from . import ConversationBot, ConversationTurn
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 
 
 def is_closing_message(response: Union[Dict, str], recursion_depth: int = 0) -> bool:

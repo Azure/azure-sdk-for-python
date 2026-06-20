@@ -8,7 +8,7 @@ import pytest
 
 import test_config
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
+from azure.cosmos.aio import CosmosClient, ContainerProxy, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders
 
 
@@ -16,6 +16,7 @@ from azure.cosmos.http_constants import HttpHeaders
 # TODO: add query tests once those changes are available
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
     """Python Cosmos Responses Tests.
     """
@@ -35,15 +36,25 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
+        # Key/data client setup (partial migration â€” most tests in this file are
+        # control-plane response-shape tests that fundamentally exercise
+        # `client.create_database` / `create_container` / `replace_throughput`,
+        # which cannot run under an AAD data-plane token).
         self.client = CosmosClient(self.host, self.masterKey)
         self.test_database = self.client.get_database_client(self.TEST_DATABASE_ID)
+        self.data_client = test_config.TestConfig.create_data_client_async()
+        self.data_test_database = self.data_client.get_database_client(self.TEST_DATABASE_ID)
 
     async def asyncTearDown(self):
         await self.client.close()
+        await self.data_client.close()
 
     async def test_point_operation_headers_async(self):
-        container = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
-                                                              partition_key=PartitionKey(path="/company"))
+        # Container create stays on key-auth (control-plane); data ops route through AAD.
+        container_id = "responses_test" + str(uuid.uuid4())
+        await self.test_database.create_container(id=container_id,
+                                                  partition_key=PartitionKey(path="/company"))
+        container = self.data_test_database.get_container_client(container_id)
         first_response = await container.upsert_item({"id": str(uuid.uuid4()), "company": "Microsoft"})
         lsn = first_response.get_response_headers()['lsn']
 
@@ -72,6 +83,81 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
         assert len(batch_response.get_response_headers()) > 0
         assert int(lsn) + 1 < int(batch_response.get_response_headers()['lsn'])
+
+    async def test_create_database_headers_async(self):
+        first_response = await self.client.create_database(id="responses_test" + str(uuid.uuid4()), return_properties=True)
+
+        assert len(first_response[1].get_response_headers()) > 0
+
+    async def test_create_database_returns_database_proxy_async(self):
+        first_response = await self.client.create_database(id="responses_test" + str(uuid.uuid4()))
+        assert isinstance(first_response, DatabaseProxy)
+
+    async def test_create_database_if_not_exists_headers_async(self):
+        first_response = await self.client.create_database_if_not_exists(id="responses_test" + str(uuid.uuid4()), return_properties=True)
+        assert len(first_response[1].get_response_headers()) > 0
+
+    async def test_create_database_if_not_exists_headers_negative_async(self):
+        first_response = await self.client.create_database_if_not_exists(id="responses_test", return_properties=True)
+        second_response = await self.client.create_database_if_not_exists(id="responses_test", return_properties=True)
+        assert len(second_response[1].get_response_headers()) > 0
+
+    async def test_create_container_headers_async(self):
+        first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
+                                                                   partition_key=PartitionKey(path="/company"), return_properties=True)
+        assert len(first_response[1].get_response_headers()) > 0
+
+    async def test_create_container_returns_container_proxy_async(self):
+        first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
+        assert isinstance(first_response, ContainerProxy)
+
+    async def test_create_container_if_not_exists_headers_async(self):
+        first_response = await self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"), return_properties=True)
+        assert len(first_response[1].get_response_headers()) > 0
+
+    async def test_create_container_if_not_exists_headers_negative_async(self):
+        first_response = await self.test_database.create_container_if_not_exists(id="responses_test1",
+                                                        partition_key=PartitionKey(path="/company"), return_properties=True)
+        second_response = await self.test_database.create_container_if_not_exists(id="responses_test1",
+                                                        partition_key=PartitionKey(path="/company"), return_properties=True)
+        assert len(second_response[1].get_response_headers()) > 0
+
+    async def test_replace_container_headers_async(self):
+        first_response = await self.test_database.create_container_if_not_exists(id="responses_test" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"))
+        second_response = await self.test_database.replace_container(first_response.id,
+                                                               partition_key=PartitionKey(path="/company"), return_properties=True)
+        assert len(second_response[1].get_response_headers()) > 0
+
+    async def test_database_read_headers_async(self):
+        db = await self.client.create_database(id="responses_test" + str(uuid.uuid4()))
+        first_response = await db.read()
+        assert len(first_response.get_response_headers()) > 0
+
+    async def test_container_read_headers_async(self):
+        container = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
+                                                             partition_key=PartitionKey(path="/company"))
+        first_response = await container.read()
+        assert len(first_response.get_response_headers()) > 0
+
+    async def test_container_replace_throughput_async(self):
+        container = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
+                                                        partition_key=PartitionKey(path="/company"), offer_throughput=400)
+        replace_throughput_value = 500
+        first_response = await container.replace_throughput(replace_throughput_value)
+        assert len(first_response.get_response_headers()) > 0
+        new_throughput = await container.get_throughput()
+        assert replace_throughput_value == new_throughput.offer_throughput
+
+    async def test_database_replace_throughput_async(self):
+        db = await self.client.create_database(id="responses_test" + str(uuid.uuid4()), offer_throughput=400)
+        replace_throughput_value = 500
+        first_response = await db.replace_throughput(replace_throughput_value)
+        assert len(first_response.get_response_headers()) > 0
+        new_throughput = await db.get_throughput()
+        assert replace_throughput_value == new_throughput.offer_throughput
 
 
 if __name__ == '__main__':

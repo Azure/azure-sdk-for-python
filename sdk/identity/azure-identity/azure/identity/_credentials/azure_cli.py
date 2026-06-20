@@ -18,6 +18,7 @@ from azure.core.exceptions import ClientAuthenticationError
 from .. import CredentialUnavailableError
 from .._internal import (
     _scopes_to_resource,
+    encode_base64,
     resolve_tenant,
     within_dac,
     validate_tenant_id,
@@ -34,6 +35,11 @@ CLI_NOT_FOUND = "Azure CLI not found on path"
 COMMAND_LINE = ["account", "get-access-token", "--output", "json"]
 EXECUTABLE_NAME = "az"
 NOT_LOGGED_IN = "Please run 'az login' to set up an account"
+CLAIMS_UNSUPPORTED_ERROR = (
+    "This credential doesn't support claims challenges. To authenticate with the required "
+    "claims, please run the following command (requires Azure CLI version 2.76.0 or later): "
+    "az login --claims-challenge {claims_value}"
+)
 
 
 class AzureCliCredential:
@@ -90,7 +96,7 @@ class AzureCliCredential:
     def get_token(
         self,
         *scopes: str,
-        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AccessToken:
@@ -102,20 +108,23 @@ class AzureCliCredential:
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
-        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str claims: additional claims required in the token. This credential does not support claims
+            challenges.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessToken
 
-        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
+        :raises ~azure.identity.CredentialUnavailableError: the credential was either unable to invoke the Azure CLI
+          or a claims challenge was provided.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
-
         options: TokenRequestOptions = {}
         if tenant_id:
             options["tenant_id"] = tenant_id
+        if claims:
+            options["claims"] = claims
 
         token_info = self._get_token_base(*scopes, options=options, **kwargs)
         return AccessToken(token_info.token, token_info.expires_on)
@@ -136,7 +145,8 @@ class AzureCliCredential:
         :rtype: ~azure.core.credentials.AccessTokenInfo
         :return: An AccessTokenInfo instance containing information about the token.
 
-        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure CLI.
+        :raises ~azure.identity.CredentialUnavailableError: the credential was either unable to invoke the Azure CLI
+          or a claims challenge was provided.
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure CLI but didn't
           receive an access token.
         """
@@ -145,6 +155,19 @@ class AzureCliCredential:
     def _get_token_base(
         self, *scopes: str, options: Optional[TokenRequestOptions] = None, **kwargs: Any
     ) -> AccessTokenInfo:
+        # Check for claims challenge first
+        if options and "claims" in options and options["claims"]:
+            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=encode_base64(options["claims"]))
+
+            # Add tenant if provided in options
+            if options.get("tenant_id"):
+                error_message += f" --tenant {options.get('tenant_id')}"
+
+            # Add scope if provided
+            if scopes:
+                error_message += f" --scope {scopes[0]}"
+
+            raise CredentialUnavailableError(message=error_message)
 
         tenant_id = options.get("tenant_id") if options else None
         if tenant_id:

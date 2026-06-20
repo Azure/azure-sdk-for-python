@@ -9,7 +9,6 @@ import test_config
 import pytest
 import time
 
-from azure.cosmos import CosmosClient
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.http_constants import ResourceType
 
@@ -48,8 +47,8 @@ TEST_ITEM = {'id': ITEM_ID}
 TEST_ITEM.update(PARTITION_KEY_ITEMS)
 
 L0 = "Default"
-L1 = "West US 3"
-L2 = "West US"
+L1 = test_config.TestConfig.WRITE_LOCATION
+L2 = test_config.TestConfig.READ_LOCATION
 L3 = "East US 2"
 
 CLIENT_ONLY_TEST_DATA = [
@@ -158,10 +157,11 @@ def create_item_with_excluded_locations(container, body, excluded_locations):
         container.create_item(body=body, excluded_locations=excluded_locations)
 
 def init_container(preferred_locations, client_excluded_locations, multiple_write_locations=True):
-    client = CosmosClient(HOST, KEY,
-                          preferred_locations=preferred_locations,
-                          excluded_locations=client_excluded_locations,
-                          multiple_write_locations=multiple_write_locations)
+    client = test_config.TestConfig.create_data_client(
+        preferred_locations=preferred_locations,
+        excluded_locations=client_excluded_locations,
+        multiple_write_locations=multiple_write_locations,
+    )
     db = client.get_database_client(DATABASE_ID)
     container = db.get_container_client(CONTAINER_ID)
     MOCK_HANDLER.reset()
@@ -187,10 +187,13 @@ def verify_endpoint(messages, client, expected_locations, multiple_write_locatio
     for req_url in req_urls:
         # Requests that require session tokens to be set can now potentially have a request made to fetch partition key ranges beforehand.
         # We only care about the request that is made to the actual item endpoint.
+        req_resource_type = re.search(r"'x-ms-thinclient-proxy-resource-type':\s*'([^']+)'", req_url)
+        resource_value = req_resource_type.group(1)
+        # ignore health check requests
+        if resource_value == ResourceType.DatabaseAccount:
+            continue
         if operation_type and resource_type:
-            req_resource_type = re.search(r"'x-ms-thinclient-proxy-resource-type':\s*'([^']+)'", req_url)
             req_operation_type = re.search(r"'x-ms-thinclient-proxy-operation-type':\s*'([^']+)'", req_url)
-            resource_value = req_resource_type.group(1)
             operation_value = req_operation_type.group(1)
             if resource_type != resource_value or operation_type != operation_value:
                 continue
@@ -212,7 +215,7 @@ def setup_and_teardown():
     logger.addHandler(MOCK_HANDLER)
     logger.setLevel(logging.DEBUG)
 
-    container = CosmosClient(HOST, KEY).get_database_client(DATABASE_ID).get_container_client(CONTAINER_ID)
+    container = test_config.TestConfig.create_data_client().get_database_client(DATABASE_ID).get_container_client(CONTAINER_ID)
     container.upsert_item(body=TEST_ITEM)
     # Waiting some time for the new items to be replicated to other regions
     time.sleep(3)
@@ -220,7 +223,9 @@ def setup_and_teardown():
     # Code to run after tests
     print("Teardown: This runs after all tests")
 
+@pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosAADCircuitBreaker
 class TestExcludedLocations:
     @pytest.mark.parametrize('test_data', read_item_test_data())
     def test_read_item(self, test_data):
@@ -433,10 +438,11 @@ class TestExcludedLocations:
             item_id = f'doc2-{str(uuid.uuid4())}'
             body = {'id': item_id}
             body.update(PARTITION_KEY_ITEMS)
-            create_item_with_excluded_locations(container, body, None)
+            create_item_with_excluded_locations(container, body, request_excluded_locations)
             MOCK_HANDLER.reset()
 
             # API call: delete_item
+            container.upsert_item(body)
             if request_excluded_locations is None:
                 container.delete_item(item_id, PARTITION_KEY_VALUES)
             else:
@@ -448,3 +454,4 @@ class TestExcludedLocations:
 
 if __name__ == "__main__":
     unittest.main()
+

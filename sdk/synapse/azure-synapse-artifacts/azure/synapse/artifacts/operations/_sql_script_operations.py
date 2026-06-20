@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,36 +7,29 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from io import IOBase
-import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
 
-from azure.core import PipelineClient
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
-    StreamClosedError,
-    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.polling.base_polling import LROBasePolling
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._configuration import ArtifactsClientConfiguration
-from .._serialization import Deserializer, Serializer
+from .._serialization import Serializer
+from .._vendor import _convert_request
 
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -186,15 +180,16 @@ class SqlScriptOperations:
 
     def __init__(self, *args, **kwargs):
         input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ArtifactsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def get_sql_scripts_by_workspace(self, **kwargs: Any) -> Iterable["_models.SqlScriptResource"]:
         """Lists sql scripts.
 
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either SqlScriptResource or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.SqlScriptResource]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -205,7 +200,7 @@ class SqlScriptOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         cls: ClsType[_models.SqlScriptsListResponse] = kwargs.pop("cls", None)
 
-        error_map: MutableMapping = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -221,6 +216,7 @@ class SqlScriptOperations:
                     headers=_headers,
                     params=_params,
                 )
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -230,6 +226,7 @@ class SqlScriptOperations:
 
             else:
                 _request = HttpRequest("GET", next_link)
+                _request = _convert_request(_request)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -266,11 +263,11 @@ class SqlScriptOperations:
     def _create_or_update_sql_script_initial(
         self,
         sql_script_name: str,
-        sql_script: Union[_models.SqlScriptResource, IO[bytes]],
+        sql_script: Union[_models.SqlScriptResource, IO],
         if_match: Optional[str] = None,
         **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
+    ) -> Optional[_models.SqlScriptResource]:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -283,7 +280,7 @@ class SqlScriptOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.SqlScriptResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -303,13 +300,13 @@ class SqlScriptOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -317,14 +314,12 @@ class SqlScriptOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize("SqlScriptResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -353,6 +348,14 @@ class SqlScriptOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either SqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.SqlScriptResource]
@@ -363,7 +366,7 @@ class SqlScriptOperations:
     def begin_create_or_update_sql_script(
         self,
         sql_script_name: str,
-        sql_script: IO[bytes],
+        sql_script: IO,
         if_match: Optional[str] = None,
         *,
         content_type: str = "application/json",
@@ -374,13 +377,21 @@ class SqlScriptOperations:
         :param sql_script_name: The sql script name. Required.
         :type sql_script_name: str
         :param sql_script: Sql Script resource definition. Required.
-        :type sql_script: IO[bytes]
+        :type sql_script: IO
         :param if_match: ETag of the SQL script entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either SqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.SqlScriptResource]
@@ -391,7 +402,7 @@ class SqlScriptOperations:
     def begin_create_or_update_sql_script(
         self,
         sql_script_name: str,
-        sql_script: Union[_models.SqlScriptResource, IO[bytes]],
+        sql_script: Union[_models.SqlScriptResource, IO],
         if_match: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[_models.SqlScriptResource]:
@@ -399,12 +410,23 @@ class SqlScriptOperations:
 
         :param sql_script_name: The sql script name. Required.
         :type sql_script_name: str
-        :param sql_script: Sql Script resource definition. Is either a SqlScriptResource type or a
-         IO[bytes] type. Required.
-        :type sql_script: ~azure.synapse.artifacts.models.SqlScriptResource or IO[bytes]
+        :param sql_script: Sql Script resource definition. Is either a SqlScriptResource type or a IO
+         type. Required.
+        :type sql_script: ~azure.synapse.artifacts.models.SqlScriptResource or IO
         :param if_match: ETag of the SQL script entity.  Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either SqlScriptResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.SqlScriptResource]
@@ -431,11 +453,10 @@ class SqlScriptOperations:
                 params=_params,
                 **kwargs
             )
-            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("SqlScriptResource", pipeline_response.http_response)
+            deserialized = self._deserialize("SqlScriptResource", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -453,15 +474,13 @@ class SqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.SqlScriptResource].from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.SqlScriptResource](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def get_sql_script(
@@ -475,11 +494,12 @@ class SqlScriptOperations:
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
          Default value is None.
         :type if_none_match: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: SqlScriptResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SqlScriptResource or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map: MutableMapping = {
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -500,6 +520,7 @@ class SqlScriptOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
@@ -518,15 +539,17 @@ class SqlScriptOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize("SqlScriptResource", pipeline_response.http_response)
+            deserialized = self._deserialize("SqlScriptResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    def _delete_sql_script_initial(self, sql_script_name: str, **kwargs: Any) -> Iterator[bytes]:
-        error_map: MutableMapping = {
+    def _delete_sql_script_initial(  # pylint: disable=inconsistent-return-statements
+        self, sql_script_name: str, **kwargs: Any
+    ) -> None:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -538,7 +561,7 @@ class SqlScriptOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_delete_sql_script_request(
             sql_script_name=sql_script_name,
@@ -546,13 +569,13 @@ class SqlScriptOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -560,19 +583,11 @@ class SqlScriptOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_delete_sql_script(self, sql_script_name: str, **kwargs: Any) -> LROPoller[None]:
@@ -580,6 +595,14 @@ class SqlScriptOperations:
 
         :param sql_script_name: The sql script name. Required.
         :type sql_script_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -593,7 +616,7 @@ class SqlScriptOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._delete_sql_script_initial(
+            raw_result = self._delete_sql_script_initial(  # type: ignore
                 sql_script_name=sql_script_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
@@ -601,7 +624,6 @@ class SqlScriptOperations:
                 params=_params,
                 **kwargs
             )
-            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -621,18 +643,18 @@ class SqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    def _rename_sql_script_initial(
+    def _rename_sql_script_initial(  # pylint: disable=inconsistent-return-statements
         self, sql_script_name: str, new_name: Optional[str] = None, **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
+    ) -> None:
+        error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
@@ -645,7 +667,7 @@ class SqlScriptOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
         _json = self._serialize.body(_request, "ArtifactRenameRequest")
@@ -658,13 +680,13 @@ class SqlScriptOperations:
             headers=_headers,
             params=_params,
         )
+        _request = _convert_request(_request)
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -672,19 +694,11 @@ class SqlScriptOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
-
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def begin_rename_sql_script(
@@ -696,6 +710,14 @@ class SqlScriptOperations:
         :type sql_script_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -710,7 +732,7 @@ class SqlScriptOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = self._rename_sql_script_initial(
+            raw_result = self._rename_sql_script_initial(  # type: ignore
                 sql_script_name=sql_script_name,
                 new_name=new_name,
                 api_version=api_version,
@@ -720,7 +742,6 @@ class SqlScriptOperations:
                 params=_params,
                 **kwargs
             )
-            raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
@@ -740,10 +761,10 @@ class SqlScriptOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore

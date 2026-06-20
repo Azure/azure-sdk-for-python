@@ -1,4 +1,4 @@
-<#! 
+<#!
 .SYNOPSIS
 Activates a virtual environment for a CI machine. Any further usages of "python" will utilize this virtual environment.
 
@@ -9,7 +9,7 @@ When activating a virtual environment, only a few things are actually functional
 # 2. VIRTUAL_ENV = path to root of the virtual env
 # 3. VIRTUAL_ENV_PROMPT = the prompt that is displayed next to the CLI cursor when the virtual env is active
 # within a CI machine, we only need the PATH and VIRTUAL_ENV variables to be set.
-# 4. (optional and inconsistently) _OLD_VIRTUAL_PATH = the PATH before the virtual env was activated. This is not set in this script. 
+# 4. (optional and inconsistently) _OLD_VIRTUAL_PATH = the PATH before the virtual env was activated. This is not set in this script.
 
 .PARAMETER VenvName
 The name of the virtual environment to activate.
@@ -44,6 +44,11 @@ else {
     $env:PATH = "$venvBinPath`:$($env:PATH)"
 }
 
-Write-Host "Activating virtual environment '$VenvName' at $venvPath via AzDO to the value '$($env:PATH)'"
+Write-Host "Activating virtual environment '$VenvName' via VIRTUAL_ENV variable at $venvPath.'"
 Write-Host "##vso[task.setvariable variable=VIRTUAL_ENV]$($env:VIRTUAL_ENV)"
-Write-Host "##vso[task.prependpath]$($env:PATH)"
+
+Write-Host "Prepending path with $venvBinPath"
+Write-Host "##vso[task.prependpath]$venvBinPath"
+
+Write-Host "Unset of PYTHONHOME"
+Write-Host "##vso[task.setvariable variable=PYTHONHOME]"

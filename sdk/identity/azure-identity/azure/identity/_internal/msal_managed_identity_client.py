@@ -45,11 +45,11 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
     def close(self) -> None:
         self.__exit__()
 
-    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:  # pylint:disable=unused-argument
+    def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
         resource = _scopes_to_resource(*scopes)
-        result = self._msal_client.acquire_token_for_client(resource=resource)
+        result = self._msal_client.acquire_token_for_client(resource=resource, claims_challenge=kwargs.get("claims"))
         now = int(time.time())
         if result and "access_token" in result and "expires_in" in result:
             refresh_on = int(result["refresh_on"]) if "refresh_on" in result else None
@@ -61,7 +61,7 @@ class MsalManagedIdentityClient(abc.ABC):  # pylint:disable=client-accepts-api-v
             )
         error_desc = ""
         if result and "error" in result:
-            error_desc = cast(str, result["error"])
+            error_desc = f"Token request error: ({result['error']}) {result.get('error_description', '')}"
         error_message = self.get_unavailable_message(error_desc)
         raise CredentialUnavailableError(error_message)
 

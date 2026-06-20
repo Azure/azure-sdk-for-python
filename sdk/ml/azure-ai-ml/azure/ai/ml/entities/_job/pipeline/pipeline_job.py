@@ -229,11 +229,11 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
         return res
 
     @settings.setter
-    def settings(self, value: Union[Dict, PipelineJobSettings]) -> None:
+    def settings(self, value: Optional[Union[Dict, PipelineJobSettings]]) -> None:
         """Set the pipeline job settings.
 
         :param value: The pipeline job settings.
-        :type value: Union[dict, ~azure.ai.ml.entities.PipelineJobSettings]
+        :type value: Optional[Union[dict, ~azure.ai.ml.entities.PipelineJobSettings]]
         """
         if value is not None:
             if isinstance(value, PipelineJobSettings):

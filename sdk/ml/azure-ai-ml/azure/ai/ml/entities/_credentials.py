@@ -23,8 +23,12 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import UserAssignedIdent
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     UsernamePassword as RestWorkspaceConnectionUsernamePassword,
 )
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity as RestManagedServiceIdentityConfiguration
-from azure.ai.ml._restclient.v2022_05_01.models import UserAssignedIdentity as RestUserAssignedIdentityConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    UserAssignedIdentity as RestUserAssignedIdentityConfiguration,
+)
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
 )
@@ -309,8 +313,6 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
 
     :param client_secret: The client secret.
     :type client_secret: str
-    :keyword kwargs: Additional arguments to pass to the parent class.
-    :paramtype kwargs: Optional[dict]
     """
 
     def __init__(

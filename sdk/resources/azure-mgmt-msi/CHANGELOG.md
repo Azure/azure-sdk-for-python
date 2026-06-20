@@ -1,5 +1,34 @@
 # Release History
 
+## 8.0.0b2 (2026-05-25)
+
+### Features Added
+
+  - Client `ManagedServiceIdentityClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ManagedServiceIdentityClient` added method `send_request`
+  - Added model `AssignmentRestrictions`
+  - Added model `ClaimsMatchingExpression`
+  - Added model `CloudError`
+  - Added model `ExtensionResource`
+  - Added enum `IsolationScope`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Identity` moved instance variable `tenant_id`, `principal_id` and `client_id` under property `properties` whose type is `UserAssignedIdentityProperties`
+  - Model `IdentityUpdate` moved instance variable `tenant_id`, `principal_id` and `client_id` under property `properties` whose type is `UserAssignedIdentityProperties`
+  - Method `FederatedIdentityCredentialsOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+
+## 8.0.0b1 (2025-08-15)
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Model `Identity` deleted or renamed its instance variable `isolation_scope`
+  - Model `IdentityUpdate` deleted or renamed its instance variable `isolation_scope`
+  - Deleted or renamed model `IsolationScope`
+
 ## 7.1.0 (2025-07-21)
 
 ### Features Added

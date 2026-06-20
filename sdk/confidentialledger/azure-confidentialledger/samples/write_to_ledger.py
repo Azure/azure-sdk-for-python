@@ -40,8 +40,7 @@ def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -74,9 +73,7 @@ def main():
 
         # Write a ledger entry.
         try:
-            post_entry_result = ledger_client.create_ledger_entry(
-                {"contents": "Hello world!"}
-            )
+            post_entry_result = ledger_client.create_ledger_entry({"contents": "Hello world!"})
             transaction_id = post_entry_result["transactionId"]
             print(
                 f"Successfully sent a ledger entry to be written. It will become durable at "
@@ -95,9 +92,7 @@ def main():
             )
             wait_poller = ledger_client.begin_wait_for_commit(transaction_id)  # type: ignore[attr-defined]
             wait_poller.wait()
-            print(
-                f"Ledger entry at transaction id {transaction_id} has been committed successfully"
-            )
+            print(f"Ledger entry at transaction id {transaction_id} has been committed successfully")
         except HttpResponseError as e:
             print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
             raise
@@ -113,9 +108,7 @@ def main():
         # Users may wait for a durable commit when writing a ledger entry though this will reduce
         # client throughput.
         try:
-            print(
-                f"Writing another entry. This time, we'll have the client method wait for commit."
-            )
+            print(f"Writing another entry. This time, we'll have the client method wait for commit.")
             post_poller = ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
                 {"contents": "Hello world again!"}
             )

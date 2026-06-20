@@ -14,6 +14,7 @@ from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TY
 
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from .._pyamqp.message import Message as pyamqp_Message
+from .._pyamqp.utils import set_message_properties, set_message_annotations
 from .._transport._pyamqp_transport import PyamqpTransport
 
 from .constants import (
@@ -275,7 +276,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.group_id
 
     @session_id.setter
-    def session_id(self, value: str) -> None:
+    def session_id(self, value: Optional[str]) -> None:
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError("session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
 
@@ -293,7 +294,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         return self._raw_amqp_message.application_properties
 
     @application_properties.setter
-    def application_properties(self, value: Dict[Union[str, bytes], Any]) -> None:
+    def application_properties(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
         self._raw_amqp_message.application_properties = value
 
     @property
@@ -309,6 +310,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
 
         :rtype: str or None
         """
+        opt_p_key = None
         try:
             opt_p_key = self._raw_amqp_message.annotations.get(_X_OPT_PARTITION_KEY)  # type: ignore
             if opt_p_key is not None:
@@ -318,7 +320,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         return None
 
     @partition_key.setter
-    def partition_key(self, value: str) -> None:
+    def partition_key(self, value: Optional[str]) -> None:
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError("partition_key cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
 
@@ -347,7 +349,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         return None
 
     @time_to_live.setter
-    def time_to_live(self, value: Union[datetime.timedelta, int]) -> None:
+    def time_to_live(self, value: Optional[Union[datetime.timedelta, int]]) -> None:
         if not self._raw_amqp_message.header:
             self._raw_amqp_message.header = AmqpMessageHeader()
         if value is None:
@@ -393,7 +395,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
         return None
 
     @scheduled_enqueue_time_utc.setter
-    def scheduled_enqueue_time_utc(self, value: datetime.datetime) -> None:
+    def scheduled_enqueue_time_utc(self, value: Optional[datetime.datetime]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         if not self._raw_amqp_message.properties.message_id:
@@ -440,7 +442,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.content_type
 
     @content_type.setter
-    def content_type(self, value: str) -> None:
+    def content_type(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.content_type = value
@@ -466,7 +468,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.correlation_id
 
     @correlation_id.setter
-    def correlation_id(self, value: str) -> None:
+    def correlation_id(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.correlation_id = value
@@ -488,7 +490,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.subject
 
     @subject.setter
-    def subject(self, value: str) -> None:
+    def subject(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.subject = value
@@ -513,7 +515,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.message_id
 
     @message_id.setter
-    def message_id(self, value: str) -> None:
+    def message_id(self, value: Optional[str]) -> None:
         if value and len(str(value)) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError("message_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH))
         if not self._raw_amqp_message.properties:
@@ -542,7 +544,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.reply_to
 
     @reply_to.setter
-    def reply_to(self, value: str) -> None:
+    def reply_to(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.reply_to = value
@@ -568,7 +570,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.reply_to_group_id
 
     @reply_to_session_id.setter
-    def reply_to_session_id(self, value: str) -> None:
+    def reply_to_session_id(self, value: Optional[str]) -> None:
         if value and len(value) > MESSAGE_PROPERTY_MAX_LENGTH:
             raise ValueError(
                 "reply_to_session_id cannot be longer than {} characters.".format(MESSAGE_PROPERTY_MAX_LENGTH)
@@ -598,7 +600,7 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
             return self._raw_amqp_message.properties.to
 
     @to.setter
-    def to(self, value: str) -> None:
+    def to(self, value: Optional[str]) -> None:
         if not self._raw_amqp_message.properties:
             self._raw_amqp_message.properties = AmqpMessageProperties()
         self._raw_amqp_message.properties.to = value
@@ -674,6 +676,16 @@ class ServiceBusMessageBatch(object):
         self._size = size_after_add
         self._count += 1
         self._messages.append(outgoing_sb_message)
+
+        if self._count == 1:  # Populate properties on the batch envelope from the first message
+            if outgoing_sb_message.message_id or outgoing_sb_message.session_id:
+                properties: List[Optional[str]] = [None] * 13
+                properties[0] = outgoing_sb_message.message_id
+                properties[10] = outgoing_sb_message.session_id
+                set_message_properties(self._message, properties)
+
+            if outgoing_sb_message.partition_key:
+                set_message_annotations(self._message, {_X_OPT_PARTITION_KEY: outgoing_sb_message.partition_key})
 
     @property
     def message(self) -> Union["BatchMessage", LegacyBatchMessage]:

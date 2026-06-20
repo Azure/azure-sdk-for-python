@@ -1,0 +1,3 @@
+{"query": "What is the capital of France?", "response": "Paris is the capital of France.", "ground_truth": "Paris"}
+{"query": "What is 2+2?", "response": "The answer is 4.", "ground_truth": "4"}
+{"query": "Who wrote Hamlet?", "response": "William Shakespeare wrote Hamlet.", "ground_truth": "Shakespeare"}

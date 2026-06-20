@@ -29,42 +29,42 @@ import logging
 import os
 
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
+from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
 try:
-    connection_string = os.environ['WEBPUBSUB_CONNECTION_STRING']
+    endpoint = os.environ["WEBPUBSUB_ENDPOINT"]
 except KeyError:
-    LOG.error("Missing environment variable 'WEBPUBSUB_CONNECTION_STRING' - please set if before running the example")
+    LOG.error("Missing environment variable 'WEBPUBSUB_ENDPOINT' - please set it before running the example")
     exit()
 
-# Build a client from the connection string. And for this example, we have enabled debug
+# Build a client through AAD. And for this example, we have enabled debug
 # tracing. For production code, this should be turned off.
-client = WebPubSubServiceClient.from_connection_string(connection_string, hub='hub', logging_enable=True)
+client = WebPubSubServiceClient(endpoint=endpoint, hub="hub", credential=DefaultAzureCredential(), logging_enable=True)
 
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all(message={'Hello': 'all!'})
-    print('Successfully sent a JSON message')
+    client.send_to_all(message={"Hello": "all!"})
+    print("Successfully sent a JSON message")
 except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+    print("Failed to send JSON message: {}".format(e.response.json()))
 
 # Send a text message to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all(message='hello, text!', content_type='text/plain')
-    print('Successfully sent a JSON message')
+    client.send_to_all(message="hello, text!", content_type="text/plain")
+    print("Successfully sent a JSON message")
 except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
+    print("Failed to send JSON message: {}".format(e.response.json()))
 
 
 # Send a json message from a stream to everybody on the given hub...
 try:
     # Raise an exception if the service rejected the call
-    client.send_to_all(message=io.BytesIO(b'{ "hello": "world" }'), content_type='application/octet-stream')
-    print('Successfully sent a JSON message')
+    client.send_to_all(message=io.BytesIO(b'{ "hello": "world" }'), content_type="application/octet-stream")
+    print("Successfully sent a JSON message")
 except HttpResponseError as e:
-    print('Failed to send JSON message: {}'.format(e.response.json()))
-
+    print("Failed to send JSON message: {}".format(e.response.json()))

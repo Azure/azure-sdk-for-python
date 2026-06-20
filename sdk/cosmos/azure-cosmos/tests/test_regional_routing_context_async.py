@@ -6,7 +6,6 @@ import uuid
 import pytest
 
 import test_config
-from azure.cosmos.aio import CosmosClient
 
 
 @pytest.mark.cosmosEmulator
@@ -26,7 +25,9 @@ class TestRegionalRoutingContextAsync(unittest.IsolatedAsyncioTestCase):
                 "tests.")
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.masterKey)
+        # Pure data-plane test: uses pre-existing single-partition container,
+        # no control-plane operations. Full AAD migration via create_data_client_async().
+        self.client = test_config.TestConfig.create_data_client_async()
         self.created_database = self.client.get_database_client(self.TEST_DATABASE_ID)
         self.created_container = self.created_database.get_container_client(self.TEST_CONTAINER_ID)
 
@@ -35,7 +36,7 @@ class TestRegionalRoutingContextAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_no_swaps_on_successful_request_async(self):
         # Make sure that getDatabaseAccount call has finished
-        await self.client.client_connection._global_endpoint_manager.force_refresh_on_startup(None)
+        await self.client.__aenter__()
         original_read_endpoint = (self.client.client_connection._global_endpoint_manager
                                   .location_cache.get_read_regional_routing_context())
         await self.created_container.create_item(body={"id": str(uuid.uuid4())})

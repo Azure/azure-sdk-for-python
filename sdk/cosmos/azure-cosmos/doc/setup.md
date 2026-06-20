@@ -31,7 +31,7 @@ Your Python interpreter might not be the right version(**Python 3.6+**). Change 
      * azure-core
      * azure-cosmos
    * `/<PATH_TO_CLONED_REPO>/azure-sdk-for-python/sdk/identity/azure-identity`
-   * `/<PATH_TO_CLONED_REPO>/azure-sdk-for-python/tools/azure-sdk-tools`
+   * `/<PATH_TO_CLONED_REPO>/azure-sdk-for-python/eng/tools/azure-sdk-tools`
 
 ![Add package 2](https://github.com/user-attachments/assets/8c97f03a-8c74-48b5-a194-457815f3260b)
 
@@ -44,7 +44,7 @@ Your Python interpreter might not be the right version(**Python 3.6+**). Change 
 #### Run Cosmos DB Emulator
 Azure CosmosDB Emulator is required to run unit tests.
 
-However, the emulator is not ready on MAC OSX yet. Please follow the instructions below to run unit tests on MAC OSX 
+However, the emulator is not ready on MAC OSX yet. Please follow the instructions below to run unit tests on MAC OSX
 
 ##### On Windows
 1. Download [Azure Cosmos DB emulator][cosmos_db_emulator]
@@ -100,23 +100,23 @@ To run aad tests, follow the steps below to create `RoleAssignment` that uses th
     ```shell
     az account set --subscription $subscriptionId
     ```
-    
-    - Create the RoleDefinition 
+
+    - Create the RoleDefinition
     ```shell
     az cosmosdb sql role definition create --account-name $accountName --resource-group $resourceGroupName --body expandedActions.json
     ```
-    
+
     - Get the principalId associated with you Azure account. Replace with any other principalId if necessary. You can also get this value from Azure Portal, by visiting the EntraId Users page. It is called 'Object Id' there.
     ```shell
     az ad signed-in-user show --query id -o tsv
     ```
-        
+
     - Set principalId to a variable
       - `<principalId>`: The returned id from the command above
     ```shell
     principalId=<principalId>
     ```
-    
+
     - Create a RoleAssignment for the principalId that uses the RoleDefinition created above
     ```shell
     az cosmosdb sql role assignment create --account-name $accountName --resource-group $resourceGroupName  --role-definition-name "ExpandedRBACActions" --scope "/" --principal-id $principalId

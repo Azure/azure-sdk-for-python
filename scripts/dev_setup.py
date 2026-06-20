@@ -75,7 +75,7 @@ args = parser.parse_args()
 
 packages = {
     tuple(os.path.dirname(f).rsplit(os.sep, 1))
-    for f in glob.glob(os.path.join(root_dir, "sdk/*/azure-*/setup.py")) + glob.glob(os.path.join(root_dir, "tools/azure-*/setup.py"))
+    for f in glob.glob(os.path.join(root_dir, "sdk/*/azure-*/setup.py")) + glob.glob(os.path.join(root_dir, "eng/tools/azure-*/pyproject.toml"))
 }
 # [(base_folder, package_name), ...] to {package_name: base_folder, ...}
 packages = {package_name: base_folder for (base_folder, package_name) in packages}
@@ -110,14 +110,9 @@ if "azure-sdk-tools" in content_packages:
     content_packages.remove("azure-sdk-tools")
 content_packages.insert(1, "azure-sdk-tools")
 
-# Put azure-common in front of content package
-if "azure-common" in content_packages:
-    content_packages.remove("azure-common")
-content_packages.insert(2, "azure-common")
-
 if 'azure-core' in content_packages:
     content_packages.remove('azure-core')
-content_packages.insert(3, 'azure-core')
+content_packages.insert(2, 'azure-core')
 
 
 print("Running dev setup...")

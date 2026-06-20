@@ -25,7 +25,10 @@ database service.
 
 from collections import deque
 import copy
-from .. import _retry_utility, http_constants
+import logging
+from .. import _retry_utility, http_constants, exceptions, _base
+
+_LOGGER = logging.getLogger(__name__)
 
 # pylint: disable=protected-access
 
@@ -46,6 +49,10 @@ class _QueryExecutionContextBase(object):
         self._has_started = False
         self._has_finished = False
         self._buffer = deque()
+        self._resource_link = None
+        # Per-query mutable capture used by __QueryFeed to report response
+        # headers (including failure checkpoints) without crossing requests.
+        self._internal_response_headers_capture = {}
 
     def _get_initial_continuation(self):
         if "continuation" in self._options:
@@ -113,13 +120,20 @@ class _QueryExecutionContextBase(object):
         """
         fetched_items = []
         new_options = copy.deepcopy(self._options)
+        # Clear stale values from prior pages before issuing a new fetch.
+        self._internal_response_headers_capture.clear()
         while self._continuation or not self._has_started:
-            if not self._has_started:
-                self._has_started = True
             new_options["continuation"] = self._continuation
+            # Reattach on every iteration: __QueryFeed pops this key off
+            # `options`, so without re-setting it here later loop iterations
+            # (empty-page-with-continuation case) would lose the capture and
+            # the 410 retry layer would resume from stale headers.
+            new_options["_internal_response_headers_capture"] = self._internal_response_headers_capture
 
             response_headers = {}
             (fetched_items, response_headers) = fetch_function(new_options)
+            if not self._has_started:
+                self._has_started = True
 
             continuation_key = http_constants.HttpHeaders.Continuation
             self._continuation = response_headers.get(continuation_key)
@@ -129,11 +143,98 @@ class _QueryExecutionContextBase(object):
         return fetched_items
 
     def _fetch_items_helper_with_retries(self, fetch_function):
-        def callback():
-            return self._fetch_items_helper_no_retries(fetch_function)
+        # TODO: Properly propagate kwargs from retry utility to fetch function
+        # the callback keep the **kwargs parameter to maintain compatibility with the retry utility's execution pattern.
+        # Execute passes retry context parameters (timeout, operation start time, logger, etc.)
+        # The callback need to accept these parameters even if unused
+        # Removing **kwargs results in a TypeError when Execute tries to pass these parameters
+        def execute_fetch():
+            def callback(**kwargs):  # pylint: disable=unused-argument
+                return self._fetch_items_helper_no_retries(fetch_function)
 
-        return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
+            return _retry_utility.Execute(
+                self._client, self._client._global_endpoint_manager, callback, **self._options
+            )
 
+        # Check if this is an internal partition key range fetch - skip 410 retry logic to avoid recursion
+        # When we call refresh_routing_map_provider(), it triggers _ReadPartitionKeyRanges which would
+        # come through this same code path. If that also gets a 410 and tries to refresh, we get infinite recursion.
+        is_pk_range_fetch = self._options.get("_internal_pk_range_fetch", False)
+        if is_pk_range_fetch:
+            # For partition key range queries, just execute without 410 partition split retry
+            # The underlying retry utility will still handle other transient errors
+            _LOGGER.debug("Partition split retry: Skipping 410 retry for internal PK range fetch")
+            return execute_fetch()
+
+        max_retries = 3
+        attempt = 0
+
+        while attempt <= max_retries:
+            try:
+                return execute_fetch()
+            except exceptions.CosmosHttpResponseError as e:
+                if exceptions._partition_range_is_gone(e):
+                    attempt += 1
+                    if attempt > max_retries:
+                        _LOGGER.error(
+                            "Partition split retry: Exhausted all %d retries. "
+                            "state: _has_started=%s, _continuation=%s",
+                            max_retries, self._has_started, self._continuation
+                        )
+                        raise  # Exhausted retries, propagate error
+
+                    _LOGGER.warning(
+                        "Partition split retry: 410 error (sub_status=%s). Attempt %d of %d. "
+                        "Refreshing routing map and resetting state.",
+                        getattr(e, 'sub_status', 'N/A'),
+                        attempt,
+                        max_retries
+                    )
+
+                    # Refresh routing map to get new partition key ranges.
+                    collection_link = self._resource_link
+                    if collection_link:
+                        previous_routing_map = None
+                        routing_map_provider = getattr(self._client, "_routing_map_provider", None)
+                        if routing_map_provider is not None:
+                            routing_map_cache = getattr(routing_map_provider, "_collection_routing_map_by_item", {})
+                            if isinstance(routing_map_cache, dict):
+                                # The cache is keyed by the normalized resource id,
+                                # not the raw collection_link. Normalize via
+                                # _base.GetResourceIdOrFullNameFromLink and fall back
+                                # to the raw link only if normalization throws.
+                                # Without this the .get() almost always returns None
+                                # and the refresh below silently degrades to a full
+                                # repopulation on every 410.
+                                lookup_key = collection_link
+                                try:
+                                    lookup_key = _base.GetResourceIdOrFullNameFromLink(collection_link)
+                                except (AttributeError, IndexError, TypeError, ValueError):
+                                    _LOGGER.debug(
+                                        "Partition split retry: could not normalize collection_link "
+                                        "'%s'; using raw value for previous-routing-map lookup.",
+                                        collection_link,
+                                    )
+                                previous_routing_map = routing_map_cache.get(lookup_key)
+                        self._client.refresh_routing_map_provider(
+                            collection_link,
+                            previous_routing_map,
+                            self._options,
+                        )
+                    else:
+                        self._client.refresh_routing_map_provider()
+                    # Reset execution context state for retry. If __QueryFeed already
+                    # stamped a checkpoint continuation on failure, resume from it.
+                    continuation_key = http_constants.HttpHeaders.Continuation
+                    checkpoint_continuation = self._internal_response_headers_capture.get(continuation_key)
+                    self._has_started = False
+                    self._continuation = checkpoint_continuation
+                    # Retry immediately (no backoff needed for partition splits)
+                    continue
+                raise  # Not a partition split error, propagate immediately
+
+        # This should never be reached, but added for safety
+        return []
     next = __next__  # Python 2 compatibility.
 
 
@@ -142,12 +243,14 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
     This is the default execution context.
     """
 
-    def __init__(self, client, options, fetch_function):
+    def __init__(self, client, options, fetch_function, resource_link=None):
         """
         :param CosmosClient client:
         :param dict options: The request options for the request.
         :param method fetch_function:
             Will be invoked for retrieving each page
+        :param str resource_link:
+            Optional collection link associated with this execution context.
 
             Example of `fetch_function`:
 
@@ -157,6 +260,7 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         """
         super(_DefaultQueryExecutionContext, self).__init__(client, options)
         self._fetch_function = fetch_function
+        self._resource_link = resource_link
 
     def _fetch_next_block(self):  # pylint: disable=inconsistent-return-statements
         while super(_DefaultQueryExecutionContext, self)._has_more_pages() and not self._buffer:

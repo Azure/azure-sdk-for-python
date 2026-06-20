@@ -5,28 +5,35 @@
 # -------------------------------------------------------------------------
 from http.client import HTTPConnection
 from collections import OrderedDict
-import sys
+import logging
+import pytest
+from unittest import mock
+from socket import timeout as SocketTimeout
 
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from urllib3.util import connection as urllib_connection
+from urllib3.response import HTTPResponse as UrllibResponse
+from urllib3.connection import HTTPConnection as UrllibConnection
 
+from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
+from azure.core.pipeline._tools import is_rest
 from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
 from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
-from azure.core.exceptions import HttpResponseError
-import logging
-import pytest
+from azure.core.exceptions import (
+    HttpResponseError,
+    ServiceRequestError,
+    ServiceResponseError,
+    ServiceRequestTimeoutError,
+    ServiceResponseTimeoutError,
+)
+
 from utils import (
     HTTP_REQUESTS,
     request_and_responses_product,
     HTTP_CLIENT_TRANSPORT_RESPONSES,
     create_transport_response,
 )
-from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
-from azure.core.pipeline._tools import is_rest
 
 
 class PipelineTransportMockResponse(PipelineTransportHttpResponse):
@@ -119,11 +126,18 @@ def test_http_request_serialization(http_request):
     assert serialized == expected
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_url_join(http_request):
-    assert _urljoin("devstoreaccount1", "") == "devstoreaccount1/"
+def test_url_join():
+    assert _urljoin("devstoreaccount1", "?testdir") == "devstoreaccount1?testdir"
+    assert _urljoin("devstoreaccount1", "?testdir=foo") == "devstoreaccount1?testdir=foo"
+    assert _urljoin("devstoreaccount1/api", "?a=1") == "devstoreaccount1/api?a=1"
+    assert (
+        _urljoin("devstoreaccount1", "/?restype=service&comp=properties")
+        == "devstoreaccount1/?restype=service&comp=properties"
+    )
+    assert _urljoin("devstoreaccount1", "") == "devstoreaccount1"
     assert _urljoin("devstoreaccount1", "testdir/") == "devstoreaccount1/testdir/"
     assert _urljoin("devstoreaccount1/", "") == "devstoreaccount1/"
+    assert _urljoin("devstoreaccount1/", "/testdir/") == "devstoreaccount1/testdir/"
     assert _urljoin("devstoreaccount1/", "testdir/") == "devstoreaccount1/testdir/"
     assert _urljoin("devstoreaccount1?a=1", "testdir/") == "devstoreaccount1/testdir/?a=1"
     assert _urljoin("devstoreaccount1", "testdir/?b=2") == "devstoreaccount1/testdir/?b=2"
@@ -1322,3 +1336,49 @@ def test_close_too_soon_works_fine(caplog, port, http_request):
     result = transport.send(request)
 
     assert result  # No exception is good enough here
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_requests_timeout_response(caplog, port, http_request):
+    transport = RequestsTransport()
+
+    request = http_request("GET", f"http://localhost:{port}/basic/string")
+
+    with mock.patch.object(UrllibConnection, "getresponse", side_effect=SocketTimeout) as mock_method:
+        with pytest.raises(ServiceResponseTimeoutError) as err:
+            transport.send(request, read_timeout=0.0001)
+
+        with pytest.raises(ServiceResponseError) as err:
+            transport.send(request, read_timeout=0.0001)
+
+        stream_request = http_request("GET", f"http://localhost:{port}/streams/basic")
+        with pytest.raises(ServiceResponseTimeoutError) as err:
+            transport.send(stream_request, stream=True, read_timeout=0.0001)
+
+    stream_resp = transport.send(stream_request, stream=True)
+    with mock.patch.object(UrllibResponse, "_handle_chunk", side_effect=SocketTimeout) as mock_method:
+        with pytest.raises(ServiceResponseTimeoutError) as err:
+            try:
+                # current HttpResponse
+                stream_resp.read()
+            except AttributeError:
+                # legacy HttpResponse
+                b"".join(stream_resp.stream_download(None))
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_requests_timeout_request(caplog, port, http_request):
+    transport = RequestsTransport()
+
+    request = http_request("GET", f"http://localhost:{port}/basic/string")
+
+    with mock.patch.object(urllib_connection, "create_connection", side_effect=SocketTimeout) as mock_method:
+        with pytest.raises(ServiceRequestTimeoutError) as err:
+            transport.send(request, connection_timeout=0.0001)
+
+        with pytest.raises(ServiceRequestTimeoutError) as err:
+            transport.send(request, connection_timeout=0.0001)
+
+        stream_request = http_request("GET", f"http://localhost:{port}/streams/basic")
+        with pytest.raises(ServiceRequestTimeoutError) as err:
+            transport.send(stream_request, stream=True, connection_timeout=0.0001)

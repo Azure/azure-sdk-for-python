@@ -18,6 +18,7 @@ from ._models import (
     RecordingProperties,
     AddParticipantResult,
     RemoveParticipantResult,
+    MoveParticipantsResult,
     TransferCallResult,
     MediaStreamingOptions,
     TranscriptionOptions,
@@ -27,6 +28,11 @@ from ._models import (
     CancelAddParticipantOperationResult,
     AzureBlobContainerRecordingStorage,
     AzureCommunicationsRecordingStorage,
+    MediaStreamingSubscription,
+    TranscriptionSubscription,
+    TeamsPhoneCallDetails,
+    TeamsPhoneCallerDetails,
+    TeamsPhoneSourceDetails
 )
 from ._shared.models import (
     CommunicationIdentifier,
@@ -50,19 +56,21 @@ from ._generated.models._enums import (
     RecognizeInputType,
     MediaStreamingAudioChannelType,
     MediaStreamingContentType,
+    MediaStreamingSubscriptionState,
+    TranscriptionResultType,
+    TranscriptionSubscriptionState,
     StreamingTransportType,
     DtmfTone,
     CallConnectionState,
     RecordingState,
     VoiceKind,
-    AudioFormat
+    AudioFormat,
 )
 
 __all__ = [
     # clients
     "CallAutomationClient",
     "CallConnectionClient",
-
     # models for input
     "FileSource",
     "TextSource",
@@ -73,9 +81,13 @@ __all__ = [
     "TranscriptionOptions",
     "AzureBlobContainerRecordingStorage",
     "AzureCommunicationsRecordingStorage",
-
+    "TeamsPhoneCallDetails",
+    "TeamsPhoneCallerDetails",
+    "TeamsPhoneSourceDetails",
     # models for output
     "CallConnectionProperties",
+    "MediaStreamingSubscription",
+    "TranscriptionSubscription",
     "CallParticipant",
     "RecordingProperties",
     "AddParticipantResult",
@@ -84,6 +96,7 @@ __all__ = [
     "MuteParticipantResult",
     "SendDtmfTonesResult",
     "CancelAddParticipantOperationResult",
+    "MoveParticipantsResult",
     # common ACS communication identifier
     "CommunicationIdentifier",
     "PhoneNumberIdentifier",
@@ -95,7 +108,6 @@ __all__ = [
     "UnknownIdentifier",
     "TeamsExtensionUserProperties",
     "TeamsExtensionUserIdentifier",
-
     # enums
     "CallRejectReason",
     "RecordingContent",
@@ -106,12 +118,15 @@ __all__ = [
     "RecognizeInputType",
     "MediaStreamingAudioChannelType",
     "MediaStreamingContentType",
+    "MediaStreamingSubscriptionState",
+    "TranscriptionResultType",
+    "TranscriptionSubscriptionState",
     "StreamingTransportType",
     "DtmfTone",
     "CallConnectionState",
     "RecordingState",
     "VoiceKind",
-    "AudioFormat"
+    "AudioFormat",
 ]
 __version__ = VERSION
 

@@ -76,15 +76,12 @@ class TestVisualStudioCodeCredential:
             os.unlink(tmp_file.name)
 
     def test_broker_credential_requirements_not_installed(self):
-        """Test that the credential w"""
+        """Test that the credential works without the broker installed."""
 
         with patch.dict("sys.modules", {"azure.identity.broker": None}):
-            with patch("azure.identity.broker.InteractiveBrowserBrokerCredential") as mock_credential:
-                with pytest.raises(CredentialUnavailableError):
-                    # This should raise an error because the broker requirements are not installed.
-                    VisualStudioCodeCredential().get_token_info("https://management.azure.com/.default")
-
-        assert mock_credential.call_count == 0, "InteractiveBrowserBrokerCredential should not be instantiated"
+            with pytest.raises(CredentialUnavailableError):
+                # This should raise an error because the broker requirements are not installed.
+                VisualStudioCodeCredential().get_token_info("https://management.azure.com/.default")
 
 
 class TestLoadVSCodeAuthRecord:

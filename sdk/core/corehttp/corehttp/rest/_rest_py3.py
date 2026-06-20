@@ -300,7 +300,7 @@ class _HttpResponseBase(abc.ABC):
 
         :return: The JSON deserialized response body
         :rtype: any
-        :raises json.decoder.JSONDecodeError or ValueError (in python 2.7) if object is not JSON decodable:
+        :raises json.decoder.JSONDecodeError: if the body is not valid JSON.
         """
 
     @abc.abstractmethod
@@ -309,7 +309,7 @@ class _HttpResponseBase(abc.ABC):
 
         If response is good, does nothing.
 
-        :raises ~corehttp.HttpResponseError if the object has an error status code.:
+        :raises ~corehttp.HttpResponseError: if the object has an error status code.
         """
 
 

@@ -9,7 +9,9 @@ from .aadclient_certificate import AadClientCertificate
 from .decorators import wrap_exceptions
 from .interactive import InteractiveCredential
 from .utils import (
+    encode_base64,
     get_default_authority,
+    get_refresh_status,
     normalize_authority,
     process_credential_exclusions,
     resolve_tenant,
@@ -46,6 +48,7 @@ __all__ = [
     "AadClientBase",
     "AuthCodeRedirectServer",
     "AadClientCertificate",
+    "encode_base64",
     "get_default_authority",
     "InteractiveCredential",
     "normalize_authority",
@@ -57,4 +60,5 @@ __all__ = [
     "within_dac",
     "wrap_exceptions",
     "validate_tenant_id",
+    "get_refresh_status",
 ]

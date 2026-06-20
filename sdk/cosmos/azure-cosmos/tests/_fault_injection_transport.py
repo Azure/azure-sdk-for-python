@@ -26,13 +26,14 @@ import json
 import logging
 import sys
 from time import sleep
-from typing import Callable, Optional, Any, Dict, List, MutableMapping
+from typing import Callable, Optional, Any, MutableMapping, Mapping, Tuple, Sequence
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline.transport._requests_basic import RequestsTransport, RequestsTransportResponse
 from requests import Session
 
 from azure.cosmos import documents
+from azure.cosmos._constants import _Constants as Constants
 
 import test_config
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -47,10 +48,10 @@ class FaultInjectionTransport(RequestsTransport):
     logger.setLevel(logging.DEBUG)
 
     def __init__(self, *, session: Optional[Session] = None, loop=None, session_owner: bool = True, **config):
-        self.faults: List[Dict[str, Any]] = []
-        self.requestTransformations: List[Dict[str, Any]]  = []
-        self.responseTransformations: List[Dict[str, Any]] = []
-        self.counters: Dict[str, int] = {
+        self.faults: list[dict[str, Any]] = []
+        self.requestTransformations: list[dict[str, Any]]  = []
+        self.responseTransformations: list[dict[str, Any]] = []
+        self.counters: dict[str, int] = {
             ERROR_WITH_COUNTER: 0
         }
         super().__init__(session=session, loop=loop, session_owner=session_owner, **config)
@@ -63,8 +64,29 @@ class FaultInjectionTransport(RequestsTransport):
         self.counters[ERROR_WITH_COUNTER] += 1
         return error
 
-    def add_fault(self, predicate: Callable[[HttpRequest], bool], fault_factory: Callable[[HttpRequest], Exception]):
-        self.faults.append({"predicate": predicate, "apply": fault_factory})
+    def add_fault(self,
+                  predicate: Callable[[HttpRequest], bool],
+                  fault_factory: Callable[[HttpRequest], Exception],
+                  max_inner_count: Optional[int] = None,
+                  after_max_count: Optional[Callable[[HttpRequest], RequestsTransportResponse]] = None):
+        """ Adds a fault to the transport that will be applied when the predicate matches the request.
+        :param Callable predicate: A callable that takes an HttpRequest and returns True if the fault should be applied.
+        :param Callable fault_factory: A callable that takes an HttpRequest and returns an Exception to be raised.
+        :param int max_inner_count: Optional maximum number of times the fault can be applied for one request.
+            If None, the fault will be applied every time the predicate matches.
+        :param Callable after_max_count: Optional callable that takes an HttpRequest and returns a
+            RequestsTransportResponse. Used to return a different response after the maximum number of faults has
+            been applied. Can only be used if `max_inner_count` is not None.
+        """
+        if max_inner_count is not None:
+            if after_max_count is not None:
+                self.faults.append({"predicate": predicate, "apply": fault_factory, "after_max_count": after_max_count,
+                                    "max_count": max_inner_count, "current_count": 0})
+            else:
+                self.faults.append({"predicate": predicate, "apply": fault_factory,
+                                    "max_count": max_inner_count, "current_count": 0})
+        else:
+            self.faults.append({"predicate": predicate, "apply": fault_factory})
 
     def add_response_transformation(self, predicate: Callable[[HttpRequest], bool], response_transformation: Callable[[HttpRequest, Callable[[HttpRequest], RequestsTransportResponse]], RequestsTransportResponse]):
         self.responseTransformations.append({
@@ -85,6 +107,16 @@ class FaultInjectionTransport(RequestsTransport):
         # find the first fault Factory with matching predicate if any
         first_fault_factory = FaultInjectionTransport.__first_item(iter(self.faults), lambda f: f["predicate"](request))
         if first_fault_factory:
+            if "max_count" in first_fault_factory:
+                FaultInjectionTransport.logger.info(f"Found fault factory with max count {first_fault_factory['max_count']}")
+                if first_fault_factory["current_count"] >= first_fault_factory["max_count"]:
+                    first_fault_factory["current_count"] = 0 # reset counter
+                    if "after_max_count" in first_fault_factory:
+                        FaultInjectionTransport.logger.info("Max count reached, returning after_max_count")
+                        return first_fault_factory["after_max_count"]
+                    FaultInjectionTransport.logger.info("Max count reached, skipping fault injection")
+                    return super().send(request, proxies=proxies, **kwargs)
+                first_fault_factory["current_count"] += 1
             FaultInjectionTransport.logger.info("--> FaultInjectionTransport.ApplyFaultInjection")
             injected_error = first_fault_factory["apply"](request)
             FaultInjectionTransport.logger.info("Found to-be-injected error {}".format(injected_error))
@@ -132,11 +164,20 @@ class FaultInjectionTransport(RequestsTransport):
             frame = frame.f_back
 
     @staticmethod
-    def predicate_req_payload_contains_id(r: HttpRequest, id_value: str):
+    def predicate_req_payload_contains_id(r: HttpRequest, id_value: str) -> bool:
         if r.body is None:
             return False
 
         return '"id":"{}"'.format(id_value) in r.body
+
+    @staticmethod
+    def predicate_req_payload_contains_field(r: HttpRequest, field_name: str, field_value: Optional[str]) -> bool:
+        if r.body is None:
+            return False
+        if field_value is None:
+            return '"{}":"'.format(field_name) in r.body
+        else:
+            return '"{}":"{}"'.format(field_name, field_value) in r.body
 
     @staticmethod
     def predicate_req_for_document_with_id(r: HttpRequest, id_value: str) -> bool:
@@ -163,14 +204,7 @@ class FaultInjectionTransport(RequestsTransport):
     @staticmethod
     def predicate_is_operation_type(r: HttpRequest, operation_type: str) -> bool:
         is_operation_type = r.headers.get(HttpHeaders.ThinClientProxyOperationType) == operation_type
-
         return is_operation_type
-
-    @staticmethod
-    def predicate_is_resource_type(r: HttpRequest, resource_type: str) -> bool:
-        is_resource_type = r.headers.get(HttpHeaders.ThinClientProxyResourceType) == resource_type
-
-        return is_resource_type
 
     @staticmethod
     def predicate_is_write_operation(r: HttpRequest, uri_prefix: str) -> bool:
@@ -225,7 +259,8 @@ class FaultInjectionTransport(RequestsTransport):
     def transform_topology_swr_mrr(
             write_region_name: str,
             read_region_name: str,
-            inner: Callable[[], RequestsTransportResponse]) -> RequestsTransportResponse:
+            inner: Callable[[], RequestsTransportResponse],
+            enable_per_partition_failover: bool = False) -> RequestsTransportResponse:
 
         response = inner()
         if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
@@ -240,6 +275,28 @@ class FaultInjectionTransport(RequestsTransport):
             readable_locations[0]["name"] = write_region_name
             writable_locations[0]["name"] = write_region_name
             readable_locations.append({"name": read_region_name, "databaseAccountEndpoint" : test_config.TestConfig.local_host})
+            FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
+            # TODO: need to verify below behavior against actual Cosmos DB service response
+            if enable_per_partition_failover:
+                result["enablePerPartitionFailoverBehavior"] = True
+            request: HttpRequest = response.request
+            return FaultInjectionTransport.MockHttpResponse(request, 200, result)
+
+        return response
+
+    @staticmethod
+    def transform_topology_ppaf_enabled( # cspell:disable-line
+            inner: Callable[[], RequestsTransportResponse]) -> RequestsTransportResponse:
+
+        response = inner()
+        if not FaultInjectionTransport.predicate_is_database_account_call(response.request):
+            return response
+
+        data = response.body()
+        if response.status_code == 200 and data:
+            data = data.decode("utf-8")
+            result = json.loads(data)
+            result[Constants.EnablePerPartitionFailoverBehavior] = True
             FaultInjectionTransport.logger.info("Transformed Account Topology: {}".format(result))
             request: HttpRequest = response.request
             return FaultInjectionTransport.MockHttpResponse(request, 200, result)
@@ -283,8 +340,25 @@ class FaultInjectionTransport(RequestsTransport):
 
         return response
 
+    class MockHttpRequest(HttpRequest):
+        def __init__(
+                self,
+                url: str,
+                method: str = "GET",
+                headers: Optional[Mapping[str, str]] = None,
+                files: Optional[Any] = None,
+                data: Optional[Any] = None,
+        ) -> None:
+            self.method = method
+            self.url = url
+            self.headers: Optional[MutableMapping[str, str]] = headers
+            self.files: Optional[Any] = files
+            self.data: Optional[Any] = data
+            self.multipart_mixed_info: Optional[
+                Tuple[Sequence[Any], Sequence[Any], Optional[str], dict[str, Any]]] = None
+
     class MockHttpResponse(RequestsTransportResponse):
-        def __init__(self, request: HttpRequest, status_code: int, content:Optional[Dict[str, Any]]):
+        def __init__(self, request: HttpRequest, status_code: int, content: Optional[Any] = None):
             self.request: HttpRequest = request
             # This is actually never None, and set by all implementations after the call to
             # __init__ of this class. This class is also a legacy impl, so it's risky to change it
@@ -295,7 +369,7 @@ class FaultInjectionTransport(RequestsTransport):
             self.reason: Optional[str] = None
             self.content_type: Optional[str] = None
             self.block_size: int = 4096  # Default to same as R
-            self.content: Optional[Dict[str, Any]] = None
+            self.content: Optional[dict[str, Any]] = None
             self.json_text: str = ""
             self.bytes: bytes = b""
             if content:

@@ -36,19 +36,19 @@ def main():
         resource={
             "location": "westus2",
             "properties": {
-                "administrator": {"password": "password", "userName": "mongoAdmin"},
+                "administrator": {"password": "********", "userName": "mongoAdmin"},
                 "authConfig": {"allowedModes": ["NativeAuth"]},
                 "compute": {"tier": "M30"},
                 "highAvailability": {"targetMode": "ZoneRedundantPreferred"},
                 "serverVersion": "5.0",
                 "sharding": {"shardCount": 1},
-                "storage": {"iops": 3000, "sizeGb": 32, "throughput": 125, "type": "PremiumSSDv2"},
+                "storage": {"sizeGb": 32, "type": "PremiumSSDv2"},
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-01-preview/MongoClusters_Create_SSDv2.json
+# x-ms-original-file: 2026-02-01-preview/MongoClusters_Create_SSDv2.json
 if __name__ == "__main__":
     main()

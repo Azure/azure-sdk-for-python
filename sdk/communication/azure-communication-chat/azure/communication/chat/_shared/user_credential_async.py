@@ -50,7 +50,7 @@ class CommunicationTokenCredential(object):
         *,
         token_refresher: Optional[Callable[[], Awaitable[Any]]] = None,
         proactive_refresh: bool = False,
-        **kwargs: Any
+        **kwargs: Any,
     ):
         """
         Initializes the CommunicationTokenCredential.
@@ -60,6 +60,7 @@ class CommunicationTokenCredential(object):
         :param proactive_refresh: Whether to refresh the token proactively.
         :param kwargs: Additional keyword arguments.
         """
+
     @overload
     def __init__(
         self,
@@ -67,7 +68,7 @@ class CommunicationTokenCredential(object):
         resource_endpoint: str,
         token_credential: AsyncTokenCredential,
         scopes: Optional[list[str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ):
         """
         Initializes the CommunicationTokenCredential using token exchange.
@@ -95,14 +96,12 @@ class CommunicationTokenCredential(object):
                 missing_fields.append("token_credential")
             raise ValueError(
                 "When using token exchange, resource_endpoint and token_credential must be provided. "
-                f"Missing: {', '.join(missing_fields)}")
+                f"Missing: {', '.join(missing_fields)}"
+            )
 
         self._token_exchange_client = None
         if resource_endpoint and token_credential:
-            self._token_exchange_client = TokenExchangeClient(
-                resource_endpoint,
-                token_credential,
-                scopes)
+            self._token_exchange_client = TokenExchangeClient(resource_endpoint, token_credential, scopes)
             self._token_refresher = self._token_exchange_client.exchange_entra_token
             self._proactive_refresh = False
 

@@ -9,7 +9,11 @@ from typing_extensions import TypeAlias
 
 try:
     from promptflow._sdk._configuration import Configuration as _Configuration
-except ImportError:
+
+    # Validate that the imported Configuration accepts our expected kwargs.
+    # Some versions of promptflow expose Configuration but with an incompatible signature.
+    _Configuration(override_config=None)
+except (ImportError, TypeError):
     _global_config: Final[Dict[str, Any]] = {}
 
     class _Configuration:

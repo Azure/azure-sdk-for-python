@@ -5,25 +5,17 @@
 # --------------------------------------------------------------------------
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
-from typing import (
-    Any, Callable, List, Optional, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Callable, List, Optional, Union, TYPE_CHECKING
 from urllib.parse import parse_qs
 
 from ._shared import sign_string
 from ._shared.constants import X_MS_VERSION
-from ._shared.models import Services
+from ._shared.models import Services, UserDelegationKey
 from ._shared.shared_access_signature import QueryStringConstants, SharedAccessSignature, _SharedAccessHelper
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.storage.fileshare import (
-        AccountSasPermissions,
-        FileSasPermissions,
-        ShareSasPermissions,
-        ResourceTypes
-    )
+    from azure.storage.fileshare import AccountSasPermissions, FileSasPermissions, ShareSasPermissions, ResourceTypes
 
 
 class FileSharedAccessSignature(SharedAccessSignature):
@@ -34,17 +26,28 @@ class FileSharedAccessSignature(SharedAccessSignature):
     generate_*_shared_access_signature method directly.
     """
 
-    def __init__(self, account_name: str, account_key: str) -> None:
+    def __init__(
+        self,
+        account_name: str,
+        account_key: Optional[str] = None,
+        user_delegation_key: Optional[UserDelegationKey] = None,
+    ) -> None:
         """
         :param str account_name:
             The storage account name used to generate the shared access signatures.
-        :param str account_key:
+        :param Optional[str] account_key:
             The access key to generate the shares access signatures.
+        :param Optional[~azure.storage.fileshare.models.UserDelegationKey] user_delegation_key:
+            Instead of an account key, the user could pass in a user delegation key.
+            A user delegation key can be obtained from the service by authenticating with an AAD identity;
+            this can be accomplished by calling get_user_delegation_key on any Share service object.
         """
         super(FileSharedAccessSignature, self).__init__(account_name, account_key, x_ms_version=X_MS_VERSION)
+        self.user_delegation_key = user_delegation_key
 
     def generate_file(
-        self, share_name: str,
+        self,
+        share_name: str,
         directory_name: Optional[str] = None,
         file_name: Optional[str] = None,
         permission: Optional[Union["FileSasPermissions", str]] = None,
@@ -58,7 +61,8 @@ class FileSharedAccessSignature(SharedAccessSignature):
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
-        sts_hook: Optional[Callable[[str], None]] = None
+        user_delegation_oid: Optional[str] = None,
+        sts_hook: Optional[Callable[[str], None]] = None,
     ) -> str:
         """
         Generates a shared access signature for the file.
@@ -121,6 +125,10 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :param Optional[str] content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :param Optional[str] user_delegation_oid:
+            Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+            The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+            issued to the user specified in this value.
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
@@ -130,18 +138,21 @@ class FileSharedAccessSignature(SharedAccessSignature):
         """
         resource_path = share_name
         if directory_name is not None:
-            resource_path += '/' + str(directory_name)
+            resource_path += "/" + str(directory_name)
         if file_name is not None:
-            resource_path += '/' + str(file_name)
+            resource_path += "/" + str(file_name)
 
         sas = _FileSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
-        sas.add_resource('f')
-        sas.add_override_response_headers(cache_control, content_disposition,
-                                          content_encoding, content_language,
-                                          content_type)
-        sas.add_resource_signature(self.account_name, self.account_key, resource_path)
+        sas.add_user_delegation_oid(user_delegation_oid)
+        sas.add_resource("f")
+        sas.add_override_response_headers(
+            cache_control, content_disposition, content_encoding, content_language, content_type
+        )
+        sas.add_resource_signature(
+            self.account_name, self.account_key, resource_path, user_delegation_key=self.user_delegation_key
+        )
 
         if sts_hook is not None:
             sts_hook(sas.string_to_sign)
@@ -149,7 +160,8 @@ class FileSharedAccessSignature(SharedAccessSignature):
         return sas.get_token()
 
     def generate_share(
-        self, share_name: str,
+        self,
+        share_name: str,
         permission: Optional[Union["ShareSasPermissions", str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
@@ -161,9 +173,10 @@ class FileSharedAccessSignature(SharedAccessSignature):
         content_encoding: Optional[str] = None,
         content_language: Optional[str] = None,
         content_type: Optional[str] = None,
+        user_delegation_oid: Optional[str] = None,
         sts_hook: Optional[Callable[[str], None]] = None,
     ) -> str:
-        '''
+        """
         Generates a shared access signature for the share.
         Use the returned signature with the sas_token parameter of FileService.
 
@@ -219,21 +232,28 @@ class FileSharedAccessSignature(SharedAccessSignature):
         :param Optional[str] content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :param Optional[str] user_delegation_oid:
+            Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+            The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+            issued to the user specified in this value.
         :param sts_hook:
             For debugging purposes only. If provided, the hook is called with the string to sign
             that was used to generate the SAS.
         :type sts_hook: Optional[Callable[[str], None]]
         :returns: The generated SAS token for the account.
         :rtype: str
-        '''
+        """
         sas = _FileSharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
         sas.add_id(policy_id)
-        sas.add_resource('s')
-        sas.add_override_response_headers(cache_control, content_disposition,
-                                          content_encoding, content_language,
-                                          content_type)
-        sas.add_resource_signature(self.account_name, self.account_key, share_name)
+        sas.add_user_delegation_oid(user_delegation_oid)
+        sas.add_resource("s")
+        sas.add_override_response_headers(
+            cache_control, content_disposition, content_encoding, content_language, content_type
+        )
+        sas.add_resource_signature(
+            self.account_name, self.account_key, share_name, user_delegation_key=self.user_delegation_key
+        )
 
         if sts_hook is not None:
             sts_hook(sas.string_to_sign)
@@ -243,39 +263,68 @@ class FileSharedAccessSignature(SharedAccessSignature):
 
 class _FileSharedAccessHelper(_SharedAccessHelper):
 
-    def add_resource_signature(self, account_name, account_key, path):
+    def add_resource_signature(self, account_name, account_key, path, user_delegation_key=None):
         def get_value_to_append(query):
-            return_value = self.query_dict.get(query) or ''
-            return return_value + '\n'
+            return_value = self.query_dict.get(query) or ""
+            return return_value + "\n"
 
-        if path[0] != '/':
-            path = '/' + path
+        if path[0] != "/":
+            path = "/" + path
 
-        canonicalized_resource = '/file/' + account_name + path + '\n'
+        canonicalized_resource = "/file/" + account_name + path + "\n"
 
         # Form the string to sign from shared_access_policy and canonicalized
         # resource. The order of values is important.
-        string_to_sign = \
-            (get_value_to_append(QueryStringConstants.SIGNED_PERMISSION) +
-             get_value_to_append(QueryStringConstants.SIGNED_START) +
-             get_value_to_append(QueryStringConstants.SIGNED_EXPIRY) +
-             canonicalized_resource +
-             get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER) +
-             get_value_to_append(QueryStringConstants.SIGNED_IP) +
-             get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
-             get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
-             get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL) +
-             get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION) +
-             get_value_to_append(QueryStringConstants.SIGNED_CONTENT_ENCODING) +
-             get_value_to_append(QueryStringConstants.SIGNED_CONTENT_LANGUAGE) +
-             get_value_to_append(QueryStringConstants.SIGNED_CONTENT_TYPE))
+        string_to_sign = (
+            get_value_to_append(QueryStringConstants.SIGNED_PERMISSION)
+            + get_value_to_append(QueryStringConstants.SIGNED_START)
+            + get_value_to_append(QueryStringConstants.SIGNED_EXPIRY)
+            + canonicalized_resource
+        )
+
+        if user_delegation_key is not None:
+            self._add_query(QueryStringConstants.SIGNED_OID, user_delegation_key.signed_oid)
+            self._add_query(QueryStringConstants.SIGNED_TID, user_delegation_key.signed_tid)
+            self._add_query(QueryStringConstants.SIGNED_KEY_START, user_delegation_key.signed_start)
+            self._add_query(QueryStringConstants.SIGNED_KEY_EXPIRY, user_delegation_key.signed_expiry)
+            self._add_query(QueryStringConstants.SIGNED_KEY_SERVICE, user_delegation_key.signed_service)
+            self._add_query(QueryStringConstants.SIGNED_KEY_VERSION, user_delegation_key.signed_version)
+            self._add_query(
+                QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID, user_delegation_key.signed_delegated_user_tid
+            )
+
+            string_to_sign += (
+                get_value_to_append(QueryStringConstants.SIGNED_OID)
+                + get_value_to_append(QueryStringConstants.SIGNED_TID)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_START)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_EXPIRY)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_SERVICE)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_VERSION)
+                + get_value_to_append(QueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID)
+                + get_value_to_append(QueryStringConstants.SIGNED_DELEGATED_USER_OID)
+            )
+        else:
+            string_to_sign += get_value_to_append(QueryStringConstants.SIGNED_IDENTIFIER)
+
+        string_to_sign += (
+            get_value_to_append(QueryStringConstants.SIGNED_IP)
+            + get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL)
+            + get_value_to_append(QueryStringConstants.SIGNED_VERSION)
+            + get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL)
+            + get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION)
+            + get_value_to_append(QueryStringConstants.SIGNED_CONTENT_ENCODING)
+            + get_value_to_append(QueryStringConstants.SIGNED_CONTENT_LANGUAGE)
+            + get_value_to_append(QueryStringConstants.SIGNED_CONTENT_TYPE)
+        )
 
         # remove the trailing newline
-        if string_to_sign[-1] == '\n':
+        if string_to_sign[-1] == "\n":
             string_to_sign = string_to_sign[:-1]
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE,
-                        sign_string(account_key, string_to_sign))
+        self._add_query(
+            QueryStringConstants.SIGNED_SIGNATURE,
+            sign_string(account_key if user_delegation_key is None else user_delegation_key.value, string_to_sign),
+        )
         self.string_to_sign = string_to_sign
 
 
@@ -361,13 +410,15 @@ def generate_account_sas(
 def generate_share_sas(
     account_name: str,
     share_name: str,
-    account_key: str,
+    account_key: Optional[str] = None,
     permission: Optional[Union["ShareSasPermissions", str]] = None,
     expiry: Optional[Union["datetime", str]] = None,
     start: Optional[Union["datetime", str]] = None,
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     *,
+    user_delegation_key: Optional[UserDelegationKey] = None,
+    user_delegation_oid: Optional[str] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -380,7 +431,7 @@ def generate_share_sas(
         The storage account name used to generate the shared access signature.
     :param str share_name:
         The name of the share.
-    :param str account_key:
+    :param Optional[str] account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
     :param permission:
         The permissions associated with the shared access signature. The
@@ -431,6 +482,16 @@ def generate_share_sas(
         using this shared access signature.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword ~azure.storage.fileshare.UserDelegationKey user_delegation_key:
+        Instead of an account shared key, the user could pass in a user delegation key.
+        A user delegation key can be obtained from the service by authenticating with an AAD identity;
+        this can be accomplished by calling :func:`~azure.storage.fileshare.ShareServiceClient.get_user_delegation_key`.
+        When present, the SAS is signed with the user delegation key instead.
+    :paramtype user_delegation_key: ~azure.storage.fileshare.UserDelegationKey
+    :keyword str user_delegation_oid:
+        Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+        The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+        issued to the user specified in this value.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -443,7 +504,9 @@ def generate_share_sas(
             raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
         if not permission:
             raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
-    sas = FileSharedAccessSignature(account_name, account_key)
+    if not user_delegation_key and not account_key:
+        raise ValueError("Either user_delegation_key or account_key must be provided.")
+    sas = FileSharedAccessSignature(account_name, account_key=account_key, user_delegation_key=user_delegation_key)
     return sas.generate_share(
         share_name=share_name,
         permission=permission,
@@ -451,6 +514,7 @@ def generate_share_sas(
         start=start,
         policy_id=policy_id,
         ip=ip,
+        user_delegation_oid=user_delegation_oid,
         sts_hook=sts_hook,
         **kwargs
     )
@@ -460,13 +524,15 @@ def generate_file_sas(
     account_name: str,
     share_name: str,
     file_path: List[str],
-    account_key: str,
+    account_key: Optional[str] = None,
     permission: Optional[Union["FileSasPermissions", str]] = None,
     expiry: Optional[Union["datetime", str]] = None,
     start: Optional[Union["datetime", str]] = None,
     policy_id: Optional[str] = None,
     ip: Optional[str] = None,
     *,
+    user_delegation_key: Optional[UserDelegationKey] = None,
+    user_delegation_oid: Optional[str] = None,
     sts_hook: Optional[Callable[[str], None]] = None,
     **kwargs: Any
 ) -> str:
@@ -482,7 +548,7 @@ def generate_file_sas(
     :param file_path:
         The file path represented as a list of path segments, including the file name.
     :type file_path: List[str]
-    :param str account_key:
+    :param Optional[str] account_key:
         The account key, also called shared key or access key, to generate the shared access signature.
     :param permission:
         The permissions associated with the shared access signature. The
@@ -532,6 +598,15 @@ def generate_file_sas(
         using this shared access signature.
     :keyword str protocol:
         Specifies the protocol permitted for a request made. The default value is https.
+    :keyword Optional[~azure.storage.fileshare.UserDelegationKey] user_delegation_key:
+        Instead of an account shared key, the user could pass in a user delegation key.
+        A user delegation key can be obtained from the service by authenticating with an AAD identity;
+        this can be accomplished by calling :func:`~azure.storage.fileshare.ShareServiceClient.get_user_delegation_key`.
+        When present, the SAS is signed with the user delegation key instead.
+    :keyword str user_delegation_oid:
+        Specifies the Entra ID of the user that is authorized to use the resulting SAS URL.
+        The resulting SAS URL must be used in conjunction with an Entra ID token that has been
+        issued to the user specified in this value.
     :keyword sts_hook:
         For debugging purposes only. If provided, the hook is called with the string to sign
         that was used to generate the SAS.
@@ -544,9 +619,11 @@ def generate_file_sas(
             raise ValueError("'expiry' parameter must be provided when not using a stored access policy.")
         if not permission:
             raise ValueError("'permission' parameter must be provided when not using a stored access policy.")
-    sas = FileSharedAccessSignature(account_name, account_key)
+    if not user_delegation_key and not account_key:
+        raise ValueError("Either user_delegation_key or account_key must be provided.")
+    sas = FileSharedAccessSignature(account_name, account_key=account_key, user_delegation_key=user_delegation_key)
     if len(file_path) > 1:
-        dir_path = '/'.join(file_path[:-1])
+        dir_path = "/".join(file_path[:-1])
     else:
         dir_path = None
     return sas.generate_file(
@@ -558,6 +635,7 @@ def generate_file_sas(
         start=start,
         policy_id=policy_id,
         ip=ip,
+        user_delegation_oid=user_delegation_oid,
         sts_hook=sts_hook,
         **kwargs
     )

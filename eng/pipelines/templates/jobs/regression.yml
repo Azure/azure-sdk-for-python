@@ -71,14 +71,20 @@ jobs:
 
     # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
     steps:
+      # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+      # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+      - template: ../steps/auth-dev-feed.yml
+        parameters:
+          DevFeedName: ${{ parameters.DevFeedName }}
+
       - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
       - task: UsePythonVersion@0
-        displayName: 'Use Python 3.9'
+        displayName: 'Use Python 3.10'
         inputs:
-          versionSpec: '3.9'
+          versionSpec: '3.10'
 
       - template: /eng/pipelines/templates/steps/use-venv.yml
 
@@ -86,7 +92,7 @@ jobs:
 
       - pwsh: |
           mkdir -p $(TEST_PROXY_FOLDER)
-          python -m pip install -r eng/regression_tools.txt
+          $(PIP_EXE) install -r eng/regression_tools.txt
         displayName: 'Prep Environment'
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
@@ -96,11 +102,6 @@ jobs:
       - template: ../steps/set-dev-build.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
-      - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-        - template: ../steps/auth-dev-feed.yml
-          parameters:
-            DevFeedName: ${{ parameters.DevFeedName }}
 
       - task: PythonScript@0
         displayName: 'Test Latest Released Dependents'

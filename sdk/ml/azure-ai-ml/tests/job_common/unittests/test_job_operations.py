@@ -1,5 +1,6 @@
 import json
 import os
+import platform
 from unittest.mock import Mock, patch
 
 import jwt
@@ -26,13 +27,13 @@ def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
-    mock_aml_services_2024_07_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
-        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
+        serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
 
@@ -155,6 +156,10 @@ class TestJobOperations:
     # use mock_component_hash to avoid passing a Mock object as client key
     @pytest.mark.usefixtures("mock_component_hash")
     @patch.object(JobOperations, "_get_job")
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy",
+        reason="Relies on CPython bytecode optimization; PyPy does not support required opcodes",
+    )
     def test_get_job(self, mock_method, mock_job_operation: JobOperations) -> None:
         from azure.ai.ml import Input, dsl, load_component
 

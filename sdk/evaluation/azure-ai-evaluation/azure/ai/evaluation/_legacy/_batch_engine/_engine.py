@@ -344,8 +344,13 @@ class BatchEngine:
 
         func_params = inspect.signature(self._func).parameters
 
-        filtered_params = {key: value for key, value in inputs.items() if key in func_params}
-        return filtered_params
+        has_kwargs = any(p.kind == p.VAR_KEYWORD for p in func_params.values())
+
+        if has_kwargs:
+            return inputs
+        else:
+            filtered_params = {key: value for key, value in inputs.items() if key in func_params}
+            return filtered_params
 
     async def _exec_line_async(
         self,

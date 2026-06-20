@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2026-02-01",
+  "apiVersions": {
+    "Microsoft.DurableTask": "2026-02-01"
+  },
+  "commit": "a86317f00c71ef51aab7f78e6f4a2be3cf58f2cd",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/durabletask/DurableTask.Management",
+  "emitterVersion": "0.60.2"
+}

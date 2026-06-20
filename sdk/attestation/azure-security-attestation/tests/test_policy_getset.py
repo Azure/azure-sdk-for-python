@@ -26,15 +26,18 @@ from helpers import pem_from_base64
 
 from azure.security.attestation import (
     AttestationAdministrationClient,
-    AttestationType,
     AttestationToken,
+    AttestationPolicyToken,
+)
+from azure.security.attestation.models import (
+    AttestationType,
     PolicyModification,
     CertificateModification,
-    AttestationPolicyToken,
 )
 
 
 class TestPolicyGetSet(AzureRecordedTestCase):
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
     @AllInstanceTypes
@@ -46,19 +49,16 @@ class TestPolicyGetSet(AzureRecordedTestCase):
         assert policy.startswith("version") or len(policy) == 0
         print("Token: ", token)
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
     @recorded_by_proxy
     def test_aad_set_policy_unsecured(self, attestation_aad_url, **kwargs):
-        attestation_policy = (
-            u"version=1.0; authorizationrules{=> permit();}; issuancerules{};"
-        )
+        attestation_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
 
         attestation_type = kwargs.pop("attestation_type")
         attest_client = self.create_admin_client(attestation_aad_url)
-        policy_set_response, _ = attest_client.set_policy(
-            attestation_type, attestation_policy
-        )
+        policy_set_response, _ = attest_client.set_policy(attestation_type, attestation_policy)
         new_policy = attest_client.get_policy(attestation_type)[0]
         assert new_policy == attestation_policy
 
@@ -70,6 +70,7 @@ class TestPolicyGetSet(AzureRecordedTestCase):
 
         assert expected_hash == policy_set_response.policy_token_hash
 
+    @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
     @recorded_by_proxy
@@ -85,13 +86,11 @@ class TestPolicyGetSet(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
-    def test_aad_reset_policy_secured(self, **kwargs):   
+    def test_aad_reset_policy_secured(self, **kwargs):
         attestation_aad_url = kwargs.pop("attestation_aad_url")
         attestation_policy_signing_key0 = kwargs.pop("attestation_policy_signing_key0")
         attestation_policy_signing_certificate0 = kwargs.pop("attestation_policy_signing_certificate0")
-        signing_certificate = pem_from_base64(
-            attestation_policy_signing_certificate0, "CERTIFICATE"
-        )
+        signing_certificate = pem_from_base64(attestation_policy_signing_certificate0, "CERTIFICATE")
         key = pem_from_base64(attestation_policy_signing_key0, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
@@ -107,17 +106,13 @@ class TestPolicyGetSet(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @AllAttestationTypes
     @AttestationPreparer()
-    def test_aad_set_policy_secured(self,**kwargs):
+    def test_aad_set_policy_secured(self, **kwargs):
         attestation_aad_url = kwargs.pop("attestation_aad_url")
         attestation_policy_signing_key0 = kwargs.pop("attestation_policy_signing_key0")
         attestation_policy_signing_certificate0 = kwargs.pop("attestation_policy_signing_certificate0")
-        attestation_policy = (
-            u"version=1.0; authorizationrules{=> permit();}; issuancerules{};"
-        )
+        attestation_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
 
-        signing_certificate = pem_from_base64(
-            attestation_policy_signing_certificate0, "CERTIFICATE"
-        )
+        signing_certificate = pem_from_base64(attestation_policy_signing_certificate0, "CERTIFICATE")
         key = pem_from_base64(attestation_policy_signing_key0, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
@@ -144,17 +139,13 @@ class TestPolicyGetSet(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
-    def test_isolated_set_policy_secured(self,**kwargs):
+    def test_isolated_set_policy_secured(self, **kwargs):
         attestation_isolated_url = kwargs.pop("attestation_isolated_url")
         attestation_isolated_signing_key = kwargs.pop("attestation_isolated_signing_key")
         attestation_isolated_signing_certificate = kwargs.pop("attestation_isolated_signing_certificate")
-        attestation_policy = (
-            u"version=1.0; authorizationrules{=> permit();}; issuancerules{};"
-        )
+        attestation_policy = "version=1.0; authorizationrules{=> permit();}; issuancerules{};"
 
-        signing_certificate = pem_from_base64(
-            attestation_isolated_signing_certificate, "CERTIFICATE"
-        )
+        signing_certificate = pem_from_base64(attestation_isolated_signing_certificate, "CERTIFICATE")
         key = pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_isolated_url)
@@ -181,13 +172,11 @@ class TestPolicyGetSet(AzureRecordedTestCase):
     @pytest.mark.live_test_only
     @AttestationPreparer()
     @AllAttestationTypes
-    def test_isolated_reset_policy_secured(self,**kwargs):
+    def test_isolated_reset_policy_secured(self, **kwargs):
         attestation_aad_url = kwargs.pop("attestation_aad_url")
         attestation_isolated_signing_key = kwargs.pop("attestation_isolated_signing_key")
         attestation_isolated_signing_certificate = kwargs.pop("attestation_isolated_signing_certificate")
-        signing_certificate = pem_from_base64(
-            attestation_isolated_signing_certificate, "CERTIFICATE"
-        )
+        signing_certificate = pem_from_base64(attestation_isolated_signing_certificate, "CERTIFICATE")
         key = pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
 
         attest_client = self.create_admin_client(attestation_aad_url)
@@ -231,13 +220,11 @@ class TestPolicyGetSet(AzureRecordedTestCase):
             expected_certificate = pem_from_base64(
                 kwargs.get("attestation_isolated_signing_certificate"), "CERTIFICATE"
             )
-        self._test_get_policy_management_certificates(
-            instance_url, expected_certificate
-        )
+        self._test_get_policy_management_certificates(instance_url, expected_certificate)
 
     @pytest.mark.live_test_only
     @AttestationPreparer()
-    def test_add_remove_policy_certificate(self,**kwargs):
+    def test_add_remove_policy_certificate(self, **kwargs):
         attestation_isolated_url = kwargs.pop("attestation_isolated_url")
         attestation_isolated_signing_certificate = kwargs.pop("attestation_isolated_signing_certificate")
         attestation_isolated_signing_key = kwargs.pop("attestation_isolated_signing_key")
@@ -245,16 +232,10 @@ class TestPolicyGetSet(AzureRecordedTestCase):
         attestation_policy_signing_certificate0 = kwargs.pop("attestation_policy_signing_certificate0")
         # type: (str, str, str, str, str, str) -> None
 
-        pem_signing_cert = pem_from_base64(
-            attestation_isolated_signing_certificate, "CERTIFICATE"
-        )
-        pem_signing_key = pem_from_base64(
-            attestation_isolated_signing_key, "PRIVATE KEY"
-        )
+        pem_signing_cert = pem_from_base64(attestation_isolated_signing_certificate, "CERTIFICATE")
+        pem_signing_key = pem_from_base64(attestation_isolated_signing_key, "PRIVATE KEY")
 
-        pem_certificate_to_add = pem_from_base64(
-            attestation_policy_signing_certificate0, "CERTIFICATE"
-        )
+        pem_certificate_to_add = pem_from_base64(attestation_policy_signing_certificate0, "CERTIFICATE")
 
         admin_client = self.create_admin_client(
             attestation_isolated_url,
@@ -268,15 +249,11 @@ class TestPolicyGetSet(AzureRecordedTestCase):
 
         # And test more than one positional parameter. Should also throw.
         with pytest.raises(TypeError):
-            admin_client.add_policy_management_certificate(
-                pem_certificate_to_add, pem_certificate_to_add
-            )
+            admin_client.add_policy_management_certificate(pem_certificate_to_add, pem_certificate_to_add)
 
         # Now let's do something meaningful :). Add a new certificate, using
         # the key and cert specified when the admin client was created.
-        result, _ = admin_client.add_policy_management_certificate(
-            pem_certificate_to_add
-        )
+        result, _ = admin_client.add_policy_management_certificate(pem_certificate_to_add)
         assert result.certificate_resolution == CertificateModification.IS_PRESENT
 
         # Add it again - this should be ok.
@@ -289,30 +266,20 @@ class TestPolicyGetSet(AzureRecordedTestCase):
 
         # Ensure that the new certificate is present.
         # We'll leverage the get certificates test to validate this.
-        self._test_get_policy_management_certificates(
-            attestation_isolated_url, pem_certificate_to_add
-        )
+        self._test_get_policy_management_certificates(attestation_isolated_url, pem_certificate_to_add)
 
         # Now remove the certificate we just added.
-        result, _ = admin_client.remove_policy_management_certificate(
-            pem_certificate_to_add
-        )
+        result, _ = admin_client.remove_policy_management_certificate(pem_certificate_to_add)
         assert result.certificate_resolution == CertificateModification.IS_ABSENT
 
         # Remove it again, this should be ok.
-        result, _ = admin_client.remove_policy_management_certificate(
-            pem_certificate_to_add
-        )
+        result, _ = admin_client.remove_policy_management_certificate(pem_certificate_to_add)
         assert result.certificate_resolution == CertificateModification.IS_ABSENT
 
         # The set of certificates should now just contain the original isolated certificate.
-        self._test_get_policy_management_certificates(
-            attestation_isolated_url, pem_signing_cert
-        )
+        self._test_get_policy_management_certificates(attestation_isolated_url, pem_signing_cert)
 
-    def create_admin_client(
-        self, base_uri, **kwargs
-    ):  # type: (str, Any) -> AttestationAdministrationClient
+    def create_admin_client(self, base_uri, **kwargs):  # type: (str, Any) -> AttestationAdministrationClient
         """
         docstring
         """

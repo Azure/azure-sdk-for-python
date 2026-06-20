@@ -4,11 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 from logging import getLogger
-import json
 import time
 import random
 from dataclasses import dataclass
-from typing import Tuple, Union, Dict, List, Any, Optional, Mapping
+from typing import Tuple, Union, Dict, List, Optional, Mapping
 from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
@@ -18,6 +17,7 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     ConfigurationSetting,
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
+    SnapshotComposition,
 )
 from ._client_manager_base import (
     _ConfigurationClientWrapperBase,
@@ -28,6 +28,8 @@ from ._client_manager_base import (
 from ._models import SettingSelector
 from ._constants import FEATURE_FLAG_PREFIX
 from ._discovery import find_auto_failover_endpoints
+from ._snapshot_reference_parser import SnapshotReferenceParser
+from ._constants import SNAPSHOT_REF_CONTENT_TYPE
 
 
 @dataclass
@@ -45,7 +47,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         user_agent: str,
         retry_total: int,
         retry_backoff_max: int,
-        **kwargs
+        **kwargs,
     ) -> Self:
         """
         Creates a new instance of the _ConfigurationClientWrapper class, using the provided credential to authenticate
@@ -67,7 +69,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -94,7 +96,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -113,20 +115,20 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
         """
         try:
-            updated_sentinel = self._client.get_configuration_setting(  # type: ignore
+            updated_watched_setting = self._client.get_configuration_setting(  # type: ignore
                 key=key, label=label, etag=etag, match_condition=MatchConditions.IfModified, headers=headers, **kwargs
             )
-            if updated_sentinel is not None:
+            if updated_watched_setting is not None:
                 self.LOGGER.debug(
                     "Refresh all triggered by key: %s label %s.",
                     key,
                     label,
                 )
-                return True, updated_sentinel
+                return True, updated_watched_setting
         except HttpResponseError as e:
             if e.status_code == 404:
                 if etag is not None:
-                    # If the sentinel is not found, it means the key/label was deleted, so we should refresh
+                    # If the watched setting is not found, it means the key/label was deleted, so we should refresh
                     self.LOGGER.debug("Refresh all triggered by key: %s label %s.", key, label)
                     return True, None
             else:
@@ -135,133 +137,180 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     def load_configuration_settings(
-        self, selects: List[SettingSelector], refresh_on: Mapping[Tuple[str, str], Optional[str]], **kwargs
-    ) -> Tuple[List[ConfigurationSetting], Dict[Tuple[str, str], str]]:
-        configuration_settings = []
-        sentinel_keys = kwargs.pop("sentinel_keys", refresh_on)
+        self, selects: List[SettingSelector], **kwargs
+    ) -> Tuple[List[ConfigurationSetting], List[List[str]]]:
+        """
+        Loads configuration settings using page-based iteration, collecting page etags for each selector.
+
+        :param selects: List of setting selectors to filter configuration settings
+        :type selects: List[SettingSelector]
+        :return: A tuple of (configuration_settings, page_etags_per_selector)
+        :rtype: Tuple[List[ConfigurationSetting], List[List[str]]]
+        """
+        configuration_settings: List[ConfigurationSetting] = []
+        page_etags: List[List[str]] = []
         for select in selects:
-            configurations = self._client.list_configuration_settings(
-                key_filter=select.key_filter, label_filter=select.label_filter, tags_filter=select.tag_filters, **kwargs
-            )
-            for config in configurations:
-                if isinstance(config, FeatureFlagConfigurationSetting):
-                    # Feature flags are ignored when loaded by Selects, as they are selected from
-                    # `feature_flag_selectors`
-                    pass
-                configuration_settings.append(config)
-                # Every time we run load_all, we should update the etag of our refresh sentinels
-                # so they stay up-to-date.
-                # Sentinel keys will have unprocessed key names, so we need to use the original key.
-                if (config.key, config.label) in refresh_on:
-                    sentinel_keys[(config.key, config.label)] = config.etag
-        return configuration_settings, sentinel_keys
+            selector_etags: List[str] = []
+            if select.snapshot_name is not None:
+                if not self._validate_snapshot(select.snapshot_name):
+                    return [], []
+                configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+                for config in configurations:
+                    if not isinstance(config, FeatureFlagConfigurationSetting):
+                        configuration_settings.append(config)
+            else:
+                configurations = self._client.list_configuration_settings(
+                    key_filter=select.key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
+                iterator = configurations.by_page()
+                for page in iterator:
+                    for config in page:
+                        if not isinstance(config, FeatureFlagConfigurationSetting):
+                            configuration_settings.append(config)
+                    selector_etags.append(iterator.etag)
+            page_etags.append(selector_etags)
+        return configuration_settings, page_etags
+
+    @distributed_trace
+    def check_page_etags(self, selects: List[SettingSelector], page_etags: List[List[str]], **kwargs) -> bool:
+        """
+        Checks if any configuration settings page has changed using page etags.
+
+        :param selects: List of setting selectors to check
+        :type selects: List[SettingSelector]
+        :param page_etags: The page etags from the last load, one list per selector
+        :type page_etags: List[List[str]]
+        :return: True if any page has changed, False otherwise
+        :rtype: bool
+        """
+        for i, select in enumerate(selects):
+            if i >= len(page_etags):
+                # Missing or stale etag state should trigger a refresh instead of failing.
+                return True
+            selector_etags = page_etags[i]
+            if select.snapshot_name is None:
+                # We only process non-snapshot selectors here, because snapshot never change
+                configurations = self._client.list_configuration_settings(
+                    key_filter=select.key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
+                for _ in configurations.by_page(match_conditions=selector_etags):
+                    # If any page is returned, it means that page has changed
+                    return True
+        return False
 
     @distributed_trace
     def load_feature_flags(
-        self,
-        feature_flag_selectors: List[SettingSelector],
-        feature_flag_refresh_enabled: bool,
-        provided_endpoint: str,
-        **kwargs
-    ) -> Tuple[
-        List[FeatureFlagConfigurationSetting],
-        Dict[Tuple[str, str], str],
-        Dict[str, bool],
-    ]:
-        feature_flag_sentinel_keys = {}
-        loaded_feature_flags = []
+        self, feature_flag_selectors: List[SettingSelector], **kwargs
+    ) -> Tuple[List[FeatureFlagConfigurationSetting], List[List[str]]]:
+        """
+        Loads feature flags using page-based iteration, collecting page etags for each selector.
+
+        :param feature_flag_selectors: List of setting selectors to filter feature flags
+        :type feature_flag_selectors: List[SettingSelector]
+        :return: A tuple of (feature_flags, page_etags_per_selector)
+        :rtype: Tuple[List[FeatureFlagConfigurationSetting], List[List[str]]]
+        """
+        loaded_feature_flags: List[FeatureFlagConfigurationSetting] = []
+        page_etags: List[List[str]] = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
-        filters_used: Dict[str, bool] = {}
         for select in feature_flag_selectors:
-            feature_flags = self._client.list_configuration_settings(
-                key_filter=FEATURE_FLAG_PREFIX + select.key_filter,
-                label_filter=select.label_filter,
-                tags_filter=select.tag_filters,
-                **kwargs
-            )
-            for feature_flag in feature_flags:
-                if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
-                    # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
-                    # mistake, so we should ignore it.
+            selector_etags: List[str] = []
+            if select.snapshot_name is not None:
+                # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
+                if not self._validate_snapshot(select.snapshot_name):
+                    page_etags.append(selector_etags)
                     continue
+                feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+                for ff in feature_flags:
+                    if isinstance(ff, FeatureFlagConfigurationSetting):
+                        loaded_feature_flags.append(ff)
+            else:
+                # Handle None key_filter by converting to empty string
+                key_filter = select.key_filter if select.key_filter is not None else ""
+                feature_flags = self._client.list_configuration_settings(
+                    key_filter=FEATURE_FLAG_PREFIX + key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
+                iterator = feature_flags.by_page()
+                for page in iterator:
+                    for ff in page:
+                        if isinstance(ff, FeatureFlagConfigurationSetting):
+                            loaded_feature_flags.append(ff)
+                    selector_etags.append(iterator.etag)
+            page_etags.append(selector_etags)
 
-                feature_flag_value = json.loads(feature_flag.value)
-
-                self._feature_flag_telemetry(provided_endpoint, feature_flag, feature_flag_value)
-                self._feature_flag_appconfig_telemetry(feature_flag, filters_used)
-
-                loaded_feature_flags.append(feature_flag_value)
-
-                if feature_flag_refresh_enabled:
-                    feature_flag_sentinel_keys[(feature_flag.key, feature_flag.label)] = feature_flag.etag
-        return loaded_feature_flags, feature_flag_sentinel_keys, filters_used
+        return loaded_feature_flags, page_etags
 
     @distributed_trace
-    def refresh_configuration_settings(
-        self,
-        selects: List[SettingSelector],
-        refresh_on: Mapping[Tuple[str, str], Optional[str]],
-        headers: Dict[str, str],
-        **kwargs
-    ) -> Tuple[bool, Mapping[Tuple[str, str], Optional[str]], List[Any]]:
+    def check_feature_flag_page_etags(
+        self, feature_flag_selectors: List[SettingSelector], page_etags: List[List[str]], **kwargs
+    ) -> bool:
         """
-        Gets the refreshed configuration settings if they have changed.
+        Checks if any feature flag page has changed using page etags.
 
-        :param List[SettingSelector] selects: The selectors to use to load configuration settings
-        :param List[SettingSelector] refresh_on: The configuration settings to check for changes
+        :param feature_flag_selectors: List of setting selectors for feature flags
+        :type feature_flag_selectors: List[SettingSelector]
+        :param page_etags: The page etags from the last load, one list per selector
+        :type page_etags: List[List[str]]
+        :return: True if any page has changed, False otherwise
+        :rtype: bool
+        """
+        for i, select in enumerate(feature_flag_selectors):
+            if i >= len(page_etags):
+                # Missing or stale etag state should trigger a refresh instead of failing.
+                return True
+            selector_etags = page_etags[i]
+            if select.snapshot_name is None:
+                key_filter = select.key_filter if select.key_filter is not None else ""
+                feature_flags = self._client.list_configuration_settings(
+                    key_filter=FEATURE_FLAG_PREFIX + key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
+                for _ in feature_flags.by_page(match_conditions=selector_etags):
+                    # If any page is returned, it means that page has changed
+                    return True
+        return False
+
+    @distributed_trace
+    def get_updated_watched_settings(
+        self, watched_settings: Mapping[Tuple[str, str], Optional[str]], headers: Dict[str, str], **kwargs
+    ) -> Mapping[Tuple[str, str], Optional[str]]:
+        """
+        Checks if any of the watch keys have changed, and updates them if they have.
+
+        :param Mapping[Tuple[str, str], Optional[str]] watched_settings: The configuration settings to check for changes
         :param Mapping[str, str] headers: The headers to use for the request
 
-        :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
-        value of the configuration sentinel keys. The third item is the updated configuration settings.
-        :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None], Union[List[ConfigurationSetting], None]]
+        :return: Updated value of the configuration watched settings.
+        :rtype: Union[Dict[Tuple[str, str], str], None]
         """
-        need_refresh = False
-        updated_sentinel_keys = dict(refresh_on)
-        for (key, label), etag in updated_sentinel_keys.items():
-            changed, updated_sentinel = self._check_configuration_setting(
+        updated_watched_settings = dict(watched_settings)
+        trigger_refresh = False
+        for (key, label), etag in watched_settings.items():
+            changed, updated_watched_setting = self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
             )
-            if changed:
-                need_refresh = True
-            if updated_sentinel is not None:
-                updated_sentinel_keys[(key, label)] = updated_sentinel.etag
-        # Need to only update once, no matter how many sentinels are updated
-        if need_refresh:
-            configuration_settings, sentinel_keys = self.load_configuration_settings(selects, refresh_on, **kwargs)
-            return True, sentinel_keys, configuration_settings
-        return False, refresh_on, []
-
-    @distributed_trace
-    def refresh_feature_flags(
-        self,
-        refresh_on: Mapping[Tuple[str, str], Optional[str]],
-        feature_flag_selectors: List[SettingSelector],
-        headers: Dict[str, str],
-        provided_endpoint: str,
-        **kwargs
-    ) -> Tuple[bool, Optional[Mapping[Tuple[str, str], Optional[str]]], Optional[List[Any]], Dict[str, bool]]:
-        """
-        Gets the refreshed feature flags if they have changed.
-
-        :param Mapping[Tuple[str, str], Optional[str]] refresh_on: The feature flags to check for changes
-        :param List[SettingSelector] feature_flag_selectors: The selectors to use to load feature flags
-        :param Mapping[str, str] headers: The headers to use for the request
-        :param str provided_endpoint: The endpoint provided by the user
-
-        :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
-        value of the feature flag sentinel keys. The third item is the updated feature flags.
-        :rtype: Tuple[bool, Union[Dict[Tuple[str, str], str], None], Union[List[Dict[str, str]], None, Dict[str, bool]]
-        """
-        feature_flag_sentinel_keys: Mapping[Tuple[str, str], Optional[str]] = dict(refresh_on)
-        for (key, label), etag in feature_flag_sentinel_keys.items():
-            changed = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
-            if changed:
-                feature_flags, feature_flag_sentinel_keys, filters_used = self.load_feature_flags(
-                    feature_flag_selectors, True, provided_endpoint, headers=headers, **kwargs
-                )
-                return True, feature_flag_sentinel_keys, feature_flags, filters_used
-        return False, None, None, {}
+            if changed and updated_watched_setting is not None:
+                updated_watched_settings[(key, label)] = updated_watched_setting.etag
+                trigger_refresh = True
+            elif changed:
+                # The key was deleted
+                updated_watched_settings[(key, label)] = None
+                trigger_refresh = True
+        if trigger_refresh:
+            return updated_watched_settings
+        return {}
 
     @distributed_trace
     def get_configuration_setting(self, key: str, label: str, **kwargs) -> Optional[ConfigurationSetting]:
@@ -274,6 +323,30 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: ConfigurationSetting
         """
         return self._client.get_configuration_setting(key=key, label=label, **kwargs)
+
+    def _validate_snapshot(self, snapshot_name: str) -> bool:
+        """Gets and validates a snapshot by name.
+
+        Returns True if the snapshot is found and has a valid composition type,
+        or False if the snapshot does not exist (404).
+
+        :param str snapshot_name: The name of the snapshot to retrieve
+        :return: True if the snapshot is valid, False if not found
+        :rtype: bool
+        :raises HttpResponseError: If the error is not a 404
+        :raises ValueError: If the snapshot composition type is not 'key'
+        """
+        snapshot = None
+        try:
+            snapshot = self._client.get_snapshot(snapshot_name)
+        except HttpResponseError as e:
+            if e.status_code == 404:
+                self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot.", snapshot_name)
+                return False
+            raise e
+        if snapshot.composition_type != SnapshotComposition.KEY:
+            raise ValueError(f"Composition type for '{snapshot_name}' must be 'key'.")
+        return True
 
     def is_active(self) -> bool:
         """
@@ -297,6 +370,31 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
+    def resolve_snapshot_reference(self, setting: ConfigurationSetting, **kwargs) -> List[ConfigurationSetting]:
+        """
+        Resolve a snapshot reference configuration setting to the actual snapshot data.
+
+        :param ConfigurationSetting setting: The snapshot reference configuration setting
+        :return: A list of resolved configuration settings from the snapshot
+        :rtype: List[ConfigurationSetting]
+        :raises ValueError: When the setting is not a valid snapshot reference
+        """
+        if SNAPSHOT_REF_CONTENT_TYPE != setting.content_type:
+            raise ValueError("Setting is not a snapshot reference")
+
+        # Parse the snapshot reference
+        snapshot_name = SnapshotReferenceParser.parse(setting)
+        if not self._validate_snapshot(snapshot_name):
+            return []
+
+        # Create a selector for the snapshot
+        snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
+
+        # Use existing load_configuration_settings to load from snapshot
+        configurations, _ = self.load_configuration_settings([snapshot_selector], **kwargs)
+
+        return configurations
+
 
 class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disable=too-many-instance-attributes
     def __init__(
@@ -311,7 +409,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         min_backoff_sec,
         max_backoff_sec,
         load_balancing_enabled,
-        **kwargs
+        **kwargs,
     ):
         super(ConfigurationClientManager, self).__init__(
             endpoint,
@@ -322,7 +420,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
             min_backoff_sec,
             max_backoff_sec,
             load_balancing_enabled,
-            **kwargs
+            **kwargs,
         )
         self._original_connection_string = connection_string
         self._credential = credential
@@ -417,7 +515,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                             self._user_agent,
                             self._retry_total,
                             self._retry_backoff_max,
-                            **self._args
+                            **self._args,
                         )
                     )
                 elif self._credential:
@@ -428,7 +526,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                             self._user_agent,
                             self._retry_total,
                             self._retry_backoff_max,
-                            **self._args
+                            **self._args,
                         )
                     )
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL

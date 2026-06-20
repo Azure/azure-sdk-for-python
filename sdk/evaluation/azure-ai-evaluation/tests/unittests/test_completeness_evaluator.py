@@ -6,19 +6,37 @@ from azure.ai.evaluation._exceptions import EvaluationException
 
 
 async def completeness_response1_async_mock():
-    return """<S0>Let's think step by step: The ground truth states "The capital of Japan is Tokyo," which provides 
-    both the subject (capital of Japan) and the specific answer (Tokyo). The response, "The capital of Japan,
-    " only partially addresses the subject but does not provide the specific answer (Tokyo). This means it misses the 
-    core claim established in the ground truth.</S0> <S1>The response is fully incomplete as it does not provide the 
-    necessary and relevant information, specifically the name of the capital, Tokyo.</S1> <S2>1</S2>"""
+    return {
+        "llm_output": {
+            "score": 1,
+            "reason": 'The response is fully incomplete because it does not provide the answer ("Tokyo") at all.',
+            "properties": {},
+        },
+        "input_token_count": 1354,
+        "output_token_count": 108,
+        "total_token_count": 1462,
+        "finish_reason": "stop",
+        "model_id": "gpt-4.1-2025-04-14",
+        "sample_input": '[{"role": "user", "content": "{\\"response\\": \\"The capital of Japan\\", \\"ground_truth\\": \\"The capital of Japan is Tokyo.\\"}"}]',
+        "sample_output": '[{"role": "assistant", "content": "<S0>Let\'s think step by step: The ground truth states \\"The capital of Japan is Tokyo.\\" The response is \\"The capital of Japan.\\" The response does not specify what the capital is; it only repeats part of the question and omits the key information (\\"Tokyo\\"). Therefore, none of the necessary information from the ground truth is present in the response.</S0>\\n<S1>The response is fully incomplete because it does not provide the answer (\\"Tokyo\\") at all.</S1>\\n<S2>1</S2>"}]',
+    }
 
 
 async def completeness_response2_async_mock():
-    return """<S0>Let's think step by step: The response states that the capital of Japan is Tokyo. The ground truth 
-    also states that the capital of Japan is Tokyo. Both the response and the ground truth are identical, containing 
-    all the necessary and relevant information. There is no missing or incorrect information in the response.</S0> 
-    <S1>The response perfectly matches the ground truth, containing all the necessary and relevant information 
-    without any omissions or errors.</S1> <S2>5</S2>"""
+    return {
+        "llm_output": {
+            "score": 5,
+            "reason": "The response is a perfect match to the ground truth, with no missing or incorrect information.",
+            "properties": {},
+        },
+        "input_token_count": 1356,
+        "output_token_count": 107,
+        "total_token_count": 1463,
+        "finish_reason": "stop",
+        "model_id": "gpt-4.1-2025-04-14",
+        "sample_input": '[{"role": "user", "content": "{\\"response\\": \\"The capital of Japan is Tokyo.\\", \\"ground_truth\\": \\"The capital of Japan is Tokyo.\\"}"}]',
+        "sample_output": '[{"role": "assistant", "content": "<S0>Let\'s think step by step: The ground truth contains a single statement: \\"The capital of Japan is Tokyo.\\" The response exactly matches this statement without omitting or altering any information. There are no additional claims or missing details to consider. According to the definitions, a fully complete response should perfectly contain all necessary and relevant information from the ground truth.</S0>\\n<S1>The response is a perfect match to the ground truth, with no missing or incorrect information.</S1>\\n<S2>5</S2>"}]',
+    }
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -54,14 +72,18 @@ class TestResponseCompletenessEvaluator:
         result = response_completeness_evaluator(ground_truth=ground_truth, response=response)
 
         key = ResponseCompletenessEvaluator._RESULT_KEY
+        prefix = ResponseCompletenessEvaluator._RESULT_KEY
         assert result is not None
         assert (
-            key in result and f"{key}_result" in result and f"{key}_threshold" in result and f"{key}_reason" in result
+            key in result
+            and f"{prefix}_passed" in result
+            and f"{prefix}_threshold" in result
+            and f"{prefix}_reason" in result
         )
         assert result[key] == 1
-        assert result[f"{key}_result"] == "fail"
-        assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
-        assert "The response is fully incomplete " in result[f"{key}_reason"]
+        assert result[f"{prefix}_passed"] is False
+        assert result[f"{prefix}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
+        assert "The response is fully incomplete " in result[f"{prefix}_reason"]
 
     def test_evaluate_completeness_valid2(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)
@@ -73,15 +95,19 @@ class TestResponseCompletenessEvaluator:
         result = response_completeness_evaluator(ground_truth=ground_truth, response=response)
 
         key = ResponseCompletenessEvaluator._RESULT_KEY
+        prefix = ResponseCompletenessEvaluator._RESULT_KEY
         assert result is not None
 
         assert (
-            key in result and f"{key}_result" in result and f"{key}_threshold" in result and f"{key}_reason" in result
+            key in result
+            and f"{prefix}_passed" in result
+            and f"{prefix}_threshold" in result
+            and f"{prefix}_reason" in result
         )
         assert result[key] == 5
-        assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
-        assert "The response perfectly matches " in result[f"{key}_reason"]
+        assert result[f"{prefix}_passed"] is True
+        assert result[f"{prefix}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
+        assert "The response is a perfect match " in result[f"{prefix}_reason"]
 
     def test_evaluate_completeness_valid3(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(
@@ -95,15 +121,19 @@ class TestResponseCompletenessEvaluator:
         result = response_completeness_evaluator(ground_truth=ground_truth, response=response)
 
         key = ResponseCompletenessEvaluator._RESULT_KEY
+        prefix = ResponseCompletenessEvaluator._RESULT_KEY
         assert result is not None
 
         assert (
-            key in result and f"{key}_result" in result and f"{key}_threshold" in result and f"{key}_reason" in result
+            key in result
+            and f"{prefix}_passed" in result
+            and f"{prefix}_threshold" in result
+            and f"{prefix}_reason" in result
         )
         assert result[key] == 5
-        assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
-        assert "The response perfectly matches " in result[f"{key}_reason"]
+        assert result[f"{prefix}_passed"] is True
+        assert result[f"{prefix}_threshold"] == ResponseCompletenessEvaluator._DEFAULT_COMPLETENESS_THRESHOLD
+        assert "The response is a perfect match " in result[f"{prefix}_reason"]
 
     def test_evaluate_completeness_missing_ground_truth(self, mock_model_config):
         response_completeness_evaluator = ResponseCompletenessEvaluator(model_config=mock_model_config)

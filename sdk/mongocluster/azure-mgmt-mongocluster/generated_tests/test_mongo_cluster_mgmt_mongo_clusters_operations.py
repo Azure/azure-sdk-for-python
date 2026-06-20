@@ -65,6 +65,7 @@ class TestMongoClusterMgmtMongoClustersOperations(AzureMgmtRecordedTestCase):
                     },
                     "highAvailability": {"targetMode": "str"},
                     "infrastructureVersion": "str",
+                    "networkBypassMode": "str",
                     "previewFeatures": ["str"],
                     "privateEndpointConnections": [
                         {
@@ -98,7 +99,7 @@ class TestMongoClusterMgmtMongoClustersOperations(AzureMgmtRecordedTestCase):
                     "restoreParameters": {"pointInTimeUTC": "2020-02-20 00:00:00", "sourceResourceId": "str"},
                     "serverVersion": "str",
                     "sharding": {"shardCount": 0},
-                    "storage": {"iops": 0, "sizeGb": 0, "throughput": 0, "type": "str"},
+                    "storage": {"sizeGb": 0, "type": "str"},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -135,12 +136,22 @@ class TestMongoClusterMgmtMongoClustersOperations(AzureMgmtRecordedTestCase):
                     "backup": {"earliestRestoreTime": "str"},
                     "compute": {"tier": "str"},
                     "dataApi": {"mode": "str"},
+                    "encryption": {
+                        "customerManagedKeyEncryption": {
+                            "keyEncryptionKeyIdentity": {
+                                "identityType": "str",
+                                "userAssignedIdentityResourceId": "str",
+                            },
+                            "keyEncryptionKeyUrl": "str",
+                        }
+                    },
                     "highAvailability": {"targetMode": "str"},
+                    "networkBypassMode": "str",
                     "previewFeatures": ["str"],
                     "publicNetworkAccess": "str",
                     "serverVersion": "str",
                     "sharding": {"shardCount": 0},
-                    "storage": {"iops": 0, "sizeGb": 0, "throughput": 0, "type": "str"},
+                    "storage": {"sizeGb": 0, "type": "str"},
                 },
                 "tags": {"str": "str"},
             },

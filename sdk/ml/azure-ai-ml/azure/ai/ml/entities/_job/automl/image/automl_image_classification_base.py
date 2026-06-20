@@ -33,8 +33,6 @@ class AutoMLImageClassificationBase(AutoMLImage):
     :paramtype training_parameters: Optional[~azure.ai.ml.automl.ImageModelSettingsClassification]
     :keyword search_space: Search space for Automl image classification jobs. Defaults to None.
     :paramtype search_space: Optional[List[~azure.ai.ml.automl.ImageClassificationSearchSpace]]
-    :keyword kwargs: Other Keyword arguments for AutoMLImageClassificationBase class.
-    :paramtype kwargs: Dict[str, Any]
     """
 
     def __init__(
@@ -62,11 +60,11 @@ class AutoMLImageClassificationBase(AutoMLImage):
         return self._training_parameters
 
     @training_parameters.setter
-    def training_parameters(self, value: Union[Dict, ImageModelSettingsClassification]) -> None:
+    def training_parameters(self, value: Optional[Union[Dict, ImageModelSettingsClassification]]) -> None:
         """Setting Image training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
 
         :param value: Training parameters for AutoML Image Classification and Image Classification Multilabel tasks.
-        :type value: Union[Dict, ~azure.ai.ml.automl.ImageModelSettingsClassification]
+        :type value: Optional[Union[Dict, ~azure.ai.ml.automl.ImageModelSettingsClassification]]
         :raises ~azure.ml.exceptions.ValidationException if value is not a dictionary or
          ImageModelSettingsClassification.
         :return: None

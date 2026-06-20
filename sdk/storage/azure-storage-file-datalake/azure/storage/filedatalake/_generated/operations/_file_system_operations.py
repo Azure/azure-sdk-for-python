@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, Literal, Optional, TypeVar, Union
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -29,7 +29,7 @@ from .._configuration import AzureDataLakeStorageRESTAPIConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -38,6 +38,7 @@ _SERIALIZER.client_side_validation = False
 def build_create_request(
     url: str,
     *,
+    version: str,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     properties: Optional[str] = None,
@@ -47,7 +48,6 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -77,6 +77,7 @@ def build_create_request(
 def build_set_properties_request(
     url: str,
     *,
+    version: str,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     properties: Optional[str] = None,
@@ -88,7 +89,6 @@ def build_set_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -120,13 +120,12 @@ def build_set_properties_request(
 
 
 def build_get_properties_request(
-    url: str, *, request_id_parameter: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+    url: str, *, version: str, request_id_parameter: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -154,6 +153,7 @@ def build_get_properties_request(
 def build_delete_request(
     url: str,
     *,
+    version: str,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -164,7 +164,6 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -197,19 +196,20 @@ def build_list_paths_request(
     url: str,
     *,
     recursive: bool,
+    version: str,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     continuation: Optional[str] = None,
     path: Optional[str] = None,
     max_results: Optional[int] = None,
     upn: Optional[bool] = None,
+    begin_from: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     resource: Literal["filesystem"] = kwargs.pop("resource", _params.pop("resource", "filesystem"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -233,6 +233,8 @@ def build_list_paths_request(
         _params["maxResults"] = _SERIALIZER.query("max_results", max_results, "int", minimum=1)
     if upn is not None:
         _params["upn"] = _SERIALIZER.query("upn", upn, "bool")
+    if begin_from is not None:
+        _params["beginFrom"] = _SERIALIZER.query("begin_from", begin_from, "str")
 
     # Construct headers
     if request_id_parameter is not None:
@@ -246,11 +248,12 @@ def build_list_paths_request(
 def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
     url: str,
     *,
+    version: str,
     prefix: Optional[str] = None,
     delimiter: Optional[str] = None,
     marker: Optional[str] = None,
     max_results: Optional[int] = None,
-    include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+    include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
     showonly: Literal["deleted"] = "deleted",
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
@@ -261,7 +264,6 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2025-05-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-05-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -370,11 +372,11 @@ class FileSystemOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             properties=properties,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -389,7 +391,10 @@ class FileSystemOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -465,13 +470,13 @@ class FileSystemOperations:
 
         _request = build_set_properties_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             properties=properties,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -486,7 +491,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -535,10 +543,10 @@ class FileSystemOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -553,7 +561,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -626,12 +637,12 @@ class FileSystemOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -646,7 +657,10 @@ class FileSystemOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -667,6 +681,7 @@ class FileSystemOperations:
         path: Optional[str] = None,
         max_results: Optional[int] = None,
         upn: Optional[bool] = None,
+        begin_from: Optional[str] = None,
         **kwargs: Any
     ) -> _models.PathList:
         """List Paths.
@@ -704,6 +719,14 @@ class FileSystemOperations:
          false. Note that group and application Object IDs are not translated because they do not have
          unique friendly names. Default value is None.
         :type upn: bool
+        :param begin_from: Optional. A relative path within the specified directory where the listing
+         will start from. For example, a recursive listing under directory folder1/folder2 with
+         beginFrom as folder3/readmefile.txt will start listing from
+         folder1/folder2/folder3/readmefile.txt. Please note that, multiple entity levels are supported
+         for recursive listing. Non-recursive listing supports only one entity level. An error will
+         appear if multiple entity levels are specified for non-recursive listing. Default value is
+         None.
+        :type begin_from: str
         :return: PathList or the result of cls(response)
         :rtype: ~azure.storage.filedatalake.models.PathList
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -724,14 +747,15 @@ class FileSystemOperations:
         _request = build_list_paths_request(
             url=self._config.url,
             recursive=recursive,
+            version=self._config.version,
             request_id_parameter=request_id_parameter,
             timeout=timeout,
             continuation=continuation,
             path=path,
             max_results=max_results,
             upn=upn,
+            begin_from=begin_from,
             resource=self._config.resource,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -746,7 +770,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -771,7 +798,7 @@ class FileSystemOperations:
         delimiter: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
-        include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
         showonly: Literal["deleted"] = "deleted",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -834,6 +861,7 @@ class FileSystemOperations:
 
         _request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             delimiter=delimiter,
             marker=marker,
@@ -844,7 +872,6 @@ class FileSystemOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -859,7 +886,10 @@ class FileSystemOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -809,7 +810,7 @@ class Serializer(object):
             # If dependencies is empty, try with current data class
             # It has to be a subclass of Enum anyway
             enum_type = self.dependencies.get(data_type, data.__class__)
-            if issubclass(enum_type, Enum):
+            if enum_type and issubclass(enum_type, Enum):
                 return Serializer.serialize_enum(data, enum_obj=enum_type)
 
             iter_type = data_type[0] + data_type[-1]
@@ -1583,14 +1584,22 @@ class Deserializer(object):
         if callable(response):
             subtype = getattr(response, "_subtype_map", {})
             try:
-                readonly = [k for k, v in response._validation.items() if v.get("readonly")]
-                const = [k for k, v in response._validation.items() if v.get("constant")]
+                readonly = [
+                    k
+                    for k, v in response._validation.items()  # pylint: disable=protected-access  # type: ignore
+                    if v.get("readonly")
+                ]
+                const = [
+                    k
+                    for k, v in response._validation.items()  # pylint: disable=protected-access  # type: ignore
+                    if v.get("constant")
+                ]
                 kwargs = {k: v for k, v in attrs.items() if k not in subtype and k not in readonly + const}
                 response_obj = response(**kwargs)
                 for attr in readonly:
                     setattr(response_obj, attr, attrs.get(attr))
                 if additional_properties:
-                    response_obj.additional_properties = additional_properties
+                    response_obj.additional_properties = additional_properties  # type: ignore
                 return response_obj
             except TypeError as err:
                 msg = "Unable to deserialize {} into model {}. ".format(kwargs, response)  # type: ignore

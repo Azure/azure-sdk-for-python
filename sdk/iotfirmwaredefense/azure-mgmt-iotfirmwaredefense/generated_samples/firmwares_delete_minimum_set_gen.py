@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-04-01-preview/Firmwares_Delete_MinimumSet_Gen.json
+# x-ms-original-file: 2025-08-02/Firmwares_Delete_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.1 (2025-09-09)
+
+### Other Changes
+
+- This package has been deprecated and will no longer be maintained after **March 8, 2026**. This package will only receive security fixes until **March 8, 2026**. To receive updates on new features and non-security bug fixes, upgrade to the replacement package, [@azure-mgmt-playwright](https://pypi.org/project/azure-mgmt-playwright/). Refer to the [migration guide](https://aka.ms/mpt/migration-guidance) for guidance on upgrading.
+
 ## 1.0.0 (2024-12-18)
 
 ### Features Added

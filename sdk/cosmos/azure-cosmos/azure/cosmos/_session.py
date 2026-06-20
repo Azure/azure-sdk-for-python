@@ -22,11 +22,13 @@
 """Session Consistency Tracking in the Azure Cosmos database service.
 """
 
+import importlib
+import inspect
 import logging
 import sys
 import traceback
 import threading
-from typing import Any, Dict, Optional
+from typing import Any, Optional
 
 from . import _base
 from . import http_constants
@@ -40,6 +42,9 @@ from .partition_key import PartitionKey
 
 logger = logging.getLogger("azure.cosmos.SessionContainer")
 
+# Keep an asyncio module attribute for test patching compatibility without direct import.
+asyncio = importlib.import_module("asyncio")
+
 class SessionContainer(object):
     def __init__(self):
         self.collection_name_to_rid = {}
@@ -50,9 +55,11 @@ class SessionContainer(object):
             self,
             resource_path: str,
             pk_value: Any,
-            container_properties_cache: Dict[str, Dict[str, Any]],
+            container_properties_cache: dict[str, dict[str, Any]],
             routing_map_provider: SmartRoutingMapProvider,
-            partition_key_range_id: Optional[int]) -> str:
+            partition_key_range_id: Optional[int],
+            options: dict[str, Any]
+    ) -> str:
         """Get Session Token for the given collection and partition key information.
 
         :param str resource_path: Self link / path to the resource
@@ -60,8 +67,10 @@ class SessionContainer(object):
             information, such as partition key ranges for a given collection
         :param Any pk_value: The partition key value being used for the operation
         :param container_properties_cache: Container properties cache used to fetch partition key definitions
-        :type container_properties_cache: Dict[str, Dict[str, Any]]
+        :type container_properties_cache: dict[str, dict[str, Any]]
         :param int partition_key_range_id: The partition key range ID used for the operation
+        :param options: Options for the operation calling this method
+        :type options: dict[str, Any]
         :return: Session Token dictionary for the collection_id, will be empty string if not found or if the operation
         does not require a session token (single master write operations).
         :rtype: str
@@ -112,7 +121,9 @@ class SessionContainer(object):
                                                      kind=collection_pk_definition['kind'],
                                                      version=collection_pk_definition['version'])
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
-                        pk_range = routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
+                        pk_range = routing_map_provider.get_overlapping_ranges(collection_name,
+                                                                               [epk_range],
+                                                                               options)
                         if len(pk_range) > 0:
                             partition_key_range_id = pk_range[0]['id']
                             vector_session_token = self._resolve_partition_local_session_token(pk_range, token_dict)
@@ -137,9 +148,11 @@ class SessionContainer(object):
             self,
             resource_path: str,
             pk_value: Any,
-            container_properties_cache: Dict[str, Dict[str, Any]],
+            container_properties_cache: dict[str, dict[str, Any]],
             routing_map_provider: SmartRoutingMapProviderAsync,
-            partition_key_range_id: Optional[str]) -> str:
+            partition_key_range_id: Optional[str],
+            options: dict[str, Any]
+    ) -> str:
         """Get Session Token for the given collection and partition key information.
 
         :param str resource_path: Self link / path to the resource
@@ -147,9 +160,11 @@ class SessionContainer(object):
             information, such as partition key ranges for a given collection
         :param Any pk_value: The partition key value being used for the operation
         :param container_properties_cache: Container properties cache used to fetch partition key definitions
-        :type container_properties_cache: Dict[str, Dict[str, Any]]
+        :type container_properties_cache: dict[str, dict[str, Any]]
         :param Any routing_map_provider: The routing map provider containing the partition key range cache logic
         :param str partition_key_range_id: The partition key range ID used for the operation
+        :param options: Options for the operation calling this method
+        :type options: dict[str, Any]
         :return: Session Token dictionary for the collection_id, will be empty string if not found or if the operation
         does not require a session token (single master write operations).
         :rtype: str
@@ -200,7 +215,9 @@ class SessionContainer(object):
                                                      kind=collection_pk_definition['kind'],
                                                      version=collection_pk_definition['version'])
                         epk_range = partition_key._get_epk_range_for_partition_key(pk_value=pk_value)
-                        pk_range = await routing_map_provider.get_overlapping_ranges(collection_name, [epk_range])
+                        pk_range = await routing_map_provider.get_overlapping_ranges(collection_name,
+                                                                                     [epk_range],
+                                                                                     options)
                         if len(pk_range) > 0:
                             partition_key_range_id = pk_range[0]['id']
                             vector_session_token = self._resolve_partition_local_session_token(pk_range, token_dict)
@@ -267,7 +284,21 @@ class SessionContainer(object):
                     collection_ranges = \
                         client_connection._routing_map_provider._collection_routing_map_by_item.get(collection_name)
                 if collection_ranges and not collection_ranges._rangeById.get(partition_key_range_id):
-                    client_connection.refresh_routing_map_provider()
+                    refresh_result = client_connection.refresh_routing_map_provider()
+                    if inspect.iscoroutine(refresh_result):
+                        try:
+                            asyncio.get_running_loop().create_task(refresh_result)
+                        except RuntimeError:
+                            # No running loop means we cannot schedule async refresh from this sync path.
+                            refresh_result.close()
+                            logger.warning(
+                                "Async routing-map refresh could not be scheduled because no event loop is running."
+                            )
+                    elif inspect.isawaitable(refresh_result):
+                        logger.warning(
+                            "Async routing-map refresh returned a non-coroutine awaitable and cannot be scheduled "
+                            "from this sync path."
+                        )
             except ValueError:
                 return
             except Exception:  # pylint: disable=broad-except
@@ -352,7 +383,7 @@ class SessionContainer(object):
 
     def _resolve_partition_local_session_token(self, pk_range, token_dict):
         parent_session_token = None
-        parents = pk_range[0].get('parents').copy()
+        parents = list(pk_range[0].get('parents') or ())
         parents.append(pk_range[0]['id'])
         for parent in parents:
             session_token = token_dict.get(parent)
@@ -389,11 +420,15 @@ class Session(object):
         self.session_container.set_session_token(client_connection, response_result, response_headers)
 
     def get_session_token(self, resource_path, pk_value, container_properties_cache, routing_map_provider,
-                          partition_key_range_id):
+                          partition_key_range_id, options):
         return self.session_container.get_session_token(resource_path, pk_value, container_properties_cache,
-                                                        routing_map_provider, partition_key_range_id)
+                                                        routing_map_provider, partition_key_range_id, options)
 
     async def get_session_token_async(self, resource_path, pk_value, container_properties_cache, routing_map_provider,
-                                      partition_key_range_id):
-        return await self.session_container.get_session_token_async(resource_path, pk_value, container_properties_cache,
-                                                                    routing_map_provider, partition_key_range_id)
+                                      partition_key_range_id, options):
+        return await self.session_container.get_session_token_async(resource_path,
+                                                                    pk_value,
+                                                                    container_properties_cache,
+                                                                    routing_map_provider,
+                                                                    partition_key_range_id,
+                                                                    options)

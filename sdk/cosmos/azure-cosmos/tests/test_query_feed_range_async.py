@@ -1,28 +1,48 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-
+# cspell:ignore JOBID
 import pytest
 import pytest_asyncio
 import test_config
 import unittest
 import uuid
+import os
+import re
 
 from azure.cosmos.aio import CosmosClient
-from itertools import combinations
 from azure.cosmos.partition_key import PartitionKey
 from typing import List, Mapping, Set
 
 CONFIG = test_config.TestConfig()
 HOST = CONFIG.host
-KEY = CONFIG.credential
+KEY = CONFIG.masterKey
 DATABASE_ID = CONFIG.TEST_DATABASE_ID
-TEST_NAME = "Query FeedRange "
+
+
+def _build_lane_suffix():
+    auth_mode = os.getenv("COSMOS_TEST_DATA_AUTH_MODE", "key")
+    run_id = (
+        os.getenv("SYSTEM_JOBID")
+        or os.getenv("BUILD_BUILDID")
+        or os.getenv("GITHUB_RUN_ID")
+        or os.getenv("TF_BUILD_BUILDID")
+        or "local"
+    )
+    raw = f"{auth_mode}-{run_id}"
+    safe = re.sub(r"[^A-Za-z0-9-]", "-", raw).strip("-")
+    return safe[:40] if safe else "local"
+
+
+TEST_NAME = "Query FeedRange async-" + _build_lane_suffix() + " "
 SINGLE_PARTITION_CONTAINER_ID = TEST_NAME + CONFIG.TEST_SINGLE_PARTITION_CONTAINER_ID
 MULTI_PARTITION_CONTAINER_ID = TEST_NAME + CONFIG.TEST_MULTI_PARTITION_CONTAINER_ID
 TEST_CONTAINERS_IDS = [SINGLE_PARTITION_CONTAINER_ID, MULTI_PARTITION_CONTAINER_ID]
 TEST_OFFER_THROUGHPUTS = [CONFIG.THROUGHPUT_FOR_1_PARTITION, CONFIG.THROUGHPUT_FOR_5_PARTITIONS]
 PARTITION_KEY = CONFIG.TEST_CONTAINER_PARTITION_KEY
 PK_VALUES = ('pk1', 'pk2', 'pk3')
+RUN_MARKER_FIELD = "_run_marker"
+RUN_MARKER_VALUE = str(uuid.uuid4())
+
 async def add_all_pk_values_to_set_async(items: List[Mapping[str, str]], pk_value_set: Set[str]) -> None:
     if len(items) == 0:
         return
@@ -30,36 +50,73 @@ async def add_all_pk_values_to_set_async(items: List[Mapping[str, str]], pk_valu
     pk_values = [item[PARTITION_KEY] for item in items if PARTITION_KEY in item]
     pk_value_set.update(pk_values)
 
-@pytest_asyncio.fixture(scope="class", autouse=True)
-async def setup_and_teardown_async():
-    print("Setup: This runs before any tests")
-    document_definitions = [{PARTITION_KEY: pk, 'id': str(uuid.uuid4())} for pk in PK_VALUES]
-    database = CosmosClient(HOST, KEY).get_database_client(DATABASE_ID)
+@pytest_asyncio.fixture(scope="class", loop_scope="class", autouse=True)
+async def setup_and_teardown_async(request):
+    """Class-scoped fixture: construct clients, ensure containers, seed docs once per class.
+
+    The tests in this class are read-only queries against pre-seeded data (or trigger
+    their own topology changes inline for the split-marked tests). Per-test isolation
+    is not needed, and re-constructing an AAD-auth data client per test would multiply
+    token acquisition + endpoint discovery cost by the number of tests.
+    """
+    print("Setup: This runs once per test class")
+    document_definitions = [
+        {
+            PARTITION_KEY: pk,
+            'id': str(uuid.uuid4()),
+            'value': 100,
+            RUN_MARKER_FIELD: RUN_MARKER_VALUE,
+        }
+        for pk in PK_VALUES
+    ]
+
+    # Key-auth client for control-plane (container creation)
+    key_client = CosmosClient(HOST, KEY)
+    key_db = key_client.get_database_client(DATABASE_ID)
+
+    # AAD (or key, depending on lane) data client for data-plane operations
+    data_client = test_config.TestConfig.create_data_client_async()
+    data_db = data_client.get_database_client(DATABASE_ID)
 
     for container_id, offer_throughput in zip(TEST_CONTAINERS_IDS, TEST_OFFER_THROUGHPUTS):
-        container = await database.create_container_if_not_exists(
+        await key_db.create_container_if_not_exists(
             id=container_id,
             partition_key=PartitionKey(path='/' + PARTITION_KEY, kind='Hash'),
             offer_throughput=offer_throughput)
+        container = data_db.get_container_client(container_id)
         for document_definition in document_definitions:
             await container.upsert_item(body=document_definition)
 
-    yield
-    # Code to run after tests
-    print("Teardown: This runs after all tests")
+    # Attach to the test class so test methods can reach them without module globals.
+    request.cls.data_db = data_db
+    request.cls.key_db = key_db
 
-async def get_container(container_id: str):
-    client = CosmosClient(HOST, KEY)
-    db = client.get_database_client(DATABASE_ID)
-    return db.get_container_client(container_id)
+    yield
+
+    print("Teardown: This runs once per test class")
+    request.cls.data_db = None
+    request.cls.key_db = None
+    await data_client.close()
+    await key_client.close()
+
 
 @pytest.mark.cosmosQuery
-@pytest.mark.asyncio
+@pytest.mark.cosmosAADSplit
+@pytest.mark.asyncio(loop_scope="class")
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestQueryFeedRangeAsync:
+    data_db = None
+    key_db = None
+
+    def get_container(self, container_id: str):
+        return self.data_db.get_container_client(container_id)
+
+    def get_key_container(self, container_id: str):
+        return self.key_db.get_container_client(container_id)
+
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    async def test_query_with_feed_range_for_all_partitions(self, container_id):
-        container = await get_container(container_id)
+    async def test_query_with_feed_range_for_all_partitions_async(self, container_id):
+        container = self.get_container(container_id)
         query = 'SELECT * from c'
 
         expected_pk_values = set(PK_VALUES)
@@ -75,8 +132,8 @@ class TestQueryFeedRangeAsync:
         assert expected_pk_values == actual_pk_values
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    async def test_query_with_feed_range_for_partition_key(self, container_id):
-        container = await get_container(container_id)
+    async def test_query_with_feed_range_for_partition_key_async(self, container_id):
+        container = self.get_container(container_id)
         query = 'SELECT * from c'
 
         for pk_value in PK_VALUES:
@@ -94,8 +151,8 @@ class TestQueryFeedRangeAsync:
             assert expected_pk_values == actual_pk_values
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    async def test_query_with_both_feed_range_and_partition_key(self, container_id):
-        container = await get_container(container_id)
+    async def test_query_with_both_feed_range_and_partition_key_async(self, container_id):
+        container = self.get_container(container_id)
 
         expected_error_message = "'feed_range' and 'partition_key' are exclusive parameters, please only set one of them."
         query = 'SELECT * from c'
@@ -112,8 +169,8 @@ class TestQueryFeedRangeAsync:
         assert str(e.value) == expected_error_message
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
-    async def test_query_with_feed_range_for_a_full_range(self, container_id):
-        container = await get_container(container_id)
+    async def test_query_with_feed_range_for_a_full_range_async(self, container_id):
+        container = self.get_container(container_id)
         query = 'SELECT * from c'
 
         expected_pk_values = set(PK_VALUES)
@@ -133,6 +190,541 @@ class TestQueryFeedRangeAsync:
          )]
         await add_all_pk_values_to_set_async(items, actual_pk_values)
         assert expected_pk_values.issubset(actual_pk_values)
+
+    # SELECT VALUE AVG(...) across a feed_range that covers more than one
+    # physical partition cannot be merged client-side and must raise
+    # ValueError. The single-partition control proves the raise is driven by
+    # the scope, not by the container.
+
+    async def test_query_with_avg_aggregate_across_full_feed_range_raises_async(self):
+        """AVG over a feed_range spanning multiple partitions must raise."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        # Full hash range covers every physical partition of the container.
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        with pytest.raises(ValueError) as excinfo:
+            _ = [item async for item in container.query_items(
+                query=query,
+                feed_range=feed_range,
+                parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+            )]
+
+        message = str(excinfo.value)
+        assert "Unsupported query shape for range-scoped pagination" in message
+        assert "SELECT VALUE AVG" in message
+
+    async def test_query_with_avg_aggregate_single_partition_feed_range_succeeds_async(self):
+        """AVG scoped to a single-partition feed_range must still succeed."""
+        # Multi-partition container, but the feed_range maps to one partition.
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        feed_range = await container.feed_range_from_partition_key(PK_VALUES[0])
+        items = [item async for item in container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        )]
+
+        # Seed data has value=100 for every document.
+        assert items, "Single-partition AVG must return at least one result row"
+        assert items[0] == 100, f"Expected AVG=100, got {items[0]}"
+
+        # Same expectation on the single-partition container.
+        single_container = self.get_container(SINGLE_PARTITION_CONTAINER_ID)
+        single_feed_range = await single_container.feed_range_from_partition_key(PK_VALUES[0])
+        single_items = [item async for item in single_container.query_items(
+            query=query,
+            feed_range=single_feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        )]
+        assert single_items, "Single-partition container AVG must return a row"
+        assert single_items[0] == 100
+
+    # The next few tests run against a multi-partition container
+    # (async variant) and confirm that combining partial results
+    # returns the right shape: lists for non-aggregate projections,
+    # single values for MIN, MAX, SUM, and COUNT.
+
+    async def test_query_value_numeric_field_across_full_feed_range_returns_list_async(self):
+        """Numeric VALUE projections should return one row per document, not a sum."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE c["value"] FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        )]
+
+        assert len(items) == len(PK_VALUES), (
+            f"Expected one value per seeded doc ({len(PK_VALUES)}); got {len(items)}."
+        )
+        assert all(item == 100 for item in items), (
+            f"Expected every value to be 100; got {items}"
+        )
+        assert sum(items) == 100 * len(PK_VALUES)
+
+    async def test_query_value_boolean_expression_across_full_feed_range_returns_list_async(self):
+        """Boolean VALUE projections should return one boolean per document."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE c["value"] > 0 FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        )]
+
+        assert len(items) == len(PK_VALUES), (
+            f"Expected one boolean per seeded doc ({len(PK_VALUES)}); got {len(items)}."
+        )
+        assert all(item is True for item in items), (
+            f"All seeded values are 100 > 0; expected every row to be True. Got {items}"
+        )
+
+    async def test_query_value_min_across_full_feed_range_returns_scalar_async(self):
+        """MIN over a multi-partition feed_range should return one value (the smallest)."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE MIN(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        )]
+
+        assert len(items) == 1, (
+            f"MIN should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100
+
+    async def test_query_value_max_across_full_feed_range_returns_scalar_async(self):
+        """MAX over a multi-partition feed_range should return one value (the largest)."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE MAX(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        )]
+
+        assert len(items) == 1, (
+            f"MAX should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100
+
+    async def test_query_value_sum_across_full_feed_range_still_sums_async(self):
+        """SUM should still add per-partition totals together."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        )]
+
+        assert len(items) == 1, (
+            f"SUM should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100 * len(PK_VALUES)
+
+    async def test_query_value_count_across_full_feed_range_still_counts_async(self):
+        """COUNT should still return a single total across partitions."""
+        container = self.get_container(MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE COUNT(1) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = [item async for item in container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        )]
+
+        assert len(items) == 1
+        assert items[0] == len(PK_VALUES)
+
+    @pytest.mark.skip(reason="will be moved to a new pipeline")
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    async def test_query_with_feed_range_async_during_back_to_back_partition_splits_async(self, container_id):
+        container = self.get_container(container_id)
+        query = 'SELECT * from c'
+
+        expected_pk_values = set(PK_VALUES)
+        actual_pk_values = set()
+
+        # Get feed ranges before any splits
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+
+        # Trigger two consecutive splits
+        key_container_for_split = self.get_key_container(container_id)
+        await test_config.TestConfig.trigger_split_async(key_container_for_split, 11000)
+        await test_config.TestConfig.trigger_split_async(key_container_for_split, 24000)
+
+        # Query using the original feed ranges, the SDK should handle the splits
+        for feed_range in feed_ranges:
+            items = [item async for item in
+                     (container.query_items(
+                         query=query,
+                         feed_range=feed_range
+                     )
+                     )]
+            await add_all_pk_values_to_set_async(items, actual_pk_values)
+
+        assert expected_pk_values == actual_pk_values
+
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    @pytest.mark.cosmosSplit
+    async def test_query_with_feed_range_async_during_partition_split_combined_async(self, container_id):
+        container = self.get_container(container_id)
+
+        # Differentiate behavior based on container type
+        if container_id == SINGLE_PARTITION_CONTAINER_ID:
+            # Single partition: starts at 400 RU/s, increase to trigger split
+            target_throughput = 11000
+            print(f"Single-partition container: increasing from ~400 to {target_throughput}")
+        else:  # MULTI_PARTITION_CONTAINER_ID
+            # Multi-partition: starts at 30000 RU/s, increase further to trigger more splits
+            target_throughput = 60000
+            print(f"Multi-partition container: increasing from 30000 to {target_throughput}")
+
+        # Get feed ranges before split
+        feed_ranges_before_split = [feed_range async for feed_range in container.read_feed_ranges()]
+        print(f"BEFORE SPLIT: Number of feed ranges: {len(feed_ranges_before_split)}")
+
+        # Get initial counts and sums before split
+        initial_count = 0
+        initial_sum = 0
+
+        for feed_range in feed_ranges_before_split:
+            count_items = [item async for item in container.query_items(
+                query='SELECT VALUE COUNT(1) FROM c',
+                feed_range=feed_range
+            )]
+            initial_count += count_items[0] if count_items else 0
+
+            sum_items = [item async for item in container.query_items(
+                query='SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])',
+                feed_range=feed_range
+            )]
+            initial_sum += sum_items[0] if sum_items else 0
+
+        print(f"Initial count: {initial_count}, Initial sum: {initial_sum}")
+
+        # verify we have some data
+        assert initial_count > 0, "Container should have at least some documents"
+
+        # Collect all PK values before split
+        expected_pk_values = set()
+        for feed_range in feed_ranges_before_split:
+            items = [item async for item in container.query_items(query='SELECT * FROM c', feed_range=feed_range)]
+            await add_all_pk_values_to_set_async(items, expected_pk_values)
+
+        print(f"Found {len(expected_pk_values)} unique partition keys before split")
+
+        # Trigger and wait for split progression using shared helper.
+        key_container_for_split = self.get_key_container(container_id)
+        await test_config.TestConfig.trigger_split_async(key_container_for_split, target_throughput)
+
+        # Test 1: Basic query with stale feed ranges (SDK should handle split)
+        actual_pk_values = set()
+        query = 'SELECT * from c'
+
+        for feed_range in feed_ranges_before_split:
+            items = [item async for item in container.query_items(query=query, feed_range=feed_range)]
+            await add_all_pk_values_to_set_async(items, actual_pk_values)
+
+        assert expected_pk_values == actual_pk_values, f"Expected {len(expected_pk_values)} PKs, got {len(actual_pk_values)}"
+        print("Test 1 (basic query with stale feed ranges) passed")
+
+        # Test 2: Order by query with stale feed ranges
+        actual_pk_values_order_by = set()
+        query_order_by = 'SELECT * FROM c ORDER BY c.id'
+
+        for feed_range in feed_ranges_before_split:
+            items = [item async for item in container.query_items(query=query_order_by, feed_range=feed_range)]
+            await add_all_pk_values_to_set_async(items, actual_pk_values_order_by)
+
+        assert expected_pk_values == actual_pk_values_order_by, f"Expected {len(expected_pk_values)} PKs, got {len(actual_pk_values_order_by)}"
+        print("Test 2 (order by query with stale feed ranges) passed")
+
+        # Test 3: Count aggregate query with stale feed ranges
+        post_split_count = 0
+        query_count = 'SELECT VALUE COUNT(1) FROM c'
+
+        for i, feed_range in enumerate(feed_ranges_before_split):
+            items = [item async for item in container.query_items(query=query_count, feed_range=feed_range)]
+            count = items[0] if items else 0
+            print(f"Feed range {i} count AFTER split: {count}")
+            post_split_count += count
+
+        print(f"Total count AFTER split: {post_split_count}, Expected: {initial_count}")
+        assert initial_count == post_split_count, f"Count mismatch: before={initial_count}, after={post_split_count}"
+        print("Test 3 (count aggregate with stale feed ranges) passed")
+
+        # Test 4: Sum aggregate query with stale feed ranges
+        post_split_sum = 0
+        query_sum = 'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+
+        for feed_range in feed_ranges_before_split:
+            items = [item async for item in container.query_items(query=query_sum, feed_range=feed_range)]
+            current_sum = items[0] if items else 0
+            post_split_sum += current_sum
+
+        print(f"Total sum AFTER split: {post_split_sum}, Expected: {initial_sum}")
+        assert initial_sum == post_split_sum, f"Sum mismatch: before={initial_sum}, after={post_split_sum}"
+        print("Test 4 (sum aggregate with stale feed ranges) passed")
+
+    @pytest.mark.skip(reason="Covered by test_query_with_feed_range_async_during_partition_split_combined_async")
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    async def test_query_with_feed_range_async_during_partition_split_async(self, container_id):
+        container = self.get_container(container_id)
+        query = 'SELECT * from c'
+
+        expected_pk_values = set(PK_VALUES)
+        actual_pk_values = set()
+
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        await test_config.TestConfig.trigger_split_async(self.get_key_container(container_id), 11000)
+        for feed_range in feed_ranges:
+            items = [item async for item in
+                     (container.query_items(
+                         query=query,
+                         feed_range=feed_range
+                     )
+                     )]
+            await add_all_pk_values_to_set_async(items, actual_pk_values)
+        assert expected_pk_values == actual_pk_values
+
+    @pytest.mark.skip(reason="Covered by test_query_with_feed_range_async_during_partition_split_combined_async")
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    async def test_query_with_order_by_and_feed_range_async_during_partition_split_async(self, container_id):
+        container = self.get_container(container_id)
+        query = 'SELECT * FROM c ORDER BY c.id'
+
+        expected_pk_values = set(PK_VALUES)
+        actual_pk_values = set()
+
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        await test_config.TestConfig.trigger_split_async(self.get_key_container(container_id), 11000)
+
+        for feed_range in feed_ranges:
+            items = [item async for item in
+                     (container.query_items(
+                         query=query,
+                         feed_range=feed_range
+                     )
+                     )]
+            await add_all_pk_values_to_set_async(items, actual_pk_values)
+
+        assert expected_pk_values == actual_pk_values
+
+    @pytest.mark.skip(reason="Covered by test_query_with_feed_range_async_during_partition_split_combined_async")
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    async def test_query_with_count_aggregate_and_feed_range_async_during_partition_split_async(self, container_id):
+        container = self.get_container(container_id)
+        # Get initial counts per feed range before split
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        print(f"BEFORE SPLIT: Number of feed ranges: {len(feed_ranges)}")
+        initial_total_count = 0
+
+        for i, feed_range in enumerate(feed_ranges):
+            query = 'SELECT VALUE COUNT(1) FROM c'
+            items = [item async for item in container.query_items(query=query, feed_range=feed_range)]
+            count = items[0] if items else 0
+            print(f"Feed range {i} count BEFORE split: {count}")
+            initial_total_count += count
+
+        print(f"Total count BEFORE split: {initial_total_count}")
+
+        # Trigger split
+        await test_config.TestConfig.trigger_split_async(self.get_key_container(container_id), 11000)
+
+        # Query with aggregate after split using original feed ranges
+        post_split_total_count = 0
+        for i, feed_range in enumerate(feed_ranges):
+            query = 'SELECT VALUE COUNT(1) FROM c'
+            items = [item async for item in container.query_items(query=query, feed_range=feed_range)]
+            count = items[0] if items else 0
+            print(f"Original feed range {i} count AFTER split: {count}")
+            post_split_total_count += count
+
+        print(f"Total count AFTER split using OLD ranges: {post_split_total_count}")
+        print(f"Expected: {len(PK_VALUES)}")
+
+        assert initial_total_count == post_split_total_count
+        assert post_split_total_count == len(PK_VALUES)
+
+        # Verify counts match (no data loss during split)
+        print(f"Initial total count: {initial_total_count}, Post-split total count: {post_split_total_count}")
+        assert initial_total_count == post_split_total_count
+        print(f"len(PK_VALUES): {len(PK_VALUES)}, Post-split total count: {post_split_total_count}")
+        assert post_split_total_count == len(PK_VALUES)
+
+    @pytest.mark.skip(reason="Covered by test_query_with_feed_range_async_during_partition_split_combined_async")
+    @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
+    async def test_query_with_sum_aggregate_and_feed_range_async_during_partition_split_async(self, container_id):
+        container = self.get_container(container_id)
+        # Get initial sums per feed range before split
+        feed_ranges = [feed_range async for feed_range in container.read_feed_ranges()]
+        initial_total_sum = 0
+        expected_total_sum = len(PK_VALUES) * 100
+
+        for feed_range in feed_ranges:
+            query = 'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+            items = [item async for item in container.query_items(query=query, feed_range=feed_range)]
+            # The result for a SUM query on an empty set of rows is `undefined`.
+            # The query returns no result pages in this case.
+            current_sum = items[0] if items else 0
+            initial_total_sum += current_sum
+
+        # Trigger split
+        await test_config.TestConfig.trigger_split_async(self.get_key_container(container_id), 11000)
+
+        # Query with aggregate after split using original feed ranges
+        post_split_total_sum = 0
+        for feed_range in feed_ranges:
+            query = 'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+            items = [item async for item in container.query_items(query=query, feed_range=feed_range)]
+            current_sum = items[0] if items else 0
+            post_split_total_sum += current_sum
+
+        # Verify sums match (no data loss during split)
+        assert initial_total_sum == post_split_total_sum
+        assert post_split_total_sum == expected_total_sum
+
+
+    async def test_query_with_static_continuation_async(self):
+        container = self.get_container(SINGLE_PARTITION_CONTAINER_ID)
+        query = 'SELECT * from c'
+
+        # verify continuation token does not have any impact
+        for i in range(10):
+            query_by_page = container.query_items(
+                query=query,
+                feed_range={
+                    'Range': {'isMaxInclusive': False, 'isMinInclusive': True,
+                              'max': '1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE',
+                              'min': '0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'}},
+                max_item_count=1,
+                continuation='-RID:~a0NPAOszCpOChB4AAAAAAA==#RT:1#TRC:2#ISV:2#IEO:65567#QCF:8').by_page()
+            async for page in query_by_page:
+                items = [item async for item in page]
+                assert len(items) > 0
+
+    async def test_query_with_continuation_async(self):
+        container = self.get_container(SINGLE_PARTITION_CONTAINER_ID)
+        query = 'SELECT * from c'
+
+        # go through all feed ranges using pagination
+        feed_ranges = container.read_feed_ranges()
+        async for feed in feed_ranges:
+            query_kwargs = {
+                "query": query,
+                "feed_range": feed,
+                "priority": "Low",
+                "max_item_count": 1
+            }
+            query_results = container.query_items(**query_kwargs)
+            pager = query_results.by_page()
+            first_page = await pager.__anext__()
+            items = [item async for item in first_page]
+            assert len(items) > 0
+            continuation_token = pager.continuation_token
+            # use that continuation token to restart the query, and drain it from there
+            query_kwargs = {
+                "query": query,
+                "feed_range": feed,
+                "continuation": continuation_token,
+                "priority": "Low",
+                "max_item_count": 2
+            }
+            query_results = container.query_items(**query_kwargs)
+            pager = query_results.by_page(continuation_token=continuation_token)
+            async for new_page in pager:
+                items = [item async for item in new_page]
+                assert len(items) > 0
 
 if __name__ == "__main__":
     unittest.main()

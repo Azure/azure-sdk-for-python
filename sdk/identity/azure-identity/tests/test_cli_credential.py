@@ -395,3 +395,66 @@ def test_multitenant_authentication_not_allowed(get_token_method):
                     kwargs = {"options": kwargs}
                 token = getattr(credential, get_token_method)("scope", **kwargs)
             assert token.token == expected_token
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_claims_challenge_raises_error(get_token_method):
+    """The credential should raise CredentialUnavailableError when claims challenge is provided"""
+
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
+    expected_encoded_claims = "eyJhY2Nlc3NfdG9rZW4iOnsiYWNycyI6eyJlc3NlbnRpYWwiOnRydWUsInZhbHVlcyI6WyJwMSJdfX19"
+    expected_command = f"az login --claims-challenge {expected_encoded_claims} --scope scope"
+
+    credential = AzureCliCredential()
+    with pytest.raises(CredentialUnavailableError, match=re.escape(expected_command)):
+        kwargs = {"claims": claims}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        getattr(credential, get_token_method)("scope", **kwargs)
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_empty_claims_does_not_raise_error(get_token_method):
+    """The credential should not raise error when claims parameter is empty or None"""
+
+    # Mock the CLI to avoid actual invocation
+    with mock.patch("shutil.which", return_value="az"):
+        with mock.patch(
+            CHECK_OUTPUT, mock.Mock(return_value='{"accessToken": "token", "expiresOn": "2021-10-07 12:00:00.000000"}')
+        ):
+            credential = AzureCliCredential()
+
+            # Test with None (default)
+            token = getattr(credential, get_token_method)("scope")
+            assert token.token == "token"
+
+            # Test with empty string claims
+            kwargs = {"claims": ""}
+            if get_token_method == "get_token_info":
+                kwargs = {"options": kwargs}
+            token = getattr(credential, get_token_method)("scope", **kwargs)
+            assert token.token == "token"
+
+            # Test with None claims explicitly
+            kwargs = {"claims": None}
+            if get_token_method == "get_token_info":
+                kwargs = {"options": kwargs}
+            token = getattr(credential, get_token_method)("scope", **kwargs)
+            assert token.token == "token"
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_claims_challenge_with_tenant(get_token_method):
+    """The credential should include tenant in the error message when claims and tenant are provided"""
+
+    claims = '{"access_token":{"acrs":{"essential":true,"values":["p1"]}}}'
+    expected_encoded_claims = "eyJhY2Nlc3NfdG9rZW4iOnsiYWNycyI6eyJlc3NlbnRpYWwiOnRydWUsInZhbHVlcyI6WyJwMSJdfX19"
+    tenant_id = "test-tenant-id"
+    expected_command = f"az login --claims-challenge {expected_encoded_claims} --tenant {tenant_id} --scope scope"
+
+    credential = AzureCliCredential()
+    with pytest.raises(CredentialUnavailableError, match=re.escape(expected_command)):
+        kwargs = {"claims": claims, "tenant_id": tenant_id}
+        if get_token_method == "get_token_info":
+            kwargs = {"options": kwargs}
+        getattr(credential, get_token_method)("scope", **kwargs)

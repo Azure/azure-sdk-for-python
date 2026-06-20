@@ -74,13 +74,14 @@ SDK_TEAM_OWNED_PACKAGES = [
 
 # Format: "library_to_score": [dependencies_to_uninstall]
 RESOLUTION_IMPOSSIBLE_LIBRARIES = {
-    "azure-mixedreality-authentication": ["azure-mixedreality-remoterendering"],
     "azure-ai-ml": ["azure-storage-blob", "azure-storage-file-share", "azure-storage-file-datalake"],
     "azure-storage-blob-changefeed": ["azure-storage-blob"],
     "azure-storage-file-datalake": ["azure-storage-blob"],
     "azure-core": ["azure-core-experimental", "azure-core-tracing-opencensus", "azure-core-tracing-opentelemetry"],
     "azure-monitor-opentelemetry": ["azure-core-tracing-opentelemetry"],
     "azure-ai-evaluation": ["azure-monitor-opentelemetry-exporter", "azure-monitor-opentelemetry"],
+    "azure-ai-language-conversations-authoring": ["azure-ai-language-conversations"],
+    "azure-ai-textanalytics-authoring": ["azure-ai-textanalytics"],
 }
 
 

@@ -11,8 +11,9 @@ from ...credentials import AccessTokenInfo, TokenRequestOptions
 from ..pipeline import PipelineRequest, PipelineResponse
 from ..pipeline._tools_async import await_result
 from ._base_async import AsyncHTTPPolicy
-from ._authentication import _BearerTokenCredentialPolicyBase
+from ._authentication import _enforce_https
 from ...rest import AsyncHttpResponse, HttpRequest
+from ...exceptions import HttpResponseError
 from ...utils._utils import get_running_async_lock
 
 if TYPE_CHECKING:
@@ -66,12 +67,12 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :type request: ~corehttp.runtime.pipeline.PipelineRequest
         :keyword auth_flows: A list of authentication flows to use for the credential.
         :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
-        :raises: :class:`~corehttp.exceptions.ServiceRequestError`
+        :raises ~corehttp.exceptions.ServiceRequestError: If the request fails.
         """
         # If auth_flows is an empty list, we should not attempt to authorize the request.
         if auth_flows is not None and len(auth_flows) == 0:
             return
-        _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
+        _enforce_https(request)
 
         if self._token is None or self._need_new_token:
             async with self._lock:
@@ -123,7 +124,20 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         if response.http_response.status_code == 401:
             self._token = None  # any cached token is invalid
             if "WWW-Authenticate" in response.http_response.headers:
-                request_authorized = await self.on_challenge(request, response)
+                try:
+                    request_authorized = await self.on_challenge(request, response)
+                except Exception as ex:
+                    # If the response is streamed, read it so the error message is immediately available to the user.
+                    # Otherwise, a generic error message will be given and the user will have to read the response
+                    # body to see the actual error.
+                    if response.context.options.get("stream"):
+                        try:
+                            await response.http_response.read()  # type: ignore
+                        except Exception:  # pylint:disable=broad-except
+                            pass
+
+                    # Raise the exception from the token request with the original 401 response
+                    raise ex from HttpResponseError(response=response.http_response)
                 if request_authorized:
                     try:
                         response = await self.next.send(request)

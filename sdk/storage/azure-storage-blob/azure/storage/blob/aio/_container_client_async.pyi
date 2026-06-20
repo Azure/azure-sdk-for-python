@@ -16,6 +16,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    Literal,
     IO,
     Iterable,
     Optional,
@@ -152,8 +153,6 @@ class ContainerClient(  # type: ignore[misc]
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
@@ -165,8 +164,6 @@ class ContainerClient(  # type: ignore[misc]
         *,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> BlobLeaseClient: ...
@@ -212,12 +209,20 @@ class ContainerClient(  # type: ignore[misc]
         name_starts_with: Optional[str] = None,
         include: Optional[Union[str, List[str]]] = None,
         *,
+        results_per_page: Optional[int] = None,
+        start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[BlobProperties]: ...
     @distributed_trace
     def list_blob_names(
-        self, *, name_starts_with: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        name_starts_with: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        start_from: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged[str]: ...
     @distributed_trace
     def walk_blobs(
@@ -225,6 +230,9 @@ class ContainerClient(  # type: ignore[misc]
         name_starts_with: Optional[str] = None,
         include: Optional[Union[List[str], str]] = None,
         delimiter: str = "/",
+        *,
+        start_from: Optional[str] = None,
+        timeout: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged[Union[BlobProperties, BlobPrefix]]: ...
     @distributed_trace
@@ -247,7 +255,7 @@ class ContainerClient(  # type: ignore[misc]
         *,
         overwrite: Optional[bool] = None,
         content_settings: Optional[ContentSettings] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -289,7 +297,7 @@ class ContainerClient(  # type: ignore[misc]
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -311,7 +319,7 @@ class ContainerClient(  # type: ignore[misc]
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -333,7 +341,7 @@ class ContainerClient(  # type: ignore[misc]
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,

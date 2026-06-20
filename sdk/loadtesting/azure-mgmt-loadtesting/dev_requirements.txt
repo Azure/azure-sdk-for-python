@@ -1,5 +1,5 @@
--e ../../../tools/azure-sdk-tools
--e ../../resources/azure-mgmt-msi
--e ../../identity/azure-identity
+-e ../../../eng/tools/azure-sdk-tools
+../../resources/azure-mgmt-msi
+../../identity/azure-identity
 ../../keyvault/azure-mgmt-keyvault
 ../../keyvault/azure-keyvault-keys

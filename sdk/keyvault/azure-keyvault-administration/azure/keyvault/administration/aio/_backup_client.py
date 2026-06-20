@@ -4,7 +4,6 @@
 # ------------------------------------
 import base64
 import functools
-import pickle
 from typing import Any, Callable, Optional, overload
 
 from typing_extensions import Literal
@@ -13,7 +12,7 @@ from azure.core.polling import AsyncLROPoller
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.models import PreBackupOperationParameters, PreRestoreOperationParameters, SASTokenParameter
-from .._backup_client import _parse_status_url
+from .._backup_client import _get_continuation_token, _parse_status_url
 from .._internal import AsyncKeyVaultClientBase, parse_folder_url
 from .._internal.async_polling import KeyVaultAsyncBackupClientPollingMethod
 from .._internal.polling import KeyVaultBackupClientPolling
@@ -46,12 +45,10 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
                 + "poller's continuation_token() method"
             ) from ex
 
-        pipeline_response = await status_method(
-            job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response
-        )
+        pipeline_response = await status_method(job_id=job_id, cls=lambda pipeline_response, _, __: pipeline_response)
         if "azure-asyncoperation" not in pipeline_response.http_response.headers:
             pipeline_response.http_response.headers["azure-asyncoperation"] = status_url
-        return base64.b64encode(pickle.dumps(pipeline_response)).decode("ascii")
+        return _get_continuation_token(pipeline_response)
 
     @overload
     async def begin_backup(
@@ -61,8 +58,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[KeyVaultBackupResult]:
-        ...
+    ) -> AsyncLROPoller[KeyVaultBackupResult]: ...
 
     @overload
     async def begin_backup(
@@ -72,8 +68,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[KeyVaultBackupResult]:
-        ...
+    ) -> AsyncLROPoller[KeyVaultBackupResult]: ...
 
     # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace_async
@@ -139,8 +134,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         key_name: Optional[str] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     @overload
     async def begin_restore(
@@ -151,8 +145,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         key_name: Optional[str] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     # Disabling pylint checks because they don't correctly handle overloads
     @distributed_trace_async
@@ -245,8 +238,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     @overload
     async def begin_pre_backup(
@@ -256,8 +248,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     @distributed_trace_async
     async def begin_pre_backup(  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -313,8 +304,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         use_managed_identity: Literal[True],
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     @overload
     async def begin_pre_restore(
@@ -324,8 +314,7 @@ class KeyVaultBackupClient(AsyncKeyVaultClientBase):
         sas_token: str,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncLROPoller[None]:
-        ...
+    ) -> AsyncLROPoller[None]: ...
 
     @distributed_trace_async
     async def begin_pre_restore(  # pylint: disable=docstring-keyword-should-match-keyword-only

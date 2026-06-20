@@ -166,10 +166,7 @@ class Receipt:
         else:
             self.leafComponents = LeafComponents.from_dict(leafComponents)
 
-        self.proof = [
-            elem if isinstance(elem, ProofElement) else ProofElement.from_dict(elem)
-            for elem in proof
-        ]
+        self.proof = [elem if isinstance(elem, ProofElement) else ProofElement.from_dict(elem) for elem in proof]
 
         self.kwargs = kwargs
 

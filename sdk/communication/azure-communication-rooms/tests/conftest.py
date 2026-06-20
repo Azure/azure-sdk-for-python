@@ -25,12 +25,14 @@
 # --------------------------------------------------------------------------
 import pytest
 import os
+import sys
 from devtools_testutils import (
     add_general_string_sanitizer,
     add_header_regex_sanitizer,
     set_default_session_settings,
     remove_batch_sanitizers,
     add_uri_regex_sanitizer,
+    set_custom_default_matcher
 )
 from azure.communication.rooms._shared.utils import parse_connection_str
 
@@ -38,6 +40,12 @@ from azure.communication.rooms._shared.utils import parse_connection_str
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     set_default_session_settings()
+
+    # On python 3.14, azure-core sends an additional 'Accept-Encoding' header value that causes playback issues.
+    # By ignoring it, we can avoid really wonky mismatch errors, while still validating the other headers
+    if sys.version_info >= (3, 14):
+        headers_to_ignore = "Accept-Encoding"
+        set_custom_default_matcher(ignored_headers=headers_to_ignore)
 
     communication_connection_string = os.getenv(
         "COMMUNICATION_CONNECTION_STRING_ROOMS", "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="

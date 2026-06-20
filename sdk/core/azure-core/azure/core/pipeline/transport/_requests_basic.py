@@ -46,7 +46,9 @@ import requests
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     ServiceRequestError,
+    ServiceRequestTimeoutError,
     ServiceResponseError,
+    ServiceResponseTimeoutError,
     IncompleteReadError,
     HttpResponseError,
     DecodeError,
@@ -85,7 +87,7 @@ def _read_raw_stream(response, chunk_size=1):
         except CoreDecodeError as e:
             raise DecodeError(e, error=e) from e
         except ReadTimeoutError as e:
-            raise ServiceRequestError(e, error=e) from e
+            raise ServiceResponseTimeoutError(e, error=e) from e
     else:
         # Standard file-like object.
         while True:
@@ -202,6 +204,14 @@ class StreamDownloadGenerator:
             _LOGGER.warning("Unable to stream download.")
             internal_response.close()
             raise HttpResponseError(err, error=err) from err
+        except requests.ConnectionError as err:
+            internal_response.close()
+            if err.args and isinstance(err.args[0], ReadTimeoutError):
+                raise ServiceResponseTimeoutError(err, error=err) from err
+            raise ServiceResponseError(err, error=err) from err
+        except requests.RequestException as err:
+            internal_response.close()
+            raise ServiceResponseError(err, error=err) from err
         except Exception as err:
             _LOGGER.warning("Unable to stream download.")
             internal_response.close()
@@ -238,6 +248,12 @@ class RequestsTransport(HttpTransport):
     :keyword requests.Session session: Request session to use instead of the default one.
     :keyword bool session_owner: Decide if the session provided by user is owned by this transport. Default to True.
     :keyword bool use_env_settings: Uses proxy settings from environment. Defaults to True.
+
+    Environment variables (read when ``use_env_settings`` is True, the default):
+
+    * ``HTTP_PROXY`` - Proxy URL for HTTP requests.
+    * ``HTTPS_PROXY`` - Proxy URL for HTTPS requests.
+    * ``NO_PROXY`` - Comma-separated list of hosts that should bypass the proxy.
 
     .. admonition:: Example:
 
@@ -384,13 +400,14 @@ class RequestsTransport(HttpTransport):
                     "Please report this issue to https://github.com/Azure/azure-sdk-for-python/issues."
                 ) from err
             raise
-        except (
-            NewConnectionError,
-            ConnectTimeoutError,
-        ) as err:
+        except NewConnectionError as err:
             error = ServiceRequestError(err, error=err)
+        except ConnectTimeoutError as err:
+            error = ServiceRequestTimeoutError(err, error=err)
+        except requests.exceptions.ConnectTimeout as err:
+            error = ServiceRequestTimeoutError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
-            error = ServiceResponseError(err, error=err)
+            error = ServiceResponseTimeoutError(err, error=err)
         except requests.exceptions.ConnectionError as err:
             if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
@@ -405,7 +422,7 @@ class RequestsTransport(HttpTransport):
                 _LOGGER.warning("Unable to stream download.")
                 error = HttpResponseError(err, error=err)
         except requests.RequestException as err:
-            error = ServiceRequestError(err, error=err)
+            error = ServiceResponseError(err, error=err)
 
         if error:
             raise error

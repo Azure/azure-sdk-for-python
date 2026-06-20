@@ -1,16 +1,14 @@
 # pylint: disable=line-too-long,useless-suppression
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
-
-
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Any, Union, Optional, Dict, List, IO, overload
-
 from azure.core.credentials import AzureKeyCredential
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import (
@@ -25,19 +23,18 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-
-from ._operations import (
-    WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated,
-    JSON,
+from ._operations import _WebPubSubServiceClientOperationsMixin as WebPubSubServiceClientOperationsMixinGenerated, JSON
+from ..._operations._patch import (
+    get_token_by_key,
     build_web_pub_sub_service_send_to_all_request,
     build_web_pub_sub_service_send_to_connection_request,
     build_web_pub_sub_service_send_to_user_request,
     build_web_pub_sub_service_send_to_group_request,
 )
-from ..._operations._patch import get_token_by_key
-from ..._models import GroupMember
+from ...models import GroupMember
 
-class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
+
+class _WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixinGenerated):
     @distributed_trace_async
     async def get_client_access_token(  # pylint: disable=arguments-differ
         self,
@@ -114,12 +111,12 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 **kwargs
             )
         else:
-            access_token = await super().get_client_access_token(
+            access_token = await super().generate_client_token(
                 user_id=user_id,
-                roles=roles,
+                role=roles,
                 minutes_to_expire=minutes_to_expire,
-                groups=groups,
-                client_protocol=client_protocol,
+                group=groups,
+                client_type=client_protocol,
                 **kwargs
             )
             token = access_token.get("token")
@@ -132,13 +129,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
     get_client_access_token.metadata = {"url": "/api/hubs/{hub}/:generateToken"}  # type: ignore
 
     @distributed_trace
-    def list_connections(
-        self,
-        *,
-        group: str,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[GroupMember]:
+    def list_connections(self, *, group: str, top: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged[GroupMember]:
         """List connections in a group.
 
         List connections in a group.
@@ -166,36 +157,29 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
 
         """
-        paged_json = super().list_connections(
-            group=group,
-            top=top,
-            **kwargs
-        )
+        paged_json = super().list_connections_in_group(group=group, top=top, **kwargs)
 
         class GroupMemberPaged(AsyncItemPaged):
             def __aiter__(self_inner):
                 async def generator():
                     async for item in paged_json:
-                        yield GroupMember(
-                            connection_id=item.get("connectionId"),
-                            user_id=item.get("userId")
-                        )
+                        yield GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId"))
+
                 return generator()
 
             def by_page(self_inner, continuation_token: Optional[str] = None):
                 async def page_generator():
                     async for page in paged_json.by_page(continuation_token=continuation_token):
+
                         async def group_member_page():
                             async for item in page:
-                                yield GroupMember(
-                                    connection_id=item.get("connectionId"),
-                                    user_id=item.get("userId")
-                                )
+                                yield GroupMember(connection_id=item.get("connectionId"), user_id=item.get("userId"))
+
                         yield group_member_page()
+
                 return page_generator()
 
         return GroupMemberPaged()
-
 
     @overload
     async def send_to_all(  # pylint: disable=inconsistent-return-statements
@@ -855,9 +839,34 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         if cls:
             return cls(pipeline_response, None, {})
 
+    @distributed_trace_async
+    async def has_permission(
+        self, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
+    ) -> bool:
+        """Check if a connection has permission to the specified action.
+
+        Check if a connection has permission to the specified action.
+
+        :param permission: The permission: current supported actions are joinLeaveGroup and
+         sendToGroup. Known values are: "sendToGroup" and "joinLeaveGroup". Required.
+        :type permission: str
+        :param connection_id: Target connection Id. Required.
+        :type connection_id: str
+        :keyword target_name: The meaning of the target depends on the specific permission. For
+         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for
+         the group name. Default value is None.
+        :paramtype target_name: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await super().check_permission(
+            permission=permission, connection_id=connection_id, target_name=target_name, **kwargs
+        )
+
 
 __all__: List[str] = [
-    "WebPubSubServiceClientOperationsMixin"
+    "_WebPubSubServiceClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 

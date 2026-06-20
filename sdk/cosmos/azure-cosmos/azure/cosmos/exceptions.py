@@ -40,6 +40,7 @@ class CosmosHttpResponseError(HttpResponseError):
         """
         self.headers = response.headers if response else {}
         self.sub_status = kwargs.pop('sub_status', None)
+        self.endpoint = kwargs.pop('endpoint', None)
         self.http_error_message = message
         status = status_code or (int(response.status_code) if response else 0)
 
@@ -51,6 +52,14 @@ class CosmosHttpResponseError(HttpResponseError):
 
         super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
         self.status_code = status
+
+    def __str__(self):
+        parts = [super().__str__()]
+        if self.endpoint:
+            parts.append(f"Endpoint: {self.endpoint}")
+        if self.sub_status:
+            parts.append(f"Sub Status: {self.sub_status}")
+        return " , ".join(parts)
 
 
 class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
@@ -117,13 +126,14 @@ class CosmosBatchOperationError(HttpResponseError):
 class CosmosClientTimeoutError(AzureError):
     """An operation failed to complete within the specified timeout."""
 
-    def __init__(self, **kwargs):
-        message = "Client operation failed to complete within specified timeout."
+    def __init__(self, message=None, **kwargs):
+        if message is None:
+            message = "The request failed to complete within the given timeout."
         self.response = None
         self.history = None
         super(CosmosClientTimeoutError, self).__init__(message, **kwargs)
 
-class InternalException:
+class _InternalCosmosException:
     def __init__(self, status_code, headers, reason=None):
         self.status_code = status_code
         self.headers = headers
@@ -145,4 +155,4 @@ def _container_recreate_exception(e) -> bool:
     return (is_bad_request and is_collection_rid_mismatch) or (is_not_found and is_throughput_not_found)
 
 def _is_partition_split_or_merge(e):
-    return e.status_code == _StatusCode.GONE and e.status_code == _SubStatusCodes.COMPLETING_SPLIT
+    return e.status_code == _StatusCode.GONE and e.sub_status == _SubStatusCodes.COMPLETING_SPLIT

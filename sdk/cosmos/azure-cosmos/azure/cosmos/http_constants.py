@@ -100,6 +100,7 @@ class HttpHeaders:
     QueryMetrics = "x-ms-documentdb-query-metrics"
     QueryExecutionInfo = "x-ms-cosmos-query-execution-info"
     IndexUtilization = "x-ms-cosmos-index-utilization"
+    QueryAdvice = "x-ms-cosmos-query-advice"
 
     # Our custom DocDB headers
     Continuation = "x-ms-continuation"
@@ -131,6 +132,7 @@ class HttpHeaders:
     IsContinuationExpected = "x-ms-documentdb-query-iscontinuationexpected"
     PopulateQueryMetrics = "x-ms-documentdb-populatequerymetrics"
     PopulateIndexMetrics = "x-ms-cosmos-populateindexmetrics"
+    PopulateQueryAdvice = "x-ms-cosmos-populatequeryadvice"
     ResourceQuota = "x-ms-resource-quota"
     ResourceUsage = "x-ms-resource-usage"
     IntendedCollectionRID = "x-ms-cosmos-intended-collection-rid"
@@ -219,7 +221,7 @@ class HttpHeaders:
 
     # Change feed
     AIM = "A-IM"
-    IncrementalFeedHeaderValue = "Incremental feed"
+    IncrementalFeedHeaderValue = "Incremental Feed"
     FullFidelityFeedHeaderValue = "Full-Fidelity Feed"
     ChangeFeedWireFormatVersion = "x-ms-cosmos-changefeed-wire-format-version"
 
@@ -373,6 +375,11 @@ class _ErrorCodes:
     # Linux Error Codes
     LinuxConnectionReset = 131
 
+class SDKSupportedCapabilities:
+    """Constants of SDK supported capabilities.
+    """
+    NONE = '0'
+    PARTITION_MERGE = '1'
 
 class StatusCodes:
     """HTTP status codes returned by the REST operations
@@ -401,6 +408,7 @@ class StatusCodes:
     RETRY_WITH = 449
 
     INTERNAL_SERVER_ERROR = 500
+    SERVICE_UNAVAILABLE = 503
 
     # Operation pause and cancel. These are FAKE status codes for QOS logging purpose only.
     OPERATION_PAUSED = 1200
@@ -443,6 +451,12 @@ class SubStatusCodes:
     # 503: Service Unavailable due to region being out of capacity for bindable partitions
     INSUFFICIENT_BINDABLE_PARTITIONS = 1007
 
+    # 503: Routing-map (/pkranges) drain produced overlapping or gapped ranges
+    # across the configured number of retries (transient snapshot inconsistency).
+    # Surfaced by ``_handle_transient_snapshot_retry_decision`` so callers and
+    # telemetry can distinguish this client-side condition from backend 503s.
+    ROUTING_MAP_SNAPSHOT_INCONSISTENT = 21015
+
     # Client Side substatus codes
     THROUGHPUT_OFFER_NOT_FOUND = 10004
 
@@ -467,3 +481,24 @@ class ResourceType:
     Topology = "topology"
     DatabaseAccount = "databaseaccount"
     PartitionKey = "partitionkey"
+
+    @staticmethod
+    def IsCollectionChild(resourceType: str) -> bool:
+        return resourceType in (
+            ResourceType.Document,
+            ResourceType.Attachment,
+            ResourceType.Conflict,
+            ResourceType.Schema,
+            ResourceType.UserDefinedFunction,
+            ResourceType.Trigger,
+            ResourceType.StoredProcedure,
+            ResourceType.PartitionKey,
+        )
+
+# The list of headers we do not want to log, it needs to be updated if any new headers should not be logged
+_cosmos_disallow_list = ["Authorization", "ProxyAuthorization", "TransferEncoding"]
+_cosmos_allow_list = set(
+    v.lower()
+    for k, v in HttpHeaders.__dict__.items()
+    if not k.startswith("_") and k not in _cosmos_disallow_list
+)

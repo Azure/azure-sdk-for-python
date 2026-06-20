@@ -21,12 +21,13 @@
 
 """Iterable change feed results in the Azure Cosmos database service.
 """
-from typing import Dict, Any, Tuple, List, Optional, Callable, cast, Union
+from typing import Any, Tuple, Optional, Callable, cast, Union
 
 from azure.core.paging import PageIterator
 
 from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
+from .._constants import _Constants as Constants
 
 
 class ChangeFeedIterable(PageIterator):
@@ -38,8 +39,8 @@ class ChangeFeedIterable(PageIterator):
     def __init__(
         self,
         client,
-        options: Dict[str, Any],
-        fetch_function=Optional[Callable[[Dict[str, Any]], Tuple[List[Dict[str, Any]], Dict[str, Any]]]],
+        options: dict[str, Any],
+        fetch_function=Optional[Callable[[dict[str, Any]], Tuple[list[dict[str, Any]], dict[str, Any]]]],
         collection_link=Optional[str],
         continuation_token=Optional[str],
     ) -> None:
@@ -87,7 +88,7 @@ class ChangeFeedIterable(PageIterator):
             self._unpack, # type: ignore[arg-type]
             continuation_token=continuation_token)
 
-    def _unpack(self, block: List[Dict[str, Any]]) -> Tuple[Optional[str], List[Dict[str, Any]]]:
+    def _unpack(self, block: list[dict[str, Any]]) -> Tuple[Optional[str], list[dict[str, Any]]]:
         continuation: Optional[str] = None
         if self._client.last_response_headers:
             continuation = self._client.last_response_headers.get('etag')
@@ -96,7 +97,7 @@ class ChangeFeedIterable(PageIterator):
             self._did_a_call_already = False
         return continuation, block
 
-    def _fetch_next(self, *args) -> List[Dict[str, Any]]:  # pylint: disable=unused-argument
+    def _fetch_next(self, *args) -> list[dict[str, Any]]:  # pylint: disable=unused-argument
         """Return a block of results with respecting retry policy.
 
         :param Any args:
@@ -118,7 +119,7 @@ class ChangeFeedIterable(PageIterator):
         change_feed_state = \
             ChangeFeedState.from_json(
                 self._collection_link,
-                cast(str, self._options.get("containerRID")),
+                cast(str, self._options.get(Constants.ContainerRID)),
                 change_feed_state_context)
 
         self._options["changeFeedState"] = change_feed_state
@@ -138,7 +139,7 @@ class ChangeFeedIterable(PageIterator):
                 self._fetch_function
             )
 
-    def _validate_change_feed_state_context(self, change_feed_state_context: Dict[str, Any]) -> None:
+    def _validate_change_feed_state_context(self, change_feed_state_context: dict[str, Any]) -> None:
 
         if change_feed_state_context.get("continuationPkRangeId") is not None:
             # if continuation token is in v1 format, throw exception if feed_range is set

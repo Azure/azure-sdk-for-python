@@ -3,16 +3,16 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer
 from azure.cosmos._execution_context.hybrid_search_aggregator import _retrieve_component_scores, _rewrite_query_infos, \
-    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids
+    _compute_rrf_scores, _compute_ranks, _coalesce_duplicate_rids, _attach_parameters, \
+    _FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_LOCAL, _FULL_TEXT_SCORE_SCOPE_DEFAULT
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
+from ..._constants import _Constants as Constants
 
 # pylint: disable=protected-access
-RRF_CONSTANT = 60
 
 
 class _Placeholders:
@@ -34,7 +34,7 @@ async def _drain_and_coalesce_results(document_producers_to_drain):
     return all_results, is_singleton
 
 
-class _HybridSearchContextAggregator(_QueryExecutionContextBase):
+class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: disable=too-many-instance-attributes
     """This class is a subclass of the query execution context base and serves for
     full text search and hybrid search queries. It is very similar to the existing MultiExecutionContextAggregator,
     but is needed since we have a lot more additional client-side logic to take care of.
@@ -53,6 +53,15 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         self._client = client
         self._resource_link = resource_link
         self._partitioned_query_ex_info = partitioned_query_execution_info
+        self._parameters = None
+        # If the query uses parameters, we must save them to add them back to the component queries
+        query_execution_info = getattr(self._partitioned_query_ex_info, "_query_execution_info", None)
+        if query_execution_info:
+            self._parameters = (
+                query_execution_info.get("parameters")
+                if isinstance(query_execution_info, dict)
+                else getattr(query_execution_info, "parameters", None)
+            )
         self._hybrid_search_query_info = hybrid_search_query_info
         self._final_results = []
         self._aggregated_global_statistics = None
@@ -63,9 +72,14 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
     async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
-            target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
+            # When FullTextScoreScope is "Local", use only target ranges for statistics.
+            # When "Global" (default), use all ranges.
+            full_text_score_scope = self._options.get(_FULL_TEXT_SCORE_SCOPE_KEY, _FULL_TEXT_SCORE_SCOPE_DEFAULT)
+            use_all_ranges = full_text_score_scope != _FULL_TEXT_SCORE_SCOPE_LOCAL
+            target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=use_all_ranges)
             global_statistics_doc_producers = []
-            global_statistics_query = self._hybrid_search_query_info['globalStatisticsQuery']
+            global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
+
             partitioned_query_execution_context_list = []
             for partition_key_target_range in target_partition_key_ranges:
                 # create a document producer for each partition key range
@@ -90,8 +104,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
                 except exceptions.CosmosHttpResponseError as e:
                     if exceptions._partition_range_is_gone(e):
                         # repairing document producer context on partition split
-                        global_statistics_doc_producers = await self._repair_document_producer(global_statistics_query,
-                                                                                               target_all_ranges=True)
+                        global_statistics_doc_producers = await self._repair_document_producer(
+                            global_statistics_query,
+                            target_all_ranges=use_all_ranges
+                        )
                     else:
                         raise
                 except StopAsyncIteration:
@@ -104,7 +120,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         component_query_infos = self._hybrid_search_query_info['componentQueryInfos']
         if self._aggregated_global_statistics:
             rewritten_query_infos = _rewrite_query_infos(self._hybrid_search_query_info,
-                                                         self._aggregated_global_statistics)
+                                                         self._aggregated_global_statistics, self._parameters)
         else:
             rewritten_query_infos = component_query_infos
 
@@ -113,6 +129,9 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=False)
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:
+                if self._parameters:
+                    rewritten_query['rewrittenQuery'] = _attach_parameters(rewritten_query['rewrittenQuery'],
+                                                                           self._parameters)
                 component_query_execution_list.append(
                     document_producer._DocumentProducer(
                         pk_range,
@@ -180,6 +199,26 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
         # Finally, sort on the RRF scores to build the final result to return
         drained_results.sort(key=lambda x: x['Score'], reverse=True)
         self._format_final_results(drained_results)
+
+    def _attach_parameters(self, query):
+        """Attach original query parameters (if any) without mutating the passed query object.
+
+        :param query: The original query (string or dict) to which saved parameters should be attached.
+        :type query: str or dict
+        :return: The query with parameters attached. Returns the original object if no parameters are stored.
+                 If the input was a string and parameters exist, a new dict is returned. If the input was a
+                 dict without "parameters", a shallow copied dict with "parameters" added is returned.
+        :rtype: str or dict
+        """
+        if not self._parameters:
+            return query
+        if isinstance(query, dict):
+            if "parameters" not in query:
+                new_query = dict(query)
+                new_query["parameters"] = self._parameters
+                return new_query
+            return query
+        return {"query": query, "parameters": self._parameters}
 
     def _format_final_results(self, results):
         skip = self._hybrid_search_query_info['skip'] or 0
@@ -255,8 +294,14 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):
 
     async def _get_target_partition_key_range(self, target_all_ranges):
         if target_all_ranges:
-            return [item async for item in self._client._ReadPartitionKeyRanges(collection_link=self._resource_link)]
+            feed_options = {}
+            if Constants.ContainerRID in self._options:
+                feed_options[Constants.ContainerRID] = self._options[Constants.ContainerRID]
+            return [item async for item in self._client._ReadPartitionKeyRanges(
+                collection_link=self._resource_link, feed_options=feed_options)]
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return await self._routing_provider.get_overlapping_ranges(
-            self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
+            self._resource_link,
+            [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges],
+            self._options
         )

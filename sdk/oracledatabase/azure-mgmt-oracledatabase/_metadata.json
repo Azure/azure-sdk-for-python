@@ -1,7 +1,7 @@
 {
-  "apiVersion": "2025-03-01",
-  "commit": "e411473e135e0f0f3c763565ee401be34ccd9f99",
+  "apiVersion": "2025-09-01",
+  "commit": "34499b0aa7b61a0e96a37d28aa282c9d2c345122",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/oracle/Oracle.Database.Management",
-  "emitterVersion": "0.45.0"
+  "emitterVersion": "0.50.0"
 }

@@ -35,6 +35,8 @@ class AgentsNamedToolChoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tool type ``deep_research``"""
     MCP = "mcp"
     """Tool type ``mcp``"""
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    """Tool type ``computer_use_preview``"""
 
 
 class AgentsResponseFormatMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -148,6 +150,19 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Query type ``vector_simple_hybrid``"""
     VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
     """Query type ``vector_semantic_hybrid``"""
+
+
+class ComputerUseEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The environment types supported by the computer use tool."""
+
+    WINDOWS = "windows"
+    """Windows environment"""
+    MAC = "mac"
+    """Mac environment"""
+    LINUX = "linux"
+    """Linux environment"""
+    BROWSER = "browser"
+    """Browser environment"""
 
 
 class DoneEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -299,6 +314,21 @@ class MessageStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Event sent before a message is completed. The data of this event is of type ThreadMessage"""
 
 
+class MouseButton(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mouse button types supported by click actions."""
+
+    LEFT = "left"
+    """Left mouse button"""
+    RIGHT = "right"
+    """Right mouse button"""
+    WHEEL = "wheel"
+    """Mouse wheel button"""
+    BACK = "back"
+    """Back mouse button"""
+    FORWARD = "forward"
+    """Forward mouse button"""
+
+
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type for OpenApi endpoint. Allowed types are:
 
@@ -401,6 +431,8 @@ class RunStepType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Represents a run step to create a message."""
     TOOL_CALLS = "tool_calls"
     """Represents a run step that calls tools."""
+    ACTIVITIES = "activities"
+    """Represents a run step with activities information."""
 
 
 class RunStreamEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):

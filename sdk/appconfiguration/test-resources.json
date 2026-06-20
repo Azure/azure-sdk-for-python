@@ -60,7 +60,8 @@
         "uniqueAzConfigName": "[format('{0}-{1}', parameters('baseName'), parameters('azConfigPrefix'))]",
         "endpointValue": "[format('https://{0}-{1}{2}', parameters('baseName'), parameters('azConfigPrefix'), parameters('azConfigEndpointSuffix'))]",
         "azureKeyVaultUrl": "[format('https://{0}{1}/', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]",
-        "azureKeyVaultSecretUrl": "[format('https://{0}{1}/secrets/TestSecret', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]"
+        "azureKeyVaultSecretUrl": "[format('https://{0}{1}/secrets/TestSecret', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]",
+        "azureKeyVaultSecretUrl2": "[format('https://{0}{1}/secrets/TestSecret2', parameters('baseName'), parameters('keyVaultEndpointSuffix'))]"
     },
     "resources": [
         {
@@ -119,6 +120,18 @@
             ],
             "properties": {
                 "value": "Very secret value"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(parameters('baseName'), '/TestSecret2')]",
+            "apiVersion": "2016-10-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('baseName'))]"
+            ],
+            "properties": {
+                "value": "Very secret value 2"
             }
         },
         {
@@ -199,6 +212,10 @@
         "APPCONFIGURATION_KEYVAULT_SECRET_URL": {
             "type": "string",
             "value": "[variables('azureKeyVaultSecretUrl')]"
+        },
+        "APPCONFIGURATION_KEYVAULT_SECRET_URL2": {
+            "type": "string",
+            "value": "[variables('azureKeyVaultSecretUrl2')]"
         }
     }
 }

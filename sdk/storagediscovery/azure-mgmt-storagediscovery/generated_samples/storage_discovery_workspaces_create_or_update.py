@@ -64,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/StorageDiscoveryWorkspaces_CreateOrUpdate.json
+# x-ms-original-file: 2025-09-01/StorageDiscoveryWorkspaces_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

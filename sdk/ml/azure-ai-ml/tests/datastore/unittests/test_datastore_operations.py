@@ -1,4 +1,6 @@
-import os, sys
+import os
+import platform
+import sys
 from unittest.mock import Mock, patch
 
 import pytest
@@ -8,19 +10,22 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationSc
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.operations import DatastoreOperations
 
+IS_CPYTHON = platform.python_implementation() == "CPython"
+IS_PYPY = platform.python_implementation() == "PyPy"
+
 
 @pytest.fixture
 def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
-    mock_aml_services_2024_07_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
-        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
+        serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
 
@@ -69,8 +74,8 @@ class TestDatastoreOperations:
         mock_datastore_operation._operation.create_or_update.assert_called_once()
 
     @pytest.mark.skipif(
-        sys.version_info >= (3, 13),
-        reason="Skipping because Python version is 3.13 or above. azureml.dataprep.rslex do not support py313",
+        (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)),
+        reason="Skipping because CPython version is >=3.13 or PyPy version is >=3.10. azureml.dataprep.rslex do not support it",
     )
     def test_mount_persistent(
         self,
@@ -94,8 +99,8 @@ class TestDatastoreOperations:
             mock_datastore_operation._compute_operation.update_data_mounts.assert_called_once()
 
     @pytest.mark.skipif(
-        sys.version_info >= (3, 13),
-        reason="Skipping because Python version is 3.13 or above. azureml.dataprep.rslex do not support py313",
+        (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)),
+        reason="Skipping because CPython version is >=3.13 or PyPy version is >=3.10. azureml.dataprep.rslex do not support it",
     )
     def test_mount_non_persistent(
         self,

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -21,7 +22,12 @@ from .._base_client import parse_connection_str, AudienceType
 from .._encoder import TableEntityEncoder, EncoderMapType
 from .._entity import TableEntity
 from .._decoder import TableEntityDecoder, deserialize_iso, DecoderMapType
-from .._generated.models import SignedIdentifier, TableProperties
+from .._generated.models import (
+    AccessPolicy as _AccessPolicy,
+    SignedIdentifier,
+    SignedIdentifiers as _SignedIdentifiers,
+    TableProperties,
+)
 from .._models import TableAccessPolicy, TableItem, UpdateMode
 from .._serialize import (
     serialize_iso,
@@ -147,7 +153,7 @@ class TableClient(AsyncTablesBaseClient):
         cls,
         table_url: str,
         *,
-        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential]] = None,
+        credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]] = None,
         **kwargs: Any,
     ) -> "TableClient":
         """A client to interact with a specific Table.
@@ -156,10 +162,11 @@ class TableClient(AsyncTablesBaseClient):
         :keyword credential:
             The credentials with which to authenticate. This is optional if the
             table URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
-            AzureSasCredential (azure-core), or a TokenCredential implementation from azure-identity.
+            AzureSasCredential (azure-core), or a AsyncTokenCredential implementation from azure-identity.
         :paramtype credential:
             ~azure.core.credentials.AzureNamedKeyCredential or
-            ~azure.core.credentials.AzureSasCredential or None
+            ~azure.core.credentials.AzureSasCredential or
+            ~azure.core.credentials_async.AsyncTokenCredential or None
         :returns: A table client.
         :rtype: ~azure.data.tables.TableClient
         """
@@ -204,7 +211,7 @@ class TableClient(AsyncTablesBaseClient):
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
         output = {}  # type: Dict[str, Optional[TableAccessPolicy]]
-        for identifier in cast(List[SignedIdentifier], identifiers):
+        for identifier in identifiers.identifiers or []:
             if identifier.access_policy:
                 output[identifier.id] = TableAccessPolicy(
                     start=deserialize_iso(identifier.access_policy.start),
@@ -228,16 +235,21 @@ class TableClient(AsyncTablesBaseClient):
         """
         identifiers = []
         for key, value in signed_identifiers.items():
-            payload = None
-            if value:
-                payload = TableAccessPolicy(
-                    start=serialize_iso(value.start),
-                    expiry=serialize_iso(value.expiry),
-                    permission=value.permission,
+            if value is not None:
+                payload = _AccessPolicy(
+                    start=serialize_iso(value.start),  # type: ignore[arg-type]
+                    expiry=serialize_iso(value.expiry),  # type: ignore[arg-type]
+                    permission=value.permission,  # type: ignore[arg-type]
                 )
+            else:
+                payload = None
             identifiers.append(SignedIdentifier(id=key, access_policy=payload))
         try:
-            await self._client.table.set_access_policy(table=self.table_name, table_acl=identifiers or None, **kwargs)
+            await self._client.table.set_access_policy(
+                table=self.table_name,
+                table_acl=_SignedIdentifiers(identifiers=identifiers),
+                **kwargs,
+            )
         except HttpResponseError as error:
             try:
                 _process_table_error(error, table_name=self.table_name)
@@ -549,6 +561,12 @@ class TableClient(AsyncTablesBaseClient):
                 :dedent: 16
                 :caption: Listing all entities held within a table
         """
+        if "query_filter" in kwargs or "parameters" in kwargs:
+            raise ValueError(
+                "'query_filter' and 'parameters' are not supported for 'list_entities'. "
+                "Use 'query_entities' for server-side filtering."
+            )
+
         if select and not isinstance(select, str):
             select = ",".join(select)
 

@@ -1,4 +1,7 @@
 [tool.azure-sdk-build]
 pyright = false
-type_check_samples = false
 sphinx = false
+
+[tool.azure-sdk-conda]
+in_bundle = true
+bundle_name = "azure-communication"

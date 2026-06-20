@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
 import collections
+import asyncio
 import logging
 import os
 import random
@@ -49,6 +50,116 @@ class TestConfig(object):
     is_live._cache = True if not is_emulator else False
     credential = masterKey if is_emulator else get_credential()
     credential_async = masterKey if is_emulator else get_credential(is_async=True)
+    data_auth_mode = os.getenv('COSMOS_TEST_DATA_AUTH_MODE', 'key').strip().lower()
+    if data_auth_mode not in ('key', 'aad'):
+        raise ValueError(
+            "Unknown COSMOS_TEST_DATA_AUTH_MODE: {!r}. Expected 'key' or 'aad'.".format(data_auth_mode)
+        )
+
+    @classmethod
+    def create_data_client(cls, **kwargs):
+        """Return a data-plane Cosmos client using AAD when configured, else key auth.
+
+        Extra ``**kwargs`` are forwarded to the ``CosmosClient`` constructor so test
+        files that need client-construction options (e.g. ``no_response_on_write=True``)
+        can opt in without bypassing the AAD/key selector.
+        """
+        if cls.data_auth_mode == 'aad':
+            return CosmosClient(cls.host, cls.credential, **kwargs)
+        return CosmosClient(cls.host, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_data_client_for_endpoint(cls, endpoint, **kwargs):
+        """Return a sync data-plane Cosmos client for a specific endpoint.
+
+        Uses AAD when configured via ``COSMOS_TEST_DATA_AUTH_MODE=aad`` and key auth
+        otherwise, matching :meth:`create_data_client` behavior while allowing
+        endpoint overrides for regional-endpoint tests.
+        """
+        resolved_endpoint = endpoint or cls.host
+        if cls.data_auth_mode == 'aad':
+            return CosmosClient(resolved_endpoint, cls.credential, **kwargs)
+        return CosmosClient(resolved_endpoint, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_data_client_async(cls, **kwargs):
+        """Return an async data-plane Cosmos client using AAD when configured, else key auth.
+
+        Lifecycle (important):
+            The returned ``azure.cosmos.aio.CosmosClient`` is **not entered**. The caller
+            owns its lifecycle and MUST either:
+              * use it as an async context manager
+                (``async with test_config.TestConfig.create_data_client_async() as c: ...``), or
+              * call ``await client.__aenter__()`` after construction and ``await client.close()``
+                in teardown (the pattern used by ``unittest.IsolatedAsyncioTestCase`` test
+                files such as ``test_query_async.py``).
+
+            Failing to close the client leaks the underlying ``aiohttp`` session and can
+            surface as ``Unclosed client session`` warnings or socket exhaustion in long
+            test runs.
+
+        Extra ``**kwargs`` are forwarded to the async ``CosmosClient`` constructor so test
+        files that need client-construction options (e.g. ``multiple_write_locations=True``)
+        can opt in without bypassing the AAD/key selector.
+        """
+        from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+        if cls.data_auth_mode == 'aad':
+            return AsyncCosmosClient(cls.host, cls.credential_async, **kwargs)
+        return AsyncCosmosClient(cls.host, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_data_client_async_for_endpoint(cls, endpoint, **kwargs):
+        """Return an async data-plane Cosmos client for a specific endpoint.
+
+        Uses AAD when configured via ``COSMOS_TEST_DATA_AUTH_MODE=aad`` and key auth
+        otherwise, matching :meth:`create_data_client_async` behavior while allowing
+        endpoint overrides for regional-endpoint tests.
+        """
+        from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+        resolved_endpoint = endpoint or cls.host
+        if cls.data_auth_mode == 'aad':
+            return AsyncCosmosClient(resolved_endpoint, cls.credential_async, **kwargs)
+        return AsyncCosmosClient(resolved_endpoint, cls.masterKey, **kwargs)
+
+    @classmethod
+    def create_test_clients(cls, database_id, **kwargs):
+        """Return ``(key_client, key_db, data_client, data_db)`` for tests that need
+        both a control-plane (key-auth) and a data-plane (AAD-or-key) client.
+
+        Removes the 4-line key+data-client setUp boilerplate. Typical use::
+
+            cls.key_client, cls.key_db, cls.client, cls.created_db = (
+                test_config.TestConfig.create_test_clients(cls.TEST_DATABASE_ID))
+
+        Extra ``**kwargs`` are forwarded to BOTH client constructors (use-cases:
+        ``multiple_write_locations=True`` for circuit-breaker tests). For per-client
+        construction options (e.g. custom ``transport`` for fault injection), construct
+        the clients manually instead of using this factory.
+        """
+        key_client = CosmosClient(cls.host, cls.masterKey, **kwargs)
+        key_db = key_client.get_database_client(database_id)
+        data_client = cls.create_data_client(**kwargs)
+        data_db = data_client.get_database_client(database_id)
+        return key_client, key_db, data_client, data_db
+
+    @classmethod
+    def create_test_clients_async(cls, database_id, **kwargs):
+        """Async equivalent of :meth:`create_test_clients`.
+
+        Returns ``(key_client, key_db, data_client, data_db)`` where both clients
+        are async ``azure.cosmos.aio.CosmosClient`` instances. Callers own the
+        lifecycle of both clients and MUST close them in teardown
+        (see :meth:`create_data_client_async` for details).
+        """
+        from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+
+        key_client = AsyncCosmosClient(cls.host, cls.masterKey, **kwargs)
+        key_db = key_client.get_database_client(database_id)
+        data_client = cls.create_data_client_async(**kwargs)
+        data_db = data_client.get_database_client(database_id)
+        return key_client, key_db, data_client, data_db
 
     global_host = os.getenv('GLOBAL_ACCOUNT_HOST', host)
     write_location_host = os.getenv('WRITE_LOCATION_HOST', host)
@@ -74,6 +185,18 @@ class TestConfig(object):
     TEST_CONTAINER_PARTITION_KEY = "pk"
     TEST_CONTAINER_PREFIX_PARTITION_KEY = ["pk1", "pk2"]
     TEST_CONTAINER_PREFIX_PARTITION_KEY_PATH = ['/pk1', '/pk2']
+
+    # these will be populated by the get_account_info method
+    WRITE_LOCATION = ""
+    # some default value that is needed for emulator tests
+    READ_LOCATION = "West US"
+
+    @classmethod
+    def get_account_info(cls, client: CosmosClient):
+        account_info = client.get_database_account()
+        cls.WRITE_LOCATION = account_info.WritableLocations[0]["name"]
+        if len(account_info.ReadableLocations) > 1:
+            cls.READ_LOCATION = account_info.ReadableLocations[1]["name"]
 
     @classmethod
     def create_database_if_not_exist(cls, client):
@@ -211,6 +334,7 @@ class TestConfig(object):
     @staticmethod
     def trigger_split(container, throughput):
         print("Triggering a split in session token helpers")
+        # Use a single control-plane attempt to avoid masking contention failures.
         container.replace_throughput(throughput)
         print(f"changed offer to {throughput}")
         print("--------------------------------")
@@ -232,6 +356,7 @@ class TestConfig(object):
     @staticmethod
     async def trigger_split_async(container, throughput):
         print("Triggering a split in session token helpers")
+        # Use a single control-plane attempt to avoid masking contention failures.
         await container.replace_throughput(throughput)
         print(f"changed offer to {throughput}")
         print("--------------------------------")
@@ -245,7 +370,7 @@ class TestConfig(object):
                     raise unittest.SkipTest("Partition split didn't complete in time")
                 else:
                     print("Waiting for split to complete")
-                    time.sleep(SLEEP_TIME)
+                    await asyncio.sleep(SLEEP_TIME)
             else:
                 break
         print("Split in session token helpers has completed")
@@ -373,7 +498,9 @@ class MockConnectionRetryPolicy(RetryPolicy):
         super().__init__(**clean_kwargs)
 
     def send(self, request):
-        self.counter = 0
+        # background health checks could reset counter unintentionally
+        if request.http_request.headers.get(http_constants.HttpHeaders.ThinClientProxyResourceType) == self.resource_type:
+            self.counter = 0
         absolute_timeout = request.context.options.pop('timeout', None)
         per_request_timeout = request.context.options.pop('connection_timeout', 0)
         request_params = request.context.options.pop('request_params', None)

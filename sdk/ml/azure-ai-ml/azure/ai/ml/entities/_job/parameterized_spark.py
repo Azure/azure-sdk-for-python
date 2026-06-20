@@ -37,8 +37,6 @@ class ParameterizedSpark(SparkJobEntryMixin):
     :type environment: Optional[Union[str, ~azure.ai.ml.entities.Environment]]
     :param args: The arguments for the job.
     :type args: Optional[str]
-    :keyword kwargs: A dictionary of additional configuration parameters.
-    :paramtype kwargs: dict
     """
 
     def __init__(

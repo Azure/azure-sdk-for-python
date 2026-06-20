@@ -526,6 +526,8 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
                                 }
                             ]
                         },
+                        "capacityType": "str",
+                        "mode": "str",
                         "provisioningState": "str",
                         "regularPriorityProfile": {"allocationStrategy": "str", "capacity": 0, "minCapacity": 0},
                         "spotPriorityProfile": {
@@ -559,6 +561,11 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
                             "rdmaNetworkInterfaceCount": {"max": 0, "min": 0},
                             "rdmaSupport": "str",
                             "vmCategories": ["str"],
+                        },
+                        "vmNamePrefix": "str",
+                        "zoneAllocationPolicy": {
+                            "distributionStrategy": "str",
+                            "zonePreferences": [{"zone": "str", "rank": 0}],
                         },
                     },
                     "systemData": {
@@ -1069,6 +1076,8 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
                                 }
                             ]
                         },
+                        "capacityType": "str",
+                        "mode": "str",
                         "provisioningState": "str",
                         "regularPriorityProfile": {"allocationStrategy": "str", "capacity": 0, "minCapacity": 0},
                         "spotPriorityProfile": {
@@ -1102,6 +1111,11 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
                             "rdmaNetworkInterfaceCount": {"max": 0, "min": 0},
                             "rdmaSupport": "str",
                             "vmCategories": ["str"],
+                        },
+                        "vmNamePrefix": "str",
+                        "zoneAllocationPolicy": {
+                            "distributionStrategy": "str",
+                            "zonePreferences": [{"zone": "str", "rank": 0}],
                         },
                     },
                     "tags": {"str": "str"},
@@ -1147,6 +1161,17 @@ class TestComputeFleetMgmtFleetsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_fleets_list_virtual_machine_scale_sets(self, resource_group):
         response = self.client.fleets.list_virtual_machine_scale_sets(
+            resource_group_name=resource_group.name,
+            name="str",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_fleets_list_virtual_machines(self, resource_group):
+        response = self.client.fleets.list_virtual_machines(
             resource_group_name=resource_group.name,
             name="str",
         )

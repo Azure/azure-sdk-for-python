@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Callable, Dict, IO, Iterator, List, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -31,7 +31,7 @@ from .._configuration import AzureBlobStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -40,8 +40,9 @@ _SERIALIZER.client_side_validation = False
 def build_create_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     access: Optional[Union[str, _models.PublicAccessType]] = None,
     request_id_parameter: Optional[str] = None,
     default_encryption_scope: Optional[str] = None,
@@ -52,7 +53,6 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -92,6 +92,7 @@ def build_create_request(
 def build_get_properties_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -101,7 +102,6 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -131,6 +131,7 @@ def build_get_properties_request(
 def build_delete_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -142,7 +143,6 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -176,9 +176,10 @@ def build_delete_request(
 def build_set_metadata_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -188,7 +189,6 @@ def build_set_metadata_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -223,6 +223,7 @@ def build_set_metadata_request(
 def build_get_access_policy_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -233,7 +234,6 @@ def build_get_access_policy_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -264,6 +264,7 @@ def build_get_access_policy_request(
 def build_set_access_policy_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     access: Optional[Union[str, _models.PublicAccessType]] = None,
@@ -279,7 +280,6 @@ def build_set_access_policy_request(
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -318,6 +318,7 @@ def build_set_access_policy_request(
 def build_restore_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     deleted_container_name: Optional[str] = None,
@@ -329,7 +330,6 @@ def build_restore_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -367,6 +367,7 @@ def build_rename_request(
     url: str,
     *,
     source_container_name: str,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     source_lease_id: Optional[str] = None,
@@ -377,7 +378,6 @@ def build_rename_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -411,6 +411,7 @@ def build_submit_batch_request(
     *,
     content_length: int,
     content: IO[bytes],
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -421,7 +422,6 @@ def build_submit_batch_request(
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["batch"] = kwargs.pop("comp", _params.pop("comp", "batch"))
     multipart_content_type: Optional[str] = kwargs.pop("multipart_content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -453,12 +453,13 @@ def build_submit_batch_request(
 def build_filter_blobs_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     where: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
-    include: Optional[List[Union[str, _models.FilterBlobsIncludeItem]]] = None,
+    include: Optional[list[Union[str, _models.FilterBlobsIncludeItem]]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -466,7 +467,6 @@ def build_filter_blobs_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["blobs"] = kwargs.pop("comp", _params.pop("comp", "blobs"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -503,6 +503,7 @@ def build_filter_blobs_request(
 def build_acquire_lease_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     duration: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
@@ -517,7 +518,6 @@ def build_acquire_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -556,6 +556,7 @@ def build_release_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -568,7 +569,6 @@ def build_release_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -604,6 +604,7 @@ def build_renew_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -616,7 +617,6 @@ def build_renew_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -651,6 +651,7 @@ def build_renew_lease_request(
 def build_break_lease_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     break_period: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -664,7 +665,6 @@ def build_break_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -702,6 +702,7 @@ def build_change_lease_request(
     *,
     lease_id: str,
     proposed_lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -714,7 +715,6 @@ def build_change_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -750,10 +750,12 @@ def build_change_lease_request(
 def build_list_blob_flat_segment_request(
     url: str,
     *,
+    version: str,
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
-    include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+    include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
+    start_from: Optional[str] = None,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -763,7 +765,6 @@ def build_list_blob_flat_segment_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -785,6 +786,8 @@ def build_list_blob_flat_segment_request(
         _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int", minimum=1)
     if include is not None:
         _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
+    if start_from is not None:
+        _params["startFrom"] = _SERIALIZER.query("start_from", start_from, "str")
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
@@ -801,10 +804,12 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
     url: str,
     *,
     delimiter: str,
+    version: str,
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
-    include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+    include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
+    start_from: Optional[str] = None,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -814,7 +819,6 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -837,6 +841,8 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
         _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int", minimum=1)
     if include is not None:
         _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
+    if start_from is not None:
+        _params["startFrom"] = _SERIALIZER.query("start_from", start_from, "str")
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
@@ -850,14 +856,13 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
 
 
 def build_get_account_info_request(
-    url: str, *, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str, *, version: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -906,7 +911,7 @@ class ContainerOperations:
     def create(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         access: Optional[Union[str, _models.PublicAccessType]] = None,
         request_id_parameter: Optional[str] = None,
         container_cpk_scope_info: Optional[_models.ContainerCpkScopeInfo] = None,
@@ -963,6 +968,7 @@ class ContainerOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             access=access,
@@ -970,7 +976,6 @@ class ContainerOperations:
             default_encryption_scope=_default_encryption_scope,
             prevent_encryption_scope_override=_prevent_encryption_scope_override,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -985,7 +990,10 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1047,11 +1055,11 @@ class ContainerOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1066,7 +1074,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1156,13 +1167,13 @@ class ContainerOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1177,7 +1188,10 @@ class ContainerOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1195,7 +1209,7 @@ class ContainerOperations:
     def set_metadata(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
@@ -1252,6 +1266,7 @@ class ContainerOperations:
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             metadata=metadata,
@@ -1259,7 +1274,6 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1274,7 +1288,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1297,7 +1314,7 @@ class ContainerOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
-    ) -> List[_models.SignedIdentifier]:
+    ) -> list[_models.SignedIdentifier]:
         """gets the permissions for the specified container. The permissions indicate whether container
         data may be accessed publicly.
 
@@ -1329,7 +1346,7 @@ class ContainerOperations:
 
         restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        cls: ClsType[List[_models.SignedIdentifier]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -1337,12 +1354,12 @@ class ContainerOperations:
 
         _request = build_get_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1357,7 +1374,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1388,7 +1408,7 @@ class ContainerOperations:
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
-        container_acl: Optional[List[_models.SignedIdentifier]] = None,
+        container_acl: Optional[list[_models.SignedIdentifier]] = None,
         **kwargs: Any
     ) -> None:
         """sets the permissions for the specified container. The permissions indicate whether blobs in a
@@ -1429,7 +1449,8 @@ class ContainerOperations:
 
         restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        content_type = content_type if container_acl else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -1450,6 +1471,7 @@ class ContainerOperations:
 
         _request = build_set_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             access=access,
@@ -1459,7 +1481,6 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1475,7 +1496,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1538,13 +1562,13 @@ class ContainerOperations:
 
         _request = build_restore_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             deleted_container_name=deleted_container_name,
             deleted_container_version=deleted_container_version,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1559,7 +1583,10 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1621,12 +1648,12 @@ class ContainerOperations:
         _request = build_rename_request(
             url=self._config.url,
             source_container_name=source_container_name,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             source_lease_id=source_lease_id,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1641,7 +1668,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1706,12 +1736,12 @@ class ContainerOperations:
         _request = build_submit_batch_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             multipart_content_type=multipart_content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1732,7 +1762,10 @@ class ContainerOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1755,7 +1788,7 @@ class ContainerOperations:
         where: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, _models.FilterBlobsIncludeItem]]] = None,
+        include: Optional[list[Union[str, _models.FilterBlobsIncludeItem]]] = None,
         **kwargs: Any
     ) -> _models.FilterBlobSegment:
         """The Filter Blobs operation enables callers to list blobs in a container whose tags match a
@@ -1811,6 +1844,7 @@ class ContainerOperations:
 
         _request = build_filter_blobs_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             where=where,
@@ -1819,7 +1853,6 @@ class ContainerOperations:
             include=include,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1834,7 +1867,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1912,6 +1948,7 @@ class ContainerOperations:
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -1921,7 +1958,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1936,7 +1972,10 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2007,6 +2046,7 @@ class ContainerOperations:
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -2014,7 +2054,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2029,7 +2068,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2099,6 +2141,7 @@ class ContainerOperations:
         _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -2106,7 +2149,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2121,7 +2163,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2197,6 +2242,7 @@ class ContainerOperations:
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             if_modified_since=_if_modified_since,
@@ -2205,7 +2251,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2220,7 +2265,10 @@ class ContainerOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2297,6 +2345,7 @@ class ContainerOperations:
             url=self._config.url,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -2304,7 +2353,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2319,7 +2367,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2342,7 +2393,8 @@ class ContainerOperations:
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -2369,6 +2421,10 @@ class ContainerOperations:
         :param include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
         :type include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
+        :param start_from: Specifies the relative path to list paths from. For non-recursive list, only
+         one entity level is supported; For recursive list, multiple entity levels are supported.
+         (Inclusive). Default value is None.
+        :type start_from: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
@@ -2399,15 +2455,16 @@ class ContainerOperations:
 
         _request = build_list_blob_flat_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
             include=include,
+            start_from=start_from,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2422,7 +2479,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2448,7 +2508,8 @@ class ContainerOperations:
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        include: Optional[list[Union[str, _models.ListBlobsIncludeItem]]] = None,
+        start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -2480,6 +2541,10 @@ class ContainerOperations:
         :param include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
         :type include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
+        :param start_from: Specifies the relative path to list paths from. For non-recursive list, only
+         one entity level is supported; For recursive list, multiple entity levels are supported.
+         (Inclusive). Default value is None.
+        :type start_from: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
@@ -2511,15 +2576,16 @@ class ContainerOperations:
         _request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
             delimiter=delimiter,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
             include=include,
+            start_from=start_from,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2534,7 +2600,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2589,11 +2658,11 @@ class ContainerOperations:
 
         _request = build_get_account_info_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2608,7 +2677,10 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

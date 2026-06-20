@@ -69,7 +69,7 @@ setup(
         "pytyped": ["py.typed"],
     },
     install_requires=[
-        "azure-core>=1.32.0",
+        "azure-core>=1.38.0",
     ],
     python_requires=">=3.9",
 )

@@ -9,7 +9,8 @@ from azure.keyvault.administration._internal.client_base import DEFAULT_VERSION
 from devtools_testutils import set_bodiless_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
 
-from _async_test_case import KeyVaultBackupClientPreparer, get_decorator
+from _async_test_case import KeyVaultBackupClientPreparer
+from _test_case import get_decorator
 from _shared.test_case_async import KeyVaultTestCase
 
 all_api_versions = get_decorator(is_async=True)
@@ -19,8 +20,9 @@ only_default = get_decorator(is_async=True, api_versions=[DEFAULT_VERSION])
 class TestExamplesTests(KeyVaultTestCase):
     def create_key_client(self, vault_uri, **kwargs):
         from azure.keyvault.keys.aio import KeyClient
+
         credential = self.get_credential(KeyClient, is_async=True)
-        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs )
+        return self.create_client_from_credential(KeyClient, credential=credential, vault_url=vault_uri, **kwargs)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("api_version", only_default)

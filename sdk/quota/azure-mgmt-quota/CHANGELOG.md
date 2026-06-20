@@ -1,5 +1,62 @@
 # Release History
 
+## 3.0.1 (2025-10-09)
+
+### Bugs Fixed
+
+- Exclude `generated_samples` and `generated_tests` from wheel
+
+## 3.0.0 (2025-09-22)
+
+### Features Added
+
+  - Model `QuotaMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `QuotaMgmtClient` added method `send_request`
+  - Client `QuotaMgmtClient` added operation group `group_quota_usages`
+  - Client `QuotaMgmtClient` added operation group `group_quota_location_settings`
+  - Model `CurrentQuotaLimitBase` added property `system_data`
+  - Model `CurrentUsagesBase` added property `system_data`
+  - Model `GroupQuotasEntityBase` added property `group_type`
+  - Model `GroupQuotasEntityProperties` added property `group_type`
+  - Model `QuotaRequestDetails` added property `system_data`
+  - Enum `RequestState` added member `ESCALATED`
+  - Added enum `EnforcementState`
+  - Added model `ExtensionResource`
+  - Added model `GroupQuotasEnforcementStatus`
+  - Added model `GroupQuotasEnforcementStatusProperties`
+  - Added enum `GroupType`
+  - Added operation group `GroupQuotaLocationSettingsOperations`
+  - Added operation group `GroupQuotaUsagesOperations`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. And please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Deleted or renamed model `CommonResourceProperties`
+  - Deleted or renamed model `CreateGenericQuotaRequestParameters`
+  - Deleted or renamed model `GroupQuotaList`
+  - Deleted or renamed model `GroupQuotaSubscriptionIdList`
+  - Deleted or renamed model `GroupQuotaSubscriptionRequestStatusList`
+  - Deleted or renamed model `LROResponse`
+  - Deleted or renamed model `LROResponseProperties`
+  - Deleted or renamed model `OperationList`
+  - Deleted or renamed model `QuotaAllocationRequestStatusList`
+  - Deleted or renamed model `QuotaLimits`
+  - Deleted or renamed model `QuotaLimitsResponse`
+  - Deleted or renamed model `QuotaRequestDetailsList`
+  - Deleted or renamed model `QuotaRequestOneResourceProperties`
+  - Deleted or renamed model `QuotaRequestOneResourceSubmitResponse`
+  - Deleted or renamed model `QuotaRequestStatusDetails`
+  - Deleted or renamed model `QuotaRequestSubmitResponse`
+  - Deleted or renamed model `QuotaRequestSubmitResponse202`
+  - Deleted or renamed model `ResourceBaseRequest`
+  - Deleted or renamed model `ResourceUsageList`
+  - Deleted or renamed model `SubmittedResourceRequestStatusList`
+  - Deleted or renamed model `SubscriptionGroupQuotaAssignment`
+  - Deleted or renamed model `SubscriptionQuotaAllocationRequestList`
+  - Deleted or renamed model `SubscriptionQuotaAllocationsStatusList`
+  - Deleted or renamed model `UsagesLimits`
+  - Method `QuotaRequestStatusOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+
 ## 2.0.0 (2025-02-26)
 
 ### Features Added

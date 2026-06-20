@@ -1,14 +1,27 @@
 # Release History
 
-## 1.1.1 (Unreleased)
-
-### Features Added
+## 2.0.0b1 (2025-10-27)
 
 ### Breaking Changes
 
-### Bugs Fixed
+* Authoring functionality (project creation, knowledge source management, deployment operations) has been removed from this package and moved to a separate dedicated authoring package / namespace. All references to `AuthoringClient`, and related authoring operations have been eliminated from the runtime client distribution.
+* Dropped support for Python versions earlier than 3.9 (aligns with Azure SDK Python support policy going forward).
+* Model base class change: all public model types now inherit from `MutableMapping[str, Any]` (dict-like) instead of the previous `Model` base class. As a result they now support standard mutable mapping behavior (key iteration, item assignment, etc.) and any code depending on methods/properties inherited from the old base class should be reviewed/updated.
+* Removed client constructor keyword argument `default_language`. Per-call language control is now done explicitly via the `language` property on `AnswersFromTextOptions` (and related options models). The service default remains `"en"` if a language is not supplied. To change the effective language:
+  * Pass `language="<bcp-47-code>"` when constructing `AnswersFromTextOptions` (e.g. `"es"`, `"zh-Hans"`).
+  * Or create / select a project in the desired language in [Language Studio](https://language.azure.com) when authoring knowledge bases.
+
+  The previous implicit fallback (client-level `default_language`) has been removed to avoid hidden state and to encourage explicit specification or project-level configuration.
+* Removed support for passing metadata as `Dict[str,str]` to `MetadataFilter`. Tuple form `[("key","value"), ...]` and `List[MetadataRecord]` remain supported.
+
+### Features Added
+
+* Documentation improvements: expanded README with authentication guidance, AAD usage, async examples, and troubleshooting section.
 
 ### Other Changes
+
+* Internal refactoring and dependency grooming in preparation for the authoring/runtime split.
+* Changed samples and README examples to use explicit `AnswersOptions` / `AnswersFromTextOptions` objects as the first argument when calling `get_answers` and `get_answers_from_text`.
 
 ## 1.1.0 (2022-10-13)
 
@@ -18,7 +31,7 @@
 
 * `QuestionAnsweringProjectsClient` was renamed to `AuthoringClient`.
 * The `azure.ai.language.questionanswering.projects` namespace was renamed to `azure.ai.language.questionanswering.authoring`
-* Authoring client methods: `begin_deploy_project`, `begin_import_assets`, `begin_update_sources` 
+* Authoring client methods: `begin_deploy_project`, `begin_import_assets`, `begin_update_sources`
   and `begin_update_qnas` now return a response upon completion of the long-running operation.
 * Keyword argument `format` renamed to `file_format` for `begin_export` and `begin_import_assets`.
 
@@ -26,7 +39,7 @@
 * Fixed a bug where the client-level keyword argument `default_language` was not being honored for `get_answers_from_text`.
 
 ### Other Changes
-* Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+* Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, see [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 * Dropped dependency on `msrest`.
 
 ## 1.1.0b2 (2022-07-19)

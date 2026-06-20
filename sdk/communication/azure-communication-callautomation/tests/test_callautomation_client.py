@@ -119,13 +119,11 @@ class TestCallAutomationClient(unittest.TestCase):
         # make invitation
         call_invite = CallInvite(target=user)
         call_automation_client = CallAutomationClient(
-            "https://endpoint",
-            AzureKeyCredential("fakeCredential=="),
-            transport=Mock(send=mock_send)
+            "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
         )
-        call_connection_properties = call_automation_client.create_call(call_invite,
-                                                                        self.callback_url,
-                                                                        teams_app_source=caller)
+        call_connection_properties = call_automation_client.create_call(
+            call_invite, self.callback_url, teams_app_source=caller
+        )
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
@@ -226,7 +224,7 @@ class TestCallAutomationClient(unittest.TestCase):
         self.assertEqual(self.call_connection_id, call_connection_properties.call_connection_id)
         self.assertEqual(self.server_callI_id, call_connection_properties.server_call_id)
         self.assertEqual(self.callback_url, call_connection_properties.callback_url)
-    
+
     def test_redirect_call(self):
         def mock_send(_, **kwargs):
             kwargs.pop("stream", None)

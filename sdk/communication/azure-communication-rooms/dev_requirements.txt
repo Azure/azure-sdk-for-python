@@ -1,5 +1,5 @@
--e ../../../tools/azure-sdk-tools
--e ../azure-communication-identity
+-e ../../../eng/tools/azure-sdk-tools
+../azure-communication-identity
 ../../core/azure-core
 ../../identity/azure-identity
 aiohttp>=3.0

@@ -13,7 +13,14 @@ from azure.core.exceptions import ClientAuthenticationError
 
 from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource, resolve_tenant, within_dac, validate_tenant_id, validate_scope
+from .._internal import (
+    _scopes_to_resource,
+    encode_base64,
+    resolve_tenant,
+    within_dac,
+    validate_tenant_id,
+    validate_scope,
+)
 from .._internal.decorators import log_get_token
 
 
@@ -24,6 +31,11 @@ BLOCKED_BY_EXECUTION_POLICY = "Execution policy prevented invoking Azure PowerSh
 NO_AZ_ACCOUNT_MODULE = "NO_AZ_ACCOUNT_MODULE"
 POWERSHELL_NOT_INSTALLED = "PowerShell is not installed"
 RUN_CONNECT_AZ_ACCOUNT = 'Please run "Connect-AzAccount" to set up account'
+CLAIMS_UNSUPPORTED_ERROR = (
+    "This credential doesn't support claims challenges. To authenticate with the required "
+    "claims, please run the following command (requires Az.Accounts module version 5.2.0 or later): "
+    "Connect-AzAccount -ClaimsChallenge {claims_value}"
+)
 SCRIPT = """$ErrorActionPreference = 'Stop'
 [version]$minimumVersion = '2.2.0'
 
@@ -112,7 +124,7 @@ class AzurePowerShellCredential:
     def get_token(
         self,
         *scopes: str,
-        claims: Optional[str] = None,  # pylint:disable=unused-argument
+        claims: Optional[str] = None,
         tenant_id: Optional[str] = None,
         **kwargs: Any,
     ) -> AccessToken:
@@ -135,10 +147,11 @@ class AzurePowerShellCredential:
         :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked Azure PowerShell but didn't
           receive an access token
         """
-
         options: TokenRequestOptions = {}
         if tenant_id:
             options["tenant_id"] = tenant_id
+        if claims:
+            options["claims"] = claims
 
         token_info = self._get_token_base(*scopes, options=options, **kwargs)
         return AccessToken(token_info.token, token_info.expires_on)
@@ -169,6 +182,13 @@ class AzurePowerShellCredential:
     def _get_token_base(
         self, *scopes: str, options: Optional[TokenRequestOptions] = None, **kwargs: Any
     ) -> AccessTokenInfo:
+
+        # Check if claims challenge is provided
+        if options and "claims" in options and options["claims"]:
+            error_message = CLAIMS_UNSUPPORTED_ERROR.format(claims_value=encode_base64(options["claims"]))
+            if options.get("tenant_id"):
+                error_message += f" -Tenant {options.get('tenant_id')}"
+            raise CredentialUnavailableError(message=error_message)
 
         tenant_id = options.get("tenant_id") if options else None
         if tenant_id:
@@ -269,7 +289,11 @@ def raise_for_error(return_code: int, stdout: str, stderr: str) -> None:
 
     if stderr:
         # stderr is too noisy to include with an exception but may be useful for debugging
-        _LOGGER.debug('%s received an error from Azure PowerShell: "%s"', AzurePowerShellCredential.__name__, stderr)
+        _LOGGER.debug(
+            '%s received an error from Azure PowerShell: "%s"',
+            AzurePowerShellCredential.__name__,
+            stderr,
+        )
     raise CredentialUnavailableError(
         message="Failed to invoke PowerShell. Enable debug logging for additional information."
     )

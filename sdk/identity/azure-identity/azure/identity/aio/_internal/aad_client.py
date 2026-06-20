@@ -8,7 +8,7 @@ from typing import Iterable, Optional, Union, Dict, Any
 from azure.core.credentials import AccessTokenInfo
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from ..._internal import AadClientCertificate
 from ..._internal import AadClientBase
 from ..._internal.pipeline import build_async_pipeline

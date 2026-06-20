@@ -5,13 +5,12 @@
 # --------------------------------------------------------------------------
 import pytest
 
-from azure.storage.blob import BlobProperties
-from azure.storage.blob.aio import BlobServiceClient
-
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
+from azure.storage.blob import BlobProperties
+from azure.storage.blob.aio import BlobServiceClient
 
 # ------------------------------------------------------------------------------
 
@@ -35,7 +34,7 @@ class TestStorageObjectReplicationAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
         )
         blob = bsc.get_blob_client(container=self.SRC_CONTAINER, blob=self.BLOB_NAME)
 
@@ -46,13 +45,13 @@ class TestStorageObjectReplicationAsync(AsyncStorageRecordedTestCase):
         assert isinstance(props, BlobProperties)
         assert props.object_replication_source_properties is not None
         for replication_policy in props.object_replication_source_properties:
-            assert replication_policy.policy_id != ''
+            assert replication_policy.policy_id != ""
             assert replication_policy.rules is not None
 
             for rule in replication_policy.rules:
-                assert rule.rule_id != ''
+                assert rule.rule_id != ""
                 assert rule.status is not None
-                assert rule.status != ''
+                assert rule.status != ""
 
         # Check that the download function gives back the same result
         stream = await blob.download_blob()
@@ -68,7 +67,7 @@ class TestStorageObjectReplicationAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
         )
         blob = bsc.get_blob_client(container=self.DST_CONTAINER, blob=self.BLOB_NAME)
 
@@ -82,5 +81,6 @@ class TestStorageObjectReplicationAsync(AsyncStorageRecordedTestCase):
         # Check that the download function gives back the same result
         stream = await blob.download_blob()
         assert stream.properties.object_replication_destination_policy == props.object_replication_destination_policy
+
 
 # ------------------------------------------------------------------------------

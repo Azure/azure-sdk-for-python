@@ -23,7 +23,6 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import os
 import pytest
 
 # In instances where packages do not require azure-sdk-tools we need to make sure that the following imports do not fail.
@@ -31,7 +30,7 @@ import pytest
 try:
     from devtools_testutils import environment_variables, recorded_test, test_proxy, variable_recorder
 except ImportError:
-    print("Failed to import test-proxy fixtures from azure-sdk-tools. If these are necessary, install tools/azure-sdk-tools.")
+    print("Failed to import test-proxy fixtures from azure-sdk-tools. If these are necessary, install eng/tools/azure-sdk-tools.")
 
 def pytest_configure(config):
     # register an additional marker
@@ -51,7 +50,7 @@ def pytest_runtest_setup(item):
     if is_playback_test_marked:
         from devtools_testutils import is_live
 
-        if is_live() and os.environ.get("AZURE_SKIP_LIVE_RECORDING", "").lower() == "true":
+        if is_live():
             pytest.skip("playback test only")
 
 

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import time
+import random
 import base64
 from typing import Any, Awaitable, Optional, cast, TypeVar, Union
 
@@ -13,10 +13,13 @@ from azure.core.credentials_async import (
     AsyncSupportsTokenInfo,
     AsyncTokenProvider,
 )
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
-    _BearerTokenCredentialPolicyBase,
+    _enforce_https,
+    _should_refresh_token,
+    MAX_REFRESH_JITTER_SECONDS,
 )
 from azure.core.pipeline.transport import (
     AsyncHttpResponse as LegacyAsyncHttpResponse,
@@ -49,6 +52,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         self._lock_instance = None
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
         self._enable_cae: bool = kwargs.get("enable_cae", False)
+        self._refresh_jitter = 0
 
     @property
     def _lock(self):
@@ -63,7 +67,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :type request: ~azure.core.pipeline.PipelineRequest
         :raises ~azure.core.exceptions.ServiceRequestError: If the request fails.
         """
-        _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
+        _enforce_https(request)
 
         if self._token is None or self._need_new_token():
             async with self._lock:
@@ -110,12 +114,22 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         if response.http_response.status_code == 401:
             self._token = None  # any cached token is invalid
             if "WWW-Authenticate" in response.http_response.headers:
-                request_authorized = await self.on_challenge(request, response)
+                try:
+                    request_authorized = await self.on_challenge(request, response)
+                except Exception as ex:
+                    # If the response is streamed, read it so the error message is immediately available to the user.
+                    # Otherwise, a generic error message will be given and the user will have to read the response
+                    # body to see the actual error.
+                    if response.context.options.get("stream"):
+                        try:
+                            await response.http_response.read()  # type: ignore
+                        except Exception:  # pylint:disable=broad-except
+                            pass
+
+                    # Raise the exception from the token request with the original 401 response
+                    raise ex from HttpResponseError(response=response.http_response)
+
                 if request_authorized:
-                    # if we receive a challenge response, we retrieve a new token
-                    # which matches the new target. In this case, we don't want to remove
-                    # token from the request so clear the 'insecure_domain_change' tag
-                    request.context.options.pop("insecure_domain_change", False)
                     try:
                         response = await self.next.send(request)
                     except Exception:
@@ -145,14 +159,11 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
             encoded_claims = get_challenge_parameter(headers, "Bearer", "claims")
             if not encoded_claims:
                 return False
-            try:
-                padding_needed = -len(encoded_claims) % 4
-                claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
-                if claims:
-                    await self.authorize_request(request, *self._scopes, claims=claims)
-                    return True
-            except Exception:  # pylint:disable=broad-except
-                return False
+            padding_needed = -len(encoded_claims) % 4
+            claims = base64.urlsafe_b64decode(encoded_claims + "=" * padding_needed).decode("utf-8")
+            if claims:
+                await self.authorize_request(request, *self._scopes, claims=claims)
+                return True
         return False
 
     def on_response(
@@ -180,9 +191,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         return
 
     def _need_new_token(self) -> bool:
-        now = time.time()
-        refresh_on = getattr(self._token, "refresh_on", None)
-        return not self._token or (refresh_on and refresh_on <= now) or self._token.expires_on - now < 300
+        return _should_refresh_token(self._token, self._refresh_jitter)
 
     async def _get_token(self, *scopes: str, **kwargs: Any) -> Union["AccessToken", "AccessTokenInfo"]:
         if self._enable_cae:
@@ -214,3 +223,4 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy[HTTPRequestType, AsyncHTT
         :param str scopes: The type of access needed.
         """
         self._token = await self._get_token(*scopes, **kwargs)
+        self._refresh_jitter = random.randint(0, MAX_REFRESH_JITTER_SECONDS)

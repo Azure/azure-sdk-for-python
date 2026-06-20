@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -16,7 +17,15 @@ from ._generated.models import KeyAttributes
 from ._models import JsonWebKey, KeyRotationLifetimeAction
 from ._shared import KeyVaultClientBase
 from ._shared._polling import DeleteRecoverPollingMethod, KeyVaultOperationPoller
-from ._models import DeletedKey, KeyVaultKey, KeyProperties, KeyReleasePolicy, KeyRotationPolicy, ReleaseKeyResult
+from ._models import (
+    DeletedKey,
+    ExternalKey,
+    KeyVaultKey,
+    KeyProperties,
+    KeyReleasePolicy,
+    KeyRotationPolicy,
+    ReleaseKeyResult,
+)
 
 
 def _get_key_id(vault_url, key_name, version=None):
@@ -56,6 +65,7 @@ class KeyClient(KeyVaultClientBase):
         not_before: Optional[datetime],
         expires_on: Optional[datetime],
         exportable: Optional[bool] = None,
+        external_key: Optional[ExternalKey] = None,
     ) -> Optional[KeyAttributes]:
         """Return a KeyAttributes object if non-None attributes are provided, or None otherwise.
 
@@ -67,23 +77,35 @@ class KeyClient(KeyVaultClientBase):
         :type expires_on: ~datetime.datetime or None
         :param exportable: Whether the private key can be exported.
         :type exportable: bool or None
+        :param external_key: A reference to an external key, when registering an external key.
+        :type external_key: ~azure.keyvault.keys.ExternalKey or None
 
         :returns: An autorest-generated model of the key's attributes.
         :rtype: KeyAttributes
         """
-        if enabled is not None or not_before is not None or expires_on is not None or exportable is not None:
+        if (
+            enabled is not None
+            or not_before is not None
+            or expires_on is not None
+            or exportable is not None
+            or external_key is not None
+        ):
             return self._models.KeyAttributes(
-                enabled=enabled, not_before=not_before, expires=expires_on, exportable=exportable
+                enabled=enabled,
+                not_before=not_before,
+                expires=expires_on,
+                exportable=exportable,
+                external_key=external_key._to_generated() if external_key is not None else None,
             )
         return None
 
     def get_cryptography_client(
-            self,
-            key_name: str,
-            *,
-            key_version: Optional[str] = None,
-            **kwargs,  # pylint: disable=unused-argument
-        ) -> CryptographyClient:
+        self,
+        key_name: str,
+        *,
+        key_version: Optional[str] = None,
+        **kwargs,  # pylint: disable=unused-argument
+    ) -> CryptographyClient:
         """Gets a :class:`~azure.keyvault.keys.crypto.CryptographyClient` for the given key.
 
         :param str key_name: The name of the key used to perform cryptographic operations.
@@ -398,7 +420,67 @@ class KeyClient(KeyVaultClientBase):
         )
 
     @distributed_trace
-    def begin_delete_key(self, name: str, **kwargs: Any) -> LROPoller[DeletedKey]:  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
+    def create_external_key(
+        self,
+        name: str,
+        external_key: ExternalKey,
+        *,
+        enabled: Optional[bool] = None,
+        tags: Optional[Dict[str, str]] = None,
+        not_before: Optional[datetime] = None,
+        expires_on: Optional[datetime] = None,
+        release_policy: Optional[KeyReleasePolicy] = None,
+        **kwargs: Any,
+    ) -> KeyVaultKey:
+        """Register a Managed HSM key that points at material managed by an external HSM.
+
+        Requires the keys/create permission. Only available with API version
+        ``2026-01-01-preview`` and newer, and only supported on Managed HSM.
+
+        :param str name: The name for the new key.
+        :param external_key: A reference identifying the external key material.
+        :type external_key: ~azure.keyvault.keys.ExternalKey
+
+        :keyword enabled: Whether the key is enabled for use.
+        :paramtype enabled: bool or None
+        :keyword tags: Application specific metadata in the form of key-value pairs.
+        :paramtype tags: dict[str, str] or None
+        :keyword not_before: Not before date of the key in UTC.
+        :paramtype not_before: ~datetime.datetime or None
+        :keyword expires_on: Expiry date of the key in UTC.
+        :paramtype expires_on: ~datetime.datetime or None
+        :keyword release_policy: The policy rules under which the key can be exported.
+        :paramtype release_policy: ~azure.keyvault.keys.KeyReleasePolicy or None
+
+        :returns: The created key.
+        :rtype: ~azure.keyvault.keys.KeyVaultKey
+
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        attributes = self._get_attributes(
+            enabled=enabled, not_before=not_before, expires_on=expires_on, external_key=external_key
+        )
+
+        policy = release_policy
+        if policy is not None:
+            policy = self._models.KeyReleasePolicy(
+                encoded_policy=policy.encoded_policy, content_type=policy.content_type, immutable=policy.immutable
+            )
+        # External keys are mutually exclusive with `kty`. The generated overload requires `kty`,
+        # but the runtime constructor accepts arbitrary kwargs.
+        parameters = self._models.KeyCreateParameters(  # type: ignore[call-overload]
+            key_attributes=attributes,
+            tags=tags,
+            release_policy=policy,
+        )
+
+        bundle = self._client.create_key(key_name=name, parameters=parameters, **kwargs)
+        return KeyVaultKey._from_key_bundle(bundle)
+
+    @distributed_trace
+    def begin_delete_key(  # pylint:disable=bad-option-value,delete-operation-wrong-return-type
+        self, name: str, **kwargs: Any
+    ) -> LROPoller[DeletedKey]:
         """Delete all versions of a key and its cryptographic material.
 
         Requires keys/delete permission. When this method returns Key Vault has begun deleting the key. Deletion may
@@ -519,7 +601,7 @@ class KeyClient(KeyVaultClientBase):
         return self._client.get_deleted_keys(
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -542,7 +624,7 @@ class KeyClient(KeyVaultClientBase):
         return self._client.get_keys(
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -568,7 +650,7 @@ class KeyClient(KeyVaultClientBase):
             name,
             maxresults=kwargs.pop("max_page_size", None),
             cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -709,9 +791,7 @@ class KeyClient(KeyVaultClientBase):
             release_policy=policy,
         )
 
-        bundle = self._client.update_key(
-            name, key_version=version or "", parameters=parameters, **kwargs
-        )
+        bundle = self._client.update_key(name, key_version=version or "", parameters=parameters, **kwargs)
         return KeyVaultKey._from_key_bundle(bundle)
 
     @distributed_trace
@@ -770,8 +850,7 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.restore_key(
-            parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup),
-            **kwargs
+            parameters=self._models.KeyRestoreParameters(key_bundle_backup=backup), **kwargs
         )
         return KeyVaultKey._from_key_bundle(bundle)
 
@@ -877,7 +956,7 @@ class KeyClient(KeyVaultClientBase):
                 nonce=nonce,
                 enc=algorithm,
             ),
-            **kwargs
+            **kwargs,
         )
         return ReleaseKeyResult(result.value)
 
@@ -988,7 +1067,7 @@ class KeyClient(KeyVaultClientBase):
     @distributed_trace
     def get_key_attestation(self, name: str, version: Optional[str] = None, **kwargs: Any) -> KeyVaultKey:
         """Get a key and its attestation blob.
-        
+
         This method is applicable to any key stored in Azure Key Vault Managed HSM. This operation requires the keys/get
         permission.
 

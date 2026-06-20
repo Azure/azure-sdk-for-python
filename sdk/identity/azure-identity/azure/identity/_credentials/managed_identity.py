@@ -76,6 +76,7 @@ class ManagedIdentityCredential:
         user_identity_info = validate_identity_config(client_id, identity_config)
         self._credential: Optional[SupportsTokenInfo] = None
         exclude_workload_identity = kwargs.pop("_exclude_workload_identity_credential", False)
+        self._enable_imds_probe = kwargs.pop("_enable_imds_probe", None)
         managed_identity_type = None
 
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
@@ -136,7 +137,12 @@ class ManagedIdentityCredential:
             managed_identity_type = "IMDS"
             from .imds import ImdsCredential
 
-            self._credential = ImdsCredential(client_id=client_id, identity_config=identity_config, **kwargs)
+            self._credential = ImdsCredential(
+                client_id=client_id,
+                identity_config=identity_config,
+                _enable_imds_probe=self._enable_imds_probe,
+                **kwargs,
+            )
 
         if managed_identity_type:
             log_msg = f"{self.__class__.__name__} will use {managed_identity_type}"
@@ -168,8 +174,8 @@ class ManagedIdentityCredential:
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
             For more information about scopes, see
             https://learn.microsoft.com/entra/identity-platform/scopes-oidc.
-
-        :keyword str claims: not used by this credential; any value provided will be ignored.
+        :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
+            claims challenge following an authorization failure.
         :keyword str tenant_id: not used by this credential; any value provided will be ignored.
 
         :return: An access token with the desired scopes.

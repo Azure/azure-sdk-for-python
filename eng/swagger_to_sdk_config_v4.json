@@ -7,7 +7,6 @@
       "python": "",
       "python-mode": "update",
       "sdkrel:python-sdks-folder": "./sdk/.",
-      "multiapi": "",
       "keep-version-file" :"",
       "no-async": ""
     },

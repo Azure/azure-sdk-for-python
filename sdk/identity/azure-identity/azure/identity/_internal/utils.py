@@ -2,17 +2,26 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import base64
 import os
 import platform
 import logging
+import time
 from contextvars import ContextVar
 from string import ascii_letters, digits
 from typing import List, Optional
 
 from urllib.parse import urlparse
 
+from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
-from .._constants import EnvironmentVariables, KnownAuthorities
+from .._constants import (
+    DEFAULT_REFRESH_OFFSET,
+    DEFAULT_TOKEN_REFRESH_RETRY_DELAY,
+    EnvironmentVariables,
+    KnownAuthorities,
+)
+from .._enums import TokenRefreshStatus
 
 within_credential_chain = ContextVar("within_credential_chain", default=False)
 within_dac = ContextVar("within_dac", default=False)
@@ -22,6 +31,39 @@ _LOGGER = logging.getLogger(__name__)
 VALID_TENANT_ID_CHARACTERS = frozenset(ascii_letters + digits + "-.")
 VALID_SCOPE_CHARACTERS = frozenset(ascii_letters + digits + "_-.:/")
 VALID_SUBSCRIPTION_CHARACTERS = frozenset(ascii_letters + digits + "_-. ")
+
+
+def get_refresh_status(token: Optional[AccessTokenInfo], last_request_time: int) -> TokenRefreshStatus:
+    """Determine the refresh status of a token.
+
+    :param ~azure.core.credentials.AccessTokenInfo or None token: The token to evaluate.
+        If None, a refresh is required.
+    :param int last_request_time: The time of the last token request, as seconds since the epoch.
+    :return: The refresh status of the token.
+    :rtype: TokenRefreshStatus
+    """
+    if token is None:
+        return TokenRefreshStatus.REQUIRED
+
+    now = int(time.time())
+
+    # Token is expired - must refresh.
+    if now >= token.expires_on:
+        return TokenRefreshStatus.REQUIRED
+
+    # A recent token request occurred - if the token is still valid, avoid making another request so soon.
+    if now - last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
+        return TokenRefreshStatus.NOT_NEEDED
+
+    # Token has a server-recommended refresh time that has passed.
+    if token.refresh_on is not None and now >= token.refresh_on:
+        return TokenRefreshStatus.RECOMMENDED
+
+    # Token is nearing expiration - proactively refresh before it expires.
+    if token.expires_on - now <= DEFAULT_REFRESH_OFFSET:
+        return TokenRefreshStatus.RECOMMENDED
+
+    return TokenRefreshStatus.NOT_NEEDED
 
 
 def normalize_authority(authority: str) -> str:
@@ -128,6 +170,11 @@ def resolve_tenant(
             tenant_id,
         )
         return tenant_id
+    # Some dev credentials commonly default to the "organizations" special tenant which can authenticate users against
+    # multiple tenants that the user belongs to. If an allowed tenant list was not provided and the credential's
+    # tenant is set to 'organizations', allow the request with the specified tenant ID.
+    if not additionally_allowed_tenants and default_tenant == "organizations":
+        return tenant_id
     raise ClientAuthenticationError(
         message="The current credential is not configured to acquire tokens for tenant {}. "
         "To enable acquiring tokens for this tenant add it to the additionally_allowed_tenants "
@@ -161,7 +208,7 @@ def process_credential_exclusions(credential_config: dict, exclude_flags: dict, 
 
     if token_credentials_env == "dev":
         # In dev mode, use only developer credentials
-        dev_credentials = {"visual_studio_code", "cli", "developer_cli", "powershell", "shared_token_cache"}
+        dev_credentials = {"visual_studio_code", "cli", "developer_cli", "powershell", "shared_token_cache", "broker"}
         for cred_key in credential_config:
             exclude_flags[cred_key] = cred_key not in dev_credentials
     elif token_credentials_env == "prod":
@@ -218,3 +265,8 @@ def is_wsl() -> bool:
     platform_name = getattr(uname, "system", uname[0]).lower()
     release = getattr(uname, "release", uname[2]).lower()
     return platform_name == "linux" and "microsoft" in release
+
+
+def encode_base64(s: str) -> str:
+    encoded = base64.b64encode(s.encode("utf-8"))
+    return encoded.decode("utf-8")

@@ -1,3 +1,4 @@
--e ../../../tools/azure-sdk-tools
--e ../../core/azure-mgmt-core
--e ../../core/azure-core
+-e ../../../eng/tools/azure-sdk-tools
+../../core/azure-mgmt-core
+../../core/azure-core
+aiohttp

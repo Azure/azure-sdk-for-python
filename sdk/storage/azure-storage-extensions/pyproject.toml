@@ -13,20 +13,21 @@ breaking = false
 suppressed_skip_warnings = ["*"]
 
 [build-system]
-requires = ["setuptools", "wheel", "cibuildwheel"]
+# cibuildwheel is NOT a build-system dependency; it is the outer orchestration tool
+requires = ["setuptools", "wheel"]
 
 [tool.cibuildwheel]
-build = ["cp39*", "pp39*", "pp310*"]
+build = ["cp310*", "pp310*", "pp311*"]
 test-requires = "pytest"
 test-command = "pytest {project}/tests"
 test-skip = "*-macosx_arm64"
+environment = "CFLAGS='-Wno-implicit-function-declaration'"
 
 [tool.cibuildwheel.linux]
 archs = "x86_64 aarch64"
 
 [tool.cibuildwheel.macos]
 archs = "x86_64 arm64"
-environment = "CFLAGS='-Wno-implicit-function-declaration'"
 
 [tool.cibuildwheel.windows]
 archs = "AMD64"

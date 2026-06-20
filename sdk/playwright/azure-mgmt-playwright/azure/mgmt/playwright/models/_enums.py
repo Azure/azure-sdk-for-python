@@ -45,20 +45,35 @@ class EnablementStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The enablement status of a feature."""
 
     ENABLED = "Enabled"
-    """The feature is Enabled."""
+    """The feature is enabled."""
     DISABLED = "Disabled"
-    """The feature is Disabled."""
+    """The feature is disabled."""
 
 
 class FreeTrialState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The free-trial state."""
+    """The free trial state."""
 
     ACTIVE = "Active"
-    """The free-trial is Active."""
+    """The free trial is active and available for use."""
     EXPIRED = "Expired"
-    """The free-trial is Expired."""
+    """The free trial has expired and is no longer available."""
     NOT_APPLICABLE = "NotApplicable"
-    """The free-trial is Not Applicable."""
+    """The free trial is not applicable for this resource."""
+
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
+    """
+
+    NONE = "None"
+    """No managed identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed identity."""
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned managed identity."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    """System and user assigned managed identity."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -84,15 +99,15 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     CREATING = "Creating"
-    """Creation in progress.."""
+    """Resource creation is in progress."""
     DELETING = "Deleting"
-    """Deletion in progress.."""
+    """Resource deletion is in progress."""
     ACCEPTED = "Accepted"
-    """Request accepted for processing.."""
+    """Request has been accepted for processing."""
 
 
 class QuotaName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Playwright quota names."""
+    """Available Playwright quota types."""
 
     EXECUTION_MINUTES = "ExecutionMinutes"
     """Quota for execution duration in minutes."""

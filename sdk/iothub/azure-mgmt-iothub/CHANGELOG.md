@@ -1,5 +1,56 @@
 # Release History
 
+## 5.0.0b3 (2026-05-20)
+
+### Features Added
+
+  - Client `IotHubClient` added method `send_request`
+  - Model `CertificateDescription` added property `system_data`
+  - Model `EventHubConsumerGroupInfo` added property `system_data`
+  - Model `IotHubProperties` added property `device_host_name`
+  - Model `IotHubProperties` added property `service_host_name`
+  - Model `IotHubProperties` added property `iot_hub_details`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Added enum `GatewayVersion`
+  - Added model `IotHubDetails`
+  - Added model `ProxyResource`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Method `CertificatesOperations.create_or_update` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `CertificatesOperations.delete` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `CertificatesOperations.generate_verification_code` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `CertificatesOperations.verify` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+  - Method `IotHubResourceOperations.begin_create_or_update` replaced positional_or_keyword `if_match` to keyword_only `etag`/`match_condition`
+
+### Other Changes
+
+  - Deleted model `CertificateBodyDescription` which actually were not used by SDK users
+
+## 5.0.0b2 (2025-10-20)
+
+### Features Added
+
+  - Model `IotHubClient` added parameter `cloud_setting` in method `__init__`
+  - Model `CertificateProperties` added property `policy_resource_id`
+  - Model `CertificatePropertiesWithNonce` added property `policy_resource_id`
+  - Model `IotHubProperties` added property `device_registry`
+  - Enum `IotHubSku` added member `GEN2`
+  - Enum `IotHubSkuTier` added member `GENERATION2`
+  - Added model `DeviceRegistry`
+
+## 5.0.0b1 (2025-08-14)
+
+### Breaking Changes
+
+- This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+
 ## 4.0.0 (2025-04-09)
 
 ### Breaking Changes

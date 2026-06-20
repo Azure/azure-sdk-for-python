@@ -13,6 +13,7 @@ from typing import (
     Callable,
     Dict,
     List,
+    Literal,
     IO,
     Iterable,
     Iterator,
@@ -144,8 +145,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> None: ...
@@ -157,8 +156,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         *,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> BlobLeaseClient: ...
@@ -177,9 +174,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         *,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
-        if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> Dict[str, Union[str, datetime]]: ...
@@ -207,12 +201,20 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         name_starts_with: Optional[str] = None,
         include: Optional[Union[str, List[str]]] = None,
         *,
+        results_per_page: Optional[int] = None,
+        start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> ItemPaged[BlobProperties]: ...
     @distributed_trace
     def list_blob_names(
-        self, *, name_starts_with: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        name_starts_with: Optional[str] = None,
+        results_per_page: Optional[int] = None,
+        start_from: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> ItemPaged[str]: ...
     @distributed_trace
     def walk_blobs(
@@ -221,6 +223,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         include: Optional[Union[List[str], str]] = None,
         delimiter: str = "/",
         *,
+        start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> ItemPaged[Union[BlobProperties, BlobPrefix]]: ...
@@ -244,7 +247,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         *,
         overwrite: Optional[bool] = None,
         content_settings: Optional[ContentSettings] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -286,7 +289,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -307,7 +310,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
@@ -329,7 +332,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         length: Optional[int] = None,
         *,
         version_id: Optional[str] = None,
-        validate_content: Optional[bool] = None,
+        validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,

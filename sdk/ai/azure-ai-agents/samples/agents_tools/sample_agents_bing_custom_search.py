@@ -23,24 +23,26 @@ USAGE:
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) BING_CUSTOM_CONNECTION_ID  - The ID of the Bing Custom Search connection, in the format of:
-       /subscriptions/{subscription-id}/resourceGroups/{resource-group-name}/providers/Microsoft.MachineLearningServices/workspaces/{workspace-name}/connections/{connection-name}
+    3) BING_CUSTOM_CONNECTION_NAME - The name of a connection to the custom search Bing resource as it is
+       listed in Azure AI Foundry connected resources.
+    4) BING_CONFIGURATION_NAME - the name of a search configuration in Grounding with Bing Custom Search
+       resource.
 """
 
 import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.agents.models import BingCustomSearchTool
+from azure.ai.agents.models import BingCustomSearchTool, ListSortOrder
 
 project_client = AIProjectClient(
     endpoint=os.environ["PROJECT_ENDPOINT"],
     credential=DefaultAzureCredential(),
 )
 
-conn_id = os.environ["BING_CUSTOM_CONNECTION_ID"]
+conn_id = project_client.connections.get(os.environ["BING_CUSTOM_CONNECTION_NAME"]).id
 
 # Initialize Bing Custom Search tool with connection id and instance name
-bing_custom_tool = BingCustomSearchTool(connection_id=conn_id, instance_name="<config_instance_name>")
+bing_custom_tool = BingCustomSearchTool(connection_id=conn_id, instance_name=os.environ["BING_CONFIGURATION_NAME"])
 
 # Create Agent with the Bing Custom Search tool and process Agent run
 with project_client:
@@ -78,10 +80,15 @@ with project_client:
     print("Deleted agent")
 
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id)
+    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for msg in messages:
         if msg.text_messages:
+            responses = []
             for text_message in msg.text_messages:
-                print(f"Agent response: {text_message.text.value}")
+                responses.append(text_message.text.value)
+            message = " ".join(responses)
             for annotation in msg.url_citation_annotations:
-                print(f"URL Citation: [{annotation.url_citation.title}]({annotation.url_citation.url})")
+                message = message.replace(
+                    annotation.text, f" [{annotation.url_citation.title}]({annotation.url_citation.url})"
+                )
+            print(f"{msg.role}: {message}")

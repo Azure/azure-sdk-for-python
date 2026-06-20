@@ -4,16 +4,21 @@
 import asyncio
 import time
 import unittest
+import unittest.mock
 import uuid
 from typing import List
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 import pytest
 import pytest_asyncio
+from azure.core.exceptions import ServiceRequestError
+
 import test_config
 from azure.cosmos import DatabaseAccount, _location_cache
 
 from azure.cosmos._location_cache import RegionalRoutingContext
-from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async
+from azure.cosmos.aio import CosmosClient, _global_endpoint_manager_async, _cosmos_client_connection_async, \
+    _retry_utility_async
 
 COLLECTION = "created_collection"
 REGION_1 = "East US"
@@ -38,15 +43,6 @@ async def setup():
 
     await client.close()
 
-def health_check():
-    # preferred_location, use_write_global_endpoint, use_read_global_endpoint
-    return [
-        (REGIONS, True, True),
-        (REGIONS, False, True),
-        (REGIONS, True, False),
-        (REGIONS, False, False)
-    ]
-
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup")
@@ -57,47 +53,49 @@ class TestHealthCheckAsync:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_SINGLE_PARTITION_ID = test_config.TestConfig.TEST_SINGLE_PARTITION_CONTAINER_ID
 
-    @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
-    async def test_health_check_success_startup_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+    async def test_health_check_success_startup_async(self, setup):
         # checks at startup that we perform a health check on all the necessary endpoints
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
-        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
-        mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
+        self.original_health_check = _cosmos_client_connection_async.CosmosClientConnection.health_check
+        mock_health_check = self.MockHealthCheckProbe()
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
-            self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
-        _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
+            self.MockGetDatabaseAccount(REGIONS))
+        _cosmos_client_connection_async.CosmosClientConnection.health_check = mock_health_check
         try:
-            client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
             # this will setup the location cache
-            client.client_connection._global_endpoint_manager.refresh_needed = True
-            await client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
+            await client.__aenter__()
+            await asyncio.sleep(10) # give some time for the background health check to complete
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
+            _cosmos_client_connection_async.CosmosClientConnection.health_check = self.original_health_check
         expected_regional_routing_context = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
-        assert mock_get_database_account_check.counter == 2
-        endpoint = self.host if use_read_global_endpoint else locational_endpoint
-        expected_regional_routing_context.append(RegionalRoutingContext(endpoint, endpoint))
+        assert mock_health_check.counter == 2
+        endpoint = locational_endpoint
+        expected_regional_routing_context.append(RegionalRoutingContext(endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        expected_regional_routing_context.append(RegionalRoutingContext(locational_endpoint, locational_endpoint))
+        expected_regional_routing_context.append(RegionalRoutingContext(locational_endpoint))
         read_regional_routing_context = client.client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
         assert read_regional_routing_context == expected_regional_routing_context
         await client.close()
 
-    @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
-    async def test_health_check_failure_startup_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+    async def test_health_check_failure_startup_async(self, setup):
         # checks at startup that the health check will mark endpoints as unavailable if it gets an error
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
-            self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
+            self.MockGetDatabaseAccount(REGIONS))
         # don't mock database account check because we want it to fail and the emulator doesn't have extra regions
         try:
-            client = CosmosClient(self.host, self.masterKey, preferred_locations=preferred_location)
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
             # this will setup the location cache
-            client.client_connection._global_endpoint_manager.refresh_needed = True
-            await client.client_connection._global_endpoint_manager.refresh_endpoint_list(None)
+            await client.__aenter__()
+            # Poll until the background health check marks endpoints as unavailable
+            start_time = time.time()
+            while (len(client.client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) < len(REGIONS)
+                   and time.time() - start_time < 10):
+                await asyncio.sleep(0.1)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
@@ -139,17 +137,25 @@ class TestHealthCheckAsync:
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._endpoints_health_check = self.original_health_check
 
-    @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
-    async def test_health_check_success_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+    async def test_health_check_success_async(self, setup):
         # checks the background health check works as expected when all endpoints healthy
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
-        self.original_getDatabaseAccountCheck = _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck
+        self.original_health_check = _cosmos_client_connection_async.CosmosClientConnection.health_check
         self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
-        setup[COLLECTION].client_connection.connection_policy.PreferredLocations = preferred_location
-        mock_get_database_account_check = self.MockGetDatabaseAccountCheck()
+        setup[COLLECTION].client_connection.connection_policy.PreferredLocations = REGIONS
+        mock_get_database_account_check = self.MockHealthCheckProbe()
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
-            self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
-        _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = mock_get_database_account_check
+            self.MockGetDatabaseAccount(REGIONS))
+        self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync
+        _cosmos_client_connection_async.CosmosClientConnection.health_check = mock_get_database_account_check
+        async def mock_execute_function(function, *args, **kwargs):
+            if args:
+                args[4].url = args[4].url.replace('-eastus', '').replace('-westus', '')
+                args[1].location_endpoint_to_route = args[1].location_endpoint_to_route.replace('-eastus', '').replace('-westus', '')
+                if args[1].endpoint_override:
+                    args[1].endpoint_override = args[1].endpoint_override.replace('-eastus', '').replace('-westus', '')
+            return await self.OriginalExecuteFunction(function, *args, **kwargs)
+        _retry_utility_async.ExecuteFunctionAsync = mock_execute_function
 
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
@@ -158,45 +164,112 @@ class TestHealthCheckAsync:
                 await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
-            _cosmos_client_connection_async.CosmosClientConnection._GetDatabaseAccountCheck = self.original_getDatabaseAccountCheck
+            _cosmos_client_connection_async.CosmosClientConnection.health_check = self.original_health_check
             setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
+            _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
         expected_regional_routing_contexts = []
 
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
 
-        assert mock_get_database_account_check.counter > 0
-        endpoint = self.host if use_read_global_endpoint else locational_endpoint
-        expected_regional_routing_contexts.append(RegionalRoutingContext(endpoint, endpoint))
+        assert mock_get_database_account_check.counter == 2
+        expected_regional_routing_contexts.append(RegionalRoutingContext(locational_endpoint))
         locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_2)
-        expected_regional_routing_contexts.append(RegionalRoutingContext(locational_endpoint, locational_endpoint))
+        expected_regional_routing_contexts.append(RegionalRoutingContext(locational_endpoint))
         read_regional_routing_context = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.read_regional_routing_contexts
         assert read_regional_routing_context == expected_regional_routing_contexts
 
+    @pytest.mark.asyncio
+    async def test_health_check_task_exception_includes_endpoint_async(self):
+        """Test that exceptions from _GetDatabaseAccount include endpoint information."""
+        # Create the exception without endpoint - simulates what the SDK initially raises
+        error = CosmosHttpResponseError(
+            status_code=500,
+            message="Internal Server Error",
+            response=None
+        )
 
-    @pytest.mark.parametrize("preferred_location, use_write_global_endpoint, use_read_global_endpoint", health_check())
-    async def test_health_check_failure_async(self, setup, preferred_location, use_write_global_endpoint, use_read_global_endpoint):
+        # Mock _GetDatabaseAccountStub to raise the exception
+        async def mock_get_database_account_stub(self, endpoint, **kwargs):
+            raise error
+
+        # Store original method to restore later
+        original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+
+        try:
+            # Create client and initialize it Before applying the mock
+            client = CosmosClient(self.host, self.masterKey)
+            await client.__aenter__()
+            endpoint_manager = client.client_connection._global_endpoint_manager
+
+            # Now replace the stub with our mock that raises an exception
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = mock_get_database_account_stub
+
+            # Call _GetDatabaseAccount and expect it to raise the exception
+            with pytest.raises(CosmosHttpResponseError) as exc_info:
+                await endpoint_manager._GetDatabaseAccount()
+
+            print(f"Caught exception: {exc_info.value}")
+            # Verify the exception now has endpoint information
+            assert exc_info.value.endpoint is not None
+            assert exc_info.value.endpoint == self.host
+
+        finally:
+            # Step 9: Restore original method
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = original_getDatabaseAccountStub
+            await client.close()
+
+    async def test_health_check_failure_async(self, setup):
         # checks the background health check works as expected when all endpoints unhealthy - it should mark the endpoints unavailable
         setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint.clear()
         self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
         _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
-            self.MockGetDatabaseAccount(REGIONS, use_write_global_endpoint, use_read_global_endpoint))
+            self.MockGetDatabaseAccount(REGIONS))
+        self.original_health_check = _cosmos_client_connection_async.CosmosClientConnection.health_check
         self.original_preferred_locations = setup[COLLECTION].client_connection.connection_policy.PreferredLocations
-        setup[COLLECTION].client_connection.connection_policy.PreferredLocations = preferred_location
+        self.OriginalExecuteFunction = _retry_utility_async.ExecuteFunctionAsync
+        mock_health_check_error = self.MockHealthCheckError()
+        _cosmos_client_connection_async.CosmosClientConnection.health_check = mock_health_check_error
+        setup[COLLECTION].client_connection.connection_policy.PreferredLocations = REGIONS
+        async def mock_execute_function(function, *args, **kwargs):
+            if args:
+                args[4].url = args[4].url.replace('-eastus', '').replace('-westus', '')
+                args[1].location_endpoint_to_route = args[1].location_endpoint_to_route.replace('-eastus', '').replace('-westus', '')
+                if args[1].endpoint_override:
+                    args[1].endpoint_override = args[1].endpoint_override.replace('-eastus', '').replace('-westus', '')
+            return await self.OriginalExecuteFunction(function, *args, **kwargs)
+
+        _retry_utility_async.ExecuteFunctionAsync = mock_execute_function
 
         try:
             setup[COLLECTION].client_connection._global_endpoint_manager.startup = False
             setup[COLLECTION].client_connection._global_endpoint_manager.refresh_needed = True
-            for i in range(2):
-                await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
-                # wait for background task to finish
-                await asyncio.sleep(2)
+            # Trigger the background health check
+            await setup[COLLECTION].create_item(body={'id': 'item' + str(uuid.uuid4()), 'pk': 'pk'})
+
+            # Poll until the background task marks the endpoints as unavailable
+            start_time = time.time()
+            while (len(setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) < len(
+                    REGIONS) and time.time() - start_time < 10):
+                await asyncio.sleep(0.1)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
             setup[COLLECTION].client_connection.connection_policy.PreferredLocations = self.original_preferred_locations
+            _cosmos_client_connection_async.CosmosClientConnection.health_check = self.original_health_check
+            _retry_utility_async.ExecuteFunctionAsync = self.OriginalExecuteFunction
 
         num_unavailable_endpoints = len(REGIONS)
         unavailable_endpoint_info = setup[COLLECTION].client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint
         assert len(unavailable_endpoint_info) == num_unavailable_endpoints
+        write_endpoints = {
+            _location_cache.LocationCache.GetLocationalEndpoint(self.host, REGION_1)
+        }
+
+        for endpoint, info in unavailable_endpoint_info.items():
+            assert _location_cache.EndpointOperationType.ReadType in info["operationType"]
+            if endpoint in write_endpoints:
+                assert _location_cache.EndpointOperationType.WriteType in info["operationType"]
+            else:
+                assert _location_cache.EndpointOperationType.WriteType not in info["operationType"]
 
     async def mock_health_check(self, **kwargs):
         await asyncio.sleep(100)
@@ -205,7 +278,7 @@ class TestHealthCheckAsync:
         await asyncio.sleep(1)
         raise Exception("Mock health check failure")
 
-    class MockGetDatabaseAccountCheck(object):
+    class MockHealthCheckProbe(object):
         def __init__(self):
             self.counter = 0
             self.index = 0
@@ -214,31 +287,29 @@ class TestHealthCheckAsync:
             self.index += 1
             self.counter += 1
 
+    class MockHealthCheckError(object):
+        async def __call__(self, endpoint):
+            raise ServiceRequestError("Mock health check failure")
+
     class MockGetDatabaseAccount(object):
         def __init__(
                 self,
                 regions: List[str],
-                use_write_global_endpoint=False,
-                use_read_global_endpoint=False,
         ):
             self.regions = regions
-            self.use_write_global_endpoint= use_write_global_endpoint
-            self.use_read_global_endpoint = use_read_global_endpoint
 
         async def __call__(self, endpoint):
             read_regions = self.regions
             read_locations = []
-            counter = 0
             for loc in read_regions:
                 locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(endpoint, loc)
-                account_endpoint = TestHealthCheckAsync.host if self.use_read_global_endpoint and counter == 0 else locational_endpoint
+                account_endpoint = locational_endpoint
                 read_locations.append({'databaseAccountEndpoint': account_endpoint, 'name': loc})
-                counter += 1
             write_regions = [self.regions[0]]
             write_locations = []
             for loc in write_regions:
                 locational_endpoint = _location_cache.LocationCache.GetLocationalEndpoint(endpoint, loc)
-                account_endpoint = TestHealthCheckAsync.host if self.use_write_global_endpoint else locational_endpoint
+                account_endpoint = locational_endpoint
                 write_locations.append({'databaseAccountEndpoint': account_endpoint, 'name': loc})
             multi_write = False
 
@@ -250,6 +321,245 @@ class TestHealthCheckAsync:
             db_acc._EnableMultipleWritableLocations = multi_write
             db_acc.ConsistencyPolicy = {"defaultConsistencyLevel": "Session"}
             return db_acc
+
+
+    async def test_force_refresh_on_startup_with_none_should_fetch_database_account(self, setup):
+        """Verifies that calling force_refresh_on_startup(None) fetches the database account
+        instead of crashing with AttributeError on NoneType._WritableLocations.
+        """
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        mock_get_db_account = self.MockGetDatabaseAccount(REGIONS)
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = mock_get_db_account
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            await client.__aenter__()
+            gem = client.client_connection._global_endpoint_manager
+
+            # Simulate the startup state
+            gem.startup = True
+            gem.refresh_needed = True
+            gem._aenter_used = True  # Simulate that __aenter__ was used
+
+            # This should NOT crash - it should fetch the database account
+            await gem.force_refresh_on_startup(None)
+
+            # Verify the location cache was properly populated
+            read_contexts = gem.location_cache.read_regional_routing_contexts
+            assert len(read_contexts) > 0, "Location cache should have read endpoints after startup refresh"
+
+            await client.close()
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
+    async def test_force_refresh_on_startup_with_valid_account_uses_provided_account(self, setup):
+        """Verifies that when a valid database account is provided to force_refresh_on_startup,
+        it uses that account directly without making another network call.
+        """
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        call_counter = {'count': 0}
+
+        async def counting_mock(self_gem, endpoint, **kwargs):
+            call_counter['count'] += 1
+            return await self.MockGetDatabaseAccount(REGIONS)(endpoint)
+
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = counting_mock
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            await client.__aenter__()
+            gem = client.client_connection._global_endpoint_manager
+
+            # Get a valid database account first
+            db_account = await gem._GetDatabaseAccount()
+            initial_call_count = call_counter['count']
+
+            # Reset startup state
+            gem.startup = True
+            gem.refresh_needed = True
+            gem._aenter_used = True
+
+            # Call with valid account - should NOT make another network call
+            await gem.force_refresh_on_startup(db_account)
+
+            # Since we provided a valid account, no additional GetDatabaseAccount call should be made
+
+            assert call_counter['count'] == initial_call_count, \
+                "Should not call _GetDatabaseAccount when valid account is provided"
+
+            await client.close()
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
+    async def test_aenter_used_flag_with_none_still_fetches_account(self, setup):
+        """Verifies that even when _aenter_used=True, passing None to force_refresh_on_startup
+        still fetches the database account.
+        """
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        fetch_was_called = {'called': False}
+
+        async def tracking_mock(self_gem, endpoint, **kwargs):
+            fetch_was_called['called'] = True
+            return await self.MockGetDatabaseAccount(REGIONS)(endpoint)
+
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = tracking_mock
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            await client.__aenter__()
+            gem = client.client_connection._global_endpoint_manager
+
+            # Reset state to simulate the buggy scenario
+            gem.startup = True
+            gem.refresh_needed = True
+            gem._aenter_used = True  # This was causing the bug to skip fetching
+            fetch_was_called['called'] = False  # Reset tracking
+
+            # Call with None - should still fetch database account (this is the fix)
+            await gem.force_refresh_on_startup(None)
+
+            # This ensures that even with _aenter_used=True, if database_account is None,
+            # it fetches the database account
+            assert fetch_was_called['called'], \
+                "With _aenter_used=True and database_account=None, should still fetch database account"
+
+            await client.close()
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
+
+    async def test_health_check_overwrites_stale_cache_mutations_async(self, setup):
+        """
+        Verify that the background health check task overwrites any stale direct
+        mutations to routing contexts. This documents WHY tests that manipulate
+        cache state must cancel the background task first.
+        """
+        from azure.cosmos._location_cache import RegionalRoutingContext
+
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
+            self.MockGetDatabaseAccount(REGIONS))
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            await client.__aenter__()
+            gem = client.client_connection._global_endpoint_manager
+            location_cache = gem.location_cache
+
+            # Wait for initial health check to complete
+            await asyncio.sleep(2)
+
+            # Now directly mutate the read_regional_routing_contexts (simulating what old tests did)
+            fake_contexts = [
+                RegionalRoutingContext("https://fake-region1.documents.azure.com"),
+                RegionalRoutingContext("https://fake-region2.documents.azure.com"),
+            ]
+            location_cache.read_regional_routing_contexts = fake_contexts
+
+            # Verify our mutation took effect
+            assert location_cache.read_regional_routing_contexts == fake_contexts
+
+            # Trigger a refresh that will run update_location_cache
+            gem.refresh_needed = True
+            gem.startup = False
+
+            # Do an operation to trigger the refresh cycle
+            self.original_health_check_method = _cosmos_client_connection_async.CosmosClientConnection.health_check
+            mock_probe = self.MockHealthCheckProbe()
+            _cosmos_client_connection_async.CosmosClientConnection.health_check = mock_probe
+
+            # Force a cache update (simulates what the health check does on completion)
+            location_cache.update_location_cache()
+
+            # The stale mutation should be overwritten by recalculation from account data
+            current_contexts = location_cache.read_regional_routing_contexts
+            current_endpoints = [ctx.get_primary() for ctx in current_contexts]
+            assert "https://fake-region1.documents.azure.com" not in current_endpoints, \
+                "Stale direct mutations should be overwritten by update_location_cache()"
+            assert "https://fake-region2.documents.azure.com" not in current_endpoints, \
+                "Stale direct mutations should be overwritten by update_location_cache()"
+
+            await client.close()
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+            if hasattr(self, 'original_health_check_method'):
+                _cosmos_client_connection_async.CosmosClientConnection.health_check = self.original_health_check_method
+
+    async def test_retry_policy_unaffected_by_concurrent_cache_refresh_async(self, setup):
+        """
+        Verify that the retry policy's failover_retry_count is unaffected by
+        a mid-flight update_location_cache() call. The retry counter lives on
+        the policy object, not in the location cache.
+        """
+        from azure.cosmos._service_request_retry_policy import ServiceRequestRetryPolicy
+        from azure.cosmos._location_cache import RegionalRoutingContext
+        from azure.cosmos._request_object import RequestObject
+        from azure.cosmos.documents import _OperationType
+        from azure.cosmos.http_constants import ResourceType
+
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = (
+            self.MockGetDatabaseAccount(REGIONS))
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            await client.__aenter__()
+            gem = client.client_connection._global_endpoint_manager
+            location_cache = gem.location_cache
+
+            # Wait for initial setup
+            await asyncio.sleep(2)
+
+            # Cancel background task to have deterministic control
+            if hasattr(gem, 'refresh_task') and gem.refresh_task and not gem.refresh_task.done():
+                gem.refresh_task.cancel()
+                try:
+                    await gem.refresh_task
+                except BaseException:
+                    pass
+
+            # Setup: ensure we have multiple read regions
+            read_contexts = location_cache.read_regional_routing_contexts
+            assert len(read_contexts) >= 2, "Need at least 2 read regions for this test"
+
+            # Create a retry policy
+            request = RequestObject(ResourceType.Document, _OperationType.Read, None)
+            request.location_endpoint_to_route = read_contexts[0].get_primary()
+
+            mock_gem = unittest.mock.Mock()
+            mock_gem.location_cache = location_cache
+            mock_gem.resolve_service_endpoint_for_partition.return_value = read_contexts[1].get_primary()
+            mock_gem.mark_endpoint_unavailable_for_read = location_cache.mark_endpoint_unavailable_for_read
+
+            mock_connection_policy = unittest.mock.Mock()
+            mock_connection_policy.EnableEndpointDiscovery = True
+            mock_pk_range_wrapper = unittest.mock.Mock()
+
+            retry_policy = ServiceRequestRetryPolicy(
+                mock_connection_policy, mock_gem, mock_pk_range_wrapper, request)
+
+            # First retry should succeed
+            should_retry = retry_policy.ShouldRetry()
+            assert should_retry is True
+            assert retry_policy.failover_retry_count == 1
+
+            # Now simulate a concurrent cache refresh mid-flight
+            location_cache.update_location_cache()
+
+            # The retry count should be unaffected by the cache refresh
+            assert retry_policy.failover_retry_count == 1, \
+                "Retry count should not be affected by concurrent cache refresh"
+
+            # Second retry attempt — count should increment normally
+            mock_gem.resolve_service_endpoint_for_partition.return_value = read_contexts[0].get_primary()
+            should_retry_again = retry_policy.ShouldRetry()
+            assert retry_policy.failover_retry_count == 2, \
+                "Retry count should increment normally regardless of cache refresh"
+
+            await client.close()
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
 
 if __name__ == '__main__':
     unittest.main()

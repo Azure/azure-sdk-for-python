@@ -9,10 +9,19 @@ INGESTION_ENDPOINT = "ingestionendpoint"
 INSTRUMENTATION_KEY = "instrumentationkey"
 # cspell:disable-next-line
 AAD_AUDIENCE = "aadaudience"
+APPLICATION_ID = "applicationid"  # cspell:disable-line
 
 # Validate UUID format
 # Specs taken from https://tools.ietf.org/html/rfc4122
 uuid_regex_pattern = re.compile("^[0-9a-f]{8}-" "[0-9a-f]{4}-" + "[0-9a-f]{4}-" "[0-9a-f]{4}-" "[0-9a-f]{12}$")
+
+# Pattern to extract region from ingestion endpoint URL
+# Examples:
+# - https://westeurope-5.in.applicationinsights.azure.com/ -> westeurope
+# - https://westeurope.in.applicationinsights.azure.com/ -> westeurope
+# - https://eastus-1.in.applicationinsights.azure.com/ -> eastus
+# - https://dc.services.visualstudio.com -> None (global endpoint)
+region_from_endpoint_pattern = re.compile(r"https://([a-z0-9]+)(?:-\d+)?\.in\.applicationinsights\.azure\.com")
 
 
 class ConnectionStringParser:
@@ -29,6 +38,8 @@ class ConnectionStringParser:
         self.live_endpoint = ""
         self._connection_string = connection_string
         self.aad_audience = ""
+        self.region = ""
+        self.application_id = ""
         self._initialize()
         self._validate_instrumentation_key()
 
@@ -39,32 +50,51 @@ class ConnectionStringParser:
         env_cs = self._parse_connection_string(os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING"))
         env_ikey = os.getenv("APPINSIGHTS_INSTRUMENTATIONKEY")
 
+        if not self._connection_string:
+            self._connection_string = os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING")
+
         # The priority of which value takes on the instrumentation key is:
         # 1. Key from explicitly passed in connection string
         # 2. Key from explicitly passed in instrumentation key
         # 3. Key from connection string in environment variable
         # 4. Key from instrumentation key in environment variable
         self.instrumentation_key = (
-            code_cs.get(INSTRUMENTATION_KEY) or code_ikey or \
-                env_cs.get(INSTRUMENTATION_KEY) or env_ikey  # type: ignore
+            code_cs.get(INSTRUMENTATION_KEY) or code_ikey or env_cs.get(INSTRUMENTATION_KEY) or env_ikey  # type: ignore
         )
         # The priority of the endpoints is as follows:
         # 1. The endpoint explicitly passed in connection string
         # 2. The endpoint from the connection string in environment variable
         # 3. The default breeze endpoint
         self.endpoint = (
-            code_cs.get(INGESTION_ENDPOINT) or env_cs.get(INGESTION_ENDPOINT) or \
-                "https://dc.services.visualstudio.com"
+            code_cs.get(INGESTION_ENDPOINT) or env_cs.get(INGESTION_ENDPOINT) or "https://dc.services.visualstudio.com"
         )
         self.live_endpoint = (
-            code_cs.get(LIVE_ENDPOINT) or env_cs.get(LIVE_ENDPOINT) or \
-                "https://rt.services.visualstudio.com"
+            code_cs.get(LIVE_ENDPOINT) or env_cs.get(LIVE_ENDPOINT) or "https://rt.services.visualstudio.com"
         )
         # The AUDIENCE is a url that identifies Azure Monitor in a specific cloud
         # (For example: "https://monitor.azure.com/").
-        self.aad_audience = (
-            code_cs.get(AAD_AUDIENCE) or env_cs.get(AAD_AUDIENCE)  # type: ignore
-        )
+        self.aad_audience = code_cs.get(AAD_AUDIENCE) or env_cs.get(AAD_AUDIENCE)  # type: ignore
+
+        # Extract region information
+        self.region = self._extract_region()  # type: ignore
+
+        # Extract application_id
+        self.application_id = code_cs.get(APPLICATION_ID) or env_cs.get(APPLICATION_ID)  # type: ignore
+
+    def _extract_region(self) -> typing.Optional[str]:
+        """Extract region from endpoint URL.
+
+        :return: Extracted region or None if not found
+        :rtype: typing.Optional[str]
+        """
+        # Try to extract region from the ingestion endpoint URL
+        endpoint = self.endpoint
+        if endpoint:
+            match = region_from_endpoint_pattern.match(endpoint)
+            if match:
+                return match.group(1)
+
+        return None
 
     def _validate_instrumentation_key(self) -> None:
         """Validates the instrumentation key used for Azure Monitor.

@@ -7,6 +7,9 @@ parameters:
   - name: ArtifactName
     type: string
     default: "not-specified"
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
 
 jobs:
   - ${{ if eq(parameters.Daily, false) }}:
@@ -43,9 +46,6 @@ jobs:
       matrix:
         Python_310_Linux (AzureCloud):
           PythonVersion: '3.10'
-        ${{ if eq(parameters.Daily, true) }}:
-          Python_39_Linux (AzureCloud):
-            PythonVersion: '3.9'
 
     pool:
       name: $(LINUXPOOL)
@@ -67,6 +67,7 @@ jobs:
           Artifact: ${{ parameters.Artifact }}
           ArtifactName: ${{ parameters.ArtifactName }}
           Daily: ${{ parameters.Daily }}
+          DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ if eq(parameters.Daily, true) }}:
     - job: run_smoke_test_windows
@@ -78,8 +79,6 @@ jobs:
         matrix:
             Python_310_Windows (AzureCloud):
               PythonVersion: '3.10'
-            Python_39_Windows (AzureCloud):
-              PythonVersion: '3.9'
 
       pool:
         name: $(WINDOWSPOOL)
@@ -99,6 +98,7 @@ jobs:
             Artifact: ${{ parameters.Artifact }}
             ArtifactName: ${{ parameters.ArtifactName }}
             Daily: ${{ parameters.Daily }}
+            DevFeedName: ${{ parameters.DevFeedName }}
 
     - job: run_smoke_test_macos
       displayName: Run Smoke Test MacOS
@@ -109,8 +109,6 @@ jobs:
         matrix:
             Python_310_Mac (AzureCloud):
               PythonVersion: '3.10'
-            Python_39_Mac (AzureCloud):
-              PythonVersion: '3.9'
 
       pool:
         name: $(MACPOOL)
@@ -132,3 +130,4 @@ jobs:
             Artifact: ${{ parameters.Artifact }}
             ArtifactName: ${{ parameters.ArtifactName }}
             Daily: ${{ parameters.Daily }}
+            DevFeedName: ${{ parameters.DevFeedName }}

@@ -372,6 +372,29 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         assert area_codes.next()
 
     @recorded_by_proxy
+    def test_list_mobile_area_codes_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        first_locality = phone_number_client.list_available_localities("IE", phone_number_type=PhoneNumberType.MOBILE).next()
+        area_codes = self.phone_number_client.list_available_area_codes(
+            "IE",
+            PhoneNumberType.MOBILE,
+            assignment_type=PhoneNumberAssignmentType.APPLICATION,
+            locality=first_locality.localized_name,
+        )
+        assert area_codes.next()
+
+    @recorded_by_proxy
+    def test_list_mobile_area_codes(self):
+        first_locality = self.phone_number_client.list_available_localities("IE", phone_number_type=PhoneNumberType.MOBILE).next()
+        area_codes = self.phone_number_client.list_available_area_codes(
+            "IE",
+            PhoneNumberType.MOBILE,
+            assignment_type=PhoneNumberAssignmentType.APPLICATION,
+            locality=first_locality.localized_name,
+        )
+        assert area_codes.next()
+
+    @recorded_by_proxy
     def test_list_countries_from_managed_identity(self):
         phone_number_client = self._get_managed_identity_phone_number_client()
         countries = phone_number_client.list_available_countries()
@@ -408,6 +431,11 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
         localities = self.phone_number_client.list_available_localities(
             "US", administrative_division=first_locality.next().administrative_division.abbreviated_name
         )
+        assert localities.next()
+    
+    @recorded_by_proxy
+    def test_list_localities_with_number_type(self):
+        localities = self.phone_number_client.list_available_localities("IE", phone_number_type=PhoneNumberType.MOBILE)
         assert localities.next()
 
     @recorded_by_proxy

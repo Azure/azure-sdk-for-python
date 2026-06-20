@@ -12,6 +12,7 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 from ._azure_openai_deployment_operations import AzureOpenAIDeploymentOperations
 from ._batch_deployment_operations import BatchDeploymentOperations
 from ._batch_endpoint_operations import BatchEndpointOperations
+from ._deployment_template_operations import DeploymentTemplateOperations
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._data_operations import DataOperations
@@ -47,6 +48,7 @@ __all__ = [
     "BatchEndpointOperations",
     "OnlineDeploymentOperations",
     "BatchDeploymentOperations",
+    "DeploymentTemplateOperations",
     "DataOperations",
     "EnvironmentOperations",
     "ComponentOperations",

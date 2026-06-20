@@ -23,20 +23,27 @@
 """
 
 import base64
+import time
 from email.utils import formatdate
 import json
 import uuid
 import re
 import binascii
-from typing import Dict, Any, List, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
+from typing import Any, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
+from urllib.parse import unquote as urllib_unquote
 from urllib.parse import urlsplit
 from azure.core import MatchConditions
 
 from . import documents
 from . import http_constants
 from . import _runtime_constants
+from ._query_aggregate_utils import (
+    _AggregatePartialClassification,
+    _classify_aggregate_partial,
+    _get_select_value_aggregate_function,
+)
 from ._constants import _Constants as Constants
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
@@ -45,9 +52,13 @@ from .partition_key import _Empty, _Undefined
 if TYPE_CHECKING:
     from ._cosmos_client_connection import CosmosClientConnection
     from .aio._cosmos_client_connection_async import CosmosClientConnection as AsyncClientConnection
+    from ._global_partition_endpoint_manager_per_partition_automatic_failover import (
+        _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover)
     from ._request_object import RequestObject
+    from ._routing.routing_range import PartitionKeyRangeWrapper
 
 # pylint: disable=protected-access
+#cspell:ignore PPAF, ppaf
 
 _COMMON_OPTIONS = {
     'initial_headers': 'initialHeaders',
@@ -68,7 +79,8 @@ _COMMON_OPTIONS = {
     'retry_write': Constants.Kwargs.RETRY_WRITE,
     'max_item_count': 'maxItemCount',
     'throughput_bucket': 'throughputBucket',
-    'excluded_locations': 'excludedLocations'
+    'excluded_locations': Constants.Kwargs.EXCLUDED_LOCATIONS,
+    "availability_strategy": Constants.Kwargs.AVAILABILITY_STRATEGY
 }
 
 # Cosmos resource ID validation regex breakdown:
@@ -78,7 +90,7 @@ _COMMON_OPTIONS = {
 _VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
 
 
-def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
+def _get_match_headers(kwargs: dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
     if_match = kwargs.pop('if_match', None)
     if_none_match = kwargs.pop('if_none_match', None)
     match_condition = kwargs.pop('match_condition', None)
@@ -103,11 +115,18 @@ def _get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[
     return if_match, if_none_match
 
 
-def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
     options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)
+    if Constants.Kwargs.READ_TIMEOUT in kwargs:
+        options[Constants.Kwargs.READ_TIMEOUT] = kwargs[Constants.Kwargs.READ_TIMEOUT]
+    if Constants.Kwargs.TIMEOUT in kwargs:
+        options[Constants.Kwargs.TIMEOUT] = kwargs[Constants.Kwargs.TIMEOUT]
+
+
+    options[Constants.OperationStartTime] = time.time()
     if_match, if_none_match = _get_match_headers(kwargs)
     if if_match:
         options['accessCondition'] = {'type': 'IfMatch', 'condition': if_match}
@@ -115,6 +134,121 @@ def build_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
         options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': if_none_match}
     return options
 
+
+def _merge_query_results(
+        results: dict[str, Any],
+        partial_result: dict[str, Any],
+        query: Optional[Union[str, dict[str, Any]]]
+) -> dict[str, Any]:
+    """Merges partial query results from different partitions.
+
+    This method is required for queries that are manually fanned out to multiple
+    partitions or ranges within the SDK, such as prefix partition key queries.
+    For non-aggregated queries, results from each partition are simply concatenated.
+    However, for aggregate queries (COUNT, SUM, MIN, MAX, AVG), each partition
+    returns a partial aggregate. This method merges these partial results to compute
+    the final, correct aggregate value.
+
+    TODO:This client-side aggregation is a temporary workaround. Ideally, this logic
+    should be integrated into the core pipeline as aggregate queries are handled by DefaultExecutionContext,
+    not MultiAggregatorExecutionContext, which is not split proof until the logic is moved to the core pipeline.
+    This method handles the aggregation of results when a query spans multiple
+    partitions. It specifically handles:
+    1. Standard queries: Appends documents from partial_result to results.
+    2. Aggregate queries that return a JSON object (e.g., `SELECT COUNT(1) FROM c`, `SELECT MIN(c.field) FROM c`).
+    3. VALUE queries with aggregation that return a scalar value (e.g., `SELECT VALUE COUNT(1) FROM c`).
+
+    :param dict[str, Any] results: The accumulated result's dictionary.
+    :param dict[str, Any] partial_result: The new partial result dictionary to merge.
+    :param query: The query being executed.
+    :type query: str or dict[str, Any]
+    :return: The merged result's dictionary.
+    :rtype: dict[str, Any]
+    """
+    if not results:
+        return partial_result
+
+    partial_docs = partial_result.get("Documents")
+    if not partial_docs:
+        return results
+
+    results_docs = results.get("Documents")
+
+    partial_aggregate_class = _classify_aggregate_partial(partial_docs, query)
+    results_aggregate_class = _classify_aggregate_partial(results_docs, query)
+
+    if (
+        partial_aggregate_class == _AggregatePartialClassification.OBJECT
+        and results_aggregate_class == _AggregatePartialClassification.OBJECT
+    ):
+        agg_results = results_docs[0]["_aggregate"] # type: ignore[index]
+        agg_partial = partial_docs[0]["_aggregate"]
+        for key in agg_partial:
+            if key not in agg_results:
+                agg_results[key] = agg_partial[key]
+            elif isinstance(agg_partial.get(key), dict) and "count" in agg_partial[key]:  # AVG
+                if isinstance(agg_results.get(key), dict):
+                    agg_results[key]["sum"] += agg_partial[key]["sum"]
+                    agg_results[key]["count"] += agg_partial[key]["count"]
+            elif key.lower().startswith("min"):
+                agg_results[key] = min(agg_results[key], agg_partial[key])
+            elif key.lower().startswith("max"):
+                agg_results[key] = max(agg_results[key], agg_partial[key])
+            else:  # COUNT, SUM
+                agg_results[key] += agg_partial[key]
+        return results
+
+    if (
+        partial_aggregate_class == _AggregatePartialClassification.VALUE
+        and results_aggregate_class == _AggregatePartialClassification.VALUE
+    ):
+        aggregate_fn = _get_select_value_aggregate_function(query)
+        if aggregate_fn is None:
+            raise ValueError(
+                "Invariant violation: VALUE aggregate classification requires a recognized aggregate function."
+            )
+        if aggregate_fn == "MIN":
+            results_docs[0] = min(results_docs[0], partial_docs[0]) # type: ignore[index]
+        elif aggregate_fn == "MAX":
+            results_docs[0] = max(results_docs[0], partial_docs[0]) # type: ignore[index]
+        elif aggregate_fn == "AVG":
+            raise ValueError(
+                "VALUE AVG aggregate merge across partitions is not supported client-side."
+            )
+        else:
+            # COUNT/SUM are additive.
+            results_docs[0] += partial_docs[0] # type: ignore[index]
+        return results
+
+    # Standard query, append documents
+    if results_docs is None:
+        results["Documents"] = partial_docs
+    elif isinstance(results_docs, list) and isinstance(partial_docs, list):
+        results_docs.extend(partial_docs)
+    results["_count"] = len(results["Documents"])
+    return results
+
+
+def _raise_query_merge_value_error(merge_error: ValueError) -> None:
+    """Raise a clearer user-facing error for unsupported VALUE aggregate merges.
+
+    ``SELECT VALUE AVG(...)`` partials cannot be merged correctly client-side
+    across multiple partition/range responses. We fail loudly instead of
+    falling back to list concatenation (which would silently produce
+    mathematically incorrect results).
+
+    :param merge_error: ValueError raised while merging partial query results.
+    :type merge_error: ValueError
+    :raises ValueError: Always re-raises, potentially with a clearer message.
+    """
+    merge_message = str(merge_error)
+    if "VALUE AVG aggregate merge across partitions is not supported client-side." in merge_message:
+        raise ValueError(
+            "Unsupported query shape for range-scoped pagination: "
+            "SELECT VALUE AVG(...) cannot be merged client-side when the query "
+            "scope spans multiple physical partitions."
+        ) from merge_error
+    raise merge_error
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],
@@ -127,7 +261,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
         options: Mapping[str, Any],
         partition_key_range_id: Optional[str] = None,
         client_id: Optional[str] = None,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Gets HTTP request headers.
 
     :param _cosmos_client_connection.CosmosClientConnection cosmos_client_connection:
@@ -145,6 +279,10 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     """
     headers = dict(default_headers)
     options = options or {}
+
+    # SDK supported capabilities header for partition merge support
+    headers[http_constants.HttpHeaders.SDKSupportedCapabilities] = \
+        http_constants.SDKSupportedCapabilities.PARTITION_MERGE
 
     # Generate a new activity ID for each request client side.
     headers[http_constants.HttpHeaders.ActivityId] = GenerateGuidId()
@@ -232,6 +370,9 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("populateIndexMetrics"):
         headers[http_constants.HttpHeaders.PopulateIndexMetrics] = options["populateIndexMetrics"]
 
+    if options.get("populateQueryAdvice"):
+        headers[http_constants.HttpHeaders.PopulateQueryAdvice] = options["populateQueryAdvice"]
+
     if options.get("responseContinuationTokenLimitInKb"):
         headers[http_constants.HttpHeaders.ResponseContinuationTokenLimitInKb] = options[
             "responseContinuationTokenLimitInKb"]
@@ -313,8 +454,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     # If it is an operation at the container level, verify the rid of the container to see if the cache needs to be
     # refreshed.
-    if resource_type != 'dbs' and options.get("containerRID"):
-        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options["containerRID"]
+    if resource_type != 'dbs' and options.get(Constants.ContainerRID):
+        headers[http_constants.HttpHeaders.IntendedCollectionRID] = options[Constants.ContainerRID]
 
     if resource_type == "":
         resource_type = http_constants.ResourceType.DatabaseAccount
@@ -334,8 +475,7 @@ def _is_session_token_request(
     # Verify that it is not a metadata request, and that it is either a read request, batch request, or an account
     # configured to use multiple write regions. Batch requests are special-cased because they can contain both read and
     # write operations, and we want to use session consistency for the read operations.
-    return (is_session_consistency is True and cosmos_client_connection.session is not None
-            and not IsMasterResource(request_object.resource_type)
+    return (is_session_consistency is True and not IsMasterResource(request_object.resource_type)
             and (documents._OperationType.IsReadOnlyOperation(request_object.operation_type)
                  or request_object.operation_type == "Batch"
                  or cosmos_client_connection._global_endpoint_manager.can_use_multiple_write_locations(request_object)))
@@ -358,13 +498,16 @@ def set_session_token_header(
             # then update from session container
             if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
                     cosmos_client_connection.session:
+                # urllib_unquote is used to decode the path, as it may contain encoded characters
+                path = urllib_unquote(path)
                 # populate session token from the client's session container
                 session_token = (
                     cosmos_client_connection.session.get_session_token(path,
                                                                 options.get('partitionKey'),
                                                                 cosmos_client_connection._container_properties_cache,
                                                                 cosmos_client_connection._routing_map_provider,
-                                                                partition_key_range_id))
+                                                                partition_key_range_id,
+                                                                options))
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 
@@ -386,12 +529,15 @@ async def set_session_token_header_async(
             if headers[http_constants.HttpHeaders.ConsistencyLevel] == documents.ConsistencyLevel.Session and \
                     cosmos_client_connection.session:
                 # populate session token from the client's session container
+                # urllib_unquote is used to decode the path, as it may contain encoded characters
+                path = urllib_unquote(path)
                 session_token = \
                     await cosmos_client_connection.session.get_session_token_async(path,
                                                                 options.get('partitionKey'),
                                                                 cosmos_client_connection._container_properties_cache,
                                                                 cosmos_client_connection._routing_map_provider,
-                                                                partition_key_range_id)
+                                                                partition_key_range_id,
+                                                                options)
                 if session_token != "":
                     headers[http_constants.HttpHeaders.SessionToken] = session_token
 
@@ -606,19 +752,21 @@ def GetItemContainerInfo(self_link: str, alt_content_path: str, resource_id: str
 
     self_link = TrimBeginningAndEndingSlashes(self_link) + "/"
 
-    index = IndexOfNth(self_link, "/", 4)
+    end_index = IndexOfNth(self_link, "/", 4)
+    start_index = IndexOfNth(self_link, "/", 3)
 
-    if index != -1:
-        collection_id = self_link[0:index]
+    if start_index != -1 and end_index != -1:
+        # parse only the collection rid from the path as it's unique across databases
+        collection_rid = self_link[start_index + 1:end_index]
 
         if "colls" in self_link:
             # this is a collection request
             index_second_slash = IndexOfNth(alt_content_path, "/", 2)
             if index_second_slash == -1:
                 collection_name = alt_content_path + "/colls/" + urllib_quote(resource_id)
-                return collection_id, collection_name
+                return collection_rid, collection_name
             collection_name = alt_content_path
-            return collection_id, collection_name
+            return collection_rid, collection_name
         raise ValueError(
             "Response Not from Server Partition, self_link: {0}, alt_content_path: {1}, id: {2}".format(
                 self_link, alt_content_path, resource_id
@@ -704,7 +852,7 @@ def TrimBeginningAndEndingSlashes(path: str) -> str:
 
 
 # Parses the paths into a list of token each representing a property
-def ParsePaths(paths: List[str]) -> List[str]:
+def ParsePaths(paths: list[str]) -> list[str]:
     segmentSeparator = "/"
     tokens = []
     for path in paths:
@@ -783,7 +931,7 @@ def _validate_resource(resource: Mapping[str, Any]) -> None:
 
 
 def _stringify_auto_scale(offer: ThroughputProperties) -> str:
-    auto_scale_params: Optional[Dict[str, Union[None, int, Dict[str, Any]]]] = None
+    auto_scale_params: Optional[dict[str, Union[None, int, dict[str, Any]]]] = None
     max_throughput = offer.auto_scale_max_throughput
     increment_percent = offer.auto_scale_increment_percent
     auto_scale_params = {"maxThroughput": max_throughput}
@@ -793,7 +941,7 @@ def _stringify_auto_scale(offer: ThroughputProperties) -> str:
     return auto_scale_settings
 
 
-def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], request_options: Dict[str, Any]) -> None:
+def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], request_options: dict[str, Any]) -> None:
     if isinstance(offer, int):
         request_options["offerThroughput"] = offer
     elif offer is not None:
@@ -812,9 +960,9 @@ def _set_throughput_options(offer: Optional[Union[int, ThroughputProperties]], r
             raise TypeError("offer_throughput must be int or an instance of ThroughputProperties") from e
 
 
-def _deserialize_throughput(throughput: List[Dict[str, Dict[str, Any]]]) -> ThroughputProperties:
+def _deserialize_throughput(throughput: list[dict[str, dict[str, Any]]]) -> ThroughputProperties:
     properties = throughput[0]
-    offer_autopilot: Optional[Dict[str, Any]] = properties['content'].get('offerAutopilotSettings')
+    offer_autopilot: Optional[dict[str, Any]] = properties['content'].get('offerAutopilotSettings')
     if offer_autopilot and 'autoUpgradePolicy' in offer_autopilot:
         return ThroughputProperties(
             properties=properties,
@@ -834,7 +982,7 @@ def _deserialize_throughput(throughput: List[Dict[str, Dict[str, Any]]]) -> Thro
 
 def _replace_throughput(
     throughput: Union[int, ThroughputProperties],
-    new_throughput_properties: Dict[str, Any]
+    new_throughput_properties: dict[str, Any]
 ) -> None:
     if isinstance(throughput, int):
         new_throughput_properties["content"]["offerThroughput"] = throughput
@@ -865,15 +1013,15 @@ def _internal_resourcetype(resource_type: str) -> str:
     return resource_type
 
 
-def _populate_batch_headers(current_headers: Dict[str, Any]) -> None:
+def _populate_batch_headers(current_headers: dict[str, Any]) -> None:
     current_headers[http_constants.HttpHeaders.IsBatchRequest] = True
     current_headers[http_constants.HttpHeaders.IsBatchAtomic] = True
     current_headers[http_constants.HttpHeaders.ShouldBatchContinueOnError] = False
 
 
 def _format_batch_operations(
-    operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], Dict[str, Any]]]]
-) -> List[Dict[str, Any]]:
+    operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]]
+) -> list[dict[str, Any]]:
     final_operations = []
     for index, batch_operation in enumerate(operations):
         try:
@@ -928,8 +1076,22 @@ def _format_batch_operations(
     return final_operations
 
 
-def _build_properties_cache(properties: Dict[str, Any], container_link: str) -> Dict[str, Any]:
+def _build_properties_cache(properties: dict[str, Any], container_link: str) -> dict[str, Any]:
     return {
         "_self": properties.get("_self", None), "_rid": properties.get("_rid", None),
         "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
+
+def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
+    """Formats the partition key range options to be used internally from the query ones.
+    :param dict query_options: The query options being used.
+    :return: The relevant partition key range options.
+    :rtype: dict
+    """
+    pk_range_options: dict[str, Any] = {}
+    if query_options is not None:
+        if Constants.ContainerRID in query_options:
+            pk_range_options[Constants.ContainerRID] = query_options[Constants.ContainerRID]
+        if "excludedLocations" in query_options:
+            pk_range_options["excludedLocations"] = query_options["excludedLocations"]
+    return pk_range_options

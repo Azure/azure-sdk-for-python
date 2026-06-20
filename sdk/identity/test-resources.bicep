@@ -95,7 +95,6 @@ resource webRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (prov
   properties: {
     principalId: testApplicationOid
     roleDefinitionId: websiteContributor
-    principalType: 'ServicePrincipal'
   }
 }
 
@@ -105,7 +104,6 @@ resource webRole2 'Microsoft.Authorization/roleAssignments@2022-04-01' = if (pro
   properties: {
     principalId: testApplicationOid
     roleDefinitionId: websiteContributor
-    principalType: 'ServicePrincipal'
   }
 }
 
@@ -304,7 +302,7 @@ resource kubernetesCluster 'Microsoft.ContainerService/managedClusters@2023-06-0
       {
         name: 'agentpool'
         count: 1
-        vmSize: 'Standard_D2s_v3'
+        vmSize: 'Standard_D2s_v6'
         osDiskSizeGB: 128
         osDiskType: 'Managed'
         kubeletDiskType: 'OS'
@@ -337,7 +335,18 @@ resource kubernetesCluster 'Microsoft.ContainerService/managedClusters@2023-06-0
   }
 }
 
-resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = if (provisionLiveResources) {
+resource publicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = if (provisionLiveResources) {
+  name: '${baseName}PublicIP'
+  location: location
+  sku: {
+    name: 'Standard'
+  }
+  properties: {
+    publicIPAllocationMethod: 'Static'
+  }
+}
+
+resource vnet 'Microsoft.Network/virtualNetworks@2024-07-01' = if (provisionLiveResources) {
   name: '${baseName}vnet'
   location: location
   properties: {
@@ -351,13 +360,14 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = if (provisionLive
         name: '${baseName}subnet'
         properties: {
           addressPrefix: '10.0.0.0/24'
+          defaultOutboundAccess: false
         }
       }
     ]
   }
 }
 
-resource networkInterface 'Microsoft.Network/networkInterfaces@2021-02-01' = if (provisionLiveResources) {
+resource networkInterface 'Microsoft.Network/networkInterfaces@2024-07-01' = if (provisionLiveResources) {
   name: '${baseName}NIC'
   location: location
   properties: {
@@ -369,13 +379,16 @@ resource networkInterface 'Microsoft.Network/networkInterfaces@2021-02-01' = if 
           subnet: {
             id: provisionLiveResources ? vnet.properties.subnets[0].id : ''
           }
+          publicIPAddress: {
+            id: provisionLiveResources ? publicIP.id : ''
+          }
         }
       }
     ]
   }
 }
 
-resource virtualMachine 'Microsoft.Compute/virtualMachines@2020-06-01' = if (provisionLiveResources) {
+resource virtualMachine 'Microsoft.Compute/virtualMachines@2024-07-01' = if (provisionLiveResources) {
   name: '${baseName}vm'
   location: location
   identity: {

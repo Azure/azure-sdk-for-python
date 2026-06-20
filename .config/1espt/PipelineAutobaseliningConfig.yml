@@ -11,3 +11,10 @@ pipelines:
           lastModifiedDate: 2024-09-13
         armory:
           lastModifiedDate: 2024-09-13
+      binary:
+        credscan:
+          lastModifiedDate: 2025-09-03
+        binskim:
+          lastModifiedDate: 2025-09-03
+        spotbugs:
+          lastModifiedDate: 2025-09-03

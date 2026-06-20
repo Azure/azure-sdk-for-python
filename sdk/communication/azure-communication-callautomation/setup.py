@@ -8,7 +8,7 @@ import re
 # your package.
 
 # this setup.py is set up in a specific way to keep the azure* and azure-mgmt-* namespaces WORKING all the way
-# up from python 3.7. Reference here: https://github.com/Azure/azure-sdk-for-python/wiki/Azure-packaging
+# up from python 3.7. Reference here: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
 
 PACKAGE_NAME = "azure-communication-callautomation"
 PACKAGE_PPRINT_NAME = "Communication Call Automation"
@@ -39,7 +39,7 @@ setup(
     url="https://github.com/Azure/azure-sdk-for-python",
     keywords="azure, azure sdk",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",

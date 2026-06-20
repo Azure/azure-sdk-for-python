@@ -14,72 +14,77 @@ from ._lease import ShareLeaseClient
 from ._shared_access_signature import generate_account_sas, generate_share_sas, generate_file_sas
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import (
+    AccountSasPermissions,
     LocationMode,
     ResourceTypes,
-    AccountSasPermissions,
+    UserDelegationKey,
     StorageErrorCode,
     Services,
 )
 from ._models import (
-    ShareProperties,
-    DirectoryProperties,
-    Handle,
-    FileProperties,
-    Metrics,
-    RetentionPolicy,
+    AccessPolicy,
+    ContentSettings,
     CorsRule,
+    DirectoryProperties,
+    FileProperties,
+    FileSasPermissions,
+    Handle,
+    Metrics,
+    NfsEncryptionInTransit,
+    NTFSAttributes,
+    RetentionPolicy,
+    ShareNfsSettings,
+    ShareProperties,
+    ShareSasPermissions,
     ShareSmbSettings,
     SmbMultichannel,
+    SmbEncryptionInTransit,
     ShareProtocolSettings,
     ShareProtocols,
-    AccessPolicy,
-    FileSasPermissions,
-    ShareSasPermissions,
-    ContentSettings,
-    NTFSAttributes,
 )
-from ._generated.models import (
-    ShareAccessTier,
-    ShareRootSquash
-)
+from ._generated.models import ShareAccessTier, ShareRootSquash
 
 __version__ = VERSION
 
 
 __all__ = [
-    'ShareFileClient',
-    'ShareDirectoryClient',
-    'ShareClient',
-    'ShareServiceClient',
-    'ShareLeaseClient',
-    'ExponentialRetry',
-    'LinearRetry',
-    'LocationMode',
-    'ResourceTypes',
-    'AccountSasPermissions',
-    'StorageErrorCode',
-    'Metrics',
-    'RetentionPolicy',
-    'CorsRule',
-    'ShareSmbSettings',
-    'ShareAccessTier',
-    'SmbMultichannel',
-    'ShareProtocolSettings',
-    'AccessPolicy',
-    'FileSasPermissions',
-    'ShareSasPermissions',
-    'ShareProtocols',
-    'ShareProperties',
-    'DirectoryProperties',
-    'FileProperties',
-    'ContentSettings',
-    'Handle',
-    'NTFSAttributes',
-    'ShareRootSquash',
-    'generate_account_sas',
-    'generate_share_sas',
-    'generate_file_sas',
-    'Services'
+    "AccessPolicy",
+    "AccountSasPermissions",
+    "ContentSettings",
+    "CorsRule",
+    "DirectoryProperties",
+    "ExponentialRetry",
+    "FileProperties",
+    "FileSasPermissions",
+    "generate_account_sas",
+    "generate_file_sas",
+    "generate_share_sas",
+    "Handle",
+    "LinearRetry",
+    "LocationMode",
+    "Metrics",
+    "NfsEncryptionInTransit",
+    "NTFSAttributes",
+    "ResourceTypes",
+    "RetentionPolicy",
+    "Services",
+    "ShareAccessTier",
+    "ShareClient",
+    "ShareDirectoryClient",
+    "ShareFileClient",
+    "ShareLeaseClient",
+    "ShareNfsSettings",
+    "ShareProperties",
+    "ShareProtocolSettings",
+    "ShareProtocols",
+    "ShareRootSquash",
+    "ShareSasPermissions",
+    "ShareServiceClient",
+    "ShareSmbSettings",
+    "SmbEncryptionInTransit",
+    "SmbMultichannel",
+    "StorageErrorCode",
+    "UserDelegationKey",
 ]
 
 
@@ -88,12 +93,10 @@ __all__ = [
 # to prevent it from showing in intellisense/docs but we handle it here to prevent
 # breaking any existing code which may have imported it.
 def __getattr__(name):
-    if name == 'HandleItem':
+    if name == "HandleItem":
         from ._generated.models import HandleItem
-        warnings.warn(
-            "HandleItem is deprecated and should not be used. Use Handle instead.",
-            DeprecationWarning
-        )
+
+        warnings.warn("HandleItem is deprecated and should not be used. Use Handle instead.", DeprecationWarning)
         return HandleItem
 
     raise AttributeError(f"module 'azure.storage.fileshare' has no attribute {name}")

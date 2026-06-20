@@ -1,0 +1,28 @@
+{
+    "CrossLanguagePackageId": "Microsoft.Compute",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.computerecommender.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.computerecommender.models.ProxyResource": "Azure.ResourceManager.CommonTypes.ProxyResource",
+        "azure.mgmt.computerecommender.models.ComputeDiagnosticBase": "Microsoft.Compute.ComputeDiagnosticBase",
+        "azure.mgmt.computerecommender.models.DiagnosticProperties": "Microsoft.Compute.DiagnosticProperties",
+        "azure.mgmt.computerecommender.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.computerecommender.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.computerecommender.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.computerecommender.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
+        "azure.mgmt.computerecommender.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.computerecommender.models.PlacementScore": "Microsoft.Compute.PlacementScore",
+        "azure.mgmt.computerecommender.models.ResourceSize": "Microsoft.Compute.ResourceSize",
+        "azure.mgmt.computerecommender.models.SpotPlacementScoresInput": "Microsoft.Compute.SpotPlacementScoresInput",
+        "azure.mgmt.computerecommender.models.SpotPlacementScoresResponse": "Microsoft.Compute.SpotPlacementScoresResponse",
+        "azure.mgmt.computerecommender.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.computerecommender.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
+        "azure.mgmt.computerecommender.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
+        "azure.mgmt.computerecommender.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.computerecommender.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.computerecommender.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.computerecommender.operations.SpotPlacementScoresOperations.get": "Microsoft.Compute.ComputeDiagnosticBases.get",
+        "azure.mgmt.computerecommender.aio.operations.SpotPlacementScoresOperations.get": "Microsoft.Compute.ComputeDiagnosticBases.get",
+        "azure.mgmt.computerecommender.operations.SpotPlacementScoresOperations.post": "Microsoft.Compute.ComputeDiagnosticBases.post",
+        "azure.mgmt.computerecommender.aio.operations.SpotPlacementScoresOperations.post": "Microsoft.Compute.ComputeDiagnosticBases.post"
+    }
+}

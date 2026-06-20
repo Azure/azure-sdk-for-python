@@ -39,10 +39,13 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED,
     _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN,
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
+    _EXPORTER_DOMAIN_SCHEMA_VERSION,
+    _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS,
     _METRIC_ENVELOPE_NAME,
+    _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
 from azure.monitor.opentelemetry.exporter import _utils
-from azure.monitor.opentelemetry.exporter._generated.models import (
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     ContextTagKeys,
     MetricDataPoint,
     MetricsData,
@@ -54,7 +57,9 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
 )
 from azure.monitor.opentelemetry.exporter.export.trace import _utils as trace_utils
-
+from azure.monitor.opentelemetry.exporter._performance_counters._constants import (
+    _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -75,13 +80,15 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     """Azure Monitor Metric exporter for OpenTelemetry."""
 
     def __init__(self, **kwargs: Any) -> None:
+        self._is_sdkstats = kwargs.get("is_sdkstats", False)
+        self._is_customer_sdkstats = kwargs.get("is_customer_sdkstats", False)
+        self._metrics_to_log_analytics = self._determine_metrics_to_log_analytics()
         BaseExporter.__init__(self, **kwargs)
         MetricExporter.__init__(
             self,
             preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,  # type: ignore
             preferred_aggregation=kwargs.get("preferred_aggregation"),  # type: ignore
         )
-        self._metrics_to_log_analytics = self._determine_metrics_to_log_analytics()
 
     # pylint: disable=R1702
     def export(
@@ -157,16 +164,25 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         # When Metrics to Log Analytics is disabled, only send Standard metrics and _OTELRESOURCE_
         if not self._metrics_to_log_analytics and name not in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             return None
-        envelope = _convert_point_to_envelope(point, name, resource, scope)
+
+        # Apply statsbeat metric name mapping if this is a statsbeat exporter
+        final_metric_name = name
+        if self._is_sdkstats and name in _STATSBEAT_METRIC_NAME_MAPPINGS:
+            final_metric_name = _STATSBEAT_METRIC_NAME_MAPPINGS[name]
+        # Apply customer sdkstats metric name mapping if this is a customer sdkstats exporter
+        if self._is_customer_sdkstats and name in _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS:
+            final_metric_name = _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS[name]
+
+        envelope = _convert_point_to_envelope(point, final_metric_name, resource, scope)
+        # Note that Performance Counters are not counted as "Autocollected standard metrics"
         if name in _AUTOCOLLECTED_INSTRUMENT_NAMES:
             envelope = _handle_std_metric_envelope(envelope, name, point.attributes)  # type: ignore
         if envelope is not None:
             envelope.instrumentation_key = self._instrumentation_key
             # Only set SentToAMW on AKS Attach
             if _utils._is_on_aks() and _utils._is_attach_enabled() and not self._is_stats_exporter():
-                if (
-                    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ
-                    and "otlp" in os.environ.get(OTEL_METRICS_EXPORTER, "")
+                if OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ and "otlp" in os.environ.get(
+                    OTEL_METRICS_EXPORTER, ""
                 ):
                     envelope.data.base_data.properties["_MS.SentToAMW"] = "True"  # type: ignore
                 else:
@@ -182,8 +198,11 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         :return: False if metrics should not be sent to Log Analytics, True otherwise.
         :rtype: bool
         """
+        # If sdkStats exporter, always send to LA
+        if self._is_sdkstats:
+            return True
         # Disabling metrics to Log Analytics via env var is currently only specified for AKS Attach scenarios.
-        if not _utils._is_on_aks() or not _utils._is_attach_enabled() or self._is_stats_exporter():
+        if not _utils._is_on_aks() or not _utils._is_attach_enabled():
             return True
         env_var = os.environ.get(_APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED)
         if not env_var:
@@ -239,6 +258,11 @@ def _convert_point_to_envelope(
     # truncation logic
     properties = _utils._filter_custom_properties(point.attributes)
 
+    # Map OTel-friendly name to Breeze Performance Counter name
+    # Note that Performance Counters are not counted as "Autocollected standard metrics"
+    if name in _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS:
+        name = _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS.get(name)  # type: ignore
+
     data_point = MetricDataPoint(
         name=str(name)[:1024],
         namespace=namespace,
@@ -249,6 +273,7 @@ def _convert_point_to_envelope(
     )
 
     data = MetricsData(
+        version=_EXPORTER_DOMAIN_SCHEMA_VERSION,
         properties=properties,
         metrics=[data_point],
     )
@@ -279,7 +304,7 @@ def _handle_std_metric_envelope(
         properties["_MS.MetricId"] = "dependencies/duration"
         properties["_MS.IsAutocollected"] = "True"
         properties["Dependency.Type"] = "http"
-        properties["Dependency.Success"] = str(_is_status_code_success(status_code))  # type: ignore
+        properties["Dependency.Success"] = str(_utils._is_status_code_success(status_code))  # type: ignore
         target, _ = trace_utils._get_target_and_path_for_http_dependency(attributes)
         properties["dependency/target"] = target  # type: ignore
         properties["dependency/resultCode"] = str(status_code)
@@ -294,7 +319,7 @@ def _handle_std_metric_envelope(
             properties["operation/synthetic"] = "True"
         properties["cloud/roleInstance"] = tags["ai.cloud.roleInstance"]  # type: ignore
         properties["cloud/roleName"] = tags["ai.cloud.role"]  # type: ignore
-        properties["Request.Success"] = str(_is_status_code_success(status_code))  # type: ignore
+        properties["Request.Success"] = str(_utils._is_status_code_success(status_code))  # type: ignore
     else:
         # Any other autocollected metrics are not supported yet for standard metrics
         # We ignore these envelopes in these cases
@@ -305,17 +330,6 @@ def _handle_std_metric_envelope(
     envelope.data.base_data.properties = properties  # type: ignore
 
     return envelope
-
-
-def _is_status_code_success(status_code: Optional[str]) -> bool:
-    if status_code is None or status_code == 0:
-        return False
-    try:
-        # Success criteria based solely off status code is True only if status_code < 400
-        # for both client and server spans
-        return int(status_code) < 400
-    except ValueError:
-        return False
 
 
 def _is_metric_namespace_opted_in() -> bool:

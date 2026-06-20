@@ -40,8 +40,7 @@ def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -99,9 +98,7 @@ def main():
             )
             get_receipt_poller = ledger_client.begin_get_receipt(transaction_id)  # type: ignore[attr-defined]
             get_receipt_result = get_receipt_poller.result()
-            print(
-                f'Receipt for transaction id {transaction_id}: {get_receipt_result}'
-            )
+            print(f"Receipt for transaction id {transaction_id}: {get_receipt_result}")
         except HttpResponseError as e:
             print("Request failed: {}".format(e.response.json()))  # type: ignore[union-attr]
             raise

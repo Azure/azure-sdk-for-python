@@ -1,16 +1,18 @@
 # Release History
 
-## 7.14.3 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 7.14.4 (Unreleased)
 
 ### Bugs Fixed
 
 - Fixed a bug where messages returned by `receive_deferred_messages` had a `lock_token` of `None`, which prevented settling (completing, abandoning, dead-lettering, deferring) or renewing the lock on a deferred message in `PEEK_LOCK` mode. The lock token is now read from the `lock-token` field of the management-link response for deferred messages. ([#42454](https://github.com/Azure/azure-sdk-for-python/issues/42454))
+- Read `com.microsoft:max-message-batch-size` vendor property from the AMQP sender link to correctly limit batch size on Premium large-message entities, where `max-message-size` can be up to 100 MB but the batch limit is 1 MB.
 
-### Other Changes
+## 7.14.3 (2025-11-11)
+
+### Bugs Fixed
+
+- Fixed a bug where batched messages couldn't be sent to a queue that had session & partitions enabled. ([#42598](https://github.com/Azure/azure-sdk-for-python/pull/42598))
+- Fixed a bug in the Service Bus client where the maximum message size negotiation during the AMQP attach frame was handled incorrectly. The client now correctly sends a max message size of 0 (unlimited), allowing the server to apply its internal limit as intended. ([#43383](https://github.com/Azure/azure-sdk-for-python/pull/43383))
 
 ## 7.14.2 (2025-04-09)
 

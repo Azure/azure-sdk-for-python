@@ -7,7 +7,8 @@ import os
 import re
 import tempfile
 from pathlib import Path
-from typing import Any, Dict, NamedTuple, Optional, Union, cast
+import time
+from typing import Any, Dict, List, NamedTuple, Optional, Union, cast
 import uuid
 import base64
 import math
@@ -25,7 +26,7 @@ from azure.ai.evaluation._constants import (
     Prefixes,
 )
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
-from azure.ai.evaluation._model_configurations import AzureAIProject
+from azure.ai.evaluation._model_configurations import AzureAIProject, EvaluationResult
 from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._azure._clients import LiteMLClient
@@ -196,8 +197,14 @@ def _log_metrics_and_instance_results_onedp(
             )
         )
 
+        # TODO: type mis-match because Evaluation instance is assigned to EvaluationRun
+        evaluation_id = (
+            upload_run_response.name  # type: ignore[attr-defined]
+            if hasattr(upload_run_response, "name")
+            else upload_run_response.id
+        )
         update_run_response = client.update_evaluation_run(
-            name=upload_run_response.id,
+            name=evaluation_id,
             evaluation=EvaluationUpload(
                 display_name=evaluation_name,
                 status="Completed",
@@ -330,7 +337,11 @@ def _write_output(path: Union[str, os.PathLike], data_dict: Any) -> None:
         json.dump(data_dict, f, ensure_ascii=False)
 
     # Use tqdm.write to print message without interfering with any current progress bar
-    tqdm.write(f'Evaluation results saved to "{p.resolve()}".\n')
+    # Fall back to regular print if tqdm.write fails (e.g., when progress bar is closed)
+    try:
+        tqdm.write(f'Evaluation results saved to "{p.resolve()}".\n')
+    except Exception:
+        print(f'Evaluation results saved to "{p.resolve()}".\n')
 
 
 def _apply_column_mapping(
@@ -460,7 +471,7 @@ class JSONLDataFileLoader:
         self.filename = filename
 
     def load(self) -> pd.DataFrame:
-        return pd.read_json(self.filename, lines=True)
+        return pd.read_json(self.filename, lines=True, dtype=object)
 
 
 class CSVDataFileLoader:
@@ -468,7 +479,7 @@ class CSVDataFileLoader:
         self.filename = filename
 
     def load(self) -> pd.DataFrame:
-        return pd.read_csv(self.filename)
+        return pd.read_csv(self.filename, dtype=str)
 
 
 class DataLoaderFactory:

@@ -230,11 +230,11 @@ class Component(
         return self._version
 
     @version.setter
-    def version(self, value: str) -> None:
+    def version(self, value: Optional[str]) -> None:
         """Set the version of the component.
 
         :param value: The version of the component.
-        :type value: str
+        :type value: Optional[str]
         """
         if value:
             if not isinstance(value, str):

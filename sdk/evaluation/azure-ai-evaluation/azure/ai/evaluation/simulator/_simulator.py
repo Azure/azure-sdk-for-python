@@ -426,7 +426,7 @@ class Simulator:
         try:
             if isinstance(response, str):
                 response = response.replace("\u2019", "'").replace("\u2018", "'")
-                response = response.replace("\u201C", '"').replace("\u201D", '"')
+                response = response.replace("\u201c", '"').replace("\u201d", '"')
 
                 # Replace None with null
                 response = response.replace("None", "null")

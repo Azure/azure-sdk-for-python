@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -130,9 +130,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -167,20 +167,73 @@ class ErrorResponse(_Model):
 
 
 class FreeTrialProperties(_Model):
-    """Subscription-level location-based Playwright quota resource free-trial properties.
+    """Subscription-level location-based Playwright quota free trial properties.
 
-    :ivar workspace_id: Playwright workspace-id that has free-trial in the subscription. Required.
+    :ivar workspace_id: The workspace ID in GUID format that has free trial enabled in the
+     subscription. Required.
     :vartype workspace_id: str
-    :ivar state: The free-trial state. Required. Known values are: "Active", "Expired", and
+    :ivar state: The free trial state. Required. Known values are: "Active", "Expired", and
      "NotApplicable".
     :vartype state: str or ~azure.mgmt.playwright.models.FreeTrialState
     """
 
     workspace_id: str = rest_field(name="workspaceId", visibility=["read"])
-    """Playwright workspace-id that has free-trial in the subscription. Required."""
+    """The workspace ID in GUID format that has free trial enabled in the subscription. Required."""
     state: Union[str, "_models.FreeTrialState"] = rest_field(visibility=["read"])
-    """The free-trial state. Required. Known values are: \"Active\", \"Expired\", and
+    """The free trial state. Required. Known values are: \"Active\", \"Expired\", and
      \"NotApplicable\"."""
+
+
+class ManagedServiceIdentity(_Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.playwright.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.playwright.models.UserAssignedIdentity]
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identities assigned to this resource by the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Operation(_Model):
@@ -241,7 +294,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -360,8 +413,7 @@ class PlaywrightQuota(ProxyResource):
 class PlaywrightQuotaProperties(_Model):
     """Subscription-level location-based Playwright quota resource properties.
 
-    :ivar free_trial: The subscription-level location-based Playwright quota resource free-trial
-     properties.
+    :ivar free_trial: The subscription-level location-based Playwright quota free trial properties.
     :vartype free_trial: ~azure.mgmt.playwright.models.FreeTrialProperties
     :ivar provisioning_state: The status of the last resource operation. Known values are:
      "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Accepted".
@@ -369,7 +421,7 @@ class PlaywrightQuotaProperties(_Model):
     """
 
     free_trial: Optional["_models.FreeTrialProperties"] = rest_field(name="freeTrial", visibility=["read"])
-    """The subscription-level location-based Playwright quota resource free-trial properties."""
+    """The subscription-level location-based Playwright quota free trial properties."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -397,7 +449,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -407,7 +459,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -441,20 +493,27 @@ class PlaywrightWorkspace(TrackedResource):
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.playwright.models.PlaywrightWorkspaceProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.playwright.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.PlaywrightWorkspaceProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
 
     @overload
     def __init__(
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.PlaywrightWorkspaceProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -469,31 +528,31 @@ class PlaywrightWorkspace(TrackedResource):
 
 
 class PlaywrightWorkspaceFreeTrialProperties(_Model):
-    """Playwright workspace quota resource resource free-trial properties.
+    """Playwright workspace quota free trial properties.
 
-    :ivar created_at: The free-trial createdAt utcDateTime. Required.
+    :ivar created_at: The free trial creation timestamp in UTC. Required.
     :vartype created_at: ~datetime.datetime
-    :ivar expiry_at: The free-trial expiryAt utcDateTime. Required.
+    :ivar expiry_at: The free trial expiration timestamp in UTC. Required.
     :vartype expiry_at: ~datetime.datetime
-    :ivar allocated_value: The free-trial allocated limit value eg. allocated free execution
-     minutes. Required.
+    :ivar allocated_value: The allocated limit value (e.g., allocated free execution minutes).
+     Required.
     :vartype allocated_value: int
-    :ivar used_value: The free-trial used value eg. used free execution minutes. Required.
+    :ivar used_value: The used value (e.g., used free execution minutes). Required.
     :vartype used_value: float
-    :ivar percentage_used: The free-trial percentage used. Required.
+    :ivar percentage_used: The percentage of the free trial quota used. Required.
     :vartype percentage_used: float
     """
 
     created_at: datetime.datetime = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
-    """The free-trial createdAt utcDateTime. Required."""
+    """The free trial creation timestamp in UTC. Required."""
     expiry_at: datetime.datetime = rest_field(name="expiryAt", visibility=["read"], format="rfc3339")
-    """The free-trial expiryAt utcDateTime. Required."""
+    """The free trial expiration timestamp in UTC. Required."""
     allocated_value: int = rest_field(name="allocatedValue", visibility=["read"])
-    """The free-trial allocated limit value eg. allocated free execution minutes. Required."""
+    """The allocated limit value (e.g., allocated free execution minutes). Required."""
     used_value: float = rest_field(name="usedValue", visibility=["read"])
-    """The free-trial used value eg. used free execution minutes. Required."""
+    """The used value (e.g., used free execution minutes). Required."""
     percentage_used: float = rest_field(name="percentageUsed", visibility=["read"])
-    """The free-trial percentage used. Required."""
+    """The percentage of the free trial quota used. Required."""
 
 
 class PlaywrightWorkspaceProperties(_Model):
@@ -502,16 +561,25 @@ class PlaywrightWorkspaceProperties(_Model):
     :ivar provisioning_state: The status of the last resource operation. Known values are:
      "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.playwright.models.ProvisioningState
-    :ivar dataplane_uri: The workspace data plane URI.
+    :ivar dataplane_uri: The workspace data plane service API URI.
     :vartype dataplane_uri: str
-    :ivar regional_affinity: This property sets the connection region for client workers to
-     cloud-hosted browsers. If enabled, workers connect to browsers in the closest Azure region,
-     ensuring lower latency. If disabled, workers connect to browsers in the Azure region in which
-     the workspace was initially created. Known values are: "Enabled" and "Disabled".
+    :ivar regional_affinity: Controls the connection region for client workers to cloud-hosted
+     browsers. When enabled, workers connect to browsers in the closest Azure region for lower
+     latency. When disabled, workers connect to browsers in the Azure region where the workspace was
+     created. Known values are: "Enabled" and "Disabled".
     :vartype regional_affinity: str or ~azure.mgmt.playwright.models.EnablementStatus
-    :ivar local_auth: When enabled, this feature allows the workspace to use local auth (through
-     service access token) for executing operations. Known values are: "Enabled" and "Disabled".
+    :ivar local_auth: Enables the workspace to use local authentication through service access
+     tokens for operations. Known values are: "Enabled" and "Disabled".
     :vartype local_auth: str or ~azure.mgmt.playwright.models.EnablementStatus
+    :ivar workspace_id: The workspace ID in GUID format.
+    :vartype workspace_id: str
+    :ivar reporting: Indicates whether reporting is enabled for the workspace. When set to true,
+     reports will be generated and available for the workspace. Known values are: "Enabled" and
+     "Disabled".
+    :vartype reporting: str or ~azure.mgmt.playwright.models.EnablementStatus
+    :ivar storage_uri: The URI of the Azure storage account used to store workspace artifacts, test
+     results, and reports.
+    :vartype storage_uri: str
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -520,19 +588,31 @@ class PlaywrightWorkspaceProperties(_Model):
     """The status of the last resource operation. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"Creating\", \"Deleting\", and \"Accepted\"."""
     dataplane_uri: Optional[str] = rest_field(name="dataplaneUri", visibility=["read"])
-    """The workspace data plane URI."""
+    """The workspace data plane service API URI."""
     regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(
         name="regionalAffinity", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This property sets the connection region for client workers to cloud-hosted browsers. If
-     enabled, workers connect to browsers in the closest Azure region, ensuring lower latency. If
-     disabled, workers connect to browsers in the Azure region in which the workspace was initially
-     created. Known values are: \"Enabled\" and \"Disabled\"."""
+    """Controls the connection region for client workers to cloud-hosted browsers. When enabled,
+     workers connect to browsers in the closest Azure region for lower latency. When disabled,
+     workers connect to browsers in the Azure region where the workspace was created. Known values
+     are: \"Enabled\" and \"Disabled\"."""
     local_auth: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(
         name="localAuth", visibility=["read", "create", "update", "delete", "query"]
     )
-    """When enabled, this feature allows the workspace to use local auth (through service access
-     token) for executing operations. Known values are: \"Enabled\" and \"Disabled\"."""
+    """Enables the workspace to use local authentication through service access tokens for operations.
+     Known values are: \"Enabled\" and \"Disabled\"."""
+    workspace_id: Optional[str] = rest_field(name="workspaceId", visibility=["read"])
+    """The workspace ID in GUID format."""
+    reporting: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether reporting is enabled for the workspace. When set to true, reports will be
+     generated and available for the workspace. Known values are: \"Enabled\" and \"Disabled\"."""
+    storage_uri: Optional[str] = rest_field(
+        name="storageUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the Azure storage account used to store workspace artifacts, test results, and
+     reports."""
 
     @overload
     def __init__(
@@ -540,6 +620,8 @@ class PlaywrightWorkspaceProperties(_Model):
         *,
         regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = None,
         local_auth: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        reporting: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        storage_uri: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -597,7 +679,7 @@ class PlaywrightWorkspaceQuota(ProxyResource):
 class PlaywrightWorkspaceQuotaProperties(_Model):
     """Playwright workspace quota resource properties.
 
-    :ivar free_trial: The Playwright workspace quota resource free-trial properties.
+    :ivar free_trial: The Playwright workspace quota free trial properties.
     :vartype free_trial: ~azure.mgmt.playwright.models.PlaywrightWorkspaceFreeTrialProperties
     :ivar provisioning_state: The status of the last resource operation. Known values are:
      "Succeeded", "Failed", "Canceled", "Creating", "Deleting", and "Accepted".
@@ -607,7 +689,7 @@ class PlaywrightWorkspaceQuotaProperties(_Model):
     free_trial: Optional["_models.PlaywrightWorkspaceFreeTrialProperties"] = rest_field(
         name="freeTrial", visibility=["read"]
     )
-    """The Playwright workspace quota resource free-trial properties."""
+    """The Playwright workspace quota free trial properties."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -618,13 +700,19 @@ class PlaywrightWorkspaceQuotaProperties(_Model):
 class PlaywrightWorkspaceUpdate(_Model):
     """The type used for update operations of the PlaywrightWorkspace.
 
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.playwright.models.ManagedServiceIdentity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.playwright.models.PlaywrightWorkspaceUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.PlaywrightWorkspaceUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -635,7 +723,8 @@ class PlaywrightWorkspaceUpdate(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.PlaywrightWorkspaceUpdateProperties"] = None,
     ) -> None: ...
 
@@ -653,28 +742,45 @@ class PlaywrightWorkspaceUpdate(_Model):
 class PlaywrightWorkspaceUpdateProperties(_Model):
     """The updatable properties of the PlaywrightWorkspace.
 
-    :ivar regional_affinity: This property sets the connection region for client workers to
-     cloud-hosted browsers. If enabled, workers connect to browsers in the closest Azure region,
-     ensuring lower latency. If disabled, workers connect to browsers in the Azure region in which
-     the workspace was initially created. Known values are: "Enabled" and "Disabled".
+    :ivar regional_affinity: Controls the connection region for client workers to cloud-hosted
+     browsers. When enabled, workers connect to browsers in the closest Azure region for lower
+     latency. When disabled, workers connect to browsers in the Azure region where the workspace was
+     created. Known values are: "Enabled" and "Disabled".
     :vartype regional_affinity: str or ~azure.mgmt.playwright.models.EnablementStatus
-    :ivar local_auth: When enabled, this feature allows the workspace to use local auth (through
-     service access token) for executing operations. Known values are: "Enabled" and "Disabled".
+    :ivar local_auth: Enables the workspace to use local authentication through service access
+     tokens for operations. Known values are: "Enabled" and "Disabled".
     :vartype local_auth: str or ~azure.mgmt.playwright.models.EnablementStatus
+    :ivar reporting: Indicates whether reporting is enabled for the workspace. When set to true,
+     reports will be generated and available for the workspace. Known values are: "Enabled" and
+     "Disabled".
+    :vartype reporting: str or ~azure.mgmt.playwright.models.EnablementStatus
+    :ivar storage_uri: The URI of the Azure storage account used to store workspace artifacts, test
+     results, and reports.
+    :vartype storage_uri: str
     """
 
     regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(
         name="regionalAffinity", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This property sets the connection region for client workers to cloud-hosted browsers. If
-     enabled, workers connect to browsers in the closest Azure region, ensuring lower latency. If
-     disabled, workers connect to browsers in the Azure region in which the workspace was initially
-     created. Known values are: \"Enabled\" and \"Disabled\"."""
+    """Controls the connection region for client workers to cloud-hosted browsers. When enabled,
+     workers connect to browsers in the closest Azure region for lower latency. When disabled,
+     workers connect to browsers in the Azure region where the workspace was created. Known values
+     are: \"Enabled\" and \"Disabled\"."""
     local_auth: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(
         name="localAuth", visibility=["read", "create", "update", "delete", "query"]
     )
-    """When enabled, this feature allows the workspace to use local auth (through service access
-     token) for executing operations. Known values are: \"Enabled\" and \"Disabled\"."""
+    """Enables the workspace to use local authentication through service access tokens for operations.
+     Known values are: \"Enabled\" and \"Disabled\"."""
+    reporting: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether reporting is enabled for the workspace. When set to true, reports will be
+     generated and available for the workspace. Known values are: \"Enabled\" and \"Disabled\"."""
+    storage_uri: Optional[str] = rest_field(
+        name="storageUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the Azure storage account used to store workspace artifacts, test results, and
+     reports."""
 
     @overload
     def __init__(
@@ -682,6 +788,8 @@ class PlaywrightWorkspaceUpdateProperties(_Model):
         *,
         regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = None,
         local_auth: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        reporting: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        storage_uri: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -760,3 +868,18 @@ class SystemData(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class UserAssignedIdentity(_Model):
+    """User assigned identity properties.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""

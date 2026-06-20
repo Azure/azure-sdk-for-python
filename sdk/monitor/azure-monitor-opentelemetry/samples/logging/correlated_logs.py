@@ -6,8 +6,8 @@
 
 from logging import getLogger
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 configure_azure_monitor(
     logger_name=__name__,

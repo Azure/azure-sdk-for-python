@@ -47,9 +47,11 @@ async def flow_side_effect(timeout, **kwargs):
     if invalid_calls > 0:
         # Return a non-numeric score to trigger an exception in the evaluator's check_score_is_valid
         return {
-            "chain_of_thought": "The tool calls were very correct that I returned a huge number!",
-            "tool_calls_success_level": 25,
-            "additional_details": {},
+            "llm_output": {
+                "reason": "The tool calls were very correct that I returned a huge number!",
+                "score": 25,
+                "properties": {},
+            }
         }
 
     score = 1  # Default score for "all bad"
@@ -60,12 +62,14 @@ async def flow_side_effect(timeout, **kwargs):
             score = 3  # Mixed good and bad
 
     return {
-        "chain_of_thought": f"Evaluated {total_calls} tool calls with {total_good_calls} correct calls.",
-        "tool_calls_success_level": score,
-        "additional_details": {
-            "tool_calls_made_by_agent": total_calls,
-            "correct_tool_calls_made_by_agent": total_good_calls,
-        },
+        "llm_output": {
+            "reason": f"Evaluated {total_calls} tool calls with {total_good_calls} correct calls.",
+            "score": score,
+            "properties": {
+                "tool_calls_made_by_agent": total_calls,
+                "correct_tool_calls_made_by_agent": total_good_calls,
+            },
+        }
     }
 
 
@@ -126,13 +130,13 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
-        assert result[key] == 3.0  # Mixed good/bad gets score 3
-        assert result[f"{key}_result"] == "pass"
+        assert f"{key}_score" in result and f"{key}_result" in result and f"{key}_threshold" in result
+        assert result[f"{key}_score"] == 3.0  # Mixed good/bad gets score 3
+        assert result[f"{key}_passed"] == True
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 1 correct calls."
-        assert "details" in result
+        assert f"{key}_properties" in result
 
     def test_evaluate_tools_valid2(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -188,13 +192,13 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
-        assert result[key] == 1.0  # All bad gets score 1
-        assert result[f"{key}_result"] == "fail"
+        assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
+        assert result[f"{key}_score"] == 1.0  # All bad gets score 1
+        assert result[f"{key}_passed"] is False
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 0 correct calls."
-        assert "details" in result
+        assert f"{key}_properties" in result
 
     def test_evaluate_tools_valid3(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -250,13 +254,13 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert key in result and f"{key}_result" in result and f"{key}_threshold" in result
-        assert result[key] == 5.0  # All good gets score 5
-        assert result[f"{key}_result"] == "pass"
+        assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
+        assert result[f"{key}_score"] == 5.0  # All good gets score 5
+        assert result[f"{key}_passed"] is True
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 2 correct calls."
-        assert "details" in result
+        assert f"{key}_properties" in result
 
     def test_evaluate_tools_one_eval_fails(self, mock_model_config):
         with pytest.raises(EvaluationException) as exc_info:
@@ -293,7 +297,7 @@ class TestToolCallAccuracyEvaluator:
 
         assert "Invalid score value" in str(exc_info.value)
 
-    def test_evaluate_tools_some_not_applicable(self, mock_model_config):
+    def test_evaluate_tools_some_missing_tool_definitions(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
@@ -327,33 +331,22 @@ class TestToolCallAccuracyEvaluator:
                         }
                     },
                 },
-            },
-            {
-                "name": "buy_jacket",
-                "type": "another_built_in",  # This tool will be filtered out
-                "description": "Buy a jacket of the given type.",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "type": {
-                            "type": "string",
-                            "description": "The type of jacket to buy.",
-                        }
-                    },
-                },
-            },
+            },  # buy_jacket definition is missing
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] is None
+        assert result[f"{key}_passed"] is None
+        assert result[f"{key}_status"] == "skipped"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-        assert result["details"] == {}
+        assert (
+            result[f"{key}_reason"] == f"Not applicable: {ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE}"
+        )
+        assert result[f"{key}_properties"] is None
 
-    def test_evaluate_tools_all_not_applicable(self, mock_model_config):
+    def test_evaluate_tools_built_in_tool_definition(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
@@ -370,7 +363,7 @@ class TestToolCallAccuracyEvaluator:
         tool_definitions = [
             {
                 "name": "fetch_weather",
-                "type": "some_built_in",  # Not a 'function' type
+                "type": "some_built_in",  # Not a 'function' type but shouldn't be filtered out
                 "description": "Fetches the weather information for the specified location.",
                 "parameters": {
                     "type": "object",
@@ -387,16 +380,18 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
-        assert result[f"{key}_result"] == "pass"
+        assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
+        assert result[f"{key}_score"] == 5.0  # All good gets score 5
+        assert result[f"{key}_passed"] is True
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-        assert result["details"] == {}
+        assert f"{key}_reason" in result
+        assert result[f"{key}_reason"] == "Evaluated 1 tool calls with 1 correct calls."
+        assert f"{key}_properties" in result
 
     def test_evaluate_tools_no_tools(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
-
+        # Test with no tool calls provided
         # Test with no tool calls provided
         query = "Where is the Eiffel Tower?"
         tool_calls = []
@@ -416,15 +411,10 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
-        assert result[f"{key}_result"] == "pass"
-        assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
-        assert result["details"] == {}
+        assert "No tool calls found in response or provided tool_calls." in str(exc_info.value)
 
     def test_evaluate_bing_custom_search(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -442,13 +432,21 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "bing_custom_search",
+                "description": "Performs a Bing Custom Search query.",
+                "parameters": {
+                    "requesturl": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 5.0
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_bing_grounding(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -466,13 +464,21 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "bing_grounding",
+                "description": "Performs a Bing grounding search.",
+                "parameters": {
+                    "requesturl": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 5.0
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_file_search(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -488,13 +494,21 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"ranking_options": {"ranker": "default_2024_08_21", "score_threshold": 0.0}},
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "file_search",
+                "description": "Searches files.",
+                "parameters": {
+                    "ranking_options": "object",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 5.0
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_azure_ai_search(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -510,13 +524,21 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"input": "3-bedroom apartment with garage"},
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "azure_ai_search",
+                "description": "Performs Azure AI Search.",
+                "parameters": {
+                    "input": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 5.0
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_fabric_dataagent(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -532,13 +554,21 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"input": "unusual patterns in financial data"},
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "fabric_dataagent",
+                "description": "Fabric Data Agent.",
+                "parameters": {
+                    "input": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 5.0
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_code_interpreter(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -556,13 +586,21 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "code_interpreter",
+                "description": "Executes Python code.",
+                "parameters": {
+                    "input": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 5.0
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_sharepoint_grounding(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -578,13 +616,21 @@ class TestToolCallAccuracyEvaluator:
                 "arguments": {"input": "monthly saving rules"},
             },
         ]
-        tool_definitions = []
+        tool_definitions = [
+            {
+                "name": "sharepoint_grounding",
+                "description": "Searches SharePoint for grounding.",
+                "parameters": {
+                    "input": "string",
+                },
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 5.0
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_open_api(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -597,13 +643,130 @@ class TestToolCallAccuracyEvaluator:
                 "type": "tool_call",
                 "tool_call_id": "call_builtin_good",
                 "name": "openapi",
-                "arguments": {"name": "exchange_rates_getExchangeRates", "arguments": '{"base":"GBP","symbols":"EUR"}'},
+                "arguments": {
+                    "name": "exchange_rates_getExchangeRates",
+                    "arguments": '{"base":"GBP","symbols":"EUR"}',
+                },
             },
         ]
         tool_definitions = []
+
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Tool definitions input is required but not provided." in str(exc_info.value)
+
+    def test_evaluate_open_api_with_tool_definition(self, mock_model_config):
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        # Test OpenAPI function call for exchange rates - converter format
+        query = "What is the exchange rate from GBP to EUR?"
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_builtin_good",
+                "name": "get_countries_LookupCountryByCurrency",
+                "arguments": {"currency": "GBP"},
+            },
+        ]
+        tool_definitions = [
+            {
+                "name": "get_countries",
+                "type": "openapi",
+                "description": "Retrieve a list of countries",
+                "spec": {
+                    "openapi": "3.1.0",
+                    "info": {
+                        "title": "RestCountries.NET API",
+                        "description": "Web API version 3.1 for managing country items, based on previous implementations from restcountries.eu and restcountries.com.",
+                        "version": "v3.1",
+                    },
+                    "servers": [{"url": "https://restcountries.net"}],
+                    "auth": [],
+                    "paths": {
+                        "/v3.1/currency": {
+                            "get": {
+                                "description": "Search by currency.",
+                                "operationId": "LookupCountryByCurrency",
+                                "parameters": [
+                                    {
+                                        "name": "currency",
+                                        "in": "query",
+                                        "description": "The currency to search for.",
+                                        "required": "true",
+                                        "schema": {"type": "string"},
+                                    }
+                                ],
+                                "responses": {
+                                    "200": {
+                                        "description": "Success",
+                                        "content": {"text/plain": {"schema": {"type": "string"}}},
+                                    }
+                                },
+                            }
+                        }
+                    },
+                    "components": {"schemes": {}},
+                },
+                "auth": {"type": "anonymous", "security_scheme": {}},
+                "functions": [
+                    {
+                        "name": "get_countries_LookupCountryByCurrency",
+                        "type": "function",
+                        "description": "Search by currency.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "currency": {"type": "string", "description": "The currency to search for."}
+                            },
+                            "required": ["currency"],
+                        },
+                    }
+                ],
+            }
+        ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_score"] == 5.0
+        assert result[f"{key}_passed"] is True
+
+    def test_evaluate_missing_query(self, mock_model_config):
+        """Test that evaluator raises exception when query is None or missing."""
+        evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
+        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+
+        tool_calls = [
+            {
+                "type": "tool_call",
+                "tool_call_id": "call_good",
+                "name": "get_weather",
+                "arguments": {"location": "Paris"},
+            }
+        ]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string", "description": "The location"}},
+                    "required": ["location"],
+                },
+            }
+        ]
+
+        # Test with query=None
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(query=None, tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)
+
+        # Test with query not provided at all
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator(tool_calls=tool_calls, tool_definitions=tool_definitions)
+
+        assert "Query is a required input" in str(exc_info.value)

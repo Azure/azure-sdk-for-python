@@ -19,6 +19,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+from .._query_param_policy import QueryParamPolicy
 from .._generated.aio import AzureAppConfigurationClient as AzureAppConfigurationClientGenerated
 from .._generated.models import (
     SnapshotStatus,
@@ -31,15 +32,18 @@ from .._generated.models import (
 from .._models import (
     ConfigurationSetting,
     ConfigurationSettingPropertiesPagedAsync,
+    AsyncConfigurationSettingPaged,
     ConfigurationSettingsFilter,
     ConfigurationSnapshot,
     ConfigurationSettingLabel,
 )
+from .._audience import get_audience, DEFAULT_SCOPE_SUFFIX
 from .._utils import (
     get_key_filter,
     get_label_filter,
     parse_connection_string,
 )
+from .._audience_error_handling_policy import AudienceErrorHandlingPolicy
 
 
 class AzureAppConfigurationClient:
@@ -51,6 +55,10 @@ class AzureAppConfigurationClient:
     :keyword api_version: Api Version. Default value is "2023-11-01". Note that overriding this default
         value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword audience: The audience to use for authentication with Microsoft Entra. Defaults to the public Azure App
+        Configuration audience. See the supported audience list at https://aka.ms/appconfig/client-token-audience
+    :paramtype audience: str
+
 
     This is the async version of :class:`~azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -67,8 +75,19 @@ class AzureAppConfigurationClient:
         if not credential:
             raise ValueError("Missing credential")
 
-        credential_scopes = [f"{base_url.strip('/')}/.default"]
         self._sync_token_policy = AsyncSyncTokenPolicy()
+        self._query_param_policy = QueryParamPolicy()
+
+        audience = kwargs.pop("audience", None)
+
+        audience_policy = AudienceErrorHandlingPolicy(bool(audience))
+        per_call_policies = [self._query_param_policy, self._sync_token_policy, audience_policy]
+
+        if audience is None:
+            audience = get_audience(base_url)
+
+        # Ensure all scopes end with /.default and strip any trailing slashes before adding suffix
+        kwargs["credential_scopes"] = [audience + DEFAULT_SCOPE_SUFFIX]
 
         if isinstance(credential, AzureKeyCredential):
             id_credential = kwargs.pop("id_credential")
@@ -80,7 +99,9 @@ class AzureAppConfigurationClient:
         elif hasattr(credential, "get_token"):  # AsyncFakeCredential is not an instance of AsyncTokenCredential
             kwargs.update(
                 {
-                    "authentication_policy": AsyncBearerTokenCredentialPolicy(credential, *credential_scopes, **kwargs),
+                    "authentication_policy": AsyncBearerTokenCredentialPolicy(
+                        credential, *kwargs["credential_scopes"], **kwargs
+                    ),
                 }
             )
         else:
@@ -89,7 +110,7 @@ class AzureAppConfigurationClient:
             )
         # mypy doesn't compare the credential type hint with the API surface in patch.py
         self._impl = AzureAppConfigurationClientGenerated(
-            base_url, credential, per_call_policies=self._sync_token_policy, **kwargs  # type: ignore[arg-type]
+            base_url, credential, per_call_policies=per_call_policies, **kwargs  # type: ignore[arg-type]
         )
 
     @classmethod
@@ -148,15 +169,15 @@ class AzureAppConfigurationClient:
         accept_datetime: Optional[Union[datetime, str]] = None,
         fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
         **kwargs: Any,
-    ) -> AsyncItemPaged[ConfigurationSetting]:
+    ) -> AsyncConfigurationSettingPaged:
         """List the configuration settings stored in the configuration service, optionally filtered by
         key, label, tags and accept_datetime. For more information about supported filters, see
         https://learn.microsoft.com/azure/azure-app-configuration/rest-api-key-value?pivots=v23-11#supported-filters.
 
-        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
+        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard at the end
             of the filter.
         :paramtype key_filter: str or None
-        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard at the end
             of the filter.
         :paramtype label_filter: str or None
         :keyword tags_filter: Filter results based on their tags.
@@ -167,7 +188,7 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
+        :rtype: ~azure.appconfiguration.AsyncConfigurationSettingPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
             :class:`~azure.core.exceptions.ClientAuthenticationError`
 
@@ -197,7 +218,7 @@ class AzureAppConfigurationClient:
         snapshot_name: str,
         fields: Optional[List[Union[str, ConfigurationSettingFields]]] = None,
         **kwargs: Any,
-    ) -> AsyncItemPaged[ConfigurationSetting]:
+    ) -> AsyncConfigurationSettingPaged:
         """List the configuration settings stored under a snapshot in the configuration service, optionally filtered by
         accept_datetime and fields to present in return.
 
@@ -206,12 +227,12 @@ class AzureAppConfigurationClient:
             Available fields see :class:`~azure.appconfiguration.ConfigurationSettingFields`.
         :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
         :return: An async iterator of :class:`~azure.appconfiguration.ConfigurationSetting`
-        :rtype: ~azure.core.paging.AsyncItemPaged[~azure.appconfiguration.ConfigurationSetting]
+        :rtype: ~azure.appconfiguration.AsyncConfigurationSettingPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
 
     @distributed_trace
-    def list_configuration_settings(self, *args: Optional[str], **kwargs: Any) -> AsyncItemPaged[ConfigurationSetting]:
+    def list_configuration_settings(self, *args: Optional[str], **kwargs: Any) -> AsyncConfigurationSettingPaged:
         accept_datetime = kwargs.pop("accept_datetime", None)
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
@@ -222,24 +243,78 @@ class AzureAppConfigurationClient:
         snapshot_name = kwargs.pop("snapshot_name", None)
 
         if snapshot_name is not None:
-            return self._impl.get_key_values(  # type: ignore[return-value]
+            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
+            return AsyncConfigurationSettingPaged(
+                command,
                 snapshot=snapshot_name,
                 accept_datetime=accept_datetime,
                 select=select,
-                cls=lambda objs: [ConfigurationSetting._from_generated(x) for x in objs],
-                **kwargs,
+                page_iterator_class=ConfigurationSettingPropertiesPagedAsync,
             )
         tags = kwargs.pop("tags_filter", None)
         key_filter, kwargs = get_key_filter(*args, **kwargs)
         label_filter, kwargs = get_label_filter(*args, **kwargs)
-        command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
-        return AsyncItemPaged(
+        command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
+        return AsyncConfigurationSettingPaged(
             command,
             key=key_filter,
             label=label_filter,
             accept_datetime=accept_datetime,
             select=select,
             tags=tags,
+            page_iterator_class=ConfigurationSettingPropertiesPagedAsync,
+        )
+
+    @distributed_trace
+    def check_configuration_settings(
+        self,
+        *,
+        key_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        tags_filter: Optional[List[str]] = None,
+        accept_datetime: Optional[Union[datetime, str]] = None,
+        **kwargs: Any,
+    ) -> AsyncConfigurationSettingPaged:
+        """Check configuration settings using a HEAD request, returning only headers without the
+        response body. This is useful for efficiently checking if settings have changed by comparing ETags.
+
+        :keyword key_filter: Filter results based on their keys. '*' can be used as wildcard at the end
+            of the filter.
+        :paramtype key_filter: str or None
+        :keyword label_filter: Filter results based on their label. '*' can be used as wildcard at the end
+            of the filter.
+        :paramtype label_filter: str or None
+        :keyword tags_filter: Filter results based on their tags.
+        :paramtype tags_filter: list[str] or None
+        :keyword accept_datetime: Retrieve ConfigurationSetting that existed at this datetime
+        :paramtype accept_datetime: ~datetime.datetime or str or None
+        :paramtype fields: list[str] or list[~azure.appconfiguration.ConfigurationSettingFields] or None
+        :return: An async pager intended for :meth:`by_page` iteration to inspect page headers (for example, ``etag``)
+            and detect changed pages. This operation issues HEAD requests and does not return full
+            :class:`~azure.appconfiguration.ConfigurationSetting` bodies when iterated item by item.
+        :rtype: ~azure.appconfiguration.AsyncConfigurationSettingPaged
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`, \
+            :class:`~azure.core.exceptions.ClientAuthenticationError`
+
+        Example
+
+        .. code-block:: python
+
+            # in async function
+            items = async_client.check_configuration_settings(key_filter="my_key*")
+            async for page in items.by_page():
+                print(page.etag)  # etag for this page
+        """
+        if isinstance(accept_datetime, datetime):
+            accept_datetime = str(accept_datetime)
+
+        command = functools.partial(self._impl.check_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
+        return AsyncConfigurationSettingPaged(
+            command,
+            key=key_filter,
+            label=label_filter,
+            accept_datetime=accept_datetime,
+            tags=tags_filter,
             page_iterator_class=ConfigurationSettingPropertiesPagedAsync,
         )
 
@@ -462,10 +537,10 @@ class AzureAppConfigurationClient:
         For more information about supported filters, see
         https://learn.microsoft.com/azure/azure-app-configuration/rest-api-revisions?pivots=v23-11#supported-filters.
 
-        :param key_filter: Filter results based on their keys. '*' can be used as wildcard in the beginning or end
+        :param key_filter: Filter results based on their keys. '*' can be used as wildcard at the end
             of the filter.
         :type key_filter: str or None
-        :param label_filter: Filter results based on their label. '*' can be used as wildcard in the beginning or end
+        :param label_filter: Filter results based on their label. '*' can be used as wildcard at the end
             of the filter.
         :type label_filter: str or None
         :keyword tags_filter: Filter results based on their tags.
@@ -615,6 +690,7 @@ class AzureAppConfigurationClient:
         composition_type: Optional[Union[str, SnapshotComposition]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
         **kwargs: Any,
     ) -> AsyncLROPoller[ConfigurationSnapshot]:
         """Create a snapshot of the configuration settings.
@@ -636,13 +712,19 @@ class AzureAppConfigurationClient:
         :paramtype retention_period: int or None
         :keyword tags: The tags of the configuration snapshot.
         :paramtype tags: dict[str, str] or None
+        :keyword description: The description of the configuration snapshot.
+        :paramtype description: str or None
         :return: A poller for create configuration snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         snapshot = ConfigurationSnapshot(
-            filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
+            filters=filters,
+            composition_type=composition_type,
+            retention_period=retention_period,
+            tags=tags,
+            description=description,
         )
         return cast(
             AsyncLROPoller[ConfigurationSnapshot],

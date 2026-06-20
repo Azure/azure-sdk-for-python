@@ -35,6 +35,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-03-01-preview/SitesBySubscription_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2025-06-01/SitesBySubscription_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

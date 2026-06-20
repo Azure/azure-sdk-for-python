@@ -1,5 +1,7 @@
 # AZURE SDK FOR PYTHON - COPILOT INSTRUCTIONS
 
+> **Note**: For general AI agent guidelines and repository overview, see [AGENTS.md](https://github.com/Azure/azure-sdk-for-python/blob/main/AGENTS.md) at the repository root.
+
 ---
 
 ## CORE PRINCIPLES
@@ -13,179 +15,12 @@
 - Use this as the authoritative source for SDK development guidance
 
 ### RULE 3: VERIFY ENVIRONMENT FIRST
-**BEFORE any commands:**
-1. Get path to azure-sdk-for-python repo root, and path to tox.ini file
-2. Use `verify_setup` tool from azure-sdk-python-mcp server
-3. Ensure Python virtual environment is active
-
-**Virtual Environment Setup:**
-```bash
-# Create new environment
-python -m venv <env_name>
-
-# Activate environment
-# Linux/macOS:
-source <env_name>/bin/activate
-# Windows:
-<env_name>\Scripts\activate
-```
-
----
-
-## TYPESPEC SDK GENERATION - COMPLETE WORKFLOW
-
-### PHASE 1: CONTEXT ASSESSMENT
-
-**ACTION:** Determine TypeSpec project location
-```
-IF TypeSpec project paths exist in context:
-    USE local paths to generate SDK from tspconfig.yaml
-ELSE:
-    ASK user for tspconfig.yaml file path
-```
-
-### PHASE 2: PREREQUISITES CHECK
-
 **REQUIRED CONDITIONS:**
-1. GitHub CLI authenticated: `gh auth login`
-2. User on feature branch (NOT main)
-   ```bash
-   git checkout -b <branch_name>
-   ```
-
-### PHASE 3: TSP-CLIENT RULES
-
-**CRITICAL RULES:**
-- **LOCAL REPO:** Do NOT grab commit hash
-- **DIRECTORIES:** Let commands auto-create directories
-- **PACKAGE GENERATION:** Find tsp-location.yaml in azure-sdk-for-python repo
-- **URL REFERENCES:** Use commit hash (NOT branch name) for tspconfig.yaml URLs
-
-**Get latest commit hash:**
-```bash
-curl -s "https://api.github.com/repos/Azure/azure-rest-api-specs/commits?path=<path_to_tspconfig.yaml>&per_page=1"
-```
-
-**DEPENDENCIES:** Verify installation of: node, python, tox
-
----
-
-## EXECUTION SEQUENCE - 7 MANDATORY STEPS
-
-**ESTIMATED TOTAL TIME: 10-15 minutes**
-- SDK Generation: ~2 minutes
-- Static Validation: ~3-5 minutes
-- Documentation & Commit: ~2-4 minutes
-
-**ALWAYS inform users of time expectations before starting any long-running operations.**
-
-### STEP 1: ENVIRONMENT VERIFICATION
-```
-ACTION: Run verify_setup mcp tool
-IF missing dependencies:
-    STOP and install missing dependencies
-    THEN proceed to Step 2
-```
-
-### STEP 2: SDK GENERATION
-```
-ACTION: Use azure-sdk-python-mcp sdk generation server tools (init for new packages, update for existing packages)
-IF commands fail:
-    ANALYZE error messages
-    DIRECT user to fix TypeSpec errors in source repo
-```
-
-### STEP 3: STATIC VALIDATION (SEQUENTIAL)
-```
-FOR EACH validation step:
-    RUN validation (tox mcp tool)
-    IF errors/warnings found:
-        FIX issues
-        RERUN same step
-    ONLY proceed to next step when current step passes
-```
-
-**Validation Commands:**
-```bash
-# Step 3a: Pylint
-tox -e pylint -c [path to tox.ini] --root .
-
-# Step 3b: MyPy  
-tox -e mypy -c [path to tox.ini] --root .
-
-# Step 3c: Pyright
-tox -e pyright -c [path to tox.ini] --root .
-
-# Step 3d: Verifytypes
-tox -e verifytypes -c [path to tox.ini] --root .
-
-# Step 3e: Sphinx
-tox -e sphinx -c [path to tox.ini] --root .
-
-# Step 3f: Mindependency
-tox -e mindependency -c [path to tox.ini] --root .
-
-# Step 3g: Bandit
-tox -e bandit -c [path to tox.ini] --root .
-
-# Step 3h: Black
-tox -e black -c [path to tox.ini] --root .
-
-# Step 3i: Samples
-tox -e samples -c [path to tox.ini] --root .
-
-# Step 3j: Breaking
-tox -e breaking -c [path to tox.ini] --root .
-```
-
-**REQUIREMENTS:**
-- Provide summary after each validation step
-- Edit ONLY files with validation errors/warnings
-- Fix each issue before proceeding
-
-### STEP 4: DOCUMENTATION UPDATE
-```
-REQUIRED ACTIONS:
-1. CREATE/UPDATE CHANGELOG.md with changes
-2. VERIFY package version matches API spec version
-3. IF version incorrect: UPDATE _version.py AND CHANGELOG
-4. SET CHANGELOG entry date to TODAY
-```
-
-### STEP 5: COMMIT AND PUSH
-```
-ACTION: Show changed files (ignore .github, .vscode)
-IF user confirms:
-    git add <changed_files>
-    git commit -m "<commit_message>"
-    git push -u origin <branch_name>
-IF authentication fails:
-    PROMPT: gh auth login
-IF user rejects:
-    GUIDE to fix issues and revalidate
-```
-
-### STEP 6: PULL REQUEST MANAGEMENT
-```
-CHECK: Does PR exist for current branch?
-IF PR exists:
-    SHOW PR details
-IF NO PR exists:
-    VERIFY branch != "main"
-    PUSH changes to remote
-    GENERATE PR title and description
-    CREATE PR in DRAFT mode
-    RETURN PR link
-ALWAYS: Display PR summary with status, checks, action items
-```
-
-### STEP 7: HANDOFF
-```
-FINAL ACTIONS:
-1. RETURN PR URL for review
-2. PROMPT user with exact text:
-   "Use the azure-rest-api-specs agent to handle the rest of the process and provide it the pull request."
-```
+- To use Azure MCP tool calls, users must have PowerShell installed. Provide [PowerShell installation instructions](https://learn.microsoft.com/powershell/scripting/install/installing-powershell) if not installed, and recommend restarting the IDE to start the MCP server.
+- When using Copilot from Visual Studio or VS Code (not applicable when using Coding Agent on Github.com):
+  - **Always run** the [`azsdk_verify_setup`](../eng/common/instructions/azsdk-tools/verify-setup.instructions.md) tool first to validate the user's development environment for SDK MCP tools.
+  - **Do not proceed** with any other tool execution until this step is complete.
+  - **Skip this check only** for queries that do not require tool execution.
 
 ---
 
@@ -195,14 +30,12 @@ FINAL ACTIONS:
 
 **REFERENCE DOCUMENTATION:**
 - [Official pylint guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
-- [Tox formatting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool usage guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 
 **COMMAND:**
 ```bash
-tox -e pylint --c <path_to_tox.ini> --root .
+azpysdk pylint .
 ```
-
-**DEFAULT PATH:** `azure-sdk-for-python/eng/tox/tox.ini`
 
 ### FIXING PYLINT WARNINGS
 
@@ -231,13 +64,13 @@ tox -e pylint --c <path_to_tox.ini> --root .
 ### RUNNING AND FIXING MYPY
 
 **REFERENCE DOCUMENTATION:**
-- [Tox guidance](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool usage guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 - [MyPy fixing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
 
 **REQUIREMENTS:**
-- Use Python 3.9 compatible environment
+- Use Python 3.10 compatible environment
 - Follow official fixing guidelines
-- Use tox mcp tool for running MyPy
+- Run `azpysdk mypy .` from the package directory
 
 ---
 
@@ -279,22 +112,58 @@ This library is failing two release blocking checks - Mypy and Tests - CI. The l
 
 ---
 
+## Local SDK Generation and Package Lifecycle (TypeSpec)
+
+### AUTHORITATIVE REFERENCE
+For all TypeSpec-based SDK workflows (generation, building, validation, testing, versioning, and release), follow #file:skills/azsdk-common-generate-sdk-locally/SKILL.md
+
+### DEFAULT BEHAVIORS
+- **Repository:** Use the current workspace as the local SDK repository unless the user specifies a different path.
+- **Configuration:** Identify `tsp-location.yaml` from files open in the editor. If unclear, ask the user.
+
+### PYTHON-SPECIFIC RULES
+- **Skip build step:** Python packages do not require compilation. After generation, proceed directly to validation and tests.
+
+### REQUIRED CONFIRMATIONS
+Ask the user for clarification if repository path or configuration file is ambiguous.
+
+---
+
+## MGMT SDK Code Review Rules
+
+### SCOPE
+These rules apply to management-plane SDK packages located at `sdk/*/azure-mgmt-*/`.
+
+### REVIEW EXCLUSIONS
+- **Skip** the `generated_samples/` and `generated_tests/` folders entirely — do not review generated sample or test code.
+- **Skip** source code under `azure/mgmt/**/` **except** `_client.py` — only review `_client.py` among the generated source files.
+
+### VERSION CONSISTENCY
+- The version string in `_version.py` **must** match the latest version listed in `CHANGELOG.md`.
+
+### CHANGELOG DATE
+- If the release date of the latest version in `CHANGELOG.md` is **more than 3 weeks in the future** from the current date, remind the author to verify and update the date.
+
+### PYPROJECT.TOML STABILITY FLAGS
+- **Stable version** (version string does **not** contain `b`):
+  - `is_stable` in `pyproject.toml` must be `true`
+  - `classifiers` must include `"Development Status :: 5 - Production/Stable"`
+- **Preview version** (version string contains `b`):
+  - `is_stable` in `pyproject.toml` must be `false`
+  - `classifiers` must include `"Development Status :: 4 - Beta"`
+
+### CLIENT SIGNATURE
+- The `__init__` method of the client class in `_client.py` must include the parameters `credential`, `subscription_id`, and `base_url` **in that order**. Default values are not checked.
+- If `subscription_id` is **not** present in the client's `__init__` signature, `pyproject.toml` must contain `no_sub = true`. If it does not, hint the user to add `no_sub = true` in `pyproject.toml` and regenerate the SDK.
+
+### CLIENT NAME CONSISTENCY
+- The client class name in `_client.py`, the client name referenced in `README.md`, and the `title` value in `pyproject.toml` must all be the same.
+
+### README CODE SNIPPETS
+- Code snippets in `README.md` must follow the real client class signatures and usage patterns. Verify that sample code matches the actual client API.
+
+---
+
 ## SDK release
 
-There are two tools to help with SDK releases:
-- Check SDK release readiness
-- Release SDK
-
-### Check SDK Release Readiness
-Run `CheckPackageReleaseReadiness` to verify if the package is ready for release. This tool checks:
-- API review status
-- Change log status
-- Package name approval(If package is new and releasing a preview version)
-- Release date is set in release tracker
-
-### Release SDK
-Run `ReleasePackage` to release the package. This tool requires package name and language as inputs. It will:
-- Check if the package is ready for release
-- Identify the release pipeline
-- Trigger the release pipeline.
-User needs to approve the release stage in the pipeline after it is triggered.
+For detailed workflow instructions, see [SDK Release](skills/azsdk-common-sdk-release/SKILL.md).

@@ -918,6 +918,36 @@ def test_within_dac_error(get_token_method):
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_within_dac_refresh_token_error(get_token_method):
+    """When within DAC context and refresh token fails, should raise CredentialUnavailableError"""
+
+    upn = "test@example.com"
+    refresh_token = "invalid-refresh-token"
+    scope = "scope"
+    account = get_account_event(uid="uid_a", utid="utid", username=upn, refresh_token=refresh_token)
+    cache = populated_cache(account)
+
+    def send(request, **kwargs):
+        # Mock a token request that fails with invalid_grant (401/400 error)
+        if "refresh_token" in (request.data or {}):
+            return mock_response(
+                status_code=400, json_payload={"error": "invalid_grant", "error_description": "Refresh token expired"}
+            )
+        # Allow discovery requests to succeed
+        return get_discovery_response("https://localhost/tenant")
+
+    transport = Mock(send=send)
+    credential = SharedTokenCacheCredential(_cache=cache, transport=transport, username=upn)
+
+    within_dac.set(True)
+    try:
+        with pytest.raises(CredentialUnavailableError):
+            getattr(credential, get_token_method)(scope)
+    finally:
+        within_dac.set(False)
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
 def test_claims_challenge(get_token_method):
     """get_token should pass any claims challenge to MSAL token acquisition APIs"""
 
@@ -942,6 +972,71 @@ def test_claims_challenge(get_token_method):
     assert msal_app.acquire_token_silent_with_error.call_count == 1
     args, kwargs = msal_app.acquire_token_silent_with_error.call_args
     assert kwargs["claims_challenge"] == expected_claims
+
+
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+def test_claims_skips_cached_access_token(get_token_method):
+    """When claims are provided, the credential should skip cached access tokens and request a new one"""
+
+    scope = "scope"
+    expected_claims = '{"access_token": {"nbf": {"essential": true, "value": "1234567890"}}}'
+    cached_access_token = "cached-access-token"
+    first_refresh_token = "first-refresh-token"
+    second_refresh_token = "second-refresh-token"
+
+    username = "user@example.com"
+    uid = "uid"
+    utid = "utid"
+
+    # Set up cache with an access token and refresh token
+    account = get_account_event(username=username, uid=uid, utid=utid, refresh_token=first_refresh_token)
+    cache = TokenCache()
+    cache.add(account)
+
+    # First request without claims - this will cache an access token
+    transport = validating_transport(
+        requests=[Request(required_data={"refresh_token": first_refresh_token})],
+        responses=[
+            mock_response(
+                json_payload=build_aad_response(
+                    uid=uid,
+                    utid=utid,
+                    access_token=cached_access_token,
+                    refresh_token=second_refresh_token,
+                    id_token=build_id_token(
+                        aud=DEVELOPER_SIGN_ON_CLIENT_ID, object_id=uid, tenant_id=utid, username=username
+                    ),
+                )
+            )
+        ],
+    )
+    credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
+    token = getattr(credential, get_token_method)(scope)
+    assert token.token == cached_access_token
+
+    # Verify the access token is now cached - second request without claims should use it
+    credential = SharedTokenCacheCredential(
+        _cache=cache, transport=Mock(send=Mock(side_effect=Exception("should use cached token")))
+    )
+    token = getattr(credential, get_token_method)(scope)
+    assert token.token == cached_access_token
+
+    # Now request with claims - should bypass the cached access token and use refresh token
+    new_token_with_claims = "new-access-token-with-claims"
+    transport = validating_transport(
+        requests=[Request(required_data={"refresh_token": second_refresh_token, "claims": expected_claims})],
+        responses=[mock_response(json_payload=build_aad_response(access_token=new_token_with_claims))],
+    )
+    credential = SharedTokenCacheCredential(_cache=cache, transport=transport)
+
+    kwargs = {"claims": expected_claims}
+    if get_token_method == "get_token_info":
+        kwargs = {"options": kwargs}
+    token = getattr(credential, get_token_method)(scope, **kwargs)
+
+    # Should receive the new token with claims, not the cached one
+    assert token.token == new_token_with_claims
+    assert token.token != cached_access_token
 
 
 @pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)

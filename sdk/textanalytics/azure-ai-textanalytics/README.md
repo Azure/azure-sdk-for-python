@@ -22,6 +22,10 @@ The Azure Cognitive Service for Language is a cloud-based service that provides 
 | [Product documentation][language_product_documentation]
 | [Samples][ta_samples]
 
+## _Disclaimer_
+
+_This package supports the following service API versions: 3.0, 3.1, 2022-05-01 and 2023-04-01 (default). Service API version 2025-05-15-preview and later are supported in package `azure-ai-textanalytics` 6.0.0b1+. Please refer this [source code][new_source_code] to check the new location of `azure-ai-textanalytics`._
+
 ## Getting started
 
 ### Prerequisites
@@ -839,6 +843,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 
 <!-- LINKS -->
 
+[new_source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-textanalytics/azure/ai/textanalytics
 [source_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics
 [ta_pypi]: https://pypi.org/project/azure-ai-textanalytics/
 [ta_ref_docs]: https://aka.ms/azsdk-python-textanalytics-ref-docs

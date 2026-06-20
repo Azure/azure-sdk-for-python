@@ -126,6 +126,105 @@ async def query_items_with_continuation_token(container):
     print('The single items in the second page are {}'.format(second_page_items_with_continuation[0].get("id")))
 
 
+async def query_items_single_partition_with_pagination(container):
+    print('\n1.5a Querying with Pagination - Demonstrating max_item_count and Counting Results\n')
+    
+    # max_item_count controls how many items are returned per page, not the total number of results
+    # This is useful for controlling memory usage and processing items in batches
+    max_items_per_page = 5
+
+    # Specify a partition key to query within a single partition
+    partition_key_value = "SalesOrder1"  # Or any partition key value you want
+    
+    query_iterable = container.query_items(
+        query="SELECT * FROM c",
+        partition_key=partition_key_value,  # Query single partition
+        max_item_count=max_items_per_page
+    )
+    
+    # Iterate through pages and count both pages and total items
+    total_item_count = 0
+    page_count = 0
+    
+    item_pages = query_iterable.by_page()
+    async for page in item_pages:
+        page_count += 1
+        items_in_page = [item async for item in page]
+        items_in_current_page = len(items_in_page)
+        total_item_count += items_in_current_page
+        
+        print(f'Page {page_count}: Retrieved {items_in_current_page} items (max per page: {max_items_per_page})')
+        
+        # Process items in this page
+        for item in items_in_page:
+            # Do something with each item
+            pass
+    
+    print(f'\nTotal pages processed: {page_count}')
+    print(f'Total items retrieved: {total_item_count}')
+    print(f'Note: max_item_count limits items PER PAGE, not total results\n')
+
+
+async def query_items_cross_partition_with_pagination(container):
+    print('\n1.5b Cross-Partition Query with Pagination\n')
+    
+    # When querying across partitions, max_item_count still controls page size
+    # but the results are gathered from multiple partitions
+    max_items_per_page = 3
+    
+    query_iterable = container.query_items(
+        query="SELECT * FROM c ORDER BY c._ts",  # Order by timestamp across all partitions
+        max_item_count=max_items_per_page
+    )
+    
+    total_item_count = 0
+    page_count = 0
+    
+    item_pages = query_iterable.by_page()
+    async for page in item_pages:
+        page_count += 1
+        items_in_page = [item async for item in page]
+        total_item_count += len(items_in_page)
+        
+        print(f'Page {page_count}: {len(items_in_page)} items from across partitions')
+    
+    print(f'\nCross-partition query completed:')
+    print(f'  - Pages: {page_count}')
+    print(f'  - Total items: {total_item_count}')
+
+async def query_items_with_feed_ranges_and_pagination(container):
+    print('\n1.5c Querying with Feed Range and Pagination\n')
+    # We again use max_item_count to control page size
+    max_items_per_page = 3
+
+    # First we fetch the relevant feed ranges for the container - feed ranges represent logical partitions
+    # or ranges of partition key values, and can be used to query as well
+    feed_ranges = container.read_feed_ranges()
+
+    # For this example, we will just use the first feed range
+    feed_ranges_list = [feed_range async for feed_range in feed_ranges]
+    query_iterable = container.query_items(
+        query="SELECT * FROM c",
+        feed_range=feed_ranges_list[0],  # Query specific feed range
+        max_item_count=max_items_per_page
+    )
+
+    # Iterate through pages and count both pages and total items
+    total_item_count = 0
+    page_count = 0
+
+    item_pages = query_iterable.by_page()
+    async for page in item_pages:
+        page_count += 1
+        items_in_page = [item async for item in page]
+        total_item_count += len(items_in_page)
+
+        print(f'Page {page_count}: {len(items_in_page)} items from across partitions')
+
+    print(f'\nCross-partition query completed:')
+    print(f'  - Pages: {page_count}')
+    print(f'  - Total items: {total_item_count}')
+
 async def replace_item(container, doc_id):
     print('\n1.6 Replace an Item\n')
 
@@ -546,6 +645,9 @@ async def run_sample():
             await read_items(container)
             await query_items(container, 'SalesOrder1')
             await query_items_with_continuation_token(container)
+            await query_items_with_feed_ranges_and_pagination(container)
+            await query_items_single_partition_with_pagination(container)
+            await query_items_cross_partition_with_pagination(container)
             await replace_item(container, 'SalesOrder1')
             await replace_item_using_etags(container, 'SalesOrder1')
             await upsert_item(container, 'SalesOrder1')

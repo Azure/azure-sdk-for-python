@@ -29,6 +29,13 @@ extends:
   parameters:
     ServiceDirectory: planetarycomputer
     TestProxy: true
+    MatrixConfigs:
+      - Name: planetarycomputer_ci_matrix
+        Path: sdk/planetarycomputer/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
     Artifacts:
     - name: azure-mgmt-planetarycomputer
       safeName: azuremgmtplanetarycomputer
+    - name: azure-planetarycomputer
+      safeName: azureplanetarycomputer

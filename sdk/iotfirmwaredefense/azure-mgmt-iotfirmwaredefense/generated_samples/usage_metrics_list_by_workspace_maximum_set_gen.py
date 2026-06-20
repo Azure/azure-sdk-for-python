@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-04-01-preview/UsageMetrics_ListByWorkspace_MaximumSet_Gen.json
+# x-ms-original-file: 2025-08-02/UsageMetrics_ListByWorkspace_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

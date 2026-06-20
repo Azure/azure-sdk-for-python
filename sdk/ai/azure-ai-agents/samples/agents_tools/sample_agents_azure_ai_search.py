@@ -11,7 +11,7 @@ DESCRIPTION:
     Azure AI Search tool from the Azure agents service using a synchronous client.
 
 PREREQUISITES:
-    You will need an Azure AI Search Resource.
+    You will need an Azure AI Search Resource connected to your Foundry project.
     If you already have one, you must create an agent that can use an existing Azure AI Search index:
     https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search
 
@@ -23,15 +23,13 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects azure-ai-projects azure-identity
+    pip install azure-ai-projects azure-ai-agents azure-identity
 
     Set these environment variables with your own values:
     1) PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
                           page of your Azure AI Foundry portal.
     2) MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Azure AI Foundry project.
-    3) AI_SEARCH_CONNECTION_NAME - The connection name of the AI Search connection to your Foundry project,
-       as found under the "Name" column in the "Connected Resources" tab in your Azure AI Foundry project.
 """
 
 import os
@@ -48,7 +46,6 @@ with AIProjectClient(
 
     # [START create_agent_with_azure_ai_search_tool]
     conn_id = project_client.connections.get_default(ConnectionType.AZURE_AI_SEARCH).id
-
     print(conn_id)
 
     # Initialize agent AI search tool and add the search index connection id
@@ -60,10 +57,7 @@ with AIProjectClient(
         filter="",
     )
 
-    # Create agent with AI search tool and process agent run
-    agents_client = project_client.agents
-
-    agent = agents_client.create_agent(
+    agent = project_client.agents.create_agent(
         model=os.environ["MODEL_DEPLOYMENT_NAME"],
         name="my-agent",
         instructions="You are a helpful agent",
@@ -74,11 +68,11 @@ with AIProjectClient(
     print(f"Created agent, ID: {agent.id}")
 
     # Create thread for communication
-    thread = agents_client.threads.create()
+    thread = project_client.agents.threads.create()
     print(f"Created thread, ID: {thread.id}")
 
     # Create message to thread
-    message = agents_client.messages.create(
+    message = project_client.agents.messages.create(
         thread_id=thread.id,
         role="user",
         content="What is the temperature rating of the cozynights sleeping bag?",
@@ -86,14 +80,14 @@ with AIProjectClient(
     print(f"Created message, ID: {message.id}")
 
     # Create and process agent run in thread with tools
-    run = agents_client.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
+    run = project_client.agents.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     print(f"Run finished with status: {run.status}")
 
     if run.status == "failed":
         print(f"Run failed: {run.last_error}")
 
     # Fetch run steps to get the details of the agent run
-    run_steps = agents_client.run_steps.list(thread_id=thread.id, run_id=run.id)
+    run_steps = project_client.agents.run_steps.list(thread_id=thread.id, run_id=run.id)
     for step in run_steps:
         print(f"Step {step['id']} status: {step['status']}")
         step_details = step.get("step_details", {})
@@ -112,12 +106,12 @@ with AIProjectClient(
         print()  # add an extra newline between steps
 
     # Delete the agent when done
-    agents_client.delete_agent(agent.id)
+    project_client.agents.delete_agent(agent.id)
     print("Deleted agent")
 
     # [START populate_references_agent_with_azure_ai_search_tool]
     # Fetch and log all messages
-    messages = agents_client.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
+    messages = project_client.agents.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
     for message in messages:
         if message.role == MessageRole.AGENT and message.url_citation_annotations:
             placeholder_annotations = {

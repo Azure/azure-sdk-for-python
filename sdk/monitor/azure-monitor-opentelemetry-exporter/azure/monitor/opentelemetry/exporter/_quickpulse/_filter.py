@@ -5,7 +5,7 @@ import json
 from dataclasses import fields
 from typing import Any, Dict, List
 
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     DerivedMetricInfo,
     DocumentStreamInfo,
     FilterConjunctionGroupInfo,
@@ -53,7 +53,7 @@ def _parse_metric_filter_configuration(config: Dict[str, Any]) -> None:
     # Process metric filter configuration
     metric_infos: Dict[TelemetryType, List[DerivedMetricInfo]] = {}
     for metric_info_dict in config.get("Metrics", []):
-        metric_info = DerivedMetricInfo.from_dict(metric_info_dict)
+        metric_info = DerivedMetricInfo(metric_info_dict)
         # Skip duplicate ids
         if metric_info.id in seen_ids:
             continue
@@ -76,7 +76,7 @@ def _parse_document_filter_configuration(config: Dict[str, Any]) -> None:
     # Process document filter configuration
     doc_infos: Dict[TelemetryType, Dict[str, List[FilterConjunctionGroupInfo]]] = {}
     for doc_stream_dict in config.get("DocumentStreams", []):
-        doc_stream = DocumentStreamInfo.from_dict(doc_stream_dict)
+        doc_stream = DocumentStreamInfo(doc_stream_dict)
         for doc_filter_group in doc_stream.document_filter_groups:
             if not _validate_document_filter_group_info(doc_filter_group):
                 continue

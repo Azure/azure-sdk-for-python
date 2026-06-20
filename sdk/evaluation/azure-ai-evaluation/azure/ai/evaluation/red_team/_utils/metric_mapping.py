@@ -7,17 +7,22 @@ from .._attack_objective_generator import _InternalRiskCategory, RiskCategory
 from azure.ai.evaluation._constants import EvaluationMetrics, _InternalEvaluationMetrics
 from azure.ai.evaluation._common.constants import Tasks, _InternalAnnotationTasks
 
-# Mapping of risk categories to their corresponding evaluation metrics
+# Mapping of risk categories to their corresponding evaluation metrics.
+# Uses the canonical sync endpoint metric names (e.g., hate_unfairness, not hate_fairness).
+# The routing layer in evaluate_with_rai_service_sync() normalizes these to legacy names
+# (e.g., hate_fairness) when use_legacy_endpoint=True via _SYNC_TO_LEGACY_METRIC_NAMES.
 RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.Violence: EvaluationMetrics.VIOLENCE,
-    RiskCategory.HateUnfairness: EvaluationMetrics.HATE_FAIRNESS,
+    RiskCategory.HateUnfairness: EvaluationMetrics.HATE_UNFAIRNESS,
     RiskCategory.Sexual: EvaluationMetrics.SEXUAL,
     RiskCategory.SelfHarm: EvaluationMetrics.SELF_HARM,
     RiskCategory.ProtectedMaterial: EvaluationMetrics.PROTECTED_MATERIAL,
     RiskCategory.UngroundedAttributes: EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
-    RiskCategory.XPIA: EvaluationMetrics.XPIA,
     _InternalRiskCategory.ECI: _InternalEvaluationMetrics.ECI,
     RiskCategory.CodeVulnerability: EvaluationMetrics.CODE_VULNERABILITY,
+    RiskCategory.SensitiveDataLeakage: EvaluationMetrics.SENSITIVE_DATA_LEAKAGE,
+    RiskCategory.TaskAdherence: EvaluationMetrics.TASK_ADHERENCE,
+    RiskCategory.ProhibitedActions: EvaluationMetrics.PROHIBITED_ACTIONS,
 }
 
 RISK_CATEGORY_ANNOTATION_TASK_MAP = {
@@ -27,9 +32,11 @@ RISK_CATEGORY_ANNOTATION_TASK_MAP = {
     RiskCategory.SelfHarm: Tasks.CONTENT_HARM,
     RiskCategory.ProtectedMaterial: Tasks.PROTECTED_MATERIAL,
     RiskCategory.UngroundedAttributes: Tasks.UNGROUNDED_ATTRIBUTES,
-    RiskCategory.XPIA: Tasks.XPIA,
     _InternalRiskCategory.ECI: _InternalAnnotationTasks.ECI,
     RiskCategory.CodeVulnerability: Tasks.CODE_VULNERABILITY,
+    RiskCategory.SensitiveDataLeakage: Tasks.SENSITIVE_DATA_LEAKAGE,
+    RiskCategory.TaskAdherence: Tasks.TASK_ADHERENCE,
+    RiskCategory.ProhibitedActions: Tasks.PROHIBITED_ACTIONS,
 }
 
 
@@ -41,7 +48,7 @@ def get_metric_from_risk_category(risk_category: Union[RiskCategory]) -> str:
     :return: The corresponding evaluation metric
     :rtype: str
     """
-    return RISK_CATEGORY_METRIC_MAP.get(risk_category, EvaluationMetrics.HATE_FAIRNESS)
+    return RISK_CATEGORY_METRIC_MAP.get(risk_category, EvaluationMetrics.HATE_UNFAIRNESS)
 
 
 def get_annotation_task_from_risk_category(risk_category: Union[RiskCategory]) -> str:
@@ -63,4 +70,7 @@ def get_attack_objective_from_risk_category(risk_category: Union[RiskCategory]) 
     :return: The corresponding attack objective string
     :rtype: str
     """
-    return "isa" if risk_category == RiskCategory.UngroundedAttributes else risk_category.value
+    if risk_category == RiskCategory.UngroundedAttributes:
+        return "isa"
+    else:
+        return risk_category.value

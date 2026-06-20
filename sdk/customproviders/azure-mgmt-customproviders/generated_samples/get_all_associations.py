@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.customproviders import Customproviders
 
 """
@@ -36,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/preview/2018-09-01-preview/examples/getAllAssociations.json
+# x-ms-original-file: specification/customproviders/resource-manager/Microsoft.CustomProviders/CustomProviders/preview/2018-09-01-preview/examples/getAllAssociations.json
 if __name__ == "__main__":
     main()

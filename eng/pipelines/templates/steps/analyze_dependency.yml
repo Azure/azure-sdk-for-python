@@ -2,14 +2,8 @@ parameters:
   ScanPath: ''
 
 steps:
-  - task: UsePythonVersion@0
-    displayName: 'Use Python $(PythonVersion)'
-    condition: succeededOrFailed()
-    inputs:
-     versionSpec: '$(PythonVersion)'
-
   - pwsh: |
-      python -m pip install -r eng/ci_tools.txt
+      $(PIP_EXE) install -r eng/ci_tools.txt
     displayName: 'Install Python Tools'
     condition: succeededOrFailed()
 
@@ -19,6 +13,6 @@ steps:
       Condition: succeededOrFailed()
 
   - pwsh: |
-      sdk_analyze_deps --verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"
+      sdk_analyze_deps "$(TargetingString)" --verbose --out "$(Build.ArtifactStagingDirectory)/reports/dependencies.html" --dump "$(Build.ArtifactStagingDirectory)/reports"
     displayName: 'Analyze dependencies'
     condition: and(succeededOrFailed(),ne(variables['Skip.AnalyzeDependencies'],'true'))

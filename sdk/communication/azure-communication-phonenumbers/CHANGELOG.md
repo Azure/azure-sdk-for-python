@@ -1,5 +1,28 @@
 # Release History
 
+## 1.5.0 (Unreleased)
+- Improved type safety and consistency across all client methods
+
+### Other Changes
+- Replaced `**kwargs` parameters with explicit typed parameters for better IDE support and type checking
+- Enhanced type annotations for Long Running Operation (LRO) methods with proper `Union[bool, "PollingMethod"]` typing
+- Fixed type compatibility issues with optional parameters (e.g., `quantity` in search operations)
+- Added proper type hints for all method parameters while maintaining backward compatibility
+- Fixed pylint and mypy compliance issues
+- Improved code organization and import structure
+
+## 1.4.0 (2025-08-28)
+
+### Features Added
+- GA release of support for mobile number types
+
+## 1.4.0b1 (2025-07-22)
+
+### Features Added
+- Adds support for mobile number types
+  - mobile numbers are location associated phone numbers with SMS capabilities
+- API version `2025-06-01` is the default.
+
 ## 1.3.0 (2025-06-20)
 
 ### Features Added
@@ -22,7 +45,7 @@
 - GA release of Number Insight.
 - API version `2025-02-11` is the default.
 
-## Other changes
+### Other Changes
 - Updated `search_operator_information` method signature to enforce `options` as a keyword-only argument.
 
 ## 1.2.0b2 (2024-03-01)
@@ -65,7 +88,7 @@
 - Added the ability specify the API version by an optional `api_version` keyword parameter.
 
 ### Other Changes
-- Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+- Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 - Updated the default polling interval to 2 seconds, it can still be overwritten by using the keyword argument "polling_interval".
 - Trying to update capabilities with empty phone number will throw `ValueError`. Prior to this change, the client would make an HTTP request that would always fail.
 - Migrated tests from vcrpy to test proxy.

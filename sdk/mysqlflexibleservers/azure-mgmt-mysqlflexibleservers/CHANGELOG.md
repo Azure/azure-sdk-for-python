@@ -1,5 +1,43 @@
 # Release History
 
+## 1.1.0b2 (2025-12-12)
+
+### Bugs Fixed
+
+  - Set default value of `lro_options` same as old version to keep compatibility for some LRO APIs
+
+## 1.1.0b1 (2025-11-19)
+
+### Features Added
+
+  - Model `HighAvailability` added property `replication_mode`
+  - Model `Server` added property `lower_case_table_names`
+  - Enum `ServerVersion` added member `EIGHT4`
+  - Added enum `ReplicationMode`
+  - Operation group  `LongRunningBackupOperations` added method `begin_delete`
+
+## 1.0.0 (2025-11-07)
+
+### Features Added
+
+  - Model `MySQLManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `MySQLManagementClient` added operation group `private_endpoint_connections`
+  - Client `MySQLManagementClient` added operation group `private_link_resources`
+  - Model `MaintenanceWindow` added property `batch_of_maintenance`
+  - Model `OperationProgressResult` added property `properties`
+  - Added enum `BatchOfMaintenance`
+  - Added enum `Origin`
+  - Added model `PrivateEndpointConnectionListResult`
+  - Added model `PrivateLinkResource`
+  - Added model `PrivateLinkResourceListResult`
+  - Added operation group `PrivateEndpointConnectionsOperations`
+  - Added operation group `PrivateLinkResourcesOperations`
+
+### Breaking Changes
+
+  - Model `OperationProgressResult` instance variable `object_type` has been moved under property `properties`
+  - Deleted unused model `Provisioning`
+
 ## 1.0.0b3 (2024-11-18)
 
 ### Features Added

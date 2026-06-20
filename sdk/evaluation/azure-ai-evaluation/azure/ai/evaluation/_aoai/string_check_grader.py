@@ -1,30 +1,28 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
+
+from openai.types.graders import StringCheckGrader
 from typing_extensions import Literal
 
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-from openai.types.graders import StringCheckGrader
 from azure.ai.evaluation._common._experimental import experimental
+from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
+from azure.core.credentials import TokenCredential
 
 from .aoai_grader import AzureOpenAIGrader
 
 
 @experimental
 class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
-    """
-    Wrapper class for OpenAI's string check graders.
+    """Wrapper class for OpenAI's string check graders.
 
     Supplying a StringCheckGrader to the `evaluate` method will cause an asynchronous request to evaluate
     the grader via the OpenAI API. The results of the evaluation will then be merged into the standard
     evaluation results.
 
     :param model_config: The model configuration to use for the grader.
-    :type model_config: Union[
-        ~azure.ai.evaluation.AzureOpenAIModelConfiguration,
-        ~azure.ai.evaluation.OpenAIModelConfiguration
-    ]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,~azure.ai.evaluation.OpenAIModelConfiguration]
     :param input: The input text. This may include template strings.
     :type input: str
     :param name: The name of the grader.
@@ -33,13 +31,14 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
     :type operation: Literal["eq", "ne", "like", "ilike"]
     :param reference: The reference text. This may include template strings.
     :type reference: str
+    :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
-
-
     """
 
     id = "azureai://built-in/evaluators/azure-openai/string_check_grader"
+    _type = "string_check"
 
     def __init__(
         self,
@@ -54,6 +53,7 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
             "ilike",
         ],
         reference: str,
+        credential: Optional[TokenCredential] = None,
         **kwargs: Any
     ):
         grader = StringCheckGrader(
@@ -61,6 +61,6 @@ class AzureOpenAIStringCheckGrader(AzureOpenAIGrader):
             name=name,
             operation=operation,
             reference=reference,
-            type="string_check",
+            type=AzureOpenAIStringCheckGrader._type,
         )
-        super().__init__(model_config=model_config, grader_config=grader, **kwargs)
+        super().__init__(model_config=model_config, grader_config=grader, credential=credential, **kwargs)

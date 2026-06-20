@@ -1,0 +1,2 @@
+{"item": {"query": "Simple query", "response": "Simple response", "ground_truth": "Simple truth"}}
+{"item": {"query": "Another query", "response": "Another response", "ground_truth": "Another truth"}}

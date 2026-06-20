@@ -17,6 +17,7 @@ USAGE: python conditional_operation_sample.py
     Set the environment variables with your own values before running the sample:
     1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
 """
+
 import os
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceModifiedError
@@ -38,7 +39,8 @@ def main():
     # Unconditional get
     first_get = client.get_configuration_setting(key="MyKey")
     if first_get is None:
-        return print("Error, unconditional set failed.")
+        print("Error, unconditional set failed.")
+        return
     print(first_get)
 
     # Conditional get, expect to return None because it is not modified

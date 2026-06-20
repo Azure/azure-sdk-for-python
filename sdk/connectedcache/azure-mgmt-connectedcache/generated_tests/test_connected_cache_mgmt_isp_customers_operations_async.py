@@ -68,7 +68,6 @@ class TestConnectedCacheMgmtIspCustomersOperationsAsync(AzureMgmtRecordedTestCas
                             "optionalProperty4": "str",
                             "optionalProperty5": "str",
                             "peeringDbLastUpdateDate": "2020-02-20 00:00:00",
-                            "peeringDbLastUpdateTime": "2020-02-20 00:00:00",
                             "signupPhaseStatusCode": 0,
                             "signupPhaseStatusText": "str",
                             "signupStatus": bool,

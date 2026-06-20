@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import Optional, Any, Union
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import ConnectionsOperations as ConnectionsOperationsGenerated
@@ -58,7 +59,5 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         """
         connections = super().list(connection_type=connection_type, default_connection=True, **kwargs)
         for connection in connections:
-            if include_credentials:
-                connection = super()._get_with_credentials(connection.name, **kwargs)
-            return connection
+            return self.get(connection.name, include_credentials=include_credentials, **kwargs)
         raise ValueError(f"No default connection found for type: {connection_type}.")

@@ -29,9 +29,6 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
-  - name: ToxEnvParallel
-    type: string
-    default: all
   - name: InjectedPackages
     type: string
     default: ''
@@ -81,6 +78,9 @@ parameters:
   - name: oneESTemplateTag
     type: string
     default: release
+  - name: EnvVars
+    type: object
+    default: {}
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -102,10 +102,10 @@ extends:
               TestMarkArgument: ${{ parameters.TestMarkArgument }}
               BuildTargetingString: ${{ parameters.BuildTargetingString }}
               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-              ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
               InjectedPackages: ${{ parameters.InjectedPackages }}
               BuildDocs: ${{ parameters.BuildDocs }}
               DevFeedName: ${{ parameters.DevFeedName }}
+              EnvVars: ${{ parameters.EnvVars }}
               MatrixConfigs:
                 - ${{ each config in parameters.MatrixConfigs }}:
                     - ${{ config }}

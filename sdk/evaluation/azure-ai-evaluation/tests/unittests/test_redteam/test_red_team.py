@@ -11,23 +11,53 @@ from datetime import datetime
 
 from azure.ai.evaluation.red_team._red_team import RedTeam, RiskCategory, AttackStrategy
 from azure.ai.evaluation.red_team._red_team_result import ScanResult, RedTeamResult
-from azure.ai.evaluation.red_team._attack_objective_generator import _AttackObjectiveGenerator
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation.red_team._attack_objective_generator import (
+    _AttackObjectiveGenerator,
+)
+from azure.ai.evaluation.red_team._utils.objective_utils import extract_risk_subtype
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from azure.core.credentials import TokenCredential
 
-# PyRIT related imports to mock
+# PyRIT related imports - handle API changes gracefully
 from pyrit.prompt_converter import PromptConverter
-from pyrit.orchestrator import PromptSendingOrchestrator
-from pyrit.common import DUCK_DB
 from pyrit.exceptions import PyritException
 from pyrit.models import ChatMessage
 
-# Imports for Crescendo tests
-from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
+# Try to import orchestrator modules - these were removed in newer PyRIT versions
+try:
+    from pyrit.orchestrator import PromptSendingOrchestrator
+    from pyrit.orchestrator.multi_turn.crescendo_orchestrator import (
+        CrescendoOrchestrator,
+    )
+
+    HAS_ORCHESTRATOR = True
+except ImportError:
+    # New PyRIT versions don't have orchestrator module
+    PromptSendingOrchestrator = MagicMock
+    CrescendoOrchestrator = MagicMock
+    HAS_ORCHESTRATOR = False
+
+# Try to import DUCK_DB - may not exist in newer versions
+try:
+    from pyrit.common import DUCK_DB
+except ImportError:
+    DUCK_DB = "duckdb"  # Fallback value
+
 from pyrit.prompt_target import PromptChatTarget
-from azure.ai.evaluation.red_team._utils._rai_service_target import AzureRAIServiceTarget
-from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import RAIServiceEvalChatTarget
-from azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
+from azure.ai.evaluation.red_team._utils._rai_service_target import (
+    AzureRAIServiceTarget,
+)
+from azure.ai.evaluation.red_team._utils._rai_service_eval_chat_target import (
+    RAIServiceEvalChatTarget,
+)
+from azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer import (
+    AzureRAIServiceTrueFalseScorer,
+)
 
 
 @pytest.fixture
@@ -49,7 +79,7 @@ def red_team(mock_azure_ai_project, mock_credential):
     with patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient"), patch(
         "azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"
     ), patch("azure.ai.evaluation.red_team._red_team.setup_logger") as mock_setup_logger, patch(
-        "azure.ai.evaluation.red_team._red_team.initialize_pyrit"
+        "azure.ai.evaluation.red_team._red_team.CentralMemory"
     ), patch(
         "os.makedirs"
     ), patch(
@@ -124,7 +154,7 @@ def red_team_instance(mock_azure_ai_project, mock_credential):
     with patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient"), patch(
         "azure.ai.evaluation.red_team._red_team.GeneratedRAIClient"
     ), patch("azure.ai.evaluation.red_team._red_team.setup_logger") as mock_setup_logger, patch(
-        "azure.ai.evaluation.red_team._red_team.initialize_pyrit"
+        "azure.ai.evaluation.red_team._red_team.CentralMemory"
     ), patch(
         "os.makedirs"
     ), patch(
@@ -162,10 +192,10 @@ class TestRedTeamInitialization:
     @patch("azure.ai.evaluation.simulator._model_tools._rai_client.RAIClient")
     @patch("azure.ai.evaluation.red_team._red_team.GeneratedRAIClient")
     @patch("azure.ai.evaluation.red_team._red_team.setup_logger")
-    @patch("azure.ai.evaluation.red_team._red_team.initialize_pyrit")
+    @patch("azure.ai.evaluation.red_team._red_team.CentralMemory")
     def test_red_team_initialization(
         self,
-        mock_initialize_pyrit,
+        mock_central_memory,
         mock_setup_logger,
         mock_generated_rai_client,
         mock_rai_client,
@@ -187,7 +217,7 @@ class TestRedTeamInitialization:
         assert agent.generated_rai_client is not None
         assert isinstance(agent.attack_objectives, dict)
         assert agent.red_team_info == {}
-        mock_initialize_pyrit.assert_called_once()
+        mock_central_memory.set_memory_instance.assert_called_once()
 
 
 @pytest.mark.unittest
@@ -238,7 +268,9 @@ class TestRedTeamMlflowIntegration:
 
         # Mock the triad extraction
         mock_extract_triad.return_value = MagicMock(
-            subscription_id="test-sub", resource_group_name="test-rg", workspace_name="test-ws"
+            subscription_id="test-sub",
+            resource_group_name="test-rg",
+            workspace_name="test-ws",
         )
 
         # Mock the client workspace call to avoid HTTP request
@@ -313,7 +345,8 @@ class TestRedTeamMlflowIntegration:
         with patch("builtins.open", mock_open()), patch("os.path.join", lambda *args: "/".join(args)), patch(
             "pathlib.Path", return_value=mock_path
         ), patch("json.dump"), patch(
-            "azure.ai.evaluation.red_team._utils.formatting_utils.format_scorecard", return_value="Generated scorecard"
+            "azure.ai.evaluation.red_team._utils.formatting_utils.format_scorecard",
+            return_value="Generated scorecard",
         ), patch.object(
             red_team, "scan_output_dir", None
         ):
@@ -333,7 +366,9 @@ class TestRedTeamMlflowIntegration:
             red_team._log_redteam_results_to_mlflow = AsyncMock(side_effect=mock_impl)
 
             result = await red_team._log_redteam_results_to_mlflow(
-                redteam_result=mock_redteam_result, eval_run=mock_eval_run, _skip_evals=True
+                redteam_result=mock_redteam_result,
+                eval_run=mock_eval_run,
+                _skip_evals=True,
             )
 
         mock_eval_run.log_artifact.assert_called_once()
@@ -368,7 +403,11 @@ class TestRedTeamMlflowIntegration:
         mock_redteam_result.scan_result = {
             "scorecard": {
                 "joint_risk_attack_summary": [
-                    {"risk_category": "violence", "baseline_asr": 10.0, "easy_complexity_asr": 20.0}
+                    {
+                        "risk_category": "violence",
+                        "baseline_asr": 10.0,
+                        "easy_complexity_asr": 20.0,
+                    }
                 ]
             }
         }
@@ -388,7 +427,8 @@ class TestRedTeamMlflowIntegration:
         with patch("builtins.open", mock_open()), patch("os.path.join", lambda *args: "/".join(args)), patch(
             "pathlib.Path", return_value=mock_path
         ), patch("json.dump"), patch(
-            "azure.ai.evaluation.red_team._utils.formatting_utils.format_scorecard", return_value="Generated scorecard"
+            "azure.ai.evaluation.red_team._utils.formatting_utils.format_scorecard",
+            return_value="Generated scorecard",
         ), patch.object(
             red_team, "scan_output_dir", None
         ):
@@ -421,7 +461,9 @@ class TestRedTeamMlflowIntegration:
             red_team._log_redteam_results_to_mlflow = AsyncMock(side_effect=mock_impl)
 
             result = await red_team._log_redteam_results_to_mlflow(
-                redteam_result=mock_redteam_result, eval_run=mock_eval_run, _skip_evals=False
+                redteam_result=mock_redteam_result,
+                eval_run=mock_eval_run,
+                _skip_evals=False,
             )
 
         mock_eval_run.log_artifact.assert_called_once()
@@ -445,7 +487,9 @@ class TestRedTeamAttackObjectives:
         red_team.attack_objective_generator.num_objectives = 1
 
         with patch.object(
-            red_team.generated_rai_client, "get_attack_objectives", new_callable=AsyncMock
+            red_team.generated_rai_client,
+            "get_attack_objectives",
+            new_callable=AsyncMock,
         ) as mock_get_attack_objectives:
             mock_get_attack_objectives.return_value = [{"messages": [{"content": "test-objective"}]}]
             objectives = await red_team._get_attack_objectives()
@@ -471,8 +515,16 @@ class TestRedTeamAttackObjectives:
 
         # Set up the mock return values
         mock_generated_rai_client_instance.get_attack_objectives.return_value = [
-            {"id": "obj1", "messages": [{"content": "test-objective-1"}], "metadata": {"target_harms": ["violence"]}},
-            {"id": "obj2", "messages": [{"content": "test-objective-2"}], "metadata": {"target_harms": ["violence"]}},
+            {
+                "id": "obj1",
+                "messages": [{"content": "test-objective-1"}],
+                "metadata": {"target_harms": ["violence"]},
+            },
+            {
+                "id": "obj2",
+                "messages": [{"content": "test-objective-2"}],
+                "metadata": {"target_harms": ["violence"]},
+            },
         ]
 
         # Return the mock instances when the clients are constructed
@@ -486,7 +538,9 @@ class TestRedTeamAttackObjectives:
             risk_category=RiskCategory.Violence, application_scenario="Test scenario"
         )
         mock_generated_rai_client_instance.get_attack_objectives.assert_called_with(
-            risk_category="violence", application_scenario="Test scenario", strategy=None
+            risk_category="violence",
+            application_scenario="Test scenario",
+            strategy=None,
         )
         assert len(objectives) == 2
         assert "test-objective-1" in objectives
@@ -543,7 +597,9 @@ class TestRedTeamAttackObjectives:
         red_team.attack_objective_generator.num_objectives = 2
 
         with patch.object(
-            red_team.generated_rai_client, "get_attack_objectives", new_callable=AsyncMock
+            red_team.generated_rai_client,
+            "get_attack_objectives",
+            new_callable=AsyncMock,
         ) as mock_get_attack_objectives:
             mock_get_attack_objectives.side_effect = Exception("API call failed")
             objectives = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence)
@@ -559,7 +615,10 @@ class TestRedTeamAttackObjectives:
         """Test getting attack objectives with custom attack seed prompts."""
         # Create a mock _AttackObjectiveGenerator with custom attack seed prompts
         mock_attack_objective_generator = red_team.attack_objective_generator
-        mock_attack_objective_generator.risk_categories = [RiskCategory.Violence, RiskCategory.HateUnfairness]
+        mock_attack_objective_generator.risk_categories = [
+            RiskCategory.Violence,
+            RiskCategory.HateUnfairness,
+        ]
         mock_attack_objective_generator.num_objectives = 2
         mock_attack_objective_generator.custom_attack_seed_prompts = "custom_prompts.json"
         mock_attack_objective_generator.validated_prompts = [
@@ -610,7 +669,8 @@ class TestRedTeamAttackObjectives:
 
         # Test with hate_unfairness risk category
         objectives = await red_team._get_attack_objectives(
-            risk_category=RiskCategory.HateUnfairness, application_scenario="Test scenario"
+            risk_category=RiskCategory.HateUnfairness,
+            application_scenario="Test scenario",
         )
 
         # Verify custom objectives were used
@@ -725,7 +785,8 @@ class TestRedTeamScan:
         ), patch.object(
             red_team.generated_rai_client, "_evaluation_onedp_client"
         ) as mock_onedp_client, pytest.raises(
-            ValueError, match="MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
+            ValueError,
+            match="MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.",
         ):
 
             # Mock the OneDp client response
@@ -744,7 +805,8 @@ class TestRedTeamScan:
         ) as mock_setup_logger, patch.object(
             red_team.generated_rai_client, "_evaluation_onedp_client"
         ) as mock_onedp_client, pytest.raises(
-            ValueError, match="MultiTurn and Crescendo strategies are not compatible with multiple attack strategies."
+            ValueError,
+            match="MultiTurn and Crescendo strategies are not compatible with multiple attack strategies.",
         ):
 
             # Mock the OneDp client response
@@ -787,6 +849,10 @@ class TestRedTeamOrchestrator:
     """Test orchestrator functionality in RedTeam."""
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(
+        not HAS_ORCHESTRATOR,
+        reason="PyRIT orchestrator module not available in this version",
+    )
     async def test_prompt_sending_orchestrator(self, red_team):
         """Test _prompt_sending_orchestrator method."""
         mock_chat_target = MagicMock()
@@ -830,6 +896,10 @@ class TestRedTeamOrchestrator:
             # The test validates that the orchestrator flow works correctly
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(
+        not HAS_ORCHESTRATOR,
+        reason="PyRIT orchestrator module not available in this version",
+    )
     async def test_prompt_sending_orchestrator_timeout(self, red_team):
         """Test _prompt_sending_orchestrator method with timeout."""
         mock_chat_target = MagicMock()
@@ -888,6 +958,10 @@ class TestCrescendoOrchestrator:
     """Test Crescendo orchestrator functionality in RedTeam."""
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(
+        not HAS_ORCHESTRATOR,
+        reason="PyRIT orchestrator module not available in this version",
+    )
     async def test_crescendo_orchestrator_initialization_and_run(self, red_team_instance):
         """Test the initialization and basic run of CrescendoOrchestrator."""
         mock_chat_target = MagicMock(spec=PromptChatTarget)
@@ -939,6 +1013,10 @@ class TestCrescendoOrchestrator:
             # The important thing is that the method executes successfully
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(
+        not HAS_ORCHESTRATOR,
+        reason="PyRIT orchestrator module not available in this version",
+    )
     async def test_crescendo_orchestrator_general_exception_handling(self, red_team_instance):
         """Test general exception handling in _crescendo_orchestrator."""
         mock_chat_target = MagicMock(spec=PromptChatTarget)
@@ -950,9 +1028,9 @@ class TestCrescendoOrchestrator:
         red_team_instance.red_team_info[strategy_name] = {risk_category_name: {}}
 
         mock_crescendo_orchestrator_instance = AsyncMock(spec=CrescendoOrchestrator)
-        # Use the imported PyritException
+        # Use the imported PyritException with keyword argument (required in new PyRIT API)
         mock_crescendo_orchestrator_instance.run_attack_async.side_effect = PyritException(
-            "Test Pyrit Exception from Crescendo"
+            message="Test Pyrit Exception from Crescendo"
         )
 
         with patch(
@@ -996,7 +1074,9 @@ class TestRedTeamProcessing:
     @pytest.mark.asyncio  # Mark as asyncio test
     async def test_write_pyrit_outputs_to_file(self, red_team, mock_orchestrator):
         """Test write_pyrit_outputs_to_file utility function."""
-        from azure.ai.evaluation.red_team._utils.formatting_utils import write_pyrit_outputs_to_file
+        from azure.ai.evaluation.red_team._utils.formatting_utils import (
+            write_pyrit_outputs_to_file,
+        )
 
         # Create a synchronous mock for _message_to_dict to avoid any async behavior
         message_to_dict_mock = MagicMock(return_value={"role": "user", "content": "test content"})
@@ -1006,11 +1086,19 @@ class TestRedTeamProcessing:
         # Create mock prompt request pieces with conversation_id attribute
         mock_prompt_piece = MagicMock()
         mock_prompt_piece.conversation_id = "test-conv-id"
+        mock_prompt_piece.original_value = "test prompt"
         mock_prompt_piece.to_chat_message.return_value = MagicMock(role="user", content="test message")
+        # Mock labels.get() to return proper values
+        mock_prompt_piece.labels = {
+            "context": "",
+            "tool_calls": [],
+            "risk_sub_type": None,
+        }
         mock_memory.get_prompt_request_pieces.return_value = [mock_prompt_piece]
 
         with patch("uuid.uuid4", return_value="test-uuid"), patch("pathlib.Path.open", mock_open()), patch(
-            "azure.ai.evaluation.red_team._utils.formatting_utils.message_to_dict", message_to_dict_mock
+            "azure.ai.evaluation.red_team._utils.formatting_utils.message_to_dict",
+            message_to_dict_mock,
         ), patch("pyrit.memory.CentralMemory.get_memory_instance", return_value=mock_memory), patch(
             "os.path.exists", return_value=False
         ), patch(
@@ -1053,7 +1141,8 @@ class TestRedTeamProcessing:
             "azure.ai.evaluation.red_team._utils.metric_mapping.get_metric_from_risk_category",
             return_value="test_metric",
         ), patch(
-            "azure.ai.evaluation._common.rai_service.evaluate_with_rai_service", new_callable=AsyncMock
+            "azure.ai.evaluation._common.rai_service.evaluate_with_rai_service_sync",
+            new_callable=AsyncMock,
         ) as mock_evaluate_rai, patch(
             "uuid.uuid4", return_value="test-uuid"
         ), patch(
@@ -1063,14 +1152,17 @@ class TestRedTeamProcessing:
         ), patch(
             "logging.FileHandler", MagicMock()
         ), patch(
-            "builtins.open", mock_open(read_data='{"conversation":{"messages":[{"role":"user","content":"test"}]}}')
+            "builtins.open",
+            mock_open(read_data='{"conversation":{"messages":[{"role":"user","content":"test"}]}}'),
         ), patch(
             "azure.ai.evaluation._evaluate._utils._write_output"
         ) as mock_write_output, patch.object(
-            red_team.evaluation_processor, "evaluate_conversation", mock_evaluate_conversation
+            red_team.evaluation_processor,
+            "evaluate_conversation",
+            mock_evaluate_conversation,
         ):  # Correctly patch the object
 
-            mock_evaluate_rai.return_value = {  # Keep this mock if evaluate_with_rai_service is still used
+            mock_evaluate_rai.return_value = {
                 "violence": "high",
                 "violence_reason": "Test reason",
                 "violence_score": 5,
@@ -1127,7 +1219,9 @@ class TestRedTeamProcessing:
         mock_internal_orchestrator.dispose_db_engine = MagicMock(return_value=None)
 
         with patch.object(
-            red_team.orchestrator_manager, "_prompt_sending_orchestrator", return_value=mock_internal_orchestrator
+            red_team.orchestrator_manager,
+            "_prompt_sending_orchestrator",
+            return_value=mock_internal_orchestrator,
         ) as mock_prompt_sending_orchestrator, patch(
             "azure.ai.evaluation.red_team._utils.formatting_utils.write_pyrit_outputs_to_file",
             return_value="/path/to/data.jsonl",
@@ -1142,7 +1236,8 @@ class TestRedTeamProcessing:
         ), patch.object(
             red_team, "start_time", datetime.now().timestamp()
         ), patch(
-            "azure.ai.evaluation.red_team._utils.strategy_utils.get_converter_for_strategy", return_value=mock_converter
+            "azure.ai.evaluation.red_team._utils.strategy_utils.get_converter_for_strategy",
+            return_value=mock_converter,
         ), patch.object(
             red_team.orchestrator_manager,
             "get_orchestrator_for_attack_strategy",
@@ -1218,7 +1313,8 @@ class TestRedTeamProcessing:
         ), patch.object(
             red_team, "start_time", datetime.now().timestamp()
         ), patch(
-            "azure.ai.evaluation.red_team._utils.strategy_utils.get_converter_for_strategy", return_value=mock_converter
+            "azure.ai.evaluation.red_team._utils.strategy_utils.get_converter_for_strategy",
+            return_value=mock_converter,
         ), patch.object(
             red_team.orchestrator_manager,
             "get_orchestrator_for_attack_strategy",
@@ -1258,7 +1354,12 @@ class TestRedTeamResultCreation:
         """Test creating a ScanResult."""
         # Since ScanResult is a TypedDict, we're just testing its dictionary-like behavior
         # without using isinstance checks or mocking
-        result = ScanResult(scorecard={}, parameters={}, attack_details=[], studio_url="https://test-studio.com")
+        result = ScanResult(
+            scorecard={},
+            parameters={},
+            attack_details=[],
+            studio_url="https://test-studio.com",
+        )
 
         # Verify the dictionary structure
         assert "scorecard" in result
@@ -1447,10 +1548,14 @@ class TestRedTeamOrchestratorSelection:
     @pytest.mark.asyncio
     async def test_get_orchestrator_raises_for_multiturn_in_list(self, red_team):
         """Tests get_orchestrator_for_attack_strategy raises ValueError for MultiTurn in a list."""
-        composed_strategy_with_multiturn = [AttackStrategy.MultiTurn, AttackStrategy.Base64]
+        composed_strategy_with_multiturn = [
+            AttackStrategy.MultiTurn,
+            AttackStrategy.Base64,
+        ]
 
         with pytest.raises(
-            ValueError, match="MultiTurn and Crescendo strategies are not supported in composed attacks."
+            ValueError,
+            match="MultiTurn and Crescendo strategies are not supported in composed attacks.",
         ):
             red_team.orchestrator_manager.get_orchestrator_for_attack_strategy(composed_strategy_with_multiturn)
 
@@ -1480,7 +1585,8 @@ class TestRedTeamOrchestratorSelection:
 
         # Test with a list containing Crescendo
         with pytest.raises(
-            ValueError, match="MultiTurn and Crescendo strategies are not supported in composed attacks."
+            ValueError,
+            match="MultiTurn and Crescendo strategies are not supported in composed attacks.",
         ):
             red_team_instance.orchestrator_manager.get_orchestrator_for_attack_strategy(
                 [AttackStrategy.Crescendo, AttackStrategy.Base64]
@@ -1494,7 +1600,11 @@ class TestRedTeamAttackSuccessThresholds:
     def test_configure_attack_success_thresholds_with_dict(self, red_team):
         """Test configuring attack success thresholds with a dictionary."""
         # Create a dictionary of thresholds
-        thresholds = {RiskCategory.HateUnfairness: 3, RiskCategory.Violence: 4, RiskCategory.Sexual: 2}
+        thresholds = {
+            RiskCategory.HateUnfairness: 3,
+            RiskCategory.Violence: 4,
+            RiskCategory.Sexual: 2,
+        }
 
         # Call the method
         configured_thresholds = red_team._configure_attack_success_thresholds(thresholds)
@@ -1538,7 +1648,9 @@ class TestRedTeamAttackSuccessThresholds:
 
     def test_get_attack_success_with_thresholds(self, red_team):
         """Test attack success evaluation with configured thresholds."""
-        from azure.ai.evaluation.red_team._utils.formatting_utils import get_attack_success
+        from azure.ai.evaluation.red_team._utils.formatting_utils import (
+            get_attack_success,
+        )
 
         # Set up thresholds for testing
         red_team.attack_success_thresholds = {"violence": 3}
@@ -1557,7 +1669,11 @@ class TestRedTeamAttackSuccessThresholds:
         # Configure thresholds - as a dictionary with risk category keys for the test
         # In practice, this dictionary will be created by the _configure_attack_success_thresholds method
         # which converts risk categories to string values
-        red_team.result_processor.attack_success_thresholds = {"violence": 3, "hate_unfairness": 4, "sexual": 2}
+        red_team.result_processor.attack_success_thresholds = {
+            "violence": 3,
+            "hate_unfairness": 4,
+            "sexual": 2,
+        }
 
         # Call the method through the result processor
         formatted = red_team.result_processor._format_thresholds_for_output()
@@ -1584,3 +1700,233 @@ class TestRedTeamAttackSuccessThresholds:
 
         formatted = clean_result_processor._format_thresholds_for_output()
         assert formatted == {}
+
+
+@pytest.mark.unittest
+class TestRedTeamRoundRobinSampling:
+    """Test round-robin sampling logic for custom attack objectives with risk subtypes."""
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_distributes_across_subtypes(self, red_team):
+        """Test that round-robin sampling correctly distributes objectives across subtypes."""
+        # Setup: Create custom attack objectives with multiple subtypes
+        custom_objectives = []
+        for subtype in ["subtype_a", "subtype_b", "subtype_c"]:
+            for i in range(1, 4):  # 3 objectives per subtype
+                custom_objectives.append(
+                    {
+                        "id": f"{subtype[8]}{i}",  # Extract letter from subtype name
+                        "messages": [{"content": f"objective {subtype[8]}{i}"}],
+                        "metadata": {"target_harms": [{"risk-subtype": subtype}]},
+                    }
+                )
+
+        # Mock the attack objective generator with custom prompts
+        red_team.attack_objective_generator.custom_attack_seed_prompts = "test.json"
+        red_team.attack_objective_generator.validated_prompts = custom_objectives
+        red_team.attack_objective_generator.valid_prompts_by_category = {"violence": custom_objectives}
+        red_team.attack_objective_generator.num_objectives = 9
+
+        # Call the actual production method
+        with patch("random.sample", side_effect=lambda x, k: x[:k]), patch("random.choice", side_effect=lambda x: x[0]):
+            prompts = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence, strategy="baseline")
+
+        # Verify: Should get 9 prompts distributed evenly across 3 subtypes (3 each)
+        assert len(prompts) == 9
+
+        # Verify distribution by checking cached objectives
+        cached_key = (("violence",), "baseline")
+        selected_objectives = red_team.attack_objectives[cached_key]["selected_objectives"]
+
+        subtype_counts = {}
+        for obj in selected_objectives:
+            subtype = extract_risk_subtype(obj)
+            subtype_counts[subtype] = subtype_counts.get(subtype, 0) + 1
+
+        assert subtype_counts["subtype_a"] == 3
+        assert subtype_counts["subtype_b"] == 3
+        assert subtype_counts["subtype_c"] == 3
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_terminates_when_exhausted(self, red_team):
+        """Test that loop terminates properly when unique objectives are exhausted."""
+        # Setup: Create custom attack objectives with limited availability
+        custom_objectives = [
+            {
+                "id": "a1",
+                "messages": [{"content": "objective a1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "a2",
+                "messages": [{"content": "objective a2"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "b1",
+                "messages": [{"content": "objective b1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+            },
+        ]
+
+        # Mock the attack objective generator
+        red_team.attack_objective_generator.custom_attack_seed_prompts = "test.json"
+        red_team.attack_objective_generator.validated_prompts = custom_objectives
+        red_team.attack_objective_generator.valid_prompts_by_category = {"violence": custom_objectives}
+        red_team.attack_objective_generator.num_objectives = 12  # Request more than available
+
+        # Call the actual production method
+        with patch("random.sample", side_effect=lambda x, k: x[:k]), patch("random.choice", side_effect=lambda x: x[0]):
+            prompts = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence, strategy="baseline")
+
+        # Verify: Should have stopped at 3 objectives (all available)
+        assert len(prompts) == 3
+
+        # Verify all unique objectives were selected
+        cached_key = (("violence",), "baseline")
+        selected_objectives = red_team.attack_objectives[cached_key]["selected_objectives"]
+        selected_ids = {obj.get("id") for obj in selected_objectives}
+        assert len(selected_ids) == 3
+        assert selected_ids == {"a1", "a2", "b1"}
+
+    @pytest.mark.asyncio
+    async def test_max_sampling_iterations_multiplier_limits_iterations(self, red_team):
+        """Test that MAX_SAMPLING_ITERATIONS_MULTIPLIER effectively limits iterations."""
+        # Setup: Create scenario where we can't fulfill the request (1 objective, request 100)
+        custom_objectives = [
+            {
+                "id": "a1",
+                "messages": [{"content": "objective a1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+        ]
+
+        # Mock the attack objective generator
+        red_team.attack_objective_generator.custom_attack_seed_prompts = "test.json"
+        red_team.attack_objective_generator.validated_prompts = custom_objectives
+        red_team.attack_objective_generator.valid_prompts_by_category = {"violence": custom_objectives}
+        red_team.attack_objective_generator.num_objectives = 100  # Request many more than available
+
+        # Call the actual production method
+        with patch("random.sample", side_effect=lambda x, k: x[:k]), patch("random.choice", side_effect=lambda x: x[0]):
+            prompts = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence, strategy="baseline")
+
+        # Verify: Should have only selected 1 objective (all that's available)
+        assert len(prompts) == 1
+
+        # Verify the constant value is reasonable
+        from azure.ai.evaluation.red_team._utils.constants import (
+            MAX_SAMPLING_ITERATIONS_MULTIPLIER,
+        )
+
+        assert MAX_SAMPLING_ITERATIONS_MULTIPLIER == 100
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_handles_unequal_subtype_sizes(self, red_team):
+        """Test round-robin sampling with subtypes having different numbers of objectives."""
+        # Setup: Create objectives with varying availability per subtype
+        custom_objectives = [
+            {
+                "id": "a1",
+                "messages": [{"content": "objective a1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "a2",
+                "messages": [{"content": "objective a2"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "a3",
+                "messages": [{"content": "objective a3"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "a4",
+                "messages": [{"content": "objective a4"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+            },
+            {
+                "id": "b1",
+                "messages": [{"content": "objective b1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+            },
+            {
+                "id": "b2",
+                "messages": [{"content": "objective b2"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_b"}]},
+            },
+            {
+                "id": "c1",
+                "messages": [{"content": "objective c1"}],
+                "metadata": {"target_harms": [{"risk-subtype": "subtype_c"}]},
+            },
+        ]
+
+        # Mock the attack objective generator
+        red_team.attack_objective_generator.custom_attack_seed_prompts = "test.json"
+        red_team.attack_objective_generator.validated_prompts = custom_objectives
+        red_team.attack_objective_generator.valid_prompts_by_category = {"violence": custom_objectives}
+        red_team.attack_objective_generator.num_objectives = 7
+
+        # Call the actual production method
+        with patch("random.sample", side_effect=lambda x, k: x[:k]), patch("random.choice", side_effect=lambda x: x[0]):
+            prompts = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence, strategy="baseline")
+
+        # Verify: Should have selected 7 objectives
+        assert len(prompts) == 7
+
+        # Verify distribution - round-robin should favor larger subtypes
+        cached_key = (("violence",), "baseline")
+        selected_objectives = red_team.attack_objectives[cached_key]["selected_objectives"]
+
+        subtype_counts = {}
+        for obj in selected_objectives:
+            subtype = extract_risk_subtype(obj)
+            subtype_counts[subtype] = subtype_counts.get(subtype, 0) + 1
+
+        # Verify that we got objectives and exhausted smaller subtypes
+        assert subtype_counts["subtype_a"] >= 2  # Has most objectives (4 available)
+        assert subtype_counts["subtype_b"] >= 1  # Has 2 available
+        assert subtype_counts["subtype_c"] == 1  # Only had 1 available
+
+    @pytest.mark.asyncio
+    async def test_round_robin_sampling_uses_objective_id_not_object_identity(self, red_team):
+        """Test that sampling uses objective 'id' field, not Python object identity."""
+        # Setup: Create two different object instances with the same ID
+        obj_a1_instance1 = {
+            "id": "a1",
+            "messages": [{"content": "objective a1"}],
+            "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+        }
+        obj_a1_instance2 = {
+            "id": "a1",  # Same ID as instance1
+            "messages": [{"content": "objective a1"}],
+            "metadata": {"target_harms": [{"risk-subtype": "subtype_a"}]},
+        }
+
+        # Verify they are different objects in memory
+        assert obj_a1_instance1 is not obj_a1_instance2
+        assert id(obj_a1_instance1) != id(obj_a1_instance2)
+
+        # Both instances in the list (same logical ID, different Python objects)
+        custom_objectives = [obj_a1_instance1, obj_a1_instance2]
+
+        # Mock the attack objective generator
+        red_team.attack_objective_generator.custom_attack_seed_prompts = "test.json"
+        red_team.attack_objective_generator.validated_prompts = custom_objectives
+        red_team.attack_objective_generator.valid_prompts_by_category = {"violence": custom_objectives}
+        red_team.attack_objective_generator.num_objectives = 2
+
+        # Call the actual production method
+        with patch("random.sample", side_effect=lambda x, k: x[:k]), patch("random.choice", side_effect=lambda x: x[0]):
+            prompts = await red_team._get_attack_objectives(risk_category=RiskCategory.Violence, strategy="baseline")
+
+        # Verify: Should only select 1 objective because both have same ID
+        assert len(prompts) == 1
+
+        # Verify the selected objective has the expected ID
+        cached_key = (("violence",), "baseline")
+        selected_objectives = red_team.attack_objectives[cached_key]["selected_objectives"]
+        assert len(selected_objectives) == 1
+        assert selected_objectives[0]["id"] == "a1"

@@ -20,10 +20,7 @@ parameters:
   - name: TestTimeoutInMinutes
     type: number
     default: 60
-  - name: ToxEnvParallel
-    type: string
-    default: 'all'
-  - name: UnsupportedToxEnvironments
+  - name: UnsupportedChecks
     type: string
     default: ''
   - name: InjectedPackages
@@ -45,6 +42,9 @@ parameters:
     default: false
   - name: OSName
     type: string
+  - name: EnvVars
+    type: object
+    default: {}
 
 jobs:
   - job:
@@ -79,6 +79,20 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - ${{ if eq(lower(parameters.OSName), 'macos') }}:
+      - pwsh: |
+          $dotnetroot = "$HOME/.dotnet"
+          Write-Host $dotnetroot
+          Write-Host "##vso[task.setvariable variable=DOTNET_ROOT]$dotnetroot"
+        displayName: 'Set DOTNET_ROOT'
+
+    - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+      parameters:
+        ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+          TokenToUseForAuth: $(azuresdk-github-pat)
+        Paths:
+          - '**'
+
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -90,40 +104,19 @@ jobs:
       parameters:
         AgentImage: ${{ parameters.OSName }}
 
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.10'
-
-    - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
-      parameters:
-        PackageName: "azure-template"
-        ServiceDirectory: "template"
-        TestPipeline: ${{ parameters.TestPipeline }}
-
-    - pwsh: |
-        python -m pip install "tools/azure-sdk-tools[build]"
-      displayName: Install build tooling
-
-    - task: PythonScript@0
-      displayName: 'Set Tox Environment'
-      inputs:
-        scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
-        arguments: >-
-          --unsupported="$(UnsupportedToxEnvironments)"
-          --override="$(Run.ToxCustomEnvs)"
-          --team-project="$(System.TeamProject)"
-
     - template: ../steps/build-test.yml
       parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        ToxTestEnv: $(toxenv)
-        ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
+        CheckEnv: $(checks)
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}
+        TestPipeline: ${{ parameters.TestPipeline }}
         BeforeTestSteps:
           - ${{ each step in parameters.BeforeTestSteps }}:
             -  ${{ step }}
         AfterTestSteps: ${{ parameters.AfterTestSteps }}
+        EnvVars: ${{ parameters.EnvVars }}

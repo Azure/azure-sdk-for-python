@@ -1,7 +1,7 @@
 import random
 import string
 import time
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy, set_bodiless_matcher
 from azure.mgmt.netapp.models import Volume, Snapshot
 from test_volume import create_volume, wait_for_volume, delete_volume, create_virtual_network
@@ -29,8 +29,8 @@ def create_snapshot(
     else:
         # we need to get the volume id if we didn't just create it
         volume = client.volumes.get(rg, account_name, pool_name, volume_name)
-
-    body = Snapshot(location=location, file_system_id=volume.file_system_id)
+    # snapshot_properties = azure.mgmt.netapp.models.SnapshotProperties(file_system_id=volume.file_system_id)
+    body = Snapshot(location=location)
     client.snapshots.begin_create(rg, account_name, pool_name, volume_name, snapshot_name, body).result()
     snapshot = wait_for_snapshot(client, rg, account_name, pool_name, volume_name, snapshot_name)
     return snapshot
