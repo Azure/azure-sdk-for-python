@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Contract tests for chat isolation key enforcement across all endpoints.
+"""Contract tests for user ID (user isolation) enforcement across all endpoints.
 
-When a response is created with an ``x-agent-chat-isolation-key`` header,
+When a response is created with an ``x-agent-user-id`` header,
 all subsequent GET, Cancel, DELETE, and InputItems requests must include
 the same key.  Mismatched or missing keys return an indistinguishable 404
-to prevent cross-chat information leakage.
+to prevent cross-user information leakage.
 
 Backward-compatible: no enforcement when the response was created without a key.
 """
@@ -41,7 +41,7 @@ def _make_client(handler=_noop_handler) -> TestClient:
     return TestClient(host)
 
 
-def _create_response(client: TestClient, *, chat_key: str | None = None, **overrides) -> dict[str, Any]:
+def _create_response(client: TestClient, *, user_id_key: str | None = None, **overrides) -> dict[str, Any]:
     """Create a response and return the parsed JSON body."""
     payload = {
         "model": "m",
@@ -49,8 +49,8 @@ def _create_response(client: TestClient, *, chat_key: str | None = None, **overr
         **overrides,
     }
     headers: dict[str, str] = {}
-    if chat_key is not None:
-        headers["x-agent-chat-isolation-key"] = chat_key
+    if user_id_key is not None:
+        headers["x-agent-user-id"] = user_id_key
     r = client.post("/responses", json=payload, headers=headers)
     assert r.status_code == 200, f"create failed: {r.status_code} {r.text}"
     return r.json()
@@ -212,8 +212,8 @@ def _build_async_client(handler: Any) -> _AsyncAsgiClient:
 # ── GET with isolation ────────────────────────────────────
 
 
-class TestGetChatIsolation:
-    """GET /responses/{id} with chat isolation key enforcement.
+class TestGetUserIsolation:
+    """GET /responses/{id} with user ID enforcement.
 
     In-flight isolation is enforced locally by the endpoint handler.
     After eviction, the Foundry storage provider enforces isolation
@@ -223,16 +223,16 @@ class TestGetChatIsolation:
     """
 
     def test_get_matching_key_returns_200(self) -> None:
-        """GET with the same chat key that was used at creation → 200."""
+        """GET with the same user ID that was used at creation → 200."""
         client = _make_client()
-        resp = _create_response(client, chat_key="key_A")
-        _wait_for_terminal(client, resp["id"], **{"x-agent-chat-isolation-key": "key_A"})
-        r = client.get(f"/responses/{resp['id']}", headers={"x-agent-chat-isolation-key": "key_A"})
+        resp = _create_response(client, user_id_key="key_A")
+        _wait_for_terminal(client, resp["id"], **{"x-agent-user-id": "key_A"})
+        r = client.get(f"/responses/{resp['id']}", headers={"x-agent-user-id": "key_A"})
         assert r.status_code == 200
 
     @pytest.mark.asyncio
     async def test_get_mismatched_key_returns_404(self) -> None:
-        """GET with a different chat key on in-flight response → 404."""
+        """GET with a different user ID on in-flight response → 404."""
         handler = _make_cancellable_bg_handler()
         client = _build_async_client(handler)
         response_id = IdGenerator.new_response_id()
@@ -246,14 +246,14 @@ class TestGetChatIsolation:
                     "background": True,
                     "stream": True,
                 },
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
         )
         try:
             await asyncio.wait_for(handler.started.wait(), timeout=5.0)
             r = await client.get(
                 f"/responses/{response_id}",
-                headers={"x-agent-chat-isolation-key": "key_B"},
+                headers={"x-agent-user-id": "key_B"},
             )
             assert r.status_code == 404
         finally:
@@ -267,7 +267,7 @@ class TestGetChatIsolation:
 
     @pytest.mark.asyncio
     async def test_get_missing_key_when_created_with_key_returns_404(self) -> None:
-        """GET without chat key when response was created with one → 404."""
+        """GET without user ID when response was created with one → 404."""
         handler = _make_cancellable_bg_handler()
         client = _build_async_client(handler)
         response_id = IdGenerator.new_response_id()
@@ -281,7 +281,7 @@ class TestGetChatIsolation:
                     "background": True,
                     "stream": True,
                 },
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
         )
         try:
@@ -303,7 +303,7 @@ class TestGetChatIsolation:
         resp = _create_response(client)
         _wait_for_terminal(client, resp["id"])
         # With a key
-        r = client.get(f"/responses/{resp['id']}", headers={"x-agent-chat-isolation-key": "any_key"})
+        r = client.get(f"/responses/{resp['id']}", headers={"x-agent-user-id": "any_key"})
         assert r.status_code == 200
         # Without a key
         r = client.get(f"/responses/{resp['id']}")
@@ -325,14 +325,14 @@ class TestGetChatIsolation:
                     "background": True,
                     "stream": True,
                 },
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
         )
         try:
             await asyncio.wait_for(handler.started.wait(), timeout=5.0)
             r = await client.get(
                 f"/responses/{response_id}",
-                headers={"x-agent-chat-isolation-key": "key_WRONG"},
+                headers={"x-agent-user-id": "key_WRONG"},
             )
             assert r.status_code == 404
             body = r.json()
@@ -351,8 +351,8 @@ class TestGetChatIsolation:
 # ── DELETE with isolation ────────────────────────────────
 
 
-class TestDeleteChatIsolation:
-    """DELETE /responses/{id} with chat isolation key enforcement.
+class TestDeleteUserIsolation:
+    """DELETE /responses/{id} with user ID enforcement.
 
     In-flight isolation is enforced locally; after eviction, isolation is
     enforced by the Foundry storage provider server-side.
@@ -360,9 +360,9 @@ class TestDeleteChatIsolation:
 
     def test_delete_matching_key_returns_200(self) -> None:
         client = _make_client()
-        resp = _create_response(client, chat_key="key_A")
-        _wait_for_terminal(client, resp["id"], **{"x-agent-chat-isolation-key": "key_A"})
-        r = client.delete(f"/responses/{resp['id']}", headers={"x-agent-chat-isolation-key": "key_A"})
+        resp = _create_response(client, user_id_key="key_A")
+        _wait_for_terminal(client, resp["id"], **{"x-agent-user-id": "key_A"})
+        r = client.delete(f"/responses/{resp['id']}", headers={"x-agent-user-id": "key_A"})
         assert r.status_code == 200
 
     @pytest.mark.asyncio
@@ -380,7 +380,7 @@ class TestDeleteChatIsolation:
                     "background": True,
                     "stream": True,
                 },
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
         )
         try:
@@ -388,7 +388,7 @@ class TestDeleteChatIsolation:
             r = await client.request(
                 "DELETE",
                 f"/responses/{response_id}",
-                headers={"x-agent-chat-isolation-key": "key_B"},
+                headers={"x-agent-user-id": "key_B"},
             )
             assert r.status_code == 404
         finally:
@@ -415,7 +415,7 @@ class TestDeleteChatIsolation:
                     "background": True,
                     "stream": True,
                 },
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
         )
         try:
@@ -435,8 +435,8 @@ class TestDeleteChatIsolation:
 # ── CANCEL with isolation (async — needs real event loop) ──
 
 
-class TestCancelChatIsolation:
-    """POST /responses/{id}/cancel with chat isolation key enforcement.
+class TestCancelUserIsolation:
+    """POST /responses/{id}/cancel with user ID enforcement.
 
     Cancel tests must use async ASGI client because the handler runs as a
     background asyncio task that needs the event loop to start before the
@@ -459,14 +459,14 @@ class TestCancelChatIsolation:
                     "background": True,
                     "stream": True,
                 },
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
         )
         try:
             await asyncio.wait_for(handler.started.wait(), timeout=5.0)
             r = await client.post(
                 f"/responses/{response_id}/cancel",
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
             assert r.status_code == 200
         finally:
@@ -494,14 +494,14 @@ class TestCancelChatIsolation:
                     "background": True,
                     "stream": True,
                 },
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
         )
         try:
             await asyncio.wait_for(handler.started.wait(), timeout=5.0)
             r = await client.post(
                 f"/responses/{response_id}/cancel",
-                headers={"x-agent-chat-isolation-key": "key_B"},
+                headers={"x-agent-user-id": "key_B"},
             )
             assert r.status_code == 404
         finally:
@@ -529,7 +529,7 @@ class TestCancelChatIsolation:
                     "background": True,
                     "stream": True,
                 },
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
         )
         try:
@@ -549,8 +549,8 @@ class TestCancelChatIsolation:
 # ── INPUT_ITEMS with isolation ────────────────────────────
 
 
-class TestInputItemsChatIsolation:
-    """GET /responses/{id}/input_items with chat isolation key enforcement.
+class TestInputItemsUserIsolation:
+    """GET /responses/{id}/input_items with user ID enforcement.
 
     In-flight isolation is enforced locally; after eviction, isolation is
     enforced by the Foundry storage provider server-side.
@@ -558,11 +558,11 @@ class TestInputItemsChatIsolation:
 
     def test_input_items_matching_key_returns_200(self) -> None:
         client = _make_client()
-        resp = _create_response(client, chat_key="key_A")
-        _wait_for_terminal(client, resp["id"], **{"x-agent-chat-isolation-key": "key_A"})
+        resp = _create_response(client, user_id_key="key_A")
+        _wait_for_terminal(client, resp["id"], **{"x-agent-user-id": "key_A"})
         r = client.get(
             f"/responses/{resp['id']}/input_items",
-            headers={"x-agent-chat-isolation-key": "key_A"},
+            headers={"x-agent-user-id": "key_A"},
         )
         assert r.status_code == 200
 
@@ -581,14 +581,14 @@ class TestInputItemsChatIsolation:
                     "background": True,
                     "stream": True,
                 },
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
         )
         try:
             await asyncio.wait_for(handler.started.wait(), timeout=5.0)
             r = await client.get(
                 f"/responses/{response_id}/input_items",
-                headers={"x-agent-chat-isolation-key": "key_B"},
+                headers={"x-agent-user-id": "key_B"},
             )
             assert r.status_code == 404
         finally:
@@ -615,7 +615,7 @@ class TestInputItemsChatIsolation:
                     "background": True,
                     "stream": True,
                 },
-                headers={"x-agent-chat-isolation-key": "key_A"},
+                headers={"x-agent-user-id": "key_A"},
             )
         )
         try:

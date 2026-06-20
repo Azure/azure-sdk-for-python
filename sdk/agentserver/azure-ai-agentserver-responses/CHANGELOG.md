@@ -1,5 +1,18 @@
 # Release History
 
+## 1.0.0b8 (Unreleased)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: the per-request call ID (`x-agent-foundry-call-id`) and global user ID (`x-agent-user-id`) are read from inbound requests, exposed on `ResponseContext.platform_context`, and forwarded as headers on all outbound Foundry Storage calls. The call ID is also bound to the request-scoped platform context so handler/tool code making raw outbound calls can forward it.
+
+### Breaking Changes
+
+- Renamed the public `IsolationContext` type to `PlatformContext`. Its fields are now `user_id_key` (from `x-agent-user-id`) and `call_id` (from `x-agent-foundry-call-id`), replacing `user_key` / `chat_key`.
+- `ResponseContext.isolation` is now `ResponseContext.platform_context`.
+- Response provider protocol methods now accept a `context` keyword argument (previously `isolation`).
+- In-process partition enforcement is now keyed on the user ID (`x-agent-user-id`) instead of the chat isolation key.
+
 ## 1.0.0b7 (2026-05-25)
 
 ### Features Added

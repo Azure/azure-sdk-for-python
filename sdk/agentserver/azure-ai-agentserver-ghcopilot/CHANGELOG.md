@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: the toolbox MCP bridge now forwards the platform identity headers (`x-agent-foundry-call-id` and `x-agent-user-id`) from the inbound request context on all outbound Foundry toolbox calls (initialize, `tools/list`, `tools/call`). No-op under protocol version `1.0.0` or local development.
+
 ## 1.0.0b2 (2026-04-24)
 
 ### Breaking Changes

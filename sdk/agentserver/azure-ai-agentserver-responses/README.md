@@ -91,7 +91,7 @@ The `ResponseContext` provides request-scoped state:
 |---|---|
 | `response_id` | Unique ID for this response |
 | `is_shutdown_requested` | Whether the server is draining |
-| `isolation` | `IsolationContext` with `user_key` and `chat_key` for multi-tenant state partitioning |
+| `platform_context` | `PlatformContext` with `user_id_key` (from `x-agent-user-id`) and `call_id` (from `x-agent-foundry-call-id`) for multi-tenant state partitioning and per-request caller-context forwarding |
 | `client_headers` | Dictionary of `x-client-*` headers forwarded from the platform (keys normalized to lowercase) |
 | `query_parameters` | Dictionary of query string parameters |
 | `get_input_items()` | Load resolved input items as `Item` subtypes |

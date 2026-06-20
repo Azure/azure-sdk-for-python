@@ -26,6 +26,8 @@ from typing import Any, Dict, List, Optional
 import httpx
 from copilot.tools import Tool, ToolResult
 
+from azure.ai.agentserver.core import get_request_context  # pylint: disable=no-name-in-module
+
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
 # Canary — proves which version of _toolbox.py is deployed.
@@ -180,6 +182,10 @@ class McpBridge:
                 logger.warning("Failed to refresh token for MCP bridge", exc_info=True)
         if self._session_id:
             headers["mcp-session-id"] = self._session_id
+        # Forward platform identity headers (call ID / user ID) to the Foundry
+        # toolbox service on container protocol version 2.0.0. No-op when absent
+        # (protocol 1.0.0 or local development).
+        headers.update(get_request_context().platform_headers())
         return headers
 
     async def initialize(self) -> str:
@@ -196,7 +202,7 @@ class McpBridge:
 
         resp = await self._client.post(
             self._endpoint,
-            headers=self._headers,
+            headers={**self._headers, **get_request_context().platform_headers()},
             json={
                 "jsonrpc": "2.0",
                 "id": self._next_id(),

@@ -339,3 +339,39 @@ class TestMakeCopilotTools:
         mcp_tools = [{"name": "simple_tool", "description": "A tool"}]
         tools = _make_copilot_tools(bridge, mcp_tools)
         assert tools[0].parameters == {"type": "object", "properties": {}}
+
+
+# ---------------------------------------------------------------------------
+# McpBridge platform identity header forwarding (container protocol 2.0.0)
+# ---------------------------------------------------------------------------
+
+
+class TestMcpBridgePlatformHeaders:
+    """The MCP bridge forwards the inbound call ID / user ID on outbound calls."""
+
+    def test_request_headers_forward_platform_context(self):
+        from azure.ai.agentserver.core import (
+            RequestContext,
+            reset_request_context,
+            set_request_context,
+        )
+
+        bridge = McpBridge("https://acct.services.ai.azure.com/toolboxes/t/mcp", {"X-Static": "1"})
+        token = set_request_context(RequestContext(call_id="call-123", user_id="user-abc"))
+        try:
+            headers = bridge._request_headers()
+        finally:
+            reset_request_context(token)
+
+        assert headers["x-agent-foundry-call-id"] == "call-123"
+        assert headers["x-agent-user-id"] == "user-abc"
+        assert headers["X-Static"] == "1"
+
+    def test_request_headers_omit_platform_context_when_absent(self):
+        bridge = McpBridge("https://acct.services.ai.azure.com/toolboxes/t/mcp", {"X-Static": "1"})
+
+        headers = bridge._request_headers()
+
+        assert "x-agent-foundry-call-id" not in headers
+        assert "x-agent-user-id" not in headers
+        assert headers["X-Static"] == "1"
