@@ -113,33 +113,6 @@ class MessagesOrQueryResponseInputValidator(ToolDefinitionsValidator):
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
                 )
-            # The final assistant message must contain text
-            last_content = messages[-1].get("content", "")
-            if isinstance(last_content, list):
-                has_text = any(
-                    (
-                        isinstance(content_item, dict)
-                        and content_item.get("type")
-                        in (
-                            ContentType.TEXT,
-                            ContentType.INPUT_TEXT,
-                            ContentType.OUTPUT_TEXT,
-                        )
-                    )
-                    or isinstance(content_item, str)
-                    for content_item in last_content
-                )
-                if not has_text:
-                    raise EvaluationException(
-                        message=(
-                            "The last message must contain text content, "
-                            "not only tool calls. The conversation appears to be "
-                            "mid-execution \u2014 provide the agent's final text response."
-                        ),
-                        blame=ErrorBlame.USER_ERROR,
-                        category=ErrorCategory.INVALID_VALUE,
-                        target=self.error_target,
-                    )
 
             if self.deep_validate_messages:
                 for message in messages:
