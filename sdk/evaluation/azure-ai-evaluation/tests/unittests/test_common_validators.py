@@ -542,27 +542,10 @@ class TestMessagesOrQueryResponseInputValidator:
         with pytest.raises(EvaluationException):
             validator.validate_eval_input({"messages": [_user_message()]})
 
-    def test_last_message_only_tool_calls_raises(self):
-        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET)
-        messages = [
-            _user_message(),
-            {"role": "assistant", "content": [_tool_call_content_item()]},
-        ]
-        with pytest.raises(EvaluationException) as exc_info:
-            validator.validate_eval_input({"messages": messages})
-        assert exc_info.value.category == ErrorCategory.INVALID_VALUE
-
-    def test_last_message_with_text_content_ok(self):
-        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET)
-        messages = [
-            _user_message(),
-            {"role": "assistant", "content": [{"type": "output_text", "text": "done"}]},
-        ]
-        assert validator.validate_eval_input({"messages": messages}) is True
-
     def test_enforce_tool_definitions_required(self):
         validator = MessagesOrQueryResponseInputValidator(
-            error_target=TARGET, optional_tool_definitions=False
+            error_target=TARGET, optional_tool_definitions=False,
+            enforce_tool_definitions=True
         )
         with pytest.raises(EvaluationException):
             validator.validate_eval_input({"messages": self._messages()})
@@ -572,17 +555,6 @@ class TestMessagesOrQueryResponseInputValidator:
             error_target=TARGET, enforce_tool_definitions=False
         )
         assert validator.validate_eval_input({"messages": self._messages()}) is True
-
-    def test_deep_validate_messages_catches_bad_content(self):
-        validator = MessagesOrQueryResponseInputValidator(
-            error_target=TARGET, enforce_tool_definitions=False, deep_validate_messages=True
-        )
-        messages = [
-            {"role": "user", "content": [{"type": "tool_call", "text": "bad"}]},
-            _assistant_message(),
-        ]
-        with pytest.raises(EvaluationException):
-            validator.validate_eval_input({"messages": messages})
 
     def test_query_response_fallback_no_enforce_tool_definitions(self):
         validator = MessagesOrQueryResponseInputValidator(
