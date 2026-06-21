@@ -78,7 +78,6 @@ def clear_session_call_id(session_id: Optional[str]) -> None:
         _call_id_by_session.pop(session_id, None)
 
 
-
 # ---------------------------------------------------------------------------
 # Discovery — read mcp.json and build server config dicts
 # ---------------------------------------------------------------------------
