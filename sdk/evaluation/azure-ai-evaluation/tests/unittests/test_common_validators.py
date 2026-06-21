@@ -121,7 +121,9 @@ class TestConversationValidator:
     def test_empty_content_raises(self):
         validator = ConversationValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
-            validator.validate_eval_input({"query": [{"role": "user", "content": ""}], "response": [_assistant_message()]})
+            validator.validate_eval_input(
+                {"query": [{"role": "user", "content": ""}], "response": [_assistant_message()]}
+            )
 
     def test_content_list_item_missing_type_raises(self):
         validator = ConversationValidator(error_target=TARGET)
@@ -544,21 +546,16 @@ class TestMessagesOrQueryResponseInputValidator:
 
     def test_enforce_tool_definitions_required(self):
         validator = MessagesOrQueryResponseInputValidator(
-            error_target=TARGET, optional_tool_definitions=False,
-            enforce_tool_definitions=True
+            error_target=TARGET, optional_tool_definitions=False, enforce_tool_definitions=True
         )
         with pytest.raises(EvaluationException):
             validator.validate_eval_input({"messages": self._messages()})
 
     def test_no_enforce_tool_definitions_ok(self):
-        validator = MessagesOrQueryResponseInputValidator(
-            error_target=TARGET, enforce_tool_definitions=False
-        )
+        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET, enforce_tool_definitions=False)
         assert validator.validate_eval_input({"messages": self._messages()}) is True
 
     def test_query_response_fallback_no_enforce_tool_definitions(self):
-        validator = MessagesOrQueryResponseInputValidator(
-            error_target=TARGET, enforce_tool_definitions=False
-        )
+        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET, enforce_tool_definitions=False)
         eval_input = {"query": [_user_message()], "response": [_assistant_message()]}
         assert validator.validate_eval_input(eval_input) is True

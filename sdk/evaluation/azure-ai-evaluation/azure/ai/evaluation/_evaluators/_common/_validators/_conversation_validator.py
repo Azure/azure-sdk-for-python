@@ -229,9 +229,7 @@ class ConversationValidator(ValidatorInterface):
                 if self.check_for_unsupported_tools:
                     if content_type == ContentType.TOOL_CALL or content_type == ContentType.OPENAPI_CALL:
                         name = (
-                            "openapi_call"
-                            if content_type == ContentType.OPENAPI_CALL
-                            else content_item["name"].lower()
+                            "openapi_call" if content_type == ContentType.OPENAPI_CALL else content_item["name"].lower()
                         )
                         if name in self.UNSUPPORTED_TOOLS:
                             return EvaluationException(
