@@ -139,6 +139,48 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
 app.run()
 ```
 
+### Multi-user session (per-request call ID)
+
+On container protocol `2.0.0` a single agent session can serve **multiple users**. Forwarding the per-request `x-agent-foundry-call-id` on outbound toolbox calls lets the tool server resolve *which* user made this request and act on their behalf — so user A's and user B's requests to the same session each get a user-scoped result. (`x-agent-user-id` is never forwarded; the tool resolves the user from the call ID server-side. Use `context.platform_context.user_id_key` only for the container's own per-user state.)
+
+```python
+import asyncio
+import os
+
+import httpx
+from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.responses import (
+    CreateResponse,
+    ResponseContext,
+    ResponsesAgentServerHost,
+    TextResponse,
+)
+
+app = ResponsesAgentServerHost()
+
+
+@app.response_handler
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    # platform_headers() echoes x-agent-foundry-call-id only (never x-agent-user-id).
+    headers = get_request_context().platform_headers()
+
+    # Toolbox / MCP — attach the call ID PER CALL. The MCP session is long-lived and
+    # shared across users/turns, so never bake one call's ID into static client headers.
+    async with httpx.AsyncClient() as mcp:
+        resp = await mcp.post(
+            f"{os.environ['FOUNDRY_PROJECT_ENDPOINT']}/toolboxes/github/mcp",
+            headers={"Authorization": f"Bearer {get_agent_token()}", **headers},  # get_agent_token(): the agent's managed-identity token
+            json={"jsonrpc": "2.0", "method": "tools/call",
+                  "params": {"name": "list_my_assigned_issues", "arguments": {}}},
+        )
+        # The toolbox resolved the caller from the call ID and returned THIS user's issues.
+
+    return TextResponse(context, request, text=resp.text)
+
+
+app.run()
+```
+
 ### Function calling
 
 ```python

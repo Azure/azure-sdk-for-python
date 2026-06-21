@@ -409,11 +409,11 @@ class TestSessionKeyedCallId:
             return _fake_post_response({"result": {"content": [{"type": "text", "text": "ok"}]}})
 
         bridge._client.post = _post
-        set_session_call_id("sess-1", "call-xyz")
+        set_session_call_id("session-1", "call-xyz")
         try:
-            out = await bridge.call_tool("doc.search", {"q": "x"}, session_id="sess-1")
+            out = await bridge.call_tool("doc.search", {"q": "x"}, session_id="session-1")
         finally:
-            clear_session_call_id("sess-1")
+            clear_session_call_id("session-1")
 
         assert out == "ok"
         # Echoed as header (preferred) and in params._meta (fallback).
@@ -431,7 +431,7 @@ class TestSessionKeyedCallId:
             return _fake_post_response({"result": {"content": [{"type": "text", "text": "ok"}]}})
 
         bridge._client.post = _post
-        out = await bridge.call_tool("doc.search", {"q": "x"}, session_id="unknown-sess")
+        out = await bridge.call_tool("doc.search", {"q": "x"}, session_id="unknown-session")
 
         assert out == "ok"
         assert "x-agent-foundry-call-id" not in captured["headers"]
