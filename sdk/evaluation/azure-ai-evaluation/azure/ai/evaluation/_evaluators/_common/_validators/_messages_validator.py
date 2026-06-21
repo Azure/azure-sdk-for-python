@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 
 """
-Validator that supports both single-turn (query/response) and multi-turn (messages) inputs.
+Validator for evaluators that support both single-turn (query/response)
+and multi-turn (messages) inputs.
 """
 
 from typing import Any, Dict
@@ -70,7 +71,7 @@ class MessagesOrQueryResponseInputValidator(ToolDefinitionsValidator):
                 if not isinstance(message, dict):
                     raise EvaluationException(
                         message=(
-                            f"Each item in 'messages' must be a dictionary, "
+                            "Each item in 'messages' must be a dictionary, "
                             f"but item at index {index} is {type(message).__name__}."
                         ),
                         blame=ErrorBlame.USER_ERROR,
