@@ -221,9 +221,10 @@ class McpBridge:
                 logger.warning("Failed to refresh token for MCP bridge", exc_info=True)
         if self._session_id:
             headers["mcp-session-id"] = self._session_id
-        # Forward platform identity headers (call ID / user ID) to the Foundry
+        # Forward the per-request call ID (x-agent-foundry-call-id) to the Foundry
         # toolbox service on container protocol version 2.0.0. No-op when absent
-        # (protocol 1.0.0 or local development).
+        # (protocol 1.0.0 or local development). x-agent-user-id is never forwarded
+        # to 1P services; it is used only for container-side per-user partitioning.
         headers.update(get_request_context().platform_headers())
         return headers
 
