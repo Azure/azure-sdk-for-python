@@ -661,38 +661,42 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         str_token = _streaming_var.set(str(ctx.stream).lower())
         # Bind platform context so handler/tool code making raw outbound 1P calls
         # can forward the per-request call ID and user ID (protocol 2.0.0).
-        platform_ctx_token = set_request_context(
-            FoundryAgentRequestContext(
-                call_id=ctx.call_id or None,
-                user_id=ctx.user_id or None,
-                session_id=agent_session_id,
-            )
+        platform_context = FoundryAgentRequestContext(
+            call_id=ctx.call_id or None,
+            user_id=ctx.user_id or None,
+            session_id=agent_session_id,
         )
+        platform_ctx_token = set_request_context(platform_context)
 
         disconnect_task: asyncio.Task[None] | None = None
         try:
             if ctx.stream:
-                body_iter = self._orchestrator.run_stream(ctx)
+                raw_iter = self._orchestrator.run_stream(ctx)
 
                 # B17: monitor client disconnect for non-background streams
                 if not ctx.background:
                     disconnect_task = asyncio.create_task(
                         self._monitor_disconnect(request, ctx.cancellation_signal)
                     )
-                    raw_iter = body_iter
 
-                    async def _iter_with_cleanup():  # type: ignore[return]
-                        try:
-                            async for chunk in raw_iter:
-                                yield chunk
-                        finally:
-                            if disconnect_task and not disconnect_task.done():
-                                disconnect_task.cancel()
-
-                    body_iter = _iter_with_cleanup()
+                # The handler runs lazily while Starlette iterates this body, which
+                # happens after handle_create returns (line below) and the `finally`
+                # has already reset the request context. Re-establish the platform
+                # context inside the streaming task so handler/tool code can still
+                # forward the per-request call ID / user ID (protocol 2.0.0), and
+                # fold in disconnect-task cleanup.
+                async def _iter_with_context():  # type: ignore[return]
+                    stream_ctx_token = set_request_context(platform_context)
+                    try:
+                        async for chunk in raw_iter:
+                            yield chunk
+                    finally:
+                        reset_request_context(stream_ctx_token)
+                        if disconnect_task and not disconnect_task.done():
+                            disconnect_task.cancel()
 
                 sse_response = StreamingResponse(
-                    body_iter,
+                    _iter_with_context(),
                     media_type="text/event-stream",
                     headers={**self._sse_headers, **self._session_headers(agent_session_id)},
                 )
