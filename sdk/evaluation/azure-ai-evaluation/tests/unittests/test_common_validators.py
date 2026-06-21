@@ -365,6 +365,59 @@ class TestTaskNavigationEfficiencyValidator:
         eval_input = {"actions": self._response(), "expected_actions": ["search"]}
         assert validator.validate_eval_input(eval_input) is True
 
+    def test_actions_alias_normalized_onto_response(self):
+        validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
+        eval_input = {"actions": self._response(), "ground_truth": ["search"]}
+        assert validator.validate_eval_input(eval_input) is True
+        # The alias value should be copied onto the canonical 'response' key in place.
+        assert eval_input["response"] == eval_input["actions"]
+
+    def test_expected_actions_alias_normalized_onto_ground_truth(self):
+        validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
+        eval_input = {"response": self._response(), "expected_actions": ["search"]}
+        assert validator.validate_eval_input(eval_input) is True
+        assert eval_input["ground_truth"] == eval_input["expected_actions"]
+
+    def test_mixed_canonical_and_alias_inputs(self):
+        validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
+        eval_input = {"actions": self._response(), "ground_truth": ["search"]}
+        assert validator.validate_eval_input(eval_input) is True
+
+    def test_canonical_takes_precedence_over_alias(self):
+        validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
+        # 'response' (canonical) is valid; 'actions' (alias) is invalid and must be ignored.
+        eval_input = {
+            "response": self._response(),
+            "actions": "not a valid list",
+            "ground_truth": ["search"],
+        }
+        assert validator.validate_eval_input(eval_input) is True
+        # Canonical value is preserved; alias does not overwrite it.
+        assert eval_input["response"] == self._response()
+
+    def test_alias_does_not_overwrite_empty_string_canonical(self):
+        validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
+        # Canonical present but falsy ("") is still not None, so alias must not overwrite it.
+        eval_input = {"response": "", "actions": self._response(), "ground_truth": ["search"]}
+        with pytest.raises(EvaluationException):
+            validator.validate_eval_input(eval_input)
+
+    def test_alias_json_string_inputs_parsed(self):
+        import json
+
+        validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
+        eval_input = {
+            "actions": json.dumps(self._response()),
+            "expected_actions": json.dumps(["search"]),
+        }
+        assert validator.validate_eval_input(eval_input) is True
+
+    def test_missing_canonical_and_alias_raises(self):
+        validator = TaskNavigationEfficiencyValidator(error_target=TARGET)
+        with pytest.raises(EvaluationException) as exc_info:
+            validator.validate_eval_input({"ground_truth": ["search"]})
+        assert exc_info.value.category == ErrorCategory.MISSING_FIELD
+
     def test_json_string_inputs_parsed(self):
         import json
 
