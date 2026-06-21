@@ -14,7 +14,9 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import threading
+from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Optional
 
 from azure.cosmos._backend.base import (
@@ -41,14 +43,61 @@ except ImportError:
     )
 
 
+# Map each op name to its bound Rust function once, at import, so each call is a
+# dict lookup instead of a getattr. Empty when the compiled module is absent.
+_OP_DISPATCH = {}
+if _rust_module is not None:
+    for _op, _method in OP_TO_BINDING_METHOD.items():
+        _fn = getattr(_rust_module, _method, None)
+        if _fn is not None:
+            _OP_DISPATCH[_op] = _fn
+
+
+_DEFAULT_ASYNC_MAX_THREADS = 256
+
+
+def _async_executor_max_threads() -> int:
+    """Size of the async backend's dedicated thread pool.
+
+    The Rust call holds its worker thread for the whole call, so this is the cap
+    on how many operations can run at once; beyond it they wait. Threads are
+    created on demand up to the cap, so a high cap is free until used. Override
+    with ``COSMOS_RUST_ASYNC_MAX_THREADS``; the default is 256, well above
+    typical concurrency. It replaces asyncio's shared default pool, which held
+    only ``min(32, cpu + 4)`` threads.
+    """
+    raw = os.environ.get("COSMOS_RUST_ASYNC_MAX_THREADS")
+    if raw:
+        try:
+            value = int(raw)
+        except ValueError:
+            _LOGGER.warning(
+                "Ignoring invalid COSMOS_RUST_ASYNC_MAX_THREADS=%r; using default %d.",
+                raw,
+                _DEFAULT_ASYNC_MAX_THREADS,
+            )
+        else:
+            if value > 0:
+                return value
+            _LOGGER.warning(
+                "Ignoring non-positive COSMOS_RUST_ASYNC_MAX_THREADS=%r; using default %d.",
+                raw,
+                _DEFAULT_ASYNC_MAX_THREADS,
+            )
+    return _DEFAULT_ASYNC_MAX_THREADS
+
 
 class AsyncRustBackend(AsyncCosmosBackend):
     """Sends async operations to the Rust driver.
 
-    The Rust call blocks until it finishes, so each operation runs on a
-    worker thread to keep the event loop free. Each operation is routed by
-    its kind; when the compiled module is missing, every operation raises
-    ``NotImplementedError``.
+    The Rust call blocks until it finishes, so each operation runs on a worker
+    thread to keep the event loop free. Those threads come from this backend's
+    own pool, not asyncio's shared default pool: the default pool holds only
+    ``min(32, cpu + 4)`` threads and is shared across the process, which would
+    cap concurrency well below what callers ask for. The dedicated pool is built
+    lazily and sized by ``_async_executor_max_threads`` (override:
+    ``COSMOS_RUST_ASYNC_MAX_THREADS``). When the compiled module is missing,
+    every operation raises ``NotImplementedError``.
     """
 
     name = BACKEND_NAME_RUST
@@ -80,6 +129,23 @@ class AsyncRustBackend(AsyncCosmosBackend):
         # it keeps the first concurrent caller the only one that builds.
         self._handle: Optional[str] = None
         self._handle_lock = threading.Lock()
+        # This backend's own thread pool for the blocking Rust calls, built
+        # lazily on first use and sized by _async_executor_max_threads(). An
+        # unused client creates no threads.
+        self._executor: Optional[ThreadPoolExecutor] = None
+        self._executor_max_threads = _async_executor_max_threads()
+
+    def _get_executor(self) -> ThreadPoolExecutor:
+        # Built on first use, on the event-loop thread; all callers run there,
+        # so the check-then-create needs no lock.
+        executor = self._executor
+        if executor is None:
+            executor = ThreadPoolExecutor(
+                max_workers=self._executor_max_threads,
+                thread_name_prefix="cosmos-rust-async",
+            )
+            self._executor = executor
+        return executor
 
     def _init_handle_with_lock(self) -> str:
         if _rust_module is None:
@@ -112,24 +178,35 @@ class AsyncRustBackend(AsyncCosmosBackend):
         if handle is not None:
             return handle
         loop = asyncio.get_running_loop()
+        # One-time call, so it runs on the default pool; the dedicated pool is
+        # for the per-operation calls (see execute).
         return await loop.run_in_executor(None, self._init_handle_with_lock)
 
     async def close(self) -> None:
-        """Release the Rust client handle from the process cache."""
+        """Release the Rust client handle and shut down the dedicated pool."""
         handle = self._take_handle_for_close()
-        if handle is None or _rust_module is None:
-            return
-        close_client = getattr(_rust_module, "close_client", None)
-        if close_client is None:
-            return
-        loop = asyncio.get_running_loop()
-        try:
-            await loop.run_in_executor(None, close_client, handle)
-        except Exception:  # pylint: disable=broad-except
-            _LOGGER.debug("AsyncRustBackend.close failed for handle=%s", handle, exc_info=True)
+        executor = self._executor
+        self._executor = None
+        if handle is not None and _rust_module is not None:
+            close_client = getattr(_rust_module, "close_client", None)
+            if close_client is not None:
+                loop = asyncio.get_running_loop()
+                try:
+                    await loop.run_in_executor(None, close_client, handle)
+                except Exception:  # pylint: disable=broad-except
+                    _LOGGER.debug(
+                        "AsyncRustBackend.close failed for handle=%s", handle, exc_info=True
+                    )
+        if executor is not None:
+            # Don't block the event loop waiting for running calls to finish.
+            executor.shutdown(wait=False)
 
     def __del__(self) -> None:
         try:
+            executor = self._executor
+            self._executor = None
+            if executor is not None:
+                executor.shutdown(wait=False)
             handle = self._take_handle_for_close()
             if handle is None or _rust_module is None:
                 return
@@ -154,12 +231,15 @@ class AsyncRustBackend(AsyncCosmosBackend):
             )
 
         handle = await self._ensure_handle()
-        loop = asyncio.get_running_loop()
-        binding_method = OP_TO_BINDING_METHOD.get(prepared.op)
-        if binding_method is None:
+        # Look the bound function up in the dict built at import (see
+        # _OP_DISPATCH) instead of a getattr per call.
+        dispatch = _OP_DISPATCH.get(prepared.op)
+        if dispatch is None:
             raise NotImplementedError(
                 "AsyncRustBackend.execute does not yet support op={!r}.".format(prepared.op)
             )
-        dispatch = getattr(_rust_module, binding_method)
-        result = await loop.run_in_executor(None, dispatch, handle, prepared)
+        loop = asyncio.get_running_loop()
+        # Run the blocking Rust call on this backend's own pool, not asyncio's
+        # shared default pool, so concurrency isn't capped at ``min(32, cpu + 4)``.
+        result = await loop.run_in_executor(self._get_executor(), dispatch, handle, prepared)
         return build_backend_response(*result)

@@ -16,11 +16,11 @@ Selection precedence (highest wins):
 
 An invalid value raises ``ValueError`` at construction time.
 
-When ``rust`` is selected the factory needs the account endpoint and a
-master-key credential; other auth shapes are rejected upfront for now.
-This is a temporary limitation -- once the Rust driver supports the other
-auth shapes (TokenCredential, AAD, resource token), they will be accepted
-too.
+When ``rust`` is selected the factory needs the account endpoint and either a
+master-key credential or a *synchronous* token credential (Entra/AAD via
+``azure-identity``). Async token credentials and resource-token auth are
+rejected upfront for now -- a temporary limitation until the Rust driver
+supports them.
 
 When ``core-python`` is selected the factory returns ``None``; the
 helper layer treats absence-of-backend as the signal to use the legacy

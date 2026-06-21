@@ -77,7 +77,8 @@ class Stats:
         """Atomically drain both summaries and error details under one lock.
 
         Returns (summaries, errors) where summaries is a list of dicts with:
-        operation, count, errors, min_ms, max_ms, mean_ms, p50_ms, p90_ms, p99_ms
+        operation, count, errors, min_ms, max_ms, mean_ms, p50_ms, p90_ms, p99_ms,
+        p99_9_ms
         and errors is a list of dicts with: operation, error_message, source_message,
         error_status_code, error_sub_status_code, timestamp.
         """
@@ -104,6 +105,9 @@ class Stats:
                             "p50_ms": hist.get_value_at_percentile(50.0) / 1000.0,
                             "p90_ms": hist.get_value_at_percentile(90.0) / 1000.0,
                             "p99_ms": hist.get_value_at_percentile(99.0) / 1000.0,
+                            # p99.9 captures the slow tail, where the move to
+                            # the Rust backend tends to show its cost first.
+                            "p99_9_ms": hist.get_value_at_percentile(99.9) / 1000.0,
                         }
                     )
                 else:
@@ -118,6 +122,7 @@ class Stats:
                             "p50_ms": 0.0,
                             "p90_ms": 0.0,
                             "p99_ms": 0.0,
+                            "p99_9_ms": 0.0,
                         }
                     )
             # Reset for next interval

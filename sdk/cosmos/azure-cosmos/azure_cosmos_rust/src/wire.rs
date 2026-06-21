@@ -26,6 +26,7 @@ use azure_data_cosmos_driver::{
         OperationOptionsBuilder,
     },
 };
+use serde::Deserialize;
 
 use crate::runtime::{drivers, require_runtime_context};
 
@@ -547,14 +548,25 @@ fn write_response_headers(
 // ---------------------------------------------------------------------------
 
 /// Parse "dbs/<db>/colls/<coll>" into ("<db>", "<coll>").
+///
+/// Reads the four segments off the split iterator instead of collecting into a
+/// `Vec`, to avoid allocating one per call. The trailing `None` arm rejects a
+/// path with extra segments.
 fn parse_container_link(link: &str) -> PyResult<(String, String)> {
-    let parts: Vec<&str> = link.split('/').collect();
-    if parts.len() == 4 && parts[0] == "dbs" && parts[2] == "colls" {
-        Ok((parts[1].to_string(), parts[3].to_string()))
-    } else {
-        Err(PyValueError::new_err(format!(
+    let mut parts = link.split('/');
+    match (
+        parts.next(),
+        parts.next(),
+        parts.next(),
+        parts.next(),
+        parts.next(),
+    ) {
+        (Some("dbs"), Some(db), Some("colls"), Some(coll), None) => {
+            Ok((db.to_string(), coll.to_string()))
+        }
+        _ => Err(PyValueError::new_err(format!(
             "container_link must be 'dbs/<db>/colls/<coll>', got {link:?}"
-        )))
+        ))),
     }
 }
 
@@ -629,14 +641,24 @@ fn json_value_to_pk_component(value: serde_json::Value) -> PyResult<PartitionKey
     }
 }
 
-/// Read the document `id` out of a JSON body. The Python helper layer
-/// guarantees it is present; we fail loudly if it is not, rather than
-/// silently minting one here.
+/// Read the document `id` out of a JSON body. The caller guarantees it is
+/// present; we error if it is not rather than inventing one.
+///
+/// This reads only the `id` field and skips the rest of the document, so a
+/// large body isn't parsed in full just to get one string. The `id` is kept as
+/// a `Value` so a present-but-non-string value still gives the "no string id"
+/// error.
+#[derive(Deserialize)]
+struct BodyId {
+    id: Option<serde_json::Value>,
+}
+
 pub(crate) fn extract_item_id(body: &[u8]) -> PyResult<String> {
-    let value: serde_json::Value = serde_json::from_slice(body)
+    let parsed: BodyId = serde_json::from_slice(body)
         .map_err(|e| PyValueError::new_err(format!("body is not valid JSON: {e}")))?;
-    value
-        .get("id")
+    parsed
+        .id
+        .as_ref()
         .and_then(|v| v.as_str())
         .map(|s| s.to_string())
         .ok_or_else(|| PyValueError::new_err("body has no string `id` field"))

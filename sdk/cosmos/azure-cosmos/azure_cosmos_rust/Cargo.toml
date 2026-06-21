@@ -43,7 +43,10 @@ async-trait = { workspace = true }
 # Parsing the account endpoint when constructing AccountReference.
 url = { workspace = true }
 
-# Helpers in lib.rs parse the partition-key header and extract the body id.
+# Parsing the partition-key header and reading the body id. `serde` (derive)
+# backs the one-field struct that reads only `id` from a write body instead of
+# parsing the whole document.
+serde = { workspace = true }
 serde_json = { workspace = true }
 
 # Parsing an activity-id header into a typed UUID.

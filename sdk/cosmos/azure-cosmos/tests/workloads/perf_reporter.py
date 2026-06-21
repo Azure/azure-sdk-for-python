@@ -170,6 +170,9 @@ class PerfReporter:
         concurrency = _safe_int_env("COSMOS_CONCURRENT_REQUESTS", 100)
         preferred = os.environ.get("COSMOS_PREFERRED_LOCATIONS", "")
         excluded = os.environ.get("COSMOS_CLIENT_EXCLUDED_LOCATIONS", "")
+        # Which backend produced these numbers: "rust" or "core-python" (the
+        # default). Tagged so the two can be told apart in the results store.
+        backend = os.environ.get("COSMOS_BACKEND", "core-python")
         ppcb = (
             os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "false").lower()
             == "true"
@@ -203,6 +206,7 @@ class PerfReporter:
                 "p50_ms": round(s["p50_ms"], 3),
                 "p90_ms": round(s["p90_ms"], 3),
                 "p99_ms": round(s["p99_ms"], 3),
+                "p99_9_ms": round(s.get("p99_9_ms", 0.0), 3),
                 "cpu_percent": round(cpu, 1),
                 "memory_bytes": mem,
                 "system_cpu_percent": round(sys_cpu, 1),
@@ -210,6 +214,7 @@ class PerfReporter:
                 "system_used_memory_bytes": sys_used,
                 "sdk_language": "python",
                 "sdk_version": self._sdk_version,
+                "config_backend": backend,
                 "config_concurrency": concurrency,
                 "config_application_region": preferred,
                 "config_excluded_regions": excluded,
@@ -237,6 +242,7 @@ class PerfReporter:
                 "error_message": err["error_message"][:2000],
                 "source_message": err["source_message"][:4000],
                 "sdk_language": "python",
+                "config_backend": backend,
                 "error_status_code": err.get("error_status_code"),
                 "error_sub_status_code": err.get("error_sub_status_code"),
             }

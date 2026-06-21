@@ -42,6 +42,15 @@ except ImportError:
     )
 
 
+# Map each op name to its bound Rust function once, at import, so each call is a
+# dict lookup instead of a getattr. Empty when the compiled module is absent.
+_OP_DISPATCH = {}
+if _rust_module is not None:
+    for _op, _method in OP_TO_BINDING_METHOD.items():
+        _fn = getattr(_rust_module, _method, None)
+        if _fn is not None:
+            _OP_DISPATCH[_op] = _fn
+
 
 class RustBackend(CosmosBackend):
     """Sends operations to the Rust driver.
@@ -53,6 +62,12 @@ class RustBackend(CosmosBackend):
     Rust module. Python never inspects the handle, it just hands it back.
     Each operation is routed by its kind; when the compiled module is
     missing, every operation raises ``NotImplementedError``.
+
+    Note: the handle is **not** the ``CosmosClient``. ``CosmosClient`` is the
+    public Python object the customer holds; the handle is just an opaque
+    reference, several layers below it, to the driver-side client (which owns
+    the connection pool, auth, and routing). One is the API you call; the
+    other is the engine it talks to.
     """
 
     name = BACKEND_NAME_RUST
@@ -145,10 +160,11 @@ class RustBackend(CosmosBackend):
             )
 
         handle = self._ensure_handle()
-        binding_method = OP_TO_BINDING_METHOD.get(prepared.op)
-        if binding_method is None:
+        # Look the bound function up in the dict built at import (see
+        # _OP_DISPATCH) instead of a getattr per call.
+        dispatch = _OP_DISPATCH.get(prepared.op)
+        if dispatch is None:
             raise NotImplementedError(
                 "RustBackend.execute does not yet support op={!r}.".format(prepared.op)
             )
-        dispatch = getattr(_rust_module, binding_method)
         return build_backend_response(*dispatch(handle, prepared))

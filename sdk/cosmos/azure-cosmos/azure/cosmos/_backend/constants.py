@@ -3,10 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Constants for the backend dispatch layer.
+"""Constants for selecting the backend.
 
-The backend names, env var, and per-request kwarg keys are imported
-from here by every module that needs them so the strings cannot drift.
+The backend names, the set of valid names, the default, and the
+``COSMOS_BACKEND`` environment variable live here and are imported by every
+module that needs them so the strings cannot drift. (The operation-kind
+constants and the dispatch types live with the contract in ``base``.)
 """
 
 #: Default backend; routes through the existing azure-core pipeline.
