@@ -6,7 +6,7 @@
 
 - Container protocol version `2.0.0` support: added the platform identity header constants `x-agent-user-id` (`USER_ID`) — the global, cross-agent per-user partition key — and `x-agent-foundry-call-id` (`FOUNDRY_CALL_ID`) — the opaque per-request call identifier — to the `_platform_headers` module.
 - Added `FOUNDRY_AGENT_ID` environment variable support exposing the agent's stable GUID via `AgentConfig.agent_guid` and the `resolve_agent_guid()` helper.
-- Added a request-scoped platform context: `RequestContext`, `get_request_context()`, `set_request_context()`, and `reset_request_context()`. Protocol packages bind the inbound per-request call ID and user ID so that handler code (and the SDK HTTP pipeline) can read them. `RequestContext.platform_headers()` builds the headers to forward on outbound Foundry 1P calls — the per-request call ID only; `x-agent-user-id` is **not** forwarded (it is not accepted/trusted by 1P services and is used only for container-side state partitioning).
+- Added a request-scoped platform context: `FoundryAgentRequestContext`, `get_request_context()`, `set_request_context()`, and `reset_request_context()`. Protocol packages bind the inbound per-request call ID and user ID so that handler code (and the SDK HTTP pipeline) can read them. `RequestContext.platform_headers()` builds the headers to forward on outbound Foundry 1P calls — the per-request call ID only; `x-agent-user-id` is **not** forwarded (it is not accepted/trusted by 1P services and is used only for container-side state partitioning).
 
 ### Breaking Changes
 

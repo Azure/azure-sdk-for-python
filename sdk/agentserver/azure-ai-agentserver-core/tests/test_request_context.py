@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 
 from azure.ai.agentserver.core import (
-    RequestContext,
+    FoundryAgentRequestContext,
     get_request_context,
     reset_request_context,
     set_request_context,
@@ -24,7 +24,7 @@ class TestRequestContext:
 
     def test_set_and_reset(self) -> None:
         token = set_request_context(
-            RequestContext(call_id="c1", user_id="u1", session_id="s1")
+            FoundryAgentRequestContext(call_id="c1", user_id="u1", session_id="s1")
         )
         try:
             ctx = get_request_context()
@@ -36,23 +36,23 @@ class TestRequestContext:
         assert get_request_context().call_id is None
 
     def test_platform_headers_includes_call_id(self) -> None:
-        ctx = RequestContext(call_id="cid", user_id="uid")
+        ctx = FoundryAgentRequestContext(call_id="cid", user_id="uid")
         headers = ctx.platform_headers()
         # Only the call ID is forwarded to 1P services; user_id is not.
         assert headers == {FOUNDRY_CALL_ID: "cid"}
         assert USER_ID not in headers
 
     def test_platform_headers_omits_absent_values(self) -> None:
-        assert RequestContext().platform_headers() == {}
+        assert FoundryAgentRequestContext().platform_headers() == {}
         # user_id alone never produces an outbound header.
-        assert RequestContext(user_id="uid").platform_headers() == {}
-        assert RequestContext(call_id="cid").platform_headers() == {FOUNDRY_CALL_ID: "cid"}
+        assert FoundryAgentRequestContext(user_id="uid").platform_headers() == {}
+        assert FoundryAgentRequestContext(call_id="cid").platform_headers() == {FOUNDRY_CALL_ID: "cid"}
 
     def test_context_propagates_into_child_task(self) -> None:
-        async def _run() -> RequestContext:
-            set_request_context(RequestContext(call_id="task-cid", user_id="task-uid"))
+        async def _run() -> FoundryAgentRequestContext:
+            set_request_context(FoundryAgentRequestContext(call_id="task-cid", user_id="task-uid"))
 
-            async def _child() -> RequestContext:
+            async def _child() -> FoundryAgentRequestContext:
                 return get_request_context()
 
             # Child task created in this scope inherits the current context.

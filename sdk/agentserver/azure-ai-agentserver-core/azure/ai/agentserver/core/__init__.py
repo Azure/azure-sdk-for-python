@@ -11,7 +11,7 @@ Public API::
     from azure.ai.agentserver.core import (
         AgentConfig,
         AgentServerHost,
-        RequestContext,
+        FoundryAgentRequestContext,
         configure_observability,
         create_error_response,
         detach_context,
@@ -30,7 +30,7 @@ from ._config import AgentConfig
 from ._errors import create_error_response
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_context import (
-    RequestContext,
+    FoundryAgentRequestContext,
     get_request_context,
     reset_request_context,
     set_request_context,
@@ -52,7 +52,7 @@ __all__ = [
     "AgentConfig",
     "AgentServerHost",
     "InboundRequestLoggingMiddleware",
-    "RequestContext",
+    "FoundryAgentRequestContext",
     "RequestIdMiddleware",
     "build_server_version",
     "configure_observability",

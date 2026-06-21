@@ -351,13 +351,13 @@ class TestMcpBridgePlatformHeaders:
 
     def test_request_headers_forward_call_id(self):
         from azure.ai.agentserver.core import (
-            RequestContext,
+            FoundryAgentRequestContext,
             reset_request_context,
             set_request_context,
         )
 
         bridge = McpBridge("https://acct.services.ai.azure.com/toolboxes/t/mcp", {"X-Static": "1"})
-        token = set_request_context(RequestContext(call_id="call-123", user_id="user-abc"))
+        token = set_request_context(FoundryAgentRequestContext(call_id="call-123", user_id="user-abc"))
         try:
             headers = bridge._request_headers()
         finally:
@@ -376,3 +376,75 @@ class TestMcpBridgePlatformHeaders:
         assert "x-agent-foundry-call-id" not in headers
         assert "x-agent-user-id" not in headers
         assert headers["X-Static"] == "1"
+
+
+# ---------------------------------------------------------------------------
+# Session-keyed per-turn call-id carry on tools/call (container protocol 2.0.0, §8)
+# ---------------------------------------------------------------------------
+
+set_session_call_id = _toolbox.set_session_call_id
+clear_session_call_id = _toolbox.clear_session_call_id
+
+
+def _fake_post_response(payload):
+    resp = mock.Mock()
+    resp.raise_for_status = mock.Mock()
+    resp.json = mock.Mock(return_value=payload)
+    resp.headers = {}
+    return resp
+
+
+class TestSessionKeyedCallId:
+    """tools/call must echo the per-turn call id resolved by session_id, because
+    it runs on the Copilot engine task where the request context var is empty."""
+
+    @pytest.mark.asyncio
+    async def test_call_tool_stamps_session_call_id_header_and_meta(self):
+        bridge = McpBridge("https://acct.services.ai.azure.com/toolboxes/t/mcp", {})
+        captured = {}
+
+        async def _post(url, headers=None, json=None):
+            captured["headers"] = headers
+            captured["json"] = json
+            return _fake_post_response({"result": {"content": [{"type": "text", "text": "ok"}]}})
+
+        bridge._client.post = _post
+        set_session_call_id("sess-1", "call-xyz")
+        try:
+            out = await bridge.call_tool("doc.search", {"q": "x"}, session_id="sess-1")
+        finally:
+            clear_session_call_id("sess-1")
+
+        assert out == "ok"
+        # Echoed as header (preferred) and in params._meta (fallback).
+        assert captured["headers"]["x-agent-foundry-call-id"] == "call-xyz"
+        assert captured["json"]["params"]["_meta"]["x-agent-foundry-call-id"] == "call-xyz"
+
+    @pytest.mark.asyncio
+    async def test_call_tool_no_call_id_when_session_unbound(self):
+        bridge = McpBridge("https://acct.services.ai.azure.com/toolboxes/t/mcp", {})
+        captured = {}
+
+        async def _post(url, headers=None, json=None):
+            captured["headers"] = headers
+            captured["json"] = json
+            return _fake_post_response({"result": {"content": [{"type": "text", "text": "ok"}]}})
+
+        bridge._client.post = _post
+        out = await bridge.call_tool("doc.search", {"q": "x"}, session_id="unknown-sess")
+
+        assert out == "ok"
+        assert "x-agent-foundry-call-id" not in captured["headers"]
+        assert "_meta" not in captured["json"]["params"]
+
+    def test_set_and_clear_session_call_id(self):
+        set_session_call_id("s", "c")
+        assert _toolbox._call_id_by_session.get("s") == "c"
+        set_session_call_id("s", None)  # clear via None
+        assert "s" not in _toolbox._call_id_by_session
+        set_session_call_id("s", "c2")
+        clear_session_call_id("s")
+        assert "s" not in _toolbox._call_id_by_session
+        # no-op for falsy session id
+        set_session_call_id(None, "c")
+        assert None not in _toolbox._call_id_by_session

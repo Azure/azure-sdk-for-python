@@ -31,14 +31,14 @@ from contextvars import ContextVar, Token
 from ._platform_headers import FOUNDRY_CALL_ID
 
 __all__ = [
-    "RequestContext",
+    "FoundryAgentRequestContext",
     "get_request_context",
     "set_request_context",
     "reset_request_context",
 ]
 
 
-class RequestContext:
+class FoundryAgentRequestContext:
     """Platform-supplied, request-scoped identity context.
 
     Populated by the protocol endpoint from inbound platform headers on every
@@ -89,25 +89,25 @@ class RequestContext:
         return headers
 
 
-_EMPTY = RequestContext()
+_EMPTY = FoundryAgentRequestContext()
 
-_request_context_var: ContextVar[RequestContext] = ContextVar("agentserver_request_context")
+_request_context_var: ContextVar[FoundryAgentRequestContext] = ContextVar("agentserver_request_context")
 
 
-def get_request_context() -> RequestContext:
+def get_request_context() -> FoundryAgentRequestContext:
     """Return the platform context for the current request.
 
     Safe to call from anywhere during request processing.  When no context has
     been established (e.g. outside a request, or local development), an empty
-    :class:`RequestContext` with all-``None`` fields is returned.
+    :class:`FoundryAgentRequestContext` with all-``None`` fields is returned.
 
     :return: The current request-scoped platform context.
-    :rtype: RequestContext
+    :rtype: FoundryAgentRequestContext
     """
     return _request_context_var.get(_EMPTY)
 
 
-def set_request_context(context: RequestContext) -> Token[RequestContext]:
+def set_request_context(context: FoundryAgentRequestContext) -> Token[FoundryAgentRequestContext]:
     """Bind ``context`` as the current request context (internal).
 
     Called by protocol endpoints at the start of request handling.  The returned
@@ -115,14 +115,14 @@ def set_request_context(context: RequestContext) -> Token[RequestContext]:
     completes to avoid leaking context across requests on the same task.
 
     :param context: The request context to bind.
-    :type context: RequestContext
+    :type context: FoundryAgentRequestContext
     :return: A reset token for restoring the previous value.
     :rtype: ~contextvars.Token
     """
     return _request_context_var.set(context)
 
 
-def reset_request_context(token: Token[RequestContext]) -> None:
+def reset_request_context(token: Token[FoundryAgentRequestContext]) -> None:
     """Restore the request context to its previous value (internal).
 
     :param token: The token returned by :func:`set_request_context`.

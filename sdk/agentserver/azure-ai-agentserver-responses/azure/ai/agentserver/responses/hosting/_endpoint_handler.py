@@ -22,7 +22,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
-    RequestContext,
+    FoundryAgentRequestContext,
     flush_spans,
     reset_request_context,
     set_request_context,
@@ -662,7 +662,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Bind platform context so handler/tool code making raw outbound 1P calls
         # can forward the per-request call ID and user ID (protocol 2.0.0).
         platform_ctx_token = set_request_context(
-            RequestContext(
+            FoundryAgentRequestContext(
                 call_id=ctx.call_id or None,
                 user_id=ctx.user_id or None,
                 session_id=agent_session_id,

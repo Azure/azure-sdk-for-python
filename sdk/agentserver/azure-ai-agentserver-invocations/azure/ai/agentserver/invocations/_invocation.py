@@ -22,7 +22,7 @@ from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
-    RequestContext,
+    FoundryAgentRequestContext,
     create_error_response,
     reset_request_context,
     set_request_context,
@@ -365,7 +365,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         response: StreamingResponse,
         invocation_id: str,
         session_id: str,
-        platform_context: RequestContext | None = None,
+        platform_context: FoundryAgentRequestContext | None = None,
     ) -> StreamingResponse:
         """Wrap streaming body iteration with invocation logging/tracing context.
 
@@ -377,7 +377,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         :type session_id: str
         :param platform_context: Platform context to re-establish for outbound
             1P calls made during stream iteration (protocol 2.0.0).
-        :type platform_context: ~azure.ai.agentserver.core.RequestContext | None
+        :type platform_context: ~azure.ai.agentserver.core.FoundryAgentRequestContext | None
         :return: The response with a wrapped body_iterator.
         :rtype: StreamingResponse
         """
@@ -453,7 +453,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         session_token = _session_id_var.set(session_id)
         # Bind platform context so outbound 1P calls (and handler/tool code) can
         # forward the per-request call ID and user ID (protocol 2.0.0).
-        platform_ctx = RequestContext(
+        platform_ctx = FoundryAgentRequestContext(
             call_id=call_id or None,
             user_id=user_id or None,
             session_id=session_id,
