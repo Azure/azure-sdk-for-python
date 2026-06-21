@@ -32,14 +32,3 @@ class ContentType(str, Enum):
     MCP_APPROVAL_RESPONSE = "mcp_approval_response"
     OPENAPI_CALL = "openapi_call"
     OPENAPI_CALL_OUTPUT = "openapi_call_output"
-
-
-class EvaluationLevel(str, Enum):
-    """Supported evaluation levels for the evaluator.
-
-    - ``CONVERSATION``: Force conversation-level evaluation using the multi-turn path.
-    - ``TURN``: Force turn-level evaluation using the single-turn query/response path.
-    """
-
-    CONVERSATION = "conversation"
-    TURN = "turn"

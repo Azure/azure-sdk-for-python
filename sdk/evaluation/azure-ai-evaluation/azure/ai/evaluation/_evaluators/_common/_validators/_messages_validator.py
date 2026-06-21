@@ -65,7 +65,7 @@ class MessagesOrQueryResponseInputValidator(ToolDefinitionsValidator):
 
             # Per-message structural checks
             valid_roles = {role.value for role in MessageRole}
-            roles_present = set()
+            roles_present: set = set()
             for index, message in enumerate(messages):
                 if not isinstance(message, dict):
                     raise EvaluationException(
