@@ -27,6 +27,7 @@ import httpx
 from copilot.tools import Tool, ToolResult
 
 from azure.ai.agentserver.core import get_request_context  # pylint: disable=no-name-in-module
+from azure.ai.agentserver.core._platform_headers import FOUNDRY_CALL_ID  # pylint: disable=no-name-in-module
 
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
@@ -37,7 +38,6 @@ logger.info("Toolbox module loaded: %s", _TOOLBOX_BUILD_TAG)
 _FOUNDRY_TOOLBOX_FEATURE_HEADER = "Toolboxes=V1Preview"
 _FOUNDRY_TOOLBOX_SERVER_KEY = "foundry-toolbox"
 _FOUNDRY_SCOPE = "https://ai.azure.com/.default"
-_FOUNDRY_CALL_ID_HEADER = "x-agent-foundry-call-id"
 
 
 # ---------------------------------------------------------------------------
@@ -342,9 +342,9 @@ class McpBridge:
         # request-context value for the engine-task dispatch.
         call_id = _call_id_by_session.get(session_id) if session_id else None
         if call_id:
-            headers[_FOUNDRY_CALL_ID_HEADER] = call_id
+            headers[FOUNDRY_CALL_ID] = call_id
             meta = dict(params.get("_meta") or {})
-            meta[_FOUNDRY_CALL_ID_HEADER] = call_id
+            meta[FOUNDRY_CALL_ID] = call_id
             params["_meta"] = meta
 
         resp = await self._client.post(
