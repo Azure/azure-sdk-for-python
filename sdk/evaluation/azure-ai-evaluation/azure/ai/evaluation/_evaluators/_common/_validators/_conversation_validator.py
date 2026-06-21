@@ -225,21 +225,21 @@ class ConversationValidator(ValidatorInterface):
                     if error:
                         return error
 
-                    # Raise error in case of unsupported tools for evaluators that enabled check_for_unsupported_tools
-                    if self.check_for_unsupported_tools:
-                        if content_type == ContentType.TOOL_CALL or content_type == ContentType.OPENAPI_CALL:
-                            name = (
-                                "openapi_call"
-                                if content_type == ContentType.OPENAPI_CALL
-                                else content_item["name"].lower()
+                # Raise error in case of unsupported tools for evaluators that enabled check_for_unsupported_tools
+                if self.check_for_unsupported_tools:
+                    if content_type == ContentType.TOOL_CALL or content_type == ContentType.OPENAPI_CALL:
+                        name = (
+                            "openapi_call"
+                            if content_type == ContentType.OPENAPI_CALL
+                            else content_item["name"].lower()
+                        )
+                        if name in self.UNSUPPORTED_TOOLS:
+                            return EvaluationException(
+                                message=f"{name} tool call is currently not supported for {self.error_target.value} evaluator.",
+                                blame=ErrorBlame.USER_ERROR,
+                                category=ErrorCategory.NOT_APPLICABLE,
+                                target=self.error_target,
                             )
-                            if name in self.UNSUPPORTED_TOOLS:
-                                return EvaluationException(
-                                    message=f"{name} tool call is currently not supported for {self.error_target.value} evaluator.",
-                                    blame=ErrorBlame.USER_ERROR,
-                                    category=ErrorCategory.NOT_APPLICABLE,
-                                    target=self.error_target,
-                                )
         return None
 
     def _validate_tool_message(self, message: Dict[str, Any]) -> Optional[EvaluationException]:

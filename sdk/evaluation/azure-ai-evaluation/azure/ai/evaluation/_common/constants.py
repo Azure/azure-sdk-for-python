@@ -62,7 +62,7 @@ class EvaluatorScoringPattern(Enum):
 
 
 class EvaluationLevel(str, Enum):
-    """Supported evaluation levels for the evaluator.
+    """Supported evaluation levels for multi-turn evaluators.
 
     - ``CONVERSATION``: Force conversation-level evaluation using the multi-turn path.
     - ``TURN``: Force turn-level evaluation using the single-turn query/response path.
