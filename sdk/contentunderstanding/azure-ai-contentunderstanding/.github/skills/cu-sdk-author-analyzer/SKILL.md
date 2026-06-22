@@ -308,13 +308,46 @@ For each input document the script writes two files into `--output`:
 > **avg confidence ≥ 0.85**, or the user is satisfied.
 >
 > Stop and report to the user when any of:
-> - Targets are met (success).
+> - Targets are met (success) — then proceed to **Step 6** to hand off.
 > - Three consecutive iterations show no improvement (need a different
 >   approach — different `baseAnalyzerId`, different `method`, or schema
 >   redesign — escalate to the user).
 > - The user signals they're done.
 
-### Step 6 — Clean up (optional)
+### Step 6 — Hand off the finished analyzer
+
+This step is required when Step 5 succeeds. **Do not skip it.** Without a
+clean handoff the user has a working analyzer in their resource but no
+idea what its ID is, where the final schema lives, or how to call it from
+their own code.
+
+> **[COPILOT]** When Step 5 reaches success, report the following to the
+> user in one message before stopping:
+>
+> 1. **Final analyzer ID** — the actual ID printed by `create_and_test.py`
+>    on its last successful run (e.g. `invoice_v3_a1b2c3d4` when `--reuse`
+>    is used). The user will need this to call the analyzer from their own
+>    code.
+> 2. **Final schema file** — the path to the last iteration of the schema
+>    JSON (e.g. `.local_only/schemas/invoice_v3.json`). Recommend the user
+>    save it somewhere outside `.local_only/` for future reference; they
+>    can also inspect any existing analyzer's schema directly via the SDK
+>    (see
+>    [`samples/sample_get_analyzer.py`](../../../samples/sample_get_analyzer.py)).
+> 3. **Next-step samples** — point the user to:
+>    - [`samples/sample_create_analyzer.py`](../../../samples/sample_create_analyzer.py)
+>      — how to (re)create a custom analyzer from a schema JSON in their own code.
+>    - [`samples/sample_analyze_binary.py`](../../../samples/sample_analyze_binary.py)
+>      and
+>      [`samples/sample_analyze_url.py`](../../../samples/sample_analyze_url.py)
+>      — how to call the analyzer on real input from their own code.
+>
+>    Remind the user that the analyzer you just built is **already deployed**
+>    to their resource and ready to use directly via its ID — they only
+>    need to re-create it from the schema if they want to bootstrap it in
+>    another resource.
+
+### Step 7 — Clean up (optional)
 
 By default the analyzer is kept in your resource so you can re-use it. Pass
 `--ephemeral` to delete it at the end of a run:

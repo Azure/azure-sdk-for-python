@@ -398,13 +398,54 @@ For each input document the script writes two files into `--output`:
 >
 > Stop and report to the user when any of:
 >
-> - All targets met (success).
+> - All targets met (success) — then proceed to **Step 7** to hand off.
 > - Three consecutive iterations show no improvement on a given category
 >   (escalate — may need a different `baseAnalyzerId`, schema redesign, or
 >   a different category split).
 > - The user signals they're done.
 
-### Step 7 — Clean up (optional)
+### Step 7 — Hand off the finished pipeline
+
+This step is required when Step 6 succeeds. **Do not skip it.** Without a
+clean handoff the user has a working classify-and-route pipeline in their
+resource but no idea what the outer classifier ID is, which inner
+analyzers it routes to, where the final schemas live, or how to call it
+from their own code.
+
+> **[COPILOT]** When Step 6 reaches success, report the following to the
+> user in one message before stopping:
+>
+> 1. **All analyzer IDs built** — list both the **outer classifier** and
+>    every **inner extractor**, with the actual IDs printed by
+>    `create_and_test_router.py` (e.g.
+>    `classifier_v2_a1b2c3d4` → routes to `invoice_v3_b2c3d4e5`,
+>    `bank_statement_v2_c3d4e5f6`, `loan_application_v3_d4e5f6a7`). The
+>    user only needs to call the **outer** analyzer in their own code; it
+>    routes to the inner ones automatically.
+> 2. **All schema files** — list the path to every schema JSON in the
+>    final iteration: the outer classifier and each inner schema (e.g.
+>    `.local_only/schemas/classifier_v2.json`,
+>    `.local_only/schemas/invoice_v3.json`, etc.). Recommend the user save
+>    them somewhere outside `.local_only/` for future reference; they can
+>    also inspect any existing analyzer's schema directly via the SDK (see
+>    [`samples/sample_get_analyzer.py`](../../../samples/sample_get_analyzer.py)).
+> 3. **Next-step samples** — point the user to:
+>    - [`samples/sample_create_classifier.py`](../../../samples/sample_create_classifier.py)
+>      — how to (re)build the full classify-and-route pipeline from schema
+>      JSON in their own code (handles inner-first creation ordering and
+>      `contentCategories.analyzerId` wiring the same way our script did).
+>    - [`samples/sample_analyze_binary.py`](../../../samples/sample_analyze_binary.py)
+>      and
+>      [`samples/sample_analyze_url.py`](../../../samples/sample_analyze_url.py)
+>      — how to call the analyzer on real input from their own code. Use
+>      the **outer classifier's** analyzer ID as `analyzer_id`.
+>
+>    Remind the user that the analyzers you just built are **already
+>    deployed** to their resource and ready to use directly via their IDs
+>    — they only need to re-create them from the schemas if they want to
+>    bootstrap into another resource.
+
+### Step 8 — Clean up (optional)
 
 By default the script leaves both the outer classifier **and** all inner
 analyzers in your resource so you can re-use them. Pass `--ephemeral` to
