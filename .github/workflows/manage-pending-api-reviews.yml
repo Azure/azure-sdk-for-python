@@ -45,6 +45,7 @@ jobs:
         with:
           sparse-checkout: |
             eng/common
+            .github/workflows/src/manage-pending-api-reviews
 
       - name: Install azsdk-cli
         shell: pwsh
@@ -72,4 +73,4 @@ jobs:
           API_REVIEW_EVENT_PATH: ${{ inputs['event-path'] }}
           API_REVIEW_METADATA_MARKER: ${{ inputs['metadata-marker'] || 'api-md-review-sync' }}
           PENDING_API_REVIEWS_FIELD: ${{ inputs['pending-reviews-field'] || 'Custom.PendingAPIReviews' }}
-        run: node eng/common/scripts/manage-pending-api-reviews.js
+        run: node .github/workflows/src/manage-pending-api-reviews/manage-pending-api-reviews.js

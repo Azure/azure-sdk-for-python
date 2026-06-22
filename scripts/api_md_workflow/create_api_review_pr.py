@@ -794,9 +794,10 @@ def architects_for_package(
 
 
 def get_package_work_item(package_name: str) -> PackageWorkItem:
+    azsdk_executable = resolve_azsdk_executable()
     result = run(
         [
-            "azsdk",
+            azsdk_executable,
             "package",
             "get-work-item",
             "--package-name",

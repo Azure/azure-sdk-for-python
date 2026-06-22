@@ -1,5 +1,7 @@
 import json
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 from scripts.api_md_workflow import create_api_review_pr as workflow
@@ -29,6 +31,7 @@ class StubGithubApi:
         self.head_results = head_results or []
         self.search_results = search_results or []
         self.on_lookup = on_lookup
+        self.reviewers = []
 
     def _lookup(self, results):
         if self.on_lookup:
@@ -49,6 +52,9 @@ class StubGithubApi:
 
     def create_draft_pull_request(self, _base, _head, _title, _body):
         return {"html_url": "https://github.com/Azure/azure-sdk-for-python/pull/1"}
+
+    def request_reviewers(self, pr_number, reviewers, team_reviewers=None):
+        self.reviewers.append((pr_number, reviewers, team_reviewers or []))
 
 
 class ApiReviewPrTests(unittest.TestCase):
@@ -321,6 +327,121 @@ class ApiReviewPrTests(unittest.TestCase):
             )
         )
 
+    def test_architects_for_package_uses_codeowners_style_last_match(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            architects_path = Path(temp_dir) / "ARCHITECTS"
+            architects_path.write_text(
+                "# comment\n"
+                "/sdk/ @fallback\n"
+                "/sdk/keyvault/ @keyvault-architect @Azure/ignored-team\n"
+                "/sdk/keyvault/azure-keyvault-keys/ @tjprescott\n",
+                encoding="utf-8",
+            )
+
+            self.assertEqual(
+                workflow.architects_for_package(
+                    "sdk/keyvault/azure-keyvault-keys", architects_path
+                ),
+                ["tjprescott"],
+            )
+
+    def test_architects_for_package_keeps_team_owners(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            architects_path = Path(temp_dir) / "ARCHITECTS"
+            architects_path.write_text(
+                "/sdk/keyvault/ @tjprescott @Azure/keyvault-arch\n",
+                encoding="utf-8",
+            )
+
+            self.assertEqual(
+                workflow.architects_for_package(
+                    "sdk/keyvault/azure-keyvault-keys", architects_path
+                ),
+                ["tjprescott", "Azure/keyvault-arch"],
+            )
+
+    def test_assign_architects_to_pr_requests_matching_architects_as_reviewers(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            architects_path = Path(temp_dir) / "ARCHITECTS"
+            architects_path.write_text(
+                "/sdk/ @kashifkhan\n/sdk/keyvault/ @tjprescott\n", encoding="utf-8"
+            )
+            github = StubGithubApi()
+            workflow.set_github_api_for_test(github)
+
+            with patch.object(workflow, "ARCHITECTS_PATH", architects_path):
+                workflow.assign_architects_to_pr(
+                    123, "sdk/keyvault/azure-keyvault-keys"
+                )
+
+            self.assertEqual(github.reviewers, [(123, ["tjprescott"], [])])
+
+    def test_assign_uses_cached_architects(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            github = StubGithubApi()
+            workflow.set_github_api_for_test(github)
+
+            with patch.object(
+                workflow, "ARCHITECTS_PATH", Path(temp_dir) / "ARCHITECTS"
+            ):
+                workflow.assign_architects_to_pr(
+                    123, "sdk/keyvault/azure-keyvault-keys", architects=["l0lawrence"]
+                )
+
+            self.assertEqual(github.reviewers, [(123, ["l0lawrence"], [])])
+
+    def test_assign_architects_to_pr_requests_team_reviewers(self):
+        github = StubGithubApi()
+        workflow.set_github_api_for_test(github)
+
+        workflow.assign_architects_to_pr(
+            123,
+            "sdk/keyvault/azure-keyvault-keys",
+            architects=["tjprescott", "Azure/keyvault-arch"],
+        )
+
+        self.assertEqual(
+            github.reviewers,
+            [(123, ["tjprescott"], ["keyvault-arch"])],
+        )
+
+    def test_assign_architects_to_pr_keeps_team_when_author_is_user(self):
+        github = StubGithubApi()
+        workflow.set_github_api_for_test(github)
+
+        workflow.assign_architects_to_pr(
+            123,
+            "sdk/keyvault/azure-keyvault-keys",
+            "tjprescott",
+            architects=["tjprescott", "Azure/keyvault-arch"],
+        )
+
+        self.assertEqual(github.reviewers, [(123, [], ["keyvault-arch"])])
+
+    def test_assign_architects_to_pr_warns_when_architect_is_pr_author(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            architects_path = Path(temp_dir) / "ARCHITECTS"
+            architects_path.write_text("/sdk/keyvault/ @tjprescott\n", encoding="utf-8")
+            github = StubGithubApi()
+            workflow.set_github_api_for_test(github)
+
+            with (
+                patch.object(workflow, "ARCHITECTS_PATH", architects_path),
+                patch.object(workflow, "log_warning") as log_warning,
+            ):
+                workflow.assign_architects_to_pr(
+                    123, "sdk/keyvault/azure-keyvault-keys", "tjprescott"
+                )
+
+            self.assertEqual(github.reviewers, [])
+            self.assertTrue(
+                any(
+                    "GitHub does not allow requesting the PR author as a reviewer"
+                    in call.args[0]
+                    for call in log_warning.call_args_list
+                )
+            )
+
     def test_replace_sync_metadata_block_replaces_stale_hidden_metadata(self):
         old_block = workflow.build_sync_metadata_block(
             {
@@ -376,16 +497,19 @@ class ApiReviewPrTests(unittest.TestCase):
         }
 
         with patch.object(
-            workflow,
-            "run",
-            return_value=workflow.CommandResult(0, json.dumps(payload), ""),
-        ) as run_mock:
-            item = workflow.get_package_work_item("azure-example")
+            workflow, "resolve_azsdk_executable", return_value="/custom/azsdk"
+        ):
+            with patch.object(
+                workflow,
+                "run",
+                return_value=workflow.CommandResult(0, json.dumps(payload), ""),
+            ) as run_mock:
+                item = workflow.get_package_work_item("azure-example")
 
         self.assertEqual(item.id, 12345)
         run_mock.assert_called_once_with(
             [
-                "azsdk",
+                "/custom/azsdk",
                 "package",
                 "get-work-item",
                 "--package-name",

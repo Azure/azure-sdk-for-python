@@ -15,8 +15,9 @@ function warn(message) {
   console.warn(message);
 }
 
+// cSpell:ignore FEFF
 function runAzsdkCli(args) {
-  const cli = process.env.AZSDK_CLI || "azsdk-cli";
+  const cli = process.env.AZSDK_CLI || "azsdk";
   log(`$ ${[cli, ...args].join(" ")}`);
   return execFileSync(cli, args, {
     encoding: "utf-8",
@@ -93,14 +94,14 @@ function getPackageWorkItem(metadata) {
     return null;
   }
 
-  const workItemId = Number(rawWorkItemId);
-  if (!Number.isInteger(workItemId)) {
+  const parsedWorkItemId = Number(rawWorkItemId);
+  if (!Number.isInteger(parsedWorkItemId)) {
     throw new Error(`Invalid packageWorkItemId in API review metadata: ${rawWorkItemId}`);
   }
 
   return parseJson(
-    runAzsdkCli(["package", "get-work-item", "--work-item-id", String(workItemId), "-o", "json"]),
-    `package work item ${workItemId}`
+    runAzsdkCli(["package", "get-work-item", "--work-item-id", String(parsedWorkItemId), "-o", "json"]),
+    `package work item ${parsedWorkItemId}`
   );
 }
 
