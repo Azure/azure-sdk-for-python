@@ -29,6 +29,9 @@ dependencies = [
     "pyyaml>=6.0",
 ]
 
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
