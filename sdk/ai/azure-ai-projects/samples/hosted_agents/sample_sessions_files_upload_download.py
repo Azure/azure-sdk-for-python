@@ -85,7 +85,7 @@ with (
         files = project_client.agents.list_session_files(
             agent_name=agent_name,
             agent_session_id=session.agent_session_id,
-            path="/remote",
+            remote_path="/remote",
         )
         for entry in files:
             print(f"  - name={entry.name}, size={entry.size}, is_directory={entry.is_directory}")
@@ -95,7 +95,7 @@ with (
             project_client.agents.download_session_file(
                 agent_name=agent_name,
                 agent_session_id=session.agent_session_id,
-                path=remote_file_path1,
+                remote_path=remote_file_path1,
             )
         )
         file_content = content_bytes.decode("utf-8", errors="replace")
@@ -105,14 +105,14 @@ with (
         project_client.agents.delete_session_file(
             agent_name=agent_name,
             agent_session_id=session.agent_session_id,
-            path=remote_file_path1,
+            remote_path=remote_file_path1,
         )
 
         print(f"Deleting session file at path: {remote_file_path2}...")
         project_client.agents.delete_session_file(
             agent_name=agent_name,
             agent_session_id=session.agent_session_id,
-            path=remote_file_path2,
+            remote_path=remote_file_path2,
         )
     finally:
         project_client.agents.delete_session(

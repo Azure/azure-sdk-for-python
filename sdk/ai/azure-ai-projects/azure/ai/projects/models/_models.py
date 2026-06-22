@@ -34,7 +34,6 @@ from ._enums import (
     FunctionShellToolParamEnvironmentType,
     IndexType,
     InsightType,
-    IsolationKeySourceKind,
     MemoryItemKind,
     MemoryStoreKind,
     MemoryStoreObjectType,
@@ -52,6 +51,7 @@ from ._enums import (
     TextResponseFormatConfigurationType,
     ToolChoiceParamType,
     ToolType,
+    ToolboxToolType,
     TriggerType,
     VersionIndicatorType,
     VersionSelectorType,
@@ -71,15 +71,14 @@ class Tool(_Model):
     CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
     ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
     OpenApiTool, ReminderPreviewTool, SharepointPreviewTool, FunctionShellToolParam,
-    ToolSearchToolParam, ToolboxSearchPreviewTool, WebSearchTool, WebSearchPreviewTool,
-    WorkIQPreviewTool
+    ToolSearchToolParam, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "image_generation",
      "local_shell", "shell", "custom", "namespace", "tool_search", "web_search_preview",
      "apply_patch", "a2a_preview", "bing_custom_search_preview", "browser_automation_preview",
      "fabric_dataagent_preview", "sharepoint_grounding_preview", "memory_search_preview",
-     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", "reminder_preview",
+     "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
      "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
      "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
@@ -92,9 +91,9 @@ class Tool(_Model):
      \"local_shell\", \"shell\", \"custom\", \"namespace\", \"tool_search\", \"web_search_preview\",
      \"apply_patch\", \"a2a_preview\", \"bing_custom_search_preview\",
      \"browser_automation_preview\", \"fabric_dataagent_preview\", \"sharepoint_grounding_preview\",
-     \"memory_search_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
-     \"toolbox_search_preview\", \"reminder_preview\", \"azure_ai_search\", \"azure_function\",
-     \"bing_grounding\", \"capture_structured_outputs\", and \"openapi\"."""
+     \"memory_search_preview\", \"reminder_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
+     \"toolbox_search_preview\", \"azure_ai_search\", \"azure_function\", \"bing_grounding\",
+     \"capture_structured_outputs\", and \"openapi\"."""
 
     @overload
     def __init__(
@@ -119,14 +118,6 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
 
     :ivar type: The type of the tool. Always ``"a2a_preview``. Required. A2A_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.A2A_PREVIEW
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar base_url: Base URL of the agent.
     :vartype base_url: str
     :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
@@ -140,6 +131,65 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
 
     type: Literal[ToolType.A2A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the tool. Always ``\"a2a_preview``. Required. A2A_PREVIEW."""
+    base_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base URL of the agent."""
+    agent_card_path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the agent card relative to the ``base_url``. If not provided, defaults to
+     ``/.well-known/agent-card.json``."""
+    project_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The connection ID in the project for the A2A server. The connection stores authentication and
+     other connection details needed to connect to the A2A server."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        base_url: Optional[str] = None,
+        agent_card_path: Optional[str] = None,
+        project_connection_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.A2A_PREVIEW  # type: ignore
+
+
+class ToolboxTool(_Model):
+    """An abstract representation of a tool stored in a toolbox.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    A2APreviewToolboxTool, AzureAISearchToolboxTool, BrowserAutomationPreviewToolboxTool,
+    CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool, FileSearchToolboxTool, MCPToolboxTool,
+    OpenApiToolboxTool, ReminderPreviewToolboxTool, ToolboxSearchPreviewToolboxTool,
+    WebSearchToolboxTool, WorkIQPreviewToolboxTool
+
+    :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
+     "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
+     "reminder_preview", "work_iq_preview", "fabric_iq_preview", and "toolbox_search_preview".
+    :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of tool. Required. Known values are: \"code_interpreter\", \"file_search\",
+     \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
+     \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
+     \"fabric_iq_preview\", and \"toolbox_search_preview\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -150,6 +200,54 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
     """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
      exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
      runtime."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class A2APreviewToolboxTool(ToolboxTool, discriminator="a2a_preview"):
+    """An A2A tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. A2_A_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.A2_A_PREVIEW
+    :ivar base_url: Base URL of the agent.
+    :vartype base_url: str
+    :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
+     provided, defaults to  ``/.well-known/agent-card.json``.
+    :vartype agent_card_path: str
+    :ivar project_connection_id: The connection ID in the project for the A2A server. The
+     connection stores authentication and other connection details needed to connect to the A2A
+     server.
+    :vartype project_connection_id: str
+    """
+
+    type: Literal[ToolboxToolType.A2_A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A2_A_PREVIEW."""
     base_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Base URL of the agent."""
     agent_card_path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -180,7 +278,40 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.A2A_PREVIEW  # type: ignore
+        self.type = ToolboxToolType.A2_A_PREVIEW  # type: ignore
+
+
+class A2aProtocolConfiguration(_Model):
+    """Configuration specific to the A2A protocol."""
+
+
+class ActivityProtocolConfiguration(_Model):
+    """Configuration specific to the activity protocol.
+
+    :ivar enable_m365_public_endpoint: Whether to enable the M365 public endpoint for the activity
+     protocol.
+    :vartype enable_m365_public_endpoint: bool
+    """
+
+    enable_m365_public_endpoint: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to enable the M365 public endpoint for the activity protocol."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enable_m365_public_endpoint: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class AgentBlueprintReference(_Model):
@@ -646,15 +777,18 @@ class AgentEndpointAuthorizationScheme(_Model):
     """AgentEndpointAuthorizationScheme.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    BotServiceAuthorizationScheme, BotServiceRbacAuthorizationScheme, EntraAuthorizationScheme
+    BotServiceAuthorizationScheme, BotServiceRbacAuthorizationScheme,
+    BotServiceTenantAuthorizationScheme, EntraAuthorizationScheme
 
-    :ivar type: Required. Known values are: "Entra", "BotService", and "BotServiceRbac".
+    :ivar type: Required. Known values are: "Entra", "BotService", "BotServiceRbac", and
+     "BotServiceTenant".
     :vartype type: str or ~azure.ai.projects.models.AgentEndpointAuthorizationSchemeType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"Entra\", \"BotService\", and \"BotServiceRbac\"."""
+    """Required. Known values are: \"Entra\", \"BotService\", \"BotServiceRbac\", and
+     \"BotServiceTenant\"."""
 
     @overload
     def __init__(
@@ -680,8 +814,8 @@ class AgentEndpointConfig(_Model):
     :ivar version_selector: The version selector of the agent endpoint determines how traffic is
      routed to different versions of the agent.
     :vartype version_selector: ~azure.ai.projects.models.VersionSelector
-    :ivar protocols: The protocols that the agent supports.
-    :vartype protocols: list[str or ~azure.ai.projects.models.AgentEndpointProtocol]
+    :ivar protocol_configuration: Per-protocol configuration for the agent endpoint.
+    :vartype protocol_configuration: ~azure.ai.projects.models.ProtocolConfiguration
     :ivar authorization_schemes: The authorization schemes supported by the agent endpoint.
     :vartype authorization_schemes:
      list[~azure.ai.projects.models.AgentEndpointAuthorizationScheme]
@@ -692,10 +826,10 @@ class AgentEndpointConfig(_Model):
     )
     """The version selector of the agent endpoint determines how traffic is routed to different
      versions of the agent."""
-    protocols: Optional[list[Union[str, "_models.AgentEndpointProtocol"]]] = rest_field(
+    protocol_configuration: Optional["_models.ProtocolConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The protocols that the agent supports."""
+    """Per-protocol configuration for the agent endpoint."""
     authorization_schemes: Optional[list["_models.AgentEndpointAuthorizationScheme"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -706,7 +840,7 @@ class AgentEndpointConfig(_Model):
         self,
         *,
         version_selector: Optional["_models.VersionSelector"] = None,
-        protocols: Optional[list[Union[str, "_models.AgentEndpointProtocol"]]] = None,
+        protocol_configuration: Optional["_models.ProtocolConfiguration"] = None,
         authorization_schemes: Optional[list["_models.AgentEndpointAuthorizationScheme"]] = None,
     ) -> None: ...
 
@@ -1743,6 +1877,39 @@ class AzureAISearchTool(Tool, discriminator="azure_ai_search"):
 
     :ivar type: The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH.
     :vartype type: str or ~azure.ai.projects.models.AZURE_AI_SEARCH
+    :ivar azure_ai_search: The azure ai search index resource. Required.
+    :vartype azure_ai_search: ~azure.ai.projects.models.AzureAISearchToolResource
+    """
+
+    type: Literal[ToolType.AZURE_AI_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH."""
+    azure_ai_search: "_models.AzureAISearchToolResource" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The azure ai search index resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        azure_ai_search: "_models.AzureAISearchToolResource",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.AZURE_AI_SEARCH  # type: ignore
+
+
+class AzureAISearchToolboxTool(ToolboxTool, discriminator="azure_ai_search"):
+    """An Azure AI Search tool stored in a toolbox.
+
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -1751,22 +1918,14 @@ class AzureAISearchTool(Tool, discriminator="azure_ai_search"):
      default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
      are silently ignored at runtime.
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. AZURE_AI_SEARCH.
+    :vartype type: str or ~azure.ai.projects.models.AZURE_AI_SEARCH
     :ivar azure_ai_search: The azure ai search index resource. Required.
     :vartype azure_ai_search: ~azure.ai.projects.models.AzureAISearchToolResource
     """
 
-    type: Literal[ToolType.AZURE_AI_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'azure_ai_search'. Required. AZURE_AI_SEARCH."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
+    type: Literal[ToolboxToolType.AZURE_AI_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. AZURE_AI_SEARCH."""
     azure_ai_search: "_models.AzureAISearchToolResource" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1791,7 +1950,7 @@ class AzureAISearchTool(Tool, discriminator="azure_ai_search"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.AZURE_AI_SEARCH  # type: ignore
+        self.type = ToolboxToolType.AZURE_AI_SEARCH  # type: ignore
 
 
 class AzureAISearchToolResource(_Model):
@@ -1993,10 +2152,6 @@ class AzureFunctionTool(Tool, discriminator="azure_function"):
     :vartype type: str or ~azure.ai.projects.models.AZURE_FUNCTION
     :ivar azure_function: The Azure Function Tool definition. Required.
     :vartype azure_function: ~azure.ai.projects.models.AzureFunctionDefinition
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolType.AZURE_FUNCTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2005,19 +2160,12 @@ class AzureFunctionTool(Tool, discriminator="azure_function"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The Azure Function Tool definition. Required."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
 
     @overload
     def __init__(
         self,
         *,
         azure_function: "_models.AzureFunctionDefinition",
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -2164,14 +2312,6 @@ class BingCustomSearchPreviewTool(Tool, discriminator="bing_custom_search_previe
     :ivar type: The object type, which is always 'bing_custom_search_preview'. Required.
      BING_CUSTOM_SEARCH_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.BING_CUSTOM_SEARCH_PREVIEW
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar bing_custom_search_preview: The bing custom search tool parameters. Required.
     :vartype bing_custom_search_preview: ~azure.ai.projects.models.BingCustomSearchToolParameters
     """
@@ -2179,16 +2319,6 @@ class BingCustomSearchPreviewTool(Tool, discriminator="bing_custom_search_previe
     type: Literal[ToolType.BING_CUSTOM_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_custom_search_preview'. Required.
      BING_CUSTOM_SEARCH_PREVIEW."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
     bing_custom_search_preview: "_models.BingCustomSearchToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2199,9 +2329,6 @@ class BingCustomSearchPreviewTool(Tool, discriminator="bing_custom_search_previe
         self,
         *,
         bing_custom_search_preview: "_models.BingCustomSearchToolParameters",
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -2337,30 +2464,12 @@ class BingGroundingTool(Tool, discriminator="bing_grounding"):
 
     :ivar type: The object type, which is always 'bing_grounding'. Required. BING_GROUNDING.
     :vartype type: str or ~azure.ai.projects.models.BING_GROUNDING
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar bing_grounding: The bing grounding search tool parameters. Required.
     :vartype bing_grounding: ~azure.ai.projects.models.BingGroundingSearchToolParameters
     """
 
     type: Literal[ToolType.BING_GROUNDING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'bing_grounding'. Required. BING_GROUNDING."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
     bing_grounding: "_models.BingGroundingSearchToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2371,9 +2480,6 @@ class BingGroundingTool(Tool, discriminator="bing_grounding"):
         self,
         *,
         bing_grounding: "_models.BingGroundingSearchToolParameters",
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -2505,12 +2611,73 @@ class BotServiceRbacAuthorizationScheme(AgentEndpointAuthorizationScheme, discri
         self.type = AgentEndpointAuthorizationSchemeType.BOT_SERVICE_RBAC  # type: ignore
 
 
+class BotServiceTenantAuthorizationScheme(AgentEndpointAuthorizationScheme, discriminator="BotServiceTenant"):
+    """BotServiceTenantAuthorizationScheme.
+
+    :ivar type: Required. BOT_SERVICE_TENANT.
+    :vartype type: str or ~azure.ai.projects.models.BOT_SERVICE_TENANT
+    """
+
+    type: Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE_TENANT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. BOT_SERVICE_TENANT."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = AgentEndpointAuthorizationSchemeType.BOT_SERVICE_TENANT  # type: ignore
+
+
 class BrowserAutomationPreviewTool(Tool, discriminator="browser_automation_preview"):
     """The input definition information for a Browser Automation Tool, as used to configure an Agent.
 
     :ivar type: The object type, which is always 'browser_automation_preview'. Required.
      BROWSER_AUTOMATION_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.BROWSER_AUTOMATION_PREVIEW
+    :ivar browser_automation_preview: The Browser Automation Tool parameters. Required.
+    :vartype browser_automation_preview: ~azure.ai.projects.models.BrowserAutomationToolParameters
+    """
+
+    type: Literal[ToolType.BROWSER_AUTOMATION_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'browser_automation_preview'. Required.
+     BROWSER_AUTOMATION_PREVIEW."""
+    browser_automation_preview: "_models.BrowserAutomationToolParameters" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Browser Automation Tool parameters. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        browser_automation_preview: "_models.BrowserAutomationToolParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.BROWSER_AUTOMATION_PREVIEW  # type: ignore
+
+
+class BrowserAutomationPreviewToolboxTool(ToolboxTool, discriminator="browser_automation_preview"):
+    """A browser automation tool stored in a toolbox.
+
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -2519,23 +2686,14 @@ class BrowserAutomationPreviewTool(Tool, discriminator="browser_automation_previ
      default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
      are silently ignored at runtime.
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. BROWSER_AUTOMATION_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.BROWSER_AUTOMATION_PREVIEW
     :ivar browser_automation_preview: The Browser Automation Tool parameters. Required.
     :vartype browser_automation_preview: ~azure.ai.projects.models.BrowserAutomationToolParameters
     """
 
-    type: Literal[ToolType.BROWSER_AUTOMATION_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'browser_automation_preview'. Required.
-     BROWSER_AUTOMATION_PREVIEW."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
+    type: Literal[ToolboxToolType.BROWSER_AUTOMATION_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. BROWSER_AUTOMATION_PREVIEW."""
     browser_automation_preview: "_models.BrowserAutomationToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2560,7 +2718,7 @@ class BrowserAutomationPreviewTool(Tool, discriminator="browser_automation_previ
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.BROWSER_AUTOMATION_PREVIEW  # type: ignore
+        self.type = ToolboxToolType.BROWSER_AUTOMATION_PREVIEW  # type: ignore
 
 
 class BrowserAutomationToolConnectionParameters(_Model):  # pylint: disable=name-too-long
@@ -2629,14 +2787,6 @@ class CaptureStructuredOutputsTool(Tool, discriminator="capture_structured_outpu
     :ivar type: The type of the tool. Always ``capture_structured_outputs``. Required.
      CAPTURE_STRUCTURED_OUTPUTS.
     :vartype type: str or ~azure.ai.projects.models.CAPTURE_STRUCTURED_OUTPUTS
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar outputs: The structured outputs to capture from the model. Required.
     :vartype outputs: ~azure.ai.projects.models.StructuredOutputDefinition
     """
@@ -2644,16 +2794,6 @@ class CaptureStructuredOutputsTool(Tool, discriminator="capture_structured_outpu
     type: Literal[ToolType.CAPTURE_STRUCTURED_OUTPUTS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the tool. Always ``capture_structured_outputs``. Required.
      CAPTURE_STRUCTURED_OUTPUTS."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
     outputs: "_models.StructuredOutputDefinition" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2664,9 +2804,6 @@ class CaptureStructuredOutputsTool(Tool, discriminator="capture_structured_outpu
         self,
         *,
         outputs: "_models.StructuredOutputDefinition",
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -3117,14 +3254,6 @@ class CodeInterpreterTool(Tool, discriminator="code_interpreter"):
     :ivar type: The type of the code interpreter tool. Always ``code_interpreter``. Required.
      CODE_INTERPRETER.
     :vartype type: str or ~azure.ai.projects.models.CODE_INTERPRETER
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar container: The code interpreter container. Can be a container ID or an object that
      specifies uploaded file IDs to make available to your code, along with an optional
      ``memory_limit`` setting. If not provided, the service assumes auto. Is either a str type or a
@@ -3134,16 +3263,55 @@ class CodeInterpreterTool(Tool, discriminator="code_interpreter"):
 
     type: Literal[ToolType.CODE_INTERPRETER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the code interpreter tool. Always ``code_interpreter``. Required. CODE_INTERPRETER."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
+    container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
+    """The code interpreter container. Can be a container ID or an object that specifies uploaded file
+     IDs to make available to your code, along with an optional ``memory_limit`` setting. If not
+     provided, the service assumes auto. Is either a str type or a AutoCodeInterpreterToolParam
+     type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.CODE_INTERPRETER  # type: ignore
+
+
+class CodeInterpreterToolboxTool(ToolboxTool, discriminator="code_interpreter"):
+    """A code interpreter tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. CODE_INTERPRETER.
+    :vartype type: str or ~azure.ai.projects.models.CODE_INTERPRETER
+    :ivar container: The code interpreter container. Can be a container ID or an object that
+     specifies uploaded file IDs to make available to your code, along with an optional
+     ``memory_limit`` setting. If not provided, the service assumes auto. Is either a str type or a
+     AutoCodeInterpreterToolParam type.
+    :vartype container: str or ~azure.ai.projects.models.AutoCodeInterpreterToolParam
+    """
+
+    type: Literal[ToolboxToolType.CODE_INTERPRETER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. CODE_INTERPRETER."""
     container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3171,7 +3339,7 @@ class CodeInterpreterTool(Tool, discriminator="code_interpreter"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.CODE_INTERPRETER  # type: ignore
+        self.type = ToolboxToolType.CODE_INTERPRETER  # type: ignore
 
 
 class ComparisonFilter(_Model):
@@ -5404,24 +5572,14 @@ class EntraAuthorizationScheme(AgentEndpointAuthorizationScheme, discriminator="
 
     :ivar type: Required. ENTRA.
     :vartype type: str or ~azure.ai.projects.models.ENTRA
-    :ivar isolation_key_source: The source from which the per-user isolation key is derived for
-     requests authorized via this scheme. Defaults to Entra-based isolation when omitted.
-    :vartype isolation_key_source: ~azure.ai.projects.models.IsolationKeySource
     """
 
     type: Literal[AgentEndpointAuthorizationSchemeType.ENTRA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. ENTRA."""
-    isolation_key_source: Optional["_models.IsolationKeySource"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The source from which the per-user isolation key is derived for requests authorized via this
-     scheme. Defaults to Entra-based isolation when omitted."""
 
     @overload
     def __init__(
         self,
-        *,
-        isolation_key_source: Optional["_models.IsolationKeySource"] = None,
     ) -> None: ...
 
     @overload
@@ -5461,65 +5619,6 @@ class EntraIDCredentials(BaseCredentials, discriminator="AAD"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = CredentialType.ENTRA_ID  # type: ignore
-
-
-class IsolationKeySource(_Model):
-    """IsolationKeySource.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    EntraIsolationKeySource, HeaderIsolationKeySource
-
-    :ivar kind: Required. Known values are: "Entra" and "Header".
-    :vartype kind: str or ~azure.ai.projects.models.IsolationKeySourceKind
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"Entra\" and \"Header\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class EntraIsolationKeySource(IsolationKeySource, discriminator="Entra"):
-    """EntraIsolationKeySource.
-
-    :ivar kind: Required. ENTRA.
-    :vartype kind: str or ~azure.ai.projects.models.ENTRA
-    """
-
-    kind: Literal[IsolationKeySourceKind.ENTRA] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. ENTRA."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = IsolationKeySourceKind.ENTRA  # type: ignore
 
 
 class EvalResult(_Model):
@@ -6745,14 +6844,6 @@ class FabricIQPreviewTool(Tool, discriminator="fabric_iq_preview"):
     :ivar require_approval: (Optional) Whether the agent requires approval before executing
      actions. Default is always. Is either a MCPToolRequireApproval type or a str type.
     :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolType.FABRIC_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -6769,16 +6860,6 @@ class FabricIQPreviewTool(Tool, discriminator="fabric_iq_preview"):
     )
     """(Optional) Whether the agent requires approval before executing actions. Default is always. Is
      either a MCPToolRequireApproval type or a str type."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
 
     @overload
     def __init__(
@@ -6788,9 +6869,6 @@ class FabricIQPreviewTool(Tool, discriminator="fabric_iq_preview"):
         server_label: Optional[str] = None,
         server_url: Optional[str] = None,
         require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -6803,6 +6881,71 @@ class FabricIQPreviewTool(Tool, discriminator="fabric_iq_preview"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.FABRIC_IQ_PREVIEW  # type: ignore
+
+
+class FabricIQPreviewToolboxTool(ToolboxTool, discriminator="fabric_iq_preview"):
+    """A FabricIQ tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. FABRIC_IQ_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.FABRIC_IQ_PREVIEW
+    :ivar project_connection_id: The ID of the FabricIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: (Optional) The label of the FabricIQ MCP server to connect to.
+    :vartype server_label: str
+    :ivar server_url: (Optional) The URL of the FabricIQ MCP server. If not provided, the URL from
+     the project connection will be used.
+    :vartype server_url: str
+    :ivar require_approval: (Optional) Whether the agent requires approval before executing
+     actions. Default is always. Is either a MCPToolRequireApproval type or a str type.
+    :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str
+    """
+
+    type: Literal[ToolboxToolType.FABRIC_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. FABRIC_IQ_PREVIEW."""
+    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the FabricIQ project connection. Required."""
+    server_label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """(Optional) The label of the FabricIQ MCP server to connect to."""
+    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """(Optional) The URL of the FabricIQ MCP server. If not provided, the URL from the project
+     connection will be used."""
+    require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """(Optional) Whether the agent requires approval before executing actions. Default is always. Is
+     either a MCPToolRequireApproval type or a str type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_connection_id: str,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        server_label: Optional[str] = None,
+        server_url: Optional[str] = None,
+        require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.FABRIC_IQ_PREVIEW  # type: ignore
 
 
 class FieldMapping(_Model):
@@ -6999,14 +7142,6 @@ class FileSearchTool(Tool, discriminator="file_search"):
     :ivar filters: Is either a ComparisonFilter type or a CompoundFilter type.
     :vartype filters: ~azure.ai.projects.models.ComparisonFilter or
      ~azure.ai.projects.models.CompoundFilter
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolType.FILE_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -7021,16 +7156,6 @@ class FileSearchTool(Tool, discriminator="file_search"):
     """Ranking options for search."""
     filters: Optional["_types.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is either a ComparisonFilter type or a CompoundFilter type."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
 
     @overload
     def __init__(
@@ -7040,9 +7165,6 @@ class FileSearchTool(Tool, discriminator="file_search"):
         max_num_results: Optional[int] = None,
         ranking_options: Optional["_models.RankingOptions"] = None,
         filters: Optional["_types.Filters"] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -7055,6 +7177,69 @@ class FileSearchTool(Tool, discriminator="file_search"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.FILE_SEARCH  # type: ignore
+
+
+class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
+    """A file search tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. FILE_SEARCH.
+    :vartype type: str or ~azure.ai.projects.models.FILE_SEARCH
+    :ivar max_num_results: The maximum number of results to return. This number should be between 1
+     and 50 inclusive.
+    :vartype max_num_results: int
+    :ivar ranking_options: Ranking options for search.
+    :vartype ranking_options: ~azure.ai.projects.models.RankingOptions
+    :ivar filters: Is either a ComparisonFilter type or a CompoundFilter type.
+    :vartype filters: ~azure.ai.projects.models.ComparisonFilter or
+     ~azure.ai.projects.models.CompoundFilter
+    :ivar vector_store_ids: The IDs of the vector stores to search.
+    :vartype vector_store_ids: list[str]
+    """
+
+    type: Literal[ToolboxToolType.FILE_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. FILE_SEARCH."""
+    max_num_results: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The maximum number of results to return. This number should be between 1 and 50 inclusive."""
+    ranking_options: Optional["_models.RankingOptions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ranking options for search."""
+    filters: Optional["_types.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Is either a ComparisonFilter type or a CompoundFilter type."""
+    vector_store_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The IDs of the vector stores to search."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        max_num_results: Optional[int] = None,
+        ranking_options: Optional["_models.RankingOptions"] = None,
+        filters: Optional["_types.Filters"] = None,
+        vector_store_ids: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.FILE_SEARCH  # type: ignore
 
 
 class VersionSelectionRule(_Model):
@@ -7226,14 +7411,6 @@ class FunctionShellToolParam(Tool, discriminator="shell"):
     :vartype type: str or ~azure.ai.projects.models.SHELL
     :ivar environment:
     :vartype environment: ~azure.ai.projects.models.FunctionShellToolParamEnvironment
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolType.SHELL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -7241,25 +7418,12 @@ class FunctionShellToolParam(Tool, discriminator="shell"):
     environment: Optional["_models.FunctionShellToolParamEnvironment"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
 
     @overload
     def __init__(
         self,
         *,
         environment: Optional["_models.FunctionShellToolParamEnvironment"] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -7505,33 +7669,6 @@ class GitHubIssueRoutineTrigger(RoutineTrigger, discriminator="github_issue"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = RoutineTriggerType.GITHUB_ISSUE  # type: ignore
-
-
-class HeaderIsolationKeySource(IsolationKeySource, discriminator="Header"):
-    """HeaderIsolationKeySource.
-
-    :ivar kind: Required. HEADER.
-    :vartype kind: str or ~azure.ai.projects.models.HEADER
-    """
-
-    kind: Literal[IsolationKeySourceKind.HEADER] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. HEADER."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = IsolationKeySourceKind.HEADER  # type: ignore
 
 
 class TelemetryEndpointAuth(_Model):
@@ -7845,14 +7982,6 @@ class ImageGenTool(Tool, discriminator="image_generation"):
     :ivar action: Whether to generate a new image or edit an existing image. Default: ``auto``.
      Known values are: "generate", "edit", and "auto".
     :vartype action: str or ~azure.ai.projects.models.ImageGenAction
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolType.IMAGE_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -7915,16 +8044,6 @@ class ImageGenTool(Tool, discriminator="image_generation"):
     )
     """Whether to generate a new image or edit an existing image. Default: ``auto``. Known values are:
      \"generate\", \"edit\", and \"auto\"."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
 
     @overload
     def __init__(
@@ -7945,9 +8064,6 @@ class ImageGenTool(Tool, discriminator="image_generation"):
         input_image_mask: Optional["_models.ImageGenToolInputImageMask"] = None,
         partial_images: Optional[int] = None,
         action: Optional[Union[str, "_models.ImageGenAction"]] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -8357,6 +8473,14 @@ class InsightSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
+class InvocationsProtocolConfiguration(_Model):
+    """Configuration specific to the invocations protocol."""
+
+
+class InvocationsWsProtocolConfiguration(_Model):
+    """Configuration specific to the WebSocket-based invocations protocol."""
+
+
 class RoutineDispatchPayload(_Model):
     """Base model for a manual dispatch payload.
 
@@ -8609,36 +8733,14 @@ class LocalShellToolParam(Tool, discriminator="local_shell"):
 
     :ivar type: The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL.
     :vartype type: str or ~azure.ai.projects.models.LOCAL_SHELL
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolType.LOCAL_SHELL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the local shell tool. Always ``local_shell``. Required. LOCAL_SHELL."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
 
     @overload
     def __init__(
         self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -8817,6 +8919,10 @@ class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
         self.type = IndexType.MANAGED_AZURE_SEARCH  # type: ignore
 
 
+class McpProtocolConfiguration(_Model):
+    """Configuration specific to the MCP protocol."""
+
+
 class MCPTool(Tool, discriminator="mcp"):
     """MCP tool.
 
@@ -8863,10 +8969,6 @@ class MCPTool(Tool, discriminator="mcp"):
      connection stores authentication and other connection details needed to connect to the MCP
      server.
     :vartype project_connection_id: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolType.MCP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -8923,12 +9025,6 @@ class MCPTool(Tool, discriminator="mcp"):
     project_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The connection ID in the project for the MCP server. The connection stores authentication and
      other connection details needed to connect to the MCP server."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
 
     @overload
     def __init__(
@@ -8955,7 +9051,6 @@ class MCPTool(Tool, discriminator="mcp"):
         require_approval: Optional[Union["_models.MCPToolRequireApproval", Literal["always"], Literal["never"]]] = None,
         defer_loading: Optional[bool] = None,
         project_connection_id: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -8968,6 +9063,159 @@ class MCPTool(Tool, discriminator="mcp"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.MCP  # type: ignore
+
+
+class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
+    """An MCP tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. MCP.
+    :vartype type: str or ~azure.ai.projects.models.MCP
+    :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
+    :vartype server_label: str
+    :ivar server_url: The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be
+     provided.
+    :vartype server_url: str
+    :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
+     ``server_url`` or ``connector_id`` must be provided. Learn more about service connectors `here
+     </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
+
+     * Dropbox: `connector_dropbox`
+     * Gmail: `connector_gmail`
+     * Google Calendar: `connector_googlecalendar`
+     * Google Drive: `connector_googledrive`
+     * Microsoft Teams: `connector_microsoftteams`
+     * Outlook Calendar: `connector_outlookcalendar`
+     * Outlook Email: `connector_outlookemail`
+     * SharePoint: `connector_sharepoint`. Is one of the following types:
+       Literal["connector_dropbox"], Literal["connector_gmail"], Literal["connector_googlecalendar"],
+       Literal["connector_googledrive"], Literal["connector_microsoftteams"],
+       Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
+       Literal["connector_sharepoint"]
+    :vartype connector_id: str or str or str or str or str or str or str or str
+    :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
+     with a custom MCP server URL or a service connector. Your application must handle the OAuth
+     authorization flow and provide the token here.
+    :vartype authorization: str
+    :ivar server_description: Optional description of the MCP server, used to provide more context.
+    :vartype server_description: str
+    :ivar headers:
+    :vartype headers: dict[str, str]
+    :ivar allowed_tools: Is either a [str] type or a MCPToolFilter type.
+    :vartype allowed_tools: list[str] or ~azure.ai.projects.models.MCPToolFilter
+    :ivar require_approval: Is one of the following types: MCPToolRequireApproval,
+     Literal["always"], Literal["never"]
+    :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str or str
+    :ivar defer_loading: Whether this MCP tool is deferred and discovered via tool search.
+    :vartype defer_loading: bool
+    :ivar project_connection_id: The connection ID in the project for the MCP server. The
+     connection stores authentication and other connection details needed to connect to the MCP
+     server.
+    :vartype project_connection_id: str
+    """
+
+    type: Literal[ToolboxToolType.MCP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. MCP."""
+    server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A label for this MCP server, used to identify it in tool calls. Required."""
+    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be provided."""
+    connector_id: Optional[
+        Literal[
+            "connector_dropbox",
+            "connector_gmail",
+            "connector_googlecalendar",
+            "connector_googledrive",
+            "connector_microsoftteams",
+            "connector_outlookcalendar",
+            "connector_outlookemail",
+            "connector_sharepoint",
+        ]
+    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url`` or
+      ``connector_id`` must be provided. Learn more about service connectors `here
+      </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
+ 
+      * Dropbox: `connector_dropbox`
+      * Gmail: `connector_gmail`
+      * Google Calendar: `connector_googlecalendar`
+      * Google Drive: `connector_googledrive`
+      * Microsoft Teams: `connector_microsoftteams`
+      * Outlook Calendar: `connector_outlookcalendar`
+      * Outlook Email: `connector_outlookemail`
+      * SharePoint: `connector_sharepoint`. Is one of the following types:
+        Literal[\"connector_dropbox\"], Literal[\"connector_gmail\"],
+        Literal[\"connector_googlecalendar\"], Literal[\"connector_googledrive\"],
+        Literal[\"connector_microsoftteams\"], Literal[\"connector_outlookcalendar\"],
+        Literal[\"connector_outlookemail\"], Literal[\"connector_sharepoint\"]"""
+    authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An OAuth access token that can be used with a remote MCP server, either with a custom MCP
+     server URL or a service connector. Your application must handle the OAuth authorization flow
+     and provide the token here."""
+    server_description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional description of the MCP server, used to provide more context."""
+    headers: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    allowed_tools: Optional[Union[list[str], "_models.MCPToolFilter"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is either a [str] type or a MCPToolFilter type."""
+    require_approval: Optional[Union["_models.MCPToolRequireApproval", Literal["always"], Literal["never"]]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Is one of the following types: MCPToolRequireApproval, Literal[\"always\"], Literal[\"never\"]"""
+    defer_loading: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this MCP tool is deferred and discovered via tool search."""
+    project_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The connection ID in the project for the MCP server. The connection stores authentication and
+     other connection details needed to connect to the MCP server."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        server_label: str,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        server_url: Optional[str] = None,
+        connector_id: Optional[
+            Literal[
+                "connector_dropbox",
+                "connector_gmail",
+                "connector_googlecalendar",
+                "connector_googledrive",
+                "connector_microsoftteams",
+                "connector_outlookcalendar",
+                "connector_outlookemail",
+                "connector_sharepoint",
+            ]
+        ] = None,
+        authorization: Optional[str] = None,
+        server_description: Optional[str] = None,
+        headers: Optional[dict[str, str]] = None,
+        allowed_tools: Optional[Union[list[str], "_models.MCPToolFilter"]] = None,
+        require_approval: Optional[Union["_models.MCPToolRequireApproval", Literal["always"], Literal["never"]]] = None,
+        defer_loading: Optional[bool] = None,
+        project_connection_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.MCP  # type: ignore
 
 
 class MCPToolFilter(_Model):
@@ -9139,14 +9387,6 @@ class MemorySearchPreviewTool(Tool, discriminator="memory_search_preview"):
     :ivar type: The type of the tool. Always ``memory_search_preview``. Required.
      MEMORY_SEARCH_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.MEMORY_SEARCH_PREVIEW
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar memory_store_name: The name of the memory store to use. Required.
     :vartype memory_store_name: str
     :ivar scope: The namespace used to group and isolate memories, such as a user ID. Limits which
@@ -9162,16 +9402,6 @@ class MemorySearchPreviewTool(Tool, discriminator="memory_search_preview"):
 
     type: Literal[ToolType.MEMORY_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the tool. Always ``memory_search_preview``. Required. MEMORY_SEARCH_PREVIEW."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
     memory_store_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the memory store to use. Required."""
     scope: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -9191,9 +9421,6 @@ class MemorySearchPreviewTool(Tool, discriminator="memory_search_preview"):
         *,
         memory_store_name: str,
         scope: str,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
         search_options: Optional["_models.MemorySearchOptions"] = None,
         update_delay: Optional[int] = None,
     ) -> None: ...
@@ -9656,14 +9883,6 @@ class MicrosoftFabricPreviewTool(Tool, discriminator="fabric_dataagent_preview")
     :ivar type: The object type, which is always 'fabric_dataagent_preview'. Required.
      FABRIC_DATAAGENT_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.FABRIC_DATAAGENT_PREVIEW
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar fabric_dataagent_preview: The fabric data agent tool parameters. Required.
     :vartype fabric_dataagent_preview: ~azure.ai.projects.models.FabricDataAgentToolParameters
     """
@@ -9671,16 +9890,6 @@ class MicrosoftFabricPreviewTool(Tool, discriminator="fabric_dataagent_preview")
     type: Literal[ToolType.FABRIC_DATAAGENT_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'fabric_dataagent_preview'. Required.
      FABRIC_DATAAGENT_PREVIEW."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
     fabric_dataagent_preview: "_models.FabricDataAgentToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -9691,9 +9900,6 @@ class MicrosoftFabricPreviewTool(Tool, discriminator="fabric_dataagent_preview")
         self,
         *,
         fabric_dataagent_preview: "_models.FabricDataAgentToolParameters",
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -10539,10 +10745,6 @@ class OpenApiTool(Tool, discriminator="openapi"):
     :vartype type: str or ~azure.ai.projects.models.OPENAPI
     :ivar openapi: The openapi function definition. Required.
     :vartype openapi: ~azure.ai.projects.models.OpenApiFunctionDefinition
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolType.OPENAPI] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -10551,19 +10753,12 @@ class OpenApiTool(Tool, discriminator="openapi"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The openapi function definition. Required."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
 
     @overload
     def __init__(
         self,
         *,
         openapi: "_models.OpenApiFunctionDefinition",
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -10576,6 +10771,52 @@ class OpenApiTool(Tool, discriminator="openapi"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.OPENAPI  # type: ignore
+
+
+class OpenApiToolboxTool(ToolboxTool, discriminator="openapi"):
+    """An OpenAPI tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. OPENAPI.
+    :vartype type: str or ~azure.ai.projects.models.OPENAPI
+    :ivar openapi: The openapi function definition. Required.
+    :vartype openapi: ~azure.ai.projects.models.OpenApiFunctionDefinition
+    """
+
+    type: Literal[ToolboxToolType.OPENAPI] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. OPENAPI."""
+    openapi: "_models.OpenApiFunctionDefinition" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The openapi function definition. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        openapi: "_models.OpenApiFunctionDefinition",
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.OPENAPI  # type: ignore
 
 
 class OptimizationAgentIdentifier(_Model):
@@ -11751,21 +11992,86 @@ class PromptEvaluatorGenerationJobSource(EvaluatorGenerationJobSource, discrimin
         self.type = EvaluatorGenerationJobSourceType.PROMPT  # type: ignore
 
 
+class ProtocolConfiguration(_Model):
+    """Per-protocol configuration for the agent endpoint.
+
+    :ivar activity: Configuration for the activity protocol.
+    :vartype activity: ~azure.ai.projects.models.ActivityProtocolConfiguration
+    :ivar responses: Configuration for the responses protocol.
+    :vartype responses: ~azure.ai.projects.models.ResponsesProtocolConfiguration
+    :ivar a2_a: Configuration for the A2A protocol.
+    :vartype a2_a: ~azure.ai.projects.models.A2aProtocolConfiguration
+    :ivar mcp: Configuration for the MCP protocol.
+    :vartype mcp: ~azure.ai.projects.models.McpProtocolConfiguration
+    :ivar invocations: Configuration for the invocations protocol.
+    :vartype invocations: ~azure.ai.projects.models.InvocationsProtocolConfiguration
+    :ivar invocations_ws: Configuration for the WebSocket-based invocations protocol.
+    :vartype invocations_ws: ~azure.ai.projects.models.InvocationsWsProtocolConfiguration
+    """
+
+    activity: Optional["_models.ActivityProtocolConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for the activity protocol."""
+    responses: Optional["_models.ResponsesProtocolConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for the responses protocol."""
+    a2_a: Optional["_models.A2aProtocolConfiguration"] = rest_field(
+        name="a2a", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for the A2A protocol."""
+    mcp: Optional["_models.McpProtocolConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for the MCP protocol."""
+    invocations: Optional["_models.InvocationsProtocolConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for the invocations protocol."""
+    invocations_ws: Optional["_models.InvocationsWsProtocolConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for the WebSocket-based invocations protocol."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        activity: Optional["_models.ActivityProtocolConfiguration"] = None,
+        responses: Optional["_models.ResponsesProtocolConfiguration"] = None,
+        a2_a: Optional["_models.A2aProtocolConfiguration"] = None,
+        mcp: Optional["_models.McpProtocolConfiguration"] = None,
+        invocations: Optional["_models.InvocationsProtocolConfiguration"] = None,
+        invocations_ws: Optional["_models.InvocationsWsProtocolConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ProtocolVersionRecord(_Model):
     """A record mapping for a single protocol and its version.
 
-    :ivar protocol: The protocol type. Required. Known values are: "activity_protocol",
-     "responses", "a2a", "mcp", "invocations", and "invocations_ws".
-    :vartype protocol: str or ~azure.ai.projects.models.AgentProtocol
+    :ivar protocol: The protocol type. Required. Known values are: "activity", "responses", "a2a",
+     "mcp", "invocations", and "invocations_ws".
+    :vartype protocol: str or ~azure.ai.projects.models.AgentEndpointProtocol
     :ivar version: The version string for the protocol, e.g. 'v0.1.1'. Required.
     :vartype version: str
     """
 
-    protocol: Union[str, "_models.AgentProtocol"] = rest_field(
+    protocol: Union[str, "_models.AgentEndpointProtocol"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The protocol type. Required. Known values are: \"activity_protocol\", \"responses\", \"a2a\",
-     \"mcp\", \"invocations\", and \"invocations_ws\"."""
+    """The protocol type. Required. Known values are: \"activity\", \"responses\", \"a2a\", \"mcp\",
+     \"invocations\", and \"invocations_ws\"."""
     version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The version string for the protocol, e.g. 'v0.1.1'. Required."""
 
@@ -11773,7 +12079,7 @@ class ProtocolVersionRecord(_Model):
     def __init__(
         self,
         *,
-        protocol: Union[str, "_models.AgentProtocol"],
+        protocol: Union[str, "_models.AgentEndpointProtocol"],
         version: str,
     ) -> None: ...
 
@@ -12073,10 +12379,6 @@ class ReminderPreviewTool(Tool, discriminator="reminder_preview"):
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
     :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolType.REMINDER_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -12085,12 +12387,44 @@ class ReminderPreviewTool(Tool, discriminator="reminder_preview"):
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.REMINDER_PREVIEW  # type: ignore
+
+
+class ReminderPreviewToolboxTool(ToolboxTool, discriminator="reminder_preview"):
+    """A reminder tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. REMINDER_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.REMINDER_PREVIEW
+    """
+
+    type: Literal[ToolboxToolType.REMINDER_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. REMINDER_PREVIEW."""
 
     @overload
     def __init__(
@@ -12110,7 +12444,11 @@ class ReminderPreviewTool(Tool, discriminator="reminder_preview"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.REMINDER_PREVIEW  # type: ignore
+        self.type = ToolboxToolType.REMINDER_PREVIEW  # type: ignore
+
+
+class ResponsesProtocolConfiguration(_Model):
+    """Configuration specific to the responses protocol."""
 
 
 class ResponseUsageInputTokensDetails(_Model):
@@ -12755,10 +13093,10 @@ class SessionLogEvent(_Model):
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -12834,14 +13172,6 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
     :ivar type: The object type, which is always 'sharepoint_grounding_preview'. Required.
      SHAREPOINT_GROUNDING_PREVIEW.
     :vartype type: str or ~azure.ai.projects.models.SHAREPOINT_GROUNDING_PREVIEW
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar sharepoint_grounding_preview: The sharepoint grounding tool parameters. Required.
     :vartype sharepoint_grounding_preview:
      ~azure.ai.projects.models.SharepointGroundingToolParameters
@@ -12850,16 +13180,6 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
     type: Literal[ToolType.SHAREPOINT_GROUNDING_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The object type, which is always 'sharepoint_grounding_preview'. Required.
      SHAREPOINT_GROUNDING_PREVIEW."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
     sharepoint_grounding_preview: "_models.SharepointGroundingToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12870,9 +13190,6 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
         self,
         *,
         sharepoint_grounding_preview: "_models.SharepointGroundingToolParameters",
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -13716,13 +14033,9 @@ class ToolboxPolicies(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ToolboxSearchPreviewTool(Tool, discriminator="toolbox_search_preview"):
-    """A tool for searching over the agent's toolbox. When present, deferred tools are hidden from
-    ``tools/list`` and only discoverable via ``search_tools`` queries at runtime.
+class ToolboxSearchPreviewToolboxTool(ToolboxTool, discriminator="toolbox_search_preview"):
+    """A toolbox search tool stored in a toolbox.
 
-    :ivar type: The type of the tool. Always ``toolbox_search_preview``. Required.
-     TOOLBOX_SEARCH_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.TOOLBOX_SEARCH_PREVIEW
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -13731,20 +14044,13 @@ class ToolboxSearchPreviewTool(Tool, discriminator="toolbox_search_preview"):
      default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
      are silently ignored at runtime.
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: The type of the tool. Always ``toolbox_search_preview``. Required.
+     TOOLBOX_SEARCH_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.TOOLBOX_SEARCH_PREVIEW
     """
 
-    type: Literal[ToolType.TOOLBOX_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    type: Literal[ToolboxToolType.TOOLBOX_SEARCH_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the tool. Always ``toolbox_search_preview``. Required. TOOLBOX_SEARCH_PREVIEW."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
 
     @overload
     def __init__(
@@ -13764,7 +14070,7 @@ class ToolboxSearchPreviewTool(Tool, discriminator="toolbox_search_preview"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.TOOLBOX_SEARCH_PREVIEW  # type: ignore
+        self.type = ToolboxToolType.TOOLBOX_SEARCH_PREVIEW  # type: ignore
 
 
 class ToolboxSkill(_Model):
@@ -13861,7 +14167,7 @@ class ToolboxVersionObject(_Model):
     :ivar created_at: The Unix timestamp (seconds) when the toolbox version was created. Required.
     :vartype created_at: ~datetime.datetime
     :ivar tools: The list of tools contained in this toolbox version. Required.
-    :vartype tools: list[~azure.ai.projects.models.Tool]
+    :vartype tools: list[~azure.ai.projects.models.ToolboxTool]
     :ivar skills: The list of skill sources included in this toolbox version.
     :vartype skills: list[~azure.ai.projects.models.ToolboxSkill]
     :ivar policies: Policy configuration for the toolbox version.
@@ -13888,7 +14194,7 @@ class ToolboxVersionObject(_Model):
         visibility=["read", "create", "update", "delete", "query"], format="unix-timestamp"
     )
     """The Unix timestamp (seconds) when the toolbox version was created. Required."""
-    tools: list["_models.Tool"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tools: list["_models.ToolboxTool"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The list of tools contained in this toolbox version. Required."""
     skills: Optional[list["_models.ToolboxSkill"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -13908,7 +14214,7 @@ class ToolboxVersionObject(_Model):
         name: str,
         version: str,
         created_at: datetime.datetime,
-        tools: list["_models.Tool"],
+        tools: list["_models.ToolboxTool"],
         description: Optional[str] = None,
         skills: Optional[list["_models.ToolboxSkill"]] = None,
         policies: Optional["_models.ToolboxPolicies"] = None,
@@ -15038,14 +15344,6 @@ class WebSearchTool(Tool, discriminator="web_search"):
      for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of
      the following types: Literal["low"], Literal["medium"], Literal["high"]
     :vartype search_context_size: str or str or str
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar custom_search_configuration: The project connections attached to this tool. There can be
      a maximum of 1 connection resource attached to the tool.
     :vartype custom_search_configuration: ~azure.ai.projects.models.WebSearchConfiguration
@@ -15066,16 +15364,6 @@ class WebSearchTool(Tool, discriminator="web_search"):
     """High level guidance for the amount of context window space to use for the search. One of
      ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of the following types:
      Literal[\"low\"], Literal[\"medium\"], Literal[\"high\"]"""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
     custom_search_configuration: Optional["_models.WebSearchConfiguration"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -15089,9 +15377,6 @@ class WebSearchTool(Tool, discriminator="web_search"):
         filters: Optional["_models.WebSearchToolFilters"] = None,
         user_location: Optional["_models.WebSearchApproximateLocation"] = None,
         search_context_size: Optional[Literal["low", "medium", "high"]] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
         custom_search_configuration: Optional["_models.WebSearchConfiguration"] = None,
     ) -> None: ...
 
@@ -15105,6 +15390,77 @@ class WebSearchTool(Tool, discriminator="web_search"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.WEB_SEARCH  # type: ignore
+
+
+class WebSearchToolboxTool(ToolboxTool, discriminator="web_search"):
+    """A web search tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. WEB_SEARCH.
+    :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH
+    :ivar filters:
+    :vartype filters: ~azure.ai.projects.models.WebSearchToolFilters
+    :ivar user_location:
+    :vartype user_location: ~azure.ai.projects.models.WebSearchApproximateLocation
+    :ivar search_context_size: High level guidance for the amount of context window space to use
+     for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of
+     the following types: Literal["low"], Literal["medium"], Literal["high"]
+    :vartype search_context_size: str or str or str
+    :ivar custom_search_configuration: The project connections attached to this tool. There can be
+     a maximum of 1 connection resource attached to the tool.
+    :vartype custom_search_configuration: ~azure.ai.projects.models.WebSearchConfiguration
+    """
+
+    type: Literal[ToolboxToolType.WEB_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. WEB_SEARCH."""
+    filters: Optional["_models.WebSearchToolFilters"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    user_location: Optional["_models.WebSearchApproximateLocation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    search_context_size: Optional[Literal["low", "medium", "high"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """High level guidance for the amount of context window space to use for the search. One of
+     ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of the following types:
+     Literal[\"low\"], Literal[\"medium\"], Literal[\"high\"]"""
+    custom_search_configuration: Optional["_models.WebSearchConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The project connections attached to this tool. There can be a maximum of 1 connection resource
+     attached to the tool."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        filters: Optional["_models.WebSearchToolFilters"] = None,
+        user_location: Optional["_models.WebSearchApproximateLocation"] = None,
+        search_context_size: Optional[Literal["low", "medium", "high"]] = None,
+        custom_search_configuration: Optional["_models.WebSearchConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.WEB_SEARCH  # type: ignore
 
 
 class WebSearchToolFilters(_Model):
@@ -15212,6 +15568,35 @@ class WorkIQPreviewTool(Tool, discriminator="work_iq_preview"):
     :vartype type: str or ~azure.ai.projects.models.WORK_IQ_PREVIEW
     :ivar project_connection_id: The ID of the WorkIQ project connection. Required.
     :vartype project_connection_id: str
+    """
+
+    type: Literal[ToolType.WORK_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW."""
+    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the WorkIQ project connection. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_connection_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.WORK_IQ_PREVIEW  # type: ignore
+
+
+class WorkIQPreviewToolboxTool(ToolboxTool, discriminator="work_iq_preview"):
+    """A WorkIQ tool stored in a toolbox.
+
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
@@ -15220,22 +15605,16 @@ class WorkIQPreviewTool(Tool, discriminator="work_iq_preview"):
      default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
      are silently ignored at runtime.
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. WORK_IQ_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.WORK_IQ_PREVIEW
+    :ivar project_connection_id: The ID of the WorkIQ project connection. Required.
+    :vartype project_connection_id: str
     """
 
-    type: Literal[ToolType.WORK_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'work_iq_preview'. Required. WORK_IQ_PREVIEW."""
+    type: Literal[ToolboxToolType.WORK_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. WORK_IQ_PREVIEW."""
     project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the WorkIQ project connection. Required."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-    tool_configs: Optional[dict[str, "_models.ToolConfig"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
-     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
-     runtime."""
 
     @overload
     def __init__(
@@ -15256,4 +15635,4 @@ class WorkIQPreviewTool(Tool, discriminator="work_iq_preview"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolType.WORK_IQ_PREVIEW  # type: ignore
+        self.type = ToolboxToolType.WORK_IQ_PREVIEW  # type: ignore

@@ -337,5 +337,5 @@ class AgentsOperations(GeneratedAgentsOperations):
         assert content is not None  # Guaranteed by validation above
 
         return super()._upload_session_file(
-            agent_name, session_id, content, path=remote_path, user_isolation_key=user_isolation_key, **kwargs
+            agent_name, session_id, content, remote_path=remote_path, user_isolation_key=user_isolation_key, **kwargs
         )
