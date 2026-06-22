@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Added `secure_wrap_key` and `secure_unwrap_key` methods for wrap/unwrap operations on keys.
+- Added `secure_wrap_key` and `secure_unwrap_key` methods for wrap/unwrap operations on keys [#47200](https://github.com/Azure/azure-sdk-for-python/pull/47591).
 - Added the `KeySecureWrapAlgorithm` enum, listing the algorithms supported by the secure wrap/unwrap operations.
 - Added the `SecureWrapResult` and `SecureUnwrapResult` model classes wrapping the results of `secure_wrap_key` and `secure_unwrap_key`, respectively.
 
