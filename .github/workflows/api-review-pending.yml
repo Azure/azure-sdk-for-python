@@ -52,8 +52,18 @@ jobs:
           $installDir = Join-Path $env:RUNNER_TEMP 'azsdk-cli'
           ./eng/common/mcp/azure-sdk-mcp.ps1 -InstallDirectory $installDir
           $azsdkCli = Join-Path $installDir "azsdk$(if ($IsWindows) { '.exe' } else { '' })"
+          $minimumVersion = [version]'0.6.22'
+          $installedVersionText = (& $azsdkCli --version | Select-Object -First 1).Trim()
+          $installedVersionMatch = [regex]::Match($installedVersionText, '\d+\.\d+\.\d+')
+          if (!$installedVersionMatch.Success) {
+            throw "Could not determine azsdk-cli version from: $installedVersionText"
+          }
+          $installedVersion = [version]$installedVersionMatch.Value
+          if ($installedVersion -lt $minimumVersion) {
+            throw "azsdk-cli $installedVersionText is older than the required minimum version $minimumVersion."
+          }
           "AZSDK_CLI=$azsdkCli" | Out-File -FilePath $env:GITHUB_ENV -Append
-          Write-Host "Installed azsdk-cli at $azsdkCli"
+          Write-Host "Installed azsdk-cli $installedVersionText at $azsdkCli"
 
       - name: Sync pending API review URL
         shell: bash
