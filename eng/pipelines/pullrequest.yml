@@ -10,6 +10,8 @@ pr:
   paths:
     include:
     - "*"
+    exclude:
+    - .github/skills/azsdk-common-*/**
 parameters:
   - name: Service
     type: string
