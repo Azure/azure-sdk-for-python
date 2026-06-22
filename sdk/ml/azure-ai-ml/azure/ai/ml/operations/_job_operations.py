@@ -34,60 +34,6 @@ from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJo
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401
 from azure.ai.ml._restclient.arm_ml_service.models import JobBase as RestJobBaseArm
 
-# JobType.FINE_TUNING was @removed at api-version 2025-12-01 in the TypeSpec, so the shared
-# arm_ml_service JobType enum (generated at 2025-12-01) no longer exposes a FINE_TUNING member.
-# The value is still valid on the 2024-10-01-preview wire (FineTuningJob.job_type == "FineTuning"),
-# so compare against the literal wire value for routing. Remove once arm_ml_service is regenerated
-# with api-version "all".
-_FINE_TUNING_JOB_TYPE = "FineTuning"
-
-
-def _ensure_arm_job_base(rest_job_resource: Any) -> Any:
-    """Return the body as a shared arm_ml_service hybrid ``JobBase``.
-
-    Command and fine-tuning jobs route to the shared arm_ml_service client, whose ``SdkJSONEncoder``
-    only serializes hybrid models. Most call sites already build an arm hybrid body, but the local-run
-    re-submit path re-PUTs a msrest ``JobBase`` fetched via GET. Round-trip any msrest body through its
-    wire dict (msrest ``.serialize()`` -> arm ``._deserialize()``), which is wire-identical. No-op when
-    the body is already an arm hybrid model. Remove once arm_ml_service is regenerated with
-    api-version "all".
-
-    :param rest_job_resource: A msrest or arm hybrid ``JobBase``.
-    :type rest_job_resource: Any
-    :return: An arm_ml_service hybrid ``JobBase``.
-    :rtype: Any
-    """
-    if hasattr(rest_job_resource, "_is_model"):  # already an arm hybrid model
-        return rest_job_resource
-    converted = RestJobBaseArm._deserialize(rest_job_resource.serialize(), [])  # pylint: disable=protected-access
-    # ``name`` is a read-only resource field that msrest ``.serialize()`` omits; carry it over so the
-    # create_or_update URL (which uses ``id=rest_job_resource.name``) is populated.
-    converted.name = rest_job_resource.name
-    return converted
-
-
-def _ensure_msrest_job_base(result: Any) -> Any:
-    """Return the create/update result as a msrest ``JobBase`` (v2023_04) for entity parsing.
-
-    Command and fine-tuning jobs route to the shared arm_ml_service client, whose ``create_or_update``
-    returns an arm hybrid ``JobBase``. The entity readers (``Job._from_rest_object`` and the nested
-    ``DistributionConfiguration._from_rest_object`` etc.) were authored against msrest ``.as_dict()``,
-    which emits snake_case keys; the hybrid ``.as_dict()`` emits camelCase, so a hybrid result makes
-    those readers pop ``None`` (e.g. ``distribution_type``) and crash. Round-trip the hybrid result
-    through its camelCase wire dict (hybrid ``.as_dict()`` -> msrest ``.deserialize()``), which is
-    wire-identical and rehydrates proper msrest nested models. No-op when the result is already a msrest
-    model. Remove once arm_ml_service is regenerated with api-version "all".
-
-    :param result: A msrest or arm hybrid ``JobBase``.
-    :type result: Any
-    :return: A msrest ``JobBase``.
-    :rtype: Any
-    """
-    if not getattr(result, "_is_model", False) is True:  # already a msrest model (or a test mock)
-        return result
-    return JobBase.deserialize(result.as_dict())
-
-
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -192,6 +138,59 @@ if TYPE_CHECKING:
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
+
+# JobType.FINE_TUNING was @removed at api-version 2025-12-01 in the TypeSpec, so the shared
+# arm_ml_service JobType enum (generated at 2025-12-01) no longer exposes a FINE_TUNING member.
+# The value is still valid on the 2024-10-01-preview wire (FineTuningJob.job_type == "FineTuning"),
+# so compare against the literal wire value for routing. Remove once arm_ml_service is regenerated
+# with api-version "all".
+_FINE_TUNING_JOB_TYPE = "FineTuning"
+
+
+def _ensure_arm_job_base(rest_job_resource: Any) -> Any:
+    """Return the body as a shared arm_ml_service hybrid ``JobBase``.
+
+    Command and fine-tuning jobs route to the shared arm_ml_service client, whose ``SdkJSONEncoder``
+    only serializes hybrid models. Most call sites already build an arm hybrid body, but the local-run
+    re-submit path re-PUTs a msrest ``JobBase`` fetched via GET. Round-trip any msrest body through its
+    wire dict (msrest ``.serialize()`` -> arm ``._deserialize()``), which is wire-identical. No-op when
+    the body is already an arm hybrid model. Remove once arm_ml_service is regenerated with
+    api-version "all".
+
+    :param rest_job_resource: A msrest or arm hybrid ``JobBase``.
+    :type rest_job_resource: Any
+    :return: An arm_ml_service hybrid ``JobBase``.
+    :rtype: Any
+    """
+    if hasattr(rest_job_resource, "_is_model"):  # already an arm hybrid model
+        return rest_job_resource
+    converted = RestJobBaseArm._deserialize(rest_job_resource.serialize(), [])  # pylint: disable=protected-access
+    # ``name`` is a read-only resource field that msrest ``.serialize()`` omits; carry it over so the
+    # create_or_update URL (which uses ``id=rest_job_resource.name``) is populated.
+    converted.name = rest_job_resource.name
+    return converted
+
+
+def _ensure_msrest_job_base(result: Any) -> Any:
+    """Return the create/update result as a msrest ``JobBase`` (v2023_04) for entity parsing.
+
+    Command and fine-tuning jobs route to the shared arm_ml_service client, whose ``create_or_update``
+    returns an arm hybrid ``JobBase``. The entity readers (``Job._from_rest_object`` and the nested
+    ``DistributionConfiguration._from_rest_object`` etc.) were authored against msrest ``.as_dict()``,
+    which emits snake_case keys; the hybrid ``.as_dict()`` emits camelCase, so a hybrid result makes
+    those readers pop ``None`` (e.g. ``distribution_type``) and crash. Round-trip the hybrid result
+    through its camelCase wire dict (hybrid ``.as_dict()`` -> msrest ``.deserialize()``), which is
+    wire-identical and rehydrates proper msrest nested models. No-op when the result is already a msrest
+    model. Remove once arm_ml_service is regenerated with api-version "all".
+
+    :param result: A msrest or arm hybrid ``JobBase``.
+    :type result: Any
+    :return: A msrest ``JobBase``.
+    :rtype: Any
+    """
+    if not getattr(result, "_is_model", False) is True:  # already a msrest model (or a test mock)
+        return result
+    return JobBase.deserialize(result.as_dict())
 
 
 class JobOperations(_ScopeDependentOperations):
