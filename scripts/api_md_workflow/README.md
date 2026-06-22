@@ -36,7 +36,7 @@ Primary output:
 
 Secondary output:
 
-- PR body sync metadata includes the package work item ID when available, so `.github/workflows/api-review-pending.yml` can synchronize `Custom.PendingAPIReviews` on PR open, close, and reopen events.
+- PR body sync metadata includes the package work item ID when available, so `.github/workflows/manage-pending-api-reviews.yml` can synchronize `Custom.PendingAPIReviews` on PR open, close, and reopen events.
 - Matching API review architects are requested as GitHub reviewers when a PR number is available.
 
 ## High-Level Flow
@@ -167,7 +167,7 @@ azsdk package get-work-item --package-name <package-name> -o json
 
 2. Extract the work item `id` and write it to PR body sync metadata as `packageWorkItemId`.
 
-The `.github/workflows/api-review-pending.yml` workflow owns `Custom.PendingAPIReviews` updates. On API review PR `opened` or `reopened`, it appends the PR URL if missing. On `closed`, it removes the PR URL.
+The `.github/workflows/manage-pending-api-reviews.yml` workflow owns `Custom.PendingAPIReviews` updates. On API review PR `opened` or `reopened`, it appends the PR URL if missing. On `closed`, it removes the PR URL.
 
 The workflow updates the work item with:
 

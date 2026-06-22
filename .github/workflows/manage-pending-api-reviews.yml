@@ -1,4 +1,4 @@
-name: API Review Pending Work Item Sync
+name: Manage Pending API Reviews
 
 on:
   pull_request_target:
@@ -29,8 +29,8 @@ permissions:
   pull-requests: read
 
 jobs:
-  sync-pending-review:
-    name: Sync Pending API Review Work Item Field
+  manage-pending-api-reviews:
+    name: Manage Pending API Reviews
     if: >-
       ${{
         github.event_name == 'workflow_call' ||
@@ -65,11 +65,11 @@ jobs:
           "AZSDK_CLI=$azsdkCli" | Out-File -FilePath $env:GITHUB_ENV -Append
           Write-Host "Installed azsdk-cli $installedVersionText at $azsdkCli"
 
-      - name: Sync pending API review URL
+      - name: Manage pending API review URL
         shell: bash
         env:
           AZURE_DEVOPS_EXT_PAT: ${{ secrets.AZURE_DEVOPS_EXT_PAT }}
           API_REVIEW_EVENT_PATH: ${{ inputs['event-path'] }}
           API_REVIEW_METADATA_MARKER: ${{ inputs['metadata-marker'] || 'api-md-review-sync' }}
           PENDING_API_REVIEWS_FIELD: ${{ inputs['pending-reviews-field'] || 'Custom.PendingAPIReviews' }}
-        run: node eng/common/scripts/sync-api-review-pending.js
+        run: node eng/common/scripts/manage-pending-api-reviews.js
