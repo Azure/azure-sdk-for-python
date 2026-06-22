@@ -277,25 +277,63 @@ extends:
                     targetPath: $(Build.ArtifactStagingDirectory)/packages_windows
 
                 - pwsh: |
-                    $allWheelsDir = "$(Build.ArtifactStagingDirectory)/all_wheels"
-                    New-Item -ItemType Directory -Path $allWheelsDir -Force | Out-Null
+                    $releaseArtifactDir = "$(Build.ArtifactStagingDirectory)/release_packages"
+                    $linuxPackagesDir = "$(Build.ArtifactStagingDirectory)/packages_linux"
+                    $extendedPackagesDir = "$(Build.ArtifactStagingDirectory)/packages_extended"
+                    New-Item -ItemType Directory -Path $releaseArtifactDir -Force | Out-Null
 
-                    Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_linux" -Recurse -Filter "*.whl" |
-                      Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
+                    Get-ChildItem $extendedPackagesDir |
+                      Copy-Item -Destination $releaseArtifactDir -Recurse -Force
 
-                    Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_extended" -Recurse -Filter "*.tar.gz" |
-                      Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
+                    function Copy-ArtifactPreservingRelativePath {
+                      param(
+                        [string]$artifactPath,
+                        [string]$sourceRoot
+                      )
+
+                      $sourceDirectory = Split-Path $artifactPath -Parent
+                      $relativeDirectory = $sourceDirectory.Substring($sourceRoot.Length).TrimStart('\', '/')
+                      $targetDirectory = if ([string]::IsNullOrEmpty($relativeDirectory)) {
+                        $releaseArtifactDir
+                      } else {
+                        Join-Path $releaseArtifactDir $relativeDirectory
+                      }
+
+                      New-Item -ItemType Directory -Path $targetDirectory -Force | Out-Null
+                      Copy-Item -Path $artifactPath -Destination $targetDirectory -Force
+                    }
+
+                    function Copy-SignedWheelToPackageFolder {
+                      param([string]$wheelPath)
+
+                      $wheelName = Split-Path $wheelPath -Leaf
+                      if ($wheelName -notmatch '^(?<package>.+?)-(?<version>\d[^-]*)-') {
+                        throw "Unable to determine the package folder for signed wheel '$wheelName'."
+                      }
+
+                      $packageFolder = $matches['package'].Replace('_', '-')
+                      $targetFolder = Join-Path $releaseArtifactDir $packageFolder
+
+                      if (-not (Test-Path $targetFolder)) {
+                        throw "Expected package folder '$targetFolder' for signed wheel '$wheelName'."
+                      }
+
+                      Copy-Item -Path $wheelPath -Destination $targetFolder -Force
+                    }
+
+                    Get-ChildItem $linuxPackagesDir -Recurse -Filter "*.whl" |
+                      ForEach-Object { Copy-ArtifactPreservingRelativePath $_.FullName $linuxPackagesDir }
 
                     Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_mac" -Recurse -Filter "*.whl" |
-                      Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
+                      ForEach-Object { Copy-SignedWheelToPackageFolder $_.FullName }
 
                     Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_windows" -Recurse -Filter "*.whl" |
-                      Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
+                      ForEach-Object { Copy-SignedWheelToPackageFolder $_.FullName }
                   displayName: Assemble release artifact
 
                 - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
                   parameters:
-                    ArtifactPath: '$(Build.ArtifactStagingDirectory)/all_wheels'
+                    ArtifactPath: '$(Build.ArtifactStagingDirectory)/release_packages'
                     ArtifactName: 'packages_all_signed'
 
           variables:
@@ -304,12 +342,16 @@ extends:
 
       - template: archetype-python-release.yml
         parameters:
-          DependsOn: "Sign_Wheels"
+          ${{ if eq(parameters.ServiceDirectory, 'storage') }}:
+            DependsOn: Sign_Binaries
+            ArtifactName: packages_all_signed
+          ${{ if ne(parameters.ServiceDirectory, 'storage') }}:
+            DependsOn: Build
+            ArtifactName: packages_extended
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           Artifacts: ${{ parameters.Artifacts }}
           ${{ if eq(parameters.ServiceDirectory, 'template') }}:
             TestPipeline: true
-          ArtifactName: packages_all_signed
           DocArtifact: documentation
           TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
           TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
