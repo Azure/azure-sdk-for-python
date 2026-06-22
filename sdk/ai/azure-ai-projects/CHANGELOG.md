@@ -4,6 +4,7 @@
 
 ### Sample updates
 
+* Updated `weather_openapi.json` to pass the OpenAPI spec validation.
 * Added `sample_routines_crud.py` to demonstrate CRUD operations.
 * Added `sample_routines_with_timer_trigger.py` to demonstrate triggering a routine with a timer.
 * Added `sample_routines_with_schedule_trigger.py` to demonstrate triggering a routine on a recurring cron schedule via `ScheduleRoutineTrigger`.
