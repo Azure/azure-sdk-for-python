@@ -235,21 +235,21 @@ class TestLocalFileBlob(unittest.TestCase):
         """Test lease with a retry-after delay period (120 seconds)"""
         blob_path = os.path.join(TEST_FOLDER, "lease_retry_after_blob")
         blob = LocalFileBlob(blob_path)
-        
+
         # Create the blob first
         test_input = [{"data": "test"}]
         blob.put(test_input)
-        
+
         # Lease with 120 second delay (typical retry-after)
         retry_after_delay = 120
         leased_blob = blob.lease(retry_after_delay)
-        
+
         # Should return a blob object on success
         self.assertIsNotNone(leased_blob)
-        
+
         # Filename should have .lock extension
         self.assertTrue(leased_blob.fullpath.endswith(".lock"))
-        
+
         # Extract and verify timestamp is in the future
         filename = os.path.basename(leased_blob.fullpath)
         self.assertIn("@", filename)
@@ -259,15 +259,15 @@ class TestLocalFileBlob(unittest.TestCase):
         """Test lease with default storage period (60 seconds)"""
         blob_path = os.path.join(TEST_FOLDER, "lease_default_blob")
         blob = LocalFileBlob(blob_path)
-        
+
         # Create the blob
         test_input = [{"data": "test"}]
         blob.put(test_input)
-        
+
         # Lease with default 60 second period
         default_period = 60
         leased_blob = blob.lease(default_period)
-        
+
         self.assertIsNotNone(leased_blob)
         self.assertTrue(leased_blob.fullpath.endswith(".lock"))
 
@@ -275,15 +275,15 @@ class TestLocalFileBlob(unittest.TestCase):
         """Test that lease returns self (the blob object) on success"""
         blob_path = os.path.join(TEST_FOLDER, "lease_self_blob")
         blob = LocalFileBlob(blob_path)
-        
+
         # Create the blob
         test_input = [{"data": "test"}]
         blob.put(test_input)
-        
+
         # Lease should return a blob object
         leased = blob.lease(60)
         self.assertIsInstance(leased, LocalFileBlob)
-        
+
         # Path should be updated with timestamp
         self.assertNotEqual(blob.fullpath, blob_path)
         self.assertIn("@", blob.fullpath)
@@ -292,10 +292,10 @@ class TestLocalFileBlob(unittest.TestCase):
         """Test that lease returns None when it fails"""
         blob_path = os.path.join(TEST_FOLDER, "lease_nonexistent")
         blob = LocalFileBlob(blob_path)
-        
+
         # Try to lease a blob that doesn't exist (no put before lease)
         leased = blob.lease(60)
-        
+
         # Should return None since os.rename will fail
         self.assertIsNone(leased)
 
@@ -303,17 +303,17 @@ class TestLocalFileBlob(unittest.TestCase):
         """Test lease on a blob that already has a lock"""
         blob_path = os.path.join(TEST_FOLDER, "lease_relock_blob")
         blob = LocalFileBlob(blob_path)
-        
+
         # Create and first lease
         test_input = [{"data": "test"}]
         blob.put(test_input)
         first_lease = blob.lease(60)
         self.assertIsNotNone(first_lease)
-        
+
         # Second lease on the already-leased blob
         second_lease = first_lease.lease(120)
         self.assertIsNotNone(second_lease)
-        
+
         # Should still have .lock extension
         self.assertTrue(second_lease.fullpath.endswith(".lock"))
 

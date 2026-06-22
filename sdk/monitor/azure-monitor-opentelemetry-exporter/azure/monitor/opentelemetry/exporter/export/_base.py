@@ -275,7 +275,9 @@ class BaseExporter:
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = [x.as_dict() for x in envelopes]
                 if self._retry_after_delay_seconds is not None:
-                    result_from_storage_put = self.storage.put(envelopes_to_store, lease_period=self._retry_after_delay_seconds)
+                    result_from_storage_put = self.storage.put(
+                        envelopes_to_store, lease_period=self._retry_after_delay_seconds
+                    )
                 else:
                     result_from_storage_put = self.storage.put(envelopes_to_store)
                 if self._should_collect_customer_sdkstats():

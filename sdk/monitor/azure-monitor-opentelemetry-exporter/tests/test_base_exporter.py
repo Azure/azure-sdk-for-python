@@ -656,6 +656,24 @@ class TestBaseExporter(unittest.TestCase):
         # Verify storage.put was called with the serialized envelopes
         exporter.storage.put.assert_called_once_with(serialized_envelopes)
 
+    def test_handle_transmit_from_storage_429_retry_after_passed_as_lease_period(self):
+        """When _retry_after_delay_seconds is set (from a prior 429 full-request
+        failure), _handle_transmit_from_storage must forward it as lease_period
+        to storage.put so the blob stays locked for the server-requested delay."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
+
+        exporter._retry_after_delay_seconds = 120
+
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        serialized_envelopes = [envelope.as_dict() for envelope in test_envelopes]
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+
+        exporter.storage.put.assert_called_once_with(serialized_envelopes, lease_period=120)
+        # _retry_after_delay_seconds must be cleared after consumption
+        self.assertIsNone(exporter._retry_after_delay_seconds)
+
     def test_handle_transmit_from_storage_success_triggers_transmit(self):
         exporter = BaseExporter(disable_offline_storage=False)
 
@@ -1089,6 +1107,23 @@ class TestBaseExporter(unittest.TestCase):
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(429)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_429_with_retry_after_header_sets_delay(self):
+        """A full-request 429 whose response carries a Retry-After header must
+        cause _transmit to set _retry_after_delay_seconds on the exporter so
+        that _handle_transmit_from_storage can forward it as the storage lease
+        period."""
+        response = HttpResponse(None, None)
+        response.status_code = 429
+        response.headers = {"Retry-After": "120"}
+        error = HttpResponseError(response=response)
+
+        exporter = BaseExporter(disable_offline_storage=True)
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=error):
+            result = exporter._transmit(self._envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(exporter._retry_after_delay_seconds, 120)
 
     def test_transmission_439(self):
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(439)):

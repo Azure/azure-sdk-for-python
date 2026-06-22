@@ -477,18 +477,19 @@ def _get_application_id(connection_string: Optional[str]) -> Optional[str]:
     parsed_connection_string = ConnectionStringParser(connection_string)
     return parsed_connection_string.application_id
 
+
 def _get_retry_delay_from_headers(headers: Any) -> Optional[int]:
     if headers is None:
-       return None
-    
+        return None
+
     retry_after = None
     for key, value in headers.items():
         if key.lower() == "retry-after":
             retry_after = value
-    
+
     if retry_after is None:
         return None
-                
+
     if isinstance(retry_after, str) and retry_after.isdigit():
         delay_seconds = int(retry_after)
         if delay_seconds > 0:
