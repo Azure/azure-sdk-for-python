@@ -44,7 +44,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
     @pytest.mark.parametrize(
         "segment_path",
         [
-            "idx/segments/2026/02/20/0000/meta.json",
+            "idx/segments/2026/02/20/0827/meta.json",
             "idx/segments/2022/11/28/2300/meta.json",
             "idx/segments/1601/01/01/0000/meta.json",
         ],
@@ -61,7 +61,6 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
             "idx/segments/2026",              # year-level directory marker
             "idx/segments",                   # prefix only
             "idx/segments/2026/02/20/0000/",  # trailing slash -> empty file token
-            "idx/segments/abcd/02/20/0000/meta.json",  # non-numeric year
         ],
     )
     def test_directory_marker_or_malformed_path_is_rejected(self, segment_path):

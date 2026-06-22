@@ -299,7 +299,7 @@ class ChangeFeed:
         path_tokens = segment_path.split(PATH_DELIMITER)
 
         # Expected: idx/segments/YYYY/MM/DD/HHMM/<file>
-        return len(path_tokens) >= 7 and path_tokens[6]
+        return len(path_tokens) >= 7 and bool(path_tokens[6])
 
     @staticmethod
     def _parse_datetime_from_segment_path(segment_path):
