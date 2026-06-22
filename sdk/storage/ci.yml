@@ -43,16 +43,16 @@ extends:
     # must be scanned
     EnableCompiledCodeql: true
     Artifacts:
-    - name: azure-storage-blob
-      safeName: azurestorageblob
-    - name: azure-storage-blob-changefeed
-      safeName: azurestorageblobchangefeed
-    - name: azure-storage-file-share
-      safeName: azurestoragefileshare
-    - name: azure-storage-file-datalake
-      safeName: azurestoragefiledatalake
-    - name: azure-storage-queue
-      safeName: azurestoragequeue
+    # - name: azure-storage-blob
+    #   safeName: azurestorageblob
+    # - name: azure-storage-blob-changefeed
+    #   safeName: azurestorageblobchangefeed
+    # - name: azure-storage-file-share
+    #   safeName: azurestoragefileshare
+    # - name: azure-storage-file-datalake
+    #   safeName: azurestoragefiledatalake
+    # - name: azure-storage-queue
+    #   safeName: azurestoragequeue
     - name: azure-storage-extensions
       safeName: azurestorageextensions
       triggeringPaths:
@@ -63,11 +63,11 @@ extends:
       # Pure C-based storage extension package, not generating docs at this moment.
       skipPublishDocGithubIo: true
       skipPublishDocMs: true
-    - name: azure-mgmt-storage
-      safeName: azuremgmtstorage
-    - name: azure-mgmt-storagecache
-      safeName: azuremgmtstoragecache
-    - name: azure-mgmt-storagesync
-      safeName: azuremgmtstoragesync
-    - name: azure-mgmt-storageimportexport
-      safeName: azuremgmtstorageimportexport
+    # - name: azure-mgmt-storage
+    #   safeName: azuremgmtstorage
+    # - name: azure-mgmt-storagecache
+    #   safeName: azuremgmtstoragecache
+    # - name: azure-mgmt-storagesync
+    #   safeName: azuremgmtstoragesync
+    # - name: azure-mgmt-storageimportexport
+    #   safeName: azuremgmtstorageimportexport
