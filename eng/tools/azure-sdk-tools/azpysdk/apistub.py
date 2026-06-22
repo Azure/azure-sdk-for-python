@@ -64,6 +64,12 @@ class apistub(Check):
             help="Generate only the raw APIView token file.",
         )
         p.add_argument(
+            "--dest-dir",
+            dest="dest_dir",
+            default=None,
+            help="Destination directory for generated API stub files.",
+        )
+        p.add_argument(
             "--install-deps",
             dest="install_deps",
             default=False,
@@ -146,7 +152,7 @@ class apistub(Check):
             pkg_path = get_package_wheel_path(package_dir)
             pkg_path = os.path.abspath(pkg_path)
 
-            out_token_path = os.path.abspath(package_dir)
+            out_token_path = os.path.abspath(getattr(args, "dest_dir", None) or package_dir)
             os.makedirs(out_token_path, exist_ok=True)
 
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)

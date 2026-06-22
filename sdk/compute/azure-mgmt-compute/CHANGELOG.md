@@ -1,5 +1,32 @@
 # Release History
 
+## 38.1.0 (2026-06-17)
+
+### Features Added
+
+  - Client `ComputeManagementClient` added operation group `interconnect_blocks`
+  - Model `NetworkProfile` added property `interconnect_group_profile`
+  - Model `SkuProfile` added property `automatic_sku_migration_policy`
+  - Model `VirtualMachineInstanceView` added property `interconnect_instance_view`
+  - Model `VirtualMachineProperties` added property `interconnect_block_profile`
+  - Model `VirtualMachineScaleSetNetworkProfile` added property `interconnect_group_profile`
+  - Model `VirtualMachineScaleSetUpdateNetworkProfile` added property `interconnect_group_profile`
+  - Model `VirtualMachineScaleSetUpdateVMProfile` added property `interconnect_block_profile`
+  - Model `VirtualMachineScaleSetVMInstanceView` added property `interconnect_instance_view`
+  - Model `VirtualMachineScaleSetVMNetworkProfileConfiguration` added property `interconnect_group_profile`
+  - Model `VirtualMachineScaleSetVMProfile` added property `interconnect_block_profile`
+  - Model `VirtualMachineScaleSetVMProperties` added property `interconnect_block_profile`
+  - Added model `AutomaticSkuMigrationPolicy`
+  - Added model `InterconnectBlock`
+  - Added enum `InterconnectBlockExpandTypes`
+  - Added model `InterconnectBlockInstanceView`
+  - Added model `InterconnectBlockProfile`
+  - Added model `InterconnectBlockProperties`
+  - Added model `InterconnectBlockUpdate`
+  - Added model `InterconnectGroupProfile`
+  - Added model `InterconnectInstanceView`
+  - Added operation group `InterconnectBlocksOperations`
+
 ## 38.0.0 (2026-04-21)
 
 ### Features Added
