@@ -4,6 +4,7 @@
 # ------------------------------------
 import pytest
 from azure.core.exceptions import HttpResponseError
+from azure.keyvault.keys import KeyOperation
 from azure.keyvault.keys.crypto.aio import CryptographyClient
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import set_bodiless_matcher
@@ -135,7 +136,7 @@ class TestCryptoExamples(KeyVaultTestCase, KeysTestCase):
         key = await key_client.create_rsa_key(
             key_name,
             hardware_protected=True,
-            key_operations=["secureWrapKey", "secureUnwrapKey"],
+            key_operations=[KeyOperation.secure_wrap_key, KeyOperation.secure_unwrap_key],
             release_policy=release_policy,
         )
         client = CryptographyClient(key, credential, api_version=key_client.api_version)

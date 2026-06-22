@@ -455,7 +455,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             key_client,
             key_name,
             hardware_protected=True,
-            key_operations=["secureWrapKey", "secureUnwrapKey"],
+            key_operations=[KeyOperation.secure_wrap_key, KeyOperation.secure_unwrap_key],
             release_policy=release_policy,
         )
         crypto_client = self.create_crypto_client(wrapping_key, api_version=key_client.api_version)

@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -36,9 +36,7 @@ from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator(is_async=True)
 only_hsm = get_decorator(only_hsm=True, is_async=True)
-only_hsm_2026_default = get_decorator(
-    only_hsm=True, is_async=True, api_versions=[DEFAULT_VERSION]
-)
+only_hsm_2026_default = get_decorator(only_hsm=True, is_async=True, api_versions=[DEFAULT_VERSION])
 only_vault_7_4_plus = get_decorator(only_vault=True, is_async=True, api_versions=[ApiVersion.V7_4, ApiVersion.V7_5])
 
 
@@ -316,7 +314,7 @@ class TestCryptoClient(KeyVaultTestCase, KeysTestCase):
             key_client,
             key_name,
             hardware_protected=True,
-            key_operations=["secureWrapKey", "secureUnwrapKey"],
+            key_operations=[KeyOperation.secure_wrap_key, KeyOperation.secure_unwrap_key],
             release_policy=release_policy,
         )
         crypto_client = self.create_crypto_client(wrapping_key, is_async=True, api_version=key_client.api_version)

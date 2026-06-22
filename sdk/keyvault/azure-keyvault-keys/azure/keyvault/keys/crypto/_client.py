@@ -503,9 +503,7 @@ class CryptographyClient(KeyVaultClientBase):
         :rtype: ~azure.keyvault.keys.crypto.SecureWrapResult
         """
         if self._jwk:
-            raise NotImplementedError(
-                "Secure wrap is not supported on a CryptographyClient created from a JsonWebKey"
-            )
+            raise NotImplementedError("Secure wrap is not supported on a CryptographyClient created from a JsonWebKey")
         operation_result = self._client.secure_wrap_key(
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,

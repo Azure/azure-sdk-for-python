@@ -7,7 +7,7 @@ import json
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.keys import KeyClient, KeyReleasePolicy
+from azure.keyvault.keys import KeyClient, KeyOperation, KeyReleasePolicy
 from azure.keyvault.keys.crypto import CryptographyClient, KeySecureWrapAlgorithm
 
 # ----------------------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ key_name = "secureWrapKeyName"
 wrapping_key = key_client.create_rsa_key(
     key_name,
     hardware_protected=True,
-    key_operations=["secureWrapKey", "secureUnwrapKey"],
+    key_operations=[KeyOperation.secure_wrap_key, KeyOperation.secure_unwrap_key],
     release_policy=release_policy,
 )
 print(f"Wrapping key '{wrapping_key.name}' created of type '{wrapping_key.key_type}'.")
@@ -83,9 +83,7 @@ crypto_client = CryptographyClient(wrapping_key, credential=credential)
 # (`encrypted_key`) can later be exchanged with a target TEE via secure_unwrap_key.
 print("\n.. Securely wrap a TEE-generated key")
 wrap_result = crypto_client.secure_wrap_key(KeySecureWrapAlgorithm.rsa_oaep_256)
-print(
-    f"Wrapped key produced for '{wrap_result.key_id}' using '{wrap_result.algorithm}'."
-)
+print(f"Wrapped key produced for '{wrap_result.key_id}' using '{wrap_result.algorithm}'.")
 encrypted_key = wrap_result.encrypted_key
 
 # Unwrap the key into a target TEE. This requires a valid attestation token signed by Microsoft Azure
@@ -96,6 +94,4 @@ print("\n.. Securely unwrap the key into a target TEE")
 unwrap_result = crypto_client.secure_unwrap_key(
     KeySecureWrapAlgorithm.rsa_oaep_256, encrypted_key, target_attestation_token
 )
-print(
-    f"Unwrapped key returned for '{unwrap_result.key_id}' using '{unwrap_result.algorithm}'."
-)
+print(f"Unwrapped key returned for '{unwrap_result.key_id}' using '{unwrap_result.algorithm}'.")

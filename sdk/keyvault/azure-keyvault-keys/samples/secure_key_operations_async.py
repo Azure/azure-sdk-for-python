@@ -8,7 +8,7 @@ import json
 import os
 
 from azure.identity.aio import DefaultAzureCredential
-from azure.keyvault.keys import KeyReleasePolicy
+from azure.keyvault.keys import KeyOperation, KeyReleasePolicy
 from azure.keyvault.keys.aio import KeyClient
 from azure.keyvault.keys.crypto import KeySecureWrapAlgorithm
 from azure.keyvault.keys.crypto.aio import CryptographyClient
@@ -76,24 +76,18 @@ async def run_sample():
     wrapping_key = await key_client.create_rsa_key(
         key_name,
         hardware_protected=True,
-        key_operations=["secureWrapKey", "secureUnwrapKey"],
+        key_operations=[KeyOperation.secure_wrap_key, KeyOperation.secure_unwrap_key],
         release_policy=release_policy,
     )
-    print(
-        f"Wrapping key '{wrapping_key.name}' created of type '{wrapping_key.key_type}'."
-    )
+    print(f"Wrapping key '{wrapping_key.name}' created of type '{wrapping_key.key_type}'.")
 
     # Build a CryptographyClient bound to the wrapping key.
     crypto_client = CryptographyClient(wrapping_key, credential=credential)
 
     # Securely wrap a key generated inside the HSM trusted execution environment.
     print("\n.. Securely wrap a TEE-generated key")
-    wrap_result = await crypto_client.secure_wrap_key(
-        KeySecureWrapAlgorithm.rsa_oaep_256
-    )
-    print(
-        f"Wrapped key produced for '{wrap_result.key_id}' using '{wrap_result.algorithm}'."
-    )
+    wrap_result = await crypto_client.secure_wrap_key(KeySecureWrapAlgorithm.rsa_oaep_256)
+    print(f"Wrapped key produced for '{wrap_result.key_id}' using '{wrap_result.algorithm}'.")
     encrypted_key = wrap_result.encrypted_key
 
     # Unwrap the key into a target TEE. This requires a valid attestation token signed by Microsoft Azure
@@ -104,9 +98,7 @@ async def run_sample():
     unwrap_result = await crypto_client.secure_unwrap_key(
         KeySecureWrapAlgorithm.rsa_oaep_256, encrypted_key, target_attestation_token
     )
-    print(
-        f"Unwrapped key returned for '{unwrap_result.key_id}' using '{unwrap_result.algorithm}'."
-    )
+    print(f"Unwrapped key returned for '{unwrap_result.key_id}' using '{unwrap_result.algorithm}'.")
 
     print("\nrun_sample done")
     await crypto_client.close()
