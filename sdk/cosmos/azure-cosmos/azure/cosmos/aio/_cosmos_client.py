@@ -232,6 +232,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # async client ``availability_strategy`` is an explicit parameter
         # (default ``False``), so it is passed directly rather than read from
         # kwargs; ``False`` carries nothing, ``True``/dict carry the threshold.
+        # ``consistency_level`` is the named constructor arg, carried so the
+        # chosen level reaches the driver instead of every read falling back to
+        # the account default.
         chosen = make_async_backend(
             backend_choice,
             url=url,
@@ -245,6 +248,17 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 kwargs.get("retry_throttle_backoff_max") or kwargs.get("retry_backoff_max")
             ),
             availability_strategy=availability_strategy,
+            user_agent_suffix=kwargs.get("user_agent_suffix"),
+            consistency_level=consistency_level,
+            # Transport/TLS knobs the Rust path can't honor yet: read (don't pop)
+            # so the legacy connection still consumes them on the core-python path,
+            # while the Rust branch rejects them instead of silently ignoring them.
+            proxy_config=kwargs.get("proxy_config"),
+            proxies=kwargs.get("proxies"),
+            connection_verify=kwargs.get("connection_verify"),
+            connection_cert=kwargs.get("connection_cert"),
+            ssl_config=kwargs.get("ssl_config"),
+            transport=kwargs.get("transport"),
         )
         self._backend: Optional[AsyncCosmosBackend] = chosen
         logging.getLogger(__name__).info(

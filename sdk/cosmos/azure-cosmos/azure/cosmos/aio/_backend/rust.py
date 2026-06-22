@@ -25,6 +25,10 @@ from azure.cosmos._backend.base import (
     build_backend_response,
     init_client_args,
 )
+from azure.cosmos._backend._driver_registry import (
+    register_client_config,
+    release_client_config,
+)
 from azure.cosmos._backend.constants import BACKEND_NAME_RUST
 
 from .base import AsyncCosmosBackend, BackendResponse, PreparedRequest
@@ -134,6 +138,21 @@ class AsyncRustBackend(AsyncCosmosBackend):
         # unused client creates no threads.
         self._executor: Optional[ThreadPoolExecutor] = None
         self._executor_max_threads = _async_executor_max_threads()
+        # Register this client against its endpoint so a second client to the same
+        # account with a different config gets a SharedDriverConfigWarning instead
+        # of silently inheriting this one's engine/config. Released once on
+        # close/finalization; the flag keeps that release idempotent.
+        self._config_released = False
+        register_client_config(self._endpoint, self._client_config)
+
+    def _release_config_once(self) -> None:
+        # Drop this client's endpoint registration exactly once, regardless of
+        # whether the handle was ever built or close() is called more than once.
+        with self._handle_lock:
+            if self._config_released:
+                return
+            self._config_released = True
+        release_client_config(self._endpoint)
 
     def _get_executor(self) -> ThreadPoolExecutor:
         # Built on first use, on the event-loop thread; all callers run there,
@@ -184,6 +203,7 @@ class AsyncRustBackend(AsyncCosmosBackend):
 
     async def close(self) -> None:
         """Release the Rust client handle and shut down the dedicated pool."""
+        self._release_config_once()
         handle = self._take_handle_for_close()
         executor = self._executor
         self._executor = None
@@ -203,6 +223,7 @@ class AsyncRustBackend(AsyncCosmosBackend):
 
     def __del__(self) -> None:
         try:
+            self._release_config_once()
             executor = self._executor
             self._executor = None
             if executor is not None:

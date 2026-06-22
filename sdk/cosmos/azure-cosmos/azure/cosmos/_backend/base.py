@@ -116,12 +116,16 @@ class PreparedClientConfig:
     rest land on a driver-level ``OperationOptions`` (the driver's "account"
     layer that every request inherits) -- ``excluded_locations`` to
     ``excluded_regions``, the throttling fields to ``ThrottlingRetryOptions``,
-    and the hedging fields to an ``AvailabilityStrategy``.
+    the hedging fields to an ``AvailabilityStrategy``, and ``consistency_level``
+    to the ``ReadConsistencyStrategy``.
 
     The Rust driver builds one engine per account endpoint and reuses it, so
     these settings take effect only for the *first* client constructed against a
     given account in a process; a later client to the same account inherits the
-    first one's engine and its config.
+    first one's engine and its config. That sharing is intentional but otherwise
+    silent, so a later client whose config differs gets a
+    :class:`~azure.cosmos._backend._driver_registry.SharedDriverConfigWarning`
+    making the dropped settings visible.
     """
 
     #: Ordered preferred region names exactly as the customer passed them
@@ -156,6 +160,28 @@ class PreparedClientConfig:
     #: behavior. (Python's ``threshold_steps_ms`` has no driver equivalent -- the
     #: driver models only a single threshold -- so it is intentionally dropped.)
     hedging_threshold_ms: Optional[int] = None
+
+    #: User-agent suffix label (the ``user_agent_suffix`` kwarg, e.g.
+    #: ``"checkout-westus2"``) the driver stamps on the User-Agent of every
+    #: request it issues, so account metrics and support tickets can tell one
+    #: service's traffic apart from another's. ``None`` -- and an empty string,
+    #: which ``build_client_config`` normalizes to ``None`` -- carries nothing, so
+    #: the driver keeps its default SDK User-Agent. The driver's suffix type is
+    #: stricter than the legacy path: at most 25 header-safe characters
+    #: (alphanumeric, ``-``, ``_``, ``.``, ``~``). A value that violates that is
+    #: rejected loudly on the Rust path rather than silently dropped.
+    user_agent_suffix: Optional[str] = None
+
+    #: Client-level consistency level the customer chose at construction (the
+    #: ``consistency_level`` kwarg, e.g. ``"Eventual"``), carried so the chosen
+    #: level actually reaches the driver instead of every read falling back to the
+    #: account default. ``None`` carries nothing, leaving the driver at the
+    #: account default. Only the levels the driver can honor are carried --
+    #: ``"Eventual"`` and ``"Session"`` map directly and ``"Strong"`` maps to the
+    #: driver's ``GlobalStrong`` in the binding; ``build_client_config`` rejects
+    #: ``"BoundedStaleness"`` / ``"ConsistentPrefix"`` (no driver equivalent yet)
+    #: rather than silently dropping them.
+    consistency_level: Optional[str] = None
 
 
 

@@ -370,6 +370,47 @@ class TestHeaderNormalization(unittest.TestCase):
         # Kept exactly as the request-byte string — including any trailing zero.
         self.assertEqual(result.get_response_headers()["x-ms-request-charge"], "2.50")
 
+    def test_case_insensitive_input_reused_in_place_not_recopied(self):
+        """Hot-path: an already-``CaseInsensitiveDict`` header map is reused
+        directly, not copied into a second dict.
+
+        The Rust backend always hands back a freshly-built
+        ``CaseInsensitiveDict`` belonging to a single-use
+        ``BackendResponse``, so the parser must not pay a second
+        per-response header construction on top of it. This is pinned via
+        ``last_response_headers`` — the exact object the parser settled on
+        (``get_response_headers`` deliberately returns a *copy*). If a
+        future change re-introduces the defensive re-copy in
+        ``_normalise_headers``, this identity check fails.
+        """
+        incoming = CaseInsensitiveDict({"x-ms-request-charge": "1.0"})
+        cc = _FakeClientConnection()
+        parse_backend_response(
+            BackendResponse(status_code=201, headers=incoming, body=b"{}"),
+            client_connection=cc,
+        )
+        self.assertIs(cc.last_response_headers, incoming)
+
+    def test_numeric_charge_fix_does_not_leak_into_a_plain_mapping_caller(self):
+        """When headers arrive as a non-``CaseInsensitiveDict`` mapping, the
+        parser builds a fresh dict so the in-place request-charge fix cannot
+        mutate the caller's object.
+
+        Reuse is only safe for the throwaway ``CaseInsensitiveDict`` the
+        backend builds; any other shape is copied first.
+        """
+        incoming = {"x-ms-request-charge": 1.43}
+        result = parse_backend_response(
+            # A plain mapping deliberately exercises the defensive non-CID
+            # branch; the field is typed CaseInsensitiveDict, so flag the
+            # intentional off-type value for the checker.
+            BackendResponse(status_code=201, headers=incoming, body=b"{}"),  # type: ignore[arg-type]
+        )
+        # Customer sees the stringified charge ...
+        self.assertEqual(result.get_response_headers()["x-ms-request-charge"], "1.43")
+        # ... but the caller's original plain dict is left untouched.
+        self.assertEqual(incoming["x-ms-request-charge"], 1.43)
+
 
 if __name__ == "__main__":
     unittest.main()

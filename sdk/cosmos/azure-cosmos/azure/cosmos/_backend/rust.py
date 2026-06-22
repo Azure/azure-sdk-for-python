@@ -26,6 +26,7 @@ from .base import (
     build_backend_response,
     init_client_args,
 )
+from ._driver_registry import register_client_config, release_client_config
 from .constants import BACKEND_NAME_RUST
 
 _LOGGER = logging.getLogger(__name__)
@@ -98,6 +99,21 @@ class RustBackend(CosmosBackend):
         # build (and leak) a separate client.
         self._handle: Optional[str] = None
         self._handle_lock = threading.Lock()
+        # Register this client against its endpoint so a second client to the same
+        # account with a different config gets a SharedDriverConfigWarning instead
+        # of silently inheriting this one's engine/config. Released once on
+        # close/finalization; the flag keeps that release idempotent.
+        self._config_released = False
+        register_client_config(self._endpoint, self._client_config)
+
+    def _release_config_once(self) -> None:
+        # Drop this client's endpoint registration exactly once, regardless of
+        # whether the handle was ever built or close() is called more than once.
+        with self._handle_lock:
+            if self._config_released:
+                return
+            self._config_released = True
+        release_client_config(self._endpoint)
 
     def _ensure_handle(self) -> str:
         # If the handle is already built, return it without locking.
@@ -126,6 +142,7 @@ class RustBackend(CosmosBackend):
 
     def close(self) -> None:
         """Release the Rust client handle from the process cache."""
+        self._release_config_once()
         with self._handle_lock:
             handle = self._handle
             self._handle = None

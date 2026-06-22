@@ -23,6 +23,7 @@ from azure.cosmos._backend.constants import BACKEND_NAME_RUST
 from azure.cosmos._backend.factory import (
     _resolve_credential,
     build_client_config,
+    reject_unsupported_transport_settings,
     resolve_backend_name,
 )
 
@@ -40,6 +41,14 @@ def make_async_backend(
     throttling_max_retry_count: Optional[int] = None,
     throttling_max_retry_wait_time_seconds: Optional[float] = None,
     availability_strategy: Any = None,
+    user_agent_suffix: Optional[str] = None,
+    consistency_level: Optional[str] = None,
+    proxy_config: Any = None,
+    proxies: Any = None,
+    connection_verify: Any = None,
+    connection_cert: Any = None,
+    ssl_config: Any = None,
+    transport: Any = None,
 ) -> Optional[AsyncCosmosBackend]:
     """Build the backend instance an async ``CosmosClient`` will hold.
 
@@ -47,7 +56,8 @@ def make_async_backend(
     ``None`` when core-python is selected. The keyword settings are only
     consulted for the Rust branch, where they are folded into the client
     config (via the shared :func:`build_client_config`) the backend carries
-    to the driver.
+    to the driver. The transport/TLS settings the Rust path can't honor yet are
+    rejected here, exactly as in the sync factory.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:
@@ -55,6 +65,14 @@ def make_async_backend(
             raise ValueError(
                 "_backend='rust' requires the account endpoint URL."
             )
+        reject_unsupported_transport_settings(
+            proxy_config=proxy_config,
+            proxies=proxies,
+            connection_verify=connection_verify,
+            connection_cert=connection_cert,
+            ssl_config=ssl_config,
+            transport=transport,
+        )
         master_key, token_credential = _resolve_credential(credential)
         return AsyncRustBackend(
             endpoint=url,
@@ -66,6 +84,8 @@ def make_async_backend(
                 throttling_max_retry_count=throttling_max_retry_count,
                 throttling_max_retry_wait_time_seconds=throttling_max_retry_wait_time_seconds,
                 availability_strategy=availability_strategy,
+                user_agent_suffix=user_agent_suffix,
+                consistency_level=consistency_level,
             ),
         )
     return None

@@ -23,6 +23,7 @@ import asyncio
 import re
 import threading
 import time
+import warnings
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -30,12 +31,24 @@ import pytest
 
 from azure.cosmos._backend.base import BackendResponse, PreparedClientConfig, PreparedRequest
 from azure.cosmos._backend.base import raise_account_read_unsupported
+from azure.cosmos._backend import _driver_registry
+from azure.cosmos._backend._driver_registry import (
+    SharedDriverConfigWarning,
+    _reset_for_tests as _reset_driver_registry,
+    register_client_config,
+    release_client_config,
+)
 from azure.cosmos._backend.constants import (
     BACKEND_ENV_VAR,
     BACKEND_NAME_CORE_PYTHON,
     BACKEND_NAME_RUST,
 )
-from azure.cosmos._backend.factory import _resolve_credential, build_client_config, make_backend
+from azure.cosmos._backend.factory import (
+    _resolve_credential,
+    build_client_config,
+    make_backend,
+    reject_unsupported_transport_settings,
+)
 from azure.cosmos._backend.rust import RustBackend
 from azure.cosmos._helpers._item_dispatch import pick_backend
 from azure.cosmos._helpers.item_helper import ItemHelper
@@ -43,6 +56,17 @@ from azure.cosmos.aio._backend.factory import make_async_backend
 from azure.cosmos.aio._backend.rust import AsyncRustBackend
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
+
+
+@pytest.fixture(autouse=True)
+def _isolate_driver_registry():
+    """Reset the shared driver registry before and after each test so one test's
+    clients can't make another test warn (or not warn) unexpectedly. The registry
+    lives for the whole process, and these tests use unique endpoints, so a client
+    finalized late only affects its own endpoint."""
+    _reset_driver_registry()
+    yield
+    _reset_driver_registry()
 
 
 # ---------------------------------------------------------------------------
@@ -516,7 +540,7 @@ def test_factory_carries_preferred_locations_into_rust_backend(monkeypatch):
     )
 
     without = make_backend(
-        BACKEND_NAME_RUST, url="https://x.documents.azure.com", credential="k"
+        BACKEND_NAME_RUST, url="https://y.documents.azure.com", credential="k"
     )
     assert isinstance(without, RustBackend)
     assert without._client_config is None
@@ -662,6 +686,8 @@ def test_build_client_config_combines_all_settings():
         throttling_max_retry_count=5,
         throttling_max_retry_wait_time_seconds=12,
         availability_strategy={"threshold_ms": 25},
+        user_agent_suffix="checkout-westus2",
+        consistency_level="Eventual",
     )
     assert config == PreparedClientConfig(
         preferred_locations=("West US",),
@@ -669,7 +695,69 @@ def test_build_client_config_combines_all_settings():
         throttling_max_retry_count=5,
         throttling_max_retry_wait_time_seconds=12,
         hedging_threshold_ms=25,
+        user_agent_suffix="checkout-westus2",
+        consistency_level="Eventual",
     )
+
+
+def test_build_client_config_carries_user_agent_suffix():
+    """A non-empty user_agent_suffix is carried for the driver to stamp on every
+    request's User-Agent (the label that previously went nowhere on Rust)."""
+    config = build_client_config(None, user_agent_suffix="checkout-westus2")
+    assert isinstance(config, PreparedClientConfig)
+    assert config.user_agent_suffix == "checkout-westus2"
+
+
+def test_build_client_config_only_user_agent_suffix_still_builds_config():
+    """A client that tunes nothing but the user-agent suffix must still produce a
+    config (not None), so the label actually reaches the driver -- carrying it is
+    the whole point of closing the 'suffix silently goes nowhere' gap."""
+    config = build_client_config(None, user_agent_suffix="order-service")
+    assert config == PreparedClientConfig(user_agent_suffix="order-service")
+
+
+def test_build_client_config_empty_user_agent_suffix_is_none():
+    """An empty string (or absent) suffix carries nothing, like an empty location
+    list, so an untuned client still produces no config."""
+    assert build_client_config(None, user_agent_suffix="") is None
+    assert build_client_config(None, user_agent_suffix=None) is None
+
+
+@pytest.mark.parametrize("level", ["Eventual", "Session", "Strong"])
+def test_build_client_config_carries_supported_consistency_level(level):
+    """Each supported consistency level is carried so the chosen level actually
+    reaches the driver (the bug was that it silently went nowhere on Rust)."""
+    config = build_client_config(None, consistency_level=level)
+    assert config == PreparedClientConfig(consistency_level=level)
+
+
+def test_build_client_config_only_consistency_still_builds_config():
+    """A client that tunes nothing but the consistency level must still produce a
+    config (not None), so the chosen level reaches the driver."""
+    config = build_client_config(None, consistency_level="Session")
+    assert isinstance(config, PreparedClientConfig)
+    assert config.consistency_level == "Session"
+
+
+def test_build_client_config_no_consistency_carries_nothing():
+    """An absent (or empty) consistency level carries nothing, leaving the driver
+    at the account default -- an untuned client is unchanged."""
+    assert build_client_config(None, consistency_level=None) is None
+    assert build_client_config(None, consistency_level="") is None
+
+
+@pytest.mark.parametrize("level", ["BoundedStaleness", "ConsistentPrefix"])
+def test_build_client_config_rejects_unsupported_consistency_level(level):
+    """Bounded Staleness / Consistent Prefix have no driver equivalent yet, so
+    they are rejected rather than silently dropped."""
+    with pytest.raises(ValueError, match="not yet supported on the Rust backend"):
+        build_client_config(None, consistency_level=level)
+
+
+def test_build_client_config_rejects_unknown_consistency_level():
+    """An unrecognized consistency-level string is rejected, not dropped."""
+    with pytest.raises(ValueError, match="not a recognized Cosmos consistency level"):
+        build_client_config(None, consistency_level="Nonsense")
 
 
 def test_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
@@ -684,6 +772,8 @@ def test_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
         throttling_max_retry_count=7,
         throttling_max_retry_wait_time_seconds=20,
         availability_strategy=True,
+        user_agent_suffix="checkout-westus2",
+        consistency_level="Eventual",
     )
     assert isinstance(backend, RustBackend)
     assert backend._client_config == PreparedClientConfig(
@@ -691,6 +781,8 @@ def test_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
         throttling_max_retry_count=7,
         throttling_max_retry_wait_time_seconds=20,
         hedging_threshold_ms=500,
+        user_agent_suffix="checkout-westus2",
+        consistency_level="Eventual",
     )
 
 
@@ -703,11 +795,15 @@ def test_async_factory_carries_all_startup_settings_into_rust_backend(monkeypatc
         credential="k",
         excluded_locations=["Central US", "East US"],
         availability_strategy={"threshold_ms": 15},
+        user_agent_suffix="reporting-eastus",
+        consistency_level="Session",
     )
     assert isinstance(backend, AsyncRustBackend)
     assert backend._client_config == PreparedClientConfig(
         excluded_locations=("Central US", "East US"),
         hedging_threshold_ms=15,
+        user_agent_suffix="reporting-eastus",
+        consistency_level="Session",
     )
 
 
@@ -756,6 +852,30 @@ class _AsyncTokenCredential:
         return ("token-value", 9999999999)
 
 
+class _AsyncTokenInfoCredential:
+    """An async credential that authenticates only through the newer
+    ``get_token_info`` (azure-core ``SupportsTokenInfo``), with no ``get_token``.
+    The Rust backend must still detect it as async and reject it."""
+
+    async def get_token_info(self, *scopes, **kwargs):  # noqa: D401
+        return ("token-value", 9999999999)
+
+
+class _AsyncContextManagerCredential:
+    """An ``azure.identity.aio``-shaped credential: an async context manager whose
+    token method is async. Detected as async via the context-manager check."""
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *exc):
+        return None
+
+    async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        return ("token-value", 9999999999)
+
+
+
 def test_resolve_credential_master_key_string():
     assert _resolve_credential("the-key") == ("the-key", None)
 
@@ -776,9 +896,41 @@ def test_resolve_credential_async_token_credential_rejected():
         _resolve_credential(_AsyncTokenCredential())
 
 
-def test_resolve_credential_resource_token_dict_rejected():
-    with pytest.raises(ValueError, match="master-key credential"):
+def test_resolve_credential_async_get_token_info_only_rejected():
+    """An async credential exposing only get_token_info (no get_token) is still
+    detected as async and rejected -- the binding can't drive a coroutine."""
+    with pytest.raises(ValueError, match="async token credential"):
+        _resolve_credential(_AsyncTokenInfoCredential())
+
+
+def test_resolve_credential_async_context_manager_credential_rejected():
+    """The azure.identity.aio shape (async context manager + async get_token) is
+    rejected via the async detector."""
+    with pytest.raises(ValueError, match="async token credential"):
+        _resolve_credential(_AsyncContextManagerCredential())
+
+
+def test_resolve_credential_sync_credential_not_false_positived():
+    """A plain synchronous credential must NOT be misread as async by the broader
+    detector -- it is accepted as a token credential."""
+    cred = _SyncTokenCredential()
+    master_key, token_credential = _resolve_credential(cred)
+    assert master_key is None
+    assert token_credential is cred
+
+
+def test_resolve_credential_resource_token_map_rejected_with_specific_message():
+    """A {resource-link: token} map (per-user scoped tokens) is rejected with the
+    resource-token message, not the generic one."""
+    with pytest.raises(ValueError, match="resource-token"):
         _resolve_credential({"dbs/x/colls/y": "resource-token"})
+
+
+def test_resolve_credential_permission_feed_rejected_with_specific_message():
+    """A permission feed (iterable of permission mappings) is rejected as a
+    resource-token credential."""
+    with pytest.raises(ValueError, match="resource-token"):
+        _resolve_credential([{"id": "perm", "_token": "t", "resource": "dbs/x"}])
 
 
 def test_resolve_credential_none_rejected():
@@ -1140,3 +1292,207 @@ def test_async_rust_backend_close_releases_handle_once(monkeypatch):
     asyncio.run(_run())
 
     fake_module.close_client.assert_called_once_with("handle-1")
+
+
+# ---------------------------------------------------------------------------
+# Transport / TLS knobs the Rust path can't honor fail loud at construction
+# ---------------------------------------------------------------------------
+#
+# The Rust driver owns its own HTTP/TLS stack and has no hook for a proxy, a
+# custom CA, a client certificate, or a stand-in transport. Rather than silently
+# ignoring these (and failing later with opaque connection/cert errors far from
+# the call site), the factory rejects them at construction with a clear message
+# naming the setting. core-python is unaffected -- it still honors them.
+
+_M15_URL = "https://x.documents.azure.com"
+
+
+@pytest.mark.parametrize(
+    "setting,value",
+    [
+        ("proxy_config", object()),
+        ("proxies", {"https": "http://proxy:8080"}),
+        ("connection_cert", "/etc/ssl/client.pem"),
+        ("ssl_config", object()),
+        ("transport", object()),
+        ("connection_verify", False),
+        ("connection_verify", "/etc/ssl/corp-ca.pem"),
+    ],
+)
+def test_make_backend_rejects_unsupported_transport_settings_on_rust(monkeypatch, setting, value):
+    """Each transport/TLS knob the Rust path can't honor is rejected at
+    construction, naming the setting."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    with pytest.raises(ValueError, match=setting):
+        make_backend(BACKEND_NAME_RUST, url=_M15_URL, credential="k", **{setting: value})
+
+
+def test_make_backend_connection_verify_true_or_none_does_not_trip(monkeypatch):
+    """Ordinary TLS verification (the default) must NOT trip the gate -- only a
+    disable (False) or a custom CA path (str) is unsupported."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    assert isinstance(
+        make_backend(BACKEND_NAME_RUST, url=_M15_URL, credential="k", connection_verify=True),
+        RustBackend,
+    )
+    assert isinstance(
+        make_backend(BACKEND_NAME_RUST, url=_M15_URL, credential="k", connection_verify=None),
+        RustBackend,
+    )
+
+
+def test_reject_unsupported_transport_settings_no_op_when_unset():
+    """Nothing set (and an empty proxies dict = 'no proxy') does not raise."""
+    reject_unsupported_transport_settings()
+    reject_unsupported_transport_settings(proxies={})
+
+
+def test_make_backend_core_python_ignores_transport_settings(monkeypatch):
+    """core-python honors these settings as before; the factory returns None and
+    never raises for them, even when several are set."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    assert (
+        make_backend(
+            None,
+            url=_M15_URL,
+            credential="k",
+            transport=object(),
+            proxies={"https": "http://proxy:8080"},
+            connection_verify=False,
+        )
+        is None
+    )
+
+
+def test_make_async_backend_rejects_transport_on_rust(monkeypatch):
+    """The async factory rejects the same unsupported settings the same way."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    with pytest.raises(ValueError, match="transport"):
+        make_async_backend(BACKEND_NAME_RUST, url=_M15_URL, credential="k", transport=object())
+
+
+def test_make_async_backend_rejects_connection_cert_on_rust(monkeypatch):
+    """Async twin: a client certificate is rejected at construction."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    with pytest.raises(ValueError, match="connection_cert"):
+        make_async_backend(
+            BACKEND_NAME_RUST, url=_M15_URL, credential="k", connection_cert="/etc/ssl/c.pem"
+        )
+
+
+# ---------------------------------------------------------------------------
+# Two clients to one account share an engine; the drop is made visible
+# ---------------------------------------------------------------------------
+#
+# The Rust backend builds one engine per account endpoint and reuses it, so a
+# second client to the same account inherits the first's config and silently
+# drops its own. That sharing stays, but a second client with a different config
+# now gets a SharedDriverConfigWarning so the drop isn't invisible. Each test uses
+# a unique endpoint so a client finalized late in another test can't disturb its
+# count (the _isolate_driver_registry autouse fixture also resets state).
+
+
+def _rust_backend(url, config=None):
+    return RustBackend(endpoint=url, master_key="k", client_config=config)
+
+
+def test_second_client_same_endpoint_different_config_warns():
+    url = "https://m16-different.documents.azure.com"
+    first = _rust_backend(url, PreparedClientConfig(preferred_locations=("West US",)))
+    with pytest.warns(SharedDriverConfigWarning):
+        second = _rust_backend(url, PreparedClientConfig(preferred_locations=("East US",)))
+    assert first is not None and second is not None
+
+
+def test_second_client_same_endpoint_same_config_no_warning():
+    url = "https://m16-same.documents.azure.com"
+    cfg = PreparedClientConfig(preferred_locations=("West US",))
+    first = _rust_backend(url, cfg)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", SharedDriverConfigWarning)
+        # A separate-but-equal config compares equal (by value) and does not warn.
+        second = _rust_backend(url, PreparedClientConfig(preferred_locations=("West US",)))
+    assert first is not None and second is not None
+
+
+def test_two_untuned_clients_same_endpoint_no_warning():
+    url = "https://m16-untuned.documents.azure.com"
+    first = _rust_backend(url, None)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", SharedDriverConfigWarning)
+        second = _rust_backend(url, None)
+    assert first is not None and second is not None
+
+
+def test_different_endpoints_no_warning():
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", SharedDriverConfigWarning)
+        a = _rust_backend(
+            "https://m16-a.documents.azure.com",
+            PreparedClientConfig(preferred_locations=("West US",)),
+        )
+        b = _rust_backend(
+            "https://m16-b.documents.azure.com",
+            PreparedClientConfig(preferred_locations=("East US",)),
+        )
+    assert a is not None and b is not None
+
+
+def test_registry_releases_on_close_then_new_config_no_warning():
+    """After the first client closes, the endpoint is forgotten, so a new client
+    with a different config starts fresh and does not warn."""
+    url = "https://m16-release.documents.azure.com"
+    first = _rust_backend(url, PreparedClientConfig(preferred_locations=("West US",)))
+    first.close()
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", SharedDriverConfigWarning)
+        second = _rust_backend(url, PreparedClientConfig(preferred_locations=("East US",)))
+    assert second is not None
+
+
+def test_backend_close_releases_registration_once():
+    """close() releases the endpoint registration exactly once; a double close
+    doesn't over-decrement, so another client to the same account stays counted."""
+    url = "https://m16-refcount.documents.azure.com"
+    first = _rust_backend(url, None)
+    second = _rust_backend(url, None)
+    assert _driver_registry._REGISTRY[url][1] == 2
+    first.close()
+    first.close()  # idempotent -- _config_released guards the second release
+    assert _driver_registry._REGISTRY[url][1] == 1
+    second.close()
+    assert url not in _driver_registry._REGISTRY
+
+
+def test_registry_register_release_refcount():
+    """The registry itself: register increments, release drops, the entry is
+    removed at zero, and an extra release is a harmless no-op."""
+    url = "https://m16-registry.documents.azure.com"
+    cfg = PreparedClientConfig(preferred_locations=("West US",))
+    register_client_config(url, cfg)
+    register_client_config(url, cfg)  # same config -> no warn, count 2
+    assert _driver_registry._REGISTRY[url][1] == 2
+    release_client_config(url)
+    assert _driver_registry._REGISTRY[url][1] == 1
+    release_client_config(url)
+    assert url not in _driver_registry._REGISTRY
+    release_client_config(url)  # extra release: no-op, no underflow
+    assert url not in _driver_registry._REGISTRY
+
+
+def test_async_second_client_same_endpoint_different_config_warns():
+    url = "https://m16-async-different.documents.azure.com"
+    first = AsyncRustBackend(
+        endpoint=url,
+        master_key="k",
+        client_config=PreparedClientConfig(preferred_locations=("West US",)),
+    )
+    with pytest.warns(SharedDriverConfigWarning):
+        second = AsyncRustBackend(
+            endpoint=url,
+            master_key="k",
+            client_config=PreparedClientConfig(preferred_locations=("East US",)),
+        )
+    assert first is not None and second is not None
+
+

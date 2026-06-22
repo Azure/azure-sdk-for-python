@@ -111,14 +111,31 @@ def parse_backend_response(
 
 
 def _normalise_headers(response: BackendResponse) -> CaseInsensitiveDict:
-    """Return the response headers as a fresh ``CaseInsensitiveDict``.
+    """Return the response headers as a ``CaseInsensitiveDict``.
 
-    Always returns a new dict so that mutation by the parser does not
-    leak back into the caller's ``BackendResponse``.
+    The Rust backend already hands back a freshly-built
+    ``CaseInsensitiveDict`` (``build_backend_response`` ->
+    ``normalize_response_headers``) that belongs to this single-use
+    ``BackendResponse`` and is shared with nothing else. In that common
+    hot-path case we reuse it directly instead of copying it into a
+    *second* dict: the response is built and consumed in one place (the
+    backend ``execute`` -> ``parse_backend_response`` hand-off in
+    ``item_helper``, sync and async), so the later in-place
+    request-charge fix cannot leak anywhere observable. Skipping the
+    second construction removes a full per-response header copy from
+    every point operation -- on the hottest path in the SDK.
+
+    Only when the headers arrive in some other shape -- a plain mapping
+    or ``None`` from a test fixture or a future backend -- do we build a
+    fresh ``CaseInsensitiveDict`` so the parser's mutation cannot leak
+    back into a caller-owned dict.
     """
-    if response.headers is None:
+    headers = response.headers
+    if headers is None:
         return CaseInsensitiveDict()
-    return CaseInsensitiveDict(response.headers)
+    if isinstance(headers, CaseInsensitiveDict):
+        return headers
+    return CaseInsensitiveDict(headers)
 
 
 def _normalise_request_charge_header(headers: CaseInsensitiveDict) -> None:
