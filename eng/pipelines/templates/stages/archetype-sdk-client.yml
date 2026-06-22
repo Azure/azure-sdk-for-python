@@ -302,18 +302,17 @@ extends:
             - template: /eng/pipelines/templates/variables/globals.yml
             - template: /eng/pipelines/templates/variables/image.yml
 
-      # Release stage intentionally disabled for first cut while build/signing are validated.
-      # - template: archetype-python-release.yml
-      #   parameters:
-      #     DependsOn: "Sign_Wheels"
-      #     ServiceDirectory: ${{ parameters.ServiceDirectory }}
-      #     Artifacts: ${{ parameters.Artifacts }}
-      #     ${{ if eq(parameters.ServiceDirectory, 'template') }}:
-      #       TestPipeline: true
-      #     ArtifactName: packages_all_signed
-      #     DocArtifact: documentation
-      #     TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
-      #     TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
-      #     DevFeedName: ${{ parameters.DevFeedName }}
-      #     PublicFeed: ${{ parameters.PublicFeed }}
-      #     PublicPublishEnvironment: ${{ parameters.PublicPublishEnvironment }}
+      - template: archetype-python-release.yml
+        parameters:
+          DependsOn: "Sign_Wheels"
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          Artifacts: ${{ parameters.Artifacts }}
+          ${{ if eq(parameters.ServiceDirectory, 'template') }}:
+            TestPipeline: true
+          ArtifactName: packages_all_signed
+          DocArtifact: documentation
+          TargetDocRepoOwner: ${{ parameters.TargetDocRepoOwner }}
+          TargetDocRepoName: ${{ parameters.TargetDocRepoName }}
+          DevFeedName: ${{ parameters.DevFeedName }}
+          PublicFeed: ${{ parameters.PublicFeed }}
+          PublicPublishEnvironment: ${{ parameters.PublicPublishEnvironment }}
