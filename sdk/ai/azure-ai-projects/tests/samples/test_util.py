@@ -41,6 +41,7 @@ def test_build_skill_zip_writes_deterministic_zip_to_temp_folder(tmp_path, monke
 
         for zip_info in zf.infolist():
             assert zip_info.date_time == (1980, 1, 1, 0, 0, 0)
+            assert zip_info.create_system == 3
             assert zip_info.compress_type == zipfile.ZIP_STORED
             assert zip_info.external_attr == 0o644 << 16
 
