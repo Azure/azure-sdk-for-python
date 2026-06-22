@@ -39,8 +39,9 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     AgentEndpointConfig,
-    AgentEndpointProtocol,
     FixedRatioVersionSelectionRule,
+    ProtocolConfiguration,
+    ResponsesProtocolConfiguration,
     VersionSelector,
 )
 from azure.ai.projects.models import VersionRefIndicator
@@ -77,7 +78,7 @@ async def main():
                         FixedRatioVersionSelectionRule(agent_version=agent.version, traffic_percentage=100),
                     ]
                 ),
-                protocols=[AgentEndpointProtocol.RESPONSES],
+                protocol_configuration=ProtocolConfiguration(responses=ResponsesProtocolConfiguration()),
             )
 
             patched_agent = await project_client.agents.patch_agent_details(
