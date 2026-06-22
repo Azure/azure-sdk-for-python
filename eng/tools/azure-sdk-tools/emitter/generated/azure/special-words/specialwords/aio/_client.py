@@ -72,7 +72,7 @@ class SpecialWordsClient:  # pylint: disable=client-accepts-api-version-keyword
        try
        while
        with
-       yield.
+       yield
 
     :ivar models: ModelsOperations operations
     :vartype models: specialwords.aio.operations.ModelsOperations

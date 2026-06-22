@@ -70,7 +70,7 @@ class ModelInOperationOperations:
 
            {
              "name": "Madge"
-           }.
+           }
 
         :param body: Required.
         :type body: ~specs.azure.clientgenerator.core.usage.models.InputModel
@@ -90,7 +90,7 @@ class ModelInOperationOperations:
 
            {
              "name": "Madge"
-           }.
+           }
 
         :param body: Required.
         :type body: JSON
@@ -112,7 +112,7 @@ class ModelInOperationOperations:
 
            {
              "name": "Madge"
-           }.
+           }
 
         :param body: Required.
         :type body: IO[bytes]
@@ -132,7 +132,7 @@ class ModelInOperationOperations:
 
            {
              "name": "Madge"
-           }.
+           }
 
         :param body: Is one of the following types: InputModel, JSON, IO[bytes] Required.
         :type body: ~specs.azure.clientgenerator.core.usage.models.InputModel or JSON or IO[bytes]
@@ -194,7 +194,7 @@ class ModelInOperationOperations:
 
            {
              "name": "Madge"
-           }.
+           }
 
         :return: OutputModel. The OutputModel is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.usage.models.OutputModel
@@ -270,7 +270,7 @@ class ModelInOperationOperations:
              "result": {
                "name": "Madge"
              }
-           }.
+           }
 
         :param body: Required.
         :type body: ~specs.azure.clientgenerator.core.usage.models.RoundTripModel
@@ -303,7 +303,7 @@ class ModelInOperationOperations:
              "result": {
                "name": "Madge"
              }
-           }.
+           }
 
         :param body: Required.
         :type body: JSON
@@ -336,7 +336,7 @@ class ModelInOperationOperations:
              "result": {
                "name": "Madge"
              }
-           }.
+           }
 
         :param body: Required.
         :type body: IO[bytes]
@@ -369,7 +369,7 @@ class ModelInOperationOperations:
              "result": {
                "name": "Madge"
              }
-           }.
+           }
 
         :param body: Is one of the following types: RoundTripModel, JSON, IO[bytes] Required.
         :type body: ~specs.azure.clientgenerator.core.usage.models.RoundTripModel or JSON or IO[bytes]
@@ -447,7 +447,7 @@ class ModelInOperationOperations:
            {
              "name": "name",
              "desc": "desc"
-           }.
+           }
 
         :param body: Required.
         :type body: any
@@ -524,7 +524,7 @@ class NamespaceUsageOperations:
 
            {
              "name": "test"
-           }.
+           }
 
         :param body: Required.
         :type body: any

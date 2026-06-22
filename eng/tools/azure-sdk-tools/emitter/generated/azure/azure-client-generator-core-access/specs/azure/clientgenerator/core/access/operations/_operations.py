@@ -731,7 +731,7 @@ class RelativeModelInOperationOperations:
              {
                "name": "Madge"
              }
-           }.
+           }
 
         :keyword name: Required.
         :paramtype name: str
@@ -798,7 +798,7 @@ class RelativeModelInOperationOperations:
            {
              "name": "Madge",
              "kind": "real"
-           }.
+           }
 
         :keyword kind: Required.
         :paramtype kind: str
