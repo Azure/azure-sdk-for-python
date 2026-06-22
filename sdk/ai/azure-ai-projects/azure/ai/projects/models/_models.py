@@ -12586,6 +12586,9 @@ class RoutineRun(_Model):
     :vartype trigger_type: str or ~azure.ai.projects.models.RoutineTriggerType
     :ivar trigger_name: The configured trigger name that produced the routine attempt.
     :vartype trigger_name: str
+    :ivar trigger_event_payload: The event payload captured from the event that triggered the
+     routine attempt, when available.
+    :vartype trigger_event_payload: dict[str, any]
     :ivar attempt_source: The source path that created the routine attempt. Known values are:
      "event_fire", "manual_dispatch", "queued_dispatch", "schedule_delivery", and "timer_delivery".
     :vartype attempt_source: str or ~azure.ai.projects.models.RoutineAttemptSource
@@ -12643,6 +12646,10 @@ class RoutineRun(_Model):
      \"github_issue\", \"schedule\", and \"timer\"."""
     trigger_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The configured trigger name that produced the routine attempt."""
+    trigger_event_payload: Optional[dict[str, Any]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The event payload captured from the event that triggered the routine attempt, when available."""
     attempt_source: Optional[Union[str, "_models.RoutineAttemptSource"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12700,6 +12707,7 @@ class RoutineRun(_Model):
         phase: Optional[Union[str, "_models.RoutineRunPhase"]] = None,
         trigger_type: Optional[Union[str, "_models.RoutineTriggerType"]] = None,
         trigger_name: Optional[str] = None,
+        trigger_event_payload: Optional[dict[str, Any]] = None,
         attempt_source: Optional[Union[str, "_models.RoutineAttemptSource"]] = None,
         action_type: Optional[Union[str, "_models.RoutineActionType"]] = None,
         agent_id: Optional[str] = None,

@@ -75,7 +75,7 @@ with (
                     FixedRatioVersionSelectionRule(agent_version=agent.version, traffic_percentage=100),
                 ]
             ),
-            protocol_configuration=ProtocolConfiguration(responses=ResponsesProtocolConfiguration())
+            protocol_configuration=ProtocolConfiguration(responses=ResponsesProtocolConfiguration()),
         )
 
         patched_agent = project_client.agents.patch_agent_details(
