@@ -1632,8 +1632,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         """Returns the list of valid ranges for a file or snapshot of a file, listing only the
         ranges that changed between the target snapshot (or live file) and a previous snapshot.
 
-        .. versionadded:: 12.6.0
-
         :param str previous_sharesnapshot:
             The snapshot diff parameter that contains an opaque DateTime value that
             specifies a previous file snapshot to be compared
