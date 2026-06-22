@@ -5,7 +5,7 @@ import os
 import shutil
 import unittest
 from unittest import mock
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.transport import HttpResponse
@@ -17,6 +17,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
     _get_storage_directory,
 )
+from azure.monitor.opentelemetry.exporter._utils import _get_retry_delay_from_headers
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
@@ -975,6 +976,81 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         # Storage should NOT be called since all errors are sampling rejections
         exporter.storage.put.assert_not_called()
+
+    def test_transmission_206_retry_after_delay_seconds_applied_to_storage_lease(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = (
+                TrackResponse(
+                    items_received=1,
+                    items_accepted=0,
+                    errors=[
+                        TelemetryErrorDetails(index=0, status_code=429, message="throttled"),
+                    ],
+                ),
+                {"Retry-After": "120"},
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_called_once()
+        self.assertEqual(exporter.storage.put.call_args[0][1], 120)
+
+    def test_transmission_206_invalid_retry_after_falls_back_to_default_storage_lease(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = (
+                TrackResponse(
+                    items_received=1,
+                    items_accepted=0,
+                    errors=[
+                        TelemetryErrorDetails(index=0, status_code=429, message="throttled"),
+                    ],
+                ),
+                {"Retry-After": "0"},
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_called_once()
+        self.assertEqual(exporter.storage.put.call_args[0][1], exporter._storage_min_retry_interval)
+
+    def test_get_retry_delay_from_headers_delay_seconds(self):
+        headers = {"Retry-After": "120"}
+        self.assertEqual(_get_retry_delay_from_headers(headers), 120)
+
+    def test_get_retry_delay_from_headers_http_date(self):
+        now = datetime.now(timezone.utc)
+        future = now + timedelta(seconds=121)
+        headers = {"Retry-After": future.strftime("%a, %d %b %Y %H:%M:%S GMT")}
+
+        self.assertEqual(_get_retry_delay_from_headers(headers), 120)
+
+    def test_get_retry_delay_from_headers_invalid_or_non_positive(self):
+        invalid_headers = (
+            None,
+            {},
+            {"Retry-After": ""},
+            {"Retry-After": "0"},
+            {"Retry-After": "-1"},
+            {"Retry-After": "not-a-date"},
+        )
+
+        for headers in invalid_headers:
+            with self.subTest(headers=headers):
+                self.assertIsNone(_get_retry_delay_from_headers(headers))
+
+    def test_get_retry_delay_from_headers_prefers_retry_after(self):
+        headers = {"Retry-After": "60", "x-ms-retry-after-ms": "90000"}
+        self.assertEqual(_get_retry_delay_from_headers(headers), 60)
 
     def test_is_sampling_rejection_true(self):
         """Test that _is_sampling_rejection correctly identifies sampling rejection messages."""
