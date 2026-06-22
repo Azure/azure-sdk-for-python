@@ -73,11 +73,10 @@ with (
 
     skill_zip_bytes, _, skill_zip_path = build_skill_zip(skill_source_dir, skill_zip_filename)
     # The ``files`` field accepts any variant of the SDK's ``FileType`` union.
-    # All four forms below produce an equivalent multipart request body; pick
-    # whichever fits your call site. The 3-tuple form (used here) is the most
-    # explicit — it pins both the filename and the content type.
+    # The 2-tuple form used here pins the filename while letting the transport
+    # choose the multipart part headers.
     #
-    #   # 1) bare IO[bytes] — filename derived from the file handle's `.name`
+    #   # 1) bare IO[bytes] - filename derived from the file handle's `.name`
     #   files=[skill_zip_path.open("rb")]
     #
     #   # 2) (filename, bytes)
@@ -88,9 +87,10 @@ with (
     #
     #   # 4) (filename, bytes, content_type)
     #   files=[(skill_zip_filename, skill_zip_bytes, "application/zip")]
+    #
     imported = project_client.beta.skills.create_from_files(
         skill_name,
-        content=CreateSkillVersionFromFilesBody(files=[(skill_zip_filename, skill_zip_bytes, "application/zip")]),
+        content=CreateSkillVersionFromFilesBody(files=[(skill_zip_filename, skill_zip_bytes)]),
     )
     imported_skill_name = imported.name
     print(f"Imported skill from package: {imported.name} ({imported.skill_id}) version={imported.version}")

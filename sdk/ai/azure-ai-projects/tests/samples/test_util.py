@@ -45,6 +45,23 @@ def test_build_skill_zip_writes_deterministic_zip_to_temp_folder(tmp_path, monke
             assert zip_info.external_attr == 0o644 << 16
 
 
+def test_build_skill_zip_normalizes_text_line_endings_and_preserves_binary(tmp_path, monkeypatch):
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+    (source_dir / "SKILL.md").write_bytes(b"# Title\r\n\r\nBody\r\n")
+    (source_dir / "data.bin").write_bytes(b"\x00\r\n\xff")
+
+    temp_dir = tmp_path / "temp"
+    temp_dir.mkdir()
+    monkeypatch.setattr(util.tempfile, "gettempdir", lambda: str(temp_dir))
+
+    zip_bytes, _zip_sha256, _zip_path = build_skill_zip(source_dir, "skill.zip")
+
+    with zipfile.ZipFile(io.BytesIO(zip_bytes), "r") as zf:
+        assert zf.read("SKILL.md") == b"# Title\n\nBody\n"
+        assert zf.read("data.bin") == b"\x00\r\n\xff"
+
+
 def test_build_skill_zip_uses_source_dir_name_for_default_zip_filename(tmp_path, monkeypatch):
     source_dir = tmp_path / "canvas-design"
     source_dir.mkdir()
