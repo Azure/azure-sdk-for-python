@@ -61,7 +61,6 @@ def get_removed_workspace_property(rest_obj: Any, wire_key: str) -> Any:
     return properties.get(wire_key)
 
 
-
 def get_name_for_dependent_resource(workspace_name: str, resource_type: str) -> str:
     alphabets_str = ""
     for char in workspace_name.lower():

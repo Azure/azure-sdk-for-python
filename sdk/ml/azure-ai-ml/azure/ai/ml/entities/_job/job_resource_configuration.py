@@ -193,7 +193,12 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
         if isinstance(obj, dict):
             return cls(**obj)
         return JobResourceConfiguration(
-            locations=obj.locations if hasattr(obj, "locations") else None,
+            # ``locations`` is on the v2023_04 msrest model but not the shared arm_ml_service model
+            # (2025-01 path). It is still carried on the wire via dict assignment, so fall back to dict
+            # access for hybrid models that keep it in their backing store but do not expose an attribute.
+            locations=(
+                obj.locations if hasattr(obj, "locations") else (obj.get("locations") if hasattr(obj, "get") else None)
+            ),
             instance_count=obj.instance_count,
             instance_type=obj.instance_type,
             # The v2023_04 msrest model exposes max_instance_count as an attribute; the shared
@@ -201,7 +206,12 @@ class JobResourceConfiguration(RestTranslatableMixin, DictMixin):
             # carries maxInstanceCount, so this resolves to None there — matching the old behavior.
             max_instance_count=obj.max_instance_count if hasattr(obj, "max_instance_count") else None,
             properties=obj.properties,
-            docker_args=obj.docker_args_list if hasattr(obj, "docker_args_list") else obj.docker_args,
+            # The shared arm_ml_service model declares BOTH ``docker_args`` (string) and
+            # ``docker_args_list`` (list) fields; only one is populated per the wire. Prefer whichever is
+            # set so the value survives the round-trip regardless of which form was submitted.
+            docker_args=(
+                getattr(obj, "docker_args_list", None) if getattr(obj, "docker_args_list", None) else obj.docker_args
+            ),
             shm_size=obj.shm_size,
             deserialize_properties=True,
         )
