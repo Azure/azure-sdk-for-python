@@ -335,3 +335,50 @@ class AgentsOperations(GeneratedAgentsOperations):
         return super()._upload_session_file(
             agent_name, session_id, content, remote_path=remote_path, **kwargs
         )
+
+    @distributed_trace
+    def download_session_file_to_disk(
+        self,
+        agent_name: str,
+        session_id: str,
+        *,
+        file_path: Union[str, "os.PathLike[str]"],
+        remote_path: str,
+        **kwargs: Any,
+    ) -> None:
+        """Download a session file directly to disk.
+
+        Downloads the file at the specified sandbox path and writes it to a local file.
+        The remote path is resolved relative to the session home directory.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword file_path: The full path to the local file where the content should be written. Required.
+        :paramtype file_path: str or os.PathLike[str]
+        :keyword remote_path: The file path to download from the sandbox, relative to the session home
+         directory. Required.
+        :paramtype remote_path: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ValueError: If *file_path* points to a directory.
+        :raises OSError: If the file cannot be written.
+        """
+        p = Path(file_path)
+        if p.exists() and p.is_dir():
+            raise ValueError(f"Provide a valid file path, not a folder path `{file_path}`.")
+
+        # Download the file content using the existing method
+        content_iterator = self.download_session_file(
+            agent_name=agent_name,
+            agent_session_id=session_id,
+            remote_path=remote_path,
+            **kwargs,
+        )
+
+        # Write the content to disk
+        with open(file_path, "wb") as f:
+            for chunk in content_iterator:
+                f.write(chunk)
