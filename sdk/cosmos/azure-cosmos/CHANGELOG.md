@@ -7,7 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
-* Fixed per-call `read_timeout`, `connection_timeout`, and `timeout` (operation deadline) being dropped on the metadata calls a query makes before its first page.
+* Fixed per-call `read_timeout`, `connection_timeout`, and `timeout` (operation deadline) being dropped on the metadata calls a query or change-feed read makes before its first page.
 
 #### Other Changes
 

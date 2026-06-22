@@ -140,9 +140,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                 await _record_success_if_request_not_cancelled(args[0], global_endpoint_manager, pk_range_wrapper)
             else:
                 result = await ExecuteFunctionAsync(function, *args, **kwargs)
-            # Check the deadline after a successful call. Outside the if/else so it
-            # also covers the normal request path (if args), matching the sync loop:
-            # a call that succeeds after the deadline passed must still raise.
+            # Check the deadline after a successful call (both paths) so a call that
+            # finishes after the deadline still raises, the same as the sync loop.
             if timeout:
                 elapsed = time.time() - operation_start_time
                 if elapsed >= timeout:

@@ -1087,30 +1087,25 @@ def _build_properties_cache(properties: dict[str, Any], container_link: str) -> 
         "partitionKey": properties.get("partitionKey", None), "container_link": container_link
     }
 
-# The three per-call timeout keys a caller can set on one request. The deadline
-# tuple below adds OperationStartTime to these; the carry helpers iterate that
-# 4-key tuple, not this one.
-_PER_CALL_TIMEOUT_OPTION_KEYS: Tuple[str, ...] = (
+# The per-call timer keys plus the OperationStartTime deadline anchor. The anchor is
+# in the same tuple so the helpers always carry it with the timers; without it, the
+# deadline would be measured from each call's own start, not the operation's.
+_PER_CALL_DEADLINE_OPTION_KEYS: Tuple[str, ...] = (
     Constants.Kwargs.READ_TIMEOUT,
     Constants.Kwargs.CONNECTION_TIMEOUT,
     Constants.Kwargs.TIMEOUT,
-)
-
-# timeout and OperationStartTime must travel together: the deadline is checked as
-# now - OperationStartTime, which defaults to now when missing, so a metadata call
-# without it would measure from its own start, not the operation's.
-_PER_CALL_DEADLINE_OPTION_KEYS: Tuple[str, ...] = _PER_CALL_TIMEOUT_OPTION_KEYS + (
     Constants.OperationStartTime,
 )
 
 
-def _carry_per_call_timeout_options(source: Optional[Mapping[str, Any]], destination: dict[str, Any]) -> None:
-    """Copy the per-call timeouts and the operation start time from source into destination.
+def _copy_per_call_timeouts_to_options(source: Optional[Mapping[str, Any]], destination: dict[str, Any]) -> None:
+    """Copy the per-call timeouts and operation start time from source into destination.
 
-    Copies read_timeout, connection_timeout, timeout, and OperationStartTime. Only
-    keys present in source are copied, so a timeout the caller did not set stays
-    absent and the request uses the client default instead of None. A None or empty
-    source is a no-op.
+    Copies read_timeout, connection_timeout, timeout, and OperationStartTime. A value
+    is copied only when set (not None), so an unset timer is left out and the request
+    uses the client default. A None or empty source is a no-op. This is the
+    options-to-options sibling of _copy_per_call_timeouts_to_kwargs; most callers use
+    _build_routing_feed_options instead of calling this directly.
 
     :param source: The request options to read the timeouts from (may be None or empty).
     :type source: ~collections.abc.Mapping[str, typing.Any] or None
@@ -1122,8 +1117,39 @@ def _carry_per_call_timeout_options(source: Optional[Mapping[str, Any]], destina
     if not source:
         return
     for key in _PER_CALL_DEADLINE_OPTION_KEYS:
+        value = source.get(key)
+        if value is not None:
+            destination[key] = value
+
+
+def _build_routing_feed_options(
+        source: Optional[Mapping[str, Any]],
+        copy_keys: Sequence[str] = (),
+) -> dict[str, Any]:
+    """Build a feed_options dict for a partition-key-ranges fetch.
+
+    Copies the requested routing keys (containerRID, excludedLocations) that are
+    present in source, then adds the per-call timeouts and operation start time. Used
+    by the paths that build their own options dict instead of going through
+    format_pk_range_options: the change-feed setup, the change-feed post-split refresh,
+    and the hybrid all-ranges fetch. Each caller lists only the keys it wants, so its
+    region routing is unchanged.
+
+    :param source: The request options to read from (may be None or empty).
+    :type source: ~collections.abc.Mapping[str, typing.Any] or None
+    :param copy_keys: The routing option keys to copy from source when present.
+    :type copy_keys: ~collections.abc.Sequence[str]
+    :return: A new feed_options dict with the requested routing keys and per-call timers.
+    :rtype: dict[str, typing.Any]
+    """
+    feed_options: dict[str, Any] = {}
+    if not source:
+        return feed_options
+    for key in copy_keys:
         if key in source:
-            destination[key] = source[key]
+            feed_options[key] = source[key]
+    _copy_per_call_timeouts_to_options(source, feed_options)
+    return feed_options
 
 
 def _copy_per_call_timeouts_to_kwargs(
@@ -1166,5 +1192,5 @@ def format_pk_range_options(query_options: Mapping[str, Any]) -> dict[str, Any]:
             pk_range_options["excludedLocations"] = query_options["excludedLocations"]
         # Keep the per-call timeouts so the partition-key ranges fetch uses them
         # instead of the client default.
-        _carry_per_call_timeout_options(query_options, pk_range_options)
+        _copy_per_call_timeouts_to_options(query_options, pk_range_options)
     return pk_range_options

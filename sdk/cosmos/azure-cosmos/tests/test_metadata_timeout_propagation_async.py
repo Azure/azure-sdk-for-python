@@ -112,6 +112,38 @@ class TestMetadataTimeoutPropagationAsync(unittest.IsolatedAsyncioTestCase):
             self.assertNotEqual(r["read_timeout"], self.READ_TIMEOUT)
             self.assertNotEqual(r["connection_timeout"], self.CONNECTION_TIMEOUT)
 
+    async def test_change_feed_cold_start_carries_per_call_timeouts(self):
+        # Change feed resolves its feed range to a physical partition through its
+        # own /pkranges fetch -- a separate code path from the query pipeline (it
+        # never fetches a query plan). A per-call timeout must reach that fetch
+        # and the container read the same way it does for a query.
+        transport = _RecordingFaultTransportAsync()
+        async with self._cold_client(transport) as client:
+            container = client.get_database_client(self.TEST_DATABASE_ID).get_container_client(
+                self.TEST_CONTAINER_ID)
+            _ = [item async for item in container.query_items_change_feed(
+                is_start_from_beginning=True,
+                read_timeout=self.READ_TIMEOUT,
+                connection_timeout=self.CONNECTION_TIMEOUT,
+            )]
+
+        for kind in ("container_read", "pkranges"):
+            recs = transport.records_for(kind)
+            self.assertTrue(recs, "expected at least one {} request on a cold change feed".format(kind))
+            for r in recs:
+                self.assertEqual(
+                    r["read_timeout"], self.READ_TIMEOUT,
+                    "change-feed {} dropped the per-call read_timeout (got {})".format(kind, r["read_timeout"]))
+                self.assertEqual(
+                    r["connection_timeout"], self.CONNECTION_TIMEOUT,
+                    "change-feed {} dropped the per-call connection_timeout (got {})".format(
+                        kind, r["connection_timeout"]))
+
+        # The forced-short failover probe must not inherit the caller's values here either.
+        for r in transport.records_for("account_probe"):
+            self.assertNotEqual(r["read_timeout"], self.READ_TIMEOUT)
+            self.assertNotEqual(r["connection_timeout"], self.CONNECTION_TIMEOUT)
+
     async def test_post_split_pkranges_refresh_carries_per_call_timeouts(self):
         transport = _RecordingFaultTransportAsync()
         async with self._cold_client(transport) as client:
