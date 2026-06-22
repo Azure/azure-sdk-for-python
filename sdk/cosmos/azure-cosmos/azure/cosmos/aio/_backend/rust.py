@@ -115,12 +115,14 @@ class AsyncRustBackend(AsyncCosmosBackend):
     ) -> None:
         self._endpoint = endpoint
         self._master_key = master_key
-        # A synchronous token credential (e.g. an azure-identity credential),
-        # or ``None`` for master-key auth. Exactly one of ``master_key`` /
-        # ``token_credential`` is set by the factory. When present it is handed
-        # to init_client, which wraps it so the Rust driver can call its
-        # ``get_token`` during request signing. (The factory rejects async
-        # credentials, so this is always synchronous.)
+        # A token credential (e.g. an azure-identity credential), or ``None`` for
+        # master-key auth. Exactly one of ``master_key`` / ``token_credential`` is
+        # set by the factory. When present it is handed to init_client, which wraps
+        # it so the Rust driver can call its ``get_token`` during request signing.
+        # For an async credential the factory passes an
+        # ``AsyncTokenCredentialBridge`` here -- it exposes the same synchronous
+        # ``get_token`` and is torn down on close (see
+        # ``_close_token_credential_bridge``).
         self._token_credential = token_credential
         # Client-construction settings (e.g. preferred_locations) carried into
         # the driver on the first init_client call. ``None`` means "nothing to
@@ -153,6 +155,19 @@ class AsyncRustBackend(AsyncCosmosBackend):
                 return
             self._config_released = True
         release_client_config(self._endpoint)
+
+    def _close_token_credential_bridge(self) -> None:
+        # If the token credential is our async->sync bridge, stop its dedicated
+        # event-loop thread. The named-method duck-type check means we only ever
+        # close *our* wrapper, never a customer's own credential. Stopping an idle
+        # loop and joining its daemon thread is near-instant, so calling it from
+        # the async close path doesn't meaningfully block the event loop.
+        closer = getattr(self._token_credential, "_close_cosmos_async_bridge", None)
+        if callable(closer):
+            try:
+                closer()
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Failed closing async-credential bridge", exc_info=True)
 
     def _get_executor(self) -> ThreadPoolExecutor:
         # Built on first use, on the event-loop thread; all callers run there,
@@ -204,6 +219,7 @@ class AsyncRustBackend(AsyncCosmosBackend):
     async def close(self) -> None:
         """Release the Rust client handle and shut down the dedicated pool."""
         self._release_config_once()
+        self._close_token_credential_bridge()
         handle = self._take_handle_for_close()
         executor = self._executor
         self._executor = None
@@ -224,6 +240,7 @@ class AsyncRustBackend(AsyncCosmosBackend):
     def __del__(self) -> None:
         try:
             self._release_config_once()
+            self._close_token_credential_bridge()
             executor = self._executor
             self._executor = None
             if executor is not None:

@@ -49,6 +49,7 @@ from azure.cosmos._backend.factory import (
     make_backend,
     reject_unsupported_transport_settings,
 )
+from azure.cosmos._backend._async_credential_bridge import AsyncTokenCredentialBridge
 from azure.cosmos._backend.rust import RustBackend
 from azure.cosmos._helpers._item_dispatch import pick_backend
 from azure.cosmos._helpers.item_helper import ItemHelper
@@ -833,9 +834,12 @@ def test_account_read_guard_raises_for_rust_backend():
 # ---------------------------------------------------------------------------
 #
 # The Rust backend accepts a master key (string or {"masterKey": ...}) or a
-# *synchronous* token credential (forwarded to the driver, which calls its
-# get_token during request signing). Async credentials and resource tokens are
-# rejected at construction so an unsupported auth shape fails loudly up front.
+# token credential. A *synchronous* token credential is forwarded to the driver
+# as-is; an *async* token credential is wrapped in an AsyncTokenCredentialBridge
+# that drives its coroutine on a dedicated loop thread and exposes the synchronous
+# get_token the driver calls. Resource tokens are still rejected at construction
+# (the driver has no resource-token auth branch yet) so that unsupported shape
+# fails loudly up front.
 
 
 class _SyncTokenCredential:
@@ -846,7 +850,8 @@ class _SyncTokenCredential:
 
 
 class _AsyncTokenCredential:
-    """A stand-in for an async credential, which the Rust backend rejects."""
+    """A stand-in for an async credential, which the Rust backend wraps in a
+    synchronous bridge."""
 
     async def get_token(self, *scopes, **kwargs):  # noqa: D401
         return ("token-value", 9999999999)
@@ -855,7 +860,8 @@ class _AsyncTokenCredential:
 class _AsyncTokenInfoCredential:
     """An async credential that authenticates only through the newer
     ``get_token_info`` (azure-core ``SupportsTokenInfo``), with no ``get_token``.
-    The Rust backend must still detect it as async and reject it."""
+    The Rust backend detects it as async and wraps it; the bridge drives
+    ``get_token_info``."""
 
     async def get_token_info(self, *scopes, **kwargs):  # noqa: D401
         return ("token-value", 9999999999)
@@ -891,23 +897,60 @@ def test_resolve_credential_sync_token_credential():
     assert token_credential is cred
 
 
-def test_resolve_credential_async_token_credential_rejected():
-    with pytest.raises(ValueError, match="async token credential"):
-        _resolve_credential(_AsyncTokenCredential())
+def test_resolve_credential_async_token_credential_wrapped():
+    """An async credential is no longer rejected: it is wrapped in a bridge that
+    drives its coroutine and exposes a synchronous get_token."""
+    cred = _AsyncTokenCredential()
+    master_key, token_credential = _resolve_credential(cred)
+    assert master_key is None
+    assert isinstance(token_credential, AsyncTokenCredentialBridge)
+    try:
+        # The bridge runs the coroutine on its own loop thread and returns the
+        # result synchronously -- exactly what the driver's sync get_token needs.
+        assert token_credential.get_token("https://cosmos.azure.com/.default") == (
+            "token-value",
+            9999999999,
+        )
+    finally:
+        token_credential._close_cosmos_async_bridge()
 
 
-def test_resolve_credential_async_get_token_info_only_rejected():
-    """An async credential exposing only get_token_info (no get_token) is still
-    detected as async and rejected -- the binding can't drive a coroutine."""
-    with pytest.raises(ValueError, match="async token credential"):
-        _resolve_credential(_AsyncTokenInfoCredential())
+def test_resolve_credential_async_get_token_info_only_wrapped():
+    """An async credential exposing only get_token_info (no get_token) is wrapped
+    too; the bridge drives get_token_info."""
+    cred = _AsyncTokenInfoCredential()
+    master_key, token_credential = _resolve_credential(cred)
+    assert master_key is None
+    assert isinstance(token_credential, AsyncTokenCredentialBridge)
+    try:
+        assert token_credential.get_token("https://cosmos.azure.com/.default") == (
+            "token-value",
+            9999999999,
+        )
+    finally:
+        token_credential._close_cosmos_async_bridge()
 
 
-def test_resolve_credential_async_context_manager_credential_rejected():
+def test_resolve_credential_async_context_manager_credential_wrapped():
     """The azure.identity.aio shape (async context manager + async get_token) is
-    rejected via the async detector."""
-    with pytest.raises(ValueError, match="async token credential"):
-        _resolve_credential(_AsyncContextManagerCredential())
+    wrapped via the async detector."""
+    cred = _AsyncContextManagerCredential()
+    master_key, token_credential = _resolve_credential(cred)
+    assert master_key is None
+    assert isinstance(token_credential, AsyncTokenCredentialBridge)
+    token_credential._close_cosmos_async_bridge()
+
+
+def test_async_credential_bridge_close_is_idempotent():
+    """Closing the bridge stops its loop thread and is safe to call more than
+    once (and before it ever started a loop)."""
+    bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential())
+    # Close before first use: no loop thread was started, still a no-op.
+    bridge._close_cosmos_async_bridge()
+    bridge = AsyncTokenCredentialBridge(_AsyncTokenCredential())
+    assert bridge.get_token("scope") == ("token-value", 9999999999)
+    bridge._close_cosmos_async_bridge()
+    bridge._close_cosmos_async_bridge()  # second close is a no-op
 
 
 def test_resolve_credential_sync_credential_not_false_positived():
@@ -965,6 +1008,35 @@ def test_async_make_backend_carries_sync_token_credential(monkeypatch):
     assert isinstance(backend, AsyncRustBackend)
     assert backend._master_key is None
     assert backend._token_credential is cred
+
+
+def test_make_backend_wraps_async_token_credential(monkeypatch):
+    """An async credential lands on the sync backend wrapped in a bridge, with no
+    master key -- so an async credential now builds a working Rust client."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    cred = _AsyncTokenCredential()
+    backend = make_backend(
+        BACKEND_NAME_RUST,
+        url="https://x.documents.azure.com",
+        credential=cred,
+    )
+    assert isinstance(backend, RustBackend)
+    assert backend._master_key is None
+    assert isinstance(backend._token_credential, AsyncTokenCredentialBridge)
+
+
+def test_async_make_backend_wraps_async_token_credential(monkeypatch):
+    """The async factory wraps an async credential the same way."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    cred = _AsyncTokenCredential()
+    backend = make_async_backend(
+        BACKEND_NAME_RUST,
+        url="https://x.documents.azure.com",
+        credential=cred,
+    )
+    assert isinstance(backend, AsyncRustBackend)
+    assert backend._master_key is None
+    assert isinstance(backend._token_credential, AsyncTokenCredentialBridge)
 
 
 def test_rust_backend_passes_token_credential_to_init_client(monkeypatch):

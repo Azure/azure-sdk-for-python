@@ -17,10 +17,12 @@ Selection precedence (highest wins):
 An invalid value raises ``ValueError`` at construction time.
 
 When ``rust`` is selected the factory needs the account endpoint and either a
-master-key credential or a *synchronous* token credential (Entra/AAD via
-``azure-identity``). Async token credentials and resource-token auth are
-rejected upfront for now -- a temporary limitation until the Rust driver
-supports them.
+master-key credential or a token credential (Entra/AAD via ``azure-identity``).
+Both synchronous and asynchronous token credentials are accepted: an async
+credential is wrapped in an :class:`AsyncTokenCredentialBridge` so the driver's
+synchronous ``get_token`` can drive it (see ``_async_credential_bridge``).
+Resource-token auth (per-user / permission credentials) is still rejected
+upfront -- the Rust driver has no resource-token auth branch yet.
 
 When ``core-python`` is selected the factory returns ``None``; the
 helper layer treats absence-of-backend as the signal to use the legacy
@@ -36,6 +38,7 @@ from typing import Any, Optional, Sequence, Tuple
 
 from .._availability_strategy_config import CrossRegionHedgingStrategy, DEFAULT_THRESHOLD_MS
 from ..documents import ConsistencyLevel
+from ._async_credential_bridge import AsyncTokenCredentialBridge
 from .base import CosmosBackend, PreparedClientConfig
 from .constants import (
     BACKEND_ENV_VAR,
@@ -94,9 +97,11 @@ def _is_async_credential(credential: Any) -> bool:
     async context manager.
 
     The binding calls ``get_token`` synchronously on a driver worker thread that
-    has no event loop, so an async credential can't run there and the first
-    request would fail. Rejecting it at construction is clearer than failing
-    later. The token method is unwrapped first in case it is decorated.
+    has no event loop, so an async credential can't run there directly. When this
+    returns ``True`` the factory wraps the credential in an
+    :class:`AsyncTokenCredentialBridge`, which supplies that event loop, instead
+    of calling it directly. The token method is unwrapped first in case it is
+    decorated.
     """
     for attr in ("get_token", "get_token_info"):
         method = getattr(credential, attr, None)
@@ -147,9 +152,11 @@ def _resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
       credential) -> token credential, forwarded to the driver, which calls
       ``get_token`` during request signing;
     * an *async* token credential (coroutine ``get_token`` / ``get_token_info``,
-      or the ``azure.identity.aio`` async-context-manager shape) is rejected: the
-      binding calls ``get_token`` synchronously and has no event loop to drive a
-      coroutine on the driver's worker thread;
+      or the ``azure.identity.aio`` async-context-manager shape) is wrapped in an
+      :class:`AsyncTokenCredentialBridge`, which drives its coroutine on a
+      dedicated event-loop thread and presents the synchronous ``get_token`` the
+      driver calls during request signing -- so async credentials work on the
+      Rust path with no driver change;
     * a resource-token / permission-feed credential (per-user scoped tokens) is
       rejected: the Rust driver has no resource-token auth support yet;
     * anything else (``None`` and unrecognized shapes) is rejected.
@@ -162,14 +169,12 @@ def _resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
     if isinstance(credential, Mapping) and "masterKey" in credential:
         return credential["masterKey"], None
     # Check async *before* the sync get_token acceptance, since an async
-    # credential also exposes a (coroutine) get_token.
+    # credential also exposes a (coroutine) get_token. Wrap it rather than reject
+    # it: the bridge drives the coroutine on its own event-loop thread and exposes
+    # the synchronous get_token the driver calls, closing the credential-admission
+    # half of the #19/#20 gap with no driver change.
     if _is_async_credential(credential):
-        raise ValueError(
-            "_backend='rust' does not support async token credentials yet "
-            "(the credential's token method is a coroutine). Use a synchronous "
-            "token credential (e.g. from azure.identity, not azure.identity.aio), "
-            "or the core-python backend."
-        )
+        return None, AsyncTokenCredentialBridge(credential)
     get_token = getattr(credential, "get_token", None)
     if callable(get_token):
         return None, credential
