@@ -244,8 +244,8 @@ extends:
                     ArtifactPath: '$(Build.ArtifactStagingDirectory)/win-wheels-signed'
                     ArtifactName: 'packages_win_signed'
 
-            - job: Consolidate_Wheels
-              displayName: Consolidate Wheels
+            - job: Build_Release_Artifact
+              displayName: Build release artifact
               dependsOn:
                 - Sign_macOS
                 - Sign_Windows
@@ -260,6 +260,11 @@ extends:
                   inputs:
                     artifactName: packages_linux
                     targetPath: $(Build.ArtifactStagingDirectory)/packages_linux
+
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: packages_extended
+                    targetPath: $(Build.ArtifactStagingDirectory)/packages_extended
 
                 - task: DownloadPipelineArtifact@2
                   inputs:
@@ -278,12 +283,15 @@ extends:
                     Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_linux" -Recurse -Filter "*.whl" |
                       Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
 
+                    Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_extended" -Recurse -Filter "*.tar.gz" |
+                      Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
+
                     Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_mac" -Recurse -Filter "*.whl" |
                       Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
 
                     Get-ChildItem "$(Build.ArtifactStagingDirectory)/packages_windows" -Recurse -Filter "*.whl" |
                       Copy-Item -Destination $allWheelsDir -ErrorAction SilentlyContinue
-                  displayName: Consolidate signed wheels
+                  displayName: Assemble release artifact
 
                 - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
                   parameters:
