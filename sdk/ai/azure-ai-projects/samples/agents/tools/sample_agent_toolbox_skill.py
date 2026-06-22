@@ -21,7 +21,7 @@ DESCRIPTION:
     you access these operations via `project_client.beta.skills`.
 
 USAGE:
-    python sample_skill_in_toolbox.py
+    python sample_agent_toolbox_skill.py
 
     Before running the sample:
 
