@@ -575,7 +575,7 @@ class ActivityAgentServerHost(AgentServerHost):
                         "No activity handler registered. Use the @app.activity() decorator "
                         "or pass a handler= callable to ActivityAgentServerHost()."
                     )
-                response: Response = await self._handler(request)  # type: ignore[assignment]
+                response = await self._handler(request)  # type: ignore[assignment]
 
                 response.headers[ActivityConstants.ACTIVITY_ID_HEADER] = activity_id
                 self._add_required_response_headers(response, session_id)

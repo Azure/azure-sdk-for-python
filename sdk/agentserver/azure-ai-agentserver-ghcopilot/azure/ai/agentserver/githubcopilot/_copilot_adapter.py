@@ -625,22 +625,24 @@ class CopilotAdapter:
             f"{len(accumulated_text)} text chars, {len(reasoning_text_acc)} reasoning chars"
         )
 
-    def run(self, port: int = None):
+    def run(self, port: Optional[int] = None):
         """Start the adapter server.
 
         :param port: Port to listen on. Defaults to ``PORT`` env var or 8088.
         """
         if self._server is None:
             self._setup_server()
+        assert self._server is not None
         self._server.run(port=port)
 
-    async def run_async(self, port: int = None):
+    async def run_async(self, port: Optional[int] = None):
         """Start the adapter server asynchronously.
 
         :param port: Port to listen on. Defaults to ``PORT`` env var or 8088.
         """
         if self._server is None:
             self._setup_server()
+        assert self._server is not None
         await self._server.run_async(port=port)
 
 
