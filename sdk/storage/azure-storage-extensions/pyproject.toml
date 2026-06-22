@@ -65,7 +65,8 @@ suppressed_skip_warnings = ["*"]
 in_bundle = false
 
 [tool.cibuildwheel]
-build = "cp310*"
+build = ["cp310*", "pp*"]
+enable = ["pypy"]
 test-requires = "pytest"
 test-command = "pytest {project}/tests"
 environment = "CFLAGS='-Wno-implicit-function-declaration'"
