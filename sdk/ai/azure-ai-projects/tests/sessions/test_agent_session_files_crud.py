@@ -5,6 +5,7 @@
 # ------------------------------------
 # cSpell:disable
 import os
+from pathlib import Path
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 from azure.ai.projects.models import VersionRefIndicator
@@ -69,12 +70,15 @@ class TestAgentSessionFilesCrud(TestBase):
         test_data_folder = os.path.join(test_dir, "..", "test_data", "sessions")
         data_file1 = os.path.join(test_data_folder, "data_file1.txt")
         data_file2 = os.path.join(test_data_folder, "data_file2.txt")
+        data_file3 = os.path.join(test_data_folder, "data_file3.txt")
         remote_file_path1 = "/remote/data_file1.txt"
         remote_file_path2 = "/remote/data_file2.txt"
+        remote_file_path3 = "/remote/data_file3.txt"
 
         # Verify test data files exist
         assert os.path.exists(data_file1), f"Test data file not found: {data_file1}"
         assert os.path.exists(data_file2), f"Test data file not found: {data_file2}"
+        assert os.path.exists(data_file3), f"Test data file not found: {data_file3}"
 
         # Get the latest active agent version
         agent = self._get_latest_active_agent_version(project_client, agent_name)
@@ -93,7 +97,7 @@ class TestAgentSessionFilesCrud(TestBase):
         print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
 
         try:
-            # Upload first file
+            # Upload first file using file_path (str)
             print(f"Uploading session file: {data_file1} -> {remote_file_path1}")
             project_client.agents.upload_session_file(
                 agent_name=agent_name,
@@ -103,17 +107,27 @@ class TestAgentSessionFilesCrud(TestBase):
             )
             print(f"Successfully uploaded file to {remote_file_path1}")
 
-            # Upload second file using content (bytes) instead of file_path
-            print(f"Uploading session file using content: {data_file2} -> {remote_file_path2}")
-            with open(data_file2, "rb") as f:
-                file2_content = f.read()
+            # Upload second file using file_path (PathLike[str])
+            print(f"Uploading session file using PathLike: {data_file2} -> {remote_file_path2}")
             project_client.agents.upload_session_file(
                 agent_name=agent_name,
                 session_id=session.agent_session_id,
-                content=file2_content,
+                file_path=Path(data_file2),
                 remote_path=remote_file_path2,
             )
             print(f"Successfully uploaded file to {remote_file_path2}")
+
+            # Upload third file using content (bytes)
+            print(f"Uploading session file using content: {data_file3} -> {remote_file_path3}")
+            with open(data_file3, "rb") as f:
+                file3_content = f.read()
+            project_client.agents.upload_session_file(
+                agent_name=agent_name,
+                session_id=session.agent_session_id,
+                content=file3_content,
+                remote_path=remote_file_path3,
+            )
+            print(f"Successfully uploaded file to {remote_file_path3}")
 
             # List session files and verify uploaded files are present
             print("Listing session files at path '/remote'...")
@@ -125,13 +139,14 @@ class TestAgentSessionFilesCrud(TestBase):
 
             # Convert to list for verification
             files_list = list(files)
-            assert len(files_list) >= 2, f"Expected at least 2 files, got {len(files_list)}"
+            assert len(files_list) >= 3, f"Expected at least 3 files, got {len(files_list)}"
 
             # Verify file entries
             file_names = [entry.name for entry in files_list]
             print(f"Files found: {file_names}")
             assert "data_file1.txt" in file_names, "data_file1.txt not found in listed files"
             assert "data_file2.txt" in file_names, "data_file2.txt not found in listed files"
+            assert "data_file3.txt" in file_names, "data_file3.txt not found in listed files"
 
             # Verify file properties
             for entry in files_list:
@@ -177,6 +192,15 @@ class TestAgentSessionFilesCrud(TestBase):
                 remote_path=remote_file_path2,
             )
             print(f"Successfully deleted {remote_file_path2}")
+
+            # Delete third file
+            print(f"Deleting session file at path: {remote_file_path3}...")
+            project_client.agents.delete_session_file(
+                agent_name=agent_name,
+                agent_session_id=session.agent_session_id,
+                remote_path=remote_file_path3,
+            )
+            print(f"Successfully deleted {remote_file_path3}")
 
             print("All session file CRUD operations completed successfully!")
 
