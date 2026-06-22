@@ -5,7 +5,7 @@
         "azure.ai.projects.models.A2APreviewTool": "Azure.AI.Projects.A2APreviewTool",
         "azure.ai.projects.models.ToolboxTool": "Azure.AI.Projects.ToolboxTool",
         "azure.ai.projects.models.A2APreviewToolboxTool": "Azure.AI.Projects.A2APreviewToolboxTool",
-        "azure.ai.projects.models.A2aProtocolConfiguration": "Azure.AI.Projects.A2aProtocolConfiguration",
+        "azure.ai.projects.models.A2AProtocolConfiguration": "Azure.AI.Projects.A2AProtocolConfiguration",
         "azure.ai.projects.models.ActivityProtocolConfiguration": "Azure.AI.Projects.ActivityProtocolConfiguration",
         "azure.ai.projects.models.AgentBlueprintReference": "Azure.AI.Projects.AgentBlueprintReference",
         "azure.ai.projects.models.AgentCard": "Azure.AI.Projects.AgentCard",
@@ -542,5 +542,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "79cf71019f76"
+    "CrossLanguageVersion": "4377aaa102a9"
 }

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 from ._models import (  # type: ignore
     A2APreviewTool,
     A2APreviewToolboxTool,
-    A2aProtocolConfiguration,
+    A2AProtocolConfiguration,
     AISearchIndexResource,
     ActivityProtocolConfiguration,
     AgentBlueprintReference,
@@ -467,7 +467,7 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "A2APreviewTool",
     "A2APreviewToolboxTool",
-    "A2aProtocolConfiguration",
+    "A2AProtocolConfiguration",
     "AISearchIndexResource",
     "ActivityProtocolConfiguration",
     "AgentBlueprintReference",
