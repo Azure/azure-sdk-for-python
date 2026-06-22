@@ -1572,8 +1572,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         """DEPRECATED: Returns the list of valid page ranges for a file or snapshot
         of a file.
 
-        .. versionadded:: 12.6.0
-
         .. deprecated::
             Use :func:`list_ranges_diff` instead.
 

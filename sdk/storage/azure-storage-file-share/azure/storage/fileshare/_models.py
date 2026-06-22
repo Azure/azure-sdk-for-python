@@ -1131,8 +1131,7 @@ class FileRange(DictMixin):
     end: Optional[int] = None
     """End of file range in bytes."""
     cleared: bool
-    """Whether the range has been cleared. Only applicable to ranges returned when listing
-        the difference between a file and a previous snapshot."""
+    """Whether the range has been cleared. Only applicable when using list_ranges_diff."""
 
     def __init__(self, start: Optional[int] = None, end: Optional[int] = None, *, cleared: bool = False) -> None:
         self.start = start
