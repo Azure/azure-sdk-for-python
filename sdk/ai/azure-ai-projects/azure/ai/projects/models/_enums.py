@@ -61,6 +61,8 @@ class AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveE
     """BOT_SERVICE."""
     BOT_SERVICE_RBAC = "BotServiceRbac"
     """BOT_SERVICE_RBAC."""
+    BOT_SERVICE_TENANT = "BotServiceTenant"
+    """BOT_SERVICE_TENANT."""
 
 
 class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -106,23 +108,6 @@ class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AGENT_VERSION_DELETED."""
     AGENT_CONTAINER = "agent.container"
     """AGENT_CONTAINER."""
-
-
-class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of AgentProtocol."""
-
-    ACTIVITY_PROTOCOL = "activity_protocol"
-    """ACTIVITY_PROTOCOL."""
-    RESPONSES = "responses"
-    """RESPONSES."""
-    A2A = "a2a"
-    """A2A."""
-    MCP = "mcp"
-    """MCP."""
-    INVOCATIONS = "invocations"
-    """INVOCATIONS."""
-    INVOCATIONS_WS = "invocations_ws"
-    """WebSocket-based protocol for hosted voice and real-time streaming agents."""
 
 
 class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -683,15 +668,6 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation Comparison."""
 
 
-class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of IsolationKeySourceKind."""
-
-    ENTRA = "Entra"
-    """ENTRA."""
-    HEADER = "Header"
-    """HEADER."""
-
-
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Extensible status values shared by Foundry jobs."""
 
@@ -1045,6 +1021,35 @@ class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEn
     """JSON_OBJECT."""
 
 
+class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported tool types for tools stored in a toolbox."""
+
+    CODE_INTERPRETER = "code_interpreter"
+    """CODE_INTERPRETER."""
+    FILE_SEARCH = "file_search"
+    """FILE_SEARCH."""
+    WEB_SEARCH = "web_search"
+    """WEB_SEARCH."""
+    MCP = "mcp"
+    """MCP."""
+    AZURE_AI_SEARCH = "azure_ai_search"
+    """AZURE_AI_SEARCH."""
+    OPENAPI = "openapi"
+    """OPENAPI."""
+    A2_A_PREVIEW = "a2a_preview"
+    """A2_A_PREVIEW."""
+    BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
+    """BROWSER_AUTOMATION_PREVIEW."""
+    REMINDER_PREVIEW = "reminder_preview"
+    """REMINDER_PREVIEW."""
+    WORK_IQ_PREVIEW = "work_iq_preview"
+    """WORK_IQ_PREVIEW."""
+    FABRIC_IQ_PREVIEW = "fabric_iq_preview"
+    """FABRIC_IQ_PREVIEW."""
+    TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+    """TOOLBOX_SEARCH_PREVIEW."""
+
+
 class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ToolChoiceParamType."""
 
@@ -1132,14 +1137,14 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHAREPOINT_GROUNDING_PREVIEW."""
     MEMORY_SEARCH_PREVIEW = "memory_search_preview"
     """MEMORY_SEARCH_PREVIEW."""
+    REMINDER_PREVIEW = "reminder_preview"
+    """REMINDER_PREVIEW."""
     WORK_IQ_PREVIEW = "work_iq_preview"
     """WORK_IQ_PREVIEW."""
     FABRIC_IQ_PREVIEW = "fabric_iq_preview"
     """FABRIC_IQ_PREVIEW."""
     TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
     """TOOLBOX_SEARCH_PREVIEW."""
-    REMINDER_PREVIEW = "reminder_preview"
-    """REMINDER_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
