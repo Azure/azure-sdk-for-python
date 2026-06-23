@@ -1,9 +1,25 @@
 # Release History
 
-## 1.0.0b53 (Unreleased)
+## 1.0.0b54 (Unreleased)
 
 ### Features Added
+- Add `StatsbeatManager.add_metric_callback` to let SDKs/distros add their own metric
+  observations to built-in statsbeat metrics
+  ([#47363](https://github.com/Azure/azure-sdk-for-python/pull/47363))
 
+### Breaking Changes
+- Customer Facing SDKStats: Renamed metric dimension attributes from snake_case/dotted to camelCase
+  (`compute_type` -> `computeType`, `telemetry_type` -> `telemetryType`, `telemetry_success` -> `telemetrySuccess`,
+  `drop.code` -> `dropCode`, `drop.reason` -> `dropReason`, `retry.code` -> `retryCode`, `retry.reason` -> `retryReason`)
+  ([#47469](https://github.com/Azure/azure-sdk-for-python/pull/47469))
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b53 (2026-06-08)
+
+### Features Added
 - Read for global feature sdkstats bitmap and add a 15 second delay timer
   ([#47031](https://github.com/Azure/azure-sdk-for-python/pull/47031))
 - Use `APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE` environment variable in `_is_attach_enabled` to
@@ -11,11 +27,18 @@
   ([#46955](https://github.com/Azure/azure-sdk-for-python/pull/46955))
 - Safeguard URL redirection issues
   ([#47265](https://github.com/Azure/azure-sdk-for-python/pull/47265))
-### Breaking Changes
+- Add client-side token-bucket rate limiter for telemetry export
+  ([#46999](https://github.com/Azure/azure-sdk-for-python/pull/46999))
 
 ### Bugs Fixed
+- Validate QuickPulse redirect targets against trusted Azure domains
+  ([#46966](https://github.com/Azure/azure-sdk-for-python/pull/46966))
+- Fix retry amplification storm in Azure Monitor OpenTelemetry exporter
+  ([#47002](https://github.com/Azure/azure-sdk-for-python/pull/47002))
 
 ### Other Changes
+- Track live metrics disabling in feature SDKstats
+  ([#47297](https://github.com/Azure/azure-sdk-for-python/pull/47297))
 
 ## 1.0.0b52 (2026-05-12)
 

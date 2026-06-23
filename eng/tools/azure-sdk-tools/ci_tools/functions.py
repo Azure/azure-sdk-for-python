@@ -68,18 +68,7 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 PATHS_EXCLUDED_FROM_DISCOVERY = []
 
 TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
-TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {
-    "azure-storage-blob": "pypy",
-    "azure-storage-queue": "pypy",
-    "azure-storage-file-datalake": "pypy",
-    "azure-storage-file-share": "pypy",
-    "azure-eventhub": "pypy",
-    "azure-servicebus": "pypy",
-    "azure-ai-projects": "pypy",
-    "azure-ai-agents": "pypy",
-    "azure-identity-broker": "pypy",
-    "azure-storage-extensions": "pypy",
-}
+TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {}
 
 omit_regression = (
     lambda x: "nspkg" not in x
@@ -193,15 +182,19 @@ def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     collected_top_level_directories = []
 
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "setup.py"), recursive=True) + glob.glob(
-            os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py")
+        globbed = (
+            glob.glob(os.path.join(target_root_dir, glob_string, "setup.py"), recursive=True)
+            + glob.glob(os.path.join(target_root_dir, "*/", glob_string, "setup.py"))
+            + glob.glob(os.path.join(target_root_dir, "sdk/*/", glob_string, "setup.py"))
         )
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # handle pyproject.toml separately, as we need to filter them by the presence of a `[project]` section
     for glob_string in individual_globs:
-        globbed = glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml"), recursive=True) + glob.glob(
-            os.path.join(target_root_dir, "sdk/*/", glob_string, "pyproject.toml")
+        globbed = (
+            glob.glob(os.path.join(target_root_dir, glob_string, "pyproject.toml"), recursive=True)
+            + glob.glob(os.path.join(target_root_dir, "*/", glob_string, "pyproject.toml"))
+            + glob.glob(os.path.join(target_root_dir, "sdk/*/", glob_string, "pyproject.toml"))
         )
         for p in globbed:
             if get_pyproject(os.path.dirname(p)):

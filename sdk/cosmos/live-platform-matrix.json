@@ -89,18 +89,6 @@
       }
     },
     {
-      "PyPyConfig": {
-        "ubuntu2404_pypy311_query": {
-          "OSVmImage": "env:LINUXVMIMAGE",
-          "Pool": "env:LINUXPOOL",
-          "PythonVersion": "pypy3.11",
-          "CoverageArg": "--disablecov",
-          "TestSamples": "false",
-          "TestMarkArgument": "cosmosQuery"
-        }
-      }
-    },
-    {
       "CoverageConfig": {
         "ubuntu2404_310_coverage_query": {
           "OSVmImage": "env:LINUXVMIMAGE",

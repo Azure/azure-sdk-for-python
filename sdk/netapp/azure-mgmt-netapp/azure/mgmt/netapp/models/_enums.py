@@ -101,6 +101,17 @@ class BucketPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Read-write access to bucket."""
 
 
+class CacheFileAccessLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Flag indicating whether file access logs are enabled for the Cache, based on active diagnostic
+    settings present on the Cache.
+    """
+
+    ENABLED = "Enabled"
+    """fileAccessLogs are enabled."""
+    DISABLED = "Disabled"
+    """fileAccessLogs are not enabled."""
+
+
 class CacheLifeCycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure NetApp Files Cache lifecycle management."""
 

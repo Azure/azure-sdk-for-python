@@ -11,8 +11,6 @@ from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._constants import _GEN_AI_ATTRIBUTES
-from opentelemetry.sdk.resources import Resource
-from unittest.mock import patch
 
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
@@ -804,7 +802,7 @@ class TestUtils(unittest.TestCase):
         },
         clear=True,
     )
-    def test_attach_type_integrated_auto_app_service(self, mock_isdir):
+    def test_attach_type_integrated_auto_app_service_not_called(self, mock_isdir):
         self.assertTrue(_utils._is_attach_enabled())
         mock_isdir.assert_not_called()
 
