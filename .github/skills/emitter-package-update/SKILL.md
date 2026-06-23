@@ -51,7 +51,10 @@ can tell later whether it was bumped.
 
 ### 2. Update Dependencies (still on `main`)
 
-Apply the latest version updates to the package file:
+The goal is to update **every** package across **both** the `dependencies` and
+`devDependencies` sections of `eng/emitter-package.json` to its latest version — not just
+`@azure-tools/typespec-python`. Run `npm-check-updates`, which upgrades all entries in both
+sections by default:
 
 ```bash
 npx npm-check-updates --packageFile eng/emitter-package.json -u
