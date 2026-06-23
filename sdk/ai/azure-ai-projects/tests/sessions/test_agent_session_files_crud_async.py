@@ -5,6 +5,7 @@
 # ------------------------------------
 # cSpell:disable
 import os
+import tempfile
 from pathlib import Path
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -130,6 +131,72 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 )
                 print(f"Successfully uploaded file to {remote_file_path3}")
 
+                # --------------------------------------------------------------------------------------------------
+
+                # Test that upload_session_file raises FileNotFoundError when file_path is a non-existing file (str type)
+                non_existing_file_str = os.path.join(tempfile.gettempdir(), "non_existing_file_12345.txt")
+                print(f"Testing upload_session_file with non-existing file (str): {non_existing_file_str}")
+                try:
+                    await project_client.agents.upload_session_file(
+                        agent_name=agent_name,
+                        session_id=session.agent_session_id,
+                        file_path=non_existing_file_str,  # str type pointing to non-existing file
+                        remote_path="/remote/non_existing.txt",
+                    )
+                    assert False, "Expected FileNotFoundError when file_path is a non-existing file (str type)"
+                except FileNotFoundError as e:
+                    print(f"Got expected FileNotFoundError for non-existing file (str): {e}")
+                    assert "does not exist" in str(e).lower(), f"Error message should mention 'does not exist': {e}"
+
+                # Test that upload_session_file raises FileNotFoundError when file_path is a non-existing file (PathLike type)
+                non_existing_file_pathlike = Path(tempfile.gettempdir()) / "non_existing_file_12345.txt"
+                print(f"Testing upload_session_file with non-existing file (PathLike): {non_existing_file_pathlike}")
+                try:
+                    await project_client.agents.upload_session_file(
+                        agent_name=agent_name,
+                        session_id=session.agent_session_id,
+                        file_path=non_existing_file_pathlike,  # PathLike[str] type pointing to non-existing file
+                        remote_path="/remote/non_existing.txt",
+                    )
+                    assert False, "Expected FileNotFoundError when file_path is a non-existing file (PathLike type)"
+                except FileNotFoundError as e:
+                    print(f"Got expected FileNotFoundError for non-existing file (PathLike): {e}")
+                    assert "does not exist" in str(e).lower(), f"Error message should mention 'does not exist': {e}"
+
+                # Test that upload_session_file raises ValueError when file_path is a folder (str type)
+                upload_folder_path_str = tempfile.gettempdir()  # This is a folder, not a file
+                print(f"Testing upload_session_file with folder path (str): {upload_folder_path_str}")
+                try:
+                    await project_client.agents.upload_session_file(
+                        agent_name=agent_name,
+                        session_id=session.agent_session_id,
+                        file_path=upload_folder_path_str,  # str type pointing to a folder
+                        remote_path="/remote/folder_upload.txt",
+                    )
+                    assert False, "Expected ValueError when file_path is a folder (str type)"
+                except ValueError as e:
+                    print(f"Got expected ValueError for folder path (str): {e}")
+                    assert "folder" in str(e).lower(), f"Error message should mention 'folder': {e}"
+
+                # Test that upload_session_file raises ValueError when file_path is a folder (PathLike type)
+                upload_folder_path_pathlike = Path(tempfile.gettempdir())  # This is a folder, not a file
+                print(f"Testing upload_session_file with folder path (PathLike): {upload_folder_path_pathlike}")
+                try:
+                    await project_client.agents.upload_session_file(
+                        agent_name=agent_name,
+                        session_id=session.agent_session_id,
+                        file_path=upload_folder_path_pathlike,  # PathLike[str] type pointing to a folder
+                        remote_path="/remote/folder_upload.txt",
+                    )
+                    assert False, "Expected ValueError when file_path is a folder (PathLike type)"
+                except ValueError as e:
+                    print(f"Got expected ValueError for folder path (PathLike): {e}")
+                    assert "folder" in str(e).lower(), f"Error message should mention 'folder': {e}"
+
+                print("upload_session_file error handling tests passed!")
+
+                # --------------------------------------------------------------------------------------------------
+
                 # List session files and verify uploaded files are present
                 print("Listing session files at path '/remote'...")
                 files_list = []
@@ -180,6 +247,103 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                     expected_content in file_content
                 ), f"Expected content '{expected_content}' not found in downloaded file"
                 print("Content verification passed!")
+
+                # Download second file to disk using download_session_file_to_disk with str file_path
+                temp_dir = tempfile.gettempdir()
+                download_path = os.path.join(temp_dir, "downloaded_data_file2.txt")
+                print(f"Downloading session file to disk: {remote_file_path2} -> {download_path}")
+
+                await project_client.agents.download_session_file_to_disk(
+                    agent_name=agent_name,
+                    session_id=session.agent_session_id,
+                    file_path=download_path,  # str type
+                    remote_path=remote_file_path2,
+                )
+                print(f"Successfully downloaded file to {download_path}")
+
+                # Verify the downloaded file exists and has expected content
+                assert os.path.exists(download_path), f"Downloaded file not found: {download_path}"
+                with open(download_path, "r", encoding="utf-8") as f:
+                    downloaded_content = f.read()
+
+                print(f"Downloaded content from disk: {downloaded_content.strip()}")
+                expected_content2 = "This is sample file 2"
+                assert (
+                    expected_content2 in downloaded_content
+                ), f"Expected content '{expected_content2}' not found in downloaded file"
+                print("download_session_file_to_disk content verification passed!")
+
+                # Clean up local temp file
+                if os.path.exists(download_path):
+                    os.remove(download_path)
+                    print(f"Cleaned up temp file: {download_path}")
+
+                # --------------------------------------------------------------------------------------------------
+
+                # Download third file to disk using download_session_file_to_disk with PathLike file_path
+                download_path3 = Path(tempfile.gettempdir()) / "downloaded_data_file3.txt"
+                print(f"Downloading session file to disk using PathLike: {remote_file_path3} -> {download_path3}")
+
+                await project_client.agents.download_session_file_to_disk(
+                    agent_name=agent_name,
+                    session_id=session.agent_session_id,
+                    file_path=download_path3,  # PathLike[str] type
+                    remote_path=remote_file_path3,
+                )
+                print(f"Successfully downloaded file to {download_path3}")
+
+                # Verify the downloaded file exists and has expected content
+                assert download_path3.exists(), f"Downloaded file not found: {download_path3}"
+                with open(download_path3, "r", encoding="utf-8") as f:
+                    downloaded_content3 = f.read()
+
+                print(f"Downloaded content from disk: {downloaded_content3.strip()}")
+                expected_content3 = "This is sample file 3"
+                assert (
+                    expected_content3 in downloaded_content3
+                ), f"Expected content '{expected_content3}' not found in downloaded file"
+                print("download_session_file_to_disk with PathLike content verification passed!")
+
+                # Clean up local temp file
+                if download_path3.exists():
+                    download_path3.unlink()
+                    print(f"Cleaned up temp file: {download_path3}")
+
+                # --------------------------------------------------------------------------------------------------
+
+                # Test that download_session_file_to_disk raises ValueError when file_path is a folder (str type)
+                folder_path_str = tempfile.gettempdir()  # This is a folder, not a file
+                print(f"Testing download_session_file_to_disk with folder path (str): {folder_path_str}")
+                try:
+                    await project_client.agents.download_session_file_to_disk(
+                        agent_name=agent_name,
+                        session_id=session.agent_session_id,
+                        file_path=folder_path_str,  # str type pointing to a folder
+                        remote_path=remote_file_path1,
+                    )
+                    assert False, "Expected ValueError when file_path is a folder (str type)"
+                except ValueError as e:
+                    print(f"Got expected ValueError for folder path (str): {e}")
+                    assert "folder" in str(e).lower(), f"Error message should mention 'folder': {e}"
+
+                # Test that download_session_file_to_disk raises ValueError when file_path is a folder (PathLike type)
+                folder_path_pathlike = Path(tempfile.gettempdir())  # This is a folder, not a file
+                print(f"Testing download_session_file_to_disk with folder path (PathLike): {folder_path_pathlike}")
+                try:
+                    await project_client.agents.download_session_file_to_disk(
+                        agent_name=agent_name,
+                        session_id=session.agent_session_id,
+                        file_path=folder_path_pathlike,  # PathLike[str] type pointing to a folder
+                        remote_path=remote_file_path1,
+                    )
+                    assert False, "Expected ValueError when file_path is a folder (PathLike type)"
+                except ValueError as e:
+                    print(f"Got expected ValueError for folder path (PathLike): {e}")
+                    assert "folder" in str(e).lower(), f"Error message should mention 'folder': {e}"
+
+                print("download_session_file_to_disk folder path validation tests passed!")
+
+                # --------------------------------------------------------------------------------------------------
 
                 # Delete first file
                 print(f"Deleting session file at path: {remote_file_path1}...")
