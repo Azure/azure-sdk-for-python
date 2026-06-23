@@ -24,6 +24,7 @@ from azure.ai.ml._utils.utils import AZUREML_PRIVATE_FEATURES_ENV_VAR
 os.environ[AZUREML_PRIVATE_FEATURES_ENV_VAR] = "true"
 
 from _builders import (
+    AOAI_FINETUNING_BUILDERS,
     COMMAND_JOB_BUILDERS,
     FINETUNING_BUILDERS,
     IMPORT_JOB_BUILDERS,
@@ -43,6 +44,7 @@ def main():
     all_builders.update(IMPORT_JOB_BUILDERS)
     all_builders.update(SCHEDULE_BUILDERS)
     all_builders.update(FINETUNING_BUILDERS)
+    all_builders.update(AOAI_FINETUNING_BUILDERS)
 
     for name in sorted(all_builders):
         entity = all_builders[name]()

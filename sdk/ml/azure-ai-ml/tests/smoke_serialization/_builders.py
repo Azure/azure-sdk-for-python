@@ -16,6 +16,8 @@ from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._job.finetuning import FineTuningTaskTypes
 from azure.ai.ml.entities import CommandJob, Environment, JobSchedule, SparkJob
 from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
+from azure.ai.ml.entities._job.finetuning.azure_openai_finetuning_job import AzureOpenAIFineTuningJob
+from azure.ai.ml.entities._job.finetuning.azure_openai_hyperparameters import AzureOpenAIHyperparameters
 from azure.ai.ml.entities._job.import_job import ImportJob, DatabaseImportSource
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits, SweepJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
@@ -257,4 +259,36 @@ def build_custom_finetuning_full():
 
 FINETUNING_BUILDERS = {
     "custom_finetuning_full": build_custom_finetuning_full,
+}
+
+
+def build_aoai_finetuning_full():
+    """An AzureOpenAIFineTuningJob exercising training/validation data, model, outputs and hyperparameters.
+
+    The Azure OpenAI path keeps its own (v2024-01-01-preview) msrest envelope, so this case guards that
+    its nested inputs/outputs stay msrest and serialize as a consistent tree.
+
+    :return: A deterministic AzureOpenAIFineTuningJob entity.
+    :rtype: ~azure.ai.ml.entities._job.finetuning.azure_openai_finetuning_job.AzureOpenAIFineTuningJob
+    """
+    return AzureOpenAIFineTuningJob(
+        name="smoke-aoai-finetuning",
+        display_name="smoke-aoai-finetuning-display",
+        experiment_name="smoke-experiment",
+        task=FineTuningTaskTypes.TEXT_COMPLETION,
+        training_data=Input(type=AssetTypes.URI_FILE, path="https://foo/bar/train.jsonl"),
+        validation_data=Input(type=AssetTypes.URI_FILE, path="https://foo/bar/validation.jsonl"),
+        model=Input(
+            type=AssetTypes.CUSTOM_MODEL,
+            path="azureml://registries/azure-openai/models/gpt-4/versions/1",
+        ),
+        hyperparameters=AzureOpenAIHyperparameters(n_epochs=2, batch_size=4, learning_rate_multiplier=0.5),
+        tags={"tag1": "value1"},
+        properties={"prop1": "value1"},
+        outputs={"registered_model": Output(type="mlflow_model", name="smoke-aoai-registered")},
+    )
+
+
+AOAI_FINETUNING_BUILDERS = {
+    "aoai_finetuning_full": build_aoai_finetuning_full,
 }
