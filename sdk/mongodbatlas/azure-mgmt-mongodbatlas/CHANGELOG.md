@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b1 (2026-06-20)
+## 1.1.0b1 (2026-06-23)
 
 ### Features Added
 
@@ -17,8 +17,8 @@
   - Added model `RegionsByTierResponse`
   - Added model `TierLimitReachedResponse`
   - Added model `TierRegions`
-  - Added model `ClustersOperations`
-  - Added model `ProjectsOperations`
+  - Added operation group `ClustersOperations`
+  - Added operation group `ProjectsOperations`
 
 ## 1.0.0 (2025-07-02)
 
