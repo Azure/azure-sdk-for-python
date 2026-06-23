@@ -34,6 +34,7 @@ from ._evaluators._tool_call_accuracy import ToolCallAccuracyEvaluator
 from ._evaluators._document_retrieval import DocumentRetrievalEvaluator
 from ._evaluators._tool_output_utilization import _ToolOutputUtilizationEvaluator
 from ._evaluators._tool_call_success import _ToolCallSuccessEvaluator
+from ._evaluators._tool_input_accuracy import _ToolInputAccuracyEvaluator
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
@@ -135,6 +136,7 @@ __all__ = [
     "ToolCallAccuracyEvaluator",
     "_ToolOutputUtilizationEvaluator",
     "_ToolCallSuccessEvaluator",
+    "_ToolInputAccuracyEvaluator",
     "AzureOpenAIGrader",
     "AzureOpenAILabelGrader",
     "AzureOpenAIStringCheckGrader",

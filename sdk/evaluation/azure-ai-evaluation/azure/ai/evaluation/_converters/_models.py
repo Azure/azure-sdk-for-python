@@ -327,11 +327,12 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
     # We will use this as our accumulator.
     messages: List[Message] = []
 
-    # As of March 17th, 2025, we only support custom functions due to built-in code interpreters and bing grounding
-    # tooling not reporting their function calls in the same way. Code interpreters don't include the tool call at
-    # all in most of the cases, and bing would only show the API URL, without arguments or results.
-    # Bing grounding would have "bing_grounding" in details with "requesturl" that will just be the API path with query.
-    # TODO: Work with AI Services to add converter support for BingGrounding and CodeInterpreter.
+    # In addition to custom functions, we support a handful of built-in tools whose runtime payload
+    # we have explicit branches for below (code_interpreter, file_search, bing_grounding,
+    # bing_custom_search, azure_ai_search, sharepoint_grounding, fabric_dataagent). Bing variants
+    # only carry the `requesturl` request side (results are redacted upstream for compliance), so
+    # they emit just the tool_call message; the others emit both call and result.
+    # Unknown built-in types are silently skipped by the trailing `return messages`.
     if hasattr(tool_call.details, _FUNCTION) or tool_call.details.get("function"):
         # This is the internals of the content object that will be included with the tool call.
         tool_call_id = tool_call.details.id
@@ -351,15 +352,22 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             arguments = {"input": tool_call.details.code_interpreter.input}
         elif tool_call.details["type"] == "bing_grounding":
             arguments = {"requesturl": tool_call.details["bing_grounding"]["requesturl"]}
+        elif tool_call.details["type"] == "bing_custom_search":
+            arguments = {"requesturl": tool_call.details["bing_custom_search"]["requesturl"]}
         elif tool_call.details["type"] == "file_search":
             options = tool_call.details["file_search"]["ranking_options"]
             arguments = {
                 "ranking_options": {"ranker": options["ranker"], "score_threshold": options["score_threshold"]}
             }
         elif tool_call.details["type"] == "azure_ai_search":
-            arguments = {"input": tool_call.details["azure_ai_search"]["input"]}
+            ais = tool_call.details["azure_ai_search"]
+            arguments = {"input": ais.get("input") or ais.get("query") or ""}
+        elif tool_call.details["type"] == "sharepoint_grounding":
+            sp = tool_call.details["sharepoint_grounding"]
+            arguments = {"input": sp.get("input") or sp.get("query") or ""}
         elif tool_call.details["type"] == "fabric_dataagent":
-            arguments = {"input": tool_call.details["fabric_dataagent"]["input"]}
+            fab = tool_call.details["fabric_dataagent"]
+            arguments = {"input": fab.get("input") or fab.get("query") or ""}
         else:
             # unsupported tool type, skip
             return messages
@@ -389,11 +397,15 @@ def break_tool_call_into_messages(tool_call: ToolCall, run_id: str) -> List[Mess
             if tool_call.details.type == _CODE_INTERPRETER:
                 output = [result.as_dict() for result in tool_call.details.code_interpreter.outputs]
             elif tool_call.details.type == _BING_GROUNDING:
-                return messages  # not supported yet from bing grounding tool
+                return messages  # results are redacted upstream for Bing; no tool_result to emit
+            elif tool_call.details.type == _BING_CUSTOM_SEARCH:
+                return messages  # results are redacted upstream for Bing; no tool_result to emit
             elif tool_call.details.type == _FILE_SEARCH:
                 output = [result.as_dict() for result in tool_call.details.file_search.results]
             elif tool_call.details.type == _AZURE_AI_SEARCH:
                 output = tool_call.details.azure_ai_search["output"]
+            elif tool_call.details.type == _SHAREPOINT_GROUNDING:
+                output = tool_call.details.sharepoint_grounding["output"]
             elif tool_call.details.type == _FABRIC_DATAAGENT:
                 output = tool_call.details.fabric_dataagent["output"]
         except:
