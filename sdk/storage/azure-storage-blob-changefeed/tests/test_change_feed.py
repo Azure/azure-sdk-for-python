@@ -55,11 +55,11 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
     @pytest.mark.parametrize(
         "segment_path",
         [
-            "idx/segments/2026/02/20",        # day-level directory marker (the reported crash)
-            "idx/segments/2026/02/20/0000",   # minute-level directory marker
-            "idx/segments/2026/02",           # month-level directory marker
-            "idx/segments/2026",              # year-level directory marker
-            "idx/segments",                   # prefix only
+            "idx/segments/2026/02/20",  # day-level directory marker (the reported crash)
+            "idx/segments/2026/02/20/0000",  # minute-level directory marker
+            "idx/segments/2026/02",  # month-level directory marker
+            "idx/segments/2026",  # year-level directory marker
+            "idx/segments",  # prefix only
             "idx/segments/2026/02/20/0000/",  # trailing slash -> empty file token
         ],
     )
@@ -67,14 +67,14 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         assert ChangeFeed._is_valid_segment_path(segment_path) is False
 
     def test_parse_datetime_from_valid_segment_path(self):
-        assert ChangeFeed._parse_datetime_from_segment_path(
-            "idx/segments/2026/02/20/0000/meta.json"
-        ) == datetime(2026, 2, 20, 0)
+        assert ChangeFeed._parse_datetime_from_segment_path("idx/segments/2026/02/20/0000/meta.json") == datetime(
+            2026, 2, 20, 0
+        )
 
     def test_get_segment_paths_skips_directory_markers(self):
         blob_names = [
-            "idx/segments/2026/02/20",                 # day-level marker
-            "idx/segments/2026/02/20/0000",            # minute-level marker
+            "idx/segments/2026/02/20",  # day-level marker
+            "idx/segments/2026/02/20/0000",  # minute-level marker
             "idx/segments/2026/02/20/0000/meta.json",  # real segment
             "idx/segments/2026/02/20/0100/meta.json",  # real segment
         ]
