@@ -117,6 +117,15 @@ def _ensure_m365_initialized():
     if _m365_initialized:
         return _agent_app, _adapter
 
+    # Apply MSAL patches before any MsalConnectionManager is created.
+    # The FMI/DefaultAzureCredential patch is only required by the
+    # digital-worker model; the simple agent-instance-identity model mints the
+    # Bot Connector token directly via the Managed Identity Client and must NOT
+    # be patched. This gate runs before the M365 SDK imports below so the patch
+    # is applied even when the optional msal package import path differs.
+    if _digital_worker_mode:
+        _apply_msal_patches()
+
     try:
         from microsoft_agents.activity import Activity, load_configuration_from_env
         from microsoft_agents.authentication.msal import MsalConnectionManager
@@ -134,14 +143,6 @@ def _ensure_m365_initialized():
             "Install: pip install microsoft-agents-hosting-core "
             "microsoft-agents-authentication-msal microsoft-agents-activity azure-identity"
         ) from exc
-
-    # Apply MSAL patches before any MsalConnectionManager is created.
-    # The FMI/DefaultAzureCredential patch is only required by the
-    # digital-worker model; the simple agent-instance-identity model mints the
-    # Bot Connector token directly via the Managed Identity Client and must NOT
-    # be patched.
-    if _digital_worker_mode:
-        _apply_msal_patches()
 
     logger.info("Initializing M365 Agents SDK...")
     config = load_configuration_from_env(os.environ)
