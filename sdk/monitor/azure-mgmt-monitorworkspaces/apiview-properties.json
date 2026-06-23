@@ -106,5 +106,5 @@
         "azure.mgmt.monitorworkspaces.operations.MetricsContainersOperations.list_by_azure_monitor_workspace": "Microsoft.Monitor.MetricsContainers.listByAzureMonitorWorkspace",
         "azure.mgmt.monitorworkspaces.aio.operations.MetricsContainersOperations.list_by_azure_monitor_workspace": "Microsoft.Monitor.MetricsContainers.listByAzureMonitorWorkspace"
     },
-    "CrossLanguageVersion": "b24c26eb8e7b"
+    "CrossLanguageVersion": "a920f5825474"
 }
