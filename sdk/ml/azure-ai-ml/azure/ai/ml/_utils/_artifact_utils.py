@@ -200,13 +200,23 @@ class ArtifactCache:
                 url, headers=header
             )
             if response.status_code == 200:
-                artifacts_tool_path = tempfile.mkdtemp()  # nosec B306
+                artifacts_tool_path = Path(tempfile.mkdtemp())  # nosec B306
                 artifacts_tool_uri = response.json()["uri"]
                 response = requests_pipeline.get(artifacts_tool_uri)  # pylint: disable=too-many-function-args
+                resolved_dest = artifacts_tool_path.resolve()
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
-                    zip_file.extractall(artifacts_tool_path)
-                os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(artifacts_tool_path.resolve())
-                self._artifacts_tool_path = artifacts_tool_path
+                    for member in zip_file.namelist():
+                        member_path = (resolved_dest / member).resolve()
+                        if member_path != resolved_dest and not str(member_path).startswith(
+                            str(resolved_dest) + os.sep
+                        ):
+                            raise RuntimeError(
+                                f"Artifact tool archive contains a path traversal entry and cannot be "
+                                f"extracted safely: {member}"
+                            )
+                    zip_file.extractall(resolved_dest)
+                os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(resolved_dest)
+                self._artifacts_tool_path = resolved_dest
             else:
                 _logger.warning("Download artifact tool failed: %s", response.text)
 
