@@ -20,7 +20,6 @@ IGNORE_BREAKING_CHANGES = {
         ("ChangedParameterOrdering", "*", "*", "__init__"),
         # Changes due to latest dpg design
         ("RemovedOrRenamedInstanceAttribute", "*", "*", "additional_properties"),
-        ("RemovedOrRenamedClass", "*", RegexSuppression(".*ListResult$")),
         ("ChangedParameterKind", "*", "*", "*", "top"),
         ("ChangedParameterKind", "*", "*", "*", "filter"),
         ("ChangedParameterKind", "*", "*", "*", "skip"),

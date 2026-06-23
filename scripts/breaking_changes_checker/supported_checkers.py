@@ -18,5 +18,4 @@ CHECKERS = [
 
 POST_PROCESSING_CHECKERS = [
     # Add any post-processing checkers here
-    UnflattenedModelsChecker(),
 ]
