@@ -37,7 +37,7 @@ from azure.keyvault.keys.crypto import (
     SignatureAlgorithm,
 )
 from azure.keyvault.keys.crypto._providers import NoLocalCryptography, get_local_cryptography_provider
-from azure.keyvault.keys._generated._serialization import Deserializer
+from azure.keyvault.keys._generated._utils.serialization import Deserializer
 from azure.keyvault.keys._generated.models import KeySignParameters
 from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher

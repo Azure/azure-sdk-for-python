@@ -49,7 +49,7 @@ def build_key_vault_create_key_request(key_name: str, **kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -75,7 +75,7 @@ def build_key_vault_rotate_key_request(key_name: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_key_vault_import_key_request(key_name: str, **kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -126,7 +126,7 @@ def build_key_vault_delete_key_request(key_name: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -151,7 +151,7 @@ def build_key_vault_update_key_request(key_name: str, key_version: str, **kwargs
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -178,7 +178,7 @@ def build_key_vault_get_key_request(key_name: str, key_version: str, **kwargs: A
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -205,7 +205,7 @@ def build_key_vault_get_key_versions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -231,7 +231,7 @@ def build_key_vault_get_keys_request(*, maxresults: Optional[int] = None, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -252,7 +252,7 @@ def build_key_vault_backup_key_request(key_name: str, **kwargs: Any) -> HttpRequ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -277,7 +277,7 @@ def build_key_vault_restore_key_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -299,7 +299,7 @@ def build_key_vault_encrypt_request(key_name: str, key_version: str, **kwargs: A
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -327,7 +327,7 @@ def build_key_vault_decrypt_request(key_name: str, key_version: str, **kwargs: A
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -355,7 +355,7 @@ def build_key_vault_sign_request(key_name: str, key_version: str, **kwargs: Any)
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -383,7 +383,7 @@ def build_key_vault_verify_request(key_name: str, key_version: str, **kwargs: An
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -411,7 +411,7 @@ def build_key_vault_wrap_key_request(key_name: str, key_version: str, **kwargs: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -439,7 +439,7 @@ def build_key_vault_secure_wrap_key_request(key_name: str, key_version: str, **k
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -469,7 +469,7 @@ def build_key_vault_secure_unwrap_key_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -497,7 +497,7 @@ def build_key_vault_unwrap_key_request(key_name: str, key_version: str, **kwargs
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -525,7 +525,7 @@ def build_key_vault_release_request(key_name: str, key_version: str, **kwargs: A
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -552,7 +552,7 @@ def build_key_vault_get_deleted_keys_request(*, maxresults: Optional[int] = None
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -573,7 +573,7 @@ def build_key_vault_get_deleted_key_request(key_name: str, **kwargs: Any) -> Htt
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -598,7 +598,7 @@ def build_key_vault_purge_deleted_key_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     # Construct URL
     _url = "/deletedkeys/{key-name}"
     path_format_arguments = {
@@ -619,7 +619,7 @@ def build_key_vault_recover_deleted_key_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -645,7 +645,7 @@ def build_key_vault_get_key_rotation_policy_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -672,7 +672,7 @@ def build_key_vault_update_key_rotation_policy_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -699,7 +699,7 @@ def build_key_vault_get_random_bytes_request(**kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -722,7 +722,7 @@ def build_key_vault_get_key_attestation_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3049,7 +3049,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["key_name", "key_version", "content_type", "accept", "api_version"]},
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview"],
     )
     def secure_wrap_key(
         self,
@@ -3259,7 +3259,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="2026-01-01-preview",
         params_added_on={"2026-01-01-preview": ["key_name", "key_version", "content_type", "accept", "api_version"]},
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-03-01-preview"],
     )
     def secure_unwrap_key(
         self,
@@ -4400,7 +4400,14 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     @api_version_validation(
         method_added_on="7.6-preview.2",
         params_added_on={"7.6-preview.2": ["key_name", "key_version", "accept", "api_version"]},
-        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01", "2026-01-01-preview"],
+        api_versions_list=[
+            "7.6-preview.2",
+            "7.6",
+            "2025-06-01-preview",
+            "2025-07-01",
+            "2026-01-01-preview",
+            "2026-03-01-preview",
+        ],
     )
     def get_key_attestation(self, key_name: str, key_version: str, **kwargs: Any) -> _models.KeyBundle:
         """Gets the public part of a stored key along with its attestation blob.

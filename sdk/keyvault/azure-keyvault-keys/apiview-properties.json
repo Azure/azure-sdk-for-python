@@ -98,5 +98,5 @@
         "azure.keyvault.keys._generated.KeyVaultClient.get_key_attestation": "KeyVault.getKeyAttestation",
         "azure.keyvault.keys._generated.aio.KeyVaultClient.get_key_attestation": "KeyVault.getKeyAttestation"
     },
-    "CrossLanguageVersion": "8246843b8f9d"
+    "CrossLanguageVersion": "8968be7e39f1"
 }

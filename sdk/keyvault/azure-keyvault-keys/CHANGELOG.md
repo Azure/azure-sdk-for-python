@@ -4,11 +4,10 @@
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
+- Added support for service API version `2026-03-01-preview`.
 ### Other Changes
+
+- Key Vault API version `2026-03-01-preview` is now the default.
 
 ## 4.12.0b2 (2026-05-29)
 
@@ -17,7 +16,6 @@
 - Added the `ExternalKey` model and the new `KeyClient.create_external_key` method
   for registering a Key Vault key whose material is held in an external HSM [#47200](https://github.com/Azure/azure-sdk-for-python/pull/47200).
 - Added the `KeyProperties.external_key` read-only property.
-
 ## 4.12.0b1 (2026-05-26)
 
 ### Features Added
