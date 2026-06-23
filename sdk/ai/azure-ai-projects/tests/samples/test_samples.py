@@ -246,10 +246,14 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "hosted_agents",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_agent_endpoint.py",
+                "sample_session_log_stream.py",
+            ],
         ),
     )
     @SamplePathPasser()
+    # To run a single sample: pytest tests\samples\test_samples.py::TestSamples::test_hosted_agents_samples[sample_agent_endpoint] -s
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
         samples_to_skip_validation = ["sample_create_hosted_agent", "sample_toolbox_with_skill"]

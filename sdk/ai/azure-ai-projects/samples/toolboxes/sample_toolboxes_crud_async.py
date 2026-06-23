@@ -34,16 +34,16 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import MCPTool, Tool
+from azure.ai.projects.models import MCPToolboxTool, ToolboxTool
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 
-def print_mcp_require_approval(tools: list[Tool]) -> None:
+def print_mcp_require_approval(tools: list[ToolboxTool]) -> None:
     for tool in tools:
-        if isinstance(tool, MCPTool):
+        if isinstance(tool, MCPToolboxTool):
             print(f"  - MCP `{tool.server_label}` require_approval: {tool.require_approval}")
 
 
@@ -62,16 +62,16 @@ async def main() -> None:
         except ResourceNotFoundError:
             pass
 
-        tools_with_mcp_approval_never: list[Tool] = [
-            MCPTool(
+        tools_with_mcp_approval_never: list[ToolboxTool] = [
+            MCPToolboxTool(
                 server_label="api_specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
                 require_approval="never",
             )
         ]
 
-        tools_with_mcp_approval_always: list[Tool] = [
-            MCPTool(
+        tools_with_mcp_approval_always: list[ToolboxTool] = [
+            MCPToolboxTool(
                 server_label="api_specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
                 require_approval="always",

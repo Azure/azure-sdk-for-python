@@ -39,6 +39,7 @@ import os
 
 from dotenv import load_dotenv
 
+from azure.ai.projects.models._models import ToolboxSearchPreviewToolboxTool
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
@@ -47,7 +48,7 @@ from azure.ai.projects.models import (
     MCPTool,
     PromptAgentDefinition,
     SkillInlineContent,
-    ToolboxSearchPreviewTool,
+    ToolboxSearchPreviewToolboxTool,
     ToolboxSkillReference,
 )
 
@@ -94,7 +95,7 @@ with (
     toolbox_version = project_client.toolboxes.create_version(
         name=TOOLBOX_NAME,
         description="Toolbox exposing a shipping-cost skill.",
-        tools=[ToolboxSearchPreviewTool()],
+        tools=[ToolboxSearchPreviewToolboxTool()],
         skills=[ToolboxSkillReference(name=skill_version.name, version=skill_version.version)],
     )
     print(f"Created toolbox: {toolbox_version.name} version={toolbox_version.version}")
