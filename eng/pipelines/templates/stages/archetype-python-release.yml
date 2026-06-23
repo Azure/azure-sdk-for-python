@@ -20,7 +20,7 @@ stages:
         dependsOn: ${{parameters.DependsOn}}
         variables:
           - template: /eng/pipelines/templates/variables/image.yml
-        condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+        condition: and(succeeded(), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
         jobs:
           - job: TagRepository
             displayName: "Create release tag"
@@ -363,119 +363,119 @@ stages:
                 Artifact: ${{ artifact }}
                 DevFeedName: ${{ parameters.DevFeedName }}
 
-  - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
-    - stage: Integration
-      dependsOn: ${{parameters.DependsOn}}
-      condition: succeededOrFailed('${{parameters.DependsOn}}')
-      jobs:
-      - job: PublishPackages
-        displayName: "Publish package to daily feed"
-        condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
-        pool:
-          image: ubuntu-24.04
-          name: azsdk-pool
-          os: linux
-        steps:
-        - download: current
-          artifact: ${{parameters.ArtifactName}}
-          timeoutInMinutes: 5
+  # - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
+  #   - stage: Integration
+  #     dependsOn: ${{parameters.DependsOn}}
+  #     condition: succeededOrFailed('${{parameters.DependsOn}}')
+  #     jobs:
+  #     - job: PublishPackages
+  #       displayName: "Publish package to daily feed"
+  #       condition: or(eq(variables['SetDevVersion'], 'true'), and(eq(variables['Build.Reason'],'Schedule'), eq(variables['System.TeamProject'], 'internal')))
+  #       pool:
+  #         image: ubuntu-24.04
+  #         name: azsdk-pool
+  #         os: linux
+  #       steps:
+  #       - download: current
+  #         artifact: ${{parameters.ArtifactName}}
+  #         timeoutInMinutes: 5
 
-        - task: UsePythonVersion@0
+  #       - task: UsePythonVersion@0
 
-        - template: ../steps/auth-dev-feed.yml
-          parameters:
-            DevFeedName: ${{ parameters.DevFeedName }}
+  #       - template: ../steps/auth-dev-feed.yml
+  #         parameters:
+  #           DevFeedName: ${{ parameters.DevFeedName }}
         
-        - script: |
-            set -e
-            python -m pip install twine
-          displayName: Install Twine
+  #       - script: |
+  #           set -e
+  #           python -m pip install twine
+  #         displayName: Install Twine
 
-        - ${{ each artifact in parameters.Artifacts }}:
-          - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
+  #       - ${{ each artifact in parameters.Artifacts }}:
+  #         - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
 
-            - pwsh: |
-                # If BuildTargetingString is set, check whether this artifact matches any of the
-                # (possibly comma-separated) glob patterns before attempting to publish.
-                # This handles scoped builds where only a subset of packages are built.
-                $targetingString = $env:BUILDTARGETINGSTRING
-                if ($targetingString) {
-                  $globs = $targetingString -split ","
-                  $isTargeted = $globs | Where-Object { "${{artifact.name}}" -like $_.Trim() }
-                  if (-not $isTargeted) {
-                    Write-Host "Package '${{artifact.name}}' does not match BuildTargetingString '$targetingString'. Skipping integration publish."
-                    exit 0
-                  }
-                }
+  #           - pwsh: |
+  #               # If BuildTargetingString is set, check whether this artifact matches any of the
+  #               # (possibly comma-separated) glob patterns before attempting to publish.
+  #               # This handles scoped builds where only a subset of packages are built.
+  #               $targetingString = $env:BUILDTARGETINGSTRING
+  #               if ($targetingString) {
+  #                 $globs = $targetingString -split ","
+  #                 $isTargeted = $globs | Where-Object { "${{artifact.name}}" -like $_.Trim() }
+  #                 if (-not $isTargeted) {
+  #                   Write-Host "Package '${{artifact.name}}' does not match BuildTargetingString '$targetingString'. Skipping integration publish."
+  #                   exit 0
+  #                 }
+  #               }
 
-                $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
+  #               $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
 
-                if ($fileCount -eq 0) {
-                  Write-Host "No alpha packages for ${{artifact.name}} to publish."
-                  exit 0
-                }
+  #               if ($fileCount -eq 0) {
+  #                 Write-Host "No alpha packages for ${{artifact.name}} to publish."
+  #                 exit 0
+  #               }
 
-                twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
-                echo "Uploaded whl to devops feed $(DevFeedName)"
-                twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
-                echo "Uploaded sdist to devops feed $(DevFeedName)"
-              displayName: 'Publish ${{artifact.name}} alpha package'
+  #               twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
+  #               echo "Uploaded whl to devops feed $(DevFeedName)"
+  #               twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
+  #               echo "Uploaded sdist to devops feed $(DevFeedName)"
+  #             displayName: 'Publish ${{artifact.name}} alpha package'
 
-      - job: PublishDocsToNightlyBranch
-        dependsOn: PublishPackages
-        condition: >-
-          and(
-            succeeded(), 
-            or(
-              eq(variables['SetDevVersion'], 'true'), 
-              and(
-                eq(variables['Build.Reason'],'Schedule'), 
-                eq(variables['System.TeamProject'], 'internal')
-              )
-            ), 
-            ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr')
-          )
-        pool:
-          image: ubuntu-24.04
-          name: azsdk-pool
-          os: linux
-        steps:
-          - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
-            parameters:
-              Paths:
-                - sdk/**/*.md
-                - .github/CODEOWNERS
-          - download: current
-          - pwsh: |
-              Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
-            displayName: Show visible artifacts
+  #     - job: PublishDocsToNightlyBranch
+  #       dependsOn: PublishPackages
+  #       condition: >-
+  #         and(
+  #           succeeded(), 
+  #           or(
+  #             eq(variables['SetDevVersion'], 'true'), 
+  #             and(
+  #               eq(variables['Build.Reason'],'Schedule'), 
+  #               eq(variables['System.TeamProject'], 'internal')
+  #             )
+  #           ), 
+  #           ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr')
+  #         )
+  #       pool:
+  #         image: ubuntu-24.04
+  #         name: azsdk-pool
+  #         os: linux
+  #       steps:
+  #         - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
+  #           parameters:
+  #             Paths:
+  #               - sdk/**/*.md
+  #               - .github/CODEOWNERS
+  #         - download: current
+  #         - pwsh: |
+  #             Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
+  #           displayName: Show visible artifacts
 
-          # py2docfx requires Python >= 3.11
-          - task: UsePythonVersion@0
-            displayName: 'Use Python 3.11'
-            inputs:
-              versionSpec: '3.11'
+  #         # py2docfx requires Python >= 3.11
+  #         - task: UsePythonVersion@0
+  #           displayName: 'Use Python 3.11'
+  #           inputs:
+  #             versionSpec: '3.11'
 
-          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
-            parameters:
-              DevFeedName: ${{ parameters.DevFeedName }}
+  #         - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+  #           parameters:
+  #             DevFeedName: ${{ parameters.DevFeedName }}
 
-          - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
+  #         - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
-          - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
-            parameters:
-              PackageInfoLocations:
-                - ${{ each artifact in parameters.Artifacts }}:
-                  - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
-                    - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
-              WorkingDirectory: $(System.DefaultWorkingDirectory)
-              TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
-              TargetDocRepoName: ${{parameters.TargetDocRepoName}}
-              Language: 'python'
-              DailyDocsBuild: true
-              SparseCheckoutPaths:
-                - docs-ref-services/
-                - metadata/
-              PackageSourceOverride: ${{parameters.PackageSourceOverride}}
+  #         - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
+  #           parameters:
+  #             PackageInfoLocations:
+  #               - ${{ each artifact in parameters.Artifacts }}:
+  #                 - ${{if ne(artifact.skipPublishDocMs, 'true')}}:
+  #                   - $(Pipeline.Workspace)/${{parameters.ArtifactName}}/PackageInfo/${{artifact.name}}.json
+  #             WorkingDirectory: $(System.DefaultWorkingDirectory)
+  #             TargetDocRepoOwner: ${{parameters.TargetDocRepoOwner}}
+  #             TargetDocRepoName: ${{parameters.TargetDocRepoName}}
+  #             Language: 'python'
+  #             DailyDocsBuild: true
+  #             SparseCheckoutPaths:
+  #               - docs-ref-services/
+  #               - metadata/
+  #             PackageSourceOverride: ${{parameters.PackageSourceOverride}}
 
-          - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml
+  #         - template: /eng/common/pipelines/templates/steps/docsms-ensure-validation.yml
