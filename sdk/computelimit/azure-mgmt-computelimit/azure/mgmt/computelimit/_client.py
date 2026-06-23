@@ -22,7 +22,9 @@ from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     FeaturesOperations,
     GuestSubscriptionsOperations,
+    MemberCapOverridesOperations,
     Operations,
+    SharedLimitCapsOperations,
     SharedLimitsOperations,
     VmFamiliesOperations,
 )
@@ -37,7 +39,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ComputeLimitMgmtClient:
+class ComputeLimitMgmtClient:  # pylint: disable=too-many-instance-attributes
     """Microsoft Azure Compute Limit Resource Provider.
 
     :ivar operations: Operations operations
@@ -50,6 +52,10 @@ class ComputeLimitMgmtClient:
     :vartype features: azure.mgmt.computelimit.operations.FeaturesOperations
     :ivar vm_families: VmFamiliesOperations operations
     :vartype vm_families: azure.mgmt.computelimit.operations.VmFamiliesOperations
+    :ivar shared_limit_caps: SharedLimitCapsOperations operations
+    :vartype shared_limit_caps: azure.mgmt.computelimit.operations.SharedLimitCapsOperations
+    :ivar member_cap_overrides: MemberCapOverridesOperations operations
+    :vartype member_cap_overrides: azure.mgmt.computelimit.operations.MemberCapOverridesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -59,7 +65,7 @@ class ComputeLimitMgmtClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-07-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -121,6 +127,12 @@ class ComputeLimitMgmtClient:
         self.shared_limits = SharedLimitsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.features = FeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.vm_families = VmFamiliesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.shared_limit_caps = SharedLimitCapsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.member_cap_overrides = MemberCapOverridesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
