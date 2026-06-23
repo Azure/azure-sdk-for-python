@@ -64,7 +64,7 @@ npx npm-check-updates --packageFile eng/emitter-package.json -u
 ```
 
 > **Restricted-network fallback (e.g. the coding-agent sandbox):** `npm-check-updates`
-> needs `registry.npmjs.org`, which may be firewalled. If it cannot reach the registry,
+> needs access to the npm registry, which may be firewalled. If it cannot reach the registry,
 > determine the latest `@azure-tools/typespec-python` version from GitHub instead — the
 > newest published tag in [Azure/typespec-azure](https://github.com/Azure/typespec-azure/tags)
 > (cross-checked against `packages/typespec-python/package.json` on `main`) — and edit
@@ -125,7 +125,7 @@ tsp-client generate-lock-file
 This regenerates `eng/emitter-package-lock.json`.
 
 > **Restricted-network note:** `tsp-client generate-lock-file` also resolves packages
-> from `registry.npmjs.org`. If the registry is unreachable, the lock file cannot be
+> from the npm registry. If the registry is unreachable, the lock file cannot be
 > regenerated in the sandbox. In that case commit only the `eng/emitter-package.json`
 > change (skip the lock file in step 6), and call out in the PR body that
 > `eng/emitter-package-lock.json` still needs to be regenerated in an environment with
