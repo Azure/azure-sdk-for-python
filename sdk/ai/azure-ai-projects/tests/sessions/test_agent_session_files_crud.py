@@ -172,7 +172,9 @@ class TestAgentSessionFilesCrud(TestBase):
 
             # Verify content matches expected
             expected_content = "This is sample file 1"
-            assert expected_content in file_content, f"Expected content '{expected_content}' not found in downloaded file"
+            assert (
+                expected_content in file_content
+            ), f"Expected content '{expected_content}' not found in downloaded file"
             print("Content verification passed!")
 
             # Delete first file

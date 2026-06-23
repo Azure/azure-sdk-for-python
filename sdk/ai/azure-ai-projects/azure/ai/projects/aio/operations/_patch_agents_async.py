@@ -316,9 +316,7 @@ class AgentsOperations(GeneratedAgentsOperations):
 
         assert content is not None  # Guaranteed by validation above
 
-        return await super()._upload_session_file(
-            agent_name, session_id, content, remote_path=remote_path, **kwargs
-        )
+        return await super()._upload_session_file(agent_name, session_id, content, remote_path=remote_path, **kwargs)
 
     @distributed_trace_async
     async def download_session_file_to_disk(
