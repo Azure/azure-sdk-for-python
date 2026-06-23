@@ -225,7 +225,6 @@ class AgentsOperations(GeneratedAgentsOperations):
         *,
         content: bytes,
         remote_path: str,
-        user_isolation_key: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.SessionFileWriteResult:
         """Upload binary content to the session sandbox.
@@ -239,9 +238,6 @@ class AgentsOperations(GeneratedAgentsOperations):
         :keyword remote_path: The destination file path within the sandbox, relative to the session home
          directory. Required.
         :paramtype remote_path: str
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
         :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SessionFileWriteResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -256,7 +252,6 @@ class AgentsOperations(GeneratedAgentsOperations):
         *,
         file_path: Union[str, "os.PathLike[str]"],
         remote_path: str,
-        user_isolation_key: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.SessionFileWriteResult:
         """Upload a file from disk to the session sandbox.
@@ -270,9 +265,6 @@ class AgentsOperations(GeneratedAgentsOperations):
         :keyword remote_path: The destination file path within the sandbox, relative to the session home
          directory. Required.
         :paramtype remote_path: str
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
         :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SessionFileWriteResult
         :raises ~azure.core.exceptions.HttpResponseError:
