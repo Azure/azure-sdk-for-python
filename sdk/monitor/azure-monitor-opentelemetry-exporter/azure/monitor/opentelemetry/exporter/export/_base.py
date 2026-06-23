@@ -365,11 +365,11 @@ class BaseExporter:
                         pipeline_response.http_response.headers,
                     ),
                 )
+                response_headers: Any = {}
                 if isinstance(track_result, tuple) and len(track_result) == 2:
                     track_response, response_headers = track_result
                 else:
                     track_response = track_result
-                    response_headers = {}
                 if not track_response.errors:  # 200
                     self._consecutive_redirects = 0
                     if not self._is_stats_exporter():
