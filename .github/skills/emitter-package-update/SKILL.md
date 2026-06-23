@@ -13,7 +13,7 @@ The Python emitter ecosystem consists of two packages:
 - **Branded emitter** (`@azure-tools/typespec-python`): Lives in [Azure/typespec-azure](https://github.com/Azure/typespec-azure/tree/main/packages/typespec-python). This is the emitter used for Azure SDK generation.
 - **Unbranded emitter** (`@typespec/http-client-python`): Lives in [microsoft/typespec](https://github.com/microsoft/typespec/tree/main/packages/http-client-python). The branded emitter wraps this package.
 
-When `eng/emitter-package.json` is updated on `main`, the [TypeSpec Python Regenerate Tests](../../workflows/typespec-python-regenerate.yml) workflow triggers automatically and pushes regenerated test code to the [`typespec-python-generated-tests`](https://github.com/Azure/azure-sdk-for-python/tree/typespec-python-generated-tests/eng/tools/azure-sdk-tools/emitter/generated) branch.
+When `eng/emitter-package.json` is updated on `main`, the [TypeSpec Python Regenerate Tests](../../workflows/typespec-python-regenerate.yml) workflow triggers automatically. It regenerates the test code, pushes it to a `regen/typespec-python-main` source branch, and (because GitHub Actions cannot open PRs in this repo) creates/updates a tracking issue with a pre-filled compare link that a maintainer clicks to open the PR against the [`typespec-python-generated-tests`](https://github.com/Azure/azure-sdk-for-python/tree/typespec-python-generated-tests/eng/tools/azure-sdk-tools/emitter/generated) target branch.
 
 ## Prerequisites
 
@@ -124,7 +124,8 @@ gh pr create --title "{pr_title}" --body "{pr_body}"
 ### 8. After Merge
 
 Once the PR merges to `main`, the [TypeSpec Python Regenerate Tests](../../workflows/typespec-python-regenerate.yml) workflow triggers automatically because `eng/emitter-package.json` was modified. It will:
-1. Install the branded emitter at the version specified in `eng/emitter-package.json`
-2. Regenerate all test code
-3. Push the updated generated files to the [`typespec-python-generated-tests`](https://github.com/Azure/azure-sdk-for-python/tree/typespec-python-generated-tests/eng/tools/azure-sdk-tools/emitter/generated) branch
-4. If the workflow fails, a GitHub issue is created and assigned to @iscai-msft and @msyyc
+1. Build `http-client-python` from `microsoft/typespec@main` and regenerate all test code
+2. Commit the regenerated files to the `regen/typespec-python-main` source branch and force-push it
+3. Create or update a tracking issue containing a pre-filled "compare" link (GitHub Actions cannot open PRs in this repo) so a maintainer can open the PR against the [`typespec-python-generated-tests`](https://github.com/Azure/azure-sdk-for-python/tree/typespec-python-generated-tests/eng/tools/azure-sdk-tools/emitter/generated) target branch. Merging that PR does **not** auto-close the tracking issue — close it manually.
+   - The tracking issue is assigned to whoever triggered a manual (`workflow_dispatch`) run, or to @iscai-msft and @msyyc for automatic `push`/`schedule` runs.
+4. If the workflow fails, a separate failure-notification issue is created (or commented on) and assigned to @iscai-msft and @msyyc
