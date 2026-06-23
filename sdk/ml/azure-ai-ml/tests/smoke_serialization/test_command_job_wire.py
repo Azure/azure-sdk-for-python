@@ -17,18 +17,18 @@ Run (offline, no Azure, no recordings):
 import pytest
 
 from _builders import COMMAND_JOB_BUILDERS
-from _wire import assert_matches_golden, assert_serializes
+from _wire import assert_wire_matches_expected, assert_serializes
 
 
-@pytest.mark.parametrize("golden_name", sorted(COMMAND_JOB_BUILDERS))
-def test_command_job_serializes(golden_name):
-    """The CommandJob rest object must serialize to wire without raising (Class A guard)."""
-    entity = COMMAND_JOB_BUILDERS[golden_name]()
+@pytest.mark.parametrize("case_name", sorted(COMMAND_JOB_BUILDERS))
+def test_command_job_serializes(case_name):
+    """The CommandJob rest object must serialize to wire without raising (serialization guard)."""
+    entity = COMMAND_JOB_BUILDERS[case_name]()
     assert_serializes(entity._to_rest_object())
 
 
-@pytest.mark.parametrize("golden_name", sorted(COMMAND_JOB_BUILDERS))
-def test_command_job_wire_matches_golden(golden_name):
-    """The CommandJob wire must be byte-identical to the golden captured from main (Class B guard)."""
-    entity = COMMAND_JOB_BUILDERS[golden_name]()
-    assert_matches_golden(golden_name, entity._to_rest_object())
+@pytest.mark.parametrize("case_name", sorted(COMMAND_JOB_BUILDERS))
+def test_command_job_wire_matches_expected(case_name):
+    """The CommandJob wire must be byte-identical to the baseline captured from main."""
+    entity = COMMAND_JOB_BUILDERS[case_name]()
+    assert_wire_matches_expected(case_name, entity._to_rest_object())
