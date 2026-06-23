@@ -26,7 +26,7 @@ class TestComputeManagementVirtualMachineScaleSetLifeCycleHookEventsOperationsAs
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
             lifecycle_hook_event_name="str",
-            api_version="2025-11-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestComputeManagementVirtualMachineScaleSetLifeCycleHookEventsOperationsAs
                     "waitUntil": "str",
                 }
             },
-            api_version="2025-11-01",
+            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestComputeManagementVirtualMachineScaleSetLifeCycleHookEventsOperationsAs
         response = self.client.virtual_machine_scale_set_life_cycle_hook_events.list(
             resource_group_name=resource_group.name,
             vm_scale_set_name="str",
-            api_version="2025-11-01",
+            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

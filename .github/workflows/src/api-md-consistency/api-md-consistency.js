@@ -47,8 +47,8 @@ function formatIssueSection(title, apiFiles) {
     lines.push(styleLog(`PACKAGE: ${packageName}`, ANSI.bold, ANSI.cyan));
     lines.push(`PATH:    ${packageDir}`);
     lines.push(`API FILE: ${apiFile}`);
-    lines.push(styleLog("Regenerate from the repository root:", ANSI.bold, ANSI.yellow));
-    lines.push(styleLog(`  azpysdk apistub --md --extract-metadata ${packageName} --dest-dir .`, ANSI.bold, ANSI.yellow));
+    lines.push(styleLog(`Regenerate from the ${packageName} package root:`, ANSI.bold, ANSI.yellow));
+    lines.push(styleLog(`  azpysdk apistub .`, ANSI.bold, ANSI.yellow));
     lines.push("============================================================");
   }
   lines.push("");
@@ -97,7 +97,7 @@ export default async function apiMdConsistency({ core }) {
       "",
       formatIssueSection("Mismatched packages:", mismatches),
       formatIssueSection("Missing required API files:", missing),
-      "To regenerate api.md locally, run the command shown for each package from the repository root.",
+      "To regenerate api.md and api.metadata.yml locally, run the command shown for each package from the repository root.",
     ].filter((part) => part !== "");
 
     core.setFailed(messageParts.join("\n"));
