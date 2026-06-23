@@ -316,6 +316,29 @@ def main(generate_input, generate_output):
                 apiview_start_time = time.time()
                 try:
                     _LOGGER.info(f"install apiview generation tool")
+                    # Workaround for Python 3.13: lazy-object-proxy==1.10.0 (pinned in
+                    # eng/apiview_reqs.txt) ships no cp313 wheel, so pip builds it from
+                    # source. The isolated build environment fails to fetch its build deps
+                    # (setuptools_scm) from the azure-sdk private feed (401 -> interactive
+                    # prompt -> EOFError), which breaks the whole install. Pre-install the
+                    # build deps from PyPI and disable build isolation so the source build
+                    # uses them instead of reaching out to the private feed.
+                    # TODO: revert this logic once it works on Python 3.13 (e.g. once
+                    # lazy-object-proxy ships a cp313 wheel on the feed).
+                    check_call(
+                        [
+                            "python",
+                            "-m",
+                            "pip",
+                            "install",
+                            "setuptools>=64",
+                            "setuptools_scm>=8",
+                            "wheel",
+                            "--index-url=https://pypi.org/simple/",
+                        ],
+                        timeout=600,
+                        stderr=None if data.get("runMode") == "release" else subprocess.DEVNULL,
+                    )
                     check_call(
                         [
                             "python",
@@ -325,6 +348,7 @@ def main(generate_input, generate_output):
                             "-r",
                             "eng/apiview_reqs.txt",
                             "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+                            "--no-build-isolation",
                         ],
                         timeout=600,
                         stderr=None if data.get("runMode") == "release" else subprocess.DEVNULL,
