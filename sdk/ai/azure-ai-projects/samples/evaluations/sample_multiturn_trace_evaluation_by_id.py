@@ -6,161 +6,263 @@
 
 """
 DESCRIPTION:
-    Given an AIProjectClient, this sample demonstrates how to evaluate multi-turn
-    conversations captured as agent traces in Application Insights, using specific
-    conversation IDs or trace IDs to select which conversations to evaluate.
+    Self-contained sample that evaluates multi-turn agent conversations captured
+    as agent traces in Application Insights, selecting them by Foundry
+    conversation IDs.
 
-    This is Scenario 2 of multi-turn evaluations: you provide known conversation
-    or trace identifiers, and the service reconstructs the messages from App Insights
-    traces, then runs conversation-level evaluators against them.
+    Steps:
+      1. Creates a transient agent.
+      2. Seeds a few multi-turn conversations against the agent so that the
+         service emits traces into Application Insights.
+      3. Creates a trace-based evaluation group with conversation-level
+         evaluators.
+      4. Submits an evaluation run that targets the seeded conversations by
+         `conversation_id_source`. Retries the run if the traces have not
+         finished ingesting into App Insights yet.
+      5. Cleans up the evaluation, seeded conversations, and agent.
 
-    Two modes are supported:
-      - conversation_id_source: Provide Foundry conversation IDs.
-      - trace_id_source: Provide W3C trace IDs (operation_Id from App Insights).
+    Prerequisite: the project must have an Application Insights resource
+    connected so the agent emits server-side traces.
+
+    Two `trace_source` shapes are supported by the service:
+      - `conversation_id_source` - the Foundry conversation IDs returned by
+        `openai_client.conversations.create()` (used here).
+      - `trace_id_source` - W3C trace IDs (`operation_Id` from App Insights);
+        see the commented snippet below for the alternative shape.
 
 USAGE:
     python sample_multiturn_trace_evaluation_by_id.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0" python-dotenv
+    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.
-    2) FOUNDRY_MODEL_NAME - Required. The model deployment name for AI-assisted evaluators.
-    3) FOUNDRY_CONVERSATION_IDS - Required (for conversation_id mode). Comma-separated
-       Foundry conversation IDs to evaluate.
-       Example: "conv_abc123,conv_def456,conv_ghi789"
-    4) FOUNDRY_TRACE_IDS - Optional (for trace_id mode). Comma-separated W3C trace IDs.
-       If set, overrides conversation IDs.
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as
+       found in the overview page of your Microsoft Foundry project.
+    2) FOUNDRY_MODEL_NAME - Required. The model deployment name used both to
+       drive the agent during trace seeding and to power the AI-assisted
+       evaluators.
 """
 
 import os
 import time
+import uuid
+from datetime import datetime, timezone
 from pprint import pprint
+from typing import List
+
 from dotenv import load_dotenv
+
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
+from azure.ai.projects.models import PromptAgentDefinition, TestingCriterionAzureAIEvaluator
 
 load_dotenv()
+
+
+AGENT_INSTRUCTIONS = (
+    "Widgets & Gizmos support agent. Be concise, empathetic, and resolve the "
+    "customer's issue when possible. Policies you can quote:\n"
+    " - Refunds: unopened 30 days; defective up to 90 days; refunds take 5-7 business days.\n"
+    " - Exchanges: same window as refunds; exchanges do not include store credit.\n"
+    " - Replacement parts: available for gizmos; flat $4.99 shipping for small parts.\n"
+    " - You cannot place orders or process refunds directly; direct the customer to the website "
+    "   or store. Always close with a confirmation that the customer's question is answered."
+)
+# Each entry is one conversation. Multi-turn conversations exercise the
+# conversation-level evaluators (task_completion, customer_satisfaction, ...).
+# The final user turn closes the conversation so task_completion can recognize
+# the agent reached a resolution.
+CONVERSATION_FLOWS: List[List[str]] = [
+    [
+        "I bought a widget last week and it stopped working.",
+        "It is past the 30 day mark, can I still return it?",
+        "How long will the refund take to process?",
+        "Thanks, that answers my question.",
+    ],
+    [
+        "Do you sell replacement parts for gizmos?",
+        "How much does shipping cost for a small part?",
+        "Got it, I will order it from the website. Thank you.",
+    ],
+    [
+        "What is the difference between an exchange and a refund?",
+        "If I exchange a defective gizmo, do I also get store credit?",
+        "Understood, thanks for clarifying.",
+    ],
+]
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 
-# Choose one: conversation IDs or trace IDs
-conversation_ids_str = os.environ.get("FOUNDRY_CONVERSATION_IDS", "")
-trace_ids_str = os.environ.get("FOUNDRY_TRACE_IDS", "")
+POLL_INTERVAL_SECONDS = 5
+INITIAL_INGEST_WAIT_SECONDS = 60
+MAX_EVAL_ATTEMPTS = 5
+RETRY_WAIT_SECONDS = 60
+
+# Per-run id keeps the agent name unique across repeated runs.
+run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4().hex[:4]}"
+agent_name = f"mt-trace-by-id-{run_id}"
+
+TERMINAL_STATUSES = {"completed", "failed", "canceled"}
+
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as client,
 ):
-    # Eval group for trace-based evaluations uses azure_ai_source with scenario "traces"
-    data_source_config = {
-        "type": "azure_ai_source",
-        "scenario": "traces",
-    }
 
-    # Conversation-level evaluators for trace data
-    testing_criteria = [
-        TestingCriterionAzureAIEvaluator(
-            type="azure_ai_evaluator",
-            name="customer_satisfaction",
-            evaluator_name="builtin.customer_satisfaction",
-            initialization_parameters={"model": model_deployment_name},
-            data_mapping={"messages": "{{item.messages}}"},
-        ),
-        TestingCriterionAzureAIEvaluator(
-            type="azure_ai_evaluator",
-            name="task_completion",
-            evaluator_name="builtin.task_completion",
-            initialization_parameters={"model": model_deployment_name},
-            data_mapping={"messages": "{{item.messages}}"},
-        ),
-        TestingCriterionAzureAIEvaluator(
-            type="azure_ai_evaluator",
-            name="conversation_coherence",
-            evaluator_name="builtin.coherence",
-            initialization_parameters={"model": model_deployment_name},
-            data_mapping={"messages": "{{item.messages}}"},
-        ),
-        TestingCriterionAzureAIEvaluator(
-            type="azure_ai_evaluator",
-            name="groundedness",
-            evaluator_name="builtin.groundedness",
-            initialization_parameters={"model": model_deployment_name},
-            data_mapping={"messages": "{{item.messages}}"},
-        ),
-    ]
+    created_agent = None
+    created_conversation_ids: List[str] = []
+    eval_object = None
 
-    print("Creating trace-based evaluation group")
-    eval_object = client.evals.create(
-        name="Multi-turn Trace Evaluation (by ID)",
-        data_source_config=data_source_config,  # type: ignore
-        testing_criteria=testing_criteria,
-    )
-    print(f"Evaluation created (id: {eval_object.id})")
+    try:
+        # 1. Create an agent to attribute the seeded conversations to.
+        print(f"Create agent `{agent_name}` (model: `{model_deployment_name}`).")
+        created_agent = project_client.agents.create_version(
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(model=model_deployment_name, instructions=AGENT_INSTRUCTIONS),
+        )
+        print(f"Agent created (id: {created_agent.id}, version: {created_agent.version}).")
 
-    # Build the data source based on which IDs are provided
-    if trace_ids_str:
-        # Trace ID mode — provide W3C trace IDs (operation_Id from App Insights)
-        trace_ids = [tid.strip() for tid in trace_ids_str.split(",") if tid.strip()]
-        print(f"Using {len(trace_ids)} trace IDs")
-        data_source = {
-            "type": "azure_ai_trace_data_source_preview",
-            "trace_source": {
-                "type": "trace_id_source",
-                "trace_ids": trace_ids,
-            },
+        # 2. Seed multi-turn conversations against the agent.
+        print(f"Seed {len(CONVERSATION_FLOWS)} multi-turn conversation(s) against the agent.")
+        for flow in CONVERSATION_FLOWS:
+            conversation = client.conversations.create()
+            created_conversation_ids.append(conversation.id)
+            print(f"  - conversation id: {conversation.id} ({len(flow)} turn(s))")
+            for turn in flow:
+                client.responses.create(
+                    conversation=conversation.id,
+                    input=turn,
+                    extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
+                )
+
+        print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
+        time.sleep(INITIAL_INGEST_WAIT_SECONDS)
+
+        # 3. Create the trace-based evaluation group (conversation-level evaluators).
+        data_source_config = {
+            "type": "azure_ai_source",
+            "scenario": "traces",
         }
-    else:
-        # Conversation ID mode — provide Foundry conversation IDs
-        conversation_ids = [cid.strip() for cid in conversation_ids_str.split(",") if cid.strip()]
-        if not conversation_ids:
-            raise ValueError(
-                "Set FOUNDRY_CONVERSATION_IDS or FOUNDRY_TRACE_IDS. "
-                "These are IDs from prior agent interactions captured in App Insights."
-            )
-        print(f"Using {len(conversation_ids)} conversation IDs")
+
+        testing_criteria = [
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="customer_satisfaction",
+                evaluator_name="builtin.customer_satisfaction",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={"messages": "{{item.messages}}"},
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="task_completion",
+                evaluator_name="builtin.task_completion",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={"messages": "{{item.messages}}"},
+            ),
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="conversation_coherence",
+                evaluator_name="builtin.coherence",
+                initialization_parameters={"model": model_deployment_name},
+                data_mapping={"messages": "{{item.messages}}"},
+            ),
+        ]
+
+        print("Create trace-based evaluation group.")
+        eval_object = client.evals.create(
+            name=f"Multi-turn Trace Evaluation (by ID) {run_id}",
+            data_source_config=data_source_config,  # type: ignore
+            testing_criteria=testing_criteria,
+        )
+        print(f"Evaluation created (id: {eval_object.id}).")
+
+        # 4. Submit an eval run that targets the seeded conversations by ID.
+        # Retry: ingestion delay can leave the conversations invisible to the
+        # eval service even after the initial wait.
         data_source = {
             "type": "azure_ai_trace_data_source_preview",
             "trace_source": {
                 "type": "conversation_id_source",
-                "conversation_ids": conversation_ids,
+                "conversation_ids": created_conversation_ids,
             },
         }
+        # Alternative shape (requires W3C trace IDs from App Insights):
+        #   "trace_source": {"type": "trace_id_source", "trace_ids": ["<operation_Id>", ...]}
 
-    # Create run with evaluation_level = "conversation"
-    eval_run = client.evals.runs.create(
-        eval_id=eval_object.id,
-        name="multiturn-trace-by-id-run",
-        data_source=data_source,  # type: ignore
-        extra_body={"evaluation_level": "conversation"},
-    )
-    print(f"Evaluation run created (id: {eval_run.id})")
+        run = None
+        for attempt in range(1, MAX_EVAL_ATTEMPTS + 1):
+            print(
+                f"Create eval run (attempt {attempt}/{MAX_EVAL_ATTEMPTS}) over "
+                f"{len(created_conversation_ids)} conversation id(s)."
+            )
+            eval_run = client.evals.runs.create(
+                eval_id=eval_object.id,
+                name=f"multiturn-trace-by-id-{run_id}-a{attempt}",
+                data_source=data_source,  # type: ignore
+                extra_body={"evaluation_level": "conversation"},
+            )
+            print(f"Eval run created (id: {eval_run.id}).")
 
-    while True:
-        run = client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
-        if run.status in ("completed", "failed"):
-            break
-        print(f"Waiting for eval run to complete... current status: {run.status}")
-        time.sleep(5)
+            print("Poll eval run until terminal.", end="", flush=True)
+            while True:
+                run = client.evals.runs.retrieve(run_id=eval_run.id, eval_id=eval_object.id)
+                if run.status in TERMINAL_STATUSES:
+                    break
+                time.sleep(POLL_INTERVAL_SECONDS)
+                print(".", end="", flush=True)
+            print()
+            print(f"Final run status: `{run.status}`.")
 
-    if run.status == "completed":
-        print("\n✓ Evaluation run completed successfully!")
-        print(f"Result Counts: {run.result_counts}")
+            if run.status == "completed":
+                output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
+                expected_items = len(created_conversation_ids)
+                if len(output_items) >= expected_items:
+                    print(f"Run produced {len(output_items)} output item(s) (>= {expected_items} expected).")
+                    print(f"Result counts: {run.result_counts}")
+                    print(f"{'-' * 60}")
+                    pprint(output_items)
+                    print(f"{'-' * 60}")
+                    print(f"Eval run report URL: {run.report_url}")
+                    break
+                print(
+                    f"Run completed but produced {len(output_items)}/{expected_items} output items "
+                    f"(result counts: {run.result_counts}); traces likely not yet fully ingested."
+                )
+            else:
+                print(f"Run did not complete (status: `{run.status}`, error: {run.error}).")
 
-        output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
-        print(f"\nOUTPUT ITEMS (Total: {len(output_items)})")
-        print(f"{'-'*60}")
-        pprint(output_items)
-        print(f"{'-'*60}")
+            if attempt == MAX_EVAL_ATTEMPTS:
+                raise RuntimeError(f"Eval run did not produce results after {MAX_EVAL_ATTEMPTS} attempts.")
+            print(f"Wait {RETRY_WAIT_SECONDS}s and retry.", flush=True)
+            time.sleep(RETRY_WAIT_SECONDS)
 
-        print(f"\nEval Run Report URL: {run.report_url}")
-    else:
-        print(f"\n✗ Evaluation run failed: {run.error}")
+    finally:
+        # Best-effort cleanup: eval object -> seeded conversations -> agent.
+        if eval_object is not None:
+            try:
+                client.evals.delete(eval_id=eval_object.id)
+                print(f"Deleted evaluation `{eval_object.id}`.")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete evaluation: {exc}")
 
-    client.evals.delete(eval_id=eval_object.id)
-    print("Evaluation deleted")
+        for cid in created_conversation_ids:
+            try:
+                client.conversations.delete(conversation_id=cid)
+                print(f"Deleted seeded conversation `{cid}`.")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete conversation `{cid}`: {exc}")
+
+        if created_agent is not None:
+            try:
+                project_client.agents.delete_version(
+                    agent_name=created_agent.name,
+                    agent_version=created_agent.version,
+                )
+                print(f"Deleted agent `{created_agent.name}` v{created_agent.version}.")
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                print(f"  (warning) could not delete agent: {exc}")

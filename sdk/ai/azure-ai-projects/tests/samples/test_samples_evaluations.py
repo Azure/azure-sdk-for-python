@@ -123,8 +123,9 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
       get_bearer_token_provider() which is incompatible with mock credentials.
 
     External service dependencies (require additional Azure services):
-    - sample_evaluations_builtin_with_traces.py: Requires Azure Application Insights and
-      uses azure-monitor-query to fetch traces.
+    - sample_evaluations_builtin_with_traces.py: Seeds agent conversations and waits for
+      Application Insights to ingest the resulting traces before running the eval; the
+      real-time ingestion wait is not suitable for recorded playback.
     - sample_scheduled_evaluations.py: Requires Azure RBAC assignment via
       azure-mgmt-authorization and azure-mgmt-resource, AND uploads Dataset.
     - sample_human_evaluations.py: Requires Azure Application Insights (fetches
@@ -146,7 +147,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             samples_to_skip=[
                 "sample_evaluations_ai_assisted.py",  # Similarity evaluator returns FAILED_EXECUTION ('query' is missing)
                 "sample_evaluations_builtin_with_inline_data_oai.py",  # 401 AuthenticationError (invalid subscription key or API endpoint)
-                "sample_evaluations_builtin_with_traces.py",  # Missing required env var APPINSIGHTS_RESOURCE_ID (KeyError)
+                "sample_evaluations_builtin_with_traces.py",  # Self-contained sample seeds traces then waits for real App Insights ingestion; not suitable for playback
                 "sample_evaluations_score_model_grader_with_image.py",  # Eval fails: image inputs not supported for configured grader model
                 "sample_evaluations_score_model_grader_with_image_model_target.py",  # Eval fails: image inputs not supported for configured grader model
                 "sample_evaluations_score_model_grader_with_audio.py",  # Eval fails: audio inputs not supported for configured grader model
