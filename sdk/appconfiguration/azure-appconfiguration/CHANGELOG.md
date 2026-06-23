@@ -1,6 +1,6 @@
 # Release History
 
-## 1.8.2 (Unreleased)
+## 1.9.0 (2026-06-18)
 
 ### Features Added
 
@@ -9,12 +9,6 @@
 - `ConfigurationSettingPaged` and `ConfigurationSettingPagedAsync` are now publicly exported from `azure.appconfiguration`.
 - Added a `description` property to `ConfigurationSetting` and `SecretReferenceConfigurationSetting` representing the description of the key-value (requires API version `2026-04-01` or later).
 - Added a `description` property and a `description` keyword argument to `ConfigurationSnapshot`, and a `description` keyword argument to `begin_create_snapshot()` for both sync and async clients (requires API version `2026-04-01` or later).
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.8.1 (2026-05-07)
 
