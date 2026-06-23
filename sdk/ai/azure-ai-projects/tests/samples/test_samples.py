@@ -246,10 +246,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "hosted_agents",
-            samples_to_skip=[
-                "sample_agent_endpoint.py",
-                "sample_session_log_stream.py",
-            ],
+            samples_to_skip=[],
         ),
     )
     @SamplePathPasser()
