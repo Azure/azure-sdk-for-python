@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0b2 (2026-06-24)
+## 3.0.0b2 (2026-06-23)
 
 ### Features Added
 
@@ -68,11 +68,11 @@
   - Added enum `StorageApplianceMetricsConfigurationStatusMetricsLevel`
   - Added model `StorageApplianceMonitoringConfigurationStatus`
   - Added enum `TransportProtocol`
-  - Operation group `ClusterManagersOperations` added method `begin_update_relay_private_endpoint_connection`
-  - Operation group `ClustersOperations` added method `begin_inspect`
-  - Operation group `ClustersOperations` added method `begin_rotate_credential`
-  - Added operation group `AccessBridgesOperations`
-  - Added operation group `KubernetesVersionsOperations`
+  - Model `ClusterManagersOperations` added method `begin_update_relay_private_endpoint_connection`
+  - Model `ClustersOperations` added method `begin_inspect`
+  - Model `ClustersOperations` added method `begin_rotate_credential`
+  - Added model `AccessBridgesOperations`
+  - Added model `KubernetesVersionsOperations`
 
 ## 3.0.0b1 (2026-04-02)
 
