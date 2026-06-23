@@ -383,12 +383,7 @@ class FoundryResultProcessor:
             # encoding-based strategy. Restricted to strings because the
             # audit field is only meaningful when both values are textual
             # (and arbitrary cross-type inequality would be too aggressive).
-            if (
-                isinstance(original, str)
-                and original
-                and isinstance(content, str)
-                and original != content
-            ):
+            if isinstance(original, str) and original and isinstance(content, str) and original != content:
                 message["original_value"] = original
 
             # Add context from labels if present (for XPIA)
