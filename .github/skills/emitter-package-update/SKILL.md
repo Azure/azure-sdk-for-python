@@ -45,27 +45,13 @@ Reset and sync the SDK repo to a clean state:
 git reset HEAD && git checkout . && git clean -fd && git checkout origin/main && git pull origin main
 ```
 
-### 2. Determine Latest Version
+Record the current `@azure-tools/typespec-python` version from `eng/emitter-package.json`
+(looking across the `dependencies`, `devDependencies`, and `overrides` sections) so you
+can tell later whether it was bumped.
 
-Run npm-check-updates to find the latest `@azure-tools/typespec-python` version:
+### 2. Update Dependencies (still on `main`)
 
-```bash
-npx npm-check-updates --packageFile eng/emitter-package.json
-```
-
-Extract the target version from the output (e.g., `0.61.3`).
-
-### 3. Create Feature Branch
-
-```bash
-git checkout -b bump-typespec-python-{version}
-```
-
-Replace `{version}` with the actual version number (e.g., `bump-typespec-python-0.61.3`).
-
-### 4. Update Dependencies
-
-Apply the version update:
+Apply the latest version updates to the package file:
 
 ```bash
 npx npm-check-updates --packageFile eng/emitter-package.json -u
@@ -73,35 +59,66 @@ npx npm-check-updates --packageFile eng/emitter-package.json -u
 
 Align `@azure-tools/openai-typespec` and `@typespec/openapi3` with the versions pinned in [azure-rest-api-specs/package.json](https://github.com/Azure/azure-rest-api-specs/blob/main/package.json) to ensure consistency between the emitter and the spec repo. Check the spec repo's versions and update `eng/emitter-package.json` accordingly (e.g., set `"@azure-tools/openai-typespec": "1.8.0"` and `"@typespec/openapi3": "1.9.0"` to match).
 
-### 5. Regenerate Config Files
+If a specific version was requested, pin `@azure-tools/typespec-python` to that exact
+version in `eng/emitter-package.json` (overriding what npm-check-updates picked).
 
-If you have a local clone of `typespec-azure`, regenerate the lock file using the branded emitter's `package.json` to ensure `devDependencies` are aligned:
+### 3. Check for Changes
+
+Determine whether anything actually changed:
 
 ```bash
-tsp-client generate-config-files \
-  --package-json=<path-to-local-typespec-azure>/packages/typespec-python/package.json
+git diff --quiet -- eng/emitter-package.json
 ```
 
-Otherwise, regenerate the lock file only:
+If there is no diff (exit code `0`), discard the working-tree changes and stop — all
+dependencies are already up to date and there is nothing to do:
+
+```bash
+git checkout -- eng/emitter-package.json
+```
+
+### 4. Create Feature Branch
+
+Read the (possibly updated) `@azure-tools/typespec-python` version and compare it with the
+value recorded in step 1 to choose names:
+
+- **If typespec-python was bumped** to `{version}`:
+  - branch: `bump-typespec-python-{version}`
+  - commit / PR title: `bump typespec-python {version}`
+  - PR body: `Bump @azure-tools/typespec-python to version {version}`
+- **Otherwise** (only other dependencies changed):
+  - branch: `update-emitter-package-dependencies`
+  - commit / PR title: `update emitter-package dependencies`
+  - PR body: `Update emitter-package.json dependencies to their latest aligned versions.`
+
+Create the branch, carrying over the working-tree changes:
+
+```bash
+git checkout -b {branch_name}
+```
+
+### 5. Regenerate Lock File
 
 ```bash
 tsp-client generate-lock-file
 ```
 
+This regenerates `eng/emitter-package-lock.json`.
+
 ### 6. Commit Changes
 
 ```bash
 git add eng/emitter-package.json eng/emitter-package-lock.json
-git commit -m "bump typespec-python {version}"
+git commit -m "{commit_message}"
 ```
 
 ### 7. Create Pull Request
 
-Push branch and create PR:
+Push the branch and create the PR:
 
 ```bash
-git push -u origin bump-typespec-python-{version}
-gh pr create --title "bump typespec-python {version}" --body "Bump @azure-tools/typespec-python to version {version}"
+git push -u origin {branch_name}
+gh pr create --title "{pr_title}" --body "{pr_body}"
 ```
 
 ### 8. After Merge
