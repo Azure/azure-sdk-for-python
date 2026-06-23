@@ -156,9 +156,9 @@ extends:
             - job: Sign_macOS
               displayName: Sign macOS Wheels
               pool:
-                name: $(WINDOWSPOOL)
-                image: $(WINDOWSVMIMAGE)
-                os: windows
+                name: $(LINUXPOOL)
+                image: $(LINUXVMIMAGE)
+                os: linux
               steps:
                 - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
 
@@ -173,6 +173,7 @@ extends:
                     targetPath: $(Build.ArtifactStagingDirectory)/packages_mac
 
                 - pwsh: |
+                    Get-ChildItem
                     python eng/scripts/wheel_signing/extract_sign_inputs.py `
                       --platform mac `
                       --wheels-dir "$(Build.ArtifactStagingDirectory)/packages_mac" `
@@ -202,9 +203,9 @@ extends:
             - job: Sign_Windows
               displayName: Sign Windows Wheels
               pool:
-                name: $(WINDOWSPOOL)
-                image: $(WINDOWSVMIMAGE)
-                os: windows
+                name: $(LINUXPOOL)
+                image: $(LINUXVMIMAGE)
+                os: linux
               steps:
                 - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
 
