@@ -164,6 +164,12 @@ class ArtifactCache:
 
         Each member's resolved destination path is validated to remain within ``destination``.
         Members with absolute paths or ``..`` segments that would escape the destination are rejected.
+
+        :param zip_file: The zip archive to extract.
+        :type zip_file: zipfile.ZipFile
+        :param destination: The directory to extract the archive members into.
+        :type destination: Union[str, os.PathLike]
+        :raises RuntimeError: If a member would be extracted outside of ``destination``.
         """
         destination_path = Path(destination).resolve()
         for member in zip_file.namelist():
