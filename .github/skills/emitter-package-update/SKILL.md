@@ -70,8 +70,10 @@ Determine whether anything actually changed:
 git diff --quiet -- eng/emitter-package.json
 ```
 
-If there is no diff (exit code `0`), discard the working-tree changes and stop — all
-dependencies are already up to date and there is nothing to do:
+**Decision rule:** A PR must be created whenever there is *any* change to `eng/emitter-package.json` — this includes the case where `@azure-tools/typespec-python` itself is unchanged but one or more other dependencies (e.g. `@typespec/*`, `@azure-tools/openai-typespec`) were updated or aligned. Do **not** require a `typespec-python` version bump as a precondition for opening a PR.
+
+- If there **is** a diff (exit code `1`), proceed to step 4 and open a PR.
+- Only if there is **no** diff at all (exit code `0`) — meaning every dependency is already up to date — discard the working-tree changes and stop, as there is nothing to commit:
 
 ```bash
 git checkout -- eng/emitter-package.json
