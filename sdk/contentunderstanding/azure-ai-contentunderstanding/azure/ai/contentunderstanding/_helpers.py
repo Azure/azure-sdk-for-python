@@ -15,7 +15,7 @@ from __future__ import annotations
 import datetime
 import math
 import re
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .models import (
@@ -38,6 +38,37 @@ _RESERVED_METADATA_KEYS = frozenset(
         "rai_warnings",
     }
 )
+
+# Marker emitted by ``to_llm_input`` at each page boundary. Future Content
+# Understanding service versions emit this same marker directly in the
+# returned markdown (per ContentUnderstanding-Docs#249). When the helper sees
+# any occurrence of this prefix in the input markdown it treats the service
+# as having already paginated the content and skips its own injection to
+# avoid duplicate markers.
+_INPUT_PAGE_MARKER_PREFIX = "<!-- InputPageNumber:"
+
+# Message prefixes the Content Understanding service has been observed to
+# emit into the ``warnings`` collection that are *not* real Responsible-AI
+# warnings (they are internal telemetry counters). The helper drops any
+# warning whose message starts with one of these prefixes before rendering
+# the ``rai_warnings:`` block, so the noise never reaches the LLM. Tracked
+# alongside a separate service bug to stop emitting them in the first place.
+_TELEMETRY_MESSAGE_PREFIXES: Tuple[str, ...] = ("LLMStats:",)
+
+
+def _has_input_page_marker(markdown: str) -> bool:
+    """Return True if *markdown* already contains an ``InputPageNumber`` marker.
+
+    Case-sensitive substring check. A single occurrence is sufficient: when
+    the service paginates content it places markers at every boundary, so
+    the presence of any marker means the helper should not inject its own.
+
+    :param str markdown: The markdown text to inspect.
+    :returns: ``True`` if at least one ``<!-- InputPageNumber:`` substring is
+        present, ``False`` otherwise.
+    :rtype: bool
+    """
+    return _INPUT_PAGE_MARKER_PREFIX in markdown
 
 
 # ---------------------------------------------------------------------------
@@ -64,6 +95,19 @@ def to_llm_input(
     classification results (parent with nested segments), the
     helper automatically expands the parent into per-segment blocks
     with category labels and markdown slices.
+
+    For document content, the helper emits ``<!-- InputPageNumber: N -->``
+    markers at page boundaries when the service result does not already
+    include them. ``N`` is the **original 1-based page number from the
+    source document** (i.e., the page index in the analyzed PDF), not a
+    counter that restarts at 1 for each call. This is important when the
+    analyze request specifies a ``content_range`` (e.g., ``"2-3, 5"``):
+    the markers in the output will read ``InputPageNumber: 2``, ``3``,
+    ``5`` \u2014 not ``1``, ``2``, ``3``. Downstream consumers (RAG indexers,
+    page-citation prompts) can rely on the marker value to cite the
+    correct source page even when only a subset of pages was analyzed.
+    Internal telemetry messages such as ``LLMStats: ...`` are filtered
+    from the rendered ``rai_warnings`` front matter.
 
     :param result: The ``AnalysisResult`` from a Content Understanding analyze operation.
     :type result: ~azure.ai.contentunderstanding.models.AnalysisResult
@@ -379,7 +423,12 @@ def _render_content_block(
 
 
 def _add_page_markers(content: "DocumentContent", markdown: str) -> str:
-    """Add ``<!-- page N -->`` markers to document markdown.
+    """Add ``<!-- InputPageNumber: N -->`` markers to document markdown.
+
+    If *markdown* already contains ``<!-- InputPageNumber:`` markers (e.g.,
+    because the service paginated the content itself per
+    ContentUnderstanding-Docs#249), the helper passes the markdown through
+    unchanged to avoid duplicate markers.
 
     :param content: The document content with page information.
     :type content: ~azure.ai.contentunderstanding.models.DocumentContent
@@ -387,6 +436,8 @@ def _add_page_markers(content: "DocumentContent", markdown: str) -> str:
     :returns: The markdown with page markers inserted.
     :rtype: str
     """
+    if _has_input_page_marker(markdown):
+        return markdown
     if content.pages:
         result = _page_markers_from_spans(markdown, content.pages)
         if result is not markdown:  # spans were found and used
@@ -403,7 +454,7 @@ def _page_markers_from_spans(markdown: str, pages: "List[DocumentPage]") -> str:
     :returns: The markdown with page markers inserted at span offsets.
     :rtype: str
     """
-    markers: List[tuple] = []
+    markers: List[Tuple[int, int]] = []
     for page in pages:
         if page.spans:
             markers.append((page.spans[0].offset, page.page_number))
@@ -419,7 +470,7 @@ def _page_markers_from_spans(markdown: str, pages: "List[DocumentPage]") -> str:
     # Compute offset shifts from the cleaning
     # Re-map original offsets to cleaned string positions
     break_pattern = re.compile(r"\n*<!-- PageBreak -->\n*")
-    shifts: List[tuple] = []  # (original_pos, delta)
+    shifts: List[Tuple[int, int]] = []  # (original_pos, delta)
     for m in break_pattern.finditer(markdown):
         replacement_len = 2  # "\n\n"
         delta = m.end() - m.start() - replacement_len
@@ -438,7 +489,7 @@ def _page_markers_from_spans(markdown: str, pages: "List[DocumentPage]") -> str:
     for offset, page_num in markers:
         adj = _adjusted_offset(offset)
         parts.append(cleaned[prev:adj])
-        parts.append(f"<!-- page {page_num} -->\n\n")
+        parts.append(f"{_INPUT_PAGE_MARKER_PREFIX} {page_num} -->\n\n")
         prev = adj
     parts.append(cleaned[prev:])
 
@@ -464,7 +515,7 @@ def _page_markers_from_breaks(markdown: str, content: "DocumentContent") -> str:
         page_num = start_page + i
         text = chunk.strip()
         if text:
-            parts.append(f"<!-- page {page_num} -->\n\n{text}")
+            parts.append(f"{_INPUT_PAGE_MARKER_PREFIX} {page_num} -->\n\n{text}")
     return "\n\n".join(parts)
 
 
@@ -559,11 +610,18 @@ def _format_warnings(
     """
     items: List[Dict[str, str]] = []
     for w in warnings:
+        message = getattr(w, "message", None)
+        # Skip internal service telemetry strings (e.g. ``LLMStats: ...``)
+        # that occasionally leak into the warnings collection. These are
+        # not Responsible-AI warnings and would otherwise be rendered into
+        # the LLM-facing ``rai_warnings:`` block.
+        if message and message.lstrip().startswith(_TELEMETRY_MESSAGE_PREFIXES):
+            continue
         entry: Dict[str, str] = {}
         if getattr(w, "code", None):
             entry["code"] = w.code  # type: ignore[assignment, union-attr]
-        if getattr(w, "message", None):
-            entry["message"] = w.message  # type: ignore[assignment, union-attr]
+        if message:
+            entry["message"] = message
         if getattr(w, "target", None):
             entry["target"] = w.target  # type: ignore[assignment, union-attr]
         if entry:

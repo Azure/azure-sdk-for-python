@@ -12,12 +12,12 @@ import logging
 import re
 import threading
 import uuid
-from collections.abc import Awaitable, Callable  # pylint: disable=import-error
+from collections.abc import AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
-from opentelemetry import baggage as _otel_baggage, context as _otel_context
+from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 from starlette.requests import Request
-from starlette.responses import JSONResponse, Response
+from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
@@ -357,6 +357,51 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             )
         return JSONResponse(spec)
 
+    def _wrap_streaming_response(
+        self,
+        response: StreamingResponse,
+        invocation_id: str,
+        session_id: str,
+    ) -> StreamingResponse:
+        """Wrap streaming body iteration with invocation logging/tracing context.
+
+        :param response: Streaming response to wrap.
+        :type response: StreamingResponse
+        :param invocation_id: Invocation identifier to stamp in context/logging.
+        :type invocation_id: str
+        :param session_id: Session identifier to stamp in context/logging.
+        :type session_id: str
+        :return: The response with a wrapped body_iterator.
+        :rtype: StreamingResponse
+        """
+        original_iterator = response.body_iterator
+
+        async def _wrapped_body() -> AsyncIterator[Any]:
+            # Re-establish the invocation context for the streaming task.
+            stream_inv_token = _invocation_id_var.set(invocation_id)
+            stream_session_token = _session_id_var.set(session_id)
+            try:
+                async for chunk in original_iterator:
+                    yield chunk
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error(
+                    "Error processing invocation %s: %s",
+                    invocation_id, exc, exc_info=True,
+                )
+                # Record the exception on the current span.
+                span = trace.get_current_span()
+                if span and span.is_recording():
+                    span.set_status(trace.StatusCode.ERROR, str(exc))
+                    span.set_attribute("error.type", type(exc).__name__)
+                    span.record_exception(exc)
+                raise
+            finally:
+                _invocation_id_var.reset(stream_inv_token)
+                _session_id_var.reset(stream_session_token)
+
+        response.body_iterator = _wrapped_body()
+        return response
+
     async def _create_invocation_endpoint(self, request: Request) -> Response:
         generated_id = str(uuid.uuid4())
         raw_invocation_id = request.headers.get(InvocationConstants.INVOCATION_ID_HEADER) or ""
@@ -427,12 +472,20 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 ),
             )
         finally:
+            # Always reset the request-scope tokens and detach baggage from the
+            # calling context here. The streaming wrapper separately resets the
+            # tokens it sets for stream iteration.
             _invocation_id_var.reset(inv_token)
             _session_id_var.reset(session_token)
             try:
                 _otel_context.detach(baggage_token)
             except ValueError:
                 pass
+
+        # Wrap streaming response body so exceptions during iteration are
+        # recorded on the current trace span and logged as invocation errors.
+        if isinstance(response, StreamingResponse):
+            response = self._wrap_streaming_response(response, invocation_id, session_id)
 
         return response
 
