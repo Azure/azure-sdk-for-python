@@ -6,5 +6,6 @@
 
 
 def template_main() -> bool:
+    # Test change for chronus-verify CI workflow (PR #46585) — no-op.
     print("Package code.")
     return True
