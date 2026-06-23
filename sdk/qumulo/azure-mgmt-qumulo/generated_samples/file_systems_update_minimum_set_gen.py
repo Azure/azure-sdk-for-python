@@ -15,7 +15,7 @@ from azure.mgmt.qumulo import QumuloMgmtClient
     pip install azure-identity
     pip install azure-mgmt-qumulo
 # USAGE
-    python file_systems_delete_minimum_set_gen.py
+    python file_systems_update_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,35 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.file_systems.begin_delete(
+    response = client.file_systems.update(
         resource_group_name="rgQumulo",
         file_system_name="qumulo-fs-01",
-    ).result()
+        properties={
+            "identity": {
+                "type": "str",
+                "principalId": "str",
+                "tenantId": "str",
+                "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+            },
+            "properties": {
+                "delegatedSubnetId": "str",
+                "marketplaceDetails": {
+                    "offerId": "str",
+                    "planId": "str",
+                    "marketplaceSubscriptionId": "str",
+                    "marketplaceSubscriptionStatus": "str",
+                    "publisherId": "str",
+                    "termUnit": "str",
+                },
+                "performanceTier": "str",
+                "userDetails": {"email": "str"},
+            },
+            "tags": {"str": "str"},
+        },
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-04-16/FileSystems_Delete_MinimumSet_Gen.json
+# x-ms-original-file: 2026-04-16/FileSystems_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

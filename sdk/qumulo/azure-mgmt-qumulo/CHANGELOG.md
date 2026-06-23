@@ -1,5 +1,13 @@
 # Release History
 
+## 2.1.0 (2026-06-23)
+
+### Features Added
+
+  - Client `QumuloMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `QumuloMgmtClient` added method `send_request`
+  - Model `FileSystemResourceUpdateProperties` added property `performance_tier`
+
 ## 2.0.0 (2024-09-05)
 
 ### Features Added
