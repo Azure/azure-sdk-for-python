@@ -1,11 +1,12 @@
 ---
 name: emitter-package-update
-description: Automate bumping typespec-python version in emitter-package.json for the Azure SDK for Python repository. Use this skill when the user wants to update @azure-tools/typespec-python to the latest version, create a PR for the version bump, or manage emitter-package.json updates.
+description: Automate updating the emitter package dependencies in eng/emitter-package.json for the Azure SDK for Python repository, then open a PR. Use this skill when the user wants to update @azure-tools/typespec-python (or any other dependency in emitter-package.json) to the latest version, create a PR for an emitter-package version bump, or manage emitter-package.json updates.
 ---
 
 # Emitter Package Update
 
-Bump `@azure-tools/typespec-python` to the latest version in `emitter-package.json` and create a PR.
+Update the dependencies in `eng/emitter-package.json` to their latest versions — including
+`@azure-tools/typespec-python` when a newer release exists — and, if anything changed, open a PR.
 
 ## Background
 
@@ -39,15 +40,17 @@ If any tool is missing:
 
 ### 1. Prepare Repository
 
-Reset and sync the SDK repo to a clean state:
+Reset and sync the SDK repo to a clean state.
+> **Warning:** this discards all uncommitted changes and switches to `main`. Only run it on
+> a clone/worktree dedicated to this task, never on a branch with work you want to keep.
 
 ```bash
 git reset HEAD && git checkout . && git clean -fd && git checkout origin/main && git pull origin main
 ```
 
 Record the current `@azure-tools/typespec-python` version from `eng/emitter-package.json`
-(looking across the `dependencies`, `devDependencies`, and `overrides` sections) so you
-can tell later whether it was bumped.
+(checking both the `dependencies` and `devDependencies` sections) so you can tell later
+whether it was bumped.
 
 ### 2. Update Dependencies (still on `main`)
 
@@ -66,7 +69,8 @@ npx npm-check-updates --packageFile eng/emitter-package.json -u
 > newest published tag in [Azure/typespec-azure](https://github.com/Azure/typespec-azure/tags)
 > (cross-checked against `packages/typespec-python/package.json` on `main`) — and edit
 > `eng/emitter-package.json` by hand to that version.
-Align `@azure-tools/openai-typespec` and `@typespec/openapi3` with the versions pinned in [azure-rest-api-specs/package.json](https://github.com/Azure/azure-rest-api-specs/blob/main/package.json) to ensure consistency between the emitter and the spec repo. Check the spec repo's versions and update `eng/emitter-package.json` accordingly (e.g., set `"@azure-tools/openai-typespec": "1.8.0"` and `"@typespec/openapi3": "1.9.0"` to match).
+
+Align `@azure-tools/openai-typespec` and `@typespec/openapi3` with the versions pinned in [azure-rest-api-specs/package.json](https://github.com/Azure/azure-rest-api-specs/blob/main/package.json) to ensure consistency between the emitter and the spec repo. Read the spec repo's current values for those two packages and set them to match in `eng/emitter-package.json` (do not assume specific version numbers — use whatever the spec repo currently pins).
 
 If a specific version was requested, pin `@azure-tools/typespec-python` to that exact
 version in `eng/emitter-package.json` (overriding what npm-check-updates picked).
@@ -108,6 +112,10 @@ Create the branch, carrying over the working-tree changes:
 git checkout -b {branch_name}
 ```
 
+If a branch with that name already exists locally from a previous run, delete it first
+(`git branch -D {branch_name}`) — or, if it holds work you want to keep, choose a different
+name — before re-creating it.
+
 ### 5. Regenerate Lock File
 
 ```bash
@@ -125,8 +133,18 @@ This regenerates `eng/emitter-package-lock.json`.
 
 ### 6. Commit Changes
 
+Stage both files when the lock file was regenerated:
+
 ```bash
 git add eng/emitter-package.json eng/emitter-package-lock.json
+git commit -m "{commit_message}"
+```
+
+If the lock file was **not** regenerated (restricted-network case in step 5), stage only the
+package file instead:
+
+```bash
+git add eng/emitter-package.json
 git commit -m "{commit_message}"
 ```
 
