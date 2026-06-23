@@ -295,6 +295,7 @@ class BaseExporter:
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-statements
+    # pylint: disable=too-many-locals
     def _transmit(self, envelopes: List[TelemetryItem], _skip_rate_limit: bool = False) -> ExportResult:
         """
         Transmit the data envelopes to the ingestion service.
