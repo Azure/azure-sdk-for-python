@@ -1,6 +1,12 @@
 # Release History
 
-## 2.1.0 (2026-06-19)
+## 3.0.0 (2026-06-19)
+
+### Breaking Changes
+
+  - Model `FileSystemResource` no longer exposes service-specific fields (`marketplace_details`, `storage_sku`, `admin_password`, `delegated_subnet_id`, `provisioning_state`, `cluster_login_url`, `private_ips`, `availability_zone`, `user_details`) as top-level attributes; they are now accessible via the nested `properties` attribute of type `FileSystemResourceProperties` (e.g. `file_system.properties.storage_sku`)
+  - Model `FileSystemResourceListResult` removed from the package namespace
+  - Model `OperationListResult` removed from the package namespace
 
 ### Features Added
 
