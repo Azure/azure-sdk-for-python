@@ -9264,11 +9264,11 @@ class StorageAppliance(TrackedResource):
      Required."""
 
     __flattened_items = [
-        "administrator_credentials",
         "rack_id",
+        "storage_appliance_sku_id",
         "rack_slot",
         "serial_number",
-        "storage_appliance_sku_id",
+        "administrator_credentials",
         "ca_certificate",
         "capacity",
         "capacity_used",
@@ -9617,18 +9617,18 @@ class StorageAppliancePatchProperties(_Model):
 class StorageApplianceProperties(_Model):
     """StorageApplianceProperties represents the properties of the storage appliance.
 
-    :ivar administrator_credentials: The credentials of the administrative interface on this
-     storage appliance. Required.
-    :vartype administrator_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
     :ivar rack_id: The resource ID of the rack where this storage appliance resides. Required.
     :vartype rack_id: str
+    :ivar storage_appliance_sku_id: The SKU for the storage appliance. Required.
+    :vartype storage_appliance_sku_id: str
     :ivar rack_slot: The slot the storage appliance is in the rack based on the BOM configuration.
      Required.
     :vartype rack_slot: int
     :ivar serial_number: The serial number for the storage appliance. Required.
     :vartype serial_number: str
-    :ivar storage_appliance_sku_id: The SKU for the storage appliance. Required.
-    :vartype storage_appliance_sku_id: str
+    :ivar administrator_credentials: The credentials of the administrative interface on this
+     storage appliance. Required.
+    :vartype administrator_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
     :ivar ca_certificate: The CA certificate information issued by the platform for connecting to
      TLS interfaces for the storage appliance. Callers add this certificate to their trusted CA
      store to allow secure communication with the storage appliance.
@@ -9677,18 +9677,18 @@ class StorageApplianceProperties(_Model):
      ~azure.mgmt.networkcloud.models.StorageApplianceProvisioningState
     """
 
-    administrator_credentials: "_models.AdministrativeCredentials" = rest_field(
-        name="administratorCredentials", visibility=["read", "create"]
-    )
-    """The credentials of the administrative interface on this storage appliance. Required."""
     rack_id: str = rest_field(name="rackId", visibility=["read", "create"])
     """The resource ID of the rack where this storage appliance resides. Required."""
+    storage_appliance_sku_id: str = rest_field(name="storageApplianceSkuId", visibility=["read", "create"])
+    """The SKU for the storage appliance. Required."""
     rack_slot: int = rest_field(name="rackSlot", visibility=["read", "create"])
     """The slot the storage appliance is in the rack based on the BOM configuration. Required."""
     serial_number: str = rest_field(name="serialNumber", visibility=["read", "create", "update", "delete", "query"])
     """The serial number for the storage appliance. Required."""
-    storage_appliance_sku_id: str = rest_field(name="storageApplianceSkuId", visibility=["read", "create"])
-    """The SKU for the storage appliance. Required."""
+    administrator_credentials: "_models.AdministrativeCredentials" = rest_field(
+        name="administratorCredentials", visibility=["read", "create"]
+    )
+    """The credentials of the administrative interface on this storage appliance. Required."""
     ca_certificate: Optional["_models.CertificateInfo"] = rest_field(name="caCertificate", visibility=["read"])
     """The CA certificate information issued by the platform for connecting to TLS interfaces for the
      storage appliance. Callers add this certificate to their trusted CA store to allow secure
@@ -9747,11 +9747,11 @@ class StorageApplianceProperties(_Model):
     def __init__(
         self,
         *,
-        administrator_credentials: "_models.AdministrativeCredentials",
         rack_id: str,
+        storage_appliance_sku_id: str,
         rack_slot: int,
         serial_number: str,
-        storage_appliance_sku_id: str,
+        administrator_credentials: "_models.AdministrativeCredentials",
     ) -> None: ...
 
     @overload
