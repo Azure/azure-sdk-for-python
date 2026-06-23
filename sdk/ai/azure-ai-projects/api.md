@@ -413,7 +413,6 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 content: bytes, 
                 remote_path: str, 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
@@ -425,7 +424,6 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 file_path: Union[str, PathLike[str]], 
                 remote_path: str, 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
@@ -9696,7 +9694,6 @@ namespace azure.ai.projects.operations
                 *, 
                 content: bytes, 
                 remote_path: str, 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
@@ -9708,7 +9705,6 @@ namespace azure.ai.projects.operations
                 *, 
                 file_path: Union[str, PathLike[str]], 
                 remote_path: str, 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
