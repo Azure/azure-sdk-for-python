@@ -1126,14 +1126,14 @@ class FileRange(DictMixin):
         End of file range in bytes.
     """
 
-    start: Optional[int] = None
+    start: int
     """Start of file range in bytes."""
-    end: Optional[int] = None
+    end: int
     """End of file range in bytes."""
     cleared: bool
     """Whether the range has been cleared. Only applicable when using list_ranges_diff."""
 
-    def __init__(self, start: Optional[int] = None, end: Optional[int] = None, *, cleared: bool = False) -> None:
+    def __init__(self, start: int, end: int, *, cleared: bool = False) -> None:
         self.start = start
         self.end = end
         self.cleared = cleared

@@ -1963,7 +1963,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
-    async def test_list_ranges_2(self, **kwargs):
+    async def test_list_ranges(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
