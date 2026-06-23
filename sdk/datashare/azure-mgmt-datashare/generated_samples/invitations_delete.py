@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.datashare import DataShareManagementClient
 
 """
@@ -29,15 +31,14 @@ def main():
         subscription_id="433a8dfd-e5d5-4e77-ad86-90acdc75eb1a",
     )
 
-    response = client.invitations.delete(
+    client.invitations.delete(
         resource_group_name="SampleResourceGroup",
         account_name="Account1",
         share_name="Share1",
         invitation_name="Invitation1",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/datashare/resource-manager/Microsoft.DataShare/stable/2020-09-01/examples/Invitations_Delete.json
+# x-ms-original-file: specification/datashare/resource-manager/Microsoft.DataShare/DataShare/stable/2020-09-01/examples/Invitations_Delete.json
 if __name__ == "__main__":
     main()

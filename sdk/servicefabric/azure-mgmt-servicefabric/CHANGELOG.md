@@ -1,5 +1,33 @@
 # Release History
 
+## 2.2.0b2 (2026-05-06)
+
+### Features Added
+
+  - Client `ServiceFabricManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ServiceFabricManagementClient` added method `send_request`
+  - Model `VMSizeResource` added property `system_data`
+  - Added model `ArmProxyResource`
+  - Added enum `CreatedByType`
+  - Added model `PatchProxyResource`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ApplicationResource` moved instance variable `type_version`, `parameters`, `upgrade_policy`, `minimum_nodes`, `maximum_nodes`, `remove_application_capacity`, `metrics`, `managed_identities`, `provisioning_state` and `type_name` under property `properties`
+  - Model `ApplicationResourceUpdate` moved instance variable `type_version`, `parameters`, `upgrade_policy`, `minimum_nodes`, `maximum_nodes`, `remove_application_capacity`, `metrics` and `managed_identities` under property `properties`
+  - Model `ClusterCodeVersionsResult` moved instance variable `code_version`, `support_expiry_utc` and `environment` under property `properties`
+  - Model `ClusterUpdateParameters` moved instance variable `add_on_features`, `certificate`, `certificate_common_names`, `client_certificate_common_names`, `client_certificate_thumbprints`, `cluster_code_version`, `event_store_service_enabled`, `fabric_settings`, `node_types`, `reliability_level`, `reverse_proxy_certificate`, `upgrade_description`, `application_type_versions_cleanup_policy`, `upgrade_mode`, `sf_zonal_upgrade_mode`, `vmss_zonal_upgrade_mode`, `infrastructure_service_manager`, `upgrade_wave`, `upgrade_pause_start_timestamp_utc`, `upgrade_pause_end_timestamp_utc`, `wave_upgrade_paused`, `notifications` and `enable_http_gateway_exclusive_auth_mode` under property `properties` whose type is `ClusterPropertiesUpdateParameters`
+  - Model `Resource` deleted or renamed its instance variable `location`, `tags` and `etag`
+  - Model `ServiceResource` moved instance variable `placement_constraints`, `correlation_scheme`, `service_load_metrics`, `service_placement_policies`, `default_move_cost`, `provisioning_state`, `service_kind`, `service_type_name`, `partition_description`, `service_package_activation_mode` and `service_dns_name` under property `properties`
+  - Model `ServiceResourceUpdate` moved instance variable `placement_constraints`, `correlation_scheme`, `service_load_metrics`, `service_placement_policies`, `default_move_cost` and `service_kind` under property `properties`
+  - Deleted or renamed model `ProxyResource`
+
+### Other Changes
+
+  - Deleted model `ApplicationResourceList`/`ApplicationTypeResourceList`/`ApplicationTypeVersionResourceList`/`ServiceResourceList`/`VMSizesResult` which actually were not used by SDK users
+
 ## 2.2.0b1 (2024-02-22)
 
 ### Features Added

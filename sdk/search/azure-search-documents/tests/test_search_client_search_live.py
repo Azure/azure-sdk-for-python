@@ -105,10 +105,7 @@ class TestSearchClientSearch(AzureRecordedTestCase):
             index_name,
             document_count=LARGE_HOTEL_DOCUMENT_COUNT,
         ) as (search_client, _):
-            assert (
-                len(list(search_client.search(search_text="")))
-                == LARGE_HOTEL_DOCUMENT_COUNT
-            )
+            assert len(list(search_client.search(search_text=""))) == LARGE_HOTEL_DOCUMENT_COUNT
 
     @live_test()
     def test_autocomplete_returns_completed_terms(self, endpoint):
