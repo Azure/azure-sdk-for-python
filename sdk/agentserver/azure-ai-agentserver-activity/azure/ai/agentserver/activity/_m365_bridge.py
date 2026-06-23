@@ -31,6 +31,23 @@ _adapter = None
 _agent_app = None
 _connection_manager = None
 
+# Outbound-auth mode. Defaults to the "simple" agent model (the agent instance
+# identity mints the Bot Connector token directly via the Managed Identity
+# Client). When set to True via :func:`set_digital_worker_mode`, the bridge
+# instead applies the federated-identity (FMI) patch used by the digital-worker
+# model. See :class:`ActivityAgentServerHost` for details.
+_digital_worker_mode = False
+
+
+def set_digital_worker_mode(enabled: bool) -> None:
+    """Select the outbound-auth model used by the bridge.
+
+    :param enabled: ``True`` for the digital-worker (FMI/blueprint) model;
+        ``False`` (default) for the simple agent-instance-identity model.
+    """
+    global _digital_worker_mode  # pylint: disable=global-statement
+    _digital_worker_mode = bool(enabled)
+
 
 def _apply_msal_patches() -> None:
     """Apply MSAL auth patches for Foundry container MAIB auth.
@@ -118,8 +135,13 @@ def _ensure_m365_initialized():
             "microsoft-agents-authentication-msal microsoft-agents-activity azure-identity"
         ) from exc
 
-    # Apply MSAL patches before any MsalConnectionManager is created
-    _apply_msal_patches()
+    # Apply MSAL patches before any MsalConnectionManager is created.
+    # The FMI/DefaultAzureCredential patch is only required by the
+    # digital-worker model; the simple agent-instance-identity model mints the
+    # Bot Connector token directly via the Managed Identity Client and must NOT
+    # be patched.
+    if _digital_worker_mode:
+        _apply_msal_patches()
 
     logger.info("Initializing M365 Agents SDK...")
     config = load_configuration_from_env(os.environ)
@@ -188,7 +210,18 @@ async def create_bridge_handler(request: Request) -> Response:
             content={"error": {"code": "invalid_request", "message": "Activity must have type and conversation.id"}},
         )
 
-    claims = ClaimsIdentity({}, is_authenticated=False, authentication_type="Anonymous")
+    if _digital_worker_mode:
+        # Digital-worker model: anonymous claims; the FMI patch supplies the
+        # outbound token via the federated-identity exchange.
+        claims = ClaimsIdentity({}, is_authenticated=False, authentication_type="Anonymous")
+    else:
+        # Simple model (default): present authenticated claims whose appid
+        # matches the service-connection client id (the agent instance
+        # identity). This makes the adapter use the real MSAL UserManagedIdentity
+        # connection for the outbound reply instead of an anonymous/empty token.
+        bot_app_id = os.environ.get("CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID", "").strip()
+        claim_dict = {"appid": bot_app_id, "aud": bot_app_id} if bot_app_id else {}
+        claims = ClaimsIdentity(claim_dict, is_authenticated=True, authentication_type="Bearer")
 
     try:
         invoke_response = await adapter.process_activity(claims, activity, agent_app.on_turn)
@@ -259,9 +292,10 @@ def _get_or_create_lazy_app() -> _LazyAgentApp:
 
 def _reset_for_testing() -> None:
     """Reset all module-level state. For test isolation only."""
-    global _m365_initialized, _adapter, _agent_app, _connection_manager, _lazy_agent_app
+    global _m365_initialized, _adapter, _agent_app, _connection_manager, _lazy_agent_app, _digital_worker_mode
     _m365_initialized = False
     _adapter = None
     _agent_app = None
     _connection_manager = None
     _lazy_agent_app = None
+    _digital_worker_mode = False

@@ -241,11 +241,16 @@ class ActivityAgentServerHost(AgentServerHost):
     When no ``handler`` is provided, the M365 Agents SDK is auto-initialized
     from environment variables.
 
+    By default the host uses the **simple** agent auth model, suitable for a
+    Microsoft Teams bot whose ``msaAppId`` is the agent instance
+    identity. Pass ``digital_worker=True`` to switch to the digital-worker
+    (blueprint + federated-identity) model.
+
     Usage::
 
         from azure.ai.agentserver.activity import ActivityAgentServerHost
 
-        app = ActivityAgentServerHost()
+        app = ActivityAgentServerHost()  # simple Teams agent (default)
 
         @app.activity("message")
         async def on_message(context, state):
@@ -258,6 +263,15 @@ class ActivityAgentServerHost(AgentServerHost):
         ``Request`` with ``request.state.activity`` set to the parsed
         activity dict.
     :type handler: Optional[Callable[[Request], Awaitable[Response]]]
+    :keyword digital_worker: Selects the outbound-auth model. ``False`` (the
+        default) uses the **simple** agent model: the agent *instance* identity
+        mints the Bot Connector token directly via the Managed Identity Client
+        (``UserManagedIdentity`` + the ``https://api.botframework.com/.default``
+        scope), which is what a single-tenant Teams bot whose ``msaAppId`` is the
+        agent instance identity requires. Set to ``True`` for the
+        **digital-worker** model, which uses the blueprint identity plus the
+        federated-identity (FMI) token exchange.
+    :paramtype digital_worker: bool
     """
 
     _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.Activity"
@@ -266,8 +280,16 @@ class ActivityAgentServerHost(AgentServerHost):
         self,
         *,
         handler: Optional[Callable[[Request], Awaitable[Response]]] = None,
+        digital_worker: bool = False,
         **kwargs: Any,
     ) -> None:
+        self._digital_worker = bool(digital_worker)
+
+        # Propagate the auth model to the bridge so it selects the matching
+        # claims / MSAL-patch behavior.
+        from ._m365_bridge import set_digital_worker_mode
+        set_digital_worker_mode(self._digital_worker)
+
         # Initialize default env vars before bridge/app setup.
         self._initialize_default_env_vars()
 
@@ -310,6 +332,16 @@ class ActivityAgentServerHost(AgentServerHost):
         1. Existing explicit connection env vars
         2. Values derived from Foundry-native env vars
         3. Static defaults for non-critical options
+
+        The defaults differ by auth model:
+
+        * **Simple** (``digital_worker=False``, default): the *instance*
+          identity (``FOUNDRY_AGENT_INSTANCE_CLIENT_ID``) mints the Bot
+          Connector token directly, scoped to
+          ``https://api.botframework.com/.default``.
+        * **Digital worker** (``digital_worker=True``): the *blueprint*
+          identity (``FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID``) is used with the
+          federated-identity exchange, scoped to the agentic resource.
         """
 
         def _get_nonempty(name: str) -> str:
@@ -319,21 +351,28 @@ class ActivityAgentServerHost(AgentServerHost):
             if value and not _get_nonempty(name):
                 os.environ[name] = value
 
+        if self._digital_worker:
+            scope = "5a807f24-c9de-44ee-a3a7-329e88a00ffc/.default"
+            client_id_env = "FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID"
+        else:
+            scope = "https://api.botframework.com/.default"
+            client_id_env = "FOUNDRY_AGENT_INSTANCE_CLIENT_ID"
+
         defaults = {
             "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__AUTHTYPE": "UserManagedIdentity",
-            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__SCOPES__0": "5a807f24-c9de-44ee-a3a7-329e88a00ffc/.default",
+            "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__SCOPES__0": scope,
             "CONNECTIONSMAP__0__SERVICEURL": "*",
             "CONNECTIONSMAP__0__CONNECTION": "SERVICE_CONNECTION",
         }
         for key, value in defaults.items():
             _set_if_missing(key, value)
 
-        foundry_blueprint_client_id = _get_nonempty("FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID")
+        foundry_client_id = _get_nonempty(client_id_env)
         foundry_tenant_id = _get_nonempty("FOUNDRY_AGENT_TENANT_ID")
 
         _set_if_missing(
             "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__CLIENTID",
-            foundry_blueprint_client_id,
+            foundry_client_id,
         )
         _set_if_missing(
             "CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID",
