@@ -42,8 +42,9 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     MCPTool,
+    MCPToolboxTool,
+    ToolboxSearchPreviewToolboxTool,
     PromptAgentDefinition,
-    ToolboxSearchPreviewTool,
 )
 
 load_dotenv()
@@ -63,7 +64,7 @@ async def main() -> None:
         project_client.get_openai_client() as openai_client,
     ):
 
-        inner_mcp_tool = MCPTool(
+        inner_mcp_tool = MCPToolboxTool(
             server_label=INNER_MCP_LABEL,
             server_url=INNER_MCP_URL,
             require_approval="never",
@@ -73,7 +74,7 @@ async def main() -> None:
         toolbox_version = await project_client.toolboxes.create_version(
             name=TOOLBOX_NAME,
             description=f"Toolbox with `{INNER_MCP_LABEL}` MCP server and tool search enabled.",
-            tools=[inner_mcp_tool, ToolboxSearchPreviewTool()],
+            tools=[inner_mcp_tool, ToolboxSearchPreviewToolboxTool()],
         )
         print(f"Created toolbox `{TOOLBOX_NAME}` (version {toolbox_version.version}).")
 

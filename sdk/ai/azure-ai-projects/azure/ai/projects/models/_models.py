@@ -233,8 +233,8 @@ class A2APreviewToolboxTool(ToolboxTool, discriminator="a2a_preview"):
      default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
      are silently ignored at runtime.
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    :ivar type: Required. A2_A_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.A2_A_PREVIEW
+    :ivar type: Required. A2A_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.A2A_PREVIEW
     :ivar base_url: Base URL of the agent.
     :vartype base_url: str
     :ivar agent_card_path: The path to the agent card relative to the ``base_url``. If not
@@ -246,8 +246,8 @@ class A2APreviewToolboxTool(ToolboxTool, discriminator="a2a_preview"):
     :vartype project_connection_id: str
     """
 
-    type: Literal[ToolboxToolType.A2_A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. A2_A_PREVIEW."""
+    type: Literal[ToolboxToolType.A2A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. A2A_PREVIEW."""
     base_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Base URL of the agent."""
     agent_card_path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -278,10 +278,10 @@ class A2APreviewToolboxTool(ToolboxTool, discriminator="a2a_preview"):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = ToolboxToolType.A2_A_PREVIEW  # type: ignore
+        self.type = ToolboxToolType.A2A_PREVIEW  # type: ignore
 
 
-class A2aProtocolConfiguration(_Model):
+class A2AProtocolConfiguration(_Model):
     """Configuration specific to the A2A protocol."""
 
 
@@ -11999,8 +11999,8 @@ class ProtocolConfiguration(_Model):
     :vartype activity: ~azure.ai.projects.models.ActivityProtocolConfiguration
     :ivar responses: Configuration for the responses protocol.
     :vartype responses: ~azure.ai.projects.models.ResponsesProtocolConfiguration
-    :ivar a2_a: Configuration for the A2A protocol.
-    :vartype a2_a: ~azure.ai.projects.models.A2aProtocolConfiguration
+    :ivar a2a: Configuration for the A2A protocol.
+    :vartype a2a: ~azure.ai.projects.models.A2AProtocolConfiguration
     :ivar mcp: Configuration for the MCP protocol.
     :vartype mcp: ~azure.ai.projects.models.McpProtocolConfiguration
     :ivar invocations: Configuration for the invocations protocol.
@@ -12017,8 +12017,8 @@ class ProtocolConfiguration(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Configuration for the responses protocol."""
-    a2_a: Optional["_models.A2aProtocolConfiguration"] = rest_field(
-        name="a2a", visibility=["read", "create", "update", "delete", "query"]
+    a2a: Optional["_models.A2AProtocolConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
     """Configuration for the A2A protocol."""
     mcp: Optional["_models.McpProtocolConfiguration"] = rest_field(
@@ -12040,7 +12040,7 @@ class ProtocolConfiguration(_Model):
         *,
         activity: Optional["_models.ActivityProtocolConfiguration"] = None,
         responses: Optional["_models.ResponsesProtocolConfiguration"] = None,
-        a2_a: Optional["_models.A2aProtocolConfiguration"] = None,
+        a2a: Optional["_models.A2AProtocolConfiguration"] = None,
         mcp: Optional["_models.McpProtocolConfiguration"] = None,
         invocations: Optional["_models.InvocationsProtocolConfiguration"] = None,
         invocations_ws: Optional["_models.InvocationsWsProtocolConfiguration"] = None,
@@ -12586,6 +12586,9 @@ class RoutineRun(_Model):
     :vartype trigger_type: str or ~azure.ai.projects.models.RoutineTriggerType
     :ivar trigger_name: The configured trigger name that produced the routine attempt.
     :vartype trigger_name: str
+    :ivar trigger_event_payload: The event payload captured from the event that triggered the
+     routine attempt, when available.
+    :vartype trigger_event_payload: dict[str, any]
     :ivar attempt_source: The source path that created the routine attempt. Known values are:
      "event_fire", "manual_dispatch", "queued_dispatch", "schedule_delivery", and "timer_delivery".
     :vartype attempt_source: str or ~azure.ai.projects.models.RoutineAttemptSource
@@ -12643,6 +12646,10 @@ class RoutineRun(_Model):
      \"github_issue\", \"schedule\", and \"timer\"."""
     trigger_name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The configured trigger name that produced the routine attempt."""
+    trigger_event_payload: Optional[dict[str, Any]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The event payload captured from the event that triggered the routine attempt, when available."""
     attempt_source: Optional[Union[str, "_models.RoutineAttemptSource"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12700,6 +12707,7 @@ class RoutineRun(_Model):
         phase: Optional[Union[str, "_models.RoutineRunPhase"]] = None,
         trigger_type: Optional[Union[str, "_models.RoutineTriggerType"]] = None,
         trigger_name: Optional[str] = None,
+        trigger_event_payload: Optional[dict[str, Any]] = None,
         attempt_source: Optional[Union[str, "_models.RoutineAttemptSource"]] = None,
         action_type: Optional[Union[str, "_models.RoutineActionType"]] = None,
         agent_id: Optional[str] = None,

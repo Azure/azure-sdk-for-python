@@ -96,7 +96,6 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 agent_session_id: Optional[str] = ..., 
                 content_type: str = "application/json", 
-                user_isolation_key: Optional[str] = ..., 
                 version_indicator: VersionIndicator, 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
@@ -108,7 +107,6 @@ namespace azure.ai.projects.aio.operations
                 body: JSON, 
                 *, 
                 content_type: str = "application/json", 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
@@ -119,7 +117,6 @@ namespace azure.ai.projects.aio.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
@@ -223,8 +220,6 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 agent_name: str, 
                 session_id: str, 
-                *, 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -236,7 +231,6 @@ namespace azure.ai.projects.aio.operations
                 *, 
                 path: str, 
                 recursive: Optional[bool] = ..., 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -273,7 +267,6 @@ namespace azure.ai.projects.aio.operations
                 agent_session_id: str, 
                 *, 
                 path: str, 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
@@ -296,8 +289,6 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 agent_name: str, 
                 session_id: str, 
-                *, 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
@@ -339,7 +330,6 @@ namespace azure.ai.projects.aio.operations
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
                 path: Optional[str] = ..., 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[SessionDirectoryEntry]: ...
 
@@ -351,7 +341,6 @@ namespace azure.ai.projects.aio.operations
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentSessionResource]: ...
 
@@ -2227,7 +2216,7 @@ namespace azure.ai.projects.aio.operations
                 metadata: Optional[dict[str, str]] = ..., 
                 policies: Optional[ToolboxPolicies] = ..., 
                 skills: Optional[List[ToolboxSkill]] = ..., 
-                tools: List[Tool], 
+                tools: List[ToolboxTool], 
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
 
@@ -2338,11 +2327,30 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.A2APreviewTool(Tool, discriminator='a2a_preview'):
         agent_card_path: Optional[str]
         base_url: Optional[str]
-        description: Optional[str]
-        name: Optional[str]
         project_connection_id: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.A2A_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                agent_card_path: Optional[str] = ..., 
+                base_url: Optional[str] = ..., 
+                project_connection_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.A2APreviewToolboxTool(ToolboxTool, discriminator='a2a_preview'):
+        agent_card_path: Optional[str]
+        base_url: Optional[str]
+        description: str
+        name: str
+        project_connection_id: Optional[str]
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.A2A_PREVIEW]
 
         @overload
         def __init__(
@@ -2358,6 +2366,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.A2AProtocolConfiguration(_Model):
 
 
     class azure.ai.projects.models.AISearchIndexResource(_Model):
@@ -2378,6 +2389,20 @@ namespace azure.ai.projects.models
                 project_connection_id: Optional[str] = ..., 
                 query_type: Optional[Union[str, AzureAISearchQueryType]] = ..., 
                 top_k: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ActivityProtocolConfiguration(_Model):
+        enable_m365_public_endpoint: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enable_m365_public_endpoint: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -2554,12 +2579,13 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         BOT_SERVICE = "BotService"
         BOT_SERVICE_RBAC = "BotServiceRbac"
+        BOT_SERVICE_TENANT = "BotServiceTenant"
         ENTRA = "Entra"
 
 
     class azure.ai.projects.models.AgentEndpointConfig(_Model):
         authorization_schemes: Optional[list[AgentEndpointAuthorizationScheme]]
-        protocols: Optional[list[Union[str, AgentEndpointProtocol]]]
+        protocol_configuration: Optional[ProtocolConfiguration]
         version_selector: Optional[VersionSelector]
 
         @overload
@@ -2567,7 +2593,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 authorization_schemes: Optional[list[AgentEndpointAuthorizationScheme]] = ..., 
-                protocols: Optional[list[Union[str, AgentEndpointProtocol]]] = ..., 
+                protocol_configuration: Optional[ProtocolConfiguration] = ..., 
                 version_selector: Optional[VersionSelector] = ...
             ) -> None: ...
 
@@ -2646,15 +2672,6 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        A2A = "a2a"
-        ACTIVITY_PROTOCOL = "activity_protocol"
-        INVOCATIONS = "invocations"
-        INVOCATIONS_WS = "invocations_ws"
-        MCP = "mcp"
-        RESPONSES = "responses"
 
 
     class azure.ai.projects.models.AgentSessionResource(_Model):
@@ -3029,19 +3046,13 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.AzureAISearchTool(Tool, discriminator='azure_ai_search'):
         azure_ai_search: AzureAISearchToolResource
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.AZURE_AI_SEARCH]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                azure_ai_search: AzureAISearchToolResource, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                azure_ai_search: AzureAISearchToolResource
             ) -> None: ...
 
         @overload
@@ -3056,6 +3067,27 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 indexes: list[AISearchIndexResource]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AzureAISearchToolboxTool(ToolboxTool, discriminator='azure_ai_search'):
+        azure_ai_search: AzureAISearchToolResource
+        description: str
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.AZURE_AI_SEARCH]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                azure_ai_search: AzureAISearchToolResource, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -3131,15 +3163,13 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.AzureFunctionTool(Tool, discriminator='azure_function'):
         azure_function: AzureFunctionDefinition
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.AZURE_FUNCTION]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                azure_function: AzureFunctionDefinition, 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                azure_function: AzureFunctionDefinition
             ) -> None: ...
 
         @overload
@@ -3201,19 +3231,13 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.BingCustomSearchPreviewTool(Tool, discriminator='bing_custom_search_preview'):
         bing_custom_search_preview: BingCustomSearchToolParameters
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.BING_CUSTOM_SEARCH_PREVIEW]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                bing_custom_search_preview: BingCustomSearchToolParameters, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                bing_custom_search_preview: BingCustomSearchToolParameters
             ) -> None: ...
 
         @overload
@@ -3272,19 +3296,13 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.BingGroundingTool(Tool, discriminator='bing_grounding'):
         bing_grounding: BingGroundingSearchToolParameters
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.BING_GROUNDING]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                bing_grounding: BingGroundingSearchToolParameters, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                bing_grounding: BingGroundingSearchToolParameters
             ) -> None: ...
 
         @overload
@@ -3340,12 +3358,37 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.BotServiceTenantAuthorizationScheme(AgentEndpointAuthorizationScheme, discriminator='BotServiceTenant'):
+        type: Literal[AgentEndpointAuthorizationSchemeType.BOT_SERVICE_TENANT]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.BrowserAutomationPreviewTool(Tool, discriminator='browser_automation_preview'):
         browser_automation_preview: BrowserAutomationToolParameters
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.BROWSER_AUTOMATION_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                browser_automation_preview: BrowserAutomationToolParameters
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.BrowserAutomationPreviewToolboxTool(ToolboxTool, discriminator='browser_automation_preview'):
+        browser_automation_preview: BrowserAutomationToolParameters
+        description: str
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.BROWSER_AUTOMATION_PREVIEW]
 
         @overload
         def __init__(
@@ -3390,20 +3433,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.CaptureStructuredOutputsTool(Tool, discriminator='capture_structured_outputs'):
-        description: Optional[str]
-        name: Optional[str]
         outputs: StructuredOutputDefinition
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.CAPTURE_STRUCTURED_OUTPUTS]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                outputs: StructuredOutputDefinition, 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                outputs: StructuredOutputDefinition
             ) -> None: ...
 
         @overload
@@ -3538,10 +3575,25 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.CodeInterpreterTool(Tool, discriminator='code_interpreter'):
         container: Optional[Union[str, AutoCodeInterpreterToolParam]]
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.CODE_INTERPRETER]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.CodeInterpreterToolboxTool(ToolboxTool, discriminator='code_interpreter'):
+        container: Optional[Union[str, AutoCodeInterpreterToolParam]]
+        description: str
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.CODE_INTERPRETER]
 
         @overload
         def __init__(
@@ -4499,22 +4551,7 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.EntraAuthorizationScheme(AgentEndpointAuthorizationScheme, discriminator='Entra'):
-        isolation_key_source: Optional[IsolationKeySource]
         type: Literal[AgentEndpointAuthorizationSchemeType.ENTRA]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                isolation_key_source: Optional[IsolationKeySource] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.EntraIDCredentials(BaseCredentials, discriminator='AAD'):
-        type: Literal[CredentialType.ENTRA_ID]
 
         @overload
         def __init__(self) -> None: ...
@@ -4523,8 +4560,8 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.EntraIsolationKeySource(IsolationKeySource, discriminator='Entra'):
-        kind: Literal[IsolationKeySourceKind.ENTRA]
+    class azure.ai.projects.models.EntraIDCredentials(BaseCredentials, discriminator='AAD'):
+        type: Literal[CredentialType.ENTRA_ID]
 
         @overload
         def __init__(self) -> None: ...
@@ -5119,14 +5156,35 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.FabricIQPreviewTool(Tool, discriminator='fabric_iq_preview'):
-        description: Optional[str]
-        name: Optional[str]
         project_connection_id: str
         require_approval: Optional[Union[MCPToolRequireApproval, str]]
         server_label: Optional[str]
         server_url: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.FABRIC_IQ_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                project_connection_id: str, 
+                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
+                server_label: Optional[str] = ..., 
+                server_url: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.FabricIQPreviewToolboxTool(ToolboxTool, discriminator='fabric_iq_preview'):
+        description: str
+        name: str
+        project_connection_id: str
+        require_approval: Optional[Union[MCPToolRequireApproval, str]]
+        server_label: Optional[str]
+        server_url: Optional[str]
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.FABRIC_IQ_PREVIEW]
 
         @overload
         def __init__(
@@ -5224,14 +5282,35 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.FileSearchTool(Tool, discriminator='file_search'):
-        description: Optional[str]
         filters: Optional[Filters]
         max_num_results: Optional[int]
-        name: Optional[str]
         ranking_options: Optional[RankingOptions]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.FILE_SEARCH]
         vector_store_ids: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                filters: Optional[Filters] = ..., 
+                max_num_results: Optional[int] = ..., 
+                ranking_options: Optional[RankingOptions] = ..., 
+                vector_store_ids: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.FileSearchToolboxTool(ToolboxTool, discriminator='file_search'):
+        description: str
+        filters: Optional[Filters]
+        max_num_results: Optional[int]
+        name: str
+        ranking_options: Optional[RankingOptions]
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.FILE_SEARCH]
+        vector_store_ids: Optional[list[str]]
 
         @overload
         def __init__(
@@ -5243,7 +5322,7 @@ namespace azure.ai.projects.models
                 name: Optional[str] = ..., 
                 ranking_options: Optional[RankingOptions] = ..., 
                 tool_configs: Optional[dict[str, ToolConfig]] = ..., 
-                vector_store_ids: list[str]
+                vector_store_ids: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -5339,20 +5418,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.FunctionShellToolParam(Tool, discriminator='shell'):
-        description: Optional[str]
         environment: Optional[FunctionShellToolParamEnvironment]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.SHELL]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                description: Optional[str] = ..., 
-                environment: Optional[FunctionShellToolParamEnvironment] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                environment: Optional[FunctionShellToolParamEnvironment] = ...
             ) -> None: ...
 
         @overload
@@ -5486,16 +5559,6 @@ namespace azure.ai.projects.models
         REGEX = "regex"
 
 
-    class azure.ai.projects.models.HeaderIsolationKeySource(IsolationKeySource, discriminator='Header'):
-        kind: Literal[IsolationKeySourceKind.HEADER]
-
-        @overload
-        def __init__(self) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.HeaderTelemetryEndpointAuth(TelemetryEndpointAuth, discriminator='header'):
         header_name: str
         secret_id: str
@@ -5596,18 +5659,15 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.ImageGenTool(Tool, discriminator='image_generation'):
         action: Optional[Union[str, ImageGenAction]]
         background: Optional[Literal["transparent", "opaque", "auto"]]
-        description: Optional[str]
         input_fidelity: Optional[Union[str, InputFidelity]]
         input_image_mask: Optional[ImageGenToolInputImageMask]
         model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], str]]
         moderation: Optional[Literal["auto", "low"]]
-        name: Optional[str]
         output_compression: Optional[int]
         output_format: Optional[Literal["png", "webp", "jpeg"]]
         partial_images: Optional[int]
         quality: Optional[Literal["low", "medium", "high", "auto"]]
         size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.IMAGE_GENERATION]
 
         @overload
@@ -5616,18 +5676,15 @@ namespace azure.ai.projects.models
                 *, 
                 action: Optional[Union[str, ImageGenAction]] = ..., 
                 background: Optional[Literal[transparent, opaque, auto]] = ..., 
-                description: Optional[str] = ..., 
                 input_fidelity: Optional[Union[str, InputFidelity]] = ..., 
                 input_image_mask: Optional[ImageGenToolInputImageMask] = ..., 
                 model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], str]] = ..., 
                 moderation: Optional[Literal[auto, low]] = ..., 
-                name: Optional[str] = ..., 
                 output_compression: Optional[int] = ..., 
                 output_format: Optional[Literal[png, webp, jpeg]] = ..., 
                 partial_images: Optional[int] = ..., 
                 quality: Optional[Literal[low, medium, high, auto]] = ..., 
-                size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ...
             ) -> None: ...
 
         @overload
@@ -5888,6 +5945,12 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.InvocationsProtocolConfiguration(_Model):
+
+
+    class azure.ai.projects.models.InvocationsWsProtocolConfiguration(_Model):
+
+
     class azure.ai.projects.models.InvokeAgentInvocationsApiDispatchPayload(RoutineDispatchPayload, discriminator='invoke_agent_invocations_api'):
         input: Any
         type: Literal[RoutineDispatchPayloadType.INVOKE_AGENT_INVOCATIONS_API]
@@ -5960,25 +6023,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.IsolationKeySource(_Model):
-        kind: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                kind: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ENTRA = "Entra"
-        HEADER = "Header"
-
-
     class azure.ai.projects.models.JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CANCELLED = "cancelled"
         FAILED = "failed"
@@ -5988,19 +6032,10 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LocalShellToolParam(Tool, discriminator='local_shell'):
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.LOCAL_SHELL]
 
         @overload
-        def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
+        def __init__(self) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -6055,7 +6090,6 @@ namespace azure.ai.projects.models
         server_description: Optional[str]
         server_label: str
         server_url: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.MCP]
 
         @overload
@@ -6071,8 +6105,7 @@ namespace azure.ai.projects.models
                 require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
                 server_description: Optional[str] = ..., 
                 server_label: str, 
-                server_url: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                server_url: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -6105,6 +6138,45 @@ namespace azure.ai.projects.models
                 *, 
                 always: Optional[MCPToolFilter] = ..., 
                 never: Optional[MCPToolFilter] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.MCPToolboxTool(ToolboxTool, discriminator='mcp'):
+        allowed_tools: Optional[Union[list[str], MCPToolFilter]]
+        authorization: Optional[str]
+        connector_id: Optional[Literal["connector_dropbox", "connector_gmail", "connector_googlecalendar", "connector_googledrive", "connector_microsoftteams", "connector_outlookcalendar", "connector_outlookemail", "connector_sharepoint"]]
+        defer_loading: Optional[bool]
+        description: str
+        headers: Optional[dict[str, str]]
+        name: str
+        project_connection_id: Optional[str]
+        require_approval: Optional[Union[MCPToolRequireApproval, Literal["always"], Literal["never"]]]
+        server_description: Optional[str]
+        server_label: str
+        server_url: Optional[str]
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.MCP]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ..., 
+                authorization: Optional[str] = ..., 
+                connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ..., 
+                defer_loading: Optional[bool] = ..., 
+                description: Optional[str] = ..., 
+                headers: Optional[dict[str, str]] = ..., 
+                name: Optional[str] = ..., 
+                project_connection_id: Optional[str] = ..., 
+                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
+                server_description: Optional[str] = ..., 
+                server_label: str, 
+                server_url: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -6146,6 +6218,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.McpProtocolConfiguration(_Model):
 
 
     class azure.ai.projects.models.MemoryItem(_Model):
@@ -6227,12 +6302,9 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.MemorySearchPreviewTool(Tool, discriminator='memory_search_preview'):
-        description: Optional[str]
         memory_store_name: str
-        name: Optional[str]
         scope: str
         search_options: Optional[MemorySearchOptions]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.MEMORY_SEARCH_PREVIEW]
         update_delay: Optional[int]
 
@@ -6240,12 +6312,9 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
-                description: Optional[str] = ..., 
                 memory_store_name: str, 
-                name: Optional[str] = ..., 
                 scope: str, 
                 search_options: Optional[MemorySearchOptions] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
                 update_delay: Optional[int] = ...
             ) -> None: ...
 
@@ -6456,20 +6525,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.MicrosoftFabricPreviewTool(Tool, discriminator='fabric_dataagent_preview'):
-        description: Optional[str]
         fabric_dataagent_preview: FabricDataAgentToolParameters
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.FABRIC_DATAAGENT_PREVIEW]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                description: Optional[str] = ..., 
-                fabric_dataagent_preview: FabricDataAgentToolParameters, 
-                name: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                fabric_dataagent_preview: FabricDataAgentToolParameters
             ) -> None: ...
 
         @overload
@@ -6833,13 +6896,32 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.OpenApiTool(Tool, discriminator='openapi'):
         openapi: OpenApiFunctionDefinition
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.OPENAPI]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                openapi: OpenApiFunctionDefinition
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.OpenApiToolboxTool(ToolboxTool, discriminator='openapi'):
+        description: str
+        name: str
+        openapi: OpenApiFunctionDefinition
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.OPENAPI]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
                 openapi: OpenApiFunctionDefinition, 
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
@@ -7326,15 +7408,39 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ProtocolConfiguration(_Model):
+        a2a: Optional[A2AProtocolConfiguration]
+        activity: Optional[ActivityProtocolConfiguration]
+        invocations: Optional[InvocationsProtocolConfiguration]
+        invocations_ws: Optional[InvocationsWsProtocolConfiguration]
+        mcp: Optional[McpProtocolConfiguration]
+        responses: Optional[ResponsesProtocolConfiguration]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                a2a: Optional[A2AProtocolConfiguration] = ..., 
+                activity: Optional[ActivityProtocolConfiguration] = ..., 
+                invocations: Optional[InvocationsProtocolConfiguration] = ..., 
+                invocations_ws: Optional[InvocationsWsProtocolConfiguration] = ..., 
+                mcp: Optional[McpProtocolConfiguration] = ..., 
+                responses: Optional[ResponsesProtocolConfiguration] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ProtocolVersionRecord(_Model):
-        protocol: Union[str, AgentProtocol]
+        protocol: Union[str, AgentEndpointProtocol]
         version: str
 
         @overload
         def __init__(
                 self, 
                 *, 
-                protocol: Union[str, AgentProtocol], 
+                protocol: Union[str, AgentEndpointProtocol], 
                 version: str
             ) -> None: ...
 
@@ -7496,8 +7602,25 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.ReminderPreviewTool(Tool, discriminator='reminder_preview'):
         description: Optional[str]
         name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.REMINDER_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ReminderPreviewToolboxTool(ToolboxTool, discriminator='reminder_preview'):
+        description: str
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.REMINDER_PREVIEW]
 
         @overload
         def __init__(
@@ -7545,6 +7668,9 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ResponsesProtocolConfiguration(_Model):
 
 
     class azure.ai.projects.models.RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -7652,6 +7778,7 @@ namespace azure.ai.projects.models
         started_at: Optional[datetime]
         status: Optional[RoutineRunStatus]
         task_id: Optional[str]
+        trigger_event_payload: Optional[dict[str, Any]]
         trigger_name: Optional[str]
         trigger_type: Optional[Union[str, RoutineTriggerType]]
         triggered_at: Optional[datetime]
@@ -7678,6 +7805,7 @@ namespace azure.ai.projects.models
                 started_at: Optional[datetime] = ..., 
                 status: Optional[RoutineRunStatus] = ..., 
                 task_id: Optional[str] = ..., 
+                trigger_event_payload: Optional[dict[str, Any]] = ..., 
                 trigger_name: Optional[str] = ..., 
                 trigger_type: Optional[Union[str, RoutineTriggerType]] = ..., 
                 triggered_at: Optional[datetime] = ...
@@ -7930,20 +8058,14 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.SharepointPreviewTool(Tool, discriminator='sharepoint_grounding_preview'):
-        description: Optional[str]
-        name: Optional[str]
         sharepoint_grounding_preview: SharepointGroundingToolParameters
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.SHAREPOINT_GROUNDING_PREVIEW]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                sharepoint_grounding_preview: SharepointGroundingToolParameters, 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
+                sharepoint_grounding_preview: SharepointGroundingToolParameters
             ) -> None: ...
 
         @overload
@@ -8676,11 +8798,11 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.ToolboxSearchPreviewTool(Tool, discriminator='toolbox_search_preview'):
-        description: Optional[str]
-        name: Optional[str]
-        tool_configs: Optional[dict[str, ToolConfig]]
-        type: Literal[ToolType.TOOLBOX_SEARCH_PREVIEW]
+    class azure.ai.projects.models.ToolboxSearchPreviewToolboxTool(ToolboxTool, discriminator='toolbox_search_preview'):
+        description: str
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.TOOLBOX_SEARCH_PREVIEW]
 
         @overload
         def __init__(
@@ -8726,6 +8848,41 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ToolboxTool(_Model):
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        A2A_PREVIEW = "a2a_preview"
+        AZURE_AI_SEARCH = "azure_ai_search"
+        BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
+        CODE_INTERPRETER = "code_interpreter"
+        FABRIC_IQ_PREVIEW = "fabric_iq_preview"
+        FILE_SEARCH = "file_search"
+        MCP = "mcp"
+        OPENAPI = "openapi"
+        REMINDER_PREVIEW = "reminder_preview"
+        TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+        WEB_SEARCH = "web_search"
+        WORK_IQ_PREVIEW = "work_iq_preview"
+
+
     class azure.ai.projects.models.ToolboxVersionObject(_Model):
         created_at: datetime
         description: Optional[str]
@@ -8734,7 +8891,7 @@ namespace azure.ai.projects.models
         name: str
         policies: Optional[ToolboxPolicies]
         skills: Optional[list[ToolboxSkill]]
-        tools: list[Tool]
+        tools: list[ToolboxTool]
         version: str
 
         @overload
@@ -8748,7 +8905,7 @@ namespace azure.ai.projects.models
                 name: str, 
                 policies: Optional[ToolboxPolicies] = ..., 
                 skills: Optional[list[ToolboxSkill]] = ..., 
-                tools: list[Tool], 
+                tools: list[ToolboxTool], 
                 version: str
             ) -> None: ...
 
@@ -9053,11 +9210,8 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.WebSearchTool(Tool, discriminator='web_search'):
         custom_search_configuration: Optional[WebSearchConfiguration]
-        description: Optional[str]
         filters: Optional[WebSearchToolFilters]
-        name: Optional[str]
         search_context_size: Optional[Literal["low", "medium", "high"]]
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.WEB_SEARCH]
         user_location: Optional[WebSearchApproximateLocation]
 
@@ -9066,11 +9220,8 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
-                description: Optional[str] = ..., 
                 filters: Optional[WebSearchToolFilters] = ..., 
-                name: Optional[str] = ..., 
                 search_context_size: Optional[Literal[low, medium, high]] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
                 user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
@@ -9086,6 +9237,33 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 allowed_domains: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.WebSearchToolboxTool(ToolboxTool, discriminator='web_search'):
+        custom_search_configuration: Optional[WebSearchConfiguration]
+        description: str
+        filters: Optional[WebSearchToolFilters]
+        name: str
+        search_context_size: Optional[Literal["low", "medium", "high"]]
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.WEB_SEARCH]
+        user_location: Optional[WebSearchApproximateLocation]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
+                description: Optional[str] = ..., 
+                filters: Optional[WebSearchToolFilters] = ..., 
+                name: Optional[str] = ..., 
+                search_context_size: Optional[Literal[low, medium, high]] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
+                user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
         @overload
@@ -9108,11 +9286,26 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.WorkIQPreviewTool(Tool, discriminator='work_iq_preview'):
-        description: Optional[str]
-        name: Optional[str]
         project_connection_id: str
-        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.WORK_IQ_PREVIEW]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                project_connection_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.WorkIQPreviewToolboxTool(ToolboxTool, discriminator='work_iq_preview'):
+        description: str
+        name: str
+        project_connection_id: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.WORK_IQ_PREVIEW]
 
         @overload
         def __init__(
@@ -9162,7 +9355,6 @@ namespace azure.ai.projects.operations
                 *, 
                 agent_session_id: Optional[str] = ..., 
                 content_type: str = "application/json", 
-                user_isolation_key: Optional[str] = ..., 
                 version_indicator: VersionIndicator, 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
@@ -9174,7 +9366,6 @@ namespace azure.ai.projects.operations
                 body: JSON, 
                 *, 
                 content_type: str = "application/json", 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
@@ -9185,7 +9376,6 @@ namespace azure.ai.projects.operations
                 body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
@@ -9289,8 +9479,6 @@ namespace azure.ai.projects.operations
                 self, 
                 agent_name: str, 
                 session_id: str, 
-                *, 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -9302,7 +9490,6 @@ namespace azure.ai.projects.operations
                 *, 
                 path: str, 
                 recursive: Optional[bool] = ..., 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -9339,7 +9526,6 @@ namespace azure.ai.projects.operations
                 agent_session_id: str, 
                 *, 
                 path: str, 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
@@ -9362,8 +9548,6 @@ namespace azure.ai.projects.operations
                 self, 
                 agent_name: str, 
                 session_id: str, 
-                *, 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AgentSessionResource: ...
 
@@ -9405,7 +9589,6 @@ namespace azure.ai.projects.operations
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
                 path: Optional[str] = ..., 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[SessionDirectoryEntry]: ...
 
@@ -9417,7 +9600,6 @@ namespace azure.ai.projects.operations
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
-                user_isolation_key: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[AgentSessionResource]: ...
 
@@ -11295,7 +11477,7 @@ namespace azure.ai.projects.operations
                 metadata: Optional[dict[str, str]] = ..., 
                 policies: Optional[ToolboxPolicies] = ..., 
                 skills: Optional[List[ToolboxSkill]] = ..., 
-                tools: List[Tool], 
+                tools: List[ToolboxTool], 
                 **kwargs: Any
             ) -> ToolboxVersionObject: ...
 
