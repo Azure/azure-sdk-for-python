@@ -6,7 +6,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import FeatureStoreSettings as RestFeatureStoreSettings
+from azure.ai.ml._restclient.arm_ml_service.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 from .compute_runtime import ComputeRuntime

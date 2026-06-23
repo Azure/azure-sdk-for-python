@@ -9,10 +9,10 @@ from .Check import Check, REPO_ROOT
 from ci_tools.functions import get_package_from_repo
 from ci_tools.logging import logger
 
-# Chronus is pinned as a dev dependency in .github/chronus/package.json with
-# a committed lockfile so both the top-level version and all transitive
+# Chronus is pinned as a dev dependency in .github/package.json with a
+# committed lockfile so both the top-level version and all transitive
 # dependencies are reproducible.
-_CHRONUS_INSTALL_DIR = os.path.join(".github", "chronus")
+_CHRONUS_INSTALL_DIR = ".github"
 _CHRONUS_BIN_NAME = "chronus.cmd" if os.name == "nt" else "chronus"
 _CHRONUS_BIN_PATH = os.path.join(_CHRONUS_INSTALL_DIR, "node_modules", ".bin", _CHRONUS_BIN_NAME)
 
@@ -127,7 +127,7 @@ class changelog(Check):
     def _ensure_chronus_installed(self) -> None:
         """Verify Chronus is installed locally, offering to install if not.
 
-        Runs ``npm ci`` against ``.github/chronus`` so only the exact
+        Runs ``npm ci`` against ``.github`` so only the exact
         versions recorded in ``package-lock.json`` are installed.
         Raises ``SystemExit`` if the user declines or installation fails.
         """
@@ -198,9 +198,15 @@ class changelog(Check):
         """Resolve a package argument to a Chronus package name."""
         if not package_arg:
             return None
-        # Resolve relative paths (e.g. ".") to absolute so get_package_from_repo
-        # doesn't accidentally glob against the repo root.
-        target = os.path.abspath(package_arg) if os.path.exists(package_arg) else package_arg
+        path_like = (
+            os.path.isabs(package_arg) or package_arg.startswith(".") or os.sep in package_arg or "/" in package_arg
+        )
+        if os.path.isabs(package_arg):
+            target = os.path.abspath(package_arg)
+        elif path_like:
+            target = os.path.join(REPO_ROOT, package_arg)
+        else:
+            target = package_arg
         try:
             parsed = get_package_from_repo(target, REPO_ROOT)
             return parsed.name if parsed else package_arg

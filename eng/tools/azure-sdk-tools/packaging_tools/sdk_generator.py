@@ -51,6 +51,72 @@ def execute_func_with_timeout(func, timeout: int = 900) -> Any:
     return multiprocessing.Pool(processes=1).apply_async(func).get(timeout)
 
 
+# Hard-coded name of the optional post-emitter script. If a service team places a
+# script with this name in the generated package folder (sdk/<service>/azure-*),
+# it will be executed after code generation.
+POST_EMITTER_SCRIPT_NAME = "PostEmitter.ps1"
+
+
+def run_post_emitter_script(sdk_code_path: str) -> None:
+    """Run the optional post-emitter PowerShell script for a package, if present.
+
+    When a script whose name matches ``POST_EMITTER_SCRIPT_NAME`` exists directly
+    inside the generated package folder (``sdk/<service>/azure-*``), it is executed
+    after code generation so service teams can run custom post-processing on the
+    generated SDK. The script's stdout/stderr are captured and logged so they appear
+    in the pipeline output. Failures are logged but never fail the overall generation.
+    """
+    package_folder = Path(sdk_code_path).resolve()
+    script_path = package_folder / POST_EMITTER_SCRIPT_NAME
+
+    # Run the script only when it exists; otherwise this is a no-op.
+    if not script_path.is_file():
+        _LOGGER.info(f"[POST-EMITTER] Skip running post-emitter script since file {script_path} was not found.")
+        return
+
+    pwsh = shutil.which("pwsh") or shutil.which("powershell")
+    if not pwsh:
+        _LOGGER.warning(
+            f"[POST-EMITTER] Found {script_path} but no PowerShell executable (pwsh/powershell) is available; skipping."
+        )
+        return
+
+    _LOGGER.info(f"[POST-EMITTER] Running post-emitter script: {script_path}")
+    post_emitter_start_time = time.time()
+    try:
+        process = subprocess.run(
+            [
+                pwsh,
+                "-NonInteractive",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(script_path),
+            ],
+            cwd=str(package_folder),
+            capture_output=True,
+            text=True,
+            timeout=600,
+        )
+        if process.stdout:
+            _LOGGER.info(f"[POST-EMITTER] stdout:\n{process.stdout}")
+        if process.stderr:
+            _LOGGER.warning(f"[POST-EMITTER] stderr:\n{process.stderr}")
+        if process.returncode != 0:
+            _LOGGER.warning(f"[POST-EMITTER] Script {script_path} exited with non-zero code {process.returncode}.")
+        else:
+            _LOGGER.info(f"[POST-EMITTER] Script {script_path} completed successfully.")
+    except subprocess.TimeoutExpired:
+        _LOGGER.warning(f"[POST-EMITTER] Script {script_path} timed out after 600 seconds.")
+    except Exception as e:
+        _LOGGER.warning(f"[POST-EMITTER] Fail to run script {script_path}: {str(e)}")
+    finally:
+        _LOGGER.info(
+            f"[POST-EMITTER] post-emitter script cost time: {int(time.time() - post_emitter_start_time)} seconds"
+        )
+
+
 # return relative path like: network/azure-mgmt-network
 def extract_sdk_folder(python_md: List[str]) -> str:
     pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
@@ -242,12 +308,37 @@ def main(generate_input, generate_output):
                 readme_or_tsp=readme_or_tsp,
             )
 
+            # Run optional post-emitter script provided by the service team
+            run_post_emitter_script(sdk_code_path)
+
             # Generate ApiView
-            if data.get("runMode") in ["spec-pull-request"]:
+            if data.get("runMode") in ["spec-pull-request", "release"]:
                 apiview_start_time = time.time()
                 try:
-                    _LOGGER.info("install dependencies for apiview generation")
-                    package_path = Path(sdk_folder, folder_name, package_name)
+                    _LOGGER.info(f"install apiview generation tool")
+                    # Workaround for Python 3.13: lazy-object-proxy==1.10.0 (pinned in
+                    # eng/apiview_reqs.txt) ships no cp313 wheel, so pip builds it from
+                    # source. The isolated build environment fails to fetch its build deps
+                    # (setuptools_scm) from the azure-sdk private feed (401 -> interactive
+                    # prompt -> EOFError), which breaks the whole install. Pre-install the
+                    # build deps from PyPI and disable build isolation so the source build
+                    # uses them instead of reaching out to the private feed.
+                    # TODO: revert this logic once it works on Python 3.13 (e.g. once
+                    # lazy-object-proxy ships a cp313 wheel on the feed).
+                    check_call(
+                        [
+                            "python",
+                            "-m",
+                            "pip",
+                            "install",
+                            "setuptools>=64",
+                            "setuptools_scm>=8",
+                            "wheel",
+                            "--index-url=https://pypi.org/simple/",
+                        ],
+                        timeout=600,
+                        stderr=None if data.get("runMode") == "release" else subprocess.DEVNULL,
+                    )
                     check_call(
                         [
                             "python",
@@ -255,26 +346,29 @@ def main(generate_input, generate_output):
                             "pip",
                             "install",
                             "-r",
-                            "../../../eng/apiview_reqs.txt",
-                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
-                            "/simple/",
+                            "eng/apiview_reqs.txt",
+                            "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+                            "--no-build-isolation",
                         ],
-                        cwd=package_path,
                         timeout=600,
+                        stderr=None if data.get("runMode") == "release" else subprocess.DEVNULL,
                     )
-                    cmds = ["apistubgen", "--pkg-path", "."]
-                    cross_language_mapping_path = Path(package_path, "apiview-properties.json")
-                    if cross_language_mapping_path.exists():
-                        cmds.extend(["--mapping-path", str(cross_language_mapping_path)])
 
+                    _LOGGER.info("generate apiview artifacts")
+                    package_path = Path(sdk_folder, folder_name, package_name)
+                    cmds = [
+                        "azpysdk",
+                        "apistub",
+                        package_name,
+                    ]
                     _LOGGER.info(f"generate apiview file for package {package_name}")
                     check_call(
                         cmds,
-                        cwd=package_path,
-                        timeout=600,
+                        timeout=900 if data.get("runMode") == "spec-pull-request" else 36000,
                         # known issue that higher python version meet install warning with lower pylint.
                         # we skip the output here to reduce confusion and will remove it after apiview tool upgrade to higher pylint version.
-                        stderr=subprocess.DEVNULL,
+                        # in "release" mode we keep stderr so the output is visible for debugging.
+                        stderr=None if data.get("runMode") == "release" else subprocess.DEVNULL,
                     )
                     for file in os.listdir(package_path):
                         if "_python.json" in file and package_name in file:

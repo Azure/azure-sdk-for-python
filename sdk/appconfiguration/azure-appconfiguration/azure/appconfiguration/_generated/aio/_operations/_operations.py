@@ -548,7 +548,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2024-09-01": ["tags"]},
-        api_versions_list=["2023-11-01", "2024-09-01"],
+        api_versions_list=["2023-11-01", "2024-09-01", "2026-04-01"],
     )
     async def get_key_value(
         self,
@@ -936,7 +936,7 @@ class _AzureAppConfigurationClientOperationsMixin(  # pylint: disable=too-many-p
     @distributed_trace_async
     @api_version_validation(
         params_added_on={"2024-09-01": ["tags"]},
-        api_versions_list=["2023-11-01", "2024-09-01"],
+        api_versions_list=["2023-11-01", "2024-09-01", "2026-04-01"],
     )
     async def check_key_value(
         self,

@@ -146,10 +146,16 @@ def configure_observability(
             logging.getLogger(_noisy).setLevel(logging.WARNING)
 
     # Tracing and OTel export
-    _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
+    _configure_tracing(
+        connection_string=connection_string,
+        enable_sensitive_data=enable_sensitive_data,
+    )
 
 
-def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive_data: bool = False) -> None:
+def _configure_tracing(
+    connection_string: Optional[str] = None,
+    enable_sensitive_data: bool = False,
+) -> None:
     """Configure OpenTelemetry exporters via the microsoft-opentelemetry distro.
 
     Internal helper called by :func:`configure_observability`.
@@ -182,7 +188,13 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
             agent_tenant_id=agent_tenant_id,
         ),
     ]
-    log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
+    log_record_processors = [  # type: ignore[list-item]
+        _BaggageLogRecordProcessor(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            session_id=_config.resolve_session_id() or None,
+        ),
+    ]
 
     try:
         _setup_distro_export(
@@ -521,6 +533,17 @@ class _BaggageLogRecordProcessor:
     for end-to-end correlation.
     """
 
+    def __init__(
+        self,
+        *,
+        agent_name: Optional[str] = None,
+        agent_version: Optional[str] = None,
+        session_id: Optional[str] = None,
+    ) -> None:
+        self.agent_name = agent_name
+        self.agent_version = agent_version
+        self.session_id = session_id
+
     def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
         """Copy baggage entries into the log record's attributes.
 
@@ -528,11 +551,26 @@ class _BaggageLogRecordProcessor:
         :type log_data: any
         """
         try:
+            if not hasattr(log_data, "log_record") or not log_data.log_record:
+                return
+
+            attrs = log_data.log_record.attributes  # type: ignore[assignment]
+
             ctx = _otel_context.get_current()
             entries = _otel_baggage.get_all(context=ctx)
-            if entries and hasattr(log_data, 'log_record') and log_data.log_record:
+            if entries:
                 for key, value in entries.items():
-                    log_data.log_record.attributes[key] = value  # type: ignore[index]
+                    attrs[key] = value  # type: ignore[index]
+
+            if self.agent_name and _ATTR_GEN_AI_AGENT_NAME not in attrs:
+                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+            if self.agent_version and _ATTR_GEN_AI_AGENT_VERSION not in attrs:
+                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+
+            bag_session = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
+            resolved_session = bag_session or self.session_id
+            if resolved_session and _ATTR_SESSION_ID not in attrs:
+                attrs[_ATTR_SESSION_ID] = resolved_session
         except Exception:  # pylint: disable=broad-except
             pass
 
