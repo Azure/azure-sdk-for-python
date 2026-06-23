@@ -11,15 +11,13 @@ import pytest
 import pytest_asyncio
 
 import test_config
-from azure.cosmos import _base
+from azure.cosmos import _base, documents
 from azure.cosmos import http_constants
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos._routing.feed_range_continuation import _decode_token
 from azure.cosmos.partition_key import PartitionKey
 
 CONFIG = test_config.TestConfig()
-HOST = CONFIG.host
-KEY = CONFIG.masterKey
 DATABASE_ID = CONFIG.TEST_DATABASE_ID
 
 REPRO_CONTAINER_ID = "FeedRangeMultiPartitionAsync-" + str(uuid.uuid4())
@@ -31,7 +29,9 @@ MIN_DOCS_PER_PARTITION = 15
 
 
 def _client() -> CosmosClient:
-    return CosmosClient(HOST, KEY)
+    """Return a data-plane client. Uses AAD when COSMOS_TEST_DATA_AUTH_MODE=aad,
+    key auth otherwise, so the AAD lane actually exercises AAD."""
+    return test_config.TestConfig.create_data_client_async()
 
 
 def _get_container(client: CosmosClient):
@@ -113,15 +113,13 @@ async def setup_and_teardown_async():
 
 
 @pytest.mark.cosmosQuery
+@pytest.mark.cosmosAADQuery
 @pytest.mark.asyncio
 @pytest.mark.usefixtures("setup_and_teardown_async")
 class TestFeedRangeMultiPartitionAsync:
     """Async end-to-end tests for feed_range queries that overlap multiple
     physical partitions."""
 
-    # ------------------------------------------------------------------ #
-    # Single-partition control
-    # ------------------------------------------------------------------ #
     async def test_single_partition_feed_range_async(self):
         """Single-partition regression guard."""
         client = _client()
@@ -174,9 +172,6 @@ class TestFeedRangeMultiPartitionAsync:
             await client.close()
 
 
-    # ------------------------------------------------------------------ #
-    # Two-partition feed_range
-    # ------------------------------------------------------------------ #
     async def test_two_partition_feed_range_async(self):
         client = _client()
         try:
@@ -511,9 +506,6 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    # ------------------------------------------------------------------ #
-    # Three-way overlap
-    # ------------------------------------------------------------------ #
     async def test_three_way_overlap_async(self):
         client = _client()
         try:
@@ -566,9 +558,6 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    # ------------------------------------------------------------------ #
-    # Post-split resume (slow)
-    # ------------------------------------------------------------------ #
     @pytest.mark.cosmosSplit
     @pytest.mark.cosmosAADSplit
     async def test_post_split_resume_async(self):
@@ -607,10 +596,19 @@ class TestFeedRangeMultiPartitionAsync:
 
             # Step 2 — trigger a real split.
             target_throughput = max(REPRO_THROUGHPUT * 2, 60000)
+            # Split trigger is a control-plane throughput operation; run it via
+            # key-auth container even in AAD lanes (same pattern as other split tests).
+            key_client_for_split = CosmosClient(CONFIG.host, CONFIG.masterKey)
             try:
-                await test_config.TestConfig.trigger_split_async(container, target_throughput)
+                key_container_for_split = _get_container(key_client_for_split)
+                await test_config.TestConfig.trigger_split_async(
+                    key_container_for_split,
+                    target_throughput,
+                )
             except unittest.SkipTest:
                 raise
+            finally:
+                await key_client_for_split.close()
             await asyncio.sleep(10)
             _ = [fr async for fr in container.read_feed_ranges(force_refresh=True)]
 
@@ -658,9 +656,6 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    # ------------------------------------------------------------------ #
-    # Legacy opaque token compatibility
-    # ------------------------------------------------------------------ #
     async def test_legacy_opaque_token_compat_async(self, caplog):
         """Use an opaque continuation token and verify restart behavior."""
         client = _client()
@@ -725,9 +720,6 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    # ------------------------------------------------------------------ #
-    # Identity-fingerprint mismatch rejection (live half)
-    # ------------------------------------------------------------------ #
     async def test_token_identity_mismatch_rejected_async(self):
         """Live identity-mismatch rejection test."""
         client = _client()
@@ -806,7 +798,286 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
+    async def test_full_partition_key_query_pagination_resume_async(self):
+        """Query with a full partition key on a hierarchical container, drain
+        page 1, resume from the returned continuation token, and confirm the
+        resumed pages match the remaining pages of a fresh iterator and
+        cover the same documents as a baseline scan in the same order.
+        """
+        client = _client()
+        try:
+            db = client.get_database_client(DATABASE_ID)
+            container_id = "FeedRangeMultiPartitionAsyncFullPK-" + str(uuid.uuid4())
+            created_container = await db.create_container_if_not_exists(
+                id=container_id,
+                partition_key=PartitionKey(
+                    path=['/state', '/city', '/zipcode'],
+                    kind=documents.PartitionKind.MultiHash),
+                offer_throughput=400,
+            )
+            try:
+                full_key = ['CA', 'Oxnard', '93033']
+                for i in range(25):
+                    await created_container.upsert_item({
+                        'id': f'full-pk-doc-async-{i:03d}',
+                        'state': full_key[0],
+                        'city': full_key[1],
+                        'zipcode': full_key[2],
+                        'value': i,
+                    })
+                for i in range(5):
+                    await created_container.upsert_item({
+                        'id': f'other-doc-async-{i:03d}',
+                        'state': 'WA',
+                        'city': 'Seattle',
+                        'zipcode': f'98{i:03d}',
+                        'value': i,
+                    })
+
+                query = 'SELECT c.id FROM c ORDER BY c.id'
+                query_iterable = created_container.query_items(
+                    query=query,
+                    partition_key=full_key,
+                    max_item_count=7,
+                )
+
+                pager = query_iterable.by_page()
+                first_page_iter = await pager.__anext__()
+                first_page = [it async for it in first_page_iter]
+                assert first_page, (
+                    "first page must contain at least one item to exercise resume")
+                token = pager.continuation_token
+                assert token, (
+                    "expected a non-empty continuation token after page 1 to "
+                    "exercise the resume path")
+
+                expected_remaining_ids: List[str] = []
+                async for page in pager:
+                    expected_remaining_ids.extend(
+                        [it['id'] async for it in page])
+
+                resumed_remaining_ids: List[str] = []
+                async for page in query_iterable.by_page(token):
+                    resumed_remaining_ids.extend(
+                        [it['id'] async for it in page])
+
+                assert expected_remaining_ids == resumed_remaining_ids, (
+                    "Pages returned after resuming from the continuation token "
+                    "must match the pages returned by draining a fresh iterator")
+
+                baseline_ids: List[str] = []
+                async for item in created_container.query_items(
+                        query=query, partition_key=full_key):
+                    baseline_ids.append(item['id'])
+                fetched_ids = [item['id'] for item in first_page] + resumed_remaining_ids
+                assert baseline_ids == fetched_ids, (
+                    "Page 1 plus the resumed pages must equal the baseline "
+                    "documents for this partition key in the same order")
+            finally:
+                try:
+                    await db.delete_container(created_container.id)
+                except Exception:  # pylint: disable=broad-except
+                    pass
+        finally:
+            await client.close()
+
+    async def test_prefix_partition_key_query_pagination_resume_async(self):
+        """Query with a partition key prefix on a hierarchical container,
+        drain page 1, resume from the returned token, and confirm the
+        resumed pages match a fresh iterator and cover the baseline
+        documents in the same order.
+        """
+        client = _client()
+        try:
+            db = client.get_database_client(DATABASE_ID)
+            container_id = "FeedRangeMultiPartitionAsyncPrefixPK-" + str(uuid.uuid4())
+            created_container = await db.create_container_if_not_exists(
+                id=container_id,
+                partition_key=PartitionKey(
+                    path=['/state', '/city', '/zipcode'],
+                    kind=documents.PartitionKind.MultiHash),
+                offer_throughput=400,
+            )
+            try:
+                for i in range(30):
+                    await created_container.upsert_item({
+                        'id': f'ca-doc-async-{i:03d}',
+                        'state': 'CA',
+                        'city': f'city-{i % 5}',
+                        'zipcode': f'zip-{i:03d}',
+                        'value': i,
+                    })
+                for i in range(6):
+                    await created_container.upsert_item({
+                        'id': f'wa-doc-async-{i:03d}',
+                        'state': 'WA',
+                        'city': f'city-{i % 2}',
+                        'zipcode': f'zip-{i:03d}',
+                        'value': i,
+                    })
+
+                query = 'SELECT c.id FROM c ORDER BY c.id'
+                query_iterable = created_container.query_items(
+                    query=query,
+                    partition_key=['CA'],
+                    max_item_count=7,
+                )
+
+                pager = query_iterable.by_page()
+                first_page_iter = await pager.__anext__()
+                first_page = [it async for it in first_page_iter]
+                assert first_page
+                token = pager.continuation_token
+                assert token, (
+                    "Expected a non-empty continuation token after page 1 "
+                    "to exercise the resume path")
+
+                expected_remaining_ids: List[str] = []
+                async for page in pager:
+                    expected_remaining_ids.extend(
+                        [it['id'] async for it in page])
+
+                resumed_remaining_ids: List[str] = []
+                async for page in query_iterable.by_page(token):
+                    resumed_remaining_ids.extend(
+                        [it['id'] async for it in page])
+
+                assert expected_remaining_ids == resumed_remaining_ids, (
+                    "Pages returned after resuming from the continuation token "
+                    "must match the pages returned by draining a fresh iterator")
+
+                baseline_ids: List[str] = []
+                async for item in created_container.query_items(
+                        query=query, partition_key=['CA']):
+                    baseline_ids.append(item['id'])
+                fetched_ids = [item['id'] for item in first_page] + resumed_remaining_ids
+                assert baseline_ids == fetched_ids, (
+                    "Page 1 plus the resumed pages must equal the baseline "
+                    "documents for this partition key prefix in the same order")
+            finally:
+                try:
+                    await db.delete_container(created_container.id)
+                except Exception:  # pylint: disable=broad-except
+                    pass
+        finally:
+            await client.close()
+
+    async def test_explode_iteration_guard_raises_in_query_loop_async(self, monkeypatch):
+        """If the routing lookup keeps returning multiple children for the same
+        range, the async query loop must give up after a fixed number of
+        retries and raise instead of looping forever.
+        """
+        client = _client()
+        try:
+            container = _get_container(client)
+            partitions = await _sorted_partition_ranges(container)
+            if len(partitions) < 2:
+                pytest.skip("Need a container with >= 2 physical partitions")
+
+            p0, p1 = partitions[0], partitions[1]
+            crossing = _crossing_feed_range(p0[0], p1[1])
+            client_conn = container.client_connection
+
+            # Always return two children whose ranges equal the requested head
+            # so the loop never makes progress and the guard must trip.
+            async def _always_multi_overlap(_rid, feed_ranges, _opts):
+                head = feed_ranges[0]
+                return [
+                    {"id": "left", "minInclusive": head.min, "maxExclusive": head.max},
+                    {"id": "right", "minInclusive": head.min, "maxExclusive": head.max},
+                ]
+
+            monkeypatch.setattr(
+                client_conn._routing_map_provider,
+                "get_overlapping_ranges",
+                _always_multi_overlap,
+            )
+            monkeypatch.setattr(
+                "azure.cosmos._routing.feed_range_continuation."
+                "_MAX_MULTI_OVERLAP_EXPLODE_ITERATIONS",
+                2,
+            )
+
+            with pytest.raises(RuntimeError) as excinfo:
+                pager = container.query_items(
+                    query="SELECT * FROM c",
+                    feed_range=crossing,
+                    max_item_count=PAGE_SIZE,
+                ).by_page()
+                async for page in pager:
+                    _ = [it async for it in page]
+            assert "split re-resolution" in str(excinfo.value), (
+                "Expected the safety-guard error message; "
+                f"got: {excinfo.value!r}")
+        finally:
+            await client.close()
+
+    async def test_no_progress_guard_logs_warning_in_query_loop_async(
+        self, monkeypatch, caplog
+    ):
+        """If the async query loop keeps receiving empty pages with the same
+        continuation token, a warning must be logged so the situation is
+        visible to operators.
+        """
+        client = _client()
+        try:
+            container = _get_container(client)
+            partitions = await _sorted_partition_ranges(container)
+            if len(partitions) < 2:
+                pytest.skip("Need a container with >= 2 physical partitions")
+
+            p0, p1 = partitions[0], partitions[1]
+            crossing = _crossing_feed_range(p0[0], p1[1])
+            client_conn = container.client_connection
+
+            post_call_count = 0
+
+            async def _stalled_post(*_args, **_kwargs):
+                nonlocal post_call_count
+                post_call_count += 1
+                continuation = "stalled-token-async" if post_call_count <= 3 else None
+                return (
+                    {"Documents": []},
+                    {http_constants.HttpHeaders.Continuation: continuation},
+                )
+
+            monkeypatch.setattr(
+                client_conn,
+                "_CosmosClientConnection__Post",
+                _stalled_post,
+            )
+            monkeypatch.setattr(
+                "azure.cosmos.aio._cosmos_client_connection_async."
+                "_MAX_CONSECUTIVE_NO_PROGRESS_PAGES",
+                2,
+            )
+
+            with caplog.at_level(
+                "WARNING",
+                logger="azure.cosmos.aio._cosmos_client_connection_async",
+            ):
+                pager = container.query_items(
+                    query="SELECT * FROM c",
+                    feed_range=crossing,
+                    max_item_count=PAGE_SIZE,
+                ).by_page()
+                async for page in pager:
+                    _ = [it async for it in page]
+
+            assert post_call_count >= 3, (
+                "Expected at least 3 stalled __Post calls to trigger the "
+                f"no-progress guard; got {post_call_count}")
+            assert any(
+                "same continuation token" in record.getMessage()
+                for record in caplog.records
+            ), (
+                "Expected warning log from the async no-progress guard "
+                "mentioning the unchanged continuation token")
+        finally:
+            await client.close()
+
 
 if __name__ == "__main__":
     unittest.main()
+
 
