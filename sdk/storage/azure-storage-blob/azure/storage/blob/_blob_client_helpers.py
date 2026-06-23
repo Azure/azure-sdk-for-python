@@ -63,7 +63,7 @@ from ._shared.request_handlers import add_metadata_headers, get_length, read_len
 from ._shared.response_handlers import return_headers_and_deserialized, return_response_headers
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
-from ._shared.validation import CV_TYPE_PARSED, parse_validation_option
+from ._shared.validation import CV_TYPE_PARSED, is_crc64_validation, parse_validation_option
 from ._upload_helpers import _any_conditions
 
 if TYPE_CHECKING:
@@ -293,6 +293,13 @@ def _download_blob_options(
         modify_user_agent_for_encryption(
             config.user_agent_policy.user_agent, sdk_moniker, encryption_options["version"], kwargs
         )
+
+    # Decompression is not supported with CRC64 content validation
+    if is_crc64_validation(validate_content):
+        decompress = kwargs.get("decompress")
+        if decompress is True:
+            raise ValueError("Decompression is not supported when using CRC64 content validation.")
+        kwargs["decompress"] = False
 
     options = {
         "clients": client,

@@ -3,8 +3,15 @@
 ## 1.0.0b54 (Unreleased)
 
 ### Features Added
+- Add `StatsbeatManager.add_metric_callback` to let SDKs/distros add their own metric
+  observations to built-in statsbeat metrics
+  ([#47363](https://github.com/Azure/azure-sdk-for-python/pull/47363))
 
 ### Breaking Changes
+- Customer Facing SDKStats: Renamed metric dimension attributes from snake_case/dotted to camelCase
+  (`compute_type` -> `computeType`, `telemetry_type` -> `telemetryType`, `telemetry_success` -> `telemetrySuccess`,
+  `drop.code` -> `dropCode`, `drop.reason` -> `dropReason`, `retry.code` -> `retryCode`, `retry.reason` -> `retryReason`)
+  ([#47469](https://github.com/Azure/azure-sdk-for-python/pull/47469))
 
 ### Bugs Fixed
 

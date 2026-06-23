@@ -179,6 +179,41 @@ class TestBatchEndpointYAML:
 
         assert endpoint.defaults is None
 
+    def test_to_rest_batch_endpoint_serializes_defaults_to_camel_case(self) -> None:
+        endpoint = BatchEndpoint(
+            name="my-batch-endpoint",
+            auth_mode="aad_token",
+            defaults={"deployment_name": "my-deployment"},
+        )
+
+        rest_batch_endpoint = endpoint._to_rest_batch_endpoint("eastus")
+        assert endpoint.defaults == {"deployment_name": "my-deployment"}
+        rest_defaults = rest_batch_endpoint.properties.defaults
+        assert rest_defaults is not None
+        assert rest_defaults.deployment_name == "my-deployment"
+        serialized = rest_defaults.as_dict()
+        assert serialized == {"deploymentName": "my-deployment"}
+        assert "deployment_name" not in serialized
+
+    def test_to_rest_batch_endpoint_with_no_defaults_passes_none(self) -> None:
+        endpoint = BatchEndpoint(
+            name="my-batch-endpoint",
+            auth_mode="aad_token",
+        )
+
+        rest_batch_endpoint = endpoint._to_rest_batch_endpoint("eastus")
+
+        assert rest_batch_endpoint.properties.defaults is None
+
+    def test_from_rest_object_defaults_returned_as_snake_case_dict(self) -> None:
+        with open(TestBatchEndpointYAML.BATCH_ENDPOINT_REST, "r") as f:
+            batch_endpoint_rest = _deserialize(BatchEndpointData, json.load(f))
+
+        batch_endpoint = BatchEndpoint._from_rest_object(batch_endpoint_rest)
+
+        assert batch_endpoint.defaults == {"deployment_name": "hello-world-1"}
+        assert batch_endpoint.defaults["deployment_name"] == "hello-world-1"
+
 
 class TestKubernetesOnlineEndopint:
     K8S_ONLINE_ENDPOINT = "tests/test_configs/endpoints/online/online_endpoint_create_k8s.yml"
