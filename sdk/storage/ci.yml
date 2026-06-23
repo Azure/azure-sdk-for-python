@@ -37,6 +37,7 @@ extends:
     ${{ if eq(parameters.ReleaseToDevOpsOnly, 'true') }}:
       PublicFeed: 'public/storage-staging'
     ServiceDirectory: storage
+    BuildTargetingString: azure-storage-extensions
     TestProxy: true
     TestTimeoutInMinutes: 120
     # Enable Compiled CodeQL because azure-storage-extensions has C code that 
