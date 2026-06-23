@@ -2216,7 +2216,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def _upload_session_file(
-        self, agent_name: str, agent_session_id: str, content: bytes, *, path: str, **kwargs: Any
+        self, agent_name: str, agent_session_id: str, content: bytes, *, remote_path: str, **kwargs: Any
     ) -> _models.SessionFileWriteResult:
         """Upload a session file.
 
@@ -2229,9 +2229,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_session_id: str
         :param content: Required.
         :type content: bytes
-        :keyword path: The destination file path within the sandbox, relative to the session home
-         directory. Required.
-        :paramtype path: str
+        :keyword remote_path: The destination file path within the sandbox, relative to the session
+         home directory. Required.
+        :paramtype remote_path: str
         :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SessionFileWriteResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2255,7 +2255,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request = build_agents_upload_session_file_request(
             agent_name=agent_name,
             agent_session_id=agent_session_id,
-            path=path,
+            remote_path=remote_path,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2300,7 +2300,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def download_session_file(
-        self, agent_name: str, agent_session_id: str, *, path: str, **kwargs: Any
+        self, agent_name: str, agent_session_id: str, *, remote_path: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Download a session file.
 
@@ -2311,9 +2311,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param agent_session_id: The session ID. Required.
         :type agent_session_id: str
-        :keyword path: The file path to download from the sandbox, relative to the session home
+        :keyword remote_path: The file path to download from the sandbox, relative to the session home
          directory. Required.
-        :paramtype path: str
+        :paramtype remote_path: str
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2334,7 +2334,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request = build_agents_download_session_file_request(
             agent_name=agent_name,
             agent_session_id=agent_session_id,
-            path=path,
+            remote_path=remote_path,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2378,7 +2378,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         agent_name: str,
         agent_session_id: str,
         *,
-        path: Optional[str] = None,
+        remote_path: Optional[str] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
@@ -2394,9 +2394,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param agent_session_id: The session ID. Required.
         :type agent_session_id: str
-        :keyword path: The directory path to list, relative to the session home directory. Defaults to
-         the home directory if not provided. Default value is None.
-        :paramtype path: str
+        :keyword remote_path: The directory path to list, relative to the session home directory.
+         Defaults to the home directory if not provided. Default value is None.
+        :paramtype remote_path: str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
          default is 20. Default value is None.
@@ -2434,7 +2434,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             _request = build_agents_list_session_files_request(
                 agent_name=agent_name,
                 agent_session_id=agent_session_id,
-                path=path,
+                remote_path=remote_path,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -2482,7 +2482,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def delete_session_file(
-        self, agent_name: str, agent_session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
+        self,
+        agent_name: str,
+        agent_session_id: str,
+        *,
+        remote_path: str,
+        recursive: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         """Delete a session file.
 
@@ -2493,9 +2499,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param agent_session_id: The session ID. Required.
         :type agent_session_id: str
-        :keyword path: The file or directory path to delete, relative to the session home directory.
-         Required.
-        :paramtype path: str
+        :keyword remote_path: The file or directory path to delete, relative to the session home
+         directory. Required.
+        :paramtype remote_path: str
         :keyword recursive: Whether to recursively delete directory contents. The service defaults to
          ``false`` if a value is not specified by the caller. Default value is None.
         :paramtype recursive: bool
@@ -2519,7 +2525,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request = build_agents_delete_session_file_request(
             agent_name=agent_name,
             agent_session_id=agent_session_id,
-            path=path,
+            remote_path=remote_path,
             recursive=recursive,
             api_version=self._config.api_version,
             headers=_headers,

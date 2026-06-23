@@ -229,8 +229,8 @@ namespace azure.ai.projects.aio.operations
                 agent_name: str, 
                 agent_session_id: str, 
                 *, 
-                path: str, 
                 recursive: Optional[bool] = ..., 
+                remote_path: str, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -266,9 +266,20 @@ namespace azure.ai.projects.aio.operations
                 agent_name: str, 
                 agent_session_id: str, 
                 *, 
-                path: str, 
+                remote_path: str, 
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
+
+        @distributed_trace_async
+        async def download_session_file_to_disk(
+                self, 
+                agent_name: str, 
+                session_id: str, 
+                *, 
+                file_path: Union[str, PathLike[str]], 
+                remote_path: str, 
+                **kwargs: Any
+            ) -> None: ...
 
         @distributed_trace_async
         async def enable(
@@ -329,7 +340,7 @@ namespace azure.ai.projects.aio.operations
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
-                path: Optional[str] = ..., 
+                remote_path: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[SessionDirectoryEntry]: ...
 
@@ -394,14 +405,25 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> None: ...
 
-        @distributed_trace_async
+        @overload
         async def upload_session_file(
                 self, 
                 agent_name: str, 
                 session_id: str, 
-                content_or_file_path: bytes | str, 
                 *, 
-                path: str, 
+                content: bytes, 
+                remote_path: str, 
+                **kwargs: Any
+            ) -> SessionFileWriteResult: ...
+
+        @overload
+        async def upload_session_file(
+                self, 
+                agent_name: str, 
+                session_id: str, 
+                *, 
+                file_path: Union[str, PathLike[str]], 
+                remote_path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
@@ -9488,8 +9510,8 @@ namespace azure.ai.projects.operations
                 agent_name: str, 
                 agent_session_id: str, 
                 *, 
-                path: str, 
                 recursive: Optional[bool] = ..., 
+                remote_path: str, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -9525,9 +9547,20 @@ namespace azure.ai.projects.operations
                 agent_name: str, 
                 agent_session_id: str, 
                 *, 
-                path: str, 
+                remote_path: str, 
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
+
+        @distributed_trace
+        def download_session_file_to_disk(
+                self, 
+                agent_name: str, 
+                session_id: str, 
+                *, 
+                file_path: Union[str, PathLike[str]], 
+                remote_path: str, 
+                **kwargs: Any
+            ) -> None: ...
 
         @distributed_trace
         def enable(
@@ -9588,7 +9621,7 @@ namespace azure.ai.projects.operations
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
-                path: Optional[str] = ..., 
+                remote_path: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[SessionDirectoryEntry]: ...
 
@@ -9653,14 +9686,25 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> None: ...
 
-        @distributed_trace
+        @overload
         def upload_session_file(
                 self, 
                 agent_name: str, 
                 session_id: str, 
-                content_or_file_path: bytes | str, 
                 *, 
-                path: str, 
+                content: bytes, 
+                remote_path: str, 
+                **kwargs: Any
+            ) -> SessionFileWriteResult: ...
+
+        @overload
+        def upload_session_file(
+                self, 
+                agent_name: str, 
+                session_id: str, 
+                *, 
+                file_path: Union[str, PathLike[str]], 
+                remote_path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 

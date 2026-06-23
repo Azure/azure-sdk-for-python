@@ -5,6 +5,7 @@
 ### Features Added
 
 * Two new methods `enable` and `disable` on the `.agents` subclient.
+* New Agent tool type `REMINDER_PREVIEW`.
 * Hosted agents are now stable. There is no need to set `allow_preview=True` on the `AIProjectClient` constructor to create a Hosted agent.
 * Toolboxes operations are now stable. The have moved from `.beta.toolboxes` subclient to the `.toolboxes` subclient.
 * Session and Session files operations are now stable. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
@@ -12,9 +13,11 @@
 
 ### Breaking Changes
 
-Breaking changes in beta methods:
+* Toolbox operation `create_version` now defines `tools` of type `List[ToolboxTool]` instead of `List[Tool]`.
+* Input argument `path` renamed to `remote_path` in methods `.agents.delete_session_file`, `.agents.download_session_file`, `.agents.list_session_files` and `.agents.upload_session_file`. 
 * Agent Optimization methods `.beta.agents.*optimization*` were re-written. Updated from v1 to v2 preview, focusing on cleanup to better align with Foundry job guidelines and platform standards. The v1 surface accumulated unused candidate sub-resources, internal-detail properties, and custom operation patterns inconsistent with the Foundry platform. The v2 API removes redundant models and operations, adopts shared Foundry job patterns (`JobLike<>`, standard job verbs), and introduces typed discriminated unions for dataset inputs and evaluator references.
 * Method `.beta.agents.list_optimization_candidates` now returns `ItemPaged[OptimizationCandidate]` instead of `AgentsPagedResultOptimizationCandidate`. The `after` parameter has been removed (use continuation-token-based paging instead).
+
 
 ### Sample updates
 
