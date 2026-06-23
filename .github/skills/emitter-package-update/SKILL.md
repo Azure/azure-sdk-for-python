@@ -60,6 +60,12 @@ sections by default:
 npx npm-check-updates --packageFile eng/emitter-package.json -u
 ```
 
+> **Restricted-network fallback (e.g. the coding-agent sandbox):** `npm-check-updates`
+> needs `registry.npmjs.org`, which may be firewalled. If it cannot reach the registry,
+> determine the latest `@azure-tools/typespec-python` version from GitHub instead — the
+> newest published tag in [Azure/typespec-azure](https://github.com/Azure/typespec-azure/tags)
+> (cross-checked against `packages/typespec-python/package.json` on `main`) — and edit
+> `eng/emitter-package.json` by hand to that version.
 Align `@azure-tools/openai-typespec` and `@typespec/openapi3` with the versions pinned in [azure-rest-api-specs/package.json](https://github.com/Azure/azure-rest-api-specs/blob/main/package.json) to ensure consistency between the emitter and the spec repo. Check the spec repo's versions and update `eng/emitter-package.json` accordingly (e.g., set `"@azure-tools/openai-typespec": "1.8.0"` and `"@typespec/openapi3": "1.9.0"` to match).
 
 If a specific version was requested, pin `@azure-tools/typespec-python` to that exact
@@ -109,6 +115,13 @@ tsp-client generate-lock-file
 ```
 
 This regenerates `eng/emitter-package-lock.json`.
+
+> **Restricted-network note:** `tsp-client generate-lock-file` also resolves packages
+> from `registry.npmjs.org`. If the registry is unreachable, the lock file cannot be
+> regenerated in the sandbox. In that case commit only the `eng/emitter-package.json`
+> change (skip the lock file in step 6), and call out in the PR body that
+> `eng/emitter-package-lock.json` still needs to be regenerated in an environment with
+> npm-registry access before merge.
 
 ### 6. Commit Changes
 
