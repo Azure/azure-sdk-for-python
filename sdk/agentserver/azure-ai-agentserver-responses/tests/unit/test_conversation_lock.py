@@ -52,6 +52,7 @@ def _empty_refs():
 
     return RuntimeRefs()
 
+
 class _FakeTaskMetadata(dict):
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
@@ -293,7 +294,10 @@ class TestRow5SequentialTurnsExtendChain:
         }
         # Dispatch must return the multi-turn primitive for conv_id requests,
         # NOT the one-shot.
-        picked = orch._pick_primitive(ctx_params)
+        picked = orch._pick_primitive(
+            conversation_id=ctx_params["conversation_id"],
+            previous_response_id=ctx_params["previous_response_id"],
+        )
         assert picked is orch._multi_turn_task_fn, (
             f"Row 5 dispatch broken: conv_id + steerable=False MUST map to "
             f"multi-turn primitive (got the {'one-shot' if picked is orch._one_shot_task_fn else 'unknown'})."

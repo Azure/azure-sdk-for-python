@@ -4,8 +4,7 @@
 
 This module models the **single** thing that crosses the cross-process crash
 boundary as durable-task input: :class:`DurableResponseInput`. It is the typed,
-fail-closed replacement for the previous hand-synced ``ctx_params`` dict +
-``_split_runtime_refs`` strip-allowlist (Spec 033 §3.1).
+fail-closed boundary for the durable-task input (Spec 033 §3.1).
 
 Design invariants (Spec 033 §3.1 / FR-001..004):
 

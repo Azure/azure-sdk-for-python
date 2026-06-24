@@ -428,7 +428,9 @@ class DurableResponseOrchestrator:
 
     def _pick_primitive(
         self,
-        ctx_params: dict[str, Any],
+        *,
+        conversation_id: str | None,
+        previous_response_id: str | None,
     ) -> "Task[dict[str, Any], None] | MultiTurnTask[dict[str, Any], None]":
         """Select the underlying durable-task primitive for this request.
 
@@ -441,15 +443,16 @@ class DurableResponseOrchestrator:
           (steerable chain extension).
         - Otherwise → one-shot primitive (no chain semantics needed).
 
-        :param ctx_params: The orchestrator's combined params dict.
+        :keyword conversation_id: The request's conversation id, if any.
+        :paramtype conversation_id: str | None
+        :keyword previous_response_id: The request's previous-response id, if any.
+        :paramtype previous_response_id: str | None
         :returns: One of ``self._one_shot_task_fn`` /
             ``self._multi_turn_task_fn``.
         """
-        conv_id = ctx_params.get("conversation_id")
-        prev_id = ctx_params.get("previous_response_id")
-        if conv_id is not None:
+        if conversation_id is not None:
             return self._multi_turn_task_fn
-        if prev_id is not None and self._options.steerable_conversations:
+        if previous_response_id is not None and self._options.steerable_conversations:
             return self._multi_turn_task_fn
         return self._one_shot_task_fn
 
@@ -1073,7 +1076,8 @@ class DurableResponseOrchestrator:
         # semantics) based on the request's conversation_id /
         # previous_response_id / steerable_conversations tuple.
         picked_primitive = self._pick_primitive(
-            {"conversation_id": conversation_id, "previous_response_id": previous_response_id}
+            conversation_id=conversation_id,
+            previous_response_id=previous_response_id,
         )
         is_multi_turn = picked_primitive is self._multi_turn_task_fn
 

@@ -458,14 +458,7 @@ class TestPrimitiveSelectionMatrix:
         assert hasattr(orch, "_one_shot_task_fn"), f"{case_id}: orchestrator must register a one-shot primitive."
         assert hasattr(orch, "_multi_turn_task_fn"), f"{case_id}: orchestrator must register a multi-turn primitive."
 
-        ctx_params = {
-            "response_id": "resp_test",
-            "agent_name": "test-agent",
-            "session_id": "sess-1",
-            "conversation_id": conv_id,
-            "previous_response_id": prev_id,
-        }
-        picked = orch._pick_primitive(ctx_params)
+        picked = orch._pick_primitive(conversation_id=conv_id, previous_response_id=prev_id)
         expected = getattr(orch, expected_attr)
         assert picked is expected, (
             f"{case_id}: pick_primitive routed to wrong primitive. "
