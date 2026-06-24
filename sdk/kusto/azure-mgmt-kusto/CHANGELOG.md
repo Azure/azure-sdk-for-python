@@ -6,293 +6,77 @@
 
   - Client `KustoManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `KustoManagementClient` added method `send_request`
-  - Model `AttachedDatabaseConfiguration` added property `properties`
   - Model `AttachedDatabaseConfiguration` added property `system_data`
   - Model `AttachedDatabaseConfigurationsCheckNameRequest` added property `type`
-  - Model `Cluster` added property `properties`
   - Model `ClusterCheckNameRequest` added property `type`
-  - Model `ClusterPrincipalAssignment` added property `properties`
   - Model `ClusterPrincipalAssignment` added property `system_data`
   - Model `ClusterPrincipalAssignmentCheckNameRequest` added property `type`
-  - Model `ClusterUpdate` added property `properties`
   - Model `ClusterUpdate` added property `system_data`
-  - Model `CosmosDbDataConnection` added property `properties`
   - Model `CosmosDbDataConnection` added property `system_data`
   - Model `DataConnection` added property `system_data`
   - Model `DataConnectionCheckNameRequest` added property `type`
   - Enum `DataConnectionKind` added member `EVENT_GRID_WITH_MANAGED_IDENTITY`
   - Enum `DataConnectionKind` added member `EVENT_HUB_WITH_MANAGED_IDENTITY`
   - Model `Database` added property `system_data`
-  - Model `DatabasePrincipalAssignment` added property `properties`
   - Model `DatabasePrincipalAssignment` added property `system_data`
   - Model `DatabasePrincipalAssignmentCheckNameRequest` added property `type`
   - Model `DatabasePrincipalListResult` added property `next_link`
-  - Model `EventGridDataConnection` added property `properties`
   - Model `EventGridDataConnection` added property `system_data`
   - Enum `EventGridDataFormat` added member `AZMONSTREAM`
-  - Model `EventHubDataConnection` added property `properties`
   - Model `EventHubDataConnection` added property `system_data`
   - Enum `EventHubDataFormat` added member `AZMONSTREAM`
-  - Model `IotHubDataConnection` added property `properties`
   - Model `IotHubDataConnection` added property `system_data`
   - Enum `IotHubDataFormat` added member `AZMONSTREAM`
   - Model `KeyVaultProperties` added property `federated_identity_client_id`
   - Model `LanguageExtensionsList` added property `next_link`
-  - Model `ManagedPrivateEndpoint` added property `properties`
   - Model `ManagedPrivateEndpointsCheckNameRequest` added property `type`
-  - Model `OperationResult` added property `properties`
-  - Model `OperationResult` added property `error`
-  - Model `OutboundNetworkDependenciesEndpoint` added property `properties`
-  - Model `OutboundNetworkDependenciesEndpoint` added property `system_data`
-  - Model `PrivateEndpointConnection` added property `properties`
-  - Model `PrivateLinkResource` added property `properties`
   - Model `ProxyResource` added property `system_data`
   - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
-  - Model `ReadOnlyFollowingDatabase` added property `properties`
-  - Model `ReadOnlyFollowingDatabase` added property `system_data`
-  - Model `ReadWriteDatabase` added property `properties`
-  - Model `ReadWriteDatabase` added property `system_data`
   - Model `Resource` added property `system_data`
-  - Model `SandboxCustomImage` added property `properties`
   - Model `SandboxCustomImage` added property `system_data`
   - Model `SandboxCustomImagesCheckNameRequest` added property `type`
-  - Model `Script` added property `properties`
   - Model `ScriptCheckNameRequest` added property `type`
   - Model `TrackedResource` added property `system_data`
-  - Added model `AttachedDatabaseConfigurationProperties`
-  - Added model `ClusterPrincipalProperties`
-  - Added model `ClusterProperties`
-  - Added model `CosmosDbDataConnectionProperties`
-  - Added model `DatabasePrincipalProperties`
-  - Added model `EventGridConnectionProperties`
   - Added model `EventGridConnectionWithManagedIdentityProperties`
   - Added model `EventGridDataConnectionWithManagedIdentity`
-  - Added model `EventHubConnectionProperties`
   - Added model `EventHubConnectionWithManagedIdentityProperties`
   - Added model `EventHubDataConnectionWithManagedIdentity`
-  - Added model `FollowerDatabaseProperties`
-  - Added model `IotHubConnectionProperties`
-  - Added model `ManagedPrivateEndpointProperties`
-  - Added model `OperationResultErrorProperties`
-  - Added model `OperationResultProperties`
-  - Added model `OutboundNetworkDependenciesEndpointProperties`
-  - Added model `PrivateEndpointConnectionProperties`
-  - Added model `PrivateLinkResourceProperties`
-  - Added model `ReadOnlyFollowingDatabaseProperties`
-  - Added model `ReadWriteDatabaseProperties`
-  - Added model `SandboxCustomImageProperties`
-  - Added model `ScriptProperties`
-  - Model `ClustersOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `ClustersOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `ClustersOperations` added parameter `etag` in method `begin_update`
-  - Model `ClustersOperations` added parameter `match_condition` in method `begin_update`
 
 ### Breaking Changes
 
-  - Model `AttachedDatabaseConfiguration` deleted or renamed its instance variable `provisioning_state`
-  - Model `AttachedDatabaseConfiguration` deleted or renamed its instance variable `database_name`
-  - Model `AttachedDatabaseConfiguration` deleted or renamed its instance variable `cluster_resource_id`
-  - Model `AttachedDatabaseConfiguration` deleted or renamed its instance variable `attached_database_names`
-  - Model `AttachedDatabaseConfiguration` deleted or renamed its instance variable `default_principals_modification_kind`
-  - Model `AttachedDatabaseConfiguration` deleted or renamed its instance variable `table_level_sharing_properties`
-  - Model `AttachedDatabaseConfiguration` deleted or renamed its instance variable `database_name_override`
-  - Model `AttachedDatabaseConfiguration` deleted or renamed its instance variable `database_name_prefix`
-  - Model `Cluster` deleted or renamed its instance variable `state`
-  - Model `Cluster` deleted or renamed its instance variable `provisioning_state`
-  - Model `Cluster` deleted or renamed its instance variable `uri`
-  - Model `Cluster` deleted or renamed its instance variable `data_ingestion_uri`
-  - Model `Cluster` deleted or renamed its instance variable `state_reason`
-  - Model `Cluster` deleted or renamed its instance variable `trusted_external_tenants`
-  - Model `Cluster` deleted or renamed its instance variable `optimized_autoscale`
-  - Model `Cluster` deleted or renamed its instance variable `enable_disk_encryption`
-  - Model `Cluster` deleted or renamed its instance variable `enable_streaming_ingest`
-  - Model `Cluster` deleted or renamed its instance variable `virtual_network_configuration`
-  - Model `Cluster` deleted or renamed its instance variable `key_vault_properties`
-  - Model `Cluster` deleted or renamed its instance variable `enable_purge`
-  - Model `Cluster` deleted or renamed its instance variable `language_extensions`
-  - Model `Cluster` deleted or renamed its instance variable `enable_double_encryption`
-  - Model `Cluster` deleted or renamed its instance variable `public_network_access`
-  - Model `Cluster` deleted or renamed its instance variable `allowed_ip_range_list`
-  - Model `Cluster` deleted or renamed its instance variable `engine_type`
-  - Model `Cluster` deleted or renamed its instance variable `accepted_audiences`
-  - Model `Cluster` deleted or renamed its instance variable `enable_auto_stop`
-  - Model `Cluster` deleted or renamed its instance variable `restrict_outbound_network_access`
-  - Model `Cluster` deleted or renamed its instance variable `allowed_fqdn_list`
-  - Model `Cluster` deleted or renamed its instance variable `callout_policies`
-  - Model `Cluster` deleted or renamed its instance variable `public_ip_type`
-  - Model `Cluster` deleted or renamed its instance variable `virtual_cluster_graduation_properties`
-  - Model `Cluster` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `Cluster` deleted or renamed its instance variable `migration_cluster`
-  - Model `Cluster` deleted or renamed its instance variable `zone_status`
-  - Model `ClusterPrincipalAssignment` deleted or renamed its instance variable `principal_id`
-  - Model `ClusterPrincipalAssignment` deleted or renamed its instance variable `role`
-  - Model `ClusterPrincipalAssignment` deleted or renamed its instance variable `tenant_id`
-  - Model `ClusterPrincipalAssignment` deleted or renamed its instance variable `principal_type`
-  - Model `ClusterPrincipalAssignment` deleted or renamed its instance variable `tenant_name`
-  - Model `ClusterPrincipalAssignment` deleted or renamed its instance variable `principal_name`
-  - Model `ClusterPrincipalAssignment` deleted or renamed its instance variable `provisioning_state`
-  - Model `ClusterPrincipalAssignment` deleted or renamed its instance variable `aad_object_id`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `state`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `provisioning_state`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `uri`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `data_ingestion_uri`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `state_reason`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `trusted_external_tenants`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `optimized_autoscale`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `enable_disk_encryption`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `enable_streaming_ingest`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `virtual_network_configuration`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `key_vault_properties`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `enable_purge`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `language_extensions`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `enable_double_encryption`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `public_network_access`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `allowed_ip_range_list`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `engine_type`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `accepted_audiences`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `enable_auto_stop`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `restrict_outbound_network_access`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `allowed_fqdn_list`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `callout_policies`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `public_ip_type`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `virtual_cluster_graduation_properties`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `migration_cluster`
-  - Model `ClusterUpdate` deleted or renamed its instance variable `zone_status`
-  - Model `CosmosDbDataConnection` deleted or renamed its instance variable `table_name`
-  - Model `CosmosDbDataConnection` deleted or renamed its instance variable `mapping_rule_name`
-  - Model `CosmosDbDataConnection` deleted or renamed its instance variable `managed_identity_resource_id`
-  - Model `CosmosDbDataConnection` deleted or renamed its instance variable `managed_identity_object_id`
-  - Model `CosmosDbDataConnection` deleted or renamed its instance variable `cosmos_db_account_resource_id`
-  - Model `CosmosDbDataConnection` deleted or renamed its instance variable `cosmos_db_database`
-  - Model `CosmosDbDataConnection` deleted or renamed its instance variable `cosmos_db_container`
-  - Model `CosmosDbDataConnection` deleted or renamed its instance variable `retrieval_start_date`
-  - Model `CosmosDbDataConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `DatabasePrincipalAssignment` deleted or renamed its instance variable `principal_id`
-  - Model `DatabasePrincipalAssignment` deleted or renamed its instance variable `role`
-  - Model `DatabasePrincipalAssignment` deleted or renamed its instance variable `tenant_id`
-  - Model `DatabasePrincipalAssignment` deleted or renamed its instance variable `principal_type`
-  - Model `DatabasePrincipalAssignment` deleted or renamed its instance variable `tenant_name`
-  - Model `DatabasePrincipalAssignment` deleted or renamed its instance variable `principal_name`
-  - Model `DatabasePrincipalAssignment` deleted or renamed its instance variable `provisioning_state`
-  - Model `DatabasePrincipalAssignment` deleted or renamed its instance variable `aad_object_id`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `storage_account_resource_id`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `event_grid_resource_id`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `event_hub_resource_id`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `consumer_group`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `table_name`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `mapping_rule_name`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `data_format`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `ignore_first_record`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `blob_storage_event_type`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `managed_identity_resource_id`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `managed_identity_object_id`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `database_routing`
-  - Model `EventGridDataConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `event_hub_resource_id`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `consumer_group`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `table_name`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `mapping_rule_name`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `data_format`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `event_system_properties`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `compression`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `managed_identity_resource_id`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `managed_identity_object_id`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `database_routing`
-  - Model `EventHubDataConnection` deleted or renamed its instance variable `retrieval_start_date`
-  - Model `FollowerDatabaseDefinitionGet` deleted or renamed its instance variable `cluster_resource_id`
-  - Model `FollowerDatabaseDefinitionGet` deleted or renamed its instance variable `attached_database_configuration_name`
-  - Model `FollowerDatabaseDefinitionGet` deleted or renamed its instance variable `database_name`
-  - Model `FollowerDatabaseDefinitionGet` deleted or renamed its instance variable `table_level_sharing_properties`
-  - Model `FollowerDatabaseDefinitionGet` deleted or renamed its instance variable `database_share_origin`
-  - Model `IotHubDataConnection` deleted or renamed its instance variable `iot_hub_resource_id`
-  - Model `IotHubDataConnection` deleted or renamed its instance variable `consumer_group`
-  - Model `IotHubDataConnection` deleted or renamed its instance variable `table_name`
-  - Model `IotHubDataConnection` deleted or renamed its instance variable `mapping_rule_name`
-  - Model `IotHubDataConnection` deleted or renamed its instance variable `data_format`
-  - Model `IotHubDataConnection` deleted or renamed its instance variable `event_system_properties`
-  - Model `IotHubDataConnection` deleted or renamed its instance variable `shared_access_policy_name`
-  - Model `IotHubDataConnection` deleted or renamed its instance variable `database_routing`
-  - Model `IotHubDataConnection` deleted or renamed its instance variable `retrieval_start_date`
-  - Model `IotHubDataConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `ManagedPrivateEndpoint` deleted or renamed its instance variable `private_link_resource_id`
-  - Model `ManagedPrivateEndpoint` deleted or renamed its instance variable `private_link_resource_region`
-  - Model `ManagedPrivateEndpoint` deleted or renamed its instance variable `group_id`
-  - Model `ManagedPrivateEndpoint` deleted or renamed its instance variable `request_message`
-  - Model `ManagedPrivateEndpoint` deleted or renamed its instance variable `provisioning_state`
-  - Model `OperationResult` deleted or renamed its instance variable `code`
-  - Model `OperationResult` deleted or renamed its instance variable `message`
-  - Model `OperationResult` deleted or renamed its instance variable `operation_kind`
-  - Model `OperationResult` deleted or renamed its instance variable `provisioning_state`
-  - Model `OperationResult` deleted or renamed its instance variable `operation_state`
-  - Model `OutboundNetworkDependenciesEndpoint` deleted or renamed its instance variable `category`
-  - Model `OutboundNetworkDependenciesEndpoint` deleted or renamed its instance variable `endpoints`
-  - Model `OutboundNetworkDependenciesEndpoint` deleted or renamed its instance variable `provisioning_state`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `group_id`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `provisioning_state`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `soft_delete_period`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `hot_cache_period`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `statistics`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `leader_cluster_resource_id`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `attached_database_configuration_name`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `principals_modification_kind`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `table_level_sharing_properties`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `original_database_name`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `database_share_origin`
-  - Model `ReadOnlyFollowingDatabase` deleted or renamed its instance variable `suspension_details`
-  - Model `ReadWriteDatabase` deleted or renamed its instance variable `provisioning_state`
-  - Model `ReadWriteDatabase` deleted or renamed its instance variable `soft_delete_period`
-  - Model `ReadWriteDatabase` deleted or renamed its instance variable `hot_cache_period`
-  - Model `ReadWriteDatabase` deleted or renamed its instance variable `statistics`
-  - Model `ReadWriteDatabase` deleted or renamed its instance variable `is_followed`
-  - Model `ReadWriteDatabase` deleted or renamed its instance variable `key_vault_properties`
-  - Model `ReadWriteDatabase` deleted or renamed its instance variable `suspension_details`
-  - Model `SandboxCustomImage` deleted or renamed its instance variable `language`
-  - Model `SandboxCustomImage` deleted or renamed its instance variable `language_version`
-  - Model `SandboxCustomImage` deleted or renamed its instance variable `base_image_name`
-  - Model `SandboxCustomImage` deleted or renamed its instance variable `requirements_file_content`
-  - Model `SandboxCustomImage` deleted or renamed its instance variable `provisioning_state`
-  - Model `Script` deleted or renamed its instance variable `script_url`
-  - Model `Script` deleted or renamed its instance variable `script_url_sas_token`
-  - Model `Script` deleted or renamed its instance variable `script_content`
-  - Model `Script` deleted or renamed its instance variable `force_update_tag`
-  - Model `Script` deleted or renamed its instance variable `continue_on_errors`
-  - Model `Script` deleted or renamed its instance variable `provisioning_state`
-  - Model `Script` deleted or renamed its instance variable `script_level`
-  - Model `Script` deleted or renamed its instance variable `principal_permissions_action`
-  - Deleted or renamed model `AttachedDatabaseConfigurationListResult`
-  - Deleted or renamed model `ClusterListResult`
-  - Deleted or renamed model `ClusterPrincipalAssignmentListResult`
-  - Deleted or renamed model `DataConnectionListResult`
-  - Deleted or renamed model `DatabaseListResult`
-  - Deleted or renamed model `DatabasePrincipalAssignmentListResult`
-  - Deleted or renamed model `FollowerDatabaseListResult`
-  - Deleted or renamed model `FollowerDatabaseListResultGet`
-  - Deleted or renamed model `ListResourceSkusResult`
-  - Deleted or renamed model `ManagedPrivateEndpointListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `OutboundNetworkDependenciesEndpointListResult`
-  - Deleted or renamed model `PrivateEndpointConnectionListResult`
-  - Deleted or renamed model `PrivateLinkResourceListResult`
-  - Deleted or renamed model `SandboxCustomImagesListResult`
-  - Deleted or renamed model `ScriptListResult`
-  - Deleted or renamed model `SkuDescriptionList`
-  - Method `ClustersOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `ClustersOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `ClustersOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `DatabasesOperations.begin_create_or_update` parameter `caller_role` changed default value from `str` to `none`
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `AttachedDatabaseConfiguration` moved instance variable `provisioning_state`, `database_name`, `cluster_resource_id`, `attached_database_names`, `default_principals_modification_kind`, `table_level_sharing_properties`, `database_name_override` and `database_name_prefix` under property `properties` whose type is `AttachedDatabaseConfigurationProperties`
+  - Model `Cluster` moved instance variable `state`, `provisioning_state`, `uri`, `data_ingestion_uri`, `state_reason`, `trusted_external_tenants`, `optimized_autoscale`, `enable_disk_encryption`, `enable_streaming_ingest`, `virtual_network_configuration`, `key_vault_properties`, `enable_purge`, `language_extensions`, `enable_double_encryption`, `public_network_access`, `allowed_ip_range_list`, `engine_type`, `accepted_audiences`, `enable_auto_stop`, `restrict_outbound_network_access`, `allowed_fqdn_list`, `callout_policies`, `public_ip_type`, `virtual_cluster_graduation_properties`, `private_endpoint_connections`, `migration_cluster` and `zone_status` under property `properties` whose type is `ClusterProperties`
+  - Model `ClusterPrincipalAssignment` moved instance variable `principal_id`, `role`, `tenant_id`, `principal_type`, `tenant_name`, `principal_name`, `provisioning_state` and `aad_object_id` under property `properties` whose type is `ClusterPrincipalProperties`
+  - Model `ClusterUpdate` moved instance variable `state`, `provisioning_state`, `uri`, `data_ingestion_uri`, `state_reason`, `trusted_external_tenants`, `optimized_autoscale`, `enable_disk_encryption`, `enable_streaming_ingest`, `virtual_network_configuration`, `key_vault_properties`, `enable_purge`, `language_extensions`, `enable_double_encryption`, `public_network_access`, `allowed_ip_range_list`, `engine_type`, `accepted_audiences`, `enable_auto_stop`, `restrict_outbound_network_access`, `allowed_fqdn_list`, `callout_policies`, `public_ip_type`, `virtual_cluster_graduation_properties`, `private_endpoint_connections`, `migration_cluster` and `zone_status` under property `properties` whose type is `ClusterProperties`
+  - Model `CosmosDbDataConnection` moved instance variable `table_name`, `mapping_rule_name`, `managed_identity_resource_id`, `managed_identity_object_id`, `cosmos_db_account_resource_id`, `cosmos_db_database`, `cosmos_db_container`, `retrieval_start_date` and `provisioning_state` under property `properties` whose type is `CosmosDbDataConnectionProperties`
+  - Model `DatabasePrincipalAssignment` moved instance variable `principal_id`, `role`, `tenant_id`, `principal_type`, `tenant_name`, `principal_name`, `provisioning_state` and `aad_object_id` under property `properties` whose type is `DatabasePrincipalProperties`
+  - Model `EventGridDataConnection` moved instance variable `storage_account_resource_id`, `event_grid_resource_id`, `event_hub_resource_id`, `consumer_group`, `table_name`, `mapping_rule_name`, `data_format`, `ignore_first_record`, `blob_storage_event_type`, `managed_identity_resource_id`, `managed_identity_object_id`, `database_routing` and `provisioning_state` under property `properties` whose type is `EventGridConnectionProperties`
+  - Model `EventHubDataConnection` moved instance variable `event_hub_resource_id`, `consumer_group`, `table_name`, `mapping_rule_name`, `data_format`, `event_system_properties`, `compression`, `provisioning_state`, `managed_identity_resource_id`, `managed_identity_object_id`, `database_routing` and `retrieval_start_date` under property `properties` whose type is `EventHubConnectionProperties`
+  - Model `FollowerDatabaseDefinitionGet` moved instance variable `cluster_resource_id`, `attached_database_configuration_name`, `database_name`, `table_level_sharing_properties` and `database_share_origin` under property `properties` whose type is `FollowerDatabaseProperties`
+  - Model `IotHubDataConnection` moved instance variable `iot_hub_resource_id`, `consumer_group`, `table_name`, `mapping_rule_name`, `data_format`, `event_system_properties`, `shared_access_policy_name`, `database_routing`, `retrieval_start_date` and `provisioning_state` under property `properties` whose type is `IotHubConnectionProperties`
+  - Model `ManagedPrivateEndpoint` moved instance variable `private_link_resource_id`, `private_link_resource_region`, `group_id`, `request_message` and `provisioning_state` under property `properties` whose type is `ManagedPrivateEndpointProperties`
+  - Model `OperationResult` moved instance variable `code` and `message` under property `error` whose type is `OperationResultErrorProperties`
+  - Model `OperationResult` moved instance variable `operation_kind`, `provisioning_state` and `operation_state` under property `properties` whose type is `OperationResultProperties`
+  - Model `OutboundNetworkDependenciesEndpoint` moved instance variable `category`, `endpoints` and `provisioning_state` under property `properties` whose type is `OutboundNetworkDependenciesEndpointProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state`, `group_id` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
+  - Model `ReadOnlyFollowingDatabase` moved instance variable `provisioning_state`, `soft_delete_period`, `hot_cache_period`, `statistics`, `leader_cluster_resource_id`, `attached_database_configuration_name`, `principals_modification_kind`, `table_level_sharing_properties`, `original_database_name`, `database_share_origin` and `suspension_details` under property `properties` whose type is `ReadOnlyFollowingDatabaseProperties`
+  - Model `ReadWriteDatabase` moved instance variable `provisioning_state`, `soft_delete_period`, `hot_cache_period`, `statistics`, `is_followed`, `key_vault_properties` and `suspension_details` under property `properties` whose type is `ReadWriteDatabaseProperties`
+  - Model `SandboxCustomImage` moved instance variable `language`, `language_version`, `base_image_name`, `requirements_file_content` and `provisioning_state` under property `properties` whose type is `SandboxCustomImageProperties`
+  - Model `Script` moved instance variable `script_url`, `script_url_sas_token`, `script_content`, `force_update_tag`, `continue_on_errors`, `provisioning_state`, `script_level` and `principal_permissions_action` under property `properties` whose type is `ScriptProperties`
+  - Method `ClustersOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match`/`if_none_match` to keyword_only parameter `etag`/`match_condition`
+  - Method `ClustersOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
+  - Parameter `caller_role` of `Method DatabasesOperations.begin_create_or_update` is now optional
   - Method `DatabasesOperations.begin_create_or_update` changed its parameter `caller_role` from `positional_or_keyword` to `keyword_only`
-  - Method `DatabasesOperations.begin_update` parameter `caller_role` changed default value from `str` to `none`
+  - Parameter `caller_role` of `Method DatabasesOperations.begin_update` is now optional
   - Method `DatabasesOperations.begin_update` changed its parameter `caller_role` from `positional_or_keyword` to `keyword_only`
   - Method `DatabasesOperations.list_by_cluster` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
-  - Method `ClustersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'cluster_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'cluster_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
+
+### Other Changes
+
+  - Deleted model `AttachedDatabaseConfigurationListResult`/`ClusterListResult`/`ClusterPrincipalAssignmentListResult`/`DataConnectionListResult`/`DatabaseListResult`/`DatabasePrincipalAssignmentListResult`/`FollowerDatabaseListResult`/`FollowerDatabaseListResultGet`/`ListResourceSkusResult`/`ManagedPrivateEndpointListResult`/`OperationListResult`/`OutboundNetworkDependenciesEndpointListResult`/`PrivateEndpointConnectionListResult`/`PrivateLinkResourceListResult`/`SandboxCustomImagesListResult`/`ScriptListResult`/`SkuDescriptionList` which actually were not used by SDK users
 
 ## 4.0.0b1 (2026-06-02)
 
