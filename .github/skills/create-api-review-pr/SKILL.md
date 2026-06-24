@@ -18,6 +18,7 @@ If the user asks to create an API review PR for a new package, explain that new 
 3. Python 3.10 or later must be available.
 4. `azpysdk` must be installed (`pip install -e ./eng/tools/azure-sdk-tools`).
 5. ApiView stub generator dependencies must be installed (`pip install -r ./eng/apiview_reqs.txt`).
+6. `azsdk` CLI may be needed for package work item lookup. Do not proactively check or install it before running `create_api_review_pr.py`; the script detects supported install locations and reports when installation or update is necessary.
 
 ## Information to Gather
 
@@ -46,6 +47,8 @@ Before running the script:
 2. **Validate the baseline tag**: Run `git tag -l "<tag>"` to confirm the tag exists. If the user provided a version like `12.29.0`, construct the full tag as `<package-name>_<version>` and validate that.
 3. **Validate the target tag when applicable**: If the user provided a target version or tag, construct or validate the full tag as `<package-name>_<version>` and run `git tag -l "<tag>"`.
 4. **Confirm the working tree is clean**: Run `git status --porcelain` and warn if there are uncommitted changes.
+
+Do not proactively run `azsdk --help`, `azsdk package find-work-item --help`, or the `azure-sdk-mcp.ps1` installer as a validation step. If `create_api_review_pr.py` fails with an error saying the `azsdk` CLI is not found or the `package find-work-item` command is unavailable, then run `pwsh ./eng/common/mcp/azure-sdk-mcp.ps1` from the repository root to install or update it, and rerun the same `create_api_review_pr.py` command once. If the script still reports an `azsdk` error after that, stop and report the failure.
 
 ## Execution
 
