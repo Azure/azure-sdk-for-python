@@ -2,7 +2,9 @@
 
 ## 1.0.0 (2026-06-24)
 
-tool can't generate changelog for this release, please update manually.
+### Other Changes
+
+  - First GA version of `azure-mgmt-networkfunction`
 
 ## 1.0.0b2 (2026-03-16)
 
