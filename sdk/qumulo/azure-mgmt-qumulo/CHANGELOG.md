@@ -1,5 +1,29 @@
 # Release History
 
+## 3.0.0 (2026-06-24)
+
+### Features Added
+
+  - Client `QumuloMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `QumuloMgmtClient` added method `send_request`
+  - Model `FileSystemResource` added property `properties`
+  - Model `FileSystemResourceUpdateProperties` added property `performance_tier`
+  - Added model `FileSystemResourceProperties`
+
+### Breaking Changes
+
+  - Model `FileSystemResource` deleted or renamed its instance variable `marketplace_details`
+  - Model `FileSystemResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `FileSystemResource` deleted or renamed its instance variable `storage_sku`
+  - Model `FileSystemResource` deleted or renamed its instance variable `user_details`
+  - Model `FileSystemResource` deleted or renamed its instance variable `delegated_subnet_id`
+  - Model `FileSystemResource` deleted or renamed its instance variable `cluster_login_url`
+  - Model `FileSystemResource` deleted or renamed its instance variable `private_ips`
+  - Model `FileSystemResource` deleted or renamed its instance variable `admin_password`
+  - Model `FileSystemResource` deleted or renamed its instance variable `availability_zone`
+  - Deleted or renamed model `FileSystemResourceListResult`
+  - Deleted or renamed model `OperationListResult`
+
 ## 2.1.0 (2026-06-23)
 
 ### Features Added
