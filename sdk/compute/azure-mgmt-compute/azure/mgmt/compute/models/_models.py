@@ -816,6 +816,38 @@ class AutomaticRepairsPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AutomaticSkuMigrationPolicy(_Model):
+    """Specifies the configuration parameters used to control automatic SKU migration for the virtual
+    machine scale set. When enabled, the platform may migrate instances to a different VM size from
+    the SKU profile depending on platform demands.
+
+    :ivar enabled: Specifies whether automatic SKU migration should be enabled on the virtual
+     machine scale set. The default value is false.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies whether automatic SKU migration should be enabled on the virtual machine scale set.
+     The default value is false."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AutomaticZoneRebalancingPolicy(_Model):
     """The configuration parameters used while performing automatic AZ balancing.
 
@@ -10918,6 +10950,271 @@ class InstanceViewStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
+class InterconnectBlock(TrackedResource):
+    """Specifies information about the Interconnect Block.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of the Interconnect Block.
+    :vartype properties: ~azure.mgmt.compute.models.InterconnectBlockProperties
+    :ivar sku: SKU of the resource for which capacity needs to be pre-allocated. Both ``sku.name``
+     and ``sku.capacity`` are required at create. After create, only ``sku.capacity`` can be
+     updated. Required.
+    :vartype sku: ~azure.mgmt.compute.models.Sku
+    :ivar zones: The availability zones.
+    :vartype zones: list[str]
+    :ivar placement: Placement section specifies the user-defined constraints for Interconnect
+     Block hardware placement. This property cannot be changed once Interconnect Block is
+     provisioned.
+    :vartype placement: ~azure.mgmt.compute.models.Placement
+    """
+
+    properties: Optional["_models.InterconnectBlockProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the Interconnect Block."""
+    sku: "_models.Sku" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """SKU of the resource for which capacity needs to be pre-allocated. Both ``sku.name`` and
+     ``sku.capacity`` are required at create. After create, only ``sku.capacity`` can be updated.
+     Required."""
+    zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The availability zones."""
+    placement: Optional["_models.Placement"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Placement section specifies the user-defined constraints for Interconnect Block hardware
+     placement. This property cannot be changed once Interconnect Block is provisioned."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        sku: "_models.Sku",
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.InterconnectBlockProperties"] = None,
+        zones: Optional[list[str]] = None,
+        placement: Optional["_models.Placement"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InterconnectBlockInstanceView(_Model):
+    """The instance view of an Interconnect Block.
+
+    :ivar current_capacity: The current capacity allocated for this Interconnect Block.
+    :vartype current_capacity: int
+    :ivar statuses: The resource status information.
+    :vartype statuses: list[~azure.mgmt.compute.models.InstanceViewStatus]
+    """
+
+    current_capacity: Optional[int] = rest_field(name="currentCapacity", visibility=["read"])
+    """The current capacity allocated for this Interconnect Block."""
+    statuses: Optional[list["_models.InstanceViewStatus"]] = rest_field(visibility=["read"])
+    """The resource status information."""
+
+
+class InterconnectBlockProfile(_Model):
+    """The parameters of an Interconnect Block Profile.
+
+    :ivar interconnect_block: Specifies the Interconnect Block resource ID that should be used for
+     allocating the Virtual Machine or Scale Set VM instances provided enough capacity has been
+     reserved.
+    :vartype interconnect_block: ~azure.mgmt.compute.models.ApiEntityReference
+    """
+
+    interconnect_block: Optional["_models.ApiEntityReference"] = rest_field(
+        name="interconnectBlock", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Interconnect Block resource ID that should be used for allocating the Virtual
+     Machine or Scale Set VM instances provided enough capacity has been reserved."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        interconnect_block: Optional["_models.ApiEntityReference"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InterconnectBlockProperties(_Model):
+    """Properties of the Interconnect Block.
+
+    :ivar virtual_machines_associated: A list of all virtual machine resource ids that are
+     associated with the Interconnect Block.
+    :vartype virtual_machines_associated: list[~azure.mgmt.compute.models.SubResourceReadOnly]
+    :ivar interconnect_group: The Microsoft.Network/interconnectGroups resource that this
+     Interconnect Block is associated with. Required at create and immutable thereafter. Required.
+    :vartype interconnect_group: ~azure.mgmt.compute.models.ApiEntityReference
+    :ivar interconnect_block_id: A unique id (GUID) generated and assigned to the Interconnect
+     Block by the platform which does not change throughout the lifetime of the resource.
+    :vartype interconnect_block_id: str
+    :ivar provisioning_time: The date time when the Interconnect Block was last updated.
+    :vartype provisioning_time: ~datetime.datetime
+    :ivar provisioning_state: The provisioning state, which only appears in the response.
+    :vartype provisioning_state: str
+    :ivar instance_view: The Interconnect Block instance view.
+    :vartype instance_view: ~azure.mgmt.compute.models.InterconnectBlockInstanceView
+    :ivar time_created: Specifies the time at which the Interconnect Block resource was created.
+    :vartype time_created: ~datetime.datetime
+    """
+
+    virtual_machines_associated: Optional[list["_models.SubResourceReadOnly"]] = rest_field(
+        name="virtualMachinesAssociated", visibility=["read"]
+    )
+    """A list of all virtual machine resource ids that are associated with the Interconnect Block."""
+    interconnect_group: "_models.ApiEntityReference" = rest_field(
+        name="interconnectGroup", visibility=["read", "create"]
+    )
+    """The Microsoft.Network/interconnectGroups resource that this Interconnect Block is associated
+     with. Required at create and immutable thereafter. Required."""
+    interconnect_block_id: Optional[str] = rest_field(name="interconnectBlockId", visibility=["read"])
+    """A unique id (GUID) generated and assigned to the Interconnect Block by the platform which does
+     not change throughout the lifetime of the resource."""
+    provisioning_time: Optional[datetime.datetime] = rest_field(
+        name="provisioningTime", visibility=["read"], format="rfc3339"
+    )
+    """The date time when the Interconnect Block was last updated."""
+    provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
+    """The provisioning state, which only appears in the response."""
+    instance_view: Optional["_models.InterconnectBlockInstanceView"] = rest_field(
+        name="instanceView", visibility=["read"]
+    )
+    """The Interconnect Block instance view."""
+    time_created: Optional[datetime.datetime] = rest_field(name="timeCreated", visibility=["read"], format="rfc3339")
+    """Specifies the time at which the Interconnect Block resource was created."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        interconnect_group: "_models.ApiEntityReference",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InterconnectBlockUpdate(UpdateResource):
+    """Specifies information about the Interconnect Block. Only tags and sku.capacity can be updated.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar sku: SKU of the resource for which capacity needs to be pre-allocated. Only
+     ``sku.capacity`` is mutable; ``sku.name`` is immutable.
+    :vartype sku: ~azure.mgmt.compute.models.Sku
+    """
+
+    sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """SKU of the resource for which capacity needs to be pre-allocated. Only ``sku.capacity`` is
+     mutable; ``sku.name`` is immutable."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        sku: Optional["_models.Sku"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InterconnectGroupProfile(_Model):
+    """Specifies the interconnect group profile for a virtual machine, used to associate the VM with
+    an interconnect group and subgroups.
+
+    :ivar interconnect_group: Reference to the interconnect group resource.
+    :vartype interconnect_group: ~azure.mgmt.compute.models.SubResource
+    :ivar subgroups: The list of subgroup references within the interconnect group.
+    :vartype subgroups: list[~azure.mgmt.compute.models.SubResource]
+    """
+
+    interconnect_group: Optional["_models.SubResource"] = rest_field(
+        name="interconnectGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to the interconnect group resource."""
+    subgroups: Optional[list["_models.SubResource"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of subgroup references within the interconnect group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        interconnect_group: Optional["_models.SubResource"] = None,
+        subgroups: Optional[list["_models.SubResource"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InterconnectInstanceView(_Model):
+    """The Interconnect Block instance view details for a Virtual Machine or Scale Set VM instance.
+
+    :ivar interconnect_subgroup_id: The ID (GUID) of the Interconnect subgroup in which the Virtual
+     Machine was placed.
+    :vartype interconnect_subgroup_id: str
+    """
+
+    interconnect_subgroup_id: Optional[str] = rest_field(name="interconnectSubgroupId", visibility=["read"])
+    """The ID (GUID) of the Interconnect subgroup in which the Virtual Machine was placed."""
+
+
 class KeyForDiskEncryptionSet(_Model):
     """Key Vault Key Url to be used for server side encryption of Managed Disks and Snapshots.
 
@@ -11941,6 +12238,9 @@ class NetworkProfile(_Model):
      used to create the virtual machine networking resources.
     :vartype network_interface_configurations:
      list[~azure.mgmt.compute.models.VirtualMachineNetworkInterfaceConfiguration]
+    :ivar interconnect_group_profile: Specifies the interconnect group profile to associate with
+     the virtual machine. Minimum api-version: 2026-03-01.
+    :vartype interconnect_group_profile: ~azure.mgmt.compute.models.InterconnectGroupProfile
     """
 
     network_interfaces: Optional[list["_models.NetworkInterfaceReference"]] = rest_field(
@@ -11958,6 +12258,11 @@ class NetworkProfile(_Model):
     )
     """Specifies the networking configurations that will be used to create the virtual machine
      networking resources."""
+    interconnect_group_profile: Optional["_models.InterconnectGroupProfile"] = rest_field(
+        name="interconnectGroupProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the interconnect group profile to associate with the virtual machine. Minimum
+     api-version: 2026-03-01."""
 
     @overload
     def __init__(
@@ -11966,6 +12271,7 @@ class NetworkProfile(_Model):
         network_interfaces: Optional[list["_models.NetworkInterfaceReference"]] = None,
         network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
         network_interface_configurations: Optional[list["_models.VirtualMachineNetworkInterfaceConfiguration"]] = None,
+        interconnect_group_profile: Optional["_models.InterconnectGroupProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -17094,6 +17400,10 @@ class SkuProfile(_Model):
      based on which the VMs will be allocated. Known values are: "LowestPrice", "CapacityOptimized",
      and "Prioritized".
     :vartype allocation_strategy: str or ~azure.mgmt.compute.models.AllocationStrategy
+    :ivar automatic_sku_migration_policy: Specifies the policy that controls whether the platform
+     may automatically migrate scale set instances to a different VM size from the SKU profile
+     depending on platform demands. When omitted, automatic SKU migration is disabled.
+    :vartype automatic_sku_migration_policy: ~azure.mgmt.compute.models.AutomaticSkuMigrationPolicy
     """
 
     vm_sizes: Optional[list["_models.SkuProfileVMSize"]] = rest_field(
@@ -17105,6 +17415,12 @@ class SkuProfile(_Model):
     )
     """Specifies the allocation strategy for the virtual machine scale set based on which the VMs will
      be allocated. Known values are: \"LowestPrice\", \"CapacityOptimized\", and \"Prioritized\"."""
+    automatic_sku_migration_policy: Optional["_models.AutomaticSkuMigrationPolicy"] = rest_field(
+        name="automaticSkuMigrationPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the policy that controls whether the platform may automatically migrate scale set
+     instances to a different VM size from the SKU profile depending on platform demands. When
+     omitted, automatic SKU migration is disabled."""
 
     @overload
     def __init__(
@@ -17112,6 +17428,7 @@ class SkuProfile(_Model):
         *,
         vm_sizes: Optional[list["_models.SkuProfileVMSize"]] = None,
         allocation_strategy: Optional[Union[str, "_models.AllocationStrategy"]] = None,
+        automatic_sku_migration_policy: Optional["_models.AutomaticSkuMigrationPolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -19388,6 +19705,7 @@ class VirtualMachine(TrackedResource):
         "scheduled_events_profile",
         "user_data",
         "capacity_reservation",
+        "interconnect_block_profile",
         "application_profile",
         "time_created",
         "resiliency_profile",
@@ -20752,6 +21070,9 @@ class VirtualMachineInstanceView(_Model):
     :ivar is_vm_in_standby_pool: [Preview Feature] Specifies whether the VM is currently in or out
      of the Standby Pool.
     :vartype is_vm_in_standby_pool: bool
+    :ivar interconnect_instance_view: The Interconnect runtime view of the Virtual Machine. Minimum
+     api-version: 2026-03-01.
+    :vartype interconnect_instance_view: ~azure.mgmt.compute.models.InterconnectInstanceView
     """
 
     platform_update_domain: Optional[int] = rest_field(
@@ -20817,6 +21138,10 @@ class VirtualMachineInstanceView(_Model):
     """[Preview Feature] The status of virtual machine patch operations."""
     is_vm_in_standby_pool: Optional[bool] = rest_field(name="isVMInStandbyPool", visibility=["read"])
     """[Preview Feature] Specifies whether the VM is currently in or out of the Standby Pool."""
+    interconnect_instance_view: Optional["_models.InterconnectInstanceView"] = rest_field(
+        name="interconnectInstanceView", visibility=["read"]
+    )
+    """The Interconnect runtime view of the Virtual Machine. Minimum api-version: 2026-03-01."""
 
     @overload
     def __init__(
@@ -21406,6 +21731,9 @@ class VirtualMachineProperties(_Model):
     :ivar capacity_reservation: Specifies information about the capacity reservation that is used
      to allocate virtual machine. Minimum api-version: 2021-04-01.
     :vartype capacity_reservation: ~azure.mgmt.compute.models.CapacityReservationProfile
+    :ivar interconnect_block_profile: Specifies information about the Interconnect Block that is
+     used to allocate the Virtual Machine. Minimum api-version: 2026-03-01.
+    :vartype interconnect_block_profile: ~azure.mgmt.compute.models.InterconnectBlockProfile
     :ivar application_profile: Specifies the gallery applications that should be made available to
      the VM/VMSS.
     :vartype application_profile: ~azure.mgmt.compute.models.ApplicationProfile
@@ -21552,6 +21880,11 @@ class VirtualMachineProperties(_Model):
     )
     """Specifies information about the capacity reservation that is used to allocate virtual machine.
      Minimum api-version: 2021-04-01."""
+    interconnect_block_profile: Optional["_models.InterconnectBlockProfile"] = rest_field(
+        name="interconnectBlockProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies information about the Interconnect Block that is used to allocate the Virtual
+     Machine. Minimum api-version: 2026-03-01."""
     application_profile: Optional["_models.ApplicationProfile"] = rest_field(
         name="applicationProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -21590,6 +21923,7 @@ class VirtualMachineProperties(_Model):
         scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
         capacity_reservation: Optional["_models.CapacityReservationProfile"] = None,
+        interconnect_block_profile: Optional["_models.InterconnectBlockProfile"] = None,
         application_profile: Optional["_models.ApplicationProfile"] = None,
         resiliency_profile: Optional["_models.ResiliencyProfile"] = None,
     ) -> None: ...
@@ -22628,22 +22962,22 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
 
     :ivar id: Resource Id.
     :vartype id: str
-    :ivar properties: Describes the properties of a Virtual Machine Scale Set Extension.
-    :vartype properties: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtensionProperties
-    :ivar type: Resource type.
-    :vartype type: str
     :ivar name: Resource name.
     :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: Describes the properties of a Virtual Machine Scale Set Extension.
+    :vartype properties: ~azure.mgmt.compute.models.VirtualMachineScaleSetExtensionProperties
     """
 
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource name."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """Resource type."""
     properties: Optional["_models.VirtualMachineScaleSetExtensionProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Describes the properties of a Virtual Machine Scale Set Extension."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """Resource type."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource name."""
 
     __flattened_items = [
         "force_update_tag",
@@ -22664,8 +22998,8 @@ class VirtualMachineScaleSetExtension(SubResourceReadOnly):
     def __init__(
         self,
         *,
-        properties: Optional["_models.VirtualMachineScaleSetExtensionProperties"] = None,
         name: Optional[str] = None,
+        properties: Optional["_models.VirtualMachineScaleSetExtensionProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -23584,6 +23918,9 @@ class VirtualMachineScaleSetNetworkProfile(_Model):
      networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
      orchestration mode 'Flexible'. Known values are: "2020-11-01" and "2022-11-01".
     :vartype network_api_version: str or ~azure.mgmt.compute.models.NetworkApiVersion
+    :ivar interconnect_group_profile: Specifies the interconnect group profile to associate with
+     the scale set. Minimum api-version: 2026-03-01.
+    :vartype interconnect_group_profile: ~azure.mgmt.compute.models.InterconnectGroupProfile
     """
 
     health_probe: Optional["_models.ApiEntityReference"] = rest_field(
@@ -23602,6 +23939,11 @@ class VirtualMachineScaleSetNetworkProfile(_Model):
     """specifies the Microsoft.Network API version used when creating networking resources in the
      Network Interface Configurations for Virtual Machine Scale Set with orchestration mode
      'Flexible'. Known values are: \"2020-11-01\" and \"2022-11-01\"."""
+    interconnect_group_profile: Optional["_models.InterconnectGroupProfile"] = rest_field(
+        name="interconnectGroupProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the interconnect group profile to associate with the scale set. Minimum api-version:
+     2026-03-01."""
 
     @overload
     def __init__(
@@ -23610,6 +23952,7 @@ class VirtualMachineScaleSetNetworkProfile(_Model):
         health_probe: Optional["_models.ApiEntityReference"] = None,
         network_interface_configurations: Optional[list["_models.VirtualMachineScaleSetNetworkConfiguration"]] = None,
         network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
+        interconnect_group_profile: Optional["_models.InterconnectGroupProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -25011,6 +25354,9 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_Model):  # pylint: disable=nam
      networking resources in the Network Interface Configurations for Virtual Machine Scale Set with
      orchestration mode 'Flexible'. Known values are: "2020-11-01" and "2022-11-01".
     :vartype network_api_version: str or ~azure.mgmt.compute.models.NetworkApiVersion
+    :ivar interconnect_group_profile: Specifies the interconnect group profile to associate with
+     the scale set. Minimum api-version: 2026-03-01.
+    :vartype interconnect_group_profile: ~azure.mgmt.compute.models.InterconnectGroupProfile
     """
 
     health_probe: Optional["_models.ApiEntityReference"] = rest_field(
@@ -25029,6 +25375,11 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_Model):  # pylint: disable=nam
     """specifies the Microsoft.Network API version used when creating networking resources in the
      Network Interface Configurations for Virtual Machine Scale Set with orchestration mode
      'Flexible'. Known values are: \"2020-11-01\" and \"2022-11-01\"."""
+    interconnect_group_profile: Optional["_models.InterconnectGroupProfile"] = rest_field(
+        name="interconnectGroupProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the interconnect group profile to associate with the scale set. Minimum api-version:
+     2026-03-01."""
 
     @overload
     def __init__(
@@ -25039,6 +25390,7 @@ class VirtualMachineScaleSetUpdateNetworkProfile(_Model):  # pylint: disable=nam
             list["_models.VirtualMachineScaleSetUpdateNetworkConfiguration"]
         ] = None,
         network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
+        interconnect_group_profile: Optional["_models.InterconnectGroupProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -25572,6 +25924,9 @@ class VirtualMachineScaleSetUpdateVMProfile(_Model):
     :ivar hardware_profile: Specifies the hardware profile related details of a scale set. Minimum
      api-version: 2021-11-01.
     :vartype hardware_profile: ~azure.mgmt.compute.models.VirtualMachineScaleSetHardwareProfile
+    :ivar interconnect_block_profile: Specifies the Interconnect Block related details of a scale
+     set. Minimum api-version: 2026-03-01.
+    :vartype interconnect_block_profile: ~azure.mgmt.compute.models.InterconnectBlockProfile
     """
 
     os_profile: Optional["_models.VirtualMachineScaleSetUpdateOSProfile"] = rest_field(
@@ -25621,6 +25976,11 @@ class VirtualMachineScaleSetUpdateVMProfile(_Model):
         name="hardwareProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the hardware profile related details of a scale set. Minimum api-version: 2021-11-01."""
+    interconnect_block_profile: Optional["_models.InterconnectBlockProfile"] = rest_field(
+        name="interconnectBlockProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Interconnect Block related details of a scale set. Minimum api-version:
+     2026-03-01."""
 
     @overload
     def __init__(
@@ -25638,6 +25998,7 @@ class VirtualMachineScaleSetUpdateVMProfile(_Model):
         scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
         hardware_profile: Optional["_models.VirtualMachineScaleSetHardwareProfile"] = None,
+        interconnect_block_profile: Optional["_models.InterconnectBlockProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -25739,6 +26100,7 @@ class VirtualMachineScaleSetVM(TrackedResource):
         "user_data",
         "time_created",
         "virtual_machine_resource_id",
+        "interconnect_block_profile",
     ]
 
     @overload
@@ -26085,6 +26447,9 @@ class VirtualMachineScaleSetVMInstanceView(_Model):
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine [V1, V2]. Known
      values are: "V1" and "V2".
     :vartype hyper_v_generation: str or ~azure.mgmt.compute.models.HyperVGeneration
+    :ivar interconnect_instance_view: The Interconnect runtime view of the Scale Set VM instance.
+     Minimum api-version: 2026-03-01.
+    :vartype interconnect_instance_view: ~azure.mgmt.compute.models.InterconnectInstanceView
     """
 
     platform_update_domain: Optional[int] = rest_field(
@@ -26152,6 +26517,10 @@ class VirtualMachineScaleSetVMInstanceView(_Model):
         name="hyperVGeneration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The hypervisor generation of the Virtual Machine [V1, V2]. Known values are: \"V1\" and \"V2\"."""
+    interconnect_instance_view: Optional["_models.InterconnectInstanceView"] = rest_field(
+        name="interconnectInstanceView", visibility=["read"]
+    )
+    """The Interconnect runtime view of the Scale Set VM instance. Minimum api-version: 2026-03-01."""
 
     @overload
     def __init__(
@@ -26190,18 +26559,27 @@ class VirtualMachineScaleSetVMNetworkProfileConfiguration(_Model):  # pylint: di
     :ivar network_interface_configurations: The list of network configurations.
     :vartype network_interface_configurations:
      list[~azure.mgmt.compute.models.VirtualMachineScaleSetNetworkConfiguration]
+    :ivar interconnect_group_profile: Specifies the interconnect group profile to associate with
+     the scale set vm instance. Minimum api-version: 2026-03-01.
+    :vartype interconnect_group_profile: ~azure.mgmt.compute.models.InterconnectGroupProfile
     """
 
     network_interface_configurations: Optional[list["_models.VirtualMachineScaleSetNetworkConfiguration"]] = rest_field(
         name="networkInterfaceConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of network configurations."""
+    interconnect_group_profile: Optional["_models.InterconnectGroupProfile"] = rest_field(
+        name="interconnectGroupProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the interconnect group profile to associate with the scale set vm instance. Minimum
+     api-version: 2026-03-01."""
 
     @overload
     def __init__(
         self,
         *,
         network_interface_configurations: Optional[list["_models.VirtualMachineScaleSetNetworkConfiguration"]] = None,
+        interconnect_group_profile: Optional["_models.InterconnectGroupProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -26265,6 +26643,9 @@ class VirtualMachineScaleSetVMProfile(_Model):
     :ivar capacity_reservation: Specifies the capacity reservation related details of a scale set.
      Minimum api-version: 2021-04-01.
     :vartype capacity_reservation: ~azure.mgmt.compute.models.CapacityReservationProfile
+    :ivar interconnect_block_profile: Specifies the Interconnect Block related details of a Scale
+     Set. Minimum api-version: 2026-03-01.
+    :vartype interconnect_block_profile: ~azure.mgmt.compute.models.InterconnectBlockProfile
     :ivar application_profile: Specifies the gallery applications that should be made available to
      the VM/VMSS.
     :vartype application_profile: ~azure.mgmt.compute.models.ApplicationProfile
@@ -26350,6 +26731,11 @@ class VirtualMachineScaleSetVMProfile(_Model):
     )
     """Specifies the capacity reservation related details of a scale set. Minimum api-version:
      2021-04-01."""
+    interconnect_block_profile: Optional["_models.InterconnectBlockProfile"] = rest_field(
+        name="interconnectBlockProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Interconnect Block related details of a Scale Set. Minimum api-version:
+     2026-03-01."""
     application_profile: Optional["_models.ApplicationProfile"] = rest_field(
         name="applicationProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -26389,6 +26775,7 @@ class VirtualMachineScaleSetVMProfile(_Model):
         scheduled_events_profile: Optional["_models.ScheduledEventsProfile"] = None,
         user_data: Optional[str] = None,
         capacity_reservation: Optional["_models.CapacityReservationProfile"] = None,
+        interconnect_block_profile: Optional["_models.InterconnectBlockProfile"] = None,
         application_profile: Optional["_models.ApplicationProfile"] = None,
         hardware_profile: Optional["_models.VirtualMachineScaleSetHardwareProfile"] = None,
         service_artifact_reference: Optional["_models.ServiceArtifactReference"] = None,
@@ -26479,6 +26866,9 @@ class VirtualMachineScaleSetVMProperties(_Model):
      machine associated with this VMSS VM. This property is only applicable to Virtual Machine Scale
      Sets with Flexible orchestration mode. Minimum api-version: 2025-11-01.
     :vartype virtual_machine_resource_id: str
+    :ivar interconnect_block_profile: Specifies the Interconnect Block related details of a Scale
+     Set VM instance. Minimum api-version: 2026-03-01.
+    :vartype interconnect_block_profile: ~azure.mgmt.compute.models.InterconnectBlockProfile
     """
 
     latest_model_applied: Optional[bool] = rest_field(name="latestModelApplied", visibility=["read"])
@@ -26571,6 +26961,11 @@ class VirtualMachineScaleSetVMProperties(_Model):
     """Specifies the ARM resource ID of the standalone virtual machine associated with this VMSS VM.
      This property is only applicable to Virtual Machine Scale Sets with Flexible orchestration
      mode. Minimum api-version: 2025-11-01."""
+    interconnect_block_profile: Optional["_models.InterconnectBlockProfile"] = rest_field(
+        name="interconnectBlockProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Interconnect Block related details of a Scale Set VM instance. Minimum
+     api-version: 2026-03-01."""
 
     @overload
     def __init__(
@@ -26589,6 +26984,7 @@ class VirtualMachineScaleSetVMProperties(_Model):
         license_type: Optional[str] = None,
         protection_policy: Optional["_models.VirtualMachineScaleSetVMProtectionPolicy"] = None,
         user_data: Optional[str] = None,
+        interconnect_block_profile: Optional["_models.InterconnectBlockProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -26857,6 +27253,7 @@ class VirtualMachineUpdate(UpdateResource):
         "scheduled_events_profile",
         "user_data",
         "capacity_reservation",
+        "interconnect_block_profile",
         "application_profile",
         "time_created",
         "resiliency_profile",
