@@ -9,6 +9,14 @@ Set up your Python environment to use the Azure AI Content Understanding SDK and
 
 > **[COPILOT INTERACTION MODEL]:** This skill is designed to be interactive. At each step marked with **[ASK USER]**, pause execution and prompt the user for input or confirmation before proceeding. Do NOT silently skip these prompts. Use the `ask_questions` tool when available.
 
+> **[COPILOT] Step numbering is stable contract.** Authoring skills
+> ([`cu-sdk-author-analyzer`](../cu-sdk-author-analyzer/SKILL.md) and
+> [`cu-sdk-author-analyzer-classify-route`](../cu-sdk-author-analyzer-classify-route/SKILL.md))
+> route the user to specific steps here on probe failures — e.g. "endpoint
+> `MISSING` → Step 4 (env vars)". When renumbering or restructuring this
+> skill, update the routing tables in those skills (or keep step numbers
+> stable).
+
 ## Prerequisites
 
 Before starting, ensure you have:

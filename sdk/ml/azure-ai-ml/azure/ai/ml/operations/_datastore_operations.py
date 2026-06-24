@@ -13,11 +13,11 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
+from azure.ai.ml._restclient.arm_ml_service import (
     MachineLearningServicesMgmtClient as ServiceClient102024Preview,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import Datastore as DatastoreData
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import Datastore as DatastoreData
+from azure.ai.ml._restclient.arm_ml_service.models import (
     DatastoreSecrets,
     NoneDatastoreCredentials,
 )
@@ -48,7 +48,7 @@ class DatastoreOperations(_ScopeDependentOperations):
         _azure_machine_learning_workspaces.AzureMachineLearningWorkspaces
     :param serviceclient_2024_10_01_preview: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type serviceclient_2024_10_01_preview: ~azure.ai.ml._restclient.v2024_10_01_preview_tsp.
+    :type serviceclient_2024_10_01_preview: ~azure.ai.ml._restclient.arm_ml_service.
         MachineLearningServicesMgmtClient
     """
 

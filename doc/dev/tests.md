@@ -147,7 +147,7 @@ A quick description of the commands above:
 - verifywhl: verifies the wheel contents and manifest
 - verifysdist: verifies the sdist contents and manifest
 - samples: runs all of the samples in the `samples` directory and verifies they are working correctly
-- apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/apiview-stub-generator) tool on your code
+- apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/apiview-stub-generator) tool on your code. By default, generates `api.md` and `api.metadata.yml` in the package directory, which are the files needed to pass the API consistency check. Use `--token-file` to generate only the raw APIView token file.
 
 ## The `devtools_testutils` package
 

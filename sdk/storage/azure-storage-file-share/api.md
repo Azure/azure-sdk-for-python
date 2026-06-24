@@ -64,7 +64,7 @@ namespace azure.storage.fileshare
         ) -> str: ...
 
 
-    class azure.storage.fileshare.AccessPolicy(_BackCompatMixin):
+    class azure.storage.fileshare.AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union[datetime, str]]
         permission: Optional[Union[ShareSasPermissions, str]]
         start: Optional[Union[datetime, str]]
@@ -219,7 +219,7 @@ namespace azure.storage.fileshare
         def values(self): ...
 
 
-    class azure.storage.fileshare.CorsRule(_BackCompatMixin):
+    class azure.storage.fileshare.CorsRule(GeneratedCorsRule):
         allowed_headers: str
         allowed_methods: str
         allowed_origins: str
@@ -585,7 +585,7 @@ namespace azure.storage.fileshare
         SECONDARY = secondary
 
 
-    class azure.storage.fileshare.Metrics(_BackCompatMixin):
+    class azure.storage.fileshare.Metrics(GeneratedMetrics):
         enabled: bool = False
         include_apis: bool
         retention_policy: RetentionPolicy
@@ -674,7 +674,7 @@ namespace azure.storage.fileshare
         def from_string(cls, string: str) -> Self: ...
 
 
-    class azure.storage.fileshare.NfsEncryptionInTransit(_BackCompatMixin):
+    class azure.storage.fileshare.NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
         required: bool
 
         def __eq__(self, other: Any) -> bool: ...
@@ -743,7 +743,7 @@ namespace azure.storage.fileshare
         def from_string(cls, string: str) -> ResourceTypes: ...
 
 
-    class azure.storage.fileshare.RetentionPolicy(_BackCompatMixin):
+    class azure.storage.fileshare.RetentionPolicy(GeneratedRetentionPolicy):
         days: Optional[int]
         enabled: bool = False
 
@@ -1710,7 +1710,7 @@ namespace azure.storage.fileshare
             ) -> None: ...
 
 
-    class azure.storage.fileshare.ShareNfsSettings(_BackCompatMixin):
+    class azure.storage.fileshare.ShareNfsSettings(GeneratedShareNfsSettings):
         encryption_in_transit: NfsEncryptionInTransit
 
         def __eq__(self, other: Any) -> bool: ...
@@ -1833,7 +1833,7 @@ namespace azure.storage.fileshare
         def values(self): ...
 
 
-    class azure.storage.fileshare.ShareProtocolSettings(_BackCompatMixin):
+    class azure.storage.fileshare.ShareProtocolSettings(GeneratedShareProtocolSettings):
         nfs: Optional[ShareNfsSettings]
         smb: Optional[ShareSmbSettings]
 
@@ -2034,7 +2034,7 @@ namespace azure.storage.fileshare
             ) -> ShareClient: ...
 
 
-    class azure.storage.fileshare.ShareSmbSettings(_BackCompatMixin):
+    class azure.storage.fileshare.ShareSmbSettings(GeneratedShareSmbSettings):
         encryption_in_transit: Optional[SmbEncryptionInTransit]
         multichannel: Optional[SmbMultichannel]
 
@@ -2087,7 +2087,7 @@ namespace azure.storage.fileshare
             ) -> JSON: ...
 
 
-    class azure.storage.fileshare.SmbEncryptionInTransit(_BackCompatMixin):
+    class azure.storage.fileshare.SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
         required: bool
 
         def __eq__(self, other: Any) -> bool: ...
@@ -2138,7 +2138,7 @@ namespace azure.storage.fileshare
             ) -> JSON: ...
 
 
-    class azure.storage.fileshare.SmbMultichannel(_BackCompatMixin):
+    class azure.storage.fileshare.SmbMultichannel(GeneratedSmbMultichannel):
         enabled: bool
 
         def __eq__(self, other: Any) -> bool: ...

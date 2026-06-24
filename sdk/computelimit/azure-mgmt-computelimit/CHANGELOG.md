@@ -1,5 +1,21 @@
 # Release History
 
+## 1.2.0 (2026-06-20)
+
+### Features Added
+
+  - Client `ComputeLimitMgmtClient` added operation group `shared_limit_caps`
+  - Client `ComputeLimitMgmtClient` added operation group `member_cap_overrides`
+  - Added model `MemberCap`
+  - Added model `MemberCapOverride`
+  - Added model `MemberCapOverrideProperties`
+  - Added model `SetMemberCapOverridesRequest`
+  - Added model `SetMemberCapOverridesResult`
+  - Added model `SharedLimitCap`
+  - Added model `SharedLimitCapProperties`
+  - Added operation group `MemberCapOverridesOperations`
+  - Added operation group `SharedLimitCapsOperations`
+
 ## 1.1.0 (2026-05-26)
 
 ### Features Added
