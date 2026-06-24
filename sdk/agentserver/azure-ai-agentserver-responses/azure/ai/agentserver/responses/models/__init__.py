@@ -13,7 +13,6 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._client import ProjectsClient  # type: ignore
-from . import types  # type: ignore
 from ._version import VERSION
 
 __version__ = VERSION
