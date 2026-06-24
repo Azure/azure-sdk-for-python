@@ -1,0 +1,63 @@
+{
+  "properties": {
+    "command": "echo ${{inputs.uri}} ${{inputs.folder}} ${{inputs.data_asset}} && echo done",
+    "computeId": "smoke-compute",
+    "description": "smoke serialization command job",
+    "displayName": "smoke-command-job-display",
+    "distribution": {
+      "distributionType": "Mpi",
+      "processCountPerInstance": 2
+    },
+    "environmentId": "AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+    "environmentVariables": {
+      "ENV1": "VAL1",
+      "ENV2": "VAL2"
+    },
+    "experimentName": "smoke-experiment",
+    "inputs": {
+      "data_asset": {
+        "jobInputType": "uri_folder",
+        "uri": "smoke-data:1"
+      },
+      "folder": {
+        "jobInputType": "uri_folder",
+        "mode": "ReadOnlyMount",
+        "uri": "azureml://datastores/workspaceblobstore/paths/python/"
+      },
+      "uri": {
+        "jobInputType": "uri_file",
+        "uri": "azureml://datastores/workspaceblobstore/paths/python/data.csv"
+      }
+    },
+    "isArchived": false,
+    "jobType": "Command",
+    "limits": {
+      "jobLimitsType": "Command",
+      "timeout": "PT10M"
+    },
+    "outputs": {
+      "model_output": {
+        "jobOutputType": "uri_folder"
+      }
+    },
+    "properties": {
+      "prop1": "value1"
+    },
+    "queueSettings": {
+      "jobTier": "Standard"
+    },
+    "resources": {
+      "instanceCount": 2,
+      "instanceType": "STANDARD_DS3_V2",
+      "locations": [
+        "westus",
+        "eastus"
+      ],
+      "properties": {}
+    },
+    "tags": {
+      "tag1": "value1",
+      "tag2": "value2"
+    }
+  }
+}

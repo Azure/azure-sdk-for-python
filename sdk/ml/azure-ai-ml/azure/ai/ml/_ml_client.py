@@ -25,7 +25,6 @@ from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtCl
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
-from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022022Preview
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
@@ -33,10 +32,6 @@ from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
-    MachineLearningServicesMgmtClient as ServiceClient102024PreviewTsp,
-)
-from azure.ai.ml._restclient.v2025_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012025Preview
 from azure.ai.ml._restclient.workspace_dataplane import WorkspaceDataplaneClient as ServiceClientWorkspaceDataplane
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import configure_appinsights_logging
@@ -109,6 +104,9 @@ ServiceClient052022 = partial(MachineLearningServicesMgmtClient, api_version="20
 ServiceClient102022 = partial(MachineLearningServicesMgmtClient, api_version="2022-10-01")
 ServiceClient042023 = partial(MachineLearningServicesMgmtClient, api_version="2023-04-01")
 ServiceClient102023 = partial(MachineLearningServicesMgmtClient, api_version="2023-10-01")
+ServiceClient022022Preview = partial(MachineLearningServicesMgmtClient, api_version="2022-02-01-preview")
+ServiceClient012025Preview = partial(MachineLearningServicesMgmtClient, api_version="2025-01-01-preview")
+ServiceClient102024PreviewTsp = partial(MachineLearningServicesMgmtClient, api_version="2024-10-01-preview")
 
 module_logger = logging.getLogger(__name__)
 
