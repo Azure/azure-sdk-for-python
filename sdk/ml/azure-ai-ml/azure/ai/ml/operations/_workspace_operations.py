@@ -8,10 +8,10 @@ from typing import Any, Dict, Iterable, List, Optional, Union, cast
 
 from marshmallow import ValidationError
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
+from azure.ai.ml._restclient.arm_ml_service import (
     MachineLearningServicesMgmtClient as ServiceClient102024Preview,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedNetworkProvisionOptions
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedNetworkProvisionOptions
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._http_utils import HttpPipeline
