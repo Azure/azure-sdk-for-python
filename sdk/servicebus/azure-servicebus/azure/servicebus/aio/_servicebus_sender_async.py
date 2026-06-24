@@ -420,9 +420,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 batch._from_list(obj_message)  # type: ignore # pylint: disable=protected-access
                 obj_message = batch
             else:
-                # pylint: disable=protected-access
-                obj_message._message = trace_message(
-                    obj_message._message,
+                obj_message._message = trace_message(  # pylint: disable=protected-access
+                    obj_message._message,  # pylint: disable=protected-access
                     amqp_transport=self._amqp_transport,
                     additional_attributes={
                         TraceAttributes.TRACE_NET_PEER_NAME_ATTRIBUTE: self.fully_qualified_namespace,
