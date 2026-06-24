@@ -1,0 +1,4 @@
+directory: specification/liftrcommvault/Commvault.ContentStore.Management
+commit: 4fede6e43ba74f1fc8151ffcd8abf485c5ab9633
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
