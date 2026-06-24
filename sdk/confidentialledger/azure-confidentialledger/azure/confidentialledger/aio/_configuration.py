@@ -24,7 +24,7 @@ class ConfidentialLedgerClientConfiguration:  # pylint: disable=too-many-instanc
      Required.
     :type ledger_endpoint: str
     :keyword api_version: The API version to use for this operation. Known values are "2026-02-23"
-     and None. Default value is None. If not set, the operation's default API version will be used.
+     and None. Default value is "2026-02-23". If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
