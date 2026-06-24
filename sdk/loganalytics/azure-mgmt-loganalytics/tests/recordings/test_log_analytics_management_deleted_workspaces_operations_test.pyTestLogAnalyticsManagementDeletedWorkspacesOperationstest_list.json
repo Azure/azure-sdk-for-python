@@ -1,0 +1,492 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.OperationalInsights/deletedWorkspaces?api-version=2025-07-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-mgmt-loganalytics/14.0.0 Python/3.13.14 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "9115",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 24 Jun 2026 05:58:19 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b560d824-e29b-42f2-a43a-2b412b60f857",
+        "x-ms-operation-identifier": "tenantId=00000000-0000-0000-0000-000000000000,objectId=5350cd0a-129b-4051-86d2-76d567db42a7/southeastasia/2261c44d-0426-4546-a1a4-8eec03ac330e",
+        "x-ms-original-request-ids": [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          ""
+        ],
+        "x-ms-ratelimit-remaining-subscription-global-reads": "16499",
+        "x-ms-ratelimit-remaining-subscription-reads": "1099",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20260624T055820Z:b560d824-e29b-42f2-a43a-2b412b60f857",
+        "X-MSEdge-Ref": "Ref A: 114F6AAA26BC44BA97FE4EFFF82C0B37 Ref B: SG2AA1070303062 Ref C: 2026-06-24T05:58:19Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "properties": {
+              "customerId": "0bde0522-3a88-4450-8f25-c68e1a929360",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-09T23:50:31.9048727Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-10T14:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-09T23:50:31.9048727Z",
+              "modifiedDate": "2026-06-09T23:59:35.0443675Z"
+            },
+            "location": "eastus",
+            "tags": {
+              "azd-env-name": "devclaw-test2"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "6cad249d-1aeb-45a1-be2f-5690ecaec80d",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-10T00:02:03.1660725Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-10T05:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-10T00:02:03.1660725Z",
+              "modifiedDate": "2026-06-11T07:10:08.2989397Z"
+            },
+            "location": "eastus",
+            "tags": {
+              "azd-env-name": "devclaw-test3"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "5d001a41-868e-4993-af9e-6d6691dcb01f",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-18T20:37:36.1715812Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-19T00:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-18T20:37:36.1715812Z",
+              "modifiedDate": "2026-06-20T03:07:54.8196398Z"
+            },
+            "location": "eastus",
+            "tags": {
+              "azd-env-name": "mvcmovie-eastus"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "9256cbe1-e3dd-4563-9e79-4144984a0bc5",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-18T18:24:04.9717368Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-18T22:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-18T18:24:04.9717368Z",
+              "modifiedDate": "2026-06-18T18:27:09.6408283Z"
+            },
+            "location": "westus2",
+            "tags": {
+              "azd-env-name": "mvcmovie-prod"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "7d942d1d-7641-4914-bb92-898f3a6b2bff",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-18T20:34:19.3882047Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-19T12:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-18T20:34:19.3882047Z",
+              "modifiedDate": "2026-06-20T03:07:58.6250417Z"
+            },
+            "location": "westus2",
+            "tags": {
+              "azd-env-name": "mvcmovie-westus2"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "f7a74e0f-cc36-4b85-8c90-ca8f252c98f4",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-12T21:23:54.1318239Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": false,
+                "disableLocalAuth": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-13T15:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-12T21:23:54.1318239Z",
+              "modifiedDate": "2026-06-14T03:07:43.7836588Z",
+              "forceCmkForQuery": true
+            },
+            "location": "northeurope",
+            "tags": {
+              "azd-env-name": "vvvv-sub"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "2b71c177-f7e8-4f5b-b20d-1d0d69dbec73",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-02T05:47:29.6178285Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-03T09:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-02T05:47:29.6178285Z",
+              "modifiedDate": "2026-06-12T07:09:21.45325Z"
+            },
+            "location": "eastus2",
+            "tags": {
+              "azd-env-name": "kaghiya-devclaw"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "fb967edd-af25-4560-ac6a-a8c92e2e6269",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-08T16:38:06.4505115Z"
+              },
+              "retentionInDays": 90,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": false,
+                "disableLocalAuth": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-09T14:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-08T16:38:06.4505115Z",
+              "modifiedDate": "2026-06-09T23:08:55.8798411Z",
+              "forceCmkForQuery": true
+            },
+            "location": "eastus2",
+            "tags": {
+              "azd-env-name": "reliability-x7k2"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "8a8feb2b-42b1-468b-88db-0d96f5a246a7",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-08T16:46:12.8559192Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-08T23:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-08T16:46:12.8559192Z",
+              "modifiedDate": "2026-06-09T23:08:56.5649007Z"
+            },
+            "location": "eastus2",
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "b8c792a5-ef21-461e-939f-7bf134de8033",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-15T06:37:10.5062689Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": false
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-15T23:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-15T06:37:10.5062689Z",
+              "modifiedDate": "2026-06-16T11:09:24.8645801Z",
+              "forceCmkForQuery": true
+            },
+            "location": "eastus2",
+            "tags": {
+              "azd-env-name": "foo"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "344b8524-2398-462e-8683-7bc50c23c697",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-18T18:29:04.8190656Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-18T19:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-18T18:29:04.8190656Z",
+              "modifiedDate": "2026-06-19T23:08:00.7477835Z"
+            },
+            "location": "eastus2",
+            "tags": {
+              "azd-env-name": "mvcmovie-prod"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          },
+          {
+            "properties": {
+              "customerId": "e4806963-9af2-4e25-90e7-b11d8221b0e6",
+              "provisioningState": "Succeeded",
+              "sku": {
+                "name": "Sanitized",
+                "lastSkuUpdate": "2026-06-18T20:40:02.3823722Z"
+              },
+              "retentionInDays": 30,
+              "features": {
+                "legacy": 0,
+                "searchVersion": 1,
+                "enableLogAccessUsingOnlyResourcePermissions": true
+              },
+              "workspaceCapping": {
+                "dailyQuotaGb": -1.0,
+                "quotaNextResetTime": "2026-06-19T08:00:00Z",
+                "dataIngestionStatus": "RespectQuota"
+              },
+              "publicNetworkAccessForIngestion": "Enabled",
+              "publicNetworkAccessForQuery": "Enabled",
+              "createdDate": "2026-06-18T20:40:02.3823722Z",
+              "modifiedDate": "2026-06-20T03:07:46.1835915Z"
+            },
+            "location": "eastus2",
+            "tags": {
+              "azd-env-name": "mvcmovie-eastus2"
+            },
+            "id": "Sanitized",
+            "name": "Sanitized",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "etag": "Sanitized"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
