@@ -64,6 +64,7 @@ from ..streaming._sse import (
 )
 from ..streaming._state_machine import EventStreamValidator
 from ._execution_context import _ExecutionContext
+from ._dispatch import decide_disposition
 from ._runtime_state import _RuntimeState
 
 if TYPE_CHECKING:
@@ -2368,10 +2369,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         #   - fg + store                      → mark-failed (Row 3 stream=T)
         # The downstream branches read ``_unified_disposition`` instead of
         # deriving the disposition independently.
-        _unified_disposition = (
-            "re-invoke"
-            if (ctx.background and self._runtime_options.durable_background and ctx.store)
-            else "mark-failed"
+        _unified_disposition = decide_disposition(
+            background=ctx.background,
+            durable_background=self._runtime_options.durable_background,
+            store=ctx.store,
         )
 
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
@@ -2620,7 +2621,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 runtime_options=self._runtime_options,
             )
 
-        await self._start_durable_background(ctx, record, _runner, disposition="mark-failed")
+        await self._start_durable_background(
+            ctx,
+            record,
+            _runner,
+            disposition=decide_disposition(
+                background=ctx.background,
+                durable_background=self._runtime_options.durable_background,
+                store=ctx.store,
+            ),
+        )
 
         # Block until the handler emits its terminal:
         #   - If durable start succeeded, ``record.durable_task_run`` is set;
@@ -3028,7 +3038,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # The legacy ``asyncio.create_task(_shielded_runner)`` path
             # for Row 2 + the separate bookkeeping task are deleted —
             # one durable task per response covers both rows.
-            disposition = "re-invoke" if self._runtime_options.durable_background else "mark-failed"
+            disposition = decide_disposition(
+                background=ctx.background,
+                durable_background=self._runtime_options.durable_background,
+                store=ctx.store,
+            )
             await self._start_durable_background(ctx, record, _shielded_runner, disposition=disposition)
         else:
             # Row 4 — no store, no durable task. Plain asyncio.
@@ -3267,10 +3281,6 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         from ._durable_orchestrator import (
             DurableResponseOrchestrator,
         )  # pylint: disable=import-outside-toplevel
-        from ._durable_input import (
-            DurableResponseInput,
-            RuntimeRefs,
-        )  # pylint: disable=import-outside-toplevel
 
         if not hasattr(self, "_durable_orchestrator"):
             self._durable_orchestrator = DurableResponseOrchestrator(
@@ -3281,37 +3291,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 parent_orchestrator=self,
             )
 
-        # (Spec 033 §3.1) The single typed durable boundary — the ONLY value
-        # persisted as durable-task input. The full request is persisted once
-        # (it carries ``.input``); request-scoped scalars (model / store /
-        # stream / background / conversation_id / previous_response_id) are
-        # re-derived from it on recovery. ``client_headers`` / ``query_parameters``
-        # are persisted here so a recovered handler observes the identical
-        # request metadata as fresh entry (FR-002b — fixes the prior drop bug).
-        durable_input = DurableResponseInput(
-            request=ctx.parsed,
-            response_id=ctx.response_id,
-            # Disposition rides the input solely to seed the first-entry
-            # ``_responses`` metadata stamp; the runtime routing SOT is the
-            # metadata namespace thereafter (survives cross-process recovery).
-            disposition=disposition,
-            agent_reference=ctx.agent_reference,
-            agent_session_id=ctx.agent_session_id,
-            user_isolation_key=ctx.user_isolation_key,
-            chat_isolation_key=ctx.chat_isolation_key,
-            client_headers=dict(ctx.context.client_headers) if ctx.context is not None else {},
-            query_parameters=dict(ctx.context.query_parameters) if ctx.context is not None else {},
-        )
-
-        # (Spec 033 §3.1) Process-local object references — never serialized;
-        # cached out-of-band by response_id and rebuilt on cross-process recovery.
-        refs = RuntimeRefs(
-            record=record,
-            context=ctx.context,
-            parsed=ctx.parsed,
-            cancel=ctx.cancellation_signal,
-            runtime_state=self._runtime_state,
-        )
+        # (Spec 033 §3.4) Durable-task construction — the typed boundary + the
+        # process-local refs — is owned by the durability orchestrator; the
+        # response pipeline only supplies the per-request context and disposition.
+        durable_input, refs = self._durable_orchestrator.build_durable_input(ctx, record, disposition=disposition)
 
         try:
             freshly_started = await self._durable_orchestrator.start_durable(

@@ -32,6 +32,7 @@ from azure.ai.agentserver.core.durable import (
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
+from ._dispatch import DISPOSITION_MARK_FAILED, DISPOSITION_REINVOKE
 from ._task_id import derive_task_id
 
 if TYPE_CHECKING:
@@ -252,8 +253,6 @@ _RESP_BACKGROUND = "background"
 #     complete the task without re-invoking (Rows 2, 3: bg+store with
 #     durable_background=False, and fg+store).
 _RESP_DISPOSITION = "disposition"
-DISPOSITION_REINVOKE = "re-invoke"
-DISPOSITION_MARK_FAILED = "mark-failed"
 
 
 # (Spec 024 Phase 2) `_BOOKKEEPING_EVENTS` module-level registry deleted —
@@ -862,6 +861,59 @@ class DurableResponseOrchestrator:
         # transition matches the row's expected behaviour without any
         # explicit ``ctx.suspend(reason=...)`` call here.
         return None
+
+    def build_durable_input(
+        self,
+        ctx: Any,
+        record: "ResponseExecution",
+        *,
+        disposition: str,
+    ) -> "tuple[DurableResponseInput, RuntimeRefs]":
+        """Build the typed durable boundary + process-local refs for a request.
+
+        (Spec 033 §3.4) Durable-task construction lives on the durability
+        orchestrator, not the response pipeline. The full request is persisted
+        once (it carries ``.input``); request-scoped scalars are re-derived from
+        it on recovery. ``client_headers`` / ``query_parameters`` are persisted so
+        a recovered handler observes the identical request metadata as fresh
+        entry (FR-002b).
+
+        :param ctx: The per-request execution context (``_ExecutionContext``).
+        :type ctx: Any
+        :param record: The mutable execution record.
+        :type record: ResponseExecution
+        :keyword disposition: The recovery disposition (``decide_disposition``).
+        :paramtype disposition: str
+        :returns: ``(durable_input, refs)``.
+        :rtype: tuple[DurableResponseInput, RuntimeRefs]
+        """
+        from ._durable_input import (
+            DurableResponseInput,
+            RuntimeRefs,
+        )  # pylint: disable=import-outside-toplevel
+
+        durable_input = DurableResponseInput(
+            request=ctx.parsed,
+            response_id=ctx.response_id,
+            # Disposition rides the input solely to seed the first-entry
+            # ``_responses`` metadata stamp; the runtime routing SOT is the
+            # metadata namespace thereafter (survives cross-process recovery).
+            disposition=disposition,
+            agent_reference=ctx.agent_reference,
+            agent_session_id=ctx.agent_session_id,
+            user_isolation_key=ctx.user_isolation_key,
+            chat_isolation_key=ctx.chat_isolation_key,
+            client_headers=dict(ctx.context.client_headers) if ctx.context is not None else {},
+            query_parameters=dict(ctx.context.query_parameters) if ctx.context is not None else {},
+        )
+        refs = RuntimeRefs(
+            record=record,
+            context=ctx.context,
+            parsed=ctx.parsed,
+            cancel=ctx.cancellation_signal,
+            runtime_state=self._runtime_state,
+        )
+        return durable_input, refs
 
     async def start_durable(
         self,
