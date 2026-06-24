@@ -135,7 +135,7 @@ async def main():
                 protocol_configuration=ProtocolConfiguration(responses=ResponsesProtocolConfiguration()),
             )
 
-            await project_client.agents.patch_agent_details(
+            await project_client.agents.update_details(
                 agent_name=agent_name,
                 agent_endpoint=endpoint_config,
             )

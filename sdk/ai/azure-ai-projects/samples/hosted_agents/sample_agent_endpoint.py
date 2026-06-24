@@ -78,7 +78,7 @@ with (
             protocol_configuration=ProtocolConfiguration(responses=ResponsesProtocolConfiguration()),
         )
 
-        patched_agent = project_client.agents.patch_agent_details(
+        patched_agent = project_client.agents.update_details(
             agent_name=agent_name,
             agent_endpoint=endpoint_config,
         )

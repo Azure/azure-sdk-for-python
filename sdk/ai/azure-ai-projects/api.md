@@ -366,8 +366,16 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentVersionDetails]: ...
 
+        @distributed_trace_async
+        async def stop_session(
+                self, 
+                agent_name: str, 
+                session_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
         @overload
-        async def patch_agent_details(
+        async def update_details(
                 self, 
                 agent_name: str, 
                 *, 
@@ -378,7 +386,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AgentDetails: ...
 
         @overload
-        async def patch_agent_details(
+        async def update_details(
                 self, 
                 agent_name: str, 
                 body: JSON, 
@@ -388,7 +396,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AgentDetails: ...
 
         @overload
-        async def patch_agent_details(
+        async def update_details(
                 self, 
                 agent_name: str, 
                 body: IO[bytes], 
@@ -396,14 +404,6 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
             ) -> AgentDetails: ...
-
-        @distributed_trace_async
-        async def stop_session(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                **kwargs: Any
-            ) -> None: ...
 
         @overload
         async def upload_session_file(
@@ -2350,6 +2350,7 @@ namespace azure.ai.projects.models
         agent_card_path: Optional[str]
         base_url: Optional[str]
         project_connection_id: Optional[str]
+        send_credentials_for_agent_card: Optional[bool]
         type: Literal[ToolType.A2A_PREVIEW]
 
         @overload
@@ -2358,7 +2359,8 @@ namespace azure.ai.projects.models
                 *, 
                 agent_card_path: Optional[str] = ..., 
                 base_url: Optional[str] = ..., 
-                project_connection_id: Optional[str] = ...
+                project_connection_id: Optional[str] = ..., 
+                send_credentials_for_agent_card: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -2371,6 +2373,7 @@ namespace azure.ai.projects.models
         description: str
         name: str
         project_connection_id: Optional[str]
+        send_credentials_for_agent_card: Optional[bool]
         tool_configs: dict[str, ToolConfig]
         type: Literal[ToolboxToolType.A2A_PREVIEW]
 
@@ -2383,6 +2386,7 @@ namespace azure.ai.projects.models
                 description: Optional[str] = ..., 
                 name: Optional[str] = ..., 
                 project_connection_id: Optional[str] = ..., 
+                send_credentials_for_agent_card: Optional[bool] = ..., 
                 tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
@@ -6365,7 +6369,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.MemoryStoreDefaultOptions(_Model):
         chat_summary_enabled: bool
-        default_ttl_seconds: Optional[int]
+        default_ttl_seconds: Optional[timedelta]
         procedural_memory_enabled: Optional[bool]
         user_profile_details: Optional[str]
         user_profile_enabled: bool
@@ -6375,7 +6379,7 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 chat_summary_enabled: bool, 
-                default_ttl_seconds: Optional[int] = ..., 
+                default_ttl_seconds: Optional[timedelta] = ..., 
                 procedural_memory_enabled: Optional[bool] = ..., 
                 user_profile_details: Optional[str] = ..., 
                 user_profile_enabled: bool
@@ -9647,8 +9651,16 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> ItemPaged[AgentVersionDetails]: ...
 
+        @distributed_trace
+        def stop_session(
+                self, 
+                agent_name: str, 
+                session_id: str, 
+                **kwargs: Any
+            ) -> None: ...
+
         @overload
-        def patch_agent_details(
+        def update_details(
                 self, 
                 agent_name: str, 
                 *, 
@@ -9659,7 +9671,7 @@ namespace azure.ai.projects.operations
             ) -> AgentDetails: ...
 
         @overload
-        def patch_agent_details(
+        def update_details(
                 self, 
                 agent_name: str, 
                 body: JSON, 
@@ -9669,7 +9681,7 @@ namespace azure.ai.projects.operations
             ) -> AgentDetails: ...
 
         @overload
-        def patch_agent_details(
+        def update_details(
                 self, 
                 agent_name: str, 
                 body: IO[bytes], 
@@ -9677,14 +9689,6 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
             ) -> AgentDetails: ...
-
-        @distributed_trace
-        def stop_session(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                **kwargs: Any
-            ) -> None: ...
 
         @overload
         def upload_session_file(

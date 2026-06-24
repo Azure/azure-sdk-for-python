@@ -105,7 +105,7 @@ with (
             protocol_configuration=ProtocolConfiguration(responses=ResponsesProtocolConfiguration()),
         )
 
-        project_client.agents.patch_agent_details(
+        project_client.agents.update_details(
             agent_name=agent_name,
             agent_endpoint=endpoint_config,
         )
