@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-13/CertificateProfiles_Get.json
+# x-ms-original-file: 2026-05-15-preview/CertificateProfiles_Get.json
 if __name__ == "__main__":
     main()
