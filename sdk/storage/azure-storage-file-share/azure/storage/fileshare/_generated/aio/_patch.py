@@ -11,8 +11,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline import AsyncPipeline, PipelineRequest
-from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline import policies
 
 from .._utils.serialization import Deserializer, Serializer
@@ -22,15 +20,6 @@ from ._configuration import FileClientConfiguration as GeneratedFileClientConfig
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-
-
-class RangeHeaderPolicy(SansIOHTTPPolicy):
-    """Policy that converts the 'Range' header to 'x-ms-range'."""
-
-    def on_request(self, request: PipelineRequest) -> None:
-        range_value = request.http_request.headers.pop("Range", None)
-        if range_value is not None:
-            request.http_request.headers["x-ms-range"] = range_value
 
 
 class FileClientConfiguration(GeneratedFileClientConfiguration):
@@ -95,16 +84,11 @@ class FileClient(GeneratedFileClient):
         self._config = FileClientConfiguration(url=url, credential=credential, **kwargs)
 
         if pipeline is not None:
-            _wrapped_pipeline = AsyncPipeline(
-                transport=pipeline._transport,
-                policies=[RangeHeaderPolicy()] + list(pipeline._impl_policies),
-            )
-            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=_wrapped_pipeline)
+            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=pipeline)
         else:
             _policies = kwargs.pop("policies", None)
             if _policies is None:
                 _policies = [
-                    RangeHeaderPolicy(),
                     policies.RequestIdPolicy(**kwargs),
                     self._config.headers_policy,
                     self._config.user_agent_policy,

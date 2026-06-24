@@ -52,6 +52,7 @@ from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
 from .policies import (
     ExponentialRetry,
     QueueMessagePolicy,
+    RangeHeaderPolicy,
     StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
@@ -351,6 +352,7 @@ class StorageAccountHostsMixin(object):
             transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
+            RangeHeaderPolicy(),
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
