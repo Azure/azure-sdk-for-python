@@ -453,6 +453,332 @@ class DurableResponseOrchestrator:
             return self._multi_turn_task_fn
         return self._one_shot_task_fn
 
+    async def _handle_recovery_disposition(
+        self,
+        responses_ns: Any,
+        *,
+        disposition_stamp: str,
+        is_recovery: bool,
+        response_id: str,
+        params: dict[str, Any],
+        background: bool,
+    ) -> bool:
+        """Stamp framework metadata + dispatch the mark-failed recovery branch.
+
+        (Spec 033 §3.2 extract) On first entry stamps ``_responses.background`` and
+        ``_responses.disposition`` (flushed durably so a crash before the next
+        await preserves the routing). On a recovered entry with a ``mark-failed``
+        disposition (Rows 2/3), persists the ``server_error`` terminal to the
+        store **without re-invoking the handler** and signals the caller to
+        return.
+
+        :param responses_ns: The ``_responses`` framework metadata namespace.
+        :type responses_ns: Any
+        :keyword disposition_stamp: The disposition to seed on first entry.
+        :paramtype disposition_stamp: str
+        :keyword is_recovery: Whether this is a recovered re-entry.
+        :paramtype is_recovery: bool
+        :keyword response_id: The response id.
+        :paramtype response_id: str
+        :keyword params: The raw durable-task input (for isolation on the failed write).
+        :paramtype params: dict[str, Any]
+        :keyword background: The request's background flag.
+        :paramtype background: bool
+        :returns: True if the caller should return (mark-failed handled).
+        :rtype: bool
+        """
+        # Store background flag on first entry for recovery decisions.
+        if _RESP_BACKGROUND not in responses_ns:
+            responses_ns[_RESP_BACKGROUND] = background
+        # (Spec 014 FR-003 / FR-004) Stamp the disposition on first entry, flushed
+        # durably BEFORE the body could be killed — otherwise a recovered task
+        # defaults to ``re-invoke`` and skips the mark-failed branch.
+        if _RESP_DISPOSITION not in responses_ns:
+            responses_ns[_RESP_DISPOSITION] = disposition_stamp
+            try:
+                await responses_ns.flush()
+            except (AttributeError, Exception):  # noqa: BLE001
+                pass  # best-effort — backend may not support explicit flush
+        disposition = _read_disposition(responses_ns)
+
+        # (Spec 014 FR-003 / FR-004) Recovery dispatch via disposition. mark-failed:
+        # the handler does NOT re-run; persist a server_error terminal and complete
+        # the task. Covers Rows 2 (bg+store, durable_background=False) and 3 (fg+store).
+        if is_recovery and disposition == DISPOSITION_MARK_FAILED:
+            logger.info(
+                "Bookkeeping task recovered (response_id=%s, disposition=mark-failed) — marking failed",
+                response_id,
+            )
+            await self._persist_crash_failed(response_id, params)
+            return True
+
+        # Backward-compat: pre-disposition non-background recovery — mark
+        # foreground responses failed on recovery without re-invoking.
+        if is_recovery and not responses_ns.get(_RESP_BACKGROUND, True):
+            logger.info(
+                "Non-background task recovered (response_id=%s) — marking failed",
+                response_id,
+            )
+            await self._persist_crash_failed(response_id, params)
+            return True
+
+        return False
+
+    async def _flatten_recovery_context(
+        self,
+        ctx: "TaskContext[dict[str, Any]]",
+        context: "ResponseContext",
+        is_recovery: bool,
+    ) -> bool:
+        """Flatten recovery/steering classifiers onto the context + prefetch.
+
+        (Spec 033 §3.2 extract) Sets ``is_recovery`` / ``is_steered_turn`` /
+        ``pending_input_count``, swaps in the developer metadata facade, exposes
+        the task context, and on a recovered entry pre-fetches the persisted
+        response. Returns True when the durable execution should be **dropped**
+        (Spec 026: the response was never durably created — definitive not-found).
+
+        :param ctx: The durable task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param context: The handler-facing response context.
+        :type context: ResponseContext
+        :param is_recovery: Whether this is a recovered re-entry.
+        :type is_recovery: bool
+        :returns: True if the caller should drop (return) without re-invoking.
+        :rtype: bool
+        """
+        context.is_recovery = is_recovery
+        context.is_steered_turn = ctx.is_steered_turn
+        context.pending_input_count = ctx.pending_input_count
+        # Swap in the handler-facing metadata facade backed by the task
+        # primitive's metadata wrapper (rejects ``_``-prefixed keys so handlers
+        # cannot collide with the framework-reserved ``_responses`` namespace).
+        from .._durability_context import (  # pylint: disable=import-outside-toplevel
+            _DeveloperMetadataFacade,
+        )
+
+        context.conversation_chain_metadata = _DeveloperMetadataFacade(ctx.metadata)
+        # (Spec 024 Phase 5 — Proposal #11) Expose the task context so
+        # ``context.exit_for_recovery()`` can delegate to the recovery sentinel.
+        context._task_context = ctx  # pylint: disable=protected-access
+
+        if not is_recovery:
+            return False
+
+        # (Spec 025 §A.3) Pre-fetch the persisted response so the handler can seed
+        # its stream. (Spec 026 FR-026-4/5/6) If the response is DEFINITIVELY
+        # absent (typed not-found), the original POST disconnected without
+        # returning a response id, so no client can fetch it — drop the durable
+        # execution. A transient/ambiguous error is NOT a definitive absence.
+        from ..store._foundry_errors import (  # pylint: disable=import-outside-toplevel
+            FoundryResourceNotFoundError,
+        )
+
+        try:
+            context.persisted_response = await self._provider.get_response(
+                context.response_id, isolation=context.isolation
+            )
+        except (KeyError, FoundryResourceNotFoundError):
+            logger.info(
+                "Recovery dropped for %s: response was never durably created "
+                "(definitive not-found); abandoning without re-invoking the handler.",
+                context.response_id,
+            )
+            return True
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug(
+                "persisted_response pre-fetch failed for %s (recovery, transient — not dropping)",
+                context.response_id,
+                exc_info=True,
+            )
+            context.persisted_response = None
+        return False
+
+    def _setup_cancel_bridge(
+        self,
+        ctx: "TaskContext[dict[str, Any]]",
+        context: "ResponseContext | None",
+        cancellation_signal: asyncio.Event,
+    ) -> "asyncio.Task[None] | None":
+        """Bridge the task cancellation surface onto the response context.
+
+        (Spec 033 §3.2 extract) ``ctx.shutdown`` maps to ``context.shutdown`` ONLY
+        (no cancel signal); ``ctx.cancel`` maps to ``cancellation_signal``. When
+        neither is set yet, spawns a bridge task that races the two and applies
+        whichever fires first. Returns the bridge task (or None when already
+        resolved at entry).
+
+        :param ctx: The durable task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param context: The handler-facing response context.
+        :type context: ResponseContext | None
+        :param cancellation_signal: The per-request cancellation event.
+        :type cancellation_signal: asyncio.Event
+        :returns: The bridge task, or None.
+        :rtype: asyncio.Task[None] | None
+        """
+        if ctx.shutdown.is_set():
+            if context is not None:
+                context.shutdown.set()
+            return None
+        if ctx.cancel.is_set():
+            cancellation_signal.set()
+            return None
+
+        async def _bridge() -> None:
+            # Race ctx.cancel vs ctx.shutdown — whichever fires first wins.
+            cancel_task = asyncio.create_task(ctx.cancel.wait())
+            shutdown_task = asyncio.create_task(ctx.shutdown.wait())
+            try:
+                done, pending = await asyncio.wait(
+                    {cancel_task, shutdown_task},
+                    return_when=asyncio.FIRST_COMPLETED,
+                )
+                for t in pending:
+                    t.cancel()
+                if shutdown_task in done and cancel_task not in done:
+                    if context is not None:
+                        context.shutdown.set()
+                else:
+                    cancellation_signal.set()
+            except asyncio.CancelledError:
+                cancel_task.cancel()
+                shutdown_task.cancel()
+                raise
+
+        return asyncio.create_task(_bridge())
+
+    async def _run_handler_in_task(
+        self,
+        ctx: "TaskContext[dict[str, Any]]",
+        record: "ResponseExecution | None",
+        context: "ResponseContext | None",
+        *,
+        cancellation_signal: asyncio.Event,
+        cancel_bridge: "asyncio.Task[None] | None",
+        parsed_ref: Any,
+        response_id: str,
+        stream: bool,
+        agent_reference: Any,
+        model: str | None,
+        store: bool,
+        agent_session_id: str | None,
+        conversation_id: str | None,
+        background: bool,
+        history_limit: int,
+        runtime_state: Any,
+    ) -> None:
+        """Run the handler body inside the durable task (Spec 033 §3.2 extract).
+
+        Dispatches to the streaming runner (``stream=True``) or the non-stream
+        background pipeline, translates a graceful-shutdown-without-terminal and a
+        handler ``exit_for_recovery()`` into the framework's task-level recovery
+        sentinel, and always tears down the cancel bridge + process-local refs.
+
+        :param ctx: The durable task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param record: The execution record.
+        :type record: ResponseExecution | None
+        :param context: The handler-facing response context.
+        :type context: ResponseContext | None
+        :keyword cancellation_signal: The per-request cancellation event.
+        :paramtype cancellation_signal: asyncio.Event
+        :keyword cancel_bridge: The cancel-bridge task to tear down.
+        :paramtype cancel_bridge: asyncio.Task[None] | None
+        :keyword parsed_ref: The parsed request.
+        :paramtype parsed_ref: Any
+        :keyword response_id: The response id.
+        :paramtype response_id: str
+        :keyword stream: Whether the request is streaming.
+        :paramtype stream: bool
+        :keyword agent_reference: The normalized agent reference.
+        :paramtype agent_reference: Any
+        :keyword model: The model name.
+        :paramtype model: str | None
+        :keyword store: Whether the response is stored.
+        :paramtype store: bool
+        :keyword agent_session_id: The resolved session id.
+        :paramtype agent_session_id: str | None
+        :keyword conversation_id: The conversation id.
+        :paramtype conversation_id: str | None
+        :keyword background: Whether the request is background.
+        :paramtype background: bool
+        :keyword history_limit: History fetch limit.
+        :paramtype history_limit: int
+        :keyword runtime_state: The runtime-state tracker.
+        :paramtype runtime_state: Any
+        """
+        from ._orchestrator import (  # pylint: disable=import-outside-toplevel
+            _run_background_non_stream,
+        )
+
+        try:
+            # Dispatch on the request's stream flag: the streaming pipeline goes
+            # through the parent orchestrator's streaming runner (events flow to
+            # record.subject AND the durable stream provider); the non-stream
+            # path drives the response-snapshot-on-terminal pipeline.
+            if stream and self._parent_orchestrator is not None:
+                assert record is not None  # reconstruction guarantees this
+                assert context is not None  # reconstruction guarantees this
+                await self._parent_orchestrator._run_durable_stream_body(
+                    parsed=parsed_ref,
+                    context=context,
+                    cancellation_signal=cancellation_signal,
+                    record=record,
+                    response_id=response_id,
+                    agent_reference=agent_reference,
+                    model=model,
+                    store=store,
+                    agent_session_id=agent_session_id,
+                    conversation_id=conversation_id,
+                    background=background,
+                )
+            else:
+                await _run_background_non_stream(
+                    create_fn=self._create_fn,
+                    parsed=parsed_ref,
+                    context=context,
+                    cancellation_signal=cancellation_signal,
+                    record=record,
+                    response_id=response_id,
+                    agent_reference=agent_reference,
+                    model=model,
+                    provider=self._provider,
+                    store=store,
+                    agent_session_id=agent_session_id,
+                    conversation_id=conversation_id,
+                    history_limit=history_limit,
+                    runtime_state=runtime_state,
+                    runtime_options=self._options,
+                )
+
+            # Spec 023 — handler returned without a terminal AND graceful shutdown
+            # is in progress: use ``ctx.exit_for_recovery()`` so the task stays
+            # ``in_progress`` for next-lifetime recovery (a CancelledError would
+            # delete a one-shot ephemeral record and the recovery scanner would
+            # find nothing).
+            if ctx.shutdown.is_set() and record is not None and record.status in {"queued", "in_progress"}:
+                logger.info(
+                    "Response %s handler returned during shutdown without terminal; "
+                    "calling ctx.exit_for_recovery() so task stays in_progress for recovery.",
+                    response_id,
+                )
+                return await ctx.exit_for_recovery()
+        except ResponseExitForRecovery:
+            # Spec 025 §A.4 — the handler called ``await context.exit_for_recovery()``;
+            # translate to the framework's task-level recovery primitive.
+            logger.info(
+                "Response %s handler invoked context.exit_for_recovery(); calling "
+                "ctx.exit_for_recovery() so task stays in_progress for recovery.",
+                response_id,
+            )
+            return await ctx.exit_for_recovery()
+        finally:
+            if cancel_bridge is not None and not cancel_bridge.done():
+                cancel_bridge.cancel()
+            # (Spec 013 US1(c)) Drop the runtime-refs entry on terminal exit.
+            _RUNTIME_REFS.pop(response_id, None)
+
     async def _execute_in_task(self, ctx: TaskContext[dict[str, Any]]) -> None:
         """Execute the response pipeline inside the task body.
 
@@ -467,9 +793,6 @@ class DurableResponseOrchestrator:
         4. Suspends (task stays alive for next turn).
         """
         # Import here to avoid circular imports
-        from ._orchestrator import (
-            _run_background_non_stream,
-        )  # pylint: disable=import-outside-toplevel
         from ._durable_input import (
             DurableResponseInput,
         )  # pylint: disable=import-outside-toplevel
@@ -512,7 +835,6 @@ class DurableResponseOrchestrator:
         _conversation_id = _resolve_conversation_id(request)
         _agent_reference = durable.agent_reference
         _agent_session_id = durable.agent_session_id
-        _history_limit = int(self._options.default_fetch_history_count)
 
         # The _responses namespace holds all framework-internal state for
         # this conversation (response_id, background, disposition, etc.).
@@ -549,53 +871,14 @@ class DurableResponseOrchestrator:
                 value = params.get(key)
             return value
 
-        # Store background flag on first entry for recovery decisions
-        if _RESP_BACKGROUND not in responses_ns:
-            responses_ns[_RESP_BACKGROUND] = _background
-
-        # (Spec 014 FR-003 / FR-004) Stamp the disposition on first entry so
-        # next-lifetime recovery can dispatch correctly without needing to
-        # reconstruct the routing decisions from input params.
-        if _RESP_DISPOSITION not in responses_ns:
-            responses_ns[_RESP_DISPOSITION] = durable.disposition
-            # Force-flush so the disposition is durable BEFORE the body
-            # could be killed — without an explicit flush the recovered
-            # task would default to ``re-invoke`` and skip the mark-failed
-            # branch.
-            try:
-                await responses_ns.flush()
-            except (AttributeError, Exception):  # noqa: BLE001
-                pass  # best-effort — backend may not support explicit flush
-        disposition = _read_disposition(responses_ns)
-
-        # (Spec 014 FR-003 / FR-004) Recovery dispatch via disposition.
-        # mark-failed: handler doesn't re-run; persist server_error to the
-        # response store and complete the task. Covers Rows 2 (bg+store with
-        # durable_background=False) and 3 (fg+store).
-        if is_recovery and disposition == DISPOSITION_MARK_FAILED:
-            logger.info(
-                "Bookkeeping task recovered (response_id=%s, disposition=mark-failed) — marking failed",
-                response_id,
-            )
-            await self._persist_crash_failed(response_id, params)
-            # Spec 023: implicit-suspend via bare ``return None`` (the
-            # framework records the suspend transition automatically for
-            # multi_turn_task bodies). The response store's ``failed``
-            # terminal that we just persisted is the authoritative failure
-            # record per SOT §7.2.
-            return None
-
-        # Backward-compat: the pre-disposition non-background recovery branch.
-        # Tasks created before the disposition key existed default to
-        # DISPOSITION_REINVOKE; for those, preserve the prior behaviour of
-        # marking foreground responses failed on recovery without re-invoking.
-        if is_recovery and not responses_ns.get(_RESP_BACKGROUND, True):
-            logger.info(
-                "Non-background task recovered (response_id=%s) — marking failed",
-                response_id,
-            )
-            await self._persist_crash_failed(response_id, params)
-            # Spec 023: implicit-suspend via bare ``return None`` (see above).
+        if await self._handle_recovery_disposition(
+            responses_ns,
+            disposition_stamp=durable.disposition,
+            is_recovery=is_recovery,
+            response_id=response_id,
+            params=params,
+            background=_background,
+        ):
             return None
 
         # (Spec 024 Phase 2 — bookkeeping unification) On fresh entry, the
@@ -640,65 +923,8 @@ class DurableResponseOrchestrator:
         assert context is not None, "context is non-None after reconstruction"
         assert record is not None, "record is non-None after reconstruction"
 
-        if context is not None:
-            context.is_recovery = is_recovery
-            context.is_steered_turn = ctx.is_steered_turn
-            context.pending_input_count = ctx.pending_input_count
-            # Swap in the handler-facing metadata facade backed by the
-            # task primitive's metadata wrapper. The facade rejects keys
-            # starting with ``_`` so handlers cannot collide with the
-            # framework-reserved ``_responses`` namespace; framework
-            # code reaches that namespace via ``ctx.metadata`` directly.
-            from .._durability_context import (  # pylint: disable=import-outside-toplevel
-                _DeveloperMetadataFacade,
-            )
-
-            context.conversation_chain_metadata = _DeveloperMetadataFacade(ctx.metadata)
-            # (Spec 024 Phase 5 — Proposal #11) Expose the task context
-            # so ``context.exit_for_recovery()`` can delegate to the
-            # framework's recovery sentinel.
-            context._task_context = ctx  # pylint: disable=protected-access
-
-            # (Spec 025 §A.3) On a recovered entry, pre-fetch the persisted
-            # response so the handler can seed its stream from already-
-            # persisted items + the response-level watermark. Entry-only:
-            # never refreshed mid-execution.
-            #
-            # (Spec 026 FR-026-4/5/6) Recovery is only meaningful when the
-            # response was durably created in the store. If it is DEFINITIVELY
-            # absent (typed not-found), the original POST disconnected without
-            # ever returning a response id, so no client can fetch it — drop
-            # the durable execution (do NOT re-invoke the handler). Returning
-            # here settles the task (the recovery scan selects ``in_progress``
-            # records; a settled record is not re-selected), so this is not
-            # retried indefinitely. A transient/ambiguous error is NOT a
-            # definitive absence and MUST NOT drop — proceed with
-            # ``persisted_response=None``.
-            if is_recovery:
-                from ..store._foundry_errors import (  # pylint: disable=import-outside-toplevel
-                    FoundryResourceNotFoundError,
-                )
-
-                try:
-                    _isolation = context.isolation
-                    context.persisted_response = await self._provider.get_response(
-                        context.response_id, isolation=_isolation
-                    )
-                except (KeyError, FoundryResourceNotFoundError):
-                    logger.info(
-                        "Recovery dropped for %s: response was never durably "
-                        "created (definitive not-found); abandoning durable "
-                        "execution without re-invoking the handler.",
-                        context.response_id,
-                    )
-                    return
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.debug(
-                        "persisted_response pre-fetch failed for %s " "(recovery, transient — not dropping)",
-                        context.response_id,
-                        exc_info=True,
-                    )
-                    context.persisted_response = None
+        if await self._flatten_recovery_context(ctx, context, is_recovery):
+            return
 
         # Bridge task cancellation → response cancellation surface.
         # ``ctx.cancel`` (steering / explicit cancel) and ``ctx.shutdown``
@@ -720,147 +946,29 @@ class DurableResponseOrchestrator:
         #   propagating through ``ctx.cancel`` here. The bridge below
         #   does NOT clobber an existing ``client_cancelled=True``.
         cancellation_signal: asyncio.Event = _ref("_cancel_ref") or asyncio.Event()
-        cancel_bridge: asyncio.Task[None] | None = None
-        if ctx.shutdown.is_set():
-            if context is not None:
-                context.shutdown.set()
-        elif ctx.cancel.is_set():
-            cancellation_signal.set()
-        else:
+        cancel_bridge = self._setup_cancel_bridge(ctx, context, cancellation_signal)
 
-            async def _bridge() -> None:
-                # Race ctx.cancel vs ctx.shutdown — whichever fires first wins.
-                cancel_task = asyncio.create_task(ctx.cancel.wait())
-                shutdown_task = asyncio.create_task(ctx.shutdown.wait())
-                try:
-                    done, pending = await asyncio.wait(
-                        {cancel_task, shutdown_task},
-                        return_when=asyncio.FIRST_COMPLETED,
-                    )
-                    for t in pending:
-                        t.cancel()
-                    if shutdown_task in done and cancel_task not in done:
-                        if context is not None:
-                            context.shutdown.set()
-                    else:
-                        cancellation_signal.set()
-                except asyncio.CancelledError:
-                    cancel_task.cancel()
-                    shutdown_task.cancel()
-                    raise
-
-            cancel_bridge = asyncio.create_task(_bridge())
-
-        try:
-            parsed_ref = _ref("_parsed_ref")
-            if parsed_ref is None:
-                # Cross-process recovery: use the request from the typed input.
-                parsed_ref = request
-
-            # (Spec 014 FR-002 — close divergence 1)
-            # Dispatch on the request's stream flag: the streaming pipeline goes
-            # through the parent orchestrator's streaming runner so events
-            # flow to record.subject (live wire iterator subscribes to it)
-            # AND to the durable stream provider (for GET reconnect after
-            # crash). The non-stream path (existing, default) drives the
-            # response-snapshot-on-terminal pipeline.
-            if _stream and self._parent_orchestrator is not None:
-                assert record is not None  # reconstruction guarantees this
-                assert context is not None  # reconstruction guarantees this
-                await self._parent_orchestrator._run_durable_stream_body(
-                    parsed=parsed_ref,
-                    context=context,
-                    cancellation_signal=cancellation_signal,
-                    record=record,
-                    response_id=response_id,
-                    agent_reference=_agent_reference,
-                    model=_model,
-                    store=_store,
-                    agent_session_id=_agent_session_id,
-                    conversation_id=_conversation_id,
-                    background=_background,
-                )
-            else:
-                await _run_background_non_stream(
-                    create_fn=self._create_fn,
-                    parsed=parsed_ref,
-                    context=context,
-                    cancellation_signal=cancellation_signal,
-                    record=record,
-                    response_id=response_id,
-                    agent_reference=_agent_reference,
-                    model=_model,
-                    provider=self._provider,
-                    store=_store,
-                    agent_session_id=_agent_session_id,
-                    conversation_id=_conversation_id,
-                    history_limit=_history_limit,
-                    runtime_state=_ref("_runtime_state_ref") or self._runtime_state,
-                    runtime_options=self._options,
-                )
-
-            # Spec 023 — If the handler returned without emitting a
-            # terminal event AND graceful shutdown is in progress,
-            # explicitly signal the framework to leave the task
-            # ``status="in_progress"`` for next-lifetime recovery.
-            #
-            # We use ``ctx.exit_for_recovery()`` (the framework's
-            # graceful-shutdown primitive) rather than raising
-            # ``CancelledError`` because:
-            # - For multi-turn primitives both work, but
-            #   ``exit_for_recovery`` is the documented public API.
-            # - For one-shot (ephemeral) primitives, ``CancelledError``
-            #   triggers the cancel-delete branch in the core manager
-            #   — the record gets DELETED, and the recovery scanner
-            #   finds nothing. ``exit_for_recovery`` releases the lease
-            #   without deleting, so the recovery scanner can re-fire
-            #   the task on the next process startup.
-            #
-            # Without this distinction, Row 1 Path B (graceful shutdown
-            # mid-handler with grace exhausted) silently loses the
-            # response because the one-shot ephemeral record is deleted
-            # on cancel.
-            if ctx.shutdown.is_set() and record is not None and record.status in {"queued", "in_progress"}:
-                logger.info(
-                    "Response %s handler returned during shutdown without "
-                    "terminal; calling ctx.exit_for_recovery() so task stays "
-                    "in_progress for next-lifetime recovery.",
-                    response_id,
-                )
-                return await ctx.exit_for_recovery()
-        except ResponseExitForRecovery:
-            # Spec 025 §A.4 — the handler called
-            # ``await context.exit_for_recovery()`` (any handler shape),
-            # which raises ``ResponseExitForRecovery``. Translate it to the
-            # framework's task-level recovery primitive so the task stays
-            # ``in_progress`` for next-lifetime recovery (same disposition as
-            # the implicit shutdown bare-return fallback above).
-            logger.info(
-                "Response %s handler invoked context.exit_for_recovery(); "
-                "calling ctx.exit_for_recovery() so task stays in_progress "
-                "for next-lifetime recovery.",
-                response_id,
-            )
-            return await ctx.exit_for_recovery()
-        finally:
-            if cancel_bridge is not None and not cancel_bridge.done():
-                cancel_bridge.cancel()
-            # (Spec 013 US1(c)) On terminal exit of the task body (handler
-            # returned), drop the runtime-refs entry to release memory. On
-            # suspend the entry would still be useful for in-process resume,
-            # but it'll be rebuilt at the next `start_durable` from the
-            # accept path, so dropping unconditionally is safe.
-            _RUNTIME_REFS.pop(response_id, None)
-
-        # Spec 023: implicit-suspend via bare ``return None``. For
-        # multi_turn_task bodies the framework records the suspend
-        # transition automatically; for one-shot @task bodies the
-        # framework marks the task ``completed`` and deletes the record
-        # (ephemeral). The per-request primitive dispatch in
-        # ``start_durable`` picks the correct primitive so the lifecycle
-        # transition matches the row's expected behaviour without any
-        # explicit ``ctx.suspend(reason=...)`` call here.
-        return None
+        # Return the handler-body result so a graceful-shutdown / handler
+        # ``exit_for_recovery()`` sentinel propagates as the task-body result
+        # (rather than being replaced by a bare implicit-suspend ``None``).
+        return await self._run_handler_in_task(
+            ctx,
+            record,
+            context,
+            cancellation_signal=cancellation_signal,
+            cancel_bridge=cancel_bridge,
+            parsed_ref=_ref("_parsed_ref") or request,
+            response_id=response_id,
+            stream=_stream,
+            agent_reference=_agent_reference,
+            model=_model,
+            store=_store,
+            agent_session_id=_agent_session_id,
+            conversation_id=_conversation_id,
+            background=_background,
+            history_limit=int(self._options.default_fetch_history_count),
+            runtime_state=_ref("_runtime_state_ref") or self._runtime_state,
+        )
 
     def build_durable_input(
         self,
