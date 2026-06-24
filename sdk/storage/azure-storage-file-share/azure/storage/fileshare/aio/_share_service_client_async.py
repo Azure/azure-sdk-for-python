@@ -19,7 +19,6 @@ from azure.core.pipeline import AsyncPipeline
 from .._generated.aio import FileClient as AzureFileStorage
 from .._generated.models import KeyInfo, StorageServiceProperties
 from .._models import CorsRule, Metrics, service_properties_deserialize, ShareProperties, ShareProtocolSettings
-from .._parser import _strip_snapshot_from_url
 from .._serialize import get_api_version
 from .._share_service_client_helpers import _parse_url
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
@@ -132,7 +131,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            url=_strip_snapshot_from_url(self.url),
+            url=self.url,
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )

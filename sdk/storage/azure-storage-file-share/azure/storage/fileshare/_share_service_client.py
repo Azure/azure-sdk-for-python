@@ -24,7 +24,6 @@ from ._models import (
     ShareProtocolSettings,
     service_properties_deserialize,
 )
-from ._parser import _strip_snapshot_from_url
 from ._serialize import get_api_version
 from ._share_client import ShareClient
 from ._share_service_client_helpers import _parse_url
@@ -128,7 +127,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            url=_strip_snapshot_from_url(self.url),
+            url=self.url,
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )
