@@ -36,6 +36,7 @@ async def main() -> None:
     project_endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     deployment = os.environ["FOUNDRY_MODEL_NAME"]
     toolbox_mcp_url = os.environ["MCP_SERVER_URL"]
+    store_responses = os.environ.get("AGENT_STORE_RESPONSES", "false").lower() == "true"
 
     credential = DefaultAzureCredential()
     token_provider = get_bearer_token_provider(credential, "https://ai.azure.com/.default")
@@ -43,7 +44,7 @@ async def main() -> None:
     async with (
         httpx.AsyncClient(
             auth=ToolboxAuth(token_provider),
-            headers={"Foundry-Features": "Toolboxes=V1Preview"},
+            headers={"Foundry-Features": "Toolboxes=V1Preview,Routines=V1Preview"},
             timeout=httpx.Timeout(30.0, read=300.0),
             follow_redirects=True,
         ) as http_client,
@@ -64,13 +65,16 @@ async def main() -> None:
                 credential=credential,
             ),
             name=os.environ.get("AGENT_NAME", "hosted-toolbox-mcp-skills"),
-            instructions=(
-                "Use available toolbox skills to answer pricing questions. "
-                "For shipping cost requests, follow the skill formula exactly "
-                "and show the formula used."
+            instructions=os.environ.get(
+                "AGENT_INSTRUCTIONS",
+                (
+                    "Use available toolbox skills to answer pricing questions. "
+                    "For shipping cost requests, follow the skill formula exactly "
+                    "and show the formula used."
+                ),
             ),
             context_providers=[skills_provider],
-            default_options={"store": False},
+            default_options={"store": store_responses},
         )
 
         server = ResponsesHostServer(agent)

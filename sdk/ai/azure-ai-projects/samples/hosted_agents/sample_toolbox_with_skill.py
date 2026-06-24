@@ -64,7 +64,7 @@ from azure.ai.projects.models import (
 
 from hosted_agents_util import wait_for_agent_version_active
 from rbac_util import ensure_agent_identity_rbac
-from util import build_skill_zip
+from util import zip
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
@@ -129,7 +129,7 @@ def main() -> None:
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
 
         zip_filename = "hosted-toolbox-mcp-skills-agent.zip"
-        zip_bytes, zip_sha256, _ = build_skill_zip(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
+        zip_bytes, zip_sha256, _ = zip(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
 
         content = CreateAgentVersionFromCodeContent(
             metadata=CreateAgentVersionFromCodeMetadata(

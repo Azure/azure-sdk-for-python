@@ -50,7 +50,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import CreateSkillVersionFromFilesBody
 
-from util import build_skill_zip
+from util import zip as zip_directory
 
 load_dotenv()
 
@@ -71,7 +71,8 @@ with (
     except ResourceNotFoundError:
         pass
 
-    skill_zip_bytes, _, skill_zip_path = build_skill_zip(skill_source_dir, skill_zip_filename)
+    skill_zip_bytes, _, skill_zip_path = zip_directory(skill_source_dir, skill_zip_filename)
+    skill_zip_filename = skill_zip_path.name
     # The ``files`` field accepts any variant of the SDK's ``FileType`` union.
     # The 2-tuple form used here pins the filename while letting the transport
     # choose the multipart part headers.

@@ -234,10 +234,34 @@ class TestSamples(AzureRecordedTestCase):
     @additionalSampleTests(
         [
             AdditionalSampleTestDetail(
+                test_id="sample_create_hosted_agent",
+                sample_filename="sample_create_hosted_agent.py",
+                env_vars={
+                    "SKIP_RBAC": "true",
+                },
+            ),
+            AdditionalSampleTestDetail(
                 test_id="sample_create_hosted_agent_from_remote_build",
                 sample_filename="sample_create_hosted_agent_from_code.py",
                 env_vars={
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
+                    "ZIP_FILE_PATH": "tests/samples/assets/echo-agent.zip",
+                    "SKIP_RBAC": "true",
+                },
+            ),
+            AdditionalSampleTestDetail(
+                test_id="sample_create_hosted_agent_from_code",
+                sample_filename="sample_create_hosted_agent_from_code.py",
+                env_vars={
+                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
+                    "SKIP_RBAC": "true",
+                },
+            ),
+            AdditionalSampleTestDetail(
+                test_id="sample_toolbox_with_skill",
+                sample_filename="sample_toolbox_with_skill.py",
+                env_vars={
+                    "ZIP_FILE_PATH": "tests/samples/assets/toolbox-mcp-skills-agent.zip",
                 },
             ),
         ]
@@ -246,29 +270,40 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "hosted_agents",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_create_hosted_agent.py",  # Specified through AdditionalSampleTestDetail
+                "sample_toolbox_with_skill.py",  # Specified through AdditionalSampleTestDetail
+                "sample_create_hosted_agent_from_code.py",  # Specified through AdditionalSampleTestDetail
+            ],
         ),
     )
     @SamplePathPasser()
     # To run a single sample: pytest tests\samples\test_samples.py::TestSamples::test_hosted_agents_samples[sample_agent_endpoint] -s
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
-        samples_to_skip_validation = ["sample_create_hosted_agent", "sample_toolbox_with_skill"]
-        if (
-            any(os.path.basename(sample_path).startswith(sample) for sample in samples_to_skip_validation)
-            and not self.is_live
-        ):
-            pytest.skip("Hosted agent sample is skipped in replay mode due to RBAC complications.")
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm()
 
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_skills_upload_and_download",
+                sample_filename="sample_skills_upload_and_download.py",
+                env_vars={
+                    "ZIP_FILE_PATH": "tests/samples/assets/team-status-update.zip",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
             "skills",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_skills_upload_and_download.py",  # Specified through AdditionalSampleTestDetail
+            ],
         ),
     )
     @servicePreparer()

@@ -1,3 +1,4 @@
+import os
 import uuid
 from typing import Any, cast
 from urllib.parse import urlparse
@@ -117,6 +118,9 @@ def ensure_agent_identity_rbac(
     :raises ~azure.core.exceptions.HttpResponseError: If role assignment creation fails
         for reasons other than an existing assignment.
     """
+    if os.environ.get("SKIP_RBAC"):
+        print("Skipping RBAC setup.")
+        return
     if not agent.instance_identity or not agent.instance_identity.principal_id:
         raise RuntimeError("Agent instance_identity or principal_id is not available.")
     principal_id = agent.instance_identity.principal_id
@@ -233,6 +237,9 @@ async def ensure_agent_identity_rbac_async(
     :raises ~azure.core.exceptions.HttpResponseError: If role assignment creation fails
         for reasons other than an existing assignment.
     """
+    if os.environ.get("SKIP_RBAC"):
+        print("Skipping RBAC setup.")
+        return
     if not agent.instance_identity or not agent.instance_identity.principal_id:
         raise RuntimeError("Agent instance_identity or principal_id is not available.")
     principal_id = agent.instance_identity.principal_id

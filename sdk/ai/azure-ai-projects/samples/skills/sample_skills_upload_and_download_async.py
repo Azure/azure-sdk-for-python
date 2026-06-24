@@ -51,7 +51,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import CreateSkillVersionFromFilesBody
 
-from util import build_skill_zip
+from util import zip as zip_directory
 
 load_dotenv()
 
@@ -74,7 +74,8 @@ async def main() -> None:
         except ResourceNotFoundError:
             pass
 
-        skill_zip_bytes, _, skill_zip_path = build_skill_zip(skill_source_dir, skill_zip_filename)
+        skill_zip_bytes, _, skill_zip_path = zip_directory(skill_source_dir, skill_zip_filename)
+        uploaded_skill_zip_filename = skill_zip_path.name
         # The ``files`` field accepts any variant of the SDK's ``FileType`` union.
         # The 2-tuple form used here pins the filename while letting the transport
         # choose the multipart part headers.
@@ -93,7 +94,7 @@ async def main() -> None:
         #
         imported = await project_client.beta.skills.create_from_files(
             skill_name,
-            content=CreateSkillVersionFromFilesBody(files=[(skill_zip_filename, skill_zip_bytes)]),
+            content=CreateSkillVersionFromFilesBody(files=[(uploaded_skill_zip_filename, skill_zip_bytes)]),
         )
         imported_skill_name = imported.name
         print(f"Imported skill from package: {imported.name} ({imported.skill_id}) version={imported.version}")
