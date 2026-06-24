@@ -39,9 +39,7 @@ async def test_bg_handle_first_event__provider_created_set_before_cancellable_sl
     normalized = {"type": "response.created", "response": {}}
     handler_events = [normalized]
 
-    with patch.object(
-        orch_mod, "_bg_persist_at_created", new=AsyncMock(return_value=True)
-    ), patch.object(
+    with patch.object(orch_mod, "_bg_persist_at_created", new=AsyncMock(return_value=True)), patch.object(
         orch_mod,
         "_extract_response_snapshot_from_events",
         return_value={"status": "in_progress"},
