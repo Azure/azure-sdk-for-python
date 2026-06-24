@@ -404,6 +404,7 @@ async def _bg_handle_first_event(
     normalized: "generated_models.ResponseStreamEvent",
     handler_events: "list[generated_models.ResponseStreamEvent]",
     *,
+    st: "_BgRunState",
     context: "ResponseContext | None",
     store: bool,
     provider: "ResponseProviderProtocol | None",
@@ -418,8 +419,11 @@ async def _bg_handle_first_event(
 
     Guards against direct ``response.output`` manipulation (allowing recovery
     seeding), sets the initial ``response.created`` snapshot, honours a
-    handler-set ``queued`` status, and persists at created time. Returns the
-    ``(output_item_count_seed, provider_created)`` pair.
+    handler-set ``queued`` status, and persists at created time. Records the
+    ``output_item_count`` seed and ``provider_created`` flag onto ``st`` **before**
+    the cancellable ``await asyncio.sleep(0)`` checkpoint, so a ``CancelledError``
+    delivered at that yield cannot lose the ``provider_created`` tracking (which
+    would otherwise force the create branch in terminal persistence).
 
     :param record: The execution record.
     :type record: ResponseExecution
@@ -427,6 +431,8 @@ async def _bg_handle_first_event(
     :type normalized: generated_models.ResponseStreamEvent
     :param handler_events: The accumulated events (first already appended).
     :type handler_events: list[generated_models.ResponseStreamEvent]
+    :keyword st: The mutable bg-run state holder updated in place.
+    :paramtype st: _BgRunState
     :keyword context: The response context.
     :paramtype context: ResponseContext | None
     :keyword store: Whether the response is stored.
@@ -445,8 +451,6 @@ async def _bg_handle_first_event(
     :paramtype conversation_id: str | None
     :keyword history_limit: History fetch limit.
     :paramtype history_limit: int
-    :returns: ``(output_item_count_seed, provider_created)``.
-    :rtype: tuple[int, bool]
     :raises ValueError: On direct output manipulation on a fresh entry.
     """
     output_item_count = 0
@@ -466,6 +470,7 @@ async def _bg_handle_first_event(
                 f"(found {len(created_output)} items, expected 0). "
                 f"Use output builder events instead."
             )
+    st.output_item_count = output_item_count
 
     # Set initial response snapshot for POST response body without changing
     # record.status (transition_to manages status lifecycle).
@@ -481,7 +486,12 @@ async def _bg_handle_first_event(
     # Honour the handler's initial status (e.g. "queued").
     if _initial_snapshot.get("status") == "queued":
         record.status = "queued"  # type: ignore[assignment]
-    provider_created = await _bg_persist_at_created(
+    # Record provider_created onto ``st`` BEFORE the cancellable sleep(0) below.
+    # If a CancelledError is delivered at that yield, terminal persistence must
+    # still see provider_created=True (the create already landed) and take the
+    # update_response branch rather than re-creating (which would raise
+    # ResponseAlreadyExistsError and diverge the in-memory record).
+    st.provider_created = await _bg_persist_at_created(
         record,
         store=store,
         provider=provider,
@@ -496,7 +506,6 @@ async def _bg_handle_first_event(
     # to terminal state (otherwise a synchronous handler runs straight to
     # completion and the POST returns "completed" instead of "in_progress").
     await asyncio.sleep(0)
-    return output_item_count, provider_created
 
 
 def _bg_resolve_terminal_status(
@@ -962,10 +971,11 @@ async def _bg_drain_handler_events(
                 st.terminal_seen = True
             if not st.first_event_processed:
                 st.first_event_processed = True
-                st.output_item_count, st.provider_created = await _bg_handle_first_event(
+                await _bg_handle_first_event(
                     record,
                     normalized,
                     st.handler_events,
+                    st=st,
                     context=context,
                     store=store,
                     provider=provider,
