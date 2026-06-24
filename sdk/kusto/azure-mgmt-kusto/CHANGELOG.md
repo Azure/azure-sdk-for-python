@@ -41,6 +41,8 @@
   - Added model `EventGridDataConnectionWithManagedIdentity`
   - Added model `EventHubConnectionWithManagedIdentityProperties`
   - Added model `EventHubDataConnectionWithManagedIdentity`
+  - Parameter `caller_role` of `Method DatabasesOperations.begin_update` is now optional
+  - Parameter `caller_role` of `Method DatabasesOperations.begin_create_or_update` is now optional
 
 ### Breaking Changes
 
@@ -68,9 +70,7 @@
   - Model `Script` moved instance variable `script_url`, `script_url_sas_token`, `script_content`, `force_update_tag`, `continue_on_errors`, `provisioning_state`, `script_level` and `principal_permissions_action` under property `properties` whose type is `ScriptProperties`
   - Method `ClustersOperations.begin_create_or_update` replaced positional_or_keyword parameter `if_match`/`if_none_match` to keyword_only parameter `etag`/`match_condition`
   - Method `ClustersOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameter `etag`/`match_condition`
-  - Parameter `caller_role` of `Method DatabasesOperations.begin_create_or_update` is now optional
   - Method `DatabasesOperations.begin_create_or_update` changed its parameter `caller_role` from `positional_or_keyword` to `keyword_only`
-  - Parameter `caller_role` of `Method DatabasesOperations.begin_update` is now optional
   - Method `DatabasesOperations.begin_update` changed its parameter `caller_role` from `positional_or_keyword` to `keyword_only`
   - Method `DatabasesOperations.list_by_cluster` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
 
