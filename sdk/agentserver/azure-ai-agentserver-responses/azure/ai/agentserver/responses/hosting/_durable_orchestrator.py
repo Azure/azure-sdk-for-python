@@ -1106,22 +1106,19 @@ class DurableResponseOrchestrator:
         # Under the new model the steerable-input-queuing case does NOT
         # raise TaskConflictError — ``MultiTurnTask(steerable=True).start()``
         # auto-queues against an in-flight chain and returns a TaskRun
-        # whose ``_queued_cancel_callback`` is set (the public-surface
-        # detection signal). See the queued-vs-fresh check below.
+        # whose ``is_queued`` is True (the public-surface detection signal).
+        # See the queued-vs-fresh check below.
         task_run = await picked_primitive.start(**start_kwargs)
         # Store the task run reference on the record for observability
         record.durable_task_run = task_run  # type: ignore[attr-defined]
 
-        # Detect "queued steering input" via the TaskRun's queued-cancel
-        # callback. The framework installs this callback ONLY when the
-        # returned handle represents a queued (not-yet-promoted) input on
-        # a steerable chain — i.e. the caller's request landed mid-turn
-        # and is awaiting drain. Returning False here signals the caller
-        # to dispatch the acceptance hook and return a ``status="queued"``
-        # response envelope to the HTTP caller.
-        # NOTE: this reads a private TaskRun attribute. If the core ever
-        # adds a public ``is_queued`` property, switch to that.
-        is_queued = getattr(task_run, "_queued_cancel_callback", None) is not None
+        # Detect "queued steering input" via the public ``TaskRun.is_queued``
+        # predicate. The framework marks the returned handle as queued ONLY when
+        # it represents a not-yet-promoted input on a steerable chain — i.e. the
+        # caller's request landed mid-turn and is awaiting drain. Returning False
+        # here signals the caller to dispatch the acceptance hook and return a
+        # ``status="queued"`` response envelope to the HTTP caller.
+        is_queued = task_run.is_queued
         return not is_queued  # True = freshly started, False = queued
 
     async def _persist_crash_failed(

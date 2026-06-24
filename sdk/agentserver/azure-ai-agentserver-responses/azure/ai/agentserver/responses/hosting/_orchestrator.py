@@ -18,9 +18,9 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
 
 import anyio
 
-from azure.ai.agentserver.core._platform_headers import (
+from azure.ai.agentserver.core.platform_headers import (
     PLATFORM_ERROR_TAG,
-)  # pylint: disable=import-error,no-name-in-module
+)
 from azure.ai.agentserver.core.durable import (
     LastInputIdPreconditionFailed,
     TaskConflictError,

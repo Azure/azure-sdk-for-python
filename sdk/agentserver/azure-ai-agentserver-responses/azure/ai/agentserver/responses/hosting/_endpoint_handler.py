@@ -28,13 +28,13 @@ from azure.ai.agentserver.core.durable import (
     LastInputIdPreconditionFailed,
     TaskConflictError,
 )
-from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core.platform_headers import (
     CHAT_ISOLATION_KEY,
     CLIENT_HEADER_PREFIX,
     SESSION_ID,
     USER_ISOLATION_KEY,
 )
-from azure.ai.agentserver.core._request_id import REQUEST_ID_STATE_KEY  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core import read_request_id
 from azure.ai.agentserver.responses.models._generated import (
     AgentReference,
     CreateResponse,
@@ -174,10 +174,7 @@ def _get_scope_request_id(request: Request) -> str | None:
     :return: The resolved request ID, or ``None``.
     :rtype: str | None
     """
-    state = request.scope.get("state")
-    if isinstance(state, dict):
-        return state.get(REQUEST_ID_STATE_KEY)
-    return None
+    return read_request_id(request.scope)
 
 
 # Structured log scope context variables (spec §7.4)
