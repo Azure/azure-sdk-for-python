@@ -6,185 +6,48 @@
 
   - Client `LogAnalyticsManagementClient` added method `send_request`
   - Model `AzureEntityResource` added property `system_data`
-  - Model `Cluster` added property `properties`
   - Model `Cluster` added property `system_data`
-  - Model `ClusterPatch` added property `properties`
-  - Model `DataExport` added property `properties`
   - Model `DataExport` added property `system_data`
   - Model `DataSource` added property `system_data`
-  - Model `LinkedService` added property `properties`
   - Model `LinkedService` added property `system_data`
-  - Model `LinkedStorageAccountsResource` added property `properties`
   - Model `LinkedStorageAccountsResource` added property `system_data`
-  - Model `LogAnalyticsQueryPack` added property `properties`
   - Model `ProxyResource` added property `system_data`
   - Model `Resource` added property `system_data`
-  - Model `SavedSearch` added property `properties`
   - Model `SavedSearch` added property `system_data`
-  - Model `StorageInsight` added property `properties`
   - Model `StorageInsight` added property `system_data`
-  - Model `SummaryLogs` added property `properties`
-  - Model `Table` added property `properties`
   - Model `TrackedResource` added property `system_data`
-  - Model `Workspace` added property `properties`
-  - Model `WorkspacePatch` added property `properties`
   - Model `WorkspacePatch` added property `system_data`
-  - Added model `ClusterPatchProperties`
-  - Added model `ClusterProperties`
-  - Added model `DataExportProperties`
   - Added model `Destination`
   - Added model `DestinationMetaData`
-  - Added model `LinkedServiceProperties`
-  - Added model `LinkedStorageAccountsProperties`
-  - Added model `LogAnalyticsQueryPackProperties`
-  - Added model `LogAnalyticsQueryPackQueryProperties`
-  - Added model `ManagementGroupProperties`
-  - Added model `SavedSearchProperties`
-  - Added model `StorageInsightProperties`
-  - Added model `SummaryLogsProperties`
   - Added enum `SummaryLogsProvisioningState`
-  - Added model `TableProperties`
-  - Added model `WorkspaceProperties`
 
 ### Breaking Changes
 
-  - Model `Cluster` deleted or renamed its instance variable `cluster_id`
-  - Model `Cluster` deleted or renamed its instance variable `provisioning_state`
-  - Model `Cluster` deleted or renamed its instance variable `is_double_encryption_enabled`
-  - Model `Cluster` deleted or renamed its instance variable `is_availability_zones_enabled`
-  - Model `Cluster` deleted or renamed its instance variable `billing_type`
-  - Model `Cluster` deleted or renamed its instance variable `key_vault_properties`
-  - Model `Cluster` deleted or renamed its instance variable `last_modified_date`
-  - Model `Cluster` deleted or renamed its instance variable `created_date`
-  - Model `Cluster` deleted or renamed its instance variable `associated_workspaces`
-  - Model `Cluster` deleted or renamed its instance variable `capacity_reservation_properties`
-  - Model `Cluster` deleted or renamed its instance variable `replication`
-  - Model `ClusterPatch` deleted or renamed its instance variable `key_vault_properties`
-  - Model `ClusterPatch` deleted or renamed its instance variable `billing_type`
-  - Model `DataExport` deleted or renamed its instance variable `data_export_id`
-  - Model `DataExport` deleted or renamed its instance variable `table_names`
-  - Model `DataExport` deleted or renamed its instance variable `enable`
-  - Model `DataExport` deleted or renamed its instance variable `created_date`
-  - Model `DataExport` deleted or renamed its instance variable `last_modified_date`
-  - Model `DataExport` deleted or renamed its instance variable `resource_id`
-  - Model `DataExport` deleted or renamed its instance variable `type_properties_destination_type`
-  - Model `DataExport` deleted or renamed its instance variable `event_hub_name`
-  - Model `LinkedService` deleted or renamed its instance variable `resource_id`
-  - Model `LinkedService` deleted or renamed its instance variable `write_access_resource_id`
-  - Model `LinkedService` deleted or renamed its instance variable `provisioning_state`
-  - Model `LinkedStorageAccountsResource` deleted or renamed its instance variable `data_source_type`
-  - Model `LinkedStorageAccountsResource` deleted or renamed its instance variable `storage_account_ids`
-  - Model `LogAnalyticsQueryPack` deleted or renamed its instance variable `query_pack_id`
-  - Model `LogAnalyticsQueryPack` deleted or renamed its instance variable `time_created`
-  - Model `LogAnalyticsQueryPack` deleted or renamed its instance variable `time_modified`
-  - Model `LogAnalyticsQueryPack` deleted or renamed its instance variable `provisioning_state`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `id_properties_id`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `display_name`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `time_created`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `time_modified`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `author`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `description`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `body`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `related`
-  - Model `LogAnalyticsQueryPackQuery` deleted or renamed its instance variable `tags`
-  - Model `ManagementGroup` deleted or renamed its instance variable `server_count`
-  - Model `ManagementGroup` deleted or renamed its instance variable `is_gateway`
-  - Model `ManagementGroup` deleted or renamed its instance variable `name`
-  - Model `ManagementGroup` deleted or renamed its instance variable `id`
-  - Model `ManagementGroup` deleted or renamed its instance variable `created`
-  - Model `ManagementGroup` deleted or renamed its instance variable `data_received`
-  - Model `ManagementGroup` deleted or renamed its instance variable `version`
-  - Model `ManagementGroup` deleted or renamed its instance variable `sku`
-  - Model `SavedSearch` deleted or renamed its instance variable `category`
-  - Model `SavedSearch` deleted or renamed its instance variable `display_name`
-  - Model `SavedSearch` deleted or renamed its instance variable `query`
-  - Model `SavedSearch` deleted or renamed its instance variable `function_alias`
-  - Model `SavedSearch` deleted or renamed its instance variable `function_parameters`
-  - Model `SavedSearch` deleted or renamed its instance variable `version`
-  - Model `SavedSearch` deleted or renamed its instance variable `tags`
-  - Model `StorageInsight` deleted or renamed its instance variable `containers`
-  - Model `StorageInsight` deleted or renamed its instance variable `tables`
-  - Model `StorageInsight` deleted or renamed its instance variable `storage_account`
-  - Model `StorageInsight` deleted or renamed its instance variable `status`
-  - Model `SummaryLogs` deleted or renamed its instance variable `rule_type`
-  - Model `SummaryLogs` deleted or renamed its instance variable `display_name`
-  - Model `SummaryLogs` deleted or renamed its instance variable `description`
-  - Model `SummaryLogs` deleted or renamed its instance variable `is_active`
-  - Model `SummaryLogs` deleted or renamed its instance variable `status_code`
-  - Model `SummaryLogs` deleted or renamed its instance variable `provisioning_state`
-  - Model `SummaryLogs` deleted or renamed its instance variable `rule_definition`
-  - Model `Table` deleted or renamed its instance variable `retention_in_days`
-  - Model `Table` deleted or renamed its instance variable `total_retention_in_days`
-  - Model `Table` deleted or renamed its instance variable `archive_retention_in_days`
-  - Model `Table` deleted or renamed its instance variable `search_results`
-  - Model `Table` deleted or renamed its instance variable `restored_logs`
-  - Model `Table` deleted or renamed its instance variable `result_statistics`
-  - Model `Table` deleted or renamed its instance variable `plan`
-  - Model `Table` deleted or renamed its instance variable `last_plan_modified_date`
-  - Model `Table` deleted or renamed its instance variable `schema`
-  - Model `Table` deleted or renamed its instance variable `provisioning_state`
-  - Model `Table` deleted or renamed its instance variable `retention_in_days_as_default`
-  - Model `Table` deleted or renamed its instance variable `total_retention_in_days_as_default`
-  - Model `Workspace` deleted or renamed its instance variable `provisioning_state`
-  - Model `Workspace` deleted or renamed its instance variable `customer_id`
-  - Model `Workspace` deleted or renamed its instance variable `sku`
-  - Model `Workspace` deleted or renamed its instance variable `retention_in_days`
-  - Model `Workspace` deleted or renamed its instance variable `workspace_capping`
-  - Model `Workspace` deleted or renamed its instance variable `created_date`
-  - Model `Workspace` deleted or renamed its instance variable `modified_date`
-  - Model `Workspace` deleted or renamed its instance variable `public_network_access_for_ingestion`
-  - Model `Workspace` deleted or renamed its instance variable `public_network_access_for_query`
-  - Model `Workspace` deleted or renamed its instance variable `force_cmk_for_query`
-  - Model `Workspace` deleted or renamed its instance variable `private_link_scoped_resources`
-  - Model `Workspace` deleted or renamed its instance variable `features`
-  - Model `Workspace` deleted or renamed its instance variable `default_data_collection_rule_resource_id`
-  - Model `Workspace` deleted or renamed its instance variable `replication`
-  - Model `Workspace` deleted or renamed its instance variable `failover`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `provisioning_state`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `customer_id`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `sku`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `retention_in_days`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `workspace_capping`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `created_date`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `modified_date`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `public_network_access_for_ingestion`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `public_network_access_for_query`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `force_cmk_for_query`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `private_link_scoped_resources`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `features`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `default_data_collection_rule_resource_id`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `replication`
-  - Model `WorkspacePatch` deleted or renamed its instance variable `failover`
-  - Deleted or renamed model `ClusterListResult`
-  - Deleted or renamed model `DataExportListResult`
-  - Deleted or renamed model `DataSourceFilter`
-  - Deleted or renamed model `DataSourceListResult`
-  - Deleted or renamed model `ErrorDetailAutoGenerated`
-  - Deleted or renamed model `ErrorDetailAutoGenerated2`
-  - Deleted or renamed model `ErrorResponseAutoGenerated`
-  - Deleted or renamed model `ErrorResponseAutoGenerated2`
-  - Deleted or renamed model `LinkedServiceListResult`
-  - Deleted or renamed model `LinkedStorageAccountsListResult`
-  - Deleted or renamed model `LogAnalyticsQueryPackListResult`
-  - Deleted or renamed model `LogAnalyticsQueryPackQueryListResult`
-  - Deleted or renamed model `NetworkSecurityPerimeterConfigurationListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `ProxyResourceAutoGenerated`
-  - Deleted or renamed model `ResourceAutoGenerated`
-  - Deleted or renamed model `StorageInsightListResult`
-  - Deleted or renamed model `SummaryLogsListResult`
-  - Deleted or renamed model `TablesListResult`
-  - Deleted or renamed model `TrackedResourceAutoGenerated`
-  - Deleted or renamed model `WorkspaceListManagementGroupsResult`
-  - Deleted or renamed model `WorkspaceListResult`
-  - Deleted or renamed model `WorkspaceListUsagesResult`
-  - Deleted or renamed model `WorkspaceReplicationPatProperties`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Cluster` moved instance variable `cluster_id`, `provisioning_state`, `is_double_encryption_enabled`, `is_availability_zones_enabled`, `billing_type`, `key_vault_properties`, `last_modified_date`, `created_date`, `associated_workspaces`, `capacity_reservation_properties` and `replication` under property `properties` whose type is `ClusterProperties`
+  - Model `ClusterPatch` moved instance variable `key_vault_properties` and `billing_type` under property `properties` whose type is `ClusterPatchProperties`
+  - Model `DataExport` moved instance variable `data_export_id`, `table_names`, `enable`, `created_date`, `last_modified_date`, `resource_id`, `type_properties_destination_type` and `event_hub_name` under property `properties` whose type is `DataExportProperties`
+  - Model `LinkedService` moved instance variable `resource_id`, `write_access_resource_id` and `provisioning_state` under property `properties` whose type is `LinkedServiceProperties`
+  - Model `LinkedStorageAccountsResource` moved instance variable `data_source_type` and `storage_account_ids` under property `properties` whose type is `LinkedStorageAccountsProperties`
+  - Model `LogAnalyticsQueryPack` moved instance variable `query_pack_id`, `time_created`, `time_modified` and `provisioning_state` under property `properties` whose type is `LogAnalyticsQueryPackProperties`
+  - Model `LogAnalyticsQueryPackQuery` moved instance variable `id_properties_id`, `display_name`, `time_created`, `time_modified`, `author`, `description`, `body`, `related` and `tags` under property `properties` whose type is `LogAnalyticsQueryPackQueryProperties`
+  - Model `ManagementGroup` moved instance variable `server_count`, `is_gateway`, `name`, `id`, `created`, `data_received`, `version` and `sku` under property `properties` whose type is `ManagementGroupProperties`
+  - Model `SavedSearch` moved instance variable `category`, `display_name`, `query`, `function_alias`, `function_parameters`, `version` and `tags` under property `properties` whose type is `SavedSearchProperties`
+  - Model `StorageInsight` moved instance variable `containers`, `tables`, `storage_account` and `status` under property `properties` whose type is `StorageInsightProperties`
+  - Model `SummaryLogs` moved instance variable `rule_type`, `display_name`, `description`, `is_active`, `status_code`, `provisioning_state` and `rule_definition` under property `properties` whose type is `SummaryLogsProperties`
+  - Model `Table` moved instance variable `retention_in_days`, `total_retention_in_days`, `archive_retention_in_days`, `search_results`, `restored_logs`, `result_statistics`, `plan`, `last_plan_modified_date`, `schema`, `provisioning_state`, `retention_in_days_as_default` and `total_retention_in_days_as_default` under property `properties` whose type is `TableProperties`
+  - Model `Workspace` moved instance variable `provisioning_state`, `customer_id`, `sku`, `retention_in_days`, `workspace_capping`, `created_date`, `modified_date`, `public_network_access_for_ingestion`, `public_network_access_for_query`, `force_cmk_for_query`, `private_link_scoped_resources`, `features`, `default_data_collection_rule_resource_id`, `replication` and `failover` under property `properties` whose type is `WorkspaceProperties`
+  - Model `WorkspacePatch` moved instance variable `provisioning_state`, `customer_id`, `sku`, `retention_in_days`, `workspace_capping`, `created_date`, `modified_date`, `public_network_access_for_ingestion`, `public_network_access_for_query`, `force_cmk_for_query`, `private_link_scoped_resources`, `features`, `default_data_collection_rule_resource_id`, `replication` and `failover` under property `properties` whose type is `WorkspaceProperties`
   - Method `DataSourcesOperations.list_by_workspace` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
-  - Method `QueriesOperations.list` changed its parameter `include_body` from `positional_or_keyword` to `keyword_only`
-  - Method `QueriesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
-  - Method `QueriesOperations.search` changed its parameter `include_body` from `positional_or_keyword` to `keyword_only`
-  - Method `QueriesOperations.search` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `QueriesOperations.list` changed its parameter `include_body`/`skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `QueriesOperations.search` changed its parameter `include_body`/`skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `WorkspacesOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `ClusterListResult`/`DataExportListResult`/`DataSourceListResult`/`LinkedServiceListResult`/`LinkedStorageAccountsListResult`/`LogAnalyticsQueryPackListResult`/`LogAnalyticsQueryPackQueryListResult`/`NetworkSecurityPerimeterConfigurationListResult`/`OperationListResult`/`StorageInsightListResult`/`SummaryLogsListResult`/`TablesListResult`/`WorkspaceListResult` which actually were not used by SDK users
+  - Deleted model `DataSourceFilter`/`ErrorDetailAutoGenerated`/`ErrorDetailAutoGenerated2`/`ErrorResponseAutoGenerated`/`ErrorResponseAutoGenerated2`/`ProxyResourceAutoGenerated`/`ResourceAutoGenerated`/`TrackedResourceAutoGenerated`/`WorkspaceListManagementGroupsResult`/`WorkspaceListUsagesResult`/`WorkspaceReplicationPatProperties` which actually were not used by SDK users
 
 ## 14.0.0b1 (2026-06-04)
 
