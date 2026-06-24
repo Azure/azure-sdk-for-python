@@ -118,6 +118,25 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         """
         return self._metadata
 
+    @property
+    def is_queued(self) -> bool:
+        """Whether this handle represents a *queued* steering input.
+
+        ``True`` when this :class:`TaskRun` is a queued (not-yet-promoted)
+        steering input on a steerable chain — i.e. the request landed while a
+        turn was already in flight and is awaiting drain — and ``False`` for a
+        freshly-started or active run. A queued run's :meth:`cancel` removes the
+        queued slot and resolves :meth:`result` with ``TaskCancelled`` without
+        affecting the active turn.
+
+        This is the supported, public way to distinguish a queued steering
+        handle from a freshly-started one.
+
+        :return: ``True`` if this handle is a queued steering input.
+        :rtype: bool
+        """
+        return self._queued_cancel_callback is not None
+
     async def result(self) -> Output:
         """Await task completion and return the raw output value.
 

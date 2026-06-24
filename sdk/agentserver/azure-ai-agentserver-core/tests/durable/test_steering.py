@@ -279,6 +279,42 @@ class TestSteering:
     # ------------------------------------------------------------------
 
     @pytest.mark.asyncio
+    async def test_is_queued_distinguishes_queued_vs_fresh_run(self, tmp_path):
+        """``TaskRun.is_queued`` is the public queued-steering-input detector.
+
+        A run returned by ``start()`` against an in-flight steerable chain is a
+        queued (not-yet-promoted) input → ``is_queued is True``; a freshly
+        started run → ``is_queued is False``.
+        """
+        manager, mgr_mod = await self._setup_manager(tmp_path)
+        try:
+
+            @multi_turn_task(name="chat", steerable=True)
+            async def chat(ctx: TaskContext[dict]) -> dict:
+                if ctx.cancel.is_set():
+                    return None
+                await asyncio.sleep(0.3)
+                if ctx.cancel.is_set():
+                    return None
+                return {"msg": ctx.input.get("msg", "?")}
+
+            # Fresh start → not queued.
+            run1 = await chat.start(task_id="t1", input={"msg": "A"})
+            assert run1.is_queued is False
+
+            await asyncio.sleep(0.05)
+
+            # Steer mid-turn → queued handle.
+            run2 = await chat.start(task_id="t1", input={"msg": "B"})
+            assert run2.is_queued is True
+
+            # The queued run still drains to completion (B runs after A winds down).
+            result2 = await asyncio.wait_for(run2.result(), timeout=5.0)
+            assert result2 == {"msg": "B"}
+        finally:
+            await self._teardown_manager(manager, mgr_mod)
+
+    @pytest.mark.asyncio
     async def test_steered_context_fields(self, tmp_path):
         """: steered generation has is_steered_turn=True.
         The legacy was_steered / steering_generation fields are removed."""

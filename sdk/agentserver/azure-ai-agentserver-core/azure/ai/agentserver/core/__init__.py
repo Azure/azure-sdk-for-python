@@ -17,6 +17,7 @@ Public API::
         end_span,
         flush_spans,
         record_error,
+        read_request_id,
         set_current_span,
         trace_stream,
     )
@@ -28,7 +29,7 @@ from ._base import AgentServerHost
 from ._config import AgentConfig
 from ._errors import create_error_response
 from ._middleware import InboundRequestLoggingMiddleware
-from ._request_id import RequestIdMiddleware
+from ._request_id import RequestIdMiddleware, read_request_id
 from ._server_version import build_server_version
 from ._tracing import (
     configure_observability,
@@ -53,6 +54,7 @@ __all__ = [
     "end_span",
     "flush_spans",
     "record_error",
+    "read_request_id",
     "set_current_span",
     "trace_stream",
 ]

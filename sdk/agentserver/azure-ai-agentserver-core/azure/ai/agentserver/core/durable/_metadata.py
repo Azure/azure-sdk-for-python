@@ -8,7 +8,7 @@ Provides a dict-like interface with typed mutation methods plus a
 
     ctx.metadata["key"] = "value"          # default namespace
     ctx.metadata("custom")["k"] = 1        # named namespace facade
-    ctx.metadata("_responses")["seq"] = 5  # framework-layer convention
+    ctx.metadata("_reserved")["seq"] = 5   # framework-layer convention
 
 Each namespace persists to a distinct payload slot:
 
@@ -93,10 +93,9 @@ class TaskMetadata(collections.abc.MutableMapping):
 
         The core primitive does NOT enforce namespace-name conventions
         (e.g. the leading-underscore reservation). That is a wrapper-
-        layer concern — handler-facing wrappers like the responses
-        package's :class:`DurabilityContext` reject ``_*`` names so
-        handlers can't collide with framework-reserved namespaces such
-        as ``_responses``. Framework-layered code (the responses
+        layer concern — handler-facing wrappers (composed protocol
+        packages) may reject ``_*`` names so handlers can't collide with
+        framework-reserved namespaces. Framework-layered code (a wrapper
         orchestrator itself) reaches reserved namespaces directly via
         this API.
 
