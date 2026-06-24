@@ -53,6 +53,6 @@ try:
         print(f" Device class '{best_update['deviceClassId']}':")
         print(f"  {best_update['update']['updateId']['provider']}")
         print(f"  {best_update['update']['updateId']['name']}")
-        print(f"  {item['update']['updateId']['version']}")
+        print(f"  {best_update['update']['updateId']['version']}")
 except HttpResponseError as e:
     print("Failed to get device message: {}".format(e))
