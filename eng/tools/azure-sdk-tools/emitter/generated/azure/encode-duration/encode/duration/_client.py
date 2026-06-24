@@ -16,7 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import DurationClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
-from .operations import HeaderOperations, PropertyOperations, QueryOperations
+from .operations import HeaderOperations, LossyOperations, PropertyOperations, QueryOperations
 
 if sys.version_info >= (3, 11):
     from typing import Self
@@ -33,6 +33,8 @@ class DurationClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype property: encode.duration.operations.PropertyOperations
     :ivar header: HeaderOperations operations
     :vartype header: encode.duration.operations.HeaderOperations
+    :ivar lossy: LossyOperations operations
+    :vartype lossy: encode.duration.operations.LossyOperations
     :keyword endpoint: Service host. Default value is "http://localhost:3000".
     :paramtype endpoint: str
     """
@@ -68,6 +70,7 @@ class DurationClient:  # pylint: disable=client-accepts-api-version-keyword
         self.query = QueryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.property = PropertyOperations(self._client, self._config, self._serialize, self._deserialize)
         self.header = HeaderOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.lossy = LossyOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

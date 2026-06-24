@@ -98,7 +98,11 @@
         "encode.duration.operations.HeaderOperations.float64_milliseconds": "Encode.Duration.Header.float64Milliseconds",
         "encode.duration.aio.operations.HeaderOperations.float64_milliseconds": "Encode.Duration.Header.float64Milliseconds",
         "encode.duration.operations.HeaderOperations.int32_milliseconds_array": "Encode.Duration.Header.int32MillisecondsArray",
-        "encode.duration.aio.operations.HeaderOperations.int32_milliseconds_array": "Encode.Duration.Header.int32MillisecondsArray"
+        "encode.duration.aio.operations.HeaderOperations.int32_milliseconds_array": "Encode.Duration.Header.int32MillisecondsArray",
+        "encode.duration.operations.LossyOperations.int_seconds": "Encode.Duration.Lossy.intSeconds",
+        "encode.duration.aio.operations.LossyOperations.int_seconds": "Encode.Duration.Lossy.intSeconds",
+        "encode.duration.operations.LossyOperations.int_milliseconds": "Encode.Duration.Lossy.intMilliseconds",
+        "encode.duration.aio.operations.LossyOperations.int_milliseconds": "Encode.Duration.Lossy.intMilliseconds"
     },
-    "CrossLanguageVersion": "59d442353391"
+    "CrossLanguageVersion": "1d6dc20e6d13"
 }
