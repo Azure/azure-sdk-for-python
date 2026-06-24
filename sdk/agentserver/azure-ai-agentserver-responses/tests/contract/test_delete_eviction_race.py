@@ -128,9 +128,7 @@ class TestDeleteEvictionRace:
 
         # DELETE should succeed (not 404) via provider fallback
         delete_resp = client.delete(f"/responses/{response_id}")
-        assert delete_resp.status_code == 200, (
-            f"Expected 200 but got {delete_resp.status_code}: {delete_resp.json()}"
-        )
+        assert delete_resp.status_code == 200, f"Expected 200 but got {delete_resp.status_code}: {delete_resp.json()}"
         body = delete_resp.json()
         assert body["id"] == response_id
         assert body["deleted"] is True
@@ -200,9 +198,7 @@ class TestDeleteEvictionRace:
 
         # DELETE — should succeed via provider fallback (record is None)
         delete_resp = client.delete(f"/responses/{response_id}")
-        assert delete_resp.status_code == 200, (
-            f"Expected 200 but got {delete_resp.status_code}: {delete_resp.json()}"
-        )
+        assert delete_resp.status_code == 200, f"Expected 200 but got {delete_resp.status_code}: {delete_resp.json()}"
         body = delete_resp.json()
         assert body["id"] == response_id
         assert body["deleted"] is True

@@ -247,6 +247,6 @@ def test_import_does_not_expose_execution_record() -> None:
     import importlib
 
     mod = importlib.import_module("azure.ai.agentserver.responses.hosting._runtime_state")
-    assert not hasattr(mod, "_ExecutionRecord"), (
-        "_ExecutionRecord should have been removed from _runtime_state in Phase 7 / Task 7.1"
-    )
+    assert not hasattr(
+        mod, "_ExecutionRecord"
+    ), "_ExecutionRecord should have been removed from _runtime_state in Phase 7 / Task 7.1"

@@ -7,8 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from io import IOBase
-from typing import Any, Callable, IO, Literal, Optional, TYPE_CHECKING, TypeVar, Union, overload
+from typing import Any, Callable, Literal, Optional, TYPE_CHECKING, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -71,6 +70,8 @@ class ResponsesOperations:
     @overload
     async def create_response(  # pylint: disable=too-many-locals
         self,
+        *,
+        content_type: str = "application/json",
         metadata: Optional[_types.Metadata] = None,
         top_logprobs: Optional[int] = None,
         temperature: Optional[float] = None,
@@ -100,109 +101,99 @@ class ResponsesOperations:
         stream_options: Optional[_types.ResponseStreamOptions] = None,
         conversation: Optional["_unions.ConversationParam"] = None,
         context_management: Optional[list[_types.ContextManagementParam]] = None,
-        agent: Optional[_types.AgentReference] = None,
-        agent_session_id: Optional[str] = None,
         agent_reference: Optional[_types.AgentReference] = None,
         structured_inputs: Optional[dict[str, Any]] = None,
-        *,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> _types.ResponseObject:
         """Creates a model response.
 
-        :param metadata: Default value is None.
-        :type metadata: ~azure.ai.agentserver.responses.models.types.Metadata
-        :param top_logprobs: Default value is None.
-        :type top_logprobs: int
-        :param temperature: Default value is None.
-        :type temperature: float
-        :param top_p: Default value is None.
-        :type top_p: float
-        :param user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword metadata: Default value is None.
+        :paramtype metadata: ~azure.ai.agentserver.responses.models.types.Metadata
+        :keyword top_logprobs: Default value is None.
+        :paramtype top_logprobs: int
+        :keyword temperature: Default value is None.
+        :paramtype temperature: float
+        :keyword top_p: Default value is None.
+        :paramtype top_p: float
+        :keyword user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``.
          Use ``prompt_cache_key`` instead to maintain caching optimizations.
            A stable identifier for your end-users.
            Used to boost cache hit rates by better bucketing similar requests and  to help OpenAI
          detect and prevent abuse. `Learn more
          </docs/guides/safety-best-practices#safety-identifiers>`_. Default value is None.
-        :type user: str
-        :param safety_identifier: A stable identifier used to help detect users of your application
+        :paramtype user: str
+        :keyword safety_identifier: A stable identifier used to help detect users of your application
          that may be violating OpenAI's usage policies.
            The IDs should be a string that uniquely identifies each user. We recommend hashing their
          username or email address, in order to avoid sending us any identifying information. `Learn
          more </docs/guides/safety-best-practices#safety-identifiers>`_. Default value is None.
-        :type safety_identifier: str
-        :param prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize
+        :paramtype safety_identifier: str
+        :keyword prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize
          your cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_.
          Default value is None.
-        :type prompt_cache_key: str
-        :param service_tier: Is one of the following types: Literal["auto"], Literal["default"],
+        :paramtype prompt_cache_key: str
+        :keyword service_tier: Is one of the following types: Literal["auto"], Literal["default"],
          Literal["flex"], Literal["scale"], Literal["priority"] Default value is None.
-        :type service_tier: str or str or str or str or str
-        :param prompt_cache_retention: Is either a Literal["in-memory"] type or a Literal["24h"] type.
+        :paramtype service_tier: str or str or str or str or str
+        :keyword prompt_cache_retention: Is either a Literal["in-memory"] type or a Literal["24h"]
+         type. Default value is None.
+        :paramtype prompt_cache_retention: str or str
+        :keyword previous_response_id: Default value is None.
+        :paramtype previous_response_id: str
+        :keyword model: The model deployment to use for the creation of this response. Default value is
+         None.
+        :paramtype model: str
+        :keyword reasoning: Default value is None.
+        :paramtype reasoning: ~azure.ai.agentserver.responses.models.types.Reasoning
+        :keyword background: Default value is None.
+        :paramtype background: bool
+        :keyword max_output_tokens: Default value is None.
+        :paramtype max_output_tokens: int
+        :keyword max_tool_calls: Default value is None.
+        :paramtype max_tool_calls: int
+        :keyword text: Default value is None.
+        :paramtype text: ~azure.ai.agentserver.responses.models.types.ResponseTextParam
+        :keyword tools: Default value is None.
+        :paramtype tools: list[~azure.ai.agentserver.responses.models.types.Tool]
+        :keyword tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type.
          Default value is None.
-        :type prompt_cache_retention: str or str
-        :param previous_response_id: Default value is None.
-        :type previous_response_id: str
-        :param model: The model deployment to use for the creation of this response. Default value is
-         None.
-        :type model: str
-        :param reasoning: Default value is None.
-        :type reasoning: ~azure.ai.agentserver.responses.models.types.Reasoning
-        :param background: Default value is None.
-        :type background: bool
-        :param max_output_tokens: Default value is None.
-        :type max_output_tokens: int
-        :param max_tool_calls: Default value is None.
-        :type max_tool_calls: int
-        :param text: Default value is None.
-        :type text: ~azure.ai.agentserver.responses.models.types.ResponseTextParam
-        :param tools: Default value is None.
-        :type tools: list[~azure.ai.agentserver.responses.models.types.Tool]
-        :param tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type. Default
+        :paramtype tool_choice: str or ~azure.ai.agentserver.responses.models.models.ToolChoiceOptions
+         or ~azure.ai.agentserver.responses.models.types.ToolChoiceParam
+        :keyword prompt: Default value is None.
+        :paramtype prompt: ~azure.ai.agentserver.responses.models.types.Prompt
+        :keyword truncation: Is either a Literal["auto"] type or a Literal["disabled"] type. Default
          value is None.
-        :type tool_choice: str or ~azure.ai.agentserver.responses.models.models.ToolChoiceOptions or
-         ~azure.ai.agentserver.responses.models.types.ToolChoiceParam
-        :param prompt: Default value is None.
-        :type prompt: ~azure.ai.agentserver.responses.models.types.Prompt
-        :param truncation: Is either a Literal["auto"] type or a Literal["disabled"] type. Default
-         value is None.
-        :type truncation: str or str
-        :param input: Is either a str type or a [Item] type. Default value is None.
-        :type input: str or list[~azure.ai.agentserver.responses.models.types.Item]
-        :param include: Default value is None.
-        :type include: list[str or ~azure.ai.agentserver.responses.models.models.IncludeEnum]
-        :param parallel_tool_calls: Default value is None.
-        :type parallel_tool_calls: bool
-        :param store: Default value is None.
-        :type store: bool
-        :param instructions: Default value is None.
-        :type instructions: str
-        :param stream_parameter: Default value is None.
-        :type stream_parameter: bool
-        :param stream_options: Default value is None.
-        :type stream_options: ~azure.ai.agentserver.responses.models.types.ResponseStreamOptions
-        :param conversation: Is either a str type or a ConversationParam_2 type. Default value is None.
-        :type conversation: str or ~azure.ai.agentserver.responses.models.types.ConversationParam_2
-        :param context_management: Context management configuration for this request. Default value is
+        :paramtype truncation: str or str
+        :keyword input: Is either a str type or a [Item] type. Default value is None.
+        :paramtype input: str or list[~azure.ai.agentserver.responses.models.types.Item]
+        :keyword include: Default value is None.
+        :paramtype include: list[str or ~azure.ai.agentserver.responses.models.models.IncludeEnum]
+        :keyword parallel_tool_calls: Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword store: Default value is None.
+        :paramtype store: bool
+        :keyword instructions: Default value is None.
+        :paramtype instructions: str
+        :keyword stream_parameter: Default value is None.
+        :paramtype stream_parameter: bool
+        :keyword stream_options: Default value is None.
+        :paramtype stream_options: ~azure.ai.agentserver.responses.models.types.ResponseStreamOptions
+        :keyword conversation: Is either a str type or a ConversationParam_2 type. Default value is
          None.
-        :type context_management:
+        :paramtype conversation: str or
+         ~azure.ai.agentserver.responses.models.types.ConversationParam_2
+        :keyword context_management: Context management configuration for this request. Default value
+         is None.
+        :paramtype context_management:
          list[~azure.ai.agentserver.responses.models.types.ContextManagementParam]
-        :param agent: (Deprecated) Use agent_reference instead.
-         The agent to use for generating the response. Default value is None.
-        :type agent: ~azure.ai.agentserver.responses.models.types.AgentReference
-        :param agent_session_id: Optional session identifier for sandbox affinity. Currently only
-         relevant for hosted agents.
-         When provided, the request is routed to the same sandbox. When omitted, auto-derived from
-         conversation_id/prev_response_id or a new UUID is generated. Default value is None.
-        :type agent_session_id: str
-        :param agent_reference: The agent to use for generating the response. Default value is None.
-        :type agent_reference: ~azure.ai.agentserver.responses.models.types.AgentReference
-        :param structured_inputs: The structured inputs to the response that can participate in prompt
-         template substitution or tool argument bindings. Default value is None.
-        :type structured_inputs: dict[str, any]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
+        :keyword agent_reference: The agent to use for generating the response. Default value is None.
+        :paramtype agent_reference: ~azure.ai.agentserver.responses.models.types.AgentReference
+        :keyword structured_inputs: The structured inputs to the response that can participate in
+         prompt template substitution or tool argument bindings. Default value is None.
+        :paramtype structured_inputs: dict[str, any]
         :return: ResponseObject
         :rtype: ~azure.ai.agentserver.responses.models.types.ResponseObject
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -254,12 +245,6 @@ class ResponsesOperations:
                         output_item
                     ],
                     "parallel_tool_calls": bool,
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_id",
-                        "version": "str"
-                    },
-                    "agent_session_id": "str",
                     "background": bool,
                     "completed_at": "2020-02-20 00:00:00",
                     "conversation": {
@@ -315,12 +300,12 @@ class ResponsesOperations:
 
     @overload
     async def create_response(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.CreateResponse, *, content_type: str = "application/json", **kwargs: Any
     ) -> _types.ResponseObject:
         """Creates a model response.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.agentserver.responses.models.types.CreateResponse
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -355,17 +340,11 @@ class ResponsesOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_reference",
-                        "version": "str"
-                    },
                     "agent_reference": {
                         "name": "str",
                         "type": "agent_reference",
                         "version": "str"
                     },
-                    "agent_session_id": "str",
                     "background": bool,
                     "context_management": [
                         {
@@ -466,133 +445,6 @@ class ResponsesOperations:
                         output_item
                     ],
                     "parallel_tool_calls": bool,
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_id",
-                        "version": "str"
-                    },
-                    "agent_session_id": "str",
-                    "background": bool,
-                    "completed_at": "2020-02-20 00:00:00",
-                    "conversation": {
-                        "id": "str"
-                    },
-                    "max_output_tokens": 0,
-                    "max_tool_calls": 0,
-                    "metadata": {},
-                    "model": "str",
-                    "output_text": "str",
-                    "previous_response_id": "str",
-                    "prompt": {
-                        "id": "str",
-                        "variables": {},
-                        "version": "str"
-                    },
-                    "prompt_cache_key": "str",
-                    "prompt_cache_retention": "in-memory",
-                    "reasoning": {
-                        "effort": "none",
-                        "generate_summary": "auto",
-                        "summary": "auto"
-                    },
-                    "safety_identifier": "str",
-                    "service_tier": "auto",
-                    "status": "completed",
-                    "temperature": 0.0,
-                    "text": {
-                        "format": text_response_format_configuration,
-                        "verbosity": "low"
-                    },
-                    "tool_choice": "str",
-                    "tools": [
-                        tool
-                    ],
-                    "top_logprobs": 0,
-                    "top_p": 0.0,
-                    "truncation": "auto",
-                    "usage": {
-                        "input_tokens": 0,
-                        "input_tokens_details": {
-                            "cached_tokens": 0
-                        },
-                        "output_tokens": 0,
-                        "output_tokens_details": {
-                            "reasoning_tokens": 0
-                        },
-                        "total_tokens": 0
-                    },
-                    "user": "str"
-                }
-        """
-
-    @overload
-    async def create_response(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _types.ResponseObject:
-        """Creates a model response.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ResponseObject
-        :rtype: ~azure.ai.agentserver.responses.models.types.ResponseObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "json_object":
-                text_response_format_configuration = {
-                    "type": "json_object"
-                }
-
-                # JSON input template for discriminator value "json_schema":
-                text_response_format_configuration = {
-                    "name": "str",
-                    "schema": {},
-                    "type": "json_schema",
-                    "description": "str",
-                    "strict": bool
-                }
-
-                # JSON input template for discriminator value "text":
-                text_response_format_configuration = {
-                    "type": "text"
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "agent_reference": {
-                        "name": "str",
-                        "type": "agent_reference",
-                        "version": "str"
-                    },
-                    "created_at": "2020-02-20 00:00:00",
-                    "error": {
-                        "code": "str",
-                        "message": "str"
-                    },
-                    "id": "str",
-                    "incomplete_details": {
-                        "reason": "max_output_tokens"
-                    },
-                    "instructions": "str",
-                    "object": "response",
-                    "output": [
-                        output_item
-                    ],
-                    "parallel_tool_calls": bool,
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_id",
-                        "version": "str"
-                    },
-                    "agent_session_id": "str",
                     "background": bool,
                     "completed_at": "2020-02-20 00:00:00",
                     "conversation": {
@@ -649,7 +501,8 @@ class ResponsesOperations:
     @distributed_trace_async
     async def create_response(  # pylint: disable=too-many-locals
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateResponse] = _Unset,
+        *,
         metadata: Optional[_types.Metadata] = None,
         top_logprobs: Optional[int] = None,
         temperature: Optional[float] = None,
@@ -679,106 +532,98 @@ class ResponsesOperations:
         stream_options: Optional[_types.ResponseStreamOptions] = None,
         conversation: Optional["_unions.ConversationParam"] = None,
         context_management: Optional[list[_types.ContextManagementParam]] = None,
-        agent: Optional[_types.AgentReference] = None,
-        agent_session_id: Optional[str] = None,
         agent_reference: Optional[_types.AgentReference] = None,
         structured_inputs: Optional[dict[str, Any]] = None,
         **kwargs: Any
     ) -> _types.ResponseObject:
         """Creates a model response.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param metadata: Default value is None.
-        :type metadata: ~azure.ai.agentserver.responses.models.types.Metadata
-        :param top_logprobs: Default value is None.
-        :type top_logprobs: int
-        :param temperature: Default value is None.
-        :type temperature: float
-        :param top_p: Default value is None.
-        :type top_p: float
-        :param user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``.
+        :param body: Is either a JSON type or a CreateResponse type. Required.
+        :type body: JSON or ~azure.ai.agentserver.responses.models.types.CreateResponse
+        :keyword metadata: Default value is None.
+        :paramtype metadata: ~azure.ai.agentserver.responses.models.types.Metadata
+        :keyword top_logprobs: Default value is None.
+        :paramtype top_logprobs: int
+        :keyword temperature: Default value is None.
+        :paramtype temperature: float
+        :keyword top_p: Default value is None.
+        :paramtype top_p: float
+        :keyword user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``.
          Use ``prompt_cache_key`` instead to maintain caching optimizations.
            A stable identifier for your end-users.
            Used to boost cache hit rates by better bucketing similar requests and  to help OpenAI
          detect and prevent abuse. `Learn more
          </docs/guides/safety-best-practices#safety-identifiers>`_. Default value is None.
-        :type user: str
-        :param safety_identifier: A stable identifier used to help detect users of your application
+        :paramtype user: str
+        :keyword safety_identifier: A stable identifier used to help detect users of your application
          that may be violating OpenAI's usage policies.
            The IDs should be a string that uniquely identifies each user. We recommend hashing their
          username or email address, in order to avoid sending us any identifying information. `Learn
          more </docs/guides/safety-best-practices#safety-identifiers>`_. Default value is None.
-        :type safety_identifier: str
-        :param prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize
+        :paramtype safety_identifier: str
+        :keyword prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize
          your cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_.
          Default value is None.
-        :type prompt_cache_key: str
-        :param service_tier: Is one of the following types: Literal["auto"], Literal["default"],
+        :paramtype prompt_cache_key: str
+        :keyword service_tier: Is one of the following types: Literal["auto"], Literal["default"],
          Literal["flex"], Literal["scale"], Literal["priority"] Default value is None.
-        :type service_tier: str or str or str or str or str
-        :param prompt_cache_retention: Is either a Literal["in-memory"] type or a Literal["24h"] type.
+        :paramtype service_tier: str or str or str or str or str
+        :keyword prompt_cache_retention: Is either a Literal["in-memory"] type or a Literal["24h"]
+         type. Default value is None.
+        :paramtype prompt_cache_retention: str or str
+        :keyword previous_response_id: Default value is None.
+        :paramtype previous_response_id: str
+        :keyword model: The model deployment to use for the creation of this response. Default value is
+         None.
+        :paramtype model: str
+        :keyword reasoning: Default value is None.
+        :paramtype reasoning: ~azure.ai.agentserver.responses.models.types.Reasoning
+        :keyword background: Default value is None.
+        :paramtype background: bool
+        :keyword max_output_tokens: Default value is None.
+        :paramtype max_output_tokens: int
+        :keyword max_tool_calls: Default value is None.
+        :paramtype max_tool_calls: int
+        :keyword text: Default value is None.
+        :paramtype text: ~azure.ai.agentserver.responses.models.types.ResponseTextParam
+        :keyword tools: Default value is None.
+        :paramtype tools: list[~azure.ai.agentserver.responses.models.types.Tool]
+        :keyword tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type.
          Default value is None.
-        :type prompt_cache_retention: str or str
-        :param previous_response_id: Default value is None.
-        :type previous_response_id: str
-        :param model: The model deployment to use for the creation of this response. Default value is
-         None.
-        :type model: str
-        :param reasoning: Default value is None.
-        :type reasoning: ~azure.ai.agentserver.responses.models.types.Reasoning
-        :param background: Default value is None.
-        :type background: bool
-        :param max_output_tokens: Default value is None.
-        :type max_output_tokens: int
-        :param max_tool_calls: Default value is None.
-        :type max_tool_calls: int
-        :param text: Default value is None.
-        :type text: ~azure.ai.agentserver.responses.models.types.ResponseTextParam
-        :param tools: Default value is None.
-        :type tools: list[~azure.ai.agentserver.responses.models.types.Tool]
-        :param tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type. Default
+        :paramtype tool_choice: str or ~azure.ai.agentserver.responses.models.models.ToolChoiceOptions
+         or ~azure.ai.agentserver.responses.models.types.ToolChoiceParam
+        :keyword prompt: Default value is None.
+        :paramtype prompt: ~azure.ai.agentserver.responses.models.types.Prompt
+        :keyword truncation: Is either a Literal["auto"] type or a Literal["disabled"] type. Default
          value is None.
-        :type tool_choice: str or ~azure.ai.agentserver.responses.models.models.ToolChoiceOptions or
-         ~azure.ai.agentserver.responses.models.types.ToolChoiceParam
-        :param prompt: Default value is None.
-        :type prompt: ~azure.ai.agentserver.responses.models.types.Prompt
-        :param truncation: Is either a Literal["auto"] type or a Literal["disabled"] type. Default
-         value is None.
-        :type truncation: str or str
-        :param input: Is either a str type or a [Item] type. Default value is None.
-        :type input: str or list[~azure.ai.agentserver.responses.models.types.Item]
-        :param include: Default value is None.
-        :type include: list[str or ~azure.ai.agentserver.responses.models.models.IncludeEnum]
-        :param parallel_tool_calls: Default value is None.
-        :type parallel_tool_calls: bool
-        :param store: Default value is None.
-        :type store: bool
-        :param instructions: Default value is None.
-        :type instructions: str
-        :param stream_parameter: Default value is None.
-        :type stream_parameter: bool
-        :param stream_options: Default value is None.
-        :type stream_options: ~azure.ai.agentserver.responses.models.types.ResponseStreamOptions
-        :param conversation: Is either a str type or a ConversationParam_2 type. Default value is None.
-        :type conversation: str or ~azure.ai.agentserver.responses.models.types.ConversationParam_2
-        :param context_management: Context management configuration for this request. Default value is
+        :paramtype truncation: str or str
+        :keyword input: Is either a str type or a [Item] type. Default value is None.
+        :paramtype input: str or list[~azure.ai.agentserver.responses.models.types.Item]
+        :keyword include: Default value is None.
+        :paramtype include: list[str or ~azure.ai.agentserver.responses.models.models.IncludeEnum]
+        :keyword parallel_tool_calls: Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword store: Default value is None.
+        :paramtype store: bool
+        :keyword instructions: Default value is None.
+        :paramtype instructions: str
+        :keyword stream_parameter: Default value is None.
+        :paramtype stream_parameter: bool
+        :keyword stream_options: Default value is None.
+        :paramtype stream_options: ~azure.ai.agentserver.responses.models.types.ResponseStreamOptions
+        :keyword conversation: Is either a str type or a ConversationParam_2 type. Default value is
          None.
-        :type context_management:
+        :paramtype conversation: str or
+         ~azure.ai.agentserver.responses.models.types.ConversationParam_2
+        :keyword context_management: Context management configuration for this request. Default value
+         is None.
+        :paramtype context_management:
          list[~azure.ai.agentserver.responses.models.types.ContextManagementParam]
-        :param agent: (Deprecated) Use agent_reference instead.
-         The agent to use for generating the response. Default value is None.
-        :type agent: ~azure.ai.agentserver.responses.models.types.AgentReference
-        :param agent_session_id: Optional session identifier for sandbox affinity. Currently only
-         relevant for hosted agents.
-         When provided, the request is routed to the same sandbox. When omitted, auto-derived from
-         conversation_id/prev_response_id or a new UUID is generated. Default value is None.
-        :type agent_session_id: str
-        :param agent_reference: The agent to use for generating the response. Default value is None.
-        :type agent_reference: ~azure.ai.agentserver.responses.models.types.AgentReference
-        :param structured_inputs: The structured inputs to the response that can participate in prompt
-         template substitution or tool argument bindings. Default value is None.
-        :type structured_inputs: dict[str, any]
+        :keyword agent_reference: The agent to use for generating the response. Default value is None.
+        :paramtype agent_reference: ~azure.ai.agentserver.responses.models.types.AgentReference
+        :keyword structured_inputs: The structured inputs to the response that can participate in
+         prompt template substitution or tool argument bindings. Default value is None.
+        :paramtype structured_inputs: dict[str, any]
         :return: ResponseObject
         :rtype: ~azure.ai.agentserver.responses.models.types.ResponseObject
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -810,17 +655,11 @@ class ResponsesOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_reference",
-                        "version": "str"
-                    },
                     "agent_reference": {
                         "name": "str",
                         "type": "agent_reference",
                         "version": "str"
                     },
-                    "agent_session_id": "str",
                     "background": bool,
                     "context_management": [
                         {
@@ -921,12 +760,6 @@ class ResponsesOperations:
                         output_item
                     ],
                     "parallel_tool_calls": bool,
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_id",
-                        "version": "str"
-                    },
-                    "agent_session_id": "str",
                     "background": bool,
                     "completed_at": "2020-02-20 00:00:00",
                     "conversation": {
@@ -995,9 +828,7 @@ class ResponsesOperations:
 
         if body is _Unset:
             body = {
-                "agent": agent,
                 "agent_reference": agent_reference,
-                "agent_session_id": agent_session_id,
                 "background": background,
                 "context_management": context_management,
                 "conversation": conversation,
@@ -1032,16 +863,14 @@ class ResponsesOperations:
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, _models.CreateResponse):
             _json = body
 
         _request = build_responses_create_response_request(
             content_type=content_type,
             json=_json,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -1087,6 +916,8 @@ class ResponsesOperations:
     @overload
     async def create_response_stream(  # pylint: disable=too-many-locals
         self,
+        *,
+        content_type: str = "application/json",
         metadata: Optional[_types.Metadata] = None,
         top_logprobs: Optional[int] = None,
         temperature: Optional[float] = None,
@@ -1116,109 +947,99 @@ class ResponsesOperations:
         stream_options: Optional[_types.ResponseStreamOptions] = None,
         conversation: Optional["_unions.ConversationParam"] = None,
         context_management: Optional[list[_types.ContextManagementParam]] = None,
-        agent: Optional[_types.AgentReference] = None,
-        agent_session_id: Optional[str] = None,
         agent_reference: Optional[_types.AgentReference] = None,
         structured_inputs: Optional[dict[str, Any]] = None,
-        *,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> "_unions.CreateResponseStreamingResponse":
         """Creates a model response (streaming response).
 
-        :param metadata: Default value is None.
-        :type metadata: ~azure.ai.agentserver.responses.models.types.Metadata
-        :param top_logprobs: Default value is None.
-        :type top_logprobs: int
-        :param temperature: Default value is None.
-        :type temperature: float
-        :param top_p: Default value is None.
-        :type top_p: float
-        :param user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword metadata: Default value is None.
+        :paramtype metadata: ~azure.ai.agentserver.responses.models.types.Metadata
+        :keyword top_logprobs: Default value is None.
+        :paramtype top_logprobs: int
+        :keyword temperature: Default value is None.
+        :paramtype temperature: float
+        :keyword top_p: Default value is None.
+        :paramtype top_p: float
+        :keyword user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``.
          Use ``prompt_cache_key`` instead to maintain caching optimizations.
            A stable identifier for your end-users.
            Used to boost cache hit rates by better bucketing similar requests and  to help OpenAI
          detect and prevent abuse. `Learn more
          </docs/guides/safety-best-practices#safety-identifiers>`_. Default value is None.
-        :type user: str
-        :param safety_identifier: A stable identifier used to help detect users of your application
+        :paramtype user: str
+        :keyword safety_identifier: A stable identifier used to help detect users of your application
          that may be violating OpenAI's usage policies.
            The IDs should be a string that uniquely identifies each user. We recommend hashing their
          username or email address, in order to avoid sending us any identifying information. `Learn
          more </docs/guides/safety-best-practices#safety-identifiers>`_. Default value is None.
-        :type safety_identifier: str
-        :param prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize
+        :paramtype safety_identifier: str
+        :keyword prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize
          your cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_.
          Default value is None.
-        :type prompt_cache_key: str
-        :param service_tier: Is one of the following types: Literal["auto"], Literal["default"],
+        :paramtype prompt_cache_key: str
+        :keyword service_tier: Is one of the following types: Literal["auto"], Literal["default"],
          Literal["flex"], Literal["scale"], Literal["priority"] Default value is None.
-        :type service_tier: str or str or str or str or str
-        :param prompt_cache_retention: Is either a Literal["in-memory"] type or a Literal["24h"] type.
+        :paramtype service_tier: str or str or str or str or str
+        :keyword prompt_cache_retention: Is either a Literal["in-memory"] type or a Literal["24h"]
+         type. Default value is None.
+        :paramtype prompt_cache_retention: str or str
+        :keyword previous_response_id: Default value is None.
+        :paramtype previous_response_id: str
+        :keyword model: The model deployment to use for the creation of this response. Default value is
+         None.
+        :paramtype model: str
+        :keyword reasoning: Default value is None.
+        :paramtype reasoning: ~azure.ai.agentserver.responses.models.types.Reasoning
+        :keyword background: Default value is None.
+        :paramtype background: bool
+        :keyword max_output_tokens: Default value is None.
+        :paramtype max_output_tokens: int
+        :keyword max_tool_calls: Default value is None.
+        :paramtype max_tool_calls: int
+        :keyword text: Default value is None.
+        :paramtype text: ~azure.ai.agentserver.responses.models.types.ResponseTextParam
+        :keyword tools: Default value is None.
+        :paramtype tools: list[~azure.ai.agentserver.responses.models.types.Tool]
+        :keyword tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type.
          Default value is None.
-        :type prompt_cache_retention: str or str
-        :param previous_response_id: Default value is None.
-        :type previous_response_id: str
-        :param model: The model deployment to use for the creation of this response. Default value is
-         None.
-        :type model: str
-        :param reasoning: Default value is None.
-        :type reasoning: ~azure.ai.agentserver.responses.models.types.Reasoning
-        :param background: Default value is None.
-        :type background: bool
-        :param max_output_tokens: Default value is None.
-        :type max_output_tokens: int
-        :param max_tool_calls: Default value is None.
-        :type max_tool_calls: int
-        :param text: Default value is None.
-        :type text: ~azure.ai.agentserver.responses.models.types.ResponseTextParam
-        :param tools: Default value is None.
-        :type tools: list[~azure.ai.agentserver.responses.models.types.Tool]
-        :param tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type. Default
+        :paramtype tool_choice: str or ~azure.ai.agentserver.responses.models.models.ToolChoiceOptions
+         or ~azure.ai.agentserver.responses.models.types.ToolChoiceParam
+        :keyword prompt: Default value is None.
+        :paramtype prompt: ~azure.ai.agentserver.responses.models.types.Prompt
+        :keyword truncation: Is either a Literal["auto"] type or a Literal["disabled"] type. Default
          value is None.
-        :type tool_choice: str or ~azure.ai.agentserver.responses.models.models.ToolChoiceOptions or
-         ~azure.ai.agentserver.responses.models.types.ToolChoiceParam
-        :param prompt: Default value is None.
-        :type prompt: ~azure.ai.agentserver.responses.models.types.Prompt
-        :param truncation: Is either a Literal["auto"] type or a Literal["disabled"] type. Default
-         value is None.
-        :type truncation: str or str
-        :param input: Is either a str type or a [Item] type. Default value is None.
-        :type input: str or list[~azure.ai.agentserver.responses.models.types.Item]
-        :param include: Default value is None.
-        :type include: list[str or ~azure.ai.agentserver.responses.models.models.IncludeEnum]
-        :param parallel_tool_calls: Default value is None.
-        :type parallel_tool_calls: bool
-        :param store: Default value is None.
-        :type store: bool
-        :param instructions: Default value is None.
-        :type instructions: str
-        :param stream_parameter: Default value is None.
-        :type stream_parameter: bool
-        :param stream_options: Default value is None.
-        :type stream_options: ~azure.ai.agentserver.responses.models.types.ResponseStreamOptions
-        :param conversation: Is either a str type or a ConversationParam_2 type. Default value is None.
-        :type conversation: str or ~azure.ai.agentserver.responses.models.types.ConversationParam_2
-        :param context_management: Context management configuration for this request. Default value is
+        :paramtype truncation: str or str
+        :keyword input: Is either a str type or a [Item] type. Default value is None.
+        :paramtype input: str or list[~azure.ai.agentserver.responses.models.types.Item]
+        :keyword include: Default value is None.
+        :paramtype include: list[str or ~azure.ai.agentserver.responses.models.models.IncludeEnum]
+        :keyword parallel_tool_calls: Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword store: Default value is None.
+        :paramtype store: bool
+        :keyword instructions: Default value is None.
+        :paramtype instructions: str
+        :keyword stream_parameter: Default value is None.
+        :paramtype stream_parameter: bool
+        :keyword stream_options: Default value is None.
+        :paramtype stream_options: ~azure.ai.agentserver.responses.models.types.ResponseStreamOptions
+        :keyword conversation: Is either a str type or a ConversationParam_2 type. Default value is
          None.
-        :type context_management:
+        :paramtype conversation: str or
+         ~azure.ai.agentserver.responses.models.types.ConversationParam_2
+        :keyword context_management: Context management configuration for this request. Default value
+         is None.
+        :paramtype context_management:
          list[~azure.ai.agentserver.responses.models.types.ContextManagementParam]
-        :param agent: (Deprecated) Use agent_reference instead.
-         The agent to use for generating the response. Default value is None.
-        :type agent: ~azure.ai.agentserver.responses.models.types.AgentReference
-        :param agent_session_id: Optional session identifier for sandbox affinity. Currently only
-         relevant for hosted agents.
-         When provided, the request is routed to the same sandbox. When omitted, auto-derived from
-         conversation_id/prev_response_id or a new UUID is generated. Default value is None.
-        :type agent_session_id: str
-        :param agent_reference: The agent to use for generating the response. Default value is None.
-        :type agent_reference: ~azure.ai.agentserver.responses.models.types.AgentReference
-        :param structured_inputs: The structured inputs to the response that can participate in prompt
-         template substitution or tool argument bindings. Default value is None.
-        :type structured_inputs: dict[str, any]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
+        :keyword agent_reference: The agent to use for generating the response. Default value is None.
+        :paramtype agent_reference: ~azure.ai.agentserver.responses.models.types.AgentReference
+        :keyword structured_inputs: The structured inputs to the response that can participate in
+         prompt template substitution or tool argument bindings. Default value is None.
+        :paramtype structured_inputs: dict[str, any]
         :return: ResponseAudioDeltaEvent or ResponseAudioTranscriptDeltaEvent or
          ResponseCodeInterpreterCallCodeDeltaEvent or ResponseCodeInterpreterCallInProgressEvent or
          ResponseCodeInterpreterCallInterpretingEvent or ResponseContentPartAddedEvent or
@@ -1310,51 +1131,16 @@ class ResponsesOperations:
                     "sequence_number": 0,
                     "type": "response.audio.delta"
                 }
-
-                # JSON input template for discriminator value "response.audio.transcript.delta":
-                response_stream_event = {
-                    "delta": "str",
-                    "sequence_number": 0,
-                    "type": "response.audio.transcript.delta"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call_code.delta":
-                response_stream_event = {
-                    "delta": "str",
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call_code.delta"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call.in_progress":
-                response_stream_event = {
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call.in_progress"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call.interpreting":
-                response_stream_event = {
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call.interpreting"
-                }
         """
 
     @overload
     async def create_response_stream(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.CreateResponse, *, content_type: str = "application/json", **kwargs: Any
     ) -> "_unions.CreateResponseStreamingResponse":
         """Creates a model response (streaming response).
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.agentserver.responses.models.types.CreateResponse
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1464,17 +1250,11 @@ class ResponsesOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_reference",
-                        "version": "str"
-                    },
                     "agent_reference": {
                         "name": "str",
                         "type": "agent_reference",
                         "version": "str"
                     },
-                    "agent_session_id": "str",
                     "background": bool,
                     "context_management": [
                         {
@@ -1539,187 +1319,14 @@ class ResponsesOperations:
                     "delta": bytes("bytes", encoding="utf-8"),
                     "sequence_number": 0,
                     "type": "response.audio.delta"
-                }
-
-                # JSON input template for discriminator value "response.audio.transcript.delta":
-                response_stream_event = {
-                    "delta": "str",
-                    "sequence_number": 0,
-                    "type": "response.audio.transcript.delta"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call_code.delta":
-                response_stream_event = {
-                    "delta": "str",
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call_code.delta"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call.in_progress":
-                response_stream_event = {
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call.in_progress"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call.interpreting":
-                response_stream_event = {
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call.interpreting"
-                }
-        """
-
-    @overload
-    async def create_response_stream(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> "_unions.CreateResponseStreamingResponse":
-        """Creates a model response (streaming response).
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ResponseAudioDeltaEvent or ResponseAudioTranscriptDeltaEvent or
-         ResponseCodeInterpreterCallCodeDeltaEvent or ResponseCodeInterpreterCallInProgressEvent or
-         ResponseCodeInterpreterCallInterpretingEvent or ResponseContentPartAddedEvent or
-         ResponseCreatedEvent or ResponseErrorEvent or ResponseFileSearchCallInProgressEvent or
-         ResponseFileSearchCallSearchingEvent or ResponseFunctionCallArgumentsDeltaEvent or
-         ResponseInProgressEvent or ResponseFailedEvent or ResponseIncompleteEvent or
-         ResponseOutputItemAddedEvent or ResponseReasoningSummaryPartAddedEvent or
-         ResponseReasoningSummaryTextDeltaEvent or ResponseReasoningTextDeltaEvent or
-         ResponseRefusalDeltaEvent or ResponseTextDeltaEvent or ResponseWebSearchCallInProgressEvent or
-         ResponseWebSearchCallSearchingEvent or ResponseImageGenCallGeneratingEvent or
-         ResponseImageGenCallInProgressEvent or ResponseImageGenCallPartialImageEvent or
-         ResponseMCPCallArgumentsDeltaEvent or ResponseMCPCallFailedEvent or
-         ResponseMCPCallInProgressEvent or ResponseMCPListToolsFailedEvent or
-         ResponseMCPListToolsInProgressEvent or ResponseOutputTextAnnotationAddedEvent or
-         ResponseQueuedEvent or ResponseCustomToolCallInputDeltaEvent or ResponseAudioDoneEvent or
-         ResponseAudioTranscriptDoneEvent or ResponseCodeInterpreterCallCodeDoneEvent or
-         ResponseCodeInterpreterCallCompletedEvent or ResponseCompletedEvent or
-         ResponseContentPartDoneEvent or ResponseFileSearchCallCompletedEvent or
-         ResponseFunctionCallArgumentsDoneEvent or ResponseOutputItemDoneEvent or
-         ResponseReasoningSummaryPartDoneEvent or ResponseReasoningSummaryTextDoneEvent or
-         ResponseReasoningTextDoneEvent or ResponseRefusalDoneEvent or ResponseTextDoneEvent or
-         ResponseWebSearchCallCompletedEvent or ResponseImageGenCallCompletedEvent or
-         ResponseMCPCallArgumentsDoneEvent or ResponseMCPCallCompletedEvent or
-         ResponseMCPListToolsCompletedEvent or ResponseCustomToolCallInputDoneEvent
-        :rtype: ~azure.ai.agentserver.responses.models.types.ResponseAudioDeltaEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseAudioTranscriptDeltaEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseCodeInterpreterCallCodeDeltaEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseCodeInterpreterCallInProgressEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseCodeInterpreterCallInterpretingEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseContentPartAddedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseCreatedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseErrorEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseFileSearchCallInProgressEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseFileSearchCallSearchingEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseFunctionCallArgumentsDeltaEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseInProgressEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseFailedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseIncompleteEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseOutputItemAddedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseReasoningSummaryPartAddedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseReasoningSummaryTextDeltaEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseReasoningTextDeltaEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseRefusalDeltaEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseTextDeltaEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseWebSearchCallInProgressEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseWebSearchCallSearchingEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseImageGenCallGeneratingEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseImageGenCallInProgressEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseImageGenCallPartialImageEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseMCPCallArgumentsDeltaEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseMCPCallFailedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseMCPCallInProgressEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseMCPListToolsFailedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseMCPListToolsInProgressEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseOutputTextAnnotationAddedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseQueuedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseCustomToolCallInputDeltaEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseAudioDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseAudioTranscriptDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseCodeInterpreterCallCodeDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseCodeInterpreterCallCompletedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseCompletedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseContentPartDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseFileSearchCallCompletedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseFunctionCallArgumentsDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseOutputItemDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseReasoningSummaryPartDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseReasoningSummaryTextDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseReasoningTextDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseRefusalDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseTextDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseWebSearchCallCompletedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseImageGenCallCompletedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseMCPCallArgumentsDoneEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseMCPCallCompletedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseMCPListToolsCompletedEvent or
-         ~azure.ai.agentserver.responses.models.types.ResponseCustomToolCallInputDoneEvent
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The response is polymorphic. The following are possible polymorphic responses based
-                  off discriminator "type":
-
-                # JSON input template for discriminator value "response.audio.delta":
-                response_stream_event = {
-                    "delta": bytes("bytes", encoding="utf-8"),
-                    "sequence_number": 0,
-                    "type": "response.audio.delta"
-                }
-
-                # JSON input template for discriminator value "response.audio.transcript.delta":
-                response_stream_event = {
-                    "delta": "str",
-                    "sequence_number": 0,
-                    "type": "response.audio.transcript.delta"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call_code.delta":
-                response_stream_event = {
-                    "delta": "str",
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call_code.delta"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call.in_progress":
-                response_stream_event = {
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call.in_progress"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call.interpreting":
-                response_stream_event = {
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call.interpreting"
                 }
         """
 
     @distributed_trace_async
     async def create_response_stream(  # pylint: disable=too-many-locals
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateResponse] = _Unset,
+        *,
         metadata: Optional[_types.Metadata] = None,
         top_logprobs: Optional[int] = None,
         temperature: Optional[float] = None,
@@ -1749,106 +1356,98 @@ class ResponsesOperations:
         stream_options: Optional[_types.ResponseStreamOptions] = None,
         conversation: Optional["_unions.ConversationParam"] = None,
         context_management: Optional[list[_types.ContextManagementParam]] = None,
-        agent: Optional[_types.AgentReference] = None,
-        agent_session_id: Optional[str] = None,
         agent_reference: Optional[_types.AgentReference] = None,
         structured_inputs: Optional[dict[str, Any]] = None,
         **kwargs: Any
     ) -> "_unions.CreateResponseStreamingResponse":
         """Creates a model response (streaming response).
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param metadata: Default value is None.
-        :type metadata: ~azure.ai.agentserver.responses.models.types.Metadata
-        :param top_logprobs: Default value is None.
-        :type top_logprobs: int
-        :param temperature: Default value is None.
-        :type temperature: float
-        :param top_p: Default value is None.
-        :type top_p: float
-        :param user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``.
+        :param body: Is either a JSON type or a CreateResponse type. Required.
+        :type body: JSON or ~azure.ai.agentserver.responses.models.types.CreateResponse
+        :keyword metadata: Default value is None.
+        :paramtype metadata: ~azure.ai.agentserver.responses.models.types.Metadata
+        :keyword top_logprobs: Default value is None.
+        :paramtype top_logprobs: int
+        :keyword temperature: Default value is None.
+        :paramtype temperature: float
+        :keyword top_p: Default value is None.
+        :paramtype top_p: float
+        :keyword user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``.
          Use ``prompt_cache_key`` instead to maintain caching optimizations.
            A stable identifier for your end-users.
            Used to boost cache hit rates by better bucketing similar requests and  to help OpenAI
          detect and prevent abuse. `Learn more
          </docs/guides/safety-best-practices#safety-identifiers>`_. Default value is None.
-        :type user: str
-        :param safety_identifier: A stable identifier used to help detect users of your application
+        :paramtype user: str
+        :keyword safety_identifier: A stable identifier used to help detect users of your application
          that may be violating OpenAI's usage policies.
            The IDs should be a string that uniquely identifies each user. We recommend hashing their
          username or email address, in order to avoid sending us any identifying information. `Learn
          more </docs/guides/safety-best-practices#safety-identifiers>`_. Default value is None.
-        :type safety_identifier: str
-        :param prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize
+        :paramtype safety_identifier: str
+        :keyword prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize
          your cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_.
          Default value is None.
-        :type prompt_cache_key: str
-        :param service_tier: Is one of the following types: Literal["auto"], Literal["default"],
+        :paramtype prompt_cache_key: str
+        :keyword service_tier: Is one of the following types: Literal["auto"], Literal["default"],
          Literal["flex"], Literal["scale"], Literal["priority"] Default value is None.
-        :type service_tier: str or str or str or str or str
-        :param prompt_cache_retention: Is either a Literal["in-memory"] type or a Literal["24h"] type.
+        :paramtype service_tier: str or str or str or str or str
+        :keyword prompt_cache_retention: Is either a Literal["in-memory"] type or a Literal["24h"]
+         type. Default value is None.
+        :paramtype prompt_cache_retention: str or str
+        :keyword previous_response_id: Default value is None.
+        :paramtype previous_response_id: str
+        :keyword model: The model deployment to use for the creation of this response. Default value is
+         None.
+        :paramtype model: str
+        :keyword reasoning: Default value is None.
+        :paramtype reasoning: ~azure.ai.agentserver.responses.models.types.Reasoning
+        :keyword background: Default value is None.
+        :paramtype background: bool
+        :keyword max_output_tokens: Default value is None.
+        :paramtype max_output_tokens: int
+        :keyword max_tool_calls: Default value is None.
+        :paramtype max_tool_calls: int
+        :keyword text: Default value is None.
+        :paramtype text: ~azure.ai.agentserver.responses.models.types.ResponseTextParam
+        :keyword tools: Default value is None.
+        :paramtype tools: list[~azure.ai.agentserver.responses.models.types.Tool]
+        :keyword tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type.
          Default value is None.
-        :type prompt_cache_retention: str or str
-        :param previous_response_id: Default value is None.
-        :type previous_response_id: str
-        :param model: The model deployment to use for the creation of this response. Default value is
-         None.
-        :type model: str
-        :param reasoning: Default value is None.
-        :type reasoning: ~azure.ai.agentserver.responses.models.types.Reasoning
-        :param background: Default value is None.
-        :type background: bool
-        :param max_output_tokens: Default value is None.
-        :type max_output_tokens: int
-        :param max_tool_calls: Default value is None.
-        :type max_tool_calls: int
-        :param text: Default value is None.
-        :type text: ~azure.ai.agentserver.responses.models.types.ResponseTextParam
-        :param tools: Default value is None.
-        :type tools: list[~azure.ai.agentserver.responses.models.types.Tool]
-        :param tool_choice: Is either a types.ToolChoiceOptions type or a ToolChoiceParam type. Default
+        :paramtype tool_choice: str or ~azure.ai.agentserver.responses.models.models.ToolChoiceOptions
+         or ~azure.ai.agentserver.responses.models.types.ToolChoiceParam
+        :keyword prompt: Default value is None.
+        :paramtype prompt: ~azure.ai.agentserver.responses.models.types.Prompt
+        :keyword truncation: Is either a Literal["auto"] type or a Literal["disabled"] type. Default
          value is None.
-        :type tool_choice: str or ~azure.ai.agentserver.responses.models.models.ToolChoiceOptions or
-         ~azure.ai.agentserver.responses.models.types.ToolChoiceParam
-        :param prompt: Default value is None.
-        :type prompt: ~azure.ai.agentserver.responses.models.types.Prompt
-        :param truncation: Is either a Literal["auto"] type or a Literal["disabled"] type. Default
-         value is None.
-        :type truncation: str or str
-        :param input: Is either a str type or a [Item] type. Default value is None.
-        :type input: str or list[~azure.ai.agentserver.responses.models.types.Item]
-        :param include: Default value is None.
-        :type include: list[str or ~azure.ai.agentserver.responses.models.models.IncludeEnum]
-        :param parallel_tool_calls: Default value is None.
-        :type parallel_tool_calls: bool
-        :param store: Default value is None.
-        :type store: bool
-        :param instructions: Default value is None.
-        :type instructions: str
-        :param stream_parameter: Default value is None.
-        :type stream_parameter: bool
-        :param stream_options: Default value is None.
-        :type stream_options: ~azure.ai.agentserver.responses.models.types.ResponseStreamOptions
-        :param conversation: Is either a str type or a ConversationParam_2 type. Default value is None.
-        :type conversation: str or ~azure.ai.agentserver.responses.models.types.ConversationParam_2
-        :param context_management: Context management configuration for this request. Default value is
+        :paramtype truncation: str or str
+        :keyword input: Is either a str type or a [Item] type. Default value is None.
+        :paramtype input: str or list[~azure.ai.agentserver.responses.models.types.Item]
+        :keyword include: Default value is None.
+        :paramtype include: list[str or ~azure.ai.agentserver.responses.models.models.IncludeEnum]
+        :keyword parallel_tool_calls: Default value is None.
+        :paramtype parallel_tool_calls: bool
+        :keyword store: Default value is None.
+        :paramtype store: bool
+        :keyword instructions: Default value is None.
+        :paramtype instructions: str
+        :keyword stream_parameter: Default value is None.
+        :paramtype stream_parameter: bool
+        :keyword stream_options: Default value is None.
+        :paramtype stream_options: ~azure.ai.agentserver.responses.models.types.ResponseStreamOptions
+        :keyword conversation: Is either a str type or a ConversationParam_2 type. Default value is
          None.
-        :type context_management:
+        :paramtype conversation: str or
+         ~azure.ai.agentserver.responses.models.types.ConversationParam_2
+        :keyword context_management: Context management configuration for this request. Default value
+         is None.
+        :paramtype context_management:
          list[~azure.ai.agentserver.responses.models.types.ContextManagementParam]
-        :param agent: (Deprecated) Use agent_reference instead.
-         The agent to use for generating the response. Default value is None.
-        :type agent: ~azure.ai.agentserver.responses.models.types.AgentReference
-        :param agent_session_id: Optional session identifier for sandbox affinity. Currently only
-         relevant for hosted agents.
-         When provided, the request is routed to the same sandbox. When omitted, auto-derived from
-         conversation_id/prev_response_id or a new UUID is generated. Default value is None.
-        :type agent_session_id: str
-        :param agent_reference: The agent to use for generating the response. Default value is None.
-        :type agent_reference: ~azure.ai.agentserver.responses.models.types.AgentReference
-        :param structured_inputs: The structured inputs to the response that can participate in prompt
-         template substitution or tool argument bindings. Default value is None.
-        :type structured_inputs: dict[str, any]
+        :keyword agent_reference: The agent to use for generating the response. Default value is None.
+        :paramtype agent_reference: ~azure.ai.agentserver.responses.models.types.AgentReference
+        :keyword structured_inputs: The structured inputs to the response that can participate in
+         prompt template substitution or tool argument bindings. Default value is None.
+        :paramtype structured_inputs: dict[str, any]
         :return: ResponseAudioDeltaEvent or ResponseAudioTranscriptDeltaEvent or
          ResponseCodeInterpreterCallCodeDeltaEvent or ResponseCodeInterpreterCallInProgressEvent or
          ResponseCodeInterpreterCallInterpretingEvent or ResponseContentPartAddedEvent or
@@ -1955,17 +1554,11 @@ class ResponsesOperations:
 
                 # JSON input template you can fill out and use as your body input.
                 body = {
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_reference",
-                        "version": "str"
-                    },
                     "agent_reference": {
                         "name": "str",
                         "type": "agent_reference",
                         "version": "str"
                     },
-                    "agent_session_id": "str",
                     "background": bool,
                     "context_management": [
                         {
@@ -2030,41 +1623,6 @@ class ResponsesOperations:
                     "delta": bytes("bytes", encoding="utf-8"),
                     "sequence_number": 0,
                     "type": "response.audio.delta"
-                }
-
-                # JSON input template for discriminator value "response.audio.transcript.delta":
-                response_stream_event = {
-                    "delta": "str",
-                    "sequence_number": 0,
-                    "type": "response.audio.transcript.delta"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call_code.delta":
-                response_stream_event = {
-                    "delta": "str",
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call_code.delta"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call.in_progress":
-                response_stream_event = {
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call.in_progress"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call.interpreting":
-                response_stream_event = {
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call.interpreting"
                 }
         """
         error_map: MutableMapping = {
@@ -2083,9 +1641,7 @@ class ResponsesOperations:
 
         if body is _Unset:
             body = {
-                "agent": agent,
                 "agent_reference": agent_reference,
-                "agent_session_id": agent_session_id,
                 "background": background,
                 "context_management": context_management,
                 "conversation": conversation,
@@ -2120,16 +1676,14 @@ class ResponsesOperations:
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, _models.CreateResponse):
             _json = body
 
         _request = build_responses_create_response_stream_request(
             content_type=content_type,
             json=_json,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -2246,12 +1800,6 @@ class ResponsesOperations:
                         output_item
                     ],
                     "parallel_tool_calls": bool,
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_id",
-                        "version": "str"
-                    },
-                    "agent_session_id": "str",
                     "background": bool,
                     "completed_at": "2020-02-20 00:00:00",
                     "conversation": {
@@ -2472,41 +2020,6 @@ class ResponsesOperations:
                     "sequence_number": 0,
                     "type": "response.audio.delta"
                 }
-
-                # JSON input template for discriminator value "response.audio.transcript.delta":
-                response_stream_event = {
-                    "delta": "str",
-                    "sequence_number": 0,
-                    "type": "response.audio.transcript.delta"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call_code.delta":
-                response_stream_event = {
-                    "delta": "str",
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call_code.delta"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call.in_progress":
-                response_stream_event = {
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call.in_progress"
-                }
-
-                # JSON input template for discriminator value
-                  "response.code_interpreter_call.interpreting":
-                response_stream_event = {
-                    "item_id": "str",
-                    "output_index": 0,
-                    "sequence_number": 0,
-                    "type": "response.code_interpreter_call.interpreting"
-                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2706,12 +2219,6 @@ class ResponsesOperations:
                         output_item
                     ],
                     "parallel_tool_calls": bool,
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_id",
-                        "version": "str"
-                    },
-                    "agent_session_id": "str",
                     "background": bool,
                     "completed_at": "2020-02-20 00:00:00",
                     "conversation": {
@@ -2873,14 +2380,6 @@ class ResponsesOperations:
                         "type": "agent_reference",
                         "version": "str"
                     },
-                    "created_by": {
-                        "agent": {
-                            "name": "str",
-                            "type": "agent_id",
-                            "version": "str"
-                        },
-                        "response_id": "str"
-                    },
                     "response_id": "str"
                 }
 
@@ -2895,14 +2394,6 @@ class ResponsesOperations:
                         "name": "str",
                         "type": "agent_reference",
                         "version": "str"
-                    },
-                    "created_by": {
-                        "agent": {
-                            "name": "str",
-                            "type": "agent_id",
-                            "version": "str"
-                        },
-                        "response_id": "str"
                     },
                     "output": {
                         "str": {}
@@ -2921,14 +2412,6 @@ class ResponsesOperations:
                         "name": "str",
                         "type": "agent_reference",
                         "version": "str"
-                    },
-                    "created_by": {
-                        "agent": {
-                            "name": "str",
-                            "type": "agent_id",
-                            "version": "str"
-                        },
-                        "response_id": "str"
                     },
                     "response_id": "str"
                 }
@@ -3096,12 +2579,6 @@ class ResponsesOperations:
                         output_item
                     ],
                     "parallel_tool_calls": bool,
-                    "agent": {
-                        "name": "str",
-                        "type": "agent_id",
-                        "version": "str"
-                    },
-                    "agent_session_id": "str",
                     "background": bool,
                     "completed_at": "2020-02-20 00:00:00",
                     "conversation": {
@@ -3217,17 +2694,17 @@ class ResponsesOperations:
     @overload
     async def compact_response_conversation(
         self,
+        *,
         model: types.ModelIdsCompaction,
+        content_type: str = "application/json",
         input: Optional[Union[str, list[_types.Item]]] = None,
         previous_response_id: Optional[str] = None,
         instructions: Optional[str] = None,
-        *,
-        content_type: str = "application/json",
         **kwargs: Any
     ) -> _types.CompactResource:
         """Produces a compaction of a responses conversation.
 
-        :param model: Known values are: "gpt-5.2", "gpt-5.2-2025-12-11", "gpt-5.2-chat-latest",
+        :keyword model: Known values are: "gpt-5.2", "gpt-5.2-2025-12-11", "gpt-5.2-chat-latest",
          "gpt-5.2-pro", "gpt-5.2-pro-2025-12-11", "gpt-5.1", "gpt-5.1-2025-11-13", "gpt-5.1-codex",
          "gpt-5.1-mini", "gpt-5.1-chat-latest", "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5-2025-08-07",
          "gpt-5-mini-2025-08-07", "gpt-5-nano-2025-08-07", "gpt-5-chat-latest", "gpt-4.1",
@@ -3248,16 +2725,16 @@ class ResponsesOperations:
          "o3-deep-research-2025-06-26", "o4-mini-deep-research", "o4-mini-deep-research-2025-06-26",
          "computer-use-preview", "computer-use-preview-2025-03-11", "gpt-5-codex", "gpt-5-pro",
          "gpt-5-pro-2025-10-06", and "gpt-5.1-codex-max". Required.
-        :type model: str or ~azure.ai.agentserver.responses.models.models.ModelIdsCompaction
-        :param input: Is either a str type or a [Item] type. Default value is None.
-        :type input: str or list[~azure.ai.agentserver.responses.models.types.Item]
-        :param previous_response_id: Default value is None.
-        :type previous_response_id: str
-        :param instructions: Default value is None.
-        :type instructions: str
+        :paramtype model: str or ~azure.ai.agentserver.responses.models.models.ModelIdsCompaction
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword input: Is either a str type or a [Item] type. Default value is None.
+        :paramtype input: str or list[~azure.ai.agentserver.responses.models.types.Item]
+        :keyword previous_response_id: Default value is None.
+        :paramtype previous_response_id: str
+        :keyword instructions: Default value is None.
+        :paramtype instructions: str
         :return: CompactResource
         :rtype: ~azure.ai.agentserver.responses.models.types.CompactResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3289,12 +2766,12 @@ class ResponsesOperations:
 
     @overload
     async def compact_response_conversation(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.CompactResponseMethodPublicBody, *, content_type: str = "application/json", **kwargs: Any
     ) -> _types.CompactResource:
         """Produces a compaction of a responses conversation.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.agentserver.responses.models.types.CompactResponseMethodPublicBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3335,51 +2812,12 @@ class ResponsesOperations:
                 }
         """
 
-    @overload
-    async def compact_response_conversation(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _types.CompactResource:
-        """Produces a compaction of a responses conversation.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: CompactResource
-        :rtype: ~azure.ai.agentserver.responses.models.types.CompactResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "created_at": "2020-02-20 00:00:00",
-                    "id": "str",
-                    "object": "response.compaction",
-                    "output": [
-                        item_field
-                    ],
-                    "usage": {
-                        "input_tokens": 0,
-                        "input_tokens_details": {
-                            "cached_tokens": 0
-                        },
-                        "output_tokens": 0,
-                        "output_tokens_details": {
-                            "reasoning_tokens": 0
-                        },
-                        "total_tokens": 0
-                    }
-                }
-        """
-
     @distributed_trace_async
     async def compact_response_conversation(
         self,
+        body: Union[JSON, _types.CompactResponseMethodPublicBody] = _Unset,
+        *,
         model: types.ModelIdsCompaction = _Unset,
-        body: Union[JSON, IO[bytes]] = _Unset,
         input: Optional[Union[str, list[_types.Item]]] = None,
         previous_response_id: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -3387,7 +2825,10 @@ class ResponsesOperations:
     ) -> _types.CompactResource:
         """Produces a compaction of a responses conversation.
 
-        :param model: Known values are: "gpt-5.2", "gpt-5.2-2025-12-11", "gpt-5.2-chat-latest",
+        :param body: Is either a JSON type or a CompactResponseMethodPublicBody type. Required.
+        :type body: JSON or
+         ~azure.ai.agentserver.responses.models.types.CompactResponseMethodPublicBody
+        :keyword model: Known values are: "gpt-5.2", "gpt-5.2-2025-12-11", "gpt-5.2-chat-latest",
          "gpt-5.2-pro", "gpt-5.2-pro-2025-12-11", "gpt-5.1", "gpt-5.1-2025-11-13", "gpt-5.1-codex",
          "gpt-5.1-mini", "gpt-5.1-chat-latest", "gpt-5", "gpt-5-mini", "gpt-5-nano", "gpt-5-2025-08-07",
          "gpt-5-mini-2025-08-07", "gpt-5-nano-2025-08-07", "gpt-5-chat-latest", "gpt-4.1",
@@ -3408,15 +2849,13 @@ class ResponsesOperations:
          "o3-deep-research-2025-06-26", "o4-mini-deep-research", "o4-mini-deep-research-2025-06-26",
          "computer-use-preview", "computer-use-preview-2025-03-11", "gpt-5-codex", "gpt-5-pro",
          "gpt-5-pro-2025-10-06", and "gpt-5.1-codex-max". Required.
-        :type model: str or ~azure.ai.agentserver.responses.models.models.ModelIdsCompaction
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :param input: Is either a str type or a [Item] type. Default value is None.
-        :type input: str or list[~azure.ai.agentserver.responses.models.types.Item]
-        :param previous_response_id: Default value is None.
-        :type previous_response_id: str
-        :param instructions: Default value is None.
-        :type instructions: str
+        :paramtype model: str or ~azure.ai.agentserver.responses.models.models.ModelIdsCompaction
+        :keyword input: Is either a str type or a [Item] type. Default value is None.
+        :paramtype input: str or list[~azure.ai.agentserver.responses.models.types.Item]
+        :keyword previous_response_id: Default value is None.
+        :paramtype previous_response_id: str
+        :keyword instructions: Default value is None.
+        :paramtype instructions: str
         :return: CompactResource
         :rtype: ~azure.ai.agentserver.responses.models.types.CompactResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3479,16 +2918,14 @@ class ResponsesOperations:
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _json = None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
+        if isinstance(body, MutableMapping):
+            _json = body
+        elif isinstance(body, MutableMapping):
             _json = body
 
         _request = build_responses_compact_response_conversation_request(
             content_type=content_type,
             json=_json,
-            content=_content,
             headers=_headers,
             params=_params,
         )

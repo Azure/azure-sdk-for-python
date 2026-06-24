@@ -1,6 +1,6 @@
 {
-  "apiVersion": "virtual-public-preview",
+  "apiVersion": "v1",
   "apiVersions": {
-    "Azure.AI.Projects": "virtual-public-preview"
+    "Azure.AI.Projects": "v1"
   }
 }

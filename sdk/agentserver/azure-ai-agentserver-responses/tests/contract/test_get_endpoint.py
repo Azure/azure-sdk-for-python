@@ -170,9 +170,9 @@ def test_get_replay__rejects_request_when_replay_preconditions_are_not_met() -> 
     assert payload["error"].get("code") == "invalid_request_error"
     assert payload["error"].get("param") == "stream"
     error_message = payload["error"].get("message", "")
-    assert "background=true" in error_message, (
-        f"SSE replay rejection for non-bg response must mention 'background=true', got: {error_message!r}"
-    )
+    assert (
+        "background=true" in error_message
+    ), f"SSE replay rejection for non-bg response must mention 'background=true', got: {error_message!r}"
 
 
 def test_get_replay__rejects_invalid_starting_after_cursor_type() -> None:
@@ -270,9 +270,9 @@ def test_get_replay__rejection_message_hints_at_background_true() -> None:
     assert replay_response.status_code == 400
     payload = replay_response.json()
     error_message = payload["error"].get("message", "")
-    assert "background=true" in error_message, (
-        f"Error message should hint at 'background=true' to guide the client, but got: {error_message!r}"
-    )
+    assert (
+        "background=true" in error_message
+    ), f"Error message should hint at 'background=true' to guide the client, but got: {error_message!r}"
     assert payload["error"].get("code") == "invalid_request_error"
     assert payload["error"].get("param") == "stream"
 
@@ -293,18 +293,18 @@ def test_get_replay__sse_response_headers_are_correct() -> None:
         headers = replay_response.headers
 
     content_type = headers.get("content-type", "")
-    assert "text/event-stream" in content_type, (
-        f"SSE replay Content-Type must be text/event-stream, got: {content_type!r}"
-    )
-    assert headers.get("cache-control") == "no-cache", (
-        f"SSE replay Cache-Control must be no-cache, got: {headers.get('cache-control')!r}"
-    )
-    assert headers.get("connection", "").lower() == "keep-alive", (
-        f"SSE replay Connection must be keep-alive, got: {headers.get('connection')!r}"
-    )
-    assert headers.get("x-accel-buffering") == "no", (
-        f"SSE replay X-Accel-Buffering must be no, got: {headers.get('x-accel-buffering')!r}"
-    )
+    assert (
+        "text/event-stream" in content_type
+    ), f"SSE replay Content-Type must be text/event-stream, got: {content_type!r}"
+    assert (
+        headers.get("cache-control") == "no-cache"
+    ), f"SSE replay Cache-Control must be no-cache, got: {headers.get('cache-control')!r}"
+    assert (
+        headers.get("connection", "").lower() == "keep-alive"
+    ), f"SSE replay Connection must be keep-alive, got: {headers.get('connection')!r}"
+    assert (
+        headers.get("x-accel-buffering") == "no"
+    ), f"SSE replay X-Accel-Buffering must be no, got: {headers.get('x-accel-buffering')!r}"
 
 
 # ══════════════════════════════════════════════════════════
@@ -333,13 +333,16 @@ def test_c2_sync_stream_stored_get_returns_200() -> None:
     assert isinstance(response_id, str)
 
     get_response = client.get(f"/responses/{response_id}")
-    assert get_response.status_code == 200, (
-        f"_finalize_non_bg_stream must persist the record so GET returns 200, got {get_response.status_code}"
-    )
+    assert (
+        get_response.status_code == 200
+    ), f"_finalize_non_bg_stream must persist the record so GET returns 200, got {get_response.status_code}"
     payload = get_response.json()
-    assert payload.get("status") in {"completed", "failed", "incomplete", "cancelled"}, (
-        f"Non-bg stored stream must be terminal after POST completes, got status={payload.get('status')!r}"
-    )
+    assert payload.get("status") in {
+        "completed",
+        "failed",
+        "incomplete",
+        "cancelled",
+    }, f"Non-bg stored stream must be terminal after POST completes, got status={payload.get('status')!r}"
 
 
 def test_c4_bg_stream_get_sse_replay() -> None:
@@ -363,18 +366,18 @@ def test_c4_bg_stream_get_sse_replay() -> None:
     assert isinstance(response_id, str)
 
     with client.stream("GET", f"/responses/{response_id}?stream=true") as replay_response:
-        assert replay_response.status_code == 200, (
-            f"bg+stream GET ?stream=true must return 200, got {replay_response.status_code}"
-        )
+        assert (
+            replay_response.status_code == 200
+        ), f"bg+stream GET ?stream=true must return 200, got {replay_response.status_code}"
         assert replay_response.headers.get("content-type", "").startswith("text/event-stream")
         replay_events = _collect_replay_events(replay_response)
 
     assert replay_events, "Expected at least one event in SSE replay"
     replay_types = [e["type"] for e in replay_events]
     terminal_types = {"response.completed", "response.failed", "response.incomplete"}
-    assert any(t in terminal_types for t in replay_types), (
-        f"SSE replay must include a terminal event, got: {replay_types}"
-    )
+    assert any(
+        t in terminal_types for t in replay_types
+    ), f"SSE replay must include a terminal event, got: {replay_types}"
     # Replay must start from the beginning (response.created should be present)
     assert "response.created" in replay_types, f"SSE replay must include response.created, got: {replay_types}"
 
@@ -400,9 +403,9 @@ def test_c6_non_stored_stream_no_get() -> None:
     assert isinstance(response_id, str)
 
     get_response = client.get(f"/responses/{response_id}")
-    assert get_response.status_code == 404, (
-        f"store=False stream response must not be retrievable via GET (C6), got {get_response.status_code}"
-    )
+    assert (
+        get_response.status_code == 404
+    ), f"store=False stream response must not be retrievable via GET (C6), got {get_response.status_code}"
 
 
 def test_bg_stream_cancelled_subject_completed() -> None:
@@ -478,9 +481,9 @@ def test_bg_stream_cancelled_subject_completed() -> None:
     assert cancel_resp.status_code == 200
 
     # The SSE stream should terminate (subject.complete() unblocks the iterator)
-    assert stream_done.wait(timeout=5.0), (
-        "_finalize_bg_stream must call subject.complete() so SSE stream terminates after cancel"
-    )
+    assert stream_done.wait(
+        timeout=5.0
+    ), "_finalize_bg_stream must call subject.complete() so SSE stream terminates after cancel"
     t.join(timeout=1.0)
 
 
@@ -617,9 +620,9 @@ def test_get__sse_replay_has_correct_sequence_numbers() -> None:
     seq_nums = [e["data"].get("sequence_number") for e in events]
     assert seq_nums[0] == 0, "First sequence_number must be 0"
     for i in range(1, len(seq_nums)):
-        assert seq_nums[i] > seq_nums[i - 1], (
-            f"Sequence numbers not monotonically increasing at index {i}: {seq_nums[i - 1]} → {seq_nums[i]}"
-        )
+        assert (
+            seq_nums[i] > seq_nums[i - 1]
+        ), f"Sequence numbers not monotonically increasing at index {i}: {seq_nums[i - 1]} → {seq_nums[i]}"
 
 
 def test_get__accept_sse_without_stream_true_returns_json_snapshot() -> None:
@@ -636,9 +639,9 @@ def test_get__accept_sse_without_stream_true_returns_json_snapshot() -> None:
     )
     assert get.status_code == 200
     content_type = get.headers.get("content-type", "")
-    assert content_type.startswith("application/json"), (
-        f"Expected application/json when Accept: text/event-stream but no ?stream=true, got {content_type!r}"
-    )
+    assert content_type.startswith(
+        "application/json"
+    ), f"Expected application/json when Accept: text/event-stream but no ?stream=true, got {content_type!r}"
     assert get.json()["id"] == response_id
 
 
