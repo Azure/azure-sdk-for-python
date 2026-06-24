@@ -85,7 +85,7 @@ def get_source_conditions(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def get_access_conditions(lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]]) -> Optional[str]:
+def get_lease_id(lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]]) -> Optional[str]:
     """Extract lease_id from a lease client or string. Returns the lease_id string or None.
 
     :param lease: A lease client or string lease ID.
@@ -100,7 +100,7 @@ def get_access_conditions(lease: Optional[Union["ShareLeaseClient", "ShareLeaseC
     return lease
 
 
-def get_source_access_conditions(
+def get_source_lease_id(
     lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]],
 ) -> Optional[str]:
     """Extract source_lease_id from a lease client or string. Returns the lease_id string or None.
@@ -117,7 +117,7 @@ def get_source_access_conditions(
     return lease
 
 
-def get_dest_access_conditions(
+def get_dest_lease_id(
     lease: Optional[Union["ShareLeaseClient", "ShareLeaseClientAsync", str]],
 ) -> Optional[str]:
     """Extract destination_lease_id from a lease client or string. Returns the lease_id string or None.

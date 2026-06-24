@@ -23,7 +23,7 @@ from ._file_client import ShareFileClient
 from ._generated import FileClient as AzureFileStorage
 from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
 from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot, _strip_snapshot_from_url
-from ._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
+from ._serialize import get_api_version, get_dest_lease_id, get_rename_smb_properties
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import process_storage_error, return_response_headers
@@ -558,14 +558,14 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
 
-        destination_access_conditions = get_dest_access_conditions(kwargs.pop("destination_lease", None))
+        destination_lease_id = get_dest_lease_id(kwargs.pop("destination_lease", None))
 
         try:
             new_directory_client._client.directory.rename(  # pylint: disable=protected-access
                 rename_source=self.url,
                 timeout=timeout,
                 replace_if_exists=overwrite,
-                destination_lease_id=destination_access_conditions,
+                destination_lease_id=destination_lease_id,
                 headers=headers,
                 allow_trailing_dot=self.allow_trailing_dot,
                 allow_source_trailing_dot=self.allow_source_trailing_dot,
