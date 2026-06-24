@@ -5,77 +5,24 @@
 ### Features Added
 
   - Client `CommunicationServiceManagementClient` added method `send_request`
-  - Model `CommunicationServiceResource` added property `properties`
-  - Model `CommunicationServiceResourceUpdate` added property `properties`
-  - Model `DomainResource` added property `properties`
-  - Model `EmailServiceResource` added property `properties`
-  - Model `SenderUsernameResource` added property `properties`
-  - Model `SmtpUsernameResource` added property `properties`
-  - Model `SuppressionListAddressResource` added property `properties`
-  - Model `SuppressionListResource` added property `properties`
-  - Model `UpdateDomainRequestParameters` added property `properties`
-  - Added model `CommunicationServiceProperties`
-  - Added model `CommunicationServiceUpdateProperties`
-  - Added model `DomainProperties`
-  - Added model `EmailServiceProperties`
-  - Added model `SenderUsernameProperties`
-  - Added model `SmtpUsernameProperties`
-  - Added model `SuppressionListAddressProperties`
-  - Added model `SuppressionListProperties`
-  - Added model `UpdateDomainProperties`
 
 ### Breaking Changes
 
-  - Model `CommunicationServiceResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `CommunicationServiceResource` deleted or renamed its instance variable `host_name`
-  - Model `CommunicationServiceResource` deleted or renamed its instance variable `data_location`
-  - Model `CommunicationServiceResource` deleted or renamed its instance variable `notification_hub_id`
-  - Model `CommunicationServiceResource` deleted or renamed its instance variable `version`
-  - Model `CommunicationServiceResource` deleted or renamed its instance variable `immutable_resource_id`
-  - Model `CommunicationServiceResource` deleted or renamed its instance variable `linked_domains`
-  - Model `CommunicationServiceResource` deleted or renamed its instance variable `public_network_access`
-  - Model `CommunicationServiceResource` deleted or renamed its instance variable `disable_local_auth`
-  - Model `CommunicationServiceResourceUpdate` deleted or renamed its instance variable `linked_domains`
-  - Model `CommunicationServiceResourceUpdate` deleted or renamed its instance variable `public_network_access`
-  - Model `CommunicationServiceResourceUpdate` deleted or renamed its instance variable `disable_local_auth`
-  - Model `DomainResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `DomainResource` deleted or renamed its instance variable `data_location`
-  - Model `DomainResource` deleted or renamed its instance variable `from_sender_domain`
-  - Model `DomainResource` deleted or renamed its instance variable `mail_from_sender_domain`
-  - Model `DomainResource` deleted or renamed its instance variable `domain_management`
-  - Model `DomainResource` deleted or renamed its instance variable `verification_states`
-  - Model `DomainResource` deleted or renamed its instance variable `verification_records`
-  - Model `DomainResource` deleted or renamed its instance variable `user_engagement_tracking`
-  - Model `EmailServiceResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `EmailServiceResource` deleted or renamed its instance variable `data_location`
-  - Model `SenderUsernameResource` deleted or renamed its instance variable `data_location`
-  - Model `SenderUsernameResource` deleted or renamed its instance variable `username`
-  - Model `SenderUsernameResource` deleted or renamed its instance variable `display_name`
-  - Model `SenderUsernameResource` deleted or renamed its instance variable `provisioning_state`
-  - Model `SmtpUsernameResource` deleted or renamed its instance variable `username`
-  - Model `SmtpUsernameResource` deleted or renamed its instance variable `entra_application_id`
-  - Model `SmtpUsernameResource` deleted or renamed its instance variable `tenant_id`
-  - Model `SuppressionListAddressResource` deleted or renamed its instance variable `email`
-  - Model `SuppressionListAddressResource` deleted or renamed its instance variable `first_name`
-  - Model `SuppressionListAddressResource` deleted or renamed its instance variable `last_name`
-  - Model `SuppressionListAddressResource` deleted or renamed its instance variable `notes`
-  - Model `SuppressionListAddressResource` deleted or renamed its instance variable `last_modified`
-  - Model `SuppressionListAddressResource` deleted or renamed its instance variable `data_location`
-  - Model `SuppressionListResource` deleted or renamed its instance variable `list_name`
-  - Model `SuppressionListResource` deleted or renamed its instance variable `last_updated_time_stamp`
-  - Model `SuppressionListResource` deleted or renamed its instance variable `created_time_stamp`
-  - Model `SuppressionListResource` deleted or renamed its instance variable `data_location`
-  - Model `UpdateDomainRequestParameters` deleted or renamed its instance variable `user_engagement_tracking`
-  - Deleted or renamed model `CommunicationServiceResourceList`
-  - Deleted or renamed model `DomainResourceList`
-  - Deleted or renamed model `EmailServiceResourceList`
-  - Deleted or renamed model `ErrorDetailAutoGenerated`
-  - Deleted or renamed model `ErrorResponseAutoGenerated`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `SenderUsernameResourceCollection`
-  - Deleted or renamed model `SmtpUsernameResourceCollection`
-  - Deleted or renamed model `SuppressionListAddressResourceCollection`
-  - Deleted or renamed model `SuppressionListResourceCollection`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `CommunicationServiceResource` moved instance variable `provisioning_state`, `host_name`, `data_location`, `notification_hub_id`, `version`, `immutable_resource_id`, `linked_domains`, `public_network_access` and `disable_local_auth` under property `properties` whose type is `CommunicationServiceProperties`
+  - Model `CommunicationServiceResourceUpdate` moved instance variable `linked_domains`, `public_network_access` and `disable_local_auth` under property `properties` whose type is `CommunicationServiceUpdateProperties`
+  - Model `DomainResource` moved instance variable `provisioning_state`, `data_location`, `from_sender_domain`, `mail_from_sender_domain`, `domain_management`, `verification_states`, `verification_records` and `user_engagement_tracking` under property `properties` whose type is `DomainProperties`
+  - Model `EmailServiceResource` moved instance variable `provisioning_state` and `data_location` under property `properties` whose type is `EmailServiceProperties`
+  - Model `SenderUsernameResource` moved instance variable `data_location`, `username`, `display_name` and `provisioning_state` under property `properties` whose type is `SenderUsernameProperties`
+  - Model `SmtpUsernameResource` moved instance variable `username`, `entra_application_id` and `tenant_id` under property `properties` whose type is `SmtpUsernameProperties`
+  - Model `SuppressionListAddressResource` moved instance variable `email`, `first_name`, `last_name`, `notes`, `last_modified` and `data_location` under property `properties` whose type is `SuppressionListAddressProperties`
+  - Model `SuppressionListResource` moved instance variable `list_name`, `last_updated_time_stamp`, `created_time_stamp` and `data_location` under property `properties` whose type is `SuppressionListProperties`
+  - Model `UpdateDomainRequestParameters` moved instance variable `user_engagement_tracking` under property `properties` whose type is `UpdateDomainProperties`
+
+### Other Changes
+
+  - Deleted model `CommunicationServiceResourceList`/`DomainResourceList`/`EmailServiceResourceList`/`OperationListResult`/`SenderUsernameResourceCollection`/`SmtpUsernameResourceCollection`/`SuppressionListAddressResourceCollection`/`SuppressionListResourceCollection` which actually were not used by SDK users
+  - Deleted model `ErrorDetailAutoGenerated`/`ErrorResponseAutoGenerated` which actually were not used by SDK users
 
 ## 3.0.0b1 (2026-03-10)
 
