@@ -131,7 +131,7 @@ function generateApiForPackage({
     const pythonExecutable = runtimeExecutable || process.env.RUNTIME_EXECUTABLE;
     run(
       pythonExecutable,
-      ["-m", "azpysdk.main", "apistub", "--md", "--extract-metadata", "--dest-dir", packageDir, packageName],
+      ["-m", "azpysdk.main", "apistub", packageName],
       {
         cwd: repoRoot,
         check: true,
@@ -141,7 +141,7 @@ function generateApiForPackage({
     return;
   }
 
-  run("azpysdk", ["apistub", "--md", "--extract-metadata", "--dest-dir", packageDir, packageName], {
+  run("azpysdk", ["apistub", packageName], {
     cwd: repoRoot,
     check: true,
     logger: activeLogger,

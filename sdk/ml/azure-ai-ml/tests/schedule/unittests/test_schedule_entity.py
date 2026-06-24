@@ -3,6 +3,7 @@ from datetime import datetime
 import pytest
 from test_utilities.utils import verify_entity_load_and_dump
 
+from azure.ai.ml._restclient.v2023_06_01_preview.models import JobBaseProperties as RestJobBaseProperties
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities import CronTrigger, JobSchedule, PipelineJob, RecurrencePattern, RecurrenceTrigger
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
@@ -128,7 +129,12 @@ class TestScheduleEntity:
         inner_job = load_job(inner_job_path)._to_job()
         schedule = load_schedule(test_path)
         rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
-        loaded_job_dict = inner_job._to_rest_object().as_dict()["properties"]
+        # CommandJob builds a shared arm_ml_service hybrid envelope (camelCase as_dict), but the schedule
+        # embeds it as a v2023_06 msrest job_definition; normalize the standalone job the same way so the
+        # snake_case dicts compare equal.
+        loaded_job_dict = RestJobBaseProperties.deserialize(
+            inner_job._to_rest_object().as_dict()["properties"]
+        ).as_dict()
         assert rest_schedule_job_dict == loaded_job_dict
         # Test with local file + overwrites
         test_path = "./tests/test_configs/schedule/local_cron_command_job2.yml"
