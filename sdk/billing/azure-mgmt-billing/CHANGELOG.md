@@ -6,8 +6,8 @@
 
   - Client `BillingManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `BillingManagementClient` added method `send_request`
-  - Added model `PatchPropertiesRenewProperties`
   - Added model `ReservationPropertyUtilization`
+  - Added model `PatchPropertiesRenewProperties`
   - Added model `ReservationPurchaseRequestPropertiesReservedResourceProperties`
 
 ### Breaking Changes
