@@ -3,7 +3,7 @@
   "apiVersions": {
     "MongoDB.Atlas": "2026-03-01-preview"
   },
-  "commit": "47583cad2795130618e606469b93e81bb253bd2f",
+  "commit": "1af5f0810159efeefa9e8991049064b1bc4ca132",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/liftrmongodb/MongoDB.Atlas.Management",
   "emitterVersion": "0.63.1",
