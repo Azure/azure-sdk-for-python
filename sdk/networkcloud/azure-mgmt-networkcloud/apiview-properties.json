@@ -546,5 +546,6 @@
         "azure.mgmt.networkcloud.aio.operations.MetricsConfigurationsOperations.begin_delete": "Microsoft.NetworkCloud.ClusterMetricsConfigurations.delete",
         "azure.mgmt.networkcloud.operations.MetricsConfigurationsOperations.list_by_cluster": "Microsoft.NetworkCloud.ClusterMetricsConfigurations.listByCluster",
         "azure.mgmt.networkcloud.aio.operations.MetricsConfigurationsOperations.list_by_cluster": "Microsoft.NetworkCloud.ClusterMetricsConfigurations.listByCluster"
-    }
+    },
+    "CrossLanguageVersion": "0edb56d0a93f"
 }
