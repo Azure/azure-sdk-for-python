@@ -26,6 +26,7 @@ from azure.servicebus._common.constants import (
 )
 from azure.servicebus._common.utils import (
     CE_ZERO_SECONDS,
+    transform_outbound_messages,
 )
 from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType, AmqpMessageProperties, AmqpMessageHeader
 from azure.servicebus._pyamqp.message import Message
@@ -231,10 +232,89 @@ def test_servicebus_message_batch(uamqp_transport):
 
     assert batch.size_in_bytes == 238 and len(batch) == 1
 
+    # The batch envelope must capture the first message's message_id/session_id/partition_key so the
+    # broker can route the batch. Under uamqp_transport this previously raised
+    # TypeError: 'BatchMessage' object is not subscriptable.
+    if uamqp_transport:
+        assert batch._message.properties.message_id == b"message_id"
+        assert batch._message.properties.group_id == b"session_id"
+        assert batch._message.annotations[_X_OPT_PARTITION_KEY] == "session_id"
+    else:
+        assert batch._message[3].message_id == "message_id"
+        assert batch._message[3].group_id == "session_id"
+        assert batch._message[2][_X_OPT_PARTITION_KEY] == "session_id"
+
     with pytest.raises(ValueError):
         batch.add_message(ServiceBusMessage("A"))
 
     assert batch.message
+
+
+@pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+def test_set_batch_envelope_properties(uamqp_transport):
+    # Unit coverage for each branch of the transport's batch-envelope routing-property capture,
+    # including the no-op case (all None). message_id/session_id populate the envelope properties
+    # (session_id as group_id); partition_key populates an annotation.
+    amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
+
+    def new_envelope():
+        return ServiceBusMessageBatch(amqp_transport=amqp_transport)._message
+
+    def props(env):
+        return env.properties if uamqp_transport else env[3]
+
+    def annotations(env):
+        return env.annotations if uamqp_transport else env[2]
+
+    def encoded(value):
+        # uamqp encodes message_id/group_id to bytes on the envelope; pyamqp keeps the raw str.
+        return value.encode("utf-8") if uamqp_transport else value
+
+    # No routing props -> no-op, envelope left unchanged.
+    env = new_envelope()
+    amqp_transport.set_batch_envelope_properties(env, None, None, None)
+    assert props(env) is None
+    assert annotations(env) is None
+
+    # message_id only.
+    env = new_envelope()
+    amqp_transport.set_batch_envelope_properties(env, "mid", None, None)
+    assert props(env).message_id == encoded("mid")
+    assert props(env).group_id is None
+    assert annotations(env) is None
+
+    # session_id only -> carried as the AMQP group_id.
+    env = new_envelope()
+    amqp_transport.set_batch_envelope_properties(env, None, "sess", None)
+    assert props(env).group_id == encoded("sess")
+    assert props(env).message_id is None
+    assert annotations(env) is None
+
+    # partition_key only -> annotation set, properties left unset.
+    env = new_envelope()
+    amqp_transport.set_batch_envelope_properties(env, None, None, "pk")
+    assert props(env) is None
+    assert annotations(env)[_X_OPT_PARTITION_KEY] == "pk"
+
+
+def test_transform_outbound_messages_discriminates_list_vs_single():
+    # ServiceBusSender.send_messages routes on isinstance(transform_outbound_messages(...), list):
+    # a list input must yield a list (-> batch branch), a single message must yield a single
+    # ServiceBusMessage (-> the trace branch that accesses obj_message._message). A list reaching
+    # that single-message branch raised the AttributeError reported in #42598, so this pins the
+    # discriminator contract the fix relies on (both sync and async senders).
+    to_amqp = PyamqpTransport.to_outgoing_amqp_message
+
+    as_list = transform_outbound_messages(
+        [ServiceBusMessage("a"), ServiceBusMessage("b")], ServiceBusMessage, to_amqp
+    )
+    assert isinstance(as_list, list)
+    assert len(as_list) == 2
+    assert all(isinstance(m, ServiceBusMessage) for m in as_list)
+
+    single = transform_outbound_messages(ServiceBusMessage("a"), ServiceBusMessage, to_amqp)
+    assert isinstance(single, ServiceBusMessage)
+    assert not isinstance(single, list)
 
 
 def test_amqp_message():

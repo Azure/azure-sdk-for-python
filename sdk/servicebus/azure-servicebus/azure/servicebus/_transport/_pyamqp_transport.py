@@ -55,6 +55,7 @@ from .._common.constants import (
     SESSION_FILTER,
     SESSION_LOCKED_UNTIL,
     _X_OPT_ENQUEUED_TIME,
+    _X_OPT_PARTITION_KEY,
     _X_OPT_LOCKED_UNTIL,
     ERROR_CODE_SESSION_LOCK_LOST,
     ERROR_CODE_MESSAGE_LOCK_LOST,
@@ -538,6 +539,31 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         """
         # pylint: disable=protected-access
         utils.add_batch(sb_message_batch._message, outgoing_sb_message._message)
+
+    @staticmethod
+    def set_batch_envelope_properties(
+        batch_message: List,
+        message_id: Optional[str],
+        session_id: Optional[str],
+        partition_key: Optional[str],
+    ) -> None:
+        """
+        Populate the batch envelope's message_id/session_id properties and partition_key annotation
+        on the underlying pyamqp batch message.
+        :param list batch_message: The underlying pyamqp batch message.
+        :param str or None message_id: The message_id of the first message in the batch.
+        :param str or None session_id: The session_id of the first message in the batch.
+        :param str or None partition_key: The partition_key of the first message in the batch.
+        :rtype: None
+        """
+        if message_id or session_id:
+            # pyamqp Properties is a 13-field tuple: index 0 = message_id, index 10 = group_id (session_id).
+            properties = cast(List, [None] * 13)
+            properties[0] = message_id
+            properties[10] = session_id
+            utils.set_message_properties(batch_message, properties)
+        if partition_key:
+            utils.set_message_annotations(batch_message, {_X_OPT_PARTITION_KEY: partition_key})
 
     @staticmethod
     def create_source(source: "Source", session_filter: Optional[str]) -> "Source":

@@ -412,11 +412,14 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             obj_message = transform_outbound_messages(  # type: ignore
                 message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
             )
-            try:
+            # transform_outbound_messages returns a list for list/generator input and a single
+            # ServiceBusMessage otherwise. Discriminate explicitly rather than catching TypeError,
+            # which would also swallow a genuine TypeError raised while building the batch.
+            if isinstance(obj_message, list):
                 batch = await self.create_message_batch()
                 batch._from_list(obj_message)  # type: ignore # pylint: disable=protected-access
                 obj_message = batch
-            except TypeError:  # Message was not a list or generator.
+            else:
                 # pylint: disable=protected-access
                 obj_message._message = trace_message(
                     obj_message._message,
