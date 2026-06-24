@@ -32,6 +32,7 @@ from azure.ai.agentserver.core.durable import (
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseExitForRecovery
+from ._dispatch import DISPOSITION_MARK_FAILED, DISPOSITION_REINVOKE
 from ._task_id import derive_task_id
 
 if TYPE_CHECKING:
@@ -41,6 +42,7 @@ if TYPE_CHECKING:
     from ..store._base import ResponseProviderProtocol
     from ._orchestrator import _ResponseOrchestrator
     from ._runtime_state import _RuntimeState
+    from ._durable_input import DurableResponseInput, RuntimeRefs
 
 logger = logging.getLogger("azure.ai.agentserver.responses.durable")
 
@@ -98,100 +100,36 @@ def _build_server_error_payload(
     }
 
 
-# (Spec 013 US1(a/c)) Process-local cache of in-memory refs (record, context,
-# parsed request, cancellation signal, runtime state). These cannot be JSON-
-# serialized for cross-process recovery, so we keep them in memory keyed by
-# response_id and pass only the serializable params through the durable task
-# input. The task body fetches refs from this cache when re-entered in the
-# same process; on cross-process recovery the entry is absent and the body
-# reconstructs from the serialized params instead.
-_RUNTIME_REFS: dict[str, dict[str, Any]] = {}
-
-# Keys in ctx_params that are runtime-only object references (kept in
-# ``_RUNTIME_REFS`` and stripped before persisting as task input).
-_REF_KEYS = frozenset(
-    {
-        "_record_ref",
-        "_context_ref",
-        "_parsed_ref",
-        "_cancel_ref",
-        "_runtime_state_ref",
-    }
-)
-
-
-def _split_runtime_refs(
-    ctx_params: dict[str, Any],
-) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Split ``ctx_params`` into refs (memory-only) and persisted params.
-
-    :param ctx_params: The orchestrator's combined params dict.
-    :type ctx_params: dict[str, Any]
-    :returns: ``(refs, persisted)`` — ``refs`` contains object references
-        to keep in process memory; ``persisted`` contains the JSON-
-        serializable subset for the durable task input.
-    :rtype: tuple[dict[str, Any], dict[str, Any]]
-    """
-    refs: dict[str, Any] = {}
-    persisted: dict[str, Any] = {}
-    for k, v in ctx_params.items():
-        if k in _REF_KEYS:
-            refs[k] = v
-        else:
-            persisted[k] = v
-    # The hosted gateway injects ``agent_reference`` as an ``AgentReference``
-    # model. That model is a Mapping but is NOT ``json.dumps``-serializable, so
-    # if it leaks into the persisted durable-task input the underlying
-    # ``create_and_start`` -> ``_resolve_input_storage`` size check raises
-    # ``TypeError`` and the whole durable start silently falls back to a
-    # non-durable ``asyncio.create_task`` (no crash recovery). Normalize it to a
-    # plain dict here: the durable input must be JSON-serializable AND survive
-    # cross-process recovery, and every consumer accepts ``AgentReference | dict``
-    # (and reads it as a mapping). Absent agent_reference is the ``{}`` sentinel,
-    # which is already serializable.
-    agent_reference = persisted.get("agent_reference")
-    if agent_reference is not None and not isinstance(agent_reference, dict):
-        if hasattr(agent_reference, "as_dict"):
-            persisted["agent_reference"] = agent_reference.as_dict()
-        else:
-            try:
-                persisted["agent_reference"] = dict(agent_reference)
-            except (TypeError, ValueError):
-                persisted["agent_reference"] = {
-                    "type": getattr(agent_reference, "type", "agent_reference"),
-                    "name": getattr(agent_reference, "name", None),
-                    "version": getattr(agent_reference, "version", None),
-                }
-    return refs, persisted
+# (Spec 033 §3.1) Process-local cache of typed :class:`RuntimeRefs` (record,
+# context, parsed request, cancellation signal, runtime state), keyed by
+# response_id. These object references cannot be JSON-serialized for
+# cross-process recovery, so they live here out-of-band and are NEVER part of
+# the persisted durable-task input (which is the typed
+# :class:`DurableResponseInput` alone). The task body fetches refs from this
+# cache on same-process re-entry; on cross-process recovery the entry is absent
+# and the body rebuilds state from the persisted ``DurableResponseInput``.
+_RUNTIME_REFS: dict[str, "RuntimeRefs"] = {}
 
 
 def _reconstruct_parsed_from_params(params: dict[str, Any]) -> Any:
-    """Re-parse the serialized raw payload back to a CreateResponse model.
+    """Re-parse the persisted request back to a ``CreateResponse`` model.
 
     Used on cross-process recovery when the in-process ``_parsed_ref`` is
-    unavailable. The original request payload was serialized to
-    ``params["parsed_payload"]`` at fresh-entry time (Spec 013 US1 deliverable (a)).
+    unavailable. Routes through the single :class:`DurableResponseInput`
+    deserializer (Spec 033 §3.1) — the request is persisted once, under the
+    ``request`` key, inside the typed durable-task input.
 
     :param params: The durable task input dict.
     :type params: dict[str, Any]
-    :returns: A re-hydrated request model, or the raw dict if parsing fails.
+    :returns: The re-hydrated ``CreateResponse`` request model.
     :rtype: Any
-    :raises RuntimeError: If parsed_payload is missing from params.
+    :raises ValueError: If the persisted input is missing the required request.
     """
-    payload = params.get("parsed_payload")
-    if payload is None:
-        raise RuntimeError(
-            "Cannot reconstruct parsed request — params['parsed_payload'] is "
-            "missing. Ensure the orchestrator stamps it at fresh-entry."
-        )
-    # Late import to avoid circular dependency on hosting/_request_parsing.
-    from ..models._generated import (
-        CreateResponse,
+    from ._durable_input import (
+        DurableResponseInput,
     )  # pylint: disable=import-outside-toplevel
 
-    if isinstance(payload, dict):
-        return CreateResponse(payload)
-    return payload
+    return DurableResponseInput.from_task_input(params).request
 
 
 def _reconstruct_from_params(
@@ -224,54 +162,83 @@ def _reconstruct_from_params(
     """
     # Late imports to avoid module-level circular dependencies.
     from .._response_context import (
-        IsolationContext,
         ResponseContext,
     )  # pylint: disable=import-outside-toplevel
     from ..models.runtime import (
         ResponseExecution,
         ResponseModeFlags,
     )  # pylint: disable=import-outside-toplevel
+    from ..models._helpers import (
+        get_input_expanded,
+        to_output_item,
+    )  # pylint: disable=import-outside-toplevel
+    from ._request_parsing import (
+        _resolve_conversation_id,
+    )  # pylint: disable=import-outside-toplevel
+    from ._durable_input import (
+        DurableResponseInput,
+    )  # pylint: disable=import-outside-toplevel
 
-    parsed = _reconstruct_parsed_from_params(params)
+    # Single deserializer (Spec 033 FR-001): the persisted boundary is read in
+    # exactly one place. Raises if the persisted input is malformed (FR-002f).
+    durable = DurableResponseInput.from_task_input(params)
+    request = durable.request
+
+    # Re-derive the request-scoped scalars from the persisted request — these are
+    # pure sync functions of the request, identical to fresh entry
+    # (``_endpoint_handler._build_execution_context`` / ``_resolve_conversation_id``).
+    # No parallel persisted scalars to drift (Spec 033 §3.1).
+    stream = bool(getattr(request, "stream", False))
+    store = True if getattr(request, "store", None) is None else bool(request.store)
+    background = bool(getattr(request, "background", False))
+    model = getattr(request, "model", None) or ""
+    previous_response_id = (
+        request.previous_response_id
+        if isinstance(request.previous_response_id, str) and request.previous_response_id
+        else None
+    )
+    conversation_id = _resolve_conversation_id(request)
+    # Input is embedded once, in the request; reconstruct the resolved input
+    # items from it exactly as fresh entry does (Spec 033 FR-002).
+    input_items = [
+        out for item in get_input_expanded(request) if (out := to_output_item(item, response_id)) is not None
+    ]
 
     record = ResponseExecution(
         response_id=response_id,
         mode_flags=ResponseModeFlags(
-            stream=bool(params.get("stream", False)),
-            store=bool(params.get("store", True)),
-            background=bool(params.get("background", True)),
+            stream=stream,
+            store=store,
+            background=background,
         ),
         status="in_progress",
-        input_items=list(params.get("input_items") or []),
-        previous_response_id=params.get("previous_response_id"),
-        initial_model=params.get("model"),
-        initial_agent_reference=params.get("agent_reference"),
-        agent_session_id=params.get("agent_session_id"),
-        conversation_id=params.get("conversation_id"),
-        chat_isolation_key=params.get("chat_isolation_key"),
+        input_items=input_items,
+        previous_response_id=previous_response_id,
+        initial_model=model,
+        initial_agent_reference=durable.agent_reference,
+        agent_session_id=durable.agent_session_id,
+        conversation_id=conversation_id,
+        chat_isolation_key=durable.chat_isolation_key,
     )
 
     context = ResponseContext(
         response_id=response_id,
         mode_flags=record.mode_flags,
-        request=parsed,
+        request=request,
         provider=provider,
         input_items=record.input_items,
         previous_response_id=record.previous_response_id,
         conversation_id=record.conversation_id,
-        history_limit=int(
-            params.get("history_limit", runtime_options.default_fetch_history_count)
-        ),
-        # Client headers / query params are not preserved across recovery
-        # — they were specific to the original HTTP request and are not
-        # meaningful for the recovered handler.
-        client_headers={},
-        query_parameters={},
-        isolation=IsolationContext(
-            user_key=params.get("user_isolation_key"),
-            chat_key=params.get("chat_isolation_key"),
-        ),
-        prefetched_history_ids=params.get("prefetched_history_ids"),
+        history_limit=int(runtime_options.default_fetch_history_count),
+        # (Spec 033 FR-002b) Request metadata MUST survive recovery so the
+        # recovered handler observes the identical headers/query it would on
+        # fresh entry. Previously hard-set to ``{}`` — a latent drop bug.
+        client_headers=dict(durable.client_headers),
+        query_parameters=dict(durable.query_parameters),
+        isolation=durable.isolation(),
+        # History is a prefetch optimization; re-derived on demand via the
+        # existing ``get_history_item_ids`` read (Spec 033 §3.1).
+        prefetched_history_ids=None,
     )
     record.response_context = context
     return record, context
@@ -286,8 +253,6 @@ _RESP_BACKGROUND = "background"
 #     complete the task without re-invoking (Rows 2, 3: bg+store with
 #     durable_background=False, and fg+store).
 _RESP_DISPOSITION = "disposition"
-DISPOSITION_REINVOKE = "re-invoke"
-DISPOSITION_MARK_FAILED = "mark-failed"
 
 
 # (Spec 024 Phase 2) `_BOOKKEEPING_EVENTS` module-level registry deleted —
@@ -463,7 +428,9 @@ class DurableResponseOrchestrator:
 
     def _pick_primitive(
         self,
-        ctx_params: dict[str, Any],
+        *,
+        conversation_id: str | None,
+        previous_response_id: str | None,
     ) -> "Task[dict[str, Any], None] | MultiTurnTask[dict[str, Any], None]":
         """Select the underlying durable-task primitive for this request.
 
@@ -476,17 +443,344 @@ class DurableResponseOrchestrator:
           (steerable chain extension).
         - Otherwise → one-shot primitive (no chain semantics needed).
 
-        :param ctx_params: The orchestrator's combined params dict.
+        :keyword conversation_id: The request's conversation id, if any.
+        :paramtype conversation_id: str | None
+        :keyword previous_response_id: The request's previous-response id, if any.
+        :paramtype previous_response_id: str | None
         :returns: One of ``self._one_shot_task_fn`` /
             ``self._multi_turn_task_fn``.
         """
-        conv_id = ctx_params.get("conversation_id")
-        prev_id = ctx_params.get("previous_response_id")
-        if conv_id is not None:
+        if conversation_id is not None:
             return self._multi_turn_task_fn
-        if prev_id is not None and self._options.steerable_conversations:
+        if previous_response_id is not None and self._options.steerable_conversations:
             return self._multi_turn_task_fn
         return self._one_shot_task_fn
+
+    async def _handle_recovery_disposition(
+        self,
+        responses_ns: Any,
+        *,
+        disposition_stamp: str,
+        is_recovery: bool,
+        response_id: str,
+        params: dict[str, Any],
+        background: bool,
+    ) -> bool:
+        """Stamp framework metadata + dispatch the mark-failed recovery branch.
+
+        (Spec 033 §3.2 extract) On first entry stamps ``_responses.background`` and
+        ``_responses.disposition`` (flushed durably so a crash before the next
+        await preserves the routing). On a recovered entry with a ``mark-failed``
+        disposition (Rows 2/3), persists the ``server_error`` terminal to the
+        store **without re-invoking the handler** and signals the caller to
+        return.
+
+        :param responses_ns: The ``_responses`` framework metadata namespace.
+        :type responses_ns: Any
+        :keyword disposition_stamp: The disposition to seed on first entry.
+        :paramtype disposition_stamp: str
+        :keyword is_recovery: Whether this is a recovered re-entry.
+        :paramtype is_recovery: bool
+        :keyword response_id: The response id.
+        :paramtype response_id: str
+        :keyword params: The raw durable-task input (for isolation on the failed write).
+        :paramtype params: dict[str, Any]
+        :keyword background: The request's background flag.
+        :paramtype background: bool
+        :returns: True if the caller should return (mark-failed handled).
+        :rtype: bool
+        """
+        # Store background flag on first entry for recovery decisions.
+        if _RESP_BACKGROUND not in responses_ns:
+            responses_ns[_RESP_BACKGROUND] = background
+        # (Spec 014 FR-003 / FR-004) Stamp the disposition on first entry, flushed
+        # durably BEFORE the body could be killed — otherwise a recovered task
+        # defaults to ``re-invoke`` and skips the mark-failed branch.
+        if _RESP_DISPOSITION not in responses_ns:
+            responses_ns[_RESP_DISPOSITION] = disposition_stamp
+            try:
+                await responses_ns.flush()
+            except (AttributeError, Exception):  # noqa: BLE001
+                pass  # best-effort — backend may not support explicit flush
+        disposition = _read_disposition(responses_ns)
+
+        # (Spec 014 FR-003 / FR-004) Recovery dispatch via disposition. mark-failed:
+        # the handler does NOT re-run; persist a server_error terminal and complete
+        # the task. Covers Rows 2 (bg+store, durable_background=False) and 3 (fg+store).
+        if is_recovery and disposition == DISPOSITION_MARK_FAILED:
+            logger.info(
+                "Bookkeeping task recovered (response_id=%s, disposition=mark-failed) — marking failed",
+                response_id,
+            )
+            await self._persist_crash_failed(response_id, params)
+            return True
+
+        # Backward-compat: pre-disposition non-background recovery — mark
+        # foreground responses failed on recovery without re-invoking.
+        if is_recovery and not responses_ns.get(_RESP_BACKGROUND, True):
+            logger.info(
+                "Non-background task recovered (response_id=%s) — marking failed",
+                response_id,
+            )
+            await self._persist_crash_failed(response_id, params)
+            return True
+
+        return False
+
+    async def _flatten_recovery_context(
+        self,
+        ctx: "TaskContext[dict[str, Any]]",
+        context: "ResponseContext",
+        is_recovery: bool,
+    ) -> bool:
+        """Flatten recovery/steering classifiers onto the context + prefetch.
+
+        (Spec 033 §3.2 extract) Sets ``is_recovery`` / ``is_steered_turn`` /
+        ``pending_input_count``, swaps in the developer metadata facade, exposes
+        the task context, and on a recovered entry pre-fetches the persisted
+        response. Returns True when the durable execution should be **dropped**
+        (Spec 026: the response was never durably created — definitive not-found).
+
+        :param ctx: The durable task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param context: The handler-facing response context.
+        :type context: ResponseContext
+        :param is_recovery: Whether this is a recovered re-entry.
+        :type is_recovery: bool
+        :returns: True if the caller should drop (return) without re-invoking.
+        :rtype: bool
+        """
+        context.is_recovery = is_recovery
+        context.is_steered_turn = ctx.is_steered_turn
+        context.pending_input_count = ctx.pending_input_count
+        # Swap in the handler-facing metadata facade backed by the task
+        # primitive's metadata wrapper (rejects ``_``-prefixed keys so handlers
+        # cannot collide with the framework-reserved ``_responses`` namespace).
+        from .._durability_context import (  # pylint: disable=import-outside-toplevel
+            _DeveloperMetadataFacade,
+        )
+
+        context.conversation_chain_metadata = _DeveloperMetadataFacade(ctx.metadata)
+        # (Spec 024 Phase 5 — Proposal #11) Expose the task context so
+        # ``context.exit_for_recovery()`` can delegate to the recovery sentinel.
+        context._task_context = ctx  # pylint: disable=protected-access
+
+        if not is_recovery:
+            return False
+
+        # (Spec 025 §A.3) Pre-fetch the persisted response so the handler can seed
+        # its stream. (Spec 026 FR-026-4/5/6) If the response is DEFINITIVELY
+        # absent (typed not-found), the original POST disconnected without
+        # returning a response id, so no client can fetch it — drop the durable
+        # execution. A transient/ambiguous error is NOT a definitive absence.
+        from ..store._foundry_errors import (  # pylint: disable=import-outside-toplevel
+            FoundryResourceNotFoundError,
+        )
+
+        try:
+            context.persisted_response = await self._provider.get_response(
+                context.response_id, isolation=context.isolation
+            )
+        except (KeyError, FoundryResourceNotFoundError):
+            logger.info(
+                "Recovery dropped for %s: response was never durably created "
+                "(definitive not-found); abandoning without re-invoking the handler.",
+                context.response_id,
+            )
+            return True
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug(
+                "persisted_response pre-fetch failed for %s (recovery, transient — not dropping)",
+                context.response_id,
+                exc_info=True,
+            )
+            context.persisted_response = None
+        return False
+
+    def _setup_cancel_bridge(
+        self,
+        ctx: "TaskContext[dict[str, Any]]",
+        context: "ResponseContext | None",
+        cancellation_signal: asyncio.Event,
+    ) -> "asyncio.Task[None] | None":
+        """Bridge the task cancellation surface onto the response context.
+
+        (Spec 033 §3.2 extract) ``ctx.shutdown`` maps to ``context.shutdown`` ONLY
+        (no cancel signal); ``ctx.cancel`` maps to ``cancellation_signal``. When
+        neither is set yet, spawns a bridge task that races the two and applies
+        whichever fires first. Returns the bridge task (or None when already
+        resolved at entry).
+
+        :param ctx: The durable task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param context: The handler-facing response context.
+        :type context: ResponseContext | None
+        :param cancellation_signal: The per-request cancellation event.
+        :type cancellation_signal: asyncio.Event
+        :returns: The bridge task, or None.
+        :rtype: asyncio.Task[None] | None
+        """
+        if ctx.shutdown.is_set():
+            if context is not None:
+                context.shutdown.set()
+            return None
+        if ctx.cancel.is_set():
+            cancellation_signal.set()
+            return None
+
+        async def _bridge() -> None:
+            # Race ctx.cancel vs ctx.shutdown — whichever fires first wins.
+            cancel_task = asyncio.create_task(ctx.cancel.wait())
+            shutdown_task = asyncio.create_task(ctx.shutdown.wait())
+            try:
+                done, pending = await asyncio.wait(
+                    {cancel_task, shutdown_task},
+                    return_when=asyncio.FIRST_COMPLETED,
+                )
+                for t in pending:
+                    t.cancel()
+                if shutdown_task in done and cancel_task not in done:
+                    if context is not None:
+                        context.shutdown.set()
+                else:
+                    cancellation_signal.set()
+            except asyncio.CancelledError:
+                cancel_task.cancel()
+                shutdown_task.cancel()
+                raise
+
+        return asyncio.create_task(_bridge())
+
+    async def _run_handler_in_task(
+        self,
+        ctx: "TaskContext[dict[str, Any]]",
+        record: "ResponseExecution | None",
+        context: "ResponseContext | None",
+        *,
+        cancellation_signal: asyncio.Event,
+        cancel_bridge: "asyncio.Task[None] | None",
+        parsed_ref: Any,
+        response_id: str,
+        stream: bool,
+        agent_reference: Any,
+        model: str | None,
+        store: bool,
+        agent_session_id: str | None,
+        conversation_id: str | None,
+        background: bool,
+        history_limit: int,
+        runtime_state: Any,
+    ) -> None:
+        """Run the handler body inside the durable task (Spec 033 §3.2 extract).
+
+        Dispatches to the streaming runner (``stream=True``) or the non-stream
+        background pipeline, translates a graceful-shutdown-without-terminal and a
+        handler ``exit_for_recovery()`` into the framework's task-level recovery
+        sentinel, and always tears down the cancel bridge + process-local refs.
+
+        :param ctx: The durable task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :param record: The execution record.
+        :type record: ResponseExecution | None
+        :param context: The handler-facing response context.
+        :type context: ResponseContext | None
+        :keyword cancellation_signal: The per-request cancellation event.
+        :paramtype cancellation_signal: asyncio.Event
+        :keyword cancel_bridge: The cancel-bridge task to tear down.
+        :paramtype cancel_bridge: asyncio.Task[None] | None
+        :keyword parsed_ref: The parsed request.
+        :paramtype parsed_ref: Any
+        :keyword response_id: The response id.
+        :paramtype response_id: str
+        :keyword stream: Whether the request is streaming.
+        :paramtype stream: bool
+        :keyword agent_reference: The normalized agent reference.
+        :paramtype agent_reference: Any
+        :keyword model: The model name.
+        :paramtype model: str | None
+        :keyword store: Whether the response is stored.
+        :paramtype store: bool
+        :keyword agent_session_id: The resolved session id.
+        :paramtype agent_session_id: str | None
+        :keyword conversation_id: The conversation id.
+        :paramtype conversation_id: str | None
+        :keyword background: Whether the request is background.
+        :paramtype background: bool
+        :keyword history_limit: History fetch limit.
+        :paramtype history_limit: int
+        :keyword runtime_state: The runtime-state tracker.
+        :paramtype runtime_state: Any
+        """
+        from ._orchestrator import (  # pylint: disable=import-outside-toplevel
+            _run_background_non_stream,
+        )
+
+        try:
+            # Dispatch on the request's stream flag: the streaming pipeline goes
+            # through the parent orchestrator's streaming runner (events flow to
+            # record.subject AND the durable stream provider); the non-stream
+            # path drives the response-snapshot-on-terminal pipeline.
+            if stream and self._parent_orchestrator is not None:
+                assert record is not None  # reconstruction guarantees this
+                assert context is not None  # reconstruction guarantees this
+                await self._parent_orchestrator._run_durable_stream_body(
+                    parsed=parsed_ref,
+                    context=context,
+                    cancellation_signal=cancellation_signal,
+                    record=record,
+                    response_id=response_id,
+                    agent_reference=agent_reference,
+                    model=model,
+                    store=store,
+                    agent_session_id=agent_session_id,
+                    conversation_id=conversation_id,
+                    background=background,
+                )
+            else:
+                await _run_background_non_stream(
+                    create_fn=self._create_fn,
+                    parsed=parsed_ref,
+                    context=context,
+                    cancellation_signal=cancellation_signal,
+                    record=record,
+                    response_id=response_id,
+                    agent_reference=agent_reference,
+                    model=model,
+                    provider=self._provider,
+                    store=store,
+                    agent_session_id=agent_session_id,
+                    conversation_id=conversation_id,
+                    history_limit=history_limit,
+                    runtime_state=runtime_state,
+                    runtime_options=self._options,
+                )
+
+            # Spec 023 — handler returned without a terminal AND graceful shutdown
+            # is in progress: use ``ctx.exit_for_recovery()`` so the task stays
+            # ``in_progress`` for next-lifetime recovery (a CancelledError would
+            # delete a one-shot ephemeral record and the recovery scanner would
+            # find nothing).
+            if ctx.shutdown.is_set() and record is not None and record.status in {"queued", "in_progress"}:
+                logger.info(
+                    "Response %s handler returned during shutdown without terminal; "
+                    "calling ctx.exit_for_recovery() so task stays in_progress for recovery.",
+                    response_id,
+                )
+                return await ctx.exit_for_recovery()
+        except ResponseExitForRecovery:
+            # Spec 025 §A.4 — the handler called ``await context.exit_for_recovery()``;
+            # translate to the framework's task-level recovery primitive.
+            logger.info(
+                "Response %s handler invoked context.exit_for_recovery(); calling "
+                "ctx.exit_for_recovery() so task stays in_progress for recovery.",
+                response_id,
+            )
+            return await ctx.exit_for_recovery()
+        finally:
+            if cancel_bridge is not None and not cancel_bridge.done():
+                cancel_bridge.cancel()
+            # (Spec 013 US1(c)) Drop the runtime-refs entry on terminal exit.
+            _RUNTIME_REFS.pop(response_id, None)
 
     async def _execute_in_task(self, ctx: TaskContext[dict[str, Any]]) -> None:
         """Execute the response pipeline inside the task body.
@@ -502,12 +796,48 @@ class DurableResponseOrchestrator:
         4. Suspends (task stays alive for next turn).
         """
         # Import here to avoid circular imports
-        from ._orchestrator import (
-            _run_background_non_stream,
+        from ._durable_input import (
+            DurableResponseInput,
+        )  # pylint: disable=import-outside-toplevel
+        from ._request_parsing import (
+            _resolve_conversation_id,
         )  # pylint: disable=import-outside-toplevel
 
         params = ctx.input
         is_recovery = _is_recovered_entry(ctx.entry_mode)
+
+        # Single deserializer of the persisted boundary (Spec 033 FR-001).
+        # Fail-closed (FR-002f): a malformed / incomplete persisted input MUST
+        # NOT re-invoke the handler with partial state. Rather than letting the
+        # body raise (which could leave a poison, re-firing task and never
+        # settle the client's response), fail-close to a terminal: if we can
+        # still address the client's response (response_id + isolation are in
+        # the raw input), mark it failed in the store; then settle the task.
+        try:
+            durable = DurableResponseInput.from_task_input(params)
+        except ValueError:
+            rid = params.get("response_id") if isinstance(params, dict) else None
+            logger.warning(
+                "Durable input failed validation for task %s (response_id=%s); "
+                "failing closed without re-invoking the handler.",
+                getattr(ctx, "task_id", "?"),
+                rid,
+            )
+            if rid:
+                await self._persist_crash_failed(rid, params if isinstance(params, dict) else {})
+            return None
+        request = durable.request
+
+        # Request-scoped scalars re-derived from the persisted request — pure
+        # sync functions identical to fresh entry; no parallel persisted scalars
+        # to drift (Spec 033 §3.1).
+        _store = True if getattr(request, "store", None) is None else bool(request.store)
+        _stream = bool(getattr(request, "stream", False))
+        _background = bool(getattr(request, "background", False))
+        _model = getattr(request, "model", None) or ""
+        _conversation_id = _resolve_conversation_id(request)
+        _agent_reference = durable.agent_reference
+        _agent_session_id = durable.agent_session_id
 
         # The _responses namespace holds all framework-internal state for
         # this conversation (response_id, background, disposition, etc.).
@@ -519,72 +849,39 @@ class DurableResponseOrchestrator:
         responses_ns = ctx.metadata(_RESPONSES_NS)
 
         # Track response_id in framework metadata
-        response_id = params["response_id"]
+        response_id = durable.response_id
         if responses_ns.get(_RESP_RESPONSE_ID) is None:
             responses_ns[_RESP_RESPONSE_ID] = response_id
 
-        # (Spec 013 US1(c)) Look up in-memory refs cached at start_durable
-        # time. Present for same-process execution; absent on cross-process
-        # recovery (the reconstruction path picks up the slack below). For
-        # backward compat with tests that inject refs directly via
-        # ``ctx.input``, fall back to ``params`` for each ref key.
-        cached_refs = _RUNTIME_REFS.get(response_id, {})
+        # (Spec 033 §3.1) Process-local refs live in a typed ``RuntimeRefs``
+        # cache, never in the serialized input. Build a small key→ref map so the
+        # existing ``_ref("_..._ref")`` call sites stay unchanged. Test-injected
+        # refs passed via ``ctx.input`` are honored as a fallback.
+        _runtime_refs = _RUNTIME_REFS.get(response_id)
+        _ref_map: dict[str, Any] = {}
+        if _runtime_refs is not None:
+            _ref_map = {
+                "_record_ref": _runtime_refs.record,
+                "_context_ref": _runtime_refs.context,
+                "_parsed_ref": _runtime_refs.parsed,
+                "_cancel_ref": _runtime_refs.cancel,
+                "_runtime_state_ref": _runtime_refs.runtime_state,
+            }
 
         def _ref(key: str) -> Any:
-            value = cached_refs.get(key)
+            value = _ref_map.get(key)
             if value is None:
                 value = params.get(key)
             return value
 
-        # Store background flag on first entry for recovery decisions
-        if _RESP_BACKGROUND not in responses_ns:
-            responses_ns[_RESP_BACKGROUND] = params.get("background", True)
-
-        # (Spec 014 FR-003 / FR-004) Stamp the disposition on first entry so
-        # next-lifetime recovery can dispatch correctly without needing to
-        # reconstruct the routing decisions from input params.
-        if _RESP_DISPOSITION not in responses_ns:
-            responses_ns[_RESP_DISPOSITION] = params.get(
-                "disposition", DISPOSITION_REINVOKE
-            )
-            # Force-flush so the disposition is durable BEFORE the body
-            # could be killed — without an explicit flush the recovered
-            # task would default to ``re-invoke`` and skip the mark-failed
-            # branch.
-            try:
-                await responses_ns.flush()
-            except (AttributeError, Exception):  # noqa: BLE001
-                pass  # best-effort — backend may not support explicit flush
-        disposition = _read_disposition(responses_ns)
-
-        # (Spec 014 FR-003 / FR-004) Recovery dispatch via disposition.
-        # mark-failed: handler doesn't re-run; persist server_error to the
-        # response store and complete the task. Covers Rows 2 (bg+store with
-        # durable_background=False) and 3 (fg+store).
-        if is_recovery and disposition == DISPOSITION_MARK_FAILED:
-            logger.info(
-                "Bookkeeping task recovered (response_id=%s, disposition=mark-failed) — marking failed",
-                response_id,
-            )
-            await self._persist_crash_failed(response_id, params)
-            # Spec 023: implicit-suspend via bare ``return None`` (the
-            # framework records the suspend transition automatically for
-            # multi_turn_task bodies). The response store's ``failed``
-            # terminal that we just persisted is the authoritative failure
-            # record per SOT §7.2.
-            return None
-
-        # Backward-compat: the pre-disposition non-background recovery branch.
-        # Tasks created before the disposition key existed default to
-        # DISPOSITION_REINVOKE; for those, preserve the prior behaviour of
-        # marking foreground responses failed on recovery without re-invoking.
-        if is_recovery and not responses_ns.get(_RESP_BACKGROUND, True):
-            logger.info(
-                "Non-background task recovered (response_id=%s) — marking failed",
-                response_id,
-            )
-            await self._persist_crash_failed(response_id, params)
-            # Spec 023: implicit-suspend via bare ``return None`` (see above).
+        if await self._handle_recovery_disposition(
+            responses_ns,
+            disposition_stamp=durable.disposition,
+            is_recovery=is_recovery,
+            response_id=response_id,
+            params=params,
+            background=_background,
+        ):
             return None
 
         # (Spec 024 Phase 2 — bookkeeping unification) On fresh entry, the
@@ -618,12 +915,8 @@ class DurableResponseOrchestrator:
                 runtime_state=self._runtime_state,
                 runtime_options=self._options,
             )
-            assert (
-                record is not None
-            ), "_reconstruct_from_params guarantees non-None record"
-            assert (
-                self._runtime_state is not None
-            ), "runtime_state always wired at orchestrator init"
+            assert record is not None, "_reconstruct_from_params guarantees non-None record"
+            assert self._runtime_state is not None, "runtime_state always wired at orchestrator init"
             await self._runtime_state.add(record)
 
         # After the reconstruction block, context and record are both
@@ -633,66 +926,8 @@ class DurableResponseOrchestrator:
         assert context is not None, "context is non-None after reconstruction"
         assert record is not None, "record is non-None after reconstruction"
 
-        if context is not None:
-            context.is_recovery = is_recovery
-            context.is_steered_turn = ctx.is_steered_turn
-            context.pending_input_count = ctx.pending_input_count
-            # Swap in the handler-facing metadata facade backed by the
-            # task primitive's metadata wrapper. The facade rejects keys
-            # starting with ``_`` so handlers cannot collide with the
-            # framework-reserved ``_responses`` namespace; framework
-            # code reaches that namespace via ``ctx.metadata`` directly.
-            from .._durability_context import (  # pylint: disable=import-outside-toplevel
-                _DeveloperMetadataFacade,
-            )
-
-            context.conversation_chain_metadata = _DeveloperMetadataFacade(ctx.metadata)
-            # (Spec 024 Phase 5 — Proposal #11) Expose the task context
-            # so ``context.exit_for_recovery()`` can delegate to the
-            # framework's recovery sentinel.
-            context._task_context = ctx  # pylint: disable=protected-access
-
-            # (Spec 025 §A.3) On a recovered entry, pre-fetch the persisted
-            # response so the handler can seed its stream from already-
-            # persisted items + the response-level watermark. Entry-only:
-            # never refreshed mid-execution.
-            #
-            # (Spec 026 FR-026-4/5/6) Recovery is only meaningful when the
-            # response was durably created in the store. If it is DEFINITIVELY
-            # absent (typed not-found), the original POST disconnected without
-            # ever returning a response id, so no client can fetch it — drop
-            # the durable execution (do NOT re-invoke the handler). Returning
-            # here settles the task (the recovery scan selects ``in_progress``
-            # records; a settled record is not re-selected), so this is not
-            # retried indefinitely. A transient/ambiguous error is NOT a
-            # definitive absence and MUST NOT drop — proceed with
-            # ``persisted_response=None``.
-            if is_recovery:
-                from ..store._foundry_errors import (  # pylint: disable=import-outside-toplevel
-                    FoundryResourceNotFoundError,
-                )
-
-                try:
-                    _isolation = context.isolation
-                    context.persisted_response = await self._provider.get_response(
-                        context.response_id, isolation=_isolation
-                    )
-                except (KeyError, FoundryResourceNotFoundError):
-                    logger.info(
-                        "Recovery dropped for %s: response was never durably "
-                        "created (definitive not-found); abandoning durable "
-                        "execution without re-invoking the handler.",
-                        context.response_id,
-                    )
-                    return
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.debug(
-                        "persisted_response pre-fetch failed for %s "
-                        "(recovery, transient — not dropping)",
-                        context.response_id,
-                        exc_info=True,
-                    )
-                    context.persisted_response = None
+        if await self._flatten_recovery_context(ctx, context, is_recovery):
+            return
 
         # Bridge task cancellation → response cancellation surface.
         # ``ctx.cancel`` (steering / explicit cancel) and ``ctx.shutdown``
@@ -714,175 +949,123 @@ class DurableResponseOrchestrator:
         #   propagating through ``ctx.cancel`` here. The bridge below
         #   does NOT clobber an existing ``client_cancelled=True``.
         cancellation_signal: asyncio.Event = _ref("_cancel_ref") or asyncio.Event()
-        cancel_bridge: asyncio.Task[None] | None = None
-        if ctx.shutdown.is_set():
-            if context is not None:
-                context.shutdown.set()
-        elif ctx.cancel.is_set():
-            cancellation_signal.set()
-        else:
+        cancel_bridge = self._setup_cancel_bridge(ctx, context, cancellation_signal)
 
-            async def _bridge() -> None:
-                # Race ctx.cancel vs ctx.shutdown — whichever fires first wins.
-                cancel_task = asyncio.create_task(ctx.cancel.wait())
-                shutdown_task = asyncio.create_task(ctx.shutdown.wait())
-                try:
-                    done, pending = await asyncio.wait(
-                        {cancel_task, shutdown_task},
-                        return_when=asyncio.FIRST_COMPLETED,
-                    )
-                    for t in pending:
-                        t.cancel()
-                    if shutdown_task in done and cancel_task not in done:
-                        if context is not None:
-                            context.shutdown.set()
-                    else:
-                        cancellation_signal.set()
-                except asyncio.CancelledError:
-                    cancel_task.cancel()
-                    shutdown_task.cancel()
-                    raise
+        # Return the handler-body result so a graceful-shutdown / handler
+        # ``exit_for_recovery()`` sentinel propagates as the task-body result
+        # (rather than being replaced by a bare implicit-suspend ``None``).
+        return await self._run_handler_in_task(
+            ctx,
+            record,
+            context,
+            cancellation_signal=cancellation_signal,
+            cancel_bridge=cancel_bridge,
+            parsed_ref=_ref("_parsed_ref") or request,
+            response_id=response_id,
+            stream=_stream,
+            agent_reference=_agent_reference,
+            model=_model,
+            store=_store,
+            agent_session_id=_agent_session_id,
+            conversation_id=_conversation_id,
+            background=_background,
+            history_limit=int(self._options.default_fetch_history_count),
+            runtime_state=_ref("_runtime_state_ref") or self._runtime_state,
+        )
 
-            cancel_bridge = asyncio.create_task(_bridge())
+    def build_durable_input(
+        self,
+        ctx: Any,
+        record: "ResponseExecution",
+        *,
+        disposition: str,
+    ) -> "tuple[DurableResponseInput, RuntimeRefs]":
+        """Build the typed durable boundary + process-local refs for a request.
 
-        try:
-            parsed_ref = _ref("_parsed_ref")
-            if parsed_ref is None:
-                # Cross-process recovery: re-parse the serialized payload.
-                parsed_ref = _reconstruct_parsed_from_params(params)
+        (Spec 033 §3.4) Durable-task construction lives on the durability
+        orchestrator, not the response pipeline. The full request is persisted
+        once (it carries ``.input``); request-scoped scalars are re-derived from
+        it on recovery. ``client_headers`` / ``query_parameters`` are persisted so
+        a recovered handler observes the identical request metadata as fresh
+        entry (FR-002b).
 
-            # (Spec 014 FR-002 — close divergence 1)
-            # Dispatch on params["stream"]: the streaming pipeline goes
-            # through the parent orchestrator's streaming runner so events
-            # flow to record.subject (live wire iterator subscribes to it)
-            # AND to the durable stream provider (for GET reconnect after
-            # crash). The non-stream path (existing, default) drives the
-            # response-snapshot-on-terminal pipeline.
-            if params.get("stream") and self._parent_orchestrator is not None:
-                assert record is not None  # reconstruction guarantees this
-                assert context is not None  # reconstruction guarantees this
-                await self._parent_orchestrator._run_durable_stream_body(
-                    parsed=parsed_ref,
-                    context=context,
-                    cancellation_signal=cancellation_signal,
-                    record=record,
-                    response_id=response_id,
-                    agent_reference=params.get("agent_reference"),
-                    model=params.get("model"),
-                    store=bool(params.get("store", True)),
-                    agent_session_id=params.get("agent_session_id"),
-                    conversation_id=params.get("conversation_id"),
-                    background=bool(params.get("background", True)),
-                )
-            else:
-                await _run_background_non_stream(
-                    create_fn=self._create_fn,
-                    parsed=parsed_ref,
-                    context=context,
-                    cancellation_signal=cancellation_signal,
-                    record=record,
-                    response_id=response_id,
-                    agent_reference=params.get("agent_reference"),
-                    model=params.get("model"),
-                    provider=self._provider,
-                    store=params.get("store", True),
-                    agent_session_id=params.get("agent_session_id"),
-                    conversation_id=params.get("conversation_id"),
-                    history_limit=params.get("history_limit", 100),
-                    runtime_state=_ref("_runtime_state_ref") or self._runtime_state,
-                    runtime_options=self._options,
-                )
+        :param ctx: The per-request execution context (``_ExecutionContext``).
+        :type ctx: Any
+        :param record: The mutable execution record.
+        :type record: ResponseExecution
+        :keyword disposition: The recovery disposition (``decide_disposition``).
+        :paramtype disposition: str
+        :returns: ``(durable_input, refs)``.
+        :rtype: tuple[DurableResponseInput, RuntimeRefs]
+        """
+        from ._durable_input import (
+            DurableResponseInput,
+            RuntimeRefs,
+        )  # pylint: disable=import-outside-toplevel
 
-            # Spec 023 — If the handler returned without emitting a
-            # terminal event AND graceful shutdown is in progress,
-            # explicitly signal the framework to leave the task
-            # ``status="in_progress"`` for next-lifetime recovery.
-            #
-            # We use ``ctx.exit_for_recovery()`` (the framework's
-            # graceful-shutdown primitive) rather than raising
-            # ``CancelledError`` because:
-            # - For multi-turn primitives both work, but
-            #   ``exit_for_recovery`` is the documented public API.
-            # - For one-shot (ephemeral) primitives, ``CancelledError``
-            #   triggers the cancel-delete branch in the core manager
-            #   — the record gets DELETED, and the recovery scanner
-            #   finds nothing. ``exit_for_recovery`` releases the lease
-            #   without deleting, so the recovery scanner can re-fire
-            #   the task on the next process startup.
-            #
-            # Without this distinction, Row 1 Path B (graceful shutdown
-            # mid-handler with grace exhausted) silently loses the
-            # response because the one-shot ephemeral record is deleted
-            # on cancel.
-            if (
-                ctx.shutdown.is_set()
-                and record is not None
-                and record.status in {"queued", "in_progress"}
-            ):
-                logger.info(
-                    "Response %s handler returned during shutdown without "
-                    "terminal; calling ctx.exit_for_recovery() so task stays "
-                    "in_progress for next-lifetime recovery.",
-                    response_id,
-                )
-                return await ctx.exit_for_recovery()
-        except ResponseExitForRecovery:
-            # Spec 025 §A.4 — the handler called
-            # ``await context.exit_for_recovery()`` (any handler shape),
-            # which raises ``ResponseExitForRecovery``. Translate it to the
-            # framework's task-level recovery primitive so the task stays
-            # ``in_progress`` for next-lifetime recovery (same disposition as
-            # the implicit shutdown bare-return fallback above).
-            logger.info(
-                "Response %s handler invoked context.exit_for_recovery(); "
-                "calling ctx.exit_for_recovery() so task stays in_progress "
-                "for next-lifetime recovery.",
-                response_id,
-            )
-            return await ctx.exit_for_recovery()
-        finally:
-            if cancel_bridge is not None and not cancel_bridge.done():
-                cancel_bridge.cancel()
-            # (Spec 013 US1(c)) On terminal exit of the task body (handler
-            # returned), drop the runtime-refs entry to release memory. On
-            # suspend the entry would still be useful for in-process resume,
-            # but it'll be rebuilt at the next `start_durable` from the
-            # accept path, so dropping unconditionally is safe.
-            _RUNTIME_REFS.pop(response_id, None)
-
-        # Spec 023: implicit-suspend via bare ``return None``. For
-        # multi_turn_task bodies the framework records the suspend
-        # transition automatically; for one-shot @task bodies the
-        # framework marks the task ``completed`` and deletes the record
-        # (ephemeral). The per-request primitive dispatch in
-        # ``start_durable`` picks the correct primitive so the lifecycle
-        # transition matches the row's expected behaviour without any
-        # explicit ``ctx.suspend(reason=...)`` call here.
-        return None
+        durable_input = DurableResponseInput(
+            request=ctx.parsed,
+            response_id=ctx.response_id,
+            # Disposition rides the input solely to seed the first-entry
+            # ``_responses`` metadata stamp; the runtime routing SOT is the
+            # metadata namespace thereafter (survives cross-process recovery).
+            disposition=disposition,
+            agent_reference=ctx.agent_reference,
+            agent_session_id=ctx.agent_session_id,
+            user_isolation_key=ctx.user_isolation_key,
+            chat_isolation_key=ctx.chat_isolation_key,
+            client_headers=dict(ctx.context.client_headers) if ctx.context is not None else {},
+            query_parameters=dict(ctx.context.query_parameters) if ctx.context is not None else {},
+        )
+        refs = RuntimeRefs(
+            record=record,
+            context=ctx.context,
+            parsed=ctx.parsed,
+            cancel=ctx.cancellation_signal,
+            runtime_state=self._runtime_state,
+        )
+        return durable_input, refs
 
     async def start_durable(
         self,
         *,
         record: "ResponseExecution",
-        ctx_params: dict[str, Any],
+        durable_input: "DurableResponseInput",
+        refs: "RuntimeRefs",
     ) -> bool:
         """Start the durable task for a background response.
 
-        Called by _ResponseOrchestrator.run_background() when durable_background=True.
-        The task takes over responsibility for execution and crash recovery.
+        Called by ``_ResponseOrchestrator._start_durable_background`` when
+        ``durable_background=True``. The task takes over responsibility for
+        execution and crash recovery.
 
         :param record: The mutable execution record (same as non-durable path).
-        :param ctx_params: Execution parameters dict containing all values needed
-            by _run_background_non_stream plus object references.
+        :param durable_input: The typed durable boundary — the ONLY value
+            persisted as durable-task input (Spec 033 §3.1).
+        :param refs: The process-local object references for this response,
+            cached out-of-band (never serialized).
         :returns: True if task was freshly started, False if input was queued
             on an already-active steerable task.
         """
+        from ._request_parsing import (
+            _resolve_conversation_id,
+        )  # pylint: disable=import-outside-toplevel
+
+        request = durable_input.request
+        response_id = durable_input.response_id
+        conversation_id = _resolve_conversation_id(request)
+        previous_response_id = (
+            request.previous_response_id
+            if isinstance(request.previous_response_id, str) and request.previous_response_id
+            else None
+        )
+
         task_id = derive_task_id(
-            agent_name=ctx_params.get("agent_name", "default"),
-            session_id=ctx_params.get("session_id", ""),
-            conversation_id=ctx_params.get("conversation_id"),
-            previous_response_id=ctx_params.get("previous_response_id"),
-            response_id=ctx_params["response_id"],
+            agent_name=getattr(self._options, "agent_name", "default"),
+            session_id=durable_input.agent_session_id or "",
+            conversation_id=conversation_id,
+            previous_response_id=previous_response_id,
+            response_id=response_id,
             steerable=self._options.steerable_conversations,
         )
 
@@ -892,20 +1075,20 @@ class DurableResponseOrchestrator:
         # ``@multi_turn_task`` primitive (suspends between turns; chain
         # semantics) based on the request's conversation_id /
         # previous_response_id / steerable_conversations tuple.
-        picked_primitive = self._pick_primitive(ctx_params)
+        picked_primitive = self._pick_primitive(
+            conversation_id=conversation_id,
+            previous_response_id=previous_response_id,
+        )
         is_multi_turn = picked_primitive is self._multi_turn_task_fn
 
-        # (Spec 013 US1(c)) Split ctx_params into in-memory refs and
-        # JSON-serializable persisted params. The durable task input only
-        # contains the persisted subset; the refs live in the process-
-        # local cache and are looked up by response_id in the task body.
-        response_id = ctx_params["response_id"]
-        refs, persisted = _split_runtime_refs(ctx_params)
+        # (Spec 033 §3.1) The process-local refs are cached out-of-band keyed by
+        # response_id; the durable task input is EXACTLY the typed boundary's
+        # serialization — the single producer (FR-001).
         _RUNTIME_REFS[response_id] = refs
 
         start_kwargs: dict[str, Any] = {
             "task_id": task_id,
-            "input": persisted,
+            "input": durable_input.to_task_input(),
         }
         # Multi-turn chain primitives carry per-turn ``input_id`` for
         # idempotency on response_id, and ``if_last_input_id`` for the
@@ -917,7 +1100,6 @@ class DurableResponseOrchestrator:
         if is_multi_turn:
             if response_id is not None:
                 start_kwargs["input_id"] = response_id
-            previous_response_id = ctx_params.get("previous_response_id")
             if previous_response_id is not None:
                 start_kwargs["if_last_input_id"] = previous_response_id
 
@@ -928,22 +1110,19 @@ class DurableResponseOrchestrator:
         # Under the new model the steerable-input-queuing case does NOT
         # raise TaskConflictError — ``MultiTurnTask(steerable=True).start()``
         # auto-queues against an in-flight chain and returns a TaskRun
-        # whose ``_queued_cancel_callback`` is set (the public-surface
-        # detection signal). See the queued-vs-fresh check below.
+        # whose ``is_queued`` is True (the public-surface detection signal).
+        # See the queued-vs-fresh check below.
         task_run = await picked_primitive.start(**start_kwargs)
         # Store the task run reference on the record for observability
         record.durable_task_run = task_run  # type: ignore[attr-defined]
 
-        # Detect "queued steering input" via the TaskRun's queued-cancel
-        # callback. The framework installs this callback ONLY when the
-        # returned handle represents a queued (not-yet-promoted) input on
-        # a steerable chain — i.e. the caller's request landed mid-turn
-        # and is awaiting drain. Returning False here signals the caller
-        # to dispatch the acceptance hook and return a ``status="queued"``
-        # response envelope to the HTTP caller.
-        # NOTE: this reads a private TaskRun attribute. If the core ever
-        # adds a public ``is_queued`` property, switch to that.
-        is_queued = getattr(task_run, "_queued_cancel_callback", None) is not None
+        # Detect "queued steering input" via the public ``TaskRun.is_queued``
+        # predicate. The framework marks the returned handle as queued ONLY when
+        # it represents a not-yet-promoted input on a steerable chain — i.e. the
+        # caller's request landed mid-turn and is awaiting drain. Returning False
+        # here signals the caller to dispatch the acceptance hook and return a
+        # ``status="queued"`` response envelope to the HTTP caller.
+        is_queued = task_run.is_queued
         return not is_queued  # True = freshly started, False = queued
 
     async def _persist_crash_failed(
@@ -983,8 +1162,8 @@ class DurableResponseOrchestrator:
         from ..models._generated import (
             ResponseObject,
         )  # pylint: disable=import-outside-toplevel
-        from .._response_context import (
-            IsolationContext,
+        from ._durable_input import (
+            isolation_from_params,
         )  # pylint: disable=import-outside-toplevel
         from ..store._foundry_errors import (
             FoundryResourceNotFoundError,
@@ -992,33 +1171,23 @@ class DurableResponseOrchestrator:
 
         _TERMINAL_STATUSES = {"completed", "failed", "cancelled", "incomplete"}
 
-        # ``_context_ref`` is a runtime-only object reference that
-        # ``_split_runtime_refs`` strips from the persisted task input, so it is
-        # ALWAYS absent here on the cross-process recovery this method serves.
-        # Rebuild the isolation context from the persisted isolation keys (same
-        # as ``_reconstruct_from_params``) so the idempotency read and the
-        # failed-marker write both target the client's partition — otherwise the
-        # marker lands in the default/unscoped partition the client never sees.
-        isolation = IsolationContext(
-            user_key=params.get("user_isolation_key"),
-            chat_key=params.get("chat_isolation_key"),
-        )
+        # Runtime-only object references never reach the persisted task input
+        # (Spec 033 §3.1 — they live in ``RuntimeRefs``), so isolation is rebuilt
+        # from the persisted isolation keys via the single derivation site
+        # (Spec 033 FR-003) — same partition the client reads. Otherwise the
+        # failed marker would land in the default/unscoped partition.
+        isolation = isolation_from_params(params)
 
         # (Spec 014 T-066) Race-safe idempotent check. If the store already
         # holds a terminal response for this id, leave it alone — the crash
         # happened after terminal persistence, and overwriting would corrupt
         # the result.
         try:
-            existing = await self._provider.get_response(
-                response_id, isolation=isolation
-            )
+            existing = await self._provider.get_response(response_id, isolation=isolation)
             existing_status = getattr(existing, "status", None) or (
                 existing.get("status") if isinstance(existing, dict) else None
             )
-            if (
-                isinstance(existing_status, str)
-                and existing_status in _TERMINAL_STATUSES
-            ):
+            if isinstance(existing_status, str) and existing_status in _TERMINAL_STATUSES:
                 logger.info(
                     "_persist_crash_failed: response %s already terminal "
                     "(status=%s) — skipping overwrite (race avoidance)",
@@ -1041,9 +1210,7 @@ class DurableResponseOrchestrator:
         )
 
         try:
-            await self._provider.update_response(
-                ResponseObject(failed_response), isolation=isolation
-            )
+            await self._provider.update_response(ResponseObject(failed_response), isolation=isolation)
         except (KeyError, FoundryResourceNotFoundError):
             # Response was never persisted at response.created — try
             # create instead so the failed terminal still lands. The Foundry

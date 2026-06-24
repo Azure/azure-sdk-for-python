@@ -31,8 +31,7 @@ from .models._helpers import get_input_expanded, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core.durable._context import _ExitForRecovery as _CoreExitForRecovery
-    from azure.ai.agentserver.core.durable._context import TaskContext as _CoreTaskContext
+    from azure.ai.agentserver.core.durable import TaskContext as _CoreTaskContext
 
     from .store._base import ResponseProviderProtocol
 

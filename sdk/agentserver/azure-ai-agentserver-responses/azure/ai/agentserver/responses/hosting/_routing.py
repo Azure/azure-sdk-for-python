@@ -276,9 +276,7 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         # Resolve AgentConfig — used for Foundry auto-activation and
         # merging platform env-vars (SSE keep-alive) into runtime options.
-        from azure.ai.agentserver.core._config import (
-            AgentConfig,
-        )  # pylint: disable=import-error,no-name-in-module
+        from azure.ai.agentserver.core import AgentConfig
 
         config = AgentConfig.from_env()
 

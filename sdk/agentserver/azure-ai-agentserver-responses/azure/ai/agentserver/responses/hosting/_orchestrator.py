@@ -1,6 +1,5 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-# pylint: disable=too-many-statements
 """Event-pipeline orchestration for the Responses server.
 
 This module is intentionally free of Starlette imports: it operates purely on
@@ -19,9 +18,9 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
 
 import anyio
 
-from azure.ai.agentserver.core._platform_headers import (
+from azure.ai.agentserver.core.platform_headers import (
     PLATFORM_ERROR_TAG,
-)  # pylint: disable=import-error,no-name-in-module
+)
 from azure.ai.agentserver.core.durable import (
     LastInputIdPreconditionFailed,
     TaskConflictError,
@@ -64,6 +63,7 @@ from ..streaming._sse import (
 )
 from ..streaming._state_machine import EventStreamValidator
 from ._execution_context import _ExecutionContext
+from ._dispatch import decide_disposition
 from ._runtime_state import _RuntimeState
 
 if TYPE_CHECKING:
@@ -72,30 +72,6 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger("azure.ai.agentserver")
-
-
-def _serialize_for_recovery(value: Any) -> Any:
-    """Convert a model or list of models to a JSON-safe representation.
-
-    The durable task input is serialized as JSON. Objects that pass through
-    this helper survive a cross-process task re-fire — used by Spec 013 US1(a)
-    reconstruction.
-
-    :param value: Any object — typically a generated model with ``as_dict``,
-        a list of such models, or a plain value.
-    :type value: Any
-    :returns: A JSON-safe representation (dict, list, str, None, etc.).
-    :rtype: Any
-    """
-    if value is None:
-        return None
-    if isinstance(value, list):
-        return [_serialize_for_recovery(item) for item in value]
-    if isinstance(value, dict):
-        return dict(value)
-    if hasattr(value, "as_dict") and callable(value.as_dict):
-        return value.as_dict()
-    return value
 
 
 _STORAGE_ERROR_MESSAGE = (
@@ -325,16 +301,733 @@ async def _do_checkpoint_persist(
         return last_snapshot
     if snapshot_bytes == last_snapshot:
         return last_snapshot  # idempotent — nothing changed since the last checkpoint
+    result = last_snapshot
     try:
         await provider.update_response(response, isolation=isolation)
-        return snapshot_bytes
+        result = snapshot_bytes
     except Exception as exc:  # pylint: disable=broad-exception-caught
         setattr(exc, PLATFORM_ERROR_TAG, True)
         logger.error("checkpoint persist failed (response_id=%s): %s", response_id, exc, exc_info=True)
-        return last_snapshot
+    return result
 
 
-async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-many-branches
+def _bg_discard_on_client_cancel(record: ResponseExecution, cancellation_signal: asyncio.Event) -> bool:
+    """Force ``cancelled`` mid-loop on a client-initiated cancel (Spec 033 §3.2).
+
+    :param record: The execution record.
+    :type record: ResponseExecution
+    :param cancellation_signal: The cancellation event.
+    :type cancellation_signal: asyncio.Event
+    :returns: True if the caller should ``return`` (discard); False otherwise.
+    :rtype: bool
+    """
+    if not (cancellation_signal.is_set() and record.cancel_requested):
+        return False
+    if record.status not in ("cancelled", "completed", "failed", "incomplete"):
+        record.transition_to("cancelled")
+    return True
+
+
+def _bg_normalize_event(
+    handler_event: Any,
+    *,
+    response_id: str,
+    agent_reference: "AgentReference | dict[str, Any]",
+    model: str | None,
+    agent_session_id: str | None,
+    conversation_id: str | None,
+) -> "generated_models.ResponseStreamEvent":
+    """Coerce, structurally validate, and default-normalise a handler event.
+
+    (Spec 033 §3.2 extract)
+
+    :param handler_event: The raw handler event.
+    :type handler_event: Any
+    :keyword response_id: The response id.
+    :paramtype response_id: str
+    :keyword agent_reference: The normalized agent reference.
+    :paramtype agent_reference: AgentReference | dict[str, Any]
+    :keyword model: The model name.
+    :paramtype model: str | None
+    :keyword agent_session_id: The resolved session id.
+    :paramtype agent_session_id: str | None
+    :keyword conversation_id: The conversation id.
+    :paramtype conversation_id: str | None
+    :returns: The normalised event.
+    :rtype: generated_models.ResponseStreamEvent
+    :raises ValueError: On a B30 structural violation.
+    """
+    coerced = _coerce_handler_event(handler_event)
+    b30_err = _validate_handler_event(coerced)
+    if b30_err:
+        raise ValueError(b30_err)
+    return _apply_stream_event_defaults(
+        coerced,
+        response_id=response_id,
+        agent_reference=agent_reference,
+        model=model,
+        sequence_number=None,
+        agent_session_id=agent_session_id,
+        conversation_id=conversation_id,
+    )
+
+
+def _bg_track_output_count(normalized: "generated_models.ResponseStreamEvent", output_item_count: int) -> int:
+    """Track ``output_item.added`` events and detect direct output manipulation.
+
+    (Spec 033 §3.2 extract) Increments the count for ``output_item.added`` events
+    and raises if a snapshot event reports more output items than were added via
+    builder events.
+
+    :param normalized: The normalised handler event.
+    :type normalized: generated_models.ResponseStreamEvent
+    :param output_item_count: The running count of added output items.
+    :type output_item_count: int
+    :returns: The updated output-item count.
+    :rtype: int
+    :raises ValueError: On an output-item count mismatch.
+    """
+    if normalized.get("type") == generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
+        output_item_count += 1
+    n_type = normalized.get("type", "")
+    if n_type in _RESPONSE_SNAPSHOT_TYPES:
+        n_output = (normalized.get("response") or {}).get("output")
+        if isinstance(n_output, list) and len(n_output) > output_item_count:
+            raise ValueError(
+                f"Output item count mismatch " f"({len(n_output)} vs {output_item_count} output_item.added events)"
+            )
+    return output_item_count
+
+
+async def _bg_handle_first_event(
+    record: ResponseExecution,
+    normalized: "generated_models.ResponseStreamEvent",
+    handler_events: "list[generated_models.ResponseStreamEvent]",
+    *,
+    st: "_BgRunState",
+    context: "ResponseContext | None",
+    store: bool,
+    provider: "ResponseProviderProtocol | None",
+    response_id: str,
+    agent_reference: "AgentReference | dict[str, Any]",
+    model: str | None,
+    agent_session_id: str | None,
+    conversation_id: str | None,
+    history_limit: int,
+) -> "tuple[int, bool]":
+    """Handle the first handler event of a bg non-stream run (Spec 033 §3.2).
+
+    Guards against direct ``response.output`` manipulation (allowing recovery
+    seeding), sets the initial ``response.created`` snapshot, honours a
+    handler-set ``queued`` status, and persists at created time. Records the
+    ``output_item_count`` seed and ``provider_created`` flag onto ``st`` **before**
+    the cancellable ``await asyncio.sleep(0)`` checkpoint, so a ``CancelledError``
+    delivered at that yield cannot lose the ``provider_created`` tracking (which
+    would otherwise force the create branch in terminal persistence).
+
+    :param record: The execution record.
+    :type record: ResponseExecution
+    :param normalized: The normalised first event.
+    :type normalized: generated_models.ResponseStreamEvent
+    :param handler_events: The accumulated events (first already appended).
+    :type handler_events: list[generated_models.ResponseStreamEvent]
+    :keyword st: The mutable bg-run state holder updated in place.
+    :paramtype st: _BgRunState
+    :keyword context: The response context.
+    :paramtype context: ResponseContext | None
+    :keyword store: Whether the response is stored.
+    :paramtype store: bool
+    :keyword provider: The persistence provider.
+    :paramtype provider: ResponseProviderProtocol | None
+    :keyword response_id: The response id.
+    :paramtype response_id: str
+    :keyword agent_reference: The normalized agent reference.
+    :paramtype agent_reference: AgentReference | dict[str, Any]
+    :keyword model: The model name.
+    :paramtype model: str | None
+    :keyword agent_session_id: The resolved session id.
+    :paramtype agent_session_id: str | None
+    :keyword conversation_id: The conversation id.
+    :paramtype conversation_id: str | None
+    :keyword history_limit: History fetch limit.
+    :paramtype history_limit: int
+    :raises ValueError: On direct output manipulation on a fresh entry.
+    """
+    output_item_count = 0
+    #: output manipulation detection on response.created
+    created_response = normalized.get("response") or {}
+    created_output = created_response.get("output")
+    if isinstance(created_output, list) and len(created_output) != 0:
+        # §6 recovery seeding: on a recovered entry the handler legitimately
+        # seeds the stream from context.persisted_response, so response.created
+        # carries the already-persisted items. Treat them as the output baseline.
+        # Only a FRESH entry must not pre-populate output.
+        if context is not None and context.is_recovery:
+            output_item_count = len(created_output)
+        else:
+            raise ValueError(
+                f"Handler directly modified Response.Output "
+                f"(found {len(created_output)} items, expected 0). "
+                f"Use output builder events instead."
+            )
+    st.output_item_count = output_item_count
+
+    # Set initial response snapshot for POST response body without changing
+    # record.status (transition_to manages status lifecycle).
+    _initial_snapshot = _extract_response_snapshot_from_events(
+        handler_events,
+        response_id=response_id,
+        agent_reference=agent_reference,
+        model=model,
+        agent_session_id=agent_session_id,
+        conversation_id=conversation_id,
+    )
+    record.set_response_snapshot(generated_models.ResponseObject(_initial_snapshot))
+    # Honour the handler's initial status (e.g. "queued").
+    if _initial_snapshot.get("status") == "queued":
+        record.status = "queued"  # type: ignore[assignment]
+    # Record provider_created onto ``st`` BEFORE the cancellable sleep(0) below.
+    # If a CancelledError is delivered at that yield, terminal persistence must
+    # still see provider_created=True (the create already landed) and take the
+    # update_response branch rather than re-creating (which would raise
+    # ResponseAlreadyExistsError and diverge the in-memory record).
+    st.provider_created = await _bg_persist_at_created(
+        record,
+        store=store,
+        provider=provider,
+        context=context,
+        response_id=response_id,
+        history_limit=history_limit,
+        initial_snapshot=_initial_snapshot,
+    )
+    record.response_created_signal.set()
+    # Yield to the event loop so run_background's ``await signal.wait()`` can
+    # resume and capture the in_progress snapshot before the handler continues
+    # to terminal state (otherwise a synchronous handler runs straight to
+    # completion and the POST returns "completed" instead of "in_progress").
+    await asyncio.sleep(0)
+
+
+def _bg_resolve_terminal_status(
+    record: ResponseExecution,
+    handler_events: "list[generated_models.ResponseStreamEvent]",
+    *,
+    response_id: str,
+    agent_reference: "AgentReference | dict[str, Any]",
+    model: str | None,
+    agent_session_id: str | None,
+    conversation_id: str | None,
+) -> None:
+    """Resolve and apply the terminal status after the handler loop (Spec 033 §3.2).
+
+    Builds the response snapshot from the accumulated events (or a synthesised
+    fallback) and transitions the record to its terminal status — unless the
+    record was already moved to a terminal state concurrently (e.g. by the
+    in-process shutdown marker), in which case that marker is authoritative.
+
+    :param record: The execution record.
+    :type record: ResponseExecution
+    :param handler_events: The accumulated normalised handler events.
+    :type handler_events: list[generated_models.ResponseStreamEvent]
+    :keyword response_id: The response id.
+    :paramtype response_id: str
+    :keyword agent_reference: The normalized agent reference.
+    :paramtype agent_reference: AgentReference | dict[str, Any]
+    :keyword model: The model name.
+    :paramtype model: str | None
+    :keyword agent_session_id: The resolved session id.
+    :paramtype agent_session_id: str | None
+    :keyword conversation_id: The conversation id.
+    :paramtype conversation_id: str | None
+    """
+    events = (
+        handler_events
+        if handler_events
+        else _build_events(
+            response_id,
+            include_progress=True,
+            agent_reference=agent_reference,
+            model=model,
+        )
+    )
+    response_payload = _extract_response_snapshot_from_events(
+        events,
+        response_id=response_id,
+        agent_reference=agent_reference,
+        model=model,
+        remove_sequence_number=True,
+        agent_session_id=agent_session_id,
+        conversation_id=conversation_id,
+    )
+    # Stamp background so the provider fallback can enforce B1 checks
+    # after eager eviction removes the in-memory record.
+    response_payload["background"] = record.mode_flags.background
+
+    resolved_status = response_payload.get("status")
+    # (Spec 024 Phase 2 — bookkeeping unification) If the record was already
+    # transitioned to a terminal status concurrently (e.g. by the in-process
+    # shutdown marker), do NOT override it with the handler's partial event
+    # sequence — that marker's persistence is authoritative.
+    _TERMINAL_STATES = {"completed", "failed", "cancelled", "incomplete"}
+    if record.status in _TERMINAL_STATES:
+        return  # leave the marker's terminal state intact
+    if record.status != "cancelled":
+        record.set_response_snapshot(generated_models.ResponseObject(response_payload))
+        target = resolved_status if isinstance(resolved_status, str) else "completed"
+        # If still queued, transition through in_progress first so the state
+        # machine stays valid (queued can only reach terminal via in_progress).
+        if record.status == "queued" and target != "in_progress":
+            record.transition_to("in_progress")
+        record.transition_to(cast(ResponseStatus, target))
+
+
+async def _bg_persist_at_created(
+    record: ResponseExecution,
+    *,
+    store: bool,
+    provider: "ResponseProviderProtocol | None",
+    context: "ResponseContext | None",
+    response_id: str,
+    history_limit: int,
+    initial_snapshot: dict[str, Any],
+) -> bool:
+    """Persist (create) the response at ``response.created`` time (Spec 033 §3.2).
+
+    Returns whether the create landed (or the response already existed — the
+    idempotent-recovery case). On failure, marks ``record.persistence_failed`` so
+    the terminal update knows not to attempt ``update_response``. A no-op
+    (returns False) when not storing.
+
+    :param record: The execution record.
+    :type record: ResponseExecution
+    :keyword store: Whether the response is stored.
+    :paramtype store: bool
+    :keyword provider: The persistence provider.
+    :paramtype provider: ResponseProviderProtocol | None
+    :keyword context: The response context (isolation / input items).
+    :paramtype context: ResponseContext | None
+    :keyword response_id: The response id.
+    :paramtype response_id: str
+    :keyword history_limit: History fetch limit.
+    :paramtype history_limit: int
+    :keyword initial_snapshot: The response.created snapshot dict.
+    :paramtype initial_snapshot: dict[str, Any]
+    :returns: ``_provider_created`` — True if the create landed or already existed.
+    :rtype: bool
+    """
+    if not (store and provider is not None):
+        return False
+    _isolation = context.isolation if context else None
+    _response_obj = generated_models.ResponseObject(initial_snapshot)
+    try:
+        _history_ids = (
+            await provider.get_history_item_ids(
+                record.previous_response_id,
+                None,
+                history_limit,
+                isolation=_isolation,
+            )
+            if record.previous_response_id
+            else None
+        )
+        _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
+        await provider.create_response(_response_obj, _resolved_items, _history_ids, isolation=_isolation)
+        return True
+    except ResponseAlreadyExistsError:
+        # Recovery: response was persisted by a prior attempt. The terminal
+        # update_response is the next write. (Spec 013 US1 deliverable (b).)
+        logger.info(
+            "Response %s already exists in store (recovery — swallowed by idempotent create).",
+            response_id,
+        )
+        return True
+    except Exception as persist_exc:  # pylint: disable=broad-exception-caught
+        # §3.3: Phase 1 create failure — mark persistence failed so the terminal
+        # update knows not to attempt update_response.
+        setattr(persist_exc, PLATFORM_ERROR_TAG, True)
+        logger.error(
+            "Phase 1 create_response failed for bg non-stream (response_id=%s): %s",
+            response_id,
+            persist_exc,
+            exc_info=True,
+        )
+        record.persistence_failed = True
+        record.persistence_exception = persist_exc
+        return False
+
+
+def _bg_resolve_cancelled(
+    record: ResponseExecution,
+    *,
+    cancellation_signal: asyncio.Event,
+    context: "ResponseContext | None",
+    first_event_processed: bool,
+    runtime_options: "ResponsesServerOptions | None",
+    response_id: str,
+    agent_reference: "AgentReference | dict[str, Any]",
+    model: str | None,
+) -> bool:
+    """Resolve a ``CancelledError`` raised during bg non-stream processing.
+
+    (Spec 033 §3.2 extract — S-024) Known cancellation (signal set) maps the
+    record's terminal status from the composing-cause flags (client cancel /
+    shutdown / steering); a durable+bg shutdown is left ``in_progress`` for
+    re-entry. An unknown cancel before any events is treated as handler failure.
+
+    :param record: The execution record.
+    :type record: ResponseExecution
+    :keyword cancellation_signal: The cancellation event.
+    :paramtype cancellation_signal: asyncio.Event
+    :keyword context: The response context.
+    :paramtype context: ResponseContext | None
+    :keyword first_event_processed: Whether any handler event was processed.
+    :paramtype first_event_processed: bool
+    :keyword runtime_options: Server runtime options.
+    :paramtype runtime_options: ResponsesServerOptions | None
+    :keyword response_id: The response id.
+    :paramtype response_id: str
+    :keyword agent_reference: The normalized agent reference.
+    :paramtype agent_reference: AgentReference | dict[str, Any]
+    :keyword model: The model name.
+    :paramtype model: str | None
+    :returns: True if the caller should ``return``; False if it should re-raise.
+    :rtype: bool
+    """
+    if cancellation_signal.is_set():
+        _client_cancelled = bool(context.client_cancelled) if context else False
+        _shutdown = bool(context.shutdown.is_set()) if context else False
+        if record.status not in ("cancelled", "completed", "failed", "incomplete"):
+            if _client_cancelled or record.cancel_requested:
+                record.transition_to("cancelled")
+            elif _shutdown:
+                # Durable+bg: leave in_progress for re-entry. Non-durable: fail.
+                _is_durable_bg = (
+                    runtime_options is not None
+                    and runtime_options.durable_background
+                    and record.mode_flags.store
+                    and record.mode_flags.background
+                )
+                if not _is_durable_bg:
+                    record.transition_to("failed")
+            else:
+                # Steering or unknown — mark failed.
+                record.transition_to("failed")
+        if not first_event_processed:
+            record.response_failed_before_events = True
+        record.response_created_signal.set()
+        return True
+    # Unknown CancelledError before any events were yielded means the handler
+    # itself raised it — treat as handler failure.
+    if not first_event_processed:
+        logger.error(
+            "Unknown CancelledError during background processing (response_id=%s)",
+            response_id,
+        )
+        record.set_response_snapshot(
+            _build_failed_response(
+                response_id,
+                agent_reference,
+                model,
+                created_at=context.created_at if context else None,
+            )
+        )
+        record.transition_to("failed")
+        record.response_failed_before_events = True
+        record.response_created_signal.set()
+        return True
+    return False
+
+
+async def _bg_persist_terminal(
+    record: ResponseExecution,
+    *,
+    store: bool,
+    provider: "ResponseProviderProtocol | None",
+    exit_for_recovery: bool,
+    provider_created: bool,
+    context: "ResponseContext | None",
+    response_id: str,
+    agent_reference: "AgentReference | dict[str, Any]",
+    model: str | None,
+    history_limit: int,
+) -> None:
+    """Persist the terminal state of a bg non-stream response (Spec 033 §3.2).
+
+    Update-after-runner for ``store`` responses: updates the persisted snapshot
+    (or creates it when the handler never reached ``response.created``). On a
+    persist failure, marks ``record.persistence_failed`` and replaces the
+    snapshot with a ``storage_error`` ``response.failed``. A no-op when not
+    storing, when deferring to recovery, when cancelled, or with no snapshot.
+
+    :param record: The execution record.
+    :type record: ResponseExecution
+    :keyword store: Whether the response is stored.
+    :paramtype store: bool
+    :keyword provider: The persistence provider.
+    :paramtype provider: ResponseProviderProtocol | None
+    :keyword exit_for_recovery: True when deferring to next-lifetime recovery.
+    :paramtype exit_for_recovery: bool
+    :keyword provider_created: True if ``create_response`` already ran at created.
+    :paramtype provider_created: bool
+    :keyword context: The response context (for isolation / created_at).
+    :paramtype context: ResponseContext | None
+    :keyword response_id: The response id.
+    :paramtype response_id: str
+    :keyword agent_reference: The normalized agent reference.
+    :paramtype agent_reference: AgentReference | dict[str, Any]
+    :keyword model: The model name.
+    :paramtype model: str | None
+    :keyword history_limit: History fetch limit for a late create.
+    :paramtype history_limit: int
+    """
+    if not (
+        store
+        and provider is not None
+        and not exit_for_recovery
+        and record.status not in {"cancelled"}
+        and record.response is not None
+    ):
+        return
+    if record.persistence_failed:
+        # Phase 1 already failed — skip update attempt and apply storage error.
+        storage_error_response = _build_failed_response(
+            response_id,
+            agent_reference,
+            model,
+            created_at=context.created_at if context else None,
+            error_code="storage_error",
+            error_message=_STORAGE_ERROR_MESSAGE,
+        )
+        record.set_response_snapshot(storage_error_response)
+        record.status = "failed"  # type: ignore[assignment]
+        return
+    _isolation = context.isolation if context else None
+    try:
+        if provider_created:
+            await provider.update_response(record.response, isolation=_isolation)
+        else:
+            # Response was never created (handler yielded nothing or failed
+            # before response.created) — create instead of update. Load history
+            # items if previous_response_id is set so the input_items endpoint
+            # can return history + current.
+            _history_ids = (
+                await provider.get_history_item_ids(
+                    record.previous_response_id,
+                    None,
+                    history_limit,
+                    isolation=_isolation,
+                )
+                if record.previous_response_id
+                else None
+            )
+            _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
+            await provider.create_response(record.response, _resolved_items, _history_ids, isolation=_isolation)
+    except Exception as persist_exc:  # pylint: disable=broad-exception-caught
+        setattr(persist_exc, PLATFORM_ERROR_TAG, True)
+        logger.error(
+            "Persistence failed at bg non-stream finalization (response_id=%s): %s",
+            response_id,
+            persist_exc,
+            exc_info=True,
+        )
+        record.persistence_failed = True
+        record.persistence_exception = persist_exc
+        storage_error_response = _build_failed_response(
+            response_id,
+            agent_reference,
+            model,
+            created_at=context.created_at if context else None,
+            error_code="storage_error",
+            error_message=_STORAGE_ERROR_MESSAGE,
+        )
+        record.set_response_snapshot(storage_error_response)
+        record.status = "failed"  # type: ignore[assignment]
+
+
+class _BgRunState:
+    """Mutable loop state for :func:`_run_background_non_stream` (Spec 033 §3.2).
+
+    Bundles the cross-boundary state threaded through the event-drain helper and
+    read by the finalization (handler_events, provider_created, exit_for_recovery)
+    plus the loop-internal accumulators.
+    """
+
+    __slots__ = (
+        "handler_events",
+        "validator",
+        "first_event_processed",
+        "output_item_count",
+        "checkpoint_snapshot",
+        "terminal_seen",
+        "exit_for_recovery",
+        "provider_created",
+    )
+
+    def __init__(self) -> None:
+        self.handler_events: list[generated_models.ResponseStreamEvent] = []
+        self.validator: EventStreamValidator = EventStreamValidator()
+        self.first_event_processed: bool = False
+        self.output_item_count: int = 0
+        self.checkpoint_snapshot: bytes | None = None
+        self.terminal_seen: bool = False
+        self.exit_for_recovery: bool = False
+        self.provider_created: bool = False
+
+
+async def _bg_drain_handler_events(
+    st: "_BgRunState",
+    record: ResponseExecution,
+    create_fn: "Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]]",
+    parsed: CreateResponse,
+    context: "ResponseContext | None",
+    cancellation_signal: asyncio.Event,
+    *,
+    store: bool,
+    provider: "ResponseProviderProtocol | None",
+    response_id: str,
+    agent_reference: "AgentReference | dict[str, Any]",
+    model: str | None,
+    agent_session_id: str | None,
+    conversation_id: str | None,
+    history_limit: int,
+    runtime_options: "ResponsesServerOptions | None",
+) -> bool:
+    """Drive the handler event loop for a bg non-stream run (Spec 033 §3.2).
+
+    Intercepts ``stream.checkpoint()`` events, normalises/validates each event,
+    runs the first-event registration + persistence, and resolves the
+    cancellation / handler-error winddown onto ``record`` / ``st``. Returns True
+    when the caller should ``return`` (discarded / failed-before-events). An
+    unknown ``CancelledError`` is re-raised; ``ResponseExitForRecovery``
+    propagates to the caller.
+
+    :param st: The mutable loop state.
+    :type st: _BgRunState
+    :param record: The execution record.
+    :type record: ResponseExecution
+    :param create_fn: The handler's async generator callable.
+    :type create_fn: Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]]
+    :param parsed: The parsed request.
+    :type parsed: CreateResponse
+    :param context: The response context.
+    :type context: ResponseContext | None
+    :param cancellation_signal: The cancellation event.
+    :type cancellation_signal: asyncio.Event
+    :keyword store: Whether the response is stored.
+    :paramtype store: bool
+    :keyword provider: The persistence provider.
+    :paramtype provider: ResponseProviderProtocol | None
+    :keyword response_id: The response id.
+    :paramtype response_id: str
+    :keyword agent_reference: The normalized agent reference.
+    :paramtype agent_reference: AgentReference | dict[str, Any]
+    :keyword model: The model name.
+    :paramtype model: str | None
+    :keyword agent_session_id: The resolved session id.
+    :paramtype agent_session_id: str | None
+    :keyword conversation_id: The conversation id.
+    :paramtype conversation_id: str | None
+    :keyword history_limit: History fetch limit.
+    :paramtype history_limit: int
+    :keyword runtime_options: Server runtime options.
+    :paramtype runtime_options: ResponsesServerOptions | None
+    :returns: True if the caller should ``return`` immediately.
+    :rtype: bool
+    """
+    try:
+        async for handler_event in _iter_with_winddown(
+            create_fn(parsed, context, cancellation_signal), cancellation_signal
+        ):
+            # Intercept developer ``stream.checkpoint()`` events (spec 025 §A.3):
+            # durably persist (durable background only) and never forward them.
+            if isinstance(handler_event, ResponseCheckpointEvent):
+                st.checkpoint_snapshot = await _do_checkpoint_persist(
+                    handler_event,
+                    provider=provider,
+                    runtime_options=runtime_options,
+                    store=store,
+                    background=record.mode_flags.background,
+                    isolation=context.isolation if context else None,
+                    response_id=response_id,
+                    last_snapshot=st.checkpoint_snapshot,
+                    terminal_seen=st.terminal_seen,
+                )
+                continue
+            # Client-initiated cancel → discard and force cancelled.
+            if _bg_discard_on_client_cancel(record, cancellation_signal):
+                return True
+
+            normalized = _bg_normalize_event(
+                handler_event,
+                response_id=response_id,
+                agent_reference=agent_reference,
+                model=model,
+                agent_session_id=agent_session_id,
+                conversation_id=conversation_id,
+            )
+            st.handler_events.append(normalized)
+            st.validator.validate_next(normalized)
+            if normalized.get("type") in _ResponseOrchestrator._TERMINAL_SSE_TYPES:
+                st.terminal_seen = True
+            if not st.first_event_processed:
+                st.first_event_processed = True
+                await _bg_handle_first_event(
+                    record,
+                    normalized,
+                    st.handler_events,
+                    st=st,
+                    context=context,
+                    store=store,
+                    provider=provider,
+                    response_id=response_id,
+                    agent_reference=agent_reference,
+                    model=model,
+                    agent_session_id=agent_session_id,
+                    conversation_id=conversation_id,
+                    history_limit=history_limit,
+                )
+            else:
+                st.output_item_count = _bg_track_output_count(normalized, st.output_item_count)
+    except asyncio.CancelledError:
+        if _bg_resolve_cancelled(
+            record,
+            cancellation_signal=cancellation_signal,
+            context=context,
+            first_event_processed=st.first_event_processed,
+            runtime_options=runtime_options,
+            response_id=response_id,
+            agent_reference=agent_reference,
+            model=model,
+        ):
+            return True
+        # After events the CancelledError is most likely event-loop / scope
+        # teardown — re-raise so the shielded runner can absorb it.
+        raise
+    except Exception as exc:  # pylint: disable=broad-exception-caught
+        logger.error(
+            "Handler raised during background processing (response_id=%s)",
+            response_id,
+            exc_info=exc,
+        )
+        if record.status != "cancelled":
+            record.set_response_snapshot(
+                _build_failed_response(
+                    response_id,
+                    agent_reference,
+                    model,
+                    created_at=context.created_at if context else None,
+                )
+            )
+            record.transition_to("failed")
+        if not st.first_event_processed:
+            # Mark failure before any events so run_background can return HTTP 500.
+            record.response_failed_before_events = True
+        record.response_created_signal.set()  # unblock run_background on failure
+        return True
+    return False
+
+
+async def _run_background_non_stream(
     *,
     create_fn: Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]],
     parsed: CreateResponse,
@@ -390,407 +1083,76 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
     :rtype: None
     """
     record.transition_to("in_progress")
-    handler_events: list[generated_models.ResponseStreamEvent] = []
-    validator = EventStreamValidator()
-    output_item_count = 0
-    _provider_created = False  # tracks whether create_response was called
-    # Track whether the handler set queued status so we can honour it
-    _handler_initial_status: str | None = None
-    first_event_processed = False
-    # Spec 025 §A.3: developer checkpoint state for this background execution.
-    _checkpoint_last_snapshot: bytes | None = None
-    _terminal_seen = False
-    # Spec 025 §A.4: when the handler defers to next-lifetime recovery via
-    # ``await context.exit_for_recovery()``, the last checkpoint snapshot is
-    # the durable state — the finalization persistence below MUST NOT
-    # overwrite it with the pre-terminal ``record.response``.
-    _exit_for_recovery = False
-
+    st = _BgRunState()
     try:
         try:
-            async for handler_event in _iter_with_winddown(
-                create_fn(parsed, context, cancellation_signal), cancellation_signal
+            if await _bg_drain_handler_events(
+                st,
+                record,
+                create_fn,
+                parsed,
+                context,
+                cancellation_signal,
+                store=store,
+                provider=provider,
+                response_id=response_id,
+                agent_reference=agent_reference,
+                model=model,
+                agent_session_id=agent_session_id,
+                conversation_id=conversation_id,
+                history_limit=history_limit,
+                runtime_options=runtime_options,
             ):
-                # Intercept developer ``stream.checkpoint()`` events (spec 025
-                # §A.3): durably persist (durable background only) and never
-                # forward them into the event pipeline.
-                if isinstance(handler_event, ResponseCheckpointEvent):
-                    _checkpoint_last_snapshot = await _do_checkpoint_persist(
-                        handler_event,
-                        provider=provider,
-                        runtime_options=runtime_options,
-                        store=store,
-                        background=record.mode_flags.background,
-                        isolation=context.isolation,
-                        response_id=response_id,
-                        last_snapshot=_checkpoint_last_snapshot,
-                        terminal_seen=_terminal_seen,
-                    )
-                    continue
-                # Client-initiated cancel (POST /cancel) → discard and force cancelled.
-                # Steering cancel (new turn queued) → let handler wind down and
-                # emit its own terminal status with output items preserved.
-                if cancellation_signal.is_set() and record.cancel_requested:
-                    if record.status not in (
-                        "cancelled",
-                        "completed",
-                        "failed",
-                        "incomplete",
-                    ):
-                        record.transition_to("cancelled")
-                    return
-
-                coerced = _coerce_handler_event(handler_event)
-                b30_err = _validate_handler_event(coerced)
-                if b30_err:
-                    raise ValueError(b30_err)
-                normalized = _apply_stream_event_defaults(
-                    coerced,
-                    response_id=response_id,
-                    agent_reference=agent_reference,
-                    model=model,
-                    sequence_number=None,
-                    agent_session_id=agent_session_id,
-                    conversation_id=conversation_id,
-                )
-                handler_events.append(normalized)
-                validator.validate_next(normalized)
-                if normalized.get("type") in _ResponseOrchestrator._TERMINAL_SSE_TYPES:
-                    _terminal_seen = True
-                if not first_event_processed:
-                    first_event_processed = True
-
-                    #: output manipulation detection on response.created
-                    created_response = normalized.get("response") or {}
-                    created_output = created_response.get("output")
-                    if isinstance(created_output, list) and len(created_output) != 0:
-                        # §6 recovery seeding: on a recovered entry the handler
-                        # legitimately seeds the stream from
-                        # context.persisted_response, so response.created carries
-                        # the already-persisted items. Treat them as the output
-                        # baseline (new output_item.added events accumulate on
-                        # top). Only a FRESH entry must not pre-populate output.
-                        if context is not None and context.is_recovery:
-                            output_item_count = len(created_output)
-                        else:
-                            raise ValueError(
-                                f"Handler directly modified Response.Output "
-                                f"(found {len(created_output)} items, expected 0). "
-                                f"Use output builder events instead."
-                            )
-
-                    # Set initial response snapshot for POST response body without
-                    # changing record.status (transition_to manages status lifecycle)
-                    _initial_snapshot = _extract_response_snapshot_from_events(
-                        handler_events,
-                        response_id=response_id,
-                        agent_reference=agent_reference,
-                        model=model,
-                        agent_session_id=agent_session_id,
-                        conversation_id=conversation_id,
-                    )
-                    record.set_response_snapshot(generated_models.ResponseObject(_initial_snapshot))
-                    # Honour the handler's initial status (e.g. "queued") so the
-                    # POST response body reflects what the handler actually set.
-                    _handler_initial_status = _initial_snapshot.get("status")
-                    if _handler_initial_status == "queued":
-                        record.status = "queued"  # type: ignore[assignment]
-                    # Persist at response.created time for bg+store
-                    if store and provider is not None:
-                        try:
-                            _isolation = context.isolation if context else None
-                            _response_obj = generated_models.ResponseObject(_initial_snapshot)
-                            _history_ids = (
-                                await provider.get_history_item_ids(
-                                    record.previous_response_id,
-                                    None,
-                                    history_limit,
-                                    isolation=_isolation,
-                                )
-                                if record.previous_response_id
-                                else None
-                            )
-                            _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
-                            await provider.create_response(
-                                _response_obj,
-                                _resolved_items,
-                                _history_ids,
-                                isolation=_isolation,
-                            )
-                            _provider_created = True
-                        except ResponseAlreadyExistsError:
-                            # Recovery: response was persisted by a prior attempt.
-                            # The terminal update_response is the next write;
-                            # nothing else to do here. (Spec 013 US1 deliverable (b).)
-                            logger.info(
-                                "Response %s already exists in store (recovery — swallowed by idempotent create).",
-                                response_id,
-                            )
-                            _provider_created = True
-                        except Exception as persist_exc:  # pylint: disable=broad-exception-caught
-                            # §3.3: Phase 1 create failure — mark persistence failed
-                            # so the terminal update knows not to attempt update_response.
-                            setattr(persist_exc, PLATFORM_ERROR_TAG, True)
-                            logger.error(
-                                "Phase 1 create_response failed for bg non-stream (response_id=%s): %s",
-                                response_id,
-                                persist_exc,
-                                exc_info=True,
-                            )
-                            record.persistence_failed = True
-                            record.persistence_exception = persist_exc
-                    record.response_created_signal.set()
-                    # Yield to the event loop so run_background's
-                    # ``await signal.wait()`` can resume and capture the
-                    # in_progress snapshot *before* the handler continues
-                    # to terminal state.  Without this, handlers that yield
-                    # events synchronously (no await between yields) can
-                    # run to completion — including transition_to("completed"),
-                    # persistence, and eager eviction — in a single
-                    # uninterrupted coroutine run, causing the POST response
-                    # to return "completed" instead of "in_progress".
-                    await asyncio.sleep(0)
-                else:
-                    # Track output_item.added events
-                    _item_added = generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
-                    if normalized.get("type") == _item_added.value:
-                        output_item_count += 1
-
-                    #: detect direct Output manipulation on response.* events
-                    n_type = normalized.get("type", "")
-                    if n_type in _RESPONSE_SNAPSHOT_TYPES:
-                        n_response = normalized.get("response") or {}
-                        n_output = n_response.get("output")
-                        if isinstance(n_output, list) and len(n_output) > output_item_count:
-                            raise ValueError(
-                                f"Output item count mismatch "
-                                f"({len(n_output)} vs {output_item_count} output_item.added events)"
-                            )
-        except asyncio.CancelledError:
-            # S-024: Distinguish known cancellation (cancel_signal set) from
-            # unknown.  Known cancellation → inspect the new
-            # composing-cause flags on ``context`` (spec 024 Phase 5
-            # Proposal #11) to determine status.
-            if cancellation_signal.is_set():
-                _client_cancelled = bool(context.client_cancelled) if context else False
-                _shutdown = bool(context.shutdown.is_set()) if context else False
-                if record.status not in (
-                    "cancelled",
-                    "completed",
-                    "failed",
-                    "incomplete",
-                ):
-                    if _client_cancelled or record.cancel_requested:
-                        record.transition_to("cancelled")
-                    elif _shutdown:
-                        # Durable+bg: leave in_progress for re-entry.
-                        # Non-durable: mark failed.
-                        _is_durable_bg = (
-                            runtime_options is not None
-                            and runtime_options.durable_background
-                            and record.mode_flags.store
-                            and record.mode_flags.background
-                        )
-                        if not _is_durable_bg:
-                            record.transition_to("failed")
-                    else:
-                        # Steering or unknown — mark failed.
-                        record.transition_to("failed")
-                if not first_event_processed:
-                    record.response_failed_before_events = True
-                record.response_created_signal.set()
                 return
-            # S-024: Unknown CancelledError before any events were yielded
-            # means the handler itself raised it — treat as handler failure.
-            if not first_event_processed:
-                logger.error(
-                    "Unknown CancelledError during background processing (response_id=%s)",
-                    response_id,
-                )
-                record.set_response_snapshot(
-                    _build_failed_response(
-                        response_id,
-                        agent_reference,
-                        model,
-                        created_at=context.created_at,
-                    )
-                )
-                record.transition_to("failed")
-                record.response_failed_before_events = True
-                record.response_created_signal.set()
-                return
-            # After events have been processed the CancelledError is most
-            # likely from event-loop / scope teardown — re-raise so the
-            # shielded runner can absorb it.
-            raise
         except ResponseExitForRecovery:
             # Spec 025 §A.4: the handler deferred to next-lifetime recovery.
             # Leave the last checkpointed snapshot as the durable state and
             # re-raise so the durable task body performs the recovery
             # translation. The finally block must NOT persist the
             # (pre-terminal) record.response over the checkpoint.
-            _exit_for_recovery = True
+            st.exit_for_recovery = True
             record.response_created_signal.set()
             raise
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            logger.error(
-                "Handler raised during background processing (response_id=%s)",
-                response_id,
-                exc_info=exc,
-            )
-            if record.status != "cancelled":
-                record.set_response_snapshot(
-                    _build_failed_response(
-                        response_id,
-                        agent_reference,
-                        model,
-                        created_at=context.created_at,
-                    )
-                )
-                record.transition_to("failed")
-            if not first_event_processed:
-                # Mark failure before any events so run_background can return HTTP 500
-                record.response_failed_before_events = True
-            record.response_created_signal.set()  # unblock run_background on failure
-            return
 
-        # Client-initiated cancel: force cancelled status.
-        # Steering cancel: handler already emitted events with its chosen
-        # terminal status — fall through to normal event extraction.
-        if cancellation_signal.is_set() and record.cancel_requested:
-            if record.status not in ("cancelled", "completed", "failed", "incomplete"):
-                record.transition_to("cancelled")
+        # Client-initiated cancel: force cancelled status. Steering cancel:
+        # the handler already emitted events — fall through to terminal extraction.
+        if _bg_discard_on_client_cancel(record, cancellation_signal):
             record.response_created_signal.set()  # unblock run_background on cancellation
             return
 
-        events = (
-            handler_events
-            if handler_events
-            else _build_events(
-                response_id,
-                include_progress=True,
-                agent_reference=agent_reference,
-                model=model,
-            )
-        )
-        response_payload = _extract_response_snapshot_from_events(
-            events,
+        _bg_resolve_terminal_status(
+            record,
+            st.handler_events,
             response_id=response_id,
             agent_reference=agent_reference,
             model=model,
-            remove_sequence_number=True,
             agent_session_id=agent_session_id,
             conversation_id=conversation_id,
         )
-        # Stamp background so the provider fallback can enforce B1 checks
-        # after eager eviction removes the in-memory record.
-        response_payload["background"] = record.mode_flags.background
-
-        resolved_status = response_payload.get("status")
-        # (Spec 024 Phase 2 — bookkeeping unification) If the record was
-        # already transitioned to a terminal status concurrently (e.g.
-        # by the in-process shutdown marker in
-        # ``_endpoint_handler.handle_shutdown``), do NOT override that
-        # terminal with the handler's partial event sequence. Attempting
-        # ``record.transition_to("in_progress")`` from "failed" raises
-        # ``InvalidStatusTransition`` and surfaces as a TaskFailed in
-        # the durable task framework. Skip the transition; the shutdown
-        # marker's persistence is authoritative.
-        _TERMINAL_STATES = {"completed", "failed", "cancelled", "incomplete"}
-        if record.status in _TERMINAL_STATES:
-            pass  # leave the marker's terminal state intact
-        elif record.status != "cancelled":
-            record.set_response_snapshot(generated_models.ResponseObject(response_payload))
-            target = resolved_status if isinstance(resolved_status, str) else "completed"
-            # If still queued, transition through in_progress first so the
-            # state machine stays valid (queued can only reach terminal
-            # states via in_progress).
-            if record.status == "queued" and target != "in_progress":
-                record.transition_to("in_progress")
-            record.transition_to(cast(ResponseStatus, target))
     finally:
         # Always unblock run_background (idempotent if already set)
         record.response_created_signal.set()
         # Stamp mode flags so the provider fallback can enforce B1/B2 checks
-        # after eager eviction removes the in-memory record.  This covers
-        # all code paths (normal completion, handler failure, cancellation).
+        # after eager eviction removes the in-memory record.
         if record.response is not None:
             record.response.background = record.mode_flags.background
-        # Persist terminal state update via provider (bg non-stream: update after runner completes)
-        # §3.5: Persistence failure sets persistence_failed on the record and
-        # replaces the snapshot with storage_error so GET returns the failure.
-        # Spec 025 §A.4: skip when deferring to recovery — the last checkpoint
-        # snapshot is authoritative and must not be clobbered.
-        if (
-            store
-            and provider is not None
-            and not _exit_for_recovery
-            and record.status not in {"cancelled"}
-            and record.response is not None
-        ):
-            if record.persistence_failed:
-                # Phase 1 already failed — skip update attempt and apply storage error.
-                storage_error_response = _build_failed_response(
-                    response_id,
-                    agent_reference,
-                    model,
-                    created_at=context.created_at if context else None,
-                    error_code="storage_error",
-                    error_message=_STORAGE_ERROR_MESSAGE,
-                )
-                record.set_response_snapshot(storage_error_response)
-                record.status = "failed"  # type: ignore[assignment]
-            else:
-                _isolation = context.isolation if context else None
-                try:
-                    if _provider_created:
-                        await provider.update_response(record.response, isolation=_isolation)
-                    else:
-                        # Response was never created (handler yielded nothing or
-                        # failed before response.created) — create instead of update.
-                        # Load history items if previous_response_id is set so the
-                        # input_items endpoint can return history + current.
-                        # (Spec 024 Phase 2 — pre-existing bug surfaced by the
-                        # unified Row 3 path which exercises this no-events branch
-                        # for handlers like _noop_response_handler.)
-                        _history_ids = (
-                            await provider.get_history_item_ids(
-                                record.previous_response_id,
-                                None,
-                                history_limit,
-                                isolation=_isolation,
-                            )
-                            if record.previous_response_id
-                            else None
-                        )
-                        _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
-                        await provider.create_response(
-                            record.response, _resolved_items, _history_ids, isolation=_isolation
-                        )
-                except Exception as persist_exc:  # pylint: disable=broad-exception-caught
-                    setattr(persist_exc, PLATFORM_ERROR_TAG, True)
-                    logger.error(
-                        "Persistence failed at bg non-stream finalization (response_id=%s): %s",
-                        response_id,
-                        persist_exc,
-                        exc_info=True,
-                    )
-                    record.persistence_failed = True
-                    record.persistence_exception = persist_exc
-                    # Replace snapshot with storage_error response.failed
-                    storage_error_response = _build_failed_response(
-                        response_id,
-                        agent_reference,
-                        model,
-                        created_at=context.created_at if context else None,
-                        error_code="storage_error",
-                        error_message=_STORAGE_ERROR_MESSAGE,
-                    )
-                    record.set_response_snapshot(storage_error_response)
-                    record.status = "failed"  # type: ignore[assignment]
-        # Eager eviction: free memory once terminal state is reached (or store=False).
-        # Skip eviction when persistence failed — the in-memory record is the
-        # only remaining source of truth for GET.
+        # Persist terminal state update via provider (bg non-stream). §3.5:
+        # persistence failure sets persistence_failed + storage_error; §A.4:
+        # skip when deferring to recovery so the checkpoint is not clobbered.
+        await _bg_persist_terminal(
+            record,
+            store=store,
+            provider=provider,
+            exit_for_recovery=st.exit_for_recovery,
+            provider_created=st.provider_created,
+            context=context,
+            response_id=response_id,
+            agent_reference=agent_reference,
+            model=model,
+            history_limit=history_limit,
+        )
+        # Eager eviction: free memory once terminal (or store=False). Skip when
+        # persistence failed — the in-memory record is the only GET source.
         if runtime_state is not None and record.is_terminal and not record.persistence_failed:
             await runtime_state.try_evict(response_id)
 
@@ -930,7 +1292,7 @@ class _PipelineState:
         self.last_persisted_snapshot: bytes | None = None
 
 
-class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
+class _ResponseOrchestrator:
     """Event-pipeline orchestrator for the Responses API.
 
     Handles the business logic for streaming, synchronous, and background
@@ -1222,6 +1584,53 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # normal transitions.
         record.status = "failed"  # type: ignore[assignment]
 
+    async def _maybe_override_to_cancelled(
+        self,
+        ctx: _ExecutionContext,
+        state: _PipelineState,
+        response_payload: dict[str, Any],
+        status: "ResponseStatus",
+    ) -> "tuple[dict[str, Any], ResponseStatus]":
+        """Force a ``client_cancelled`` response's terminal to ``cancelled``.
+
+        (Spec 033 §3.2 extract — B11/B17) Applies to both the ``/cancel`` API
+        endpoint and non-bg POST client disconnect: without this override a
+        handler that emits its own ``completed`` AFTER seeing the cancellation
+        signal would have its terminal honored even though the framework promised
+        ``cancelled`` to the client. Returns the (possibly overridden)
+        ``(response_payload, status)`` and replaces ``state.pending_terminal``.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :param response_payload: The resolved response snapshot dict.
+        :type response_payload: dict[str, Any]
+        :param status: The resolved terminal status.
+        :type status: ResponseStatus
+        :return: The (possibly overridden) ``(response_payload, status)``.
+        :rtype: tuple[dict[str, Any], ResponseStatus]
+        """
+        _client_cancelled = bool(ctx.context.client_cancelled) if ctx.context else False
+        if not (_client_cancelled and status != "cancelled"):
+            return response_payload, status
+        cancelled_response = _build_cancelled_response(
+            ctx.response_id,
+            ctx.agent_reference,
+            ctx.model,
+            created_at=ctx.context.created_at if ctx.context else None,
+        )
+        response_payload = cancelled_response.as_dict()
+        response_payload["background"] = ctx.background
+        # Replace state.pending_terminal with the cancel-terminal event so
+        # the SSE wire and persistence see the overridden status.
+        override_event: dict[str, Any] = {
+            "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+            "response": response_payload,
+        }
+        state.pending_terminal = await self._normalize_and_append(ctx, state, override_event)
+        return response_payload, "cancelled"
+
     async def _persist_and_resolve_terminal(
         self, ctx: _ExecutionContext, state: _PipelineState, record: ResponseExecution
     ) -> generated_models.ResponseStreamEvent:
@@ -1275,30 +1684,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         # B11 + B17: client_cancelled overrides the handler's terminal to
         # ``cancelled`` regardless of what the handler ultimately emitted.
-        # Applies to both the ``/cancel`` API endpoint (sets client_cancelled
-        # via the cancel handler) and non-bg POST client disconnect (sets
-        # client_cancelled via the disconnect monitor). Without this
-        # override a handler that emits its own ``completed`` AFTER seeing
-        # the cancellation signal would have its terminal honored even
-        # though the framework promised ``cancelled`` to the client.
-        _client_cancelled = bool(ctx.context.client_cancelled) if ctx.context else False
-        if _client_cancelled and status != "cancelled":
-            cancelled_response = _build_cancelled_response(
-                ctx.response_id,
-                ctx.agent_reference,
-                ctx.model,
-                created_at=ctx.context.created_at if ctx.context else None,
-            )
-            response_payload = cancelled_response.as_dict()
-            response_payload["background"] = ctx.background
-            status = "cancelled"
-            # Replace state.pending_terminal with the cancel-terminal event so
-            # the SSE wire and persistence see the overridden status.
-            override_event: dict[str, Any] = {
-                "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-                "response": response_payload,
-            }
-            state.pending_terminal = await self._normalize_and_append(ctx, state, override_event)
+        response_payload, status = await self._maybe_override_to_cancelled(ctx, state, response_payload, status)
 
         # Guard: if the cancel endpoint already transitioned this record to a
         # terminal state (race between cancel endpoint and B11), skip the
@@ -1620,7 +2006,132 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             terminal_seen=state.pending_terminal is not None,
         )
 
-    async def _process_handler_events(  # pylint: disable=too-many-return-statements,too-many-branches
+    async def _emit_standalone_error(
+        self,
+        ctx: _ExecutionContext,
+        *,
+        message: str = "An internal server error occurred.",
+        code: str | None = None,
+    ) -> generated_models.ResponseStreamEvent:
+        """Build a standalone ``error`` event and emit it to the wire stream.
+
+        Shared by the pre-creation error paths (B8 / B30 / first-event-contract):
+        each constructs the same ``error`` event shape and, for store+stream
+        rows, also publishes it to the per-response wire stream so the live
+        iterator sees it. Returns the event for the caller to ``yield``.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :keyword message: The client-facing error message.
+        :paramtype message: str
+        :keyword code: The optional error code.
+        :paramtype code: str | None
+        :returns: The constructed ``error`` event.
+        :rtype: generated_models.ResponseStreamEvent
+        """
+        event = construct_event_model(
+            {
+                "type": "error",
+                "message": message,
+                "param": None,
+                "code": code,
+                "sequence_number": 0,
+            }
+        )
+        if ctx.store and ctx.stream:
+            _err_stream = await streams.get_or_create(ctx.response_id)
+            await self._safe_emit(_err_stream, event)
+        return event
+
+    async def _acquire_first_event(
+        self,
+        ctx: _ExecutionContext,
+        state: _PipelineState,
+        handler_iterator: AsyncIterator[generated_models.ResponseStreamEvent],
+    ) -> "tuple[generated_models.ResponseStreamEvent | None, list[generated_models.ResponseStreamEvent]]":
+        """Acquire the handler's first event, handling the pre-creation paths.
+
+        (Spec 033 §3.2 extract) Returns ``(first_raw, pre_events)``. On success
+        ``first_raw`` is the first handler event and ``pre_events`` is empty. On an
+        empty handler / pre-creation cancellation / pre-creation error
+        (B8 / B17 / S-024) ``first_raw`` is ``None`` (the caller stops the
+        pipeline) and ``pre_events`` holds the contract-mandated fallback /
+        ``error`` events for the caller to yield; ``state.pending_terminal`` /
+        ``state.captured_error`` may be set. An unknown ``CancelledError`` is
+        re-raised.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :param handler_iterator: The handler's event iterator.
+        :type handler_iterator: AsyncIterator[ResponseStreamEvent]
+        :returns: ``(first_raw_or_None, pre_events)``.
+        :rtype: tuple[ResponseStreamEvent | None, list[ResponseStreamEvent]]
+        """
+        pre: list[generated_models.ResponseStreamEvent] = []
+        try:
+            return await handler_iterator.__anext__(), pre
+        except StopAsyncIteration:
+            # B17: Handler exited without yielding after cancellation — treat as
+            # a cancellation (not an empty handler) so run_sync raises and the
+            # response is never persisted.
+            if ctx.cancellation_signal.is_set():
+                state.captured_error = asyncio.CancelledError()
+                return None, pre
+            # Handler yielded nothing: synthesise fallback lifecycle events.
+            fallback_events = _build_events(
+                ctx.response_id,
+                include_progress=True,
+                agent_reference=ctx.agent_reference,
+                model=ctx.model,
+            )
+            for event in fallback_events:
+                # Re-stamp with the monotonic ``state.next_seq`` (defaults seq=0).
+                event["sequence_number"] = state.next_seq
+                state.handler_events.append(event)
+                state.next_seq += 1
+                # For store + (bg or stream) the canonical record isn't registered
+                # yet — bind the per-response stream so the wire iterator sees the
+                # fallback events. Skip terminal (the caller emits the resolved one).
+                if ctx.store and (ctx.background or ctx.stream) and event.get("type") not in self._TERMINAL_SSE_TYPES:
+                    _fallback_stream = await streams.get_or_create(ctx.response_id)
+                    await self._safe_emit(_fallback_stream, event)
+                if event.get("type") in self._TERMINAL_SSE_TYPES:
+                    state.pending_terminal = event
+                else:
+                    pre.append(event)
+            return None, pre
+        except asyncio.CancelledError:
+            # S-024: Known cancellation before first event.
+            if ctx.cancellation_signal.is_set():
+                state.captured_error = asyncio.CancelledError()
+                pre.append(
+                    construct_event_model(
+                        {
+                            "type": "error",
+                            "message": "An internal server error occurred.",
+                            "param": None,
+                            "code": None,
+                            "sequence_number": 0,
+                        }
+                    )
+                )
+                return None, pre
+            # Unknown CancelledError (e.g. event-loop teardown) — re-raise.
+            raise
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            # B8: Pre-creation error → standalone `error` event only.
+            logger.error(
+                "Handler raised before response.created (response_id=%s)",
+                ctx.response_id,
+                exc_info=exc,
+            )
+            state.captured_error = exc
+            pre.append(await self._emit_standalone_error(ctx))
+            return None, pre
+
+    async def _process_handler_events(
         self,
         ctx: _ExecutionContext,
         state: _PipelineState,
@@ -1661,96 +2172,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # BEFORE any coercion/validation/forwarding: they are durably persisted
         # by the orchestrator and never reach the wire or the event taxonomy.
         handler_iterator = self._intercept_checkpoints(ctx, state, handler_iterator)
-        # --- First event ---
-        try:
-            first_raw = await handler_iterator.__anext__()
-        except StopAsyncIteration:
-            # B17: Handler exited without yielding after cancellation — treat
-            # as a cancellation (not an empty handler) so that run_sync raises
-            # _HandlerError and the response is never persisted.
-            if ctx.cancellation_signal.is_set():
-                state.captured_error = asyncio.CancelledError()
-                return
-            # Handler yielded nothing: synthesise fallback lifecycle events.
-            fallback_events = _build_events(
-                ctx.response_id,
-                include_progress=True,
-                agent_reference=ctx.agent_reference,
-                model=ctx.model,
-            )
-            for event in fallback_events:
-                # Re-stamp with the monotonic ``state.next_seq`` —
-                # _build_events stamps seq=0 for every event by default,
-                # which breaks the streaming contract that seq must
-                # monotonically increase. The ResponseStreamEvent model
-                # supports item assignment so we mutate in-place without
-                # breaking model identity.
-                event["sequence_number"] = state.next_seq
-                state.handler_events.append(event)
-                state.next_seq += 1
-                # For bg+store paths AND unified Row 3 stream (fg+store+stream=T),
-                # the canonical record (and its ``subject``) hasn't been
-                # registered yet — the synthesised lifecycle bypasses
-                # ``_register_bg_execution``. Bind the per-response stream
-                # directly so the live wire iterator (subscribed via
-                # ``streams.get_or_create(response_id)``) sees the fallback
-                # events. Skip terminal here — the caller emits the resolved
-                # terminal via _persist_and_resolve_terminal so on persistence
-                # failure the storage_error replacement lands instead of the
-                # original terminal.
-                # (Spec 024 Phase 2) Condition broadened from
-                # `ctx.background and ctx.store` to `ctx.store and ctx.stream`
-                # so Row 3 stream gets fallback events on wire_stream too.
-                if ctx.store and (ctx.background or ctx.stream) and event.get("type") not in self._TERMINAL_SSE_TYPES:
-                    _fallback_stream = await streams.get_or_create(ctx.response_id)
-                    await self._safe_emit(_fallback_stream, event)
-                if event.get("type") in self._TERMINAL_SSE_TYPES:
-                    state.pending_terminal = event
-                else:
-                    yield event
-            return
-        except asyncio.CancelledError:
-            # S-024: Known cancellation before first event.
-            if ctx.cancellation_signal.is_set():
-                state.captured_error = asyncio.CancelledError()
-                yield construct_event_model(
-                    {
-                        "type": "error",
-                        "message": "An internal server error occurred.",
-                        "param": None,
-                        "code": None,
-                        "sequence_number": 0,
-                    }
-                )
-                return
-            # Unknown CancelledError (e.g. event-loop teardown) — re-raise.
-            raise
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            # B8: Pre-creation error → emit a standalone `error` event only.
-            # No response.created precedes it; this is the contract-mandated shape.
-            logger.error(
-                "Handler raised before response.created (response_id=%s)",
-                ctx.response_id,
-                exc_info=exc,
-            )
-            state.captured_error = exc
-            _b8_event = construct_event_model(
-                {
-                    "type": "error",
-                    "message": "An internal server error occurred.",
-                    "param": None,
-                    "code": None,
-                    "sequence_number": 0,
-                }
-            )
-            # (Spec 024 Phase 2) For unified store-stream paths the live
-            # wire iterator subscribes to wire_stream, not to the yielded
-            # events from this method — also emit the error to wire_stream
-            # so the wire iterator sees it.
-            if ctx.store and ctx.stream:
-                _err_stream = await streams.get_or_create(ctx.response_id)
-                await self._safe_emit(_err_stream, _b8_event)
-            yield _b8_event
+        # --- First event acquisition (StopAsyncIteration / cancel / B8) ---
+        first_raw, _pre_events = await self._acquire_first_event(ctx, state, handler_iterator)
+        for _ev in _pre_events:
+            yield _ev
+        if first_raw is None:
             return
 
         # Normalise the first event manually (before _normalize_and_append so we
@@ -1766,19 +2192,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 b30_violation,
             )
             state.captured_error = ValueError(b30_violation)
-            _b30_event = construct_event_model(
-                {
-                    "type": "error",
-                    "message": "An internal server error occurred.",
-                    "param": None,
-                    "code": None,
-                    "sequence_number": 0,
-                }
-            )
-            if ctx.store and ctx.stream:
-                _err_stream = await streams.get_or_create(ctx.response_id)
-                await self._safe_emit(_err_stream, _b30_event)
-            yield _b30_event
+            yield await self._emit_standalone_error(ctx)
             return
 
         first_normalized = _apply_stream_event_defaults(
@@ -1803,19 +2217,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 violation,
             )
             state.captured_error = RuntimeError(violation)
-            _fec_event = construct_event_model(
-                {
-                    "type": "error",
-                    "message": "An internal server error occurred.",
-                    "param": None,
-                    "code": None,
-                    "sequence_number": 0,
-                }
-            )
-            if ctx.store and ctx.stream:
-                _err_stream = await streams.get_or_create(ctx.response_id)
-                await self._safe_emit(_err_stream, _fec_event)
-            yield _fec_event
+            yield await self._emit_standalone_error(ctx)
             return
 
         state.handler_events.append(first_normalized)
@@ -1850,92 +2252,134 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             state.pending_terminal = await self._make_failed_event(ctx, state)
             return
 
-        # (Spec 024 Phase 2) bg+store OR fg+store+stream: create and register
-        # the execution record after the first event so events fan out to the
-        # per-response stream (wire_stream subscribers in _live_stream see
-        # them). Pre-Phase-2 only bg+store used this path; unified Row 3
-        # stream (fg+store+stream=T) also subscribes to wire_stream and
-        # needs the registration.
-        if ctx.store and (ctx.background or ctx.stream):
-            await self._register_bg_execution(ctx, state, first_normalized)
-            # Phase 1 (start) persistence failure splits two ways by
-            # request shape:
-            #
-            # 1. Non-bg streaming (Row 3 stream=true): emit the standard
-            #    response.created → response.failed sequence so the SSE
-            #    contract (B27 first-event invariant) is respected. The
-            #    response.failed envelope carries the storage_error code
-            #    so the GET fallback path can synthesise the same shape.
-            #
-            # 2. Bg+stream (Row 1/2 stream=true): emit a standalone error
-            #    event (no response.created). The HTTP request has not
-            #    yet returned the queued response object, so swallowing
-            #    the failure into a response.failed terminal would
-            #    promise persistence the storage layer never delivered.
-            #    Clients see the error event and stop; subsequent GETs
-            #    return 404.
-            if state.bg_record is not None and state.bg_record.persistence_failed:
-                state.captured_error = state.bg_record.persistence_exception or RuntimeError("Phase 1 create failed")
-                if not ctx.background:
-                    # Non-bg streaming: emit response.created → response.failed.
-                    storage_error_response = _build_failed_response(
-                        ctx.response_id,
-                        ctx.agent_reference,
-                        ctx.model,
-                        created_at=ctx.context.created_at if ctx.context else None,
-                        error_code="storage_error",
-                        error_message=_STORAGE_ERROR_MESSAGE,
-                    )
-                    _wire_stream = await streams.get_or_create(ctx.response_id)
-                    await self._safe_emit(_wire_stream, first_normalized)
-                    yield first_normalized
-                    # Build, validate, and APPEND the terminal to
-                    # ``state.handler_events`` BEFORE emitting/yielding it.
-                    # This closes the window where a generator close after
-                    # yield-but-before-append would leave the event list
-                    # holding only ``response.created`` —
-                    # ``_finalize_stream`` Path B rebuilds the snapshot
-                    # from the event list, and would regress
-                    # ``status="failed"`` back to ``status="in_progress"``.
-                    failed_event = {
-                        "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-                        "response": storage_error_response.as_dict(),
-                    }
-                    failed_normalized = await self._normalize_and_append(ctx, state, failed_event)
-                    # Stamp the in-memory record with the terminal snapshot
-                    # + status BEFORE emitting the wire/yield, so a GET that
-                    # races the post-yield finalize observes a consistent
-                    # ``status=failed error.code=storage_error`` envelope.
-                    if state.bg_record is not None:
-                        state.bg_record.set_response_snapshot(storage_error_response)
-                        state.bg_record.status = "failed"  # type: ignore[assignment]
-                    await self._safe_emit(_wire_stream, failed_normalized)
-                    yield failed_normalized
-                    return
-                # Bg+stream: standalone error event (no response.created).
-                await self._runtime_state.try_evict(ctx.response_id)
-                error_event = construct_event_model(
-                    {
-                        "type": "error",
-                        "message": _STORAGE_ERROR_MESSAGE,
-                        "param": None,
-                        "code": "storage_error",
-                        "sequence_number": 0,
-                    }
-                )
-                _err_stream = await streams.get_or_create(ctx.response_id)
-                await self._safe_emit(_err_stream, error_event)
-                yield error_event
-                return
+        _halt, _store_events = await self._register_and_handle_storage_failure(ctx, state, first_normalized)
+        for _ev in _store_events:
+            yield _ev
+        if _halt:
+            return
 
         yield first_normalized
 
+        async for _event in self._drain_remaining_events(ctx, state, handler_iterator, _seeded_output_count):
+            yield _event
+
+    async def _register_and_handle_storage_failure(
+        self,
+        ctx: _ExecutionContext,
+        state: _PipelineState,
+        first_normalized: generated_models.ResponseStreamEvent,
+    ) -> "tuple[bool, list[generated_models.ResponseStreamEvent]]":
+        """Register the bg/stream execution record and handle a start-time
+        persistence failure (Spec 033 §3.2 extract).
+
+        For store + (background or stream) rows, registers the execution record
+        then, if the start-time persist failed, builds the storage-error winddown
+        (response.created→failed for non-bg streaming, or a standalone error for
+        bg+stream). Returns ``(halt, events)`` — ``halt`` True means the caller
+        stops the pipeline; ``events`` are for the caller to yield. A no-op
+        ``(False, [])`` for other rows.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :param first_normalized: The normalised first event.
+        :type first_normalized: generated_models.ResponseStreamEvent
+        :returns: ``(halt, winddown_events)``.
+        :rtype: tuple[bool, list[ResponseStreamEvent]]
+        """
+        evs: list[generated_models.ResponseStreamEvent] = []
+        if not (ctx.store and (ctx.background or ctx.stream)):
+            return False, evs
+        # Register the execution record after the first event so events fan out
+        # to the per-response stream (wire_stream subscribers in _live_stream
+        # see them). Pre-Phase-2 only bg+store used this path; unified Row 3
+        # stream (fg+store+stream=T) also subscribes to wire_stream.
+        await self._register_bg_execution(ctx, state, first_normalized)
+        if state.bg_record is None or not state.bg_record.persistence_failed:
+            return False, evs
+        # Phase 1 (start) persistence failure splits two ways by request shape:
+        #
+        # 1. Non-bg streaming (Row 3 stream=true): emit response.created →
+        #    response.failed so the SSE first-event invariant (B27) holds; the
+        #    failed envelope carries the storage_error code for the GET fallback.
+        # 2. Bg+stream (Row 1/2 stream=true): emit a standalone error event (no
+        #    response.created) — the HTTP request has not yet returned the queued
+        #    response, so a response.failed terminal would promise persistence
+        #    the storage layer never delivered.
+        state.captured_error = state.bg_record.persistence_exception or RuntimeError("Phase 1 create failed")
+        if not ctx.background:
+            # Non-bg streaming: emit response.created → response.failed.
+            storage_error_response = _build_failed_response(
+                ctx.response_id,
+                ctx.agent_reference,
+                ctx.model,
+                created_at=ctx.context.created_at if ctx.context else None,
+                error_code="storage_error",
+                error_message=_STORAGE_ERROR_MESSAGE,
+            )
+            _wire_stream = await streams.get_or_create(ctx.response_id)
+            await self._safe_emit(_wire_stream, first_normalized)
+            evs.append(first_normalized)
+            # Build, validate, and APPEND the terminal BEFORE emitting it so a
+            # generator-close after yield-but-before-append can't leave only
+            # response.created (which _finalize_stream Path B would regress to
+            # status=in_progress).
+            failed_event = {
+                "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+                "response": storage_error_response.as_dict(),
+            }
+            failed_normalized = await self._normalize_and_append(ctx, state, failed_event)
+            if state.bg_record is not None:
+                state.bg_record.set_response_snapshot(storage_error_response)
+                state.bg_record.status = "failed"  # type: ignore[assignment]
+            await self._safe_emit(_wire_stream, failed_normalized)
+            evs.append(failed_normalized)
+            return True, evs
+        # Bg+stream: standalone error event (no response.created).
+        await self._runtime_state.try_evict(ctx.response_id)
+        error_event = construct_event_model(
+            {
+                "type": "error",
+                "message": _STORAGE_ERROR_MESSAGE,
+                "param": None,
+                "code": "storage_error",
+                "sequence_number": 0,
+            }
+        )
+        _err_stream = await streams.get_or_create(ctx.response_id)
+        await self._safe_emit(_err_stream, error_event)
+        evs.append(error_event)
+        return True, evs
+
+    async def _drain_remaining_events(
+        self,
+        ctx: _ExecutionContext,
+        state: _PipelineState,
+        handler_iterator: AsyncIterator[generated_models.ResponseStreamEvent],
+        seeded_output_count: int = 0,
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Drain the post-first-event handler stream (Spec 033 §3.2 extract).
+
+        Yields normalised non-terminal events and resolves the terminal /
+        cancellation / handler-error winddown onto ``state`` (the caller emits
+        the resolved terminal via ``_persist_and_resolve_terminal``).
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :param handler_iterator: The handler's event iterator (post first event).
+        :type handler_iterator: AsyncIterator[ResponseStreamEvent]
+        :return: Async iterator of normalised non-terminal events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
         # --- Remaining events ---
         # On a recovered entry the handler seeded response.created with the
         # already-persisted items (§6); they form the output-count baseline so
         # subsequent snapshot events (which carry seeded + new items) don't trip
         # the count-mismatch guard.
-        output_item_count = _seeded_output_count
+        output_item_count = seeded_output_count
         try:
             async for raw in _iter_with_winddown(handler_iterator, ctx.cancellation_signal):
                 # Pre-check for output manipulation BEFORE validation.
@@ -2070,6 +2514,21 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 state.pending_terminal = await self._make_failed_event(ctx, state)
             return
 
+        await self._resolve_no_terminal_winddown(ctx, state)
+
+    async def _resolve_no_terminal_winddown(self, ctx: _ExecutionContext, state: _PipelineState) -> None:
+        """Resolve the terminal when the handler finished without emitting one.
+
+        (Spec 033 §3.2 extract) Covers B11 (handler returned without a terminal
+        under a set cancellation signal — terminal type depends on the cause) and
+        S-015 (handler completed normally but emitted no terminal). Sets
+        ``state.pending_terminal``; never yields.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        """
         # B11: Handler returned without a terminal event while cancellation
         # signal is set. The terminal status depends on the cancellation cause
         # (spec 024 Phase 5 Proposal #11):
@@ -2392,10 +2851,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         #   - fg + store                      → mark-failed (Row 3 stream=T)
         # The downstream branches read ``_unified_disposition`` instead of
         # deriving the disposition independently.
-        _unified_disposition = (
-            "re-invoke"
-            if (ctx.background and self._runtime_options.durable_background and ctx.store)
-            else "mark-failed"
+        _unified_disposition = decide_disposition(
+            background=ctx.background,
+            durable_background=self._runtime_options.durable_background,
+            store=ctx.store,
         )
 
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
@@ -2499,6 +2958,30 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             return
 
         # --- Keep-alive path: merge handler events with periodic keep-alive comments ---
+        async for _chunk in self._live_stream_keep_alive(ctx, state, handler_iterator):
+            yield _chunk
+
+    async def _live_stream_keep_alive(
+        self,
+        ctx: _ExecutionContext,
+        state: _PipelineState,
+        handler_iterator: AsyncIterator[generated_models.ResponseStreamEvent],
+    ) -> AsyncIterator[str]:
+        """Ephemeral streaming with SSE keep-alive comments (Spec 033 §3.2 extract).
+
+        Merges handler events with periodic keep-alive comments via a shared
+        queue so comments are sent even while the handler is idle. Used by the
+        non-stored streaming path when keep-alive is enabled.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :param handler_iterator: The handler's event iterator.
+        :type handler_iterator: AsyncIterator[ResponseStreamEvent]
+        :return: Async iterator of SSE-encoded strings.
+        :rtype: AsyncIterator[str]
+        """
         # via a shared asyncio.Queue so comments are sent even while the handler is idle.
         _SENTINEL = object()
         merge_queue: asyncio.Queue[str | object] = asyncio.Queue()
@@ -2558,7 +3041,150 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     await handler_task
                 except asyncio.CancelledError:
                     pass
-            await _finalize()
+            await self._finalize_stream(ctx, state)
+
+    async def _await_sync_durable_terminal(self, ctx: _ExecutionContext, record: ResponseExecution) -> None:
+        """Block until the sync durable task / fallback execution reaches terminal.
+
+        (Spec 033 §3.2 extract) Awaits ``record.durable_task_run.result()`` (or
+        the asyncio fallback ``record.execution_task``). On HTTP client disconnect
+        (``CancelledError``) cancels the underlying task body, evicts the record
+        so a later GET returns 404 (B17), ends the span, and re-raises.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param record: The sync execution record.
+        :type record: ResponseExecution
+        """
+        task_run = getattr(record, "durable_task_run", None)
+        execution_task = getattr(record, "execution_task", None)
+        try:
+            if task_run is not None:
+                try:
+                    await task_run.result()
+                except asyncio.CancelledError:
+                    raise
+                except Exception as task_exc:  # pylint: disable=broad-exception-caught
+                    # Durable task body raised. If the handler had a pre-creation
+                    # error (B8) → re-raise as _HandlerError below. Otherwise
+                    # (post-creation error / persistence error) the record already
+                    # reflects the failure state and the snapshot below carries
+                    # the response.failed details.
+                    if not getattr(record, "response_failed_before_events", False):
+                        logger.warning(
+                            "Durable task for sync response %s raised: %s",
+                            ctx.response_id,
+                            task_exc,
+                            exc_info=True,
+                        )
+            elif execution_task is not None:
+                try:
+                    await execution_task
+                except asyncio.CancelledError:
+                    raise
+                except Exception as task_exc:  # pylint: disable=broad-exception-caught
+                    if not getattr(record, "response_failed_before_events", False):
+                        logger.warning(
+                            "Fallback execution_task for sync response %s raised: %s",
+                            ctx.response_id,
+                            task_exc,
+                            exc_info=True,
+                        )
+        except asyncio.CancelledError:
+            # HTTP client disconnected — per B17, the non-bg sync response is
+            # discarded. Cancel the underlying task body (best-effort) so it
+            # doesn't continue running after the HTTP request is gone. Remove
+            # the record from runtime_state so subsequent GETs return 404.
+            logger.info(
+                "Non-bg sync response %s discarded due to HTTP client disconnect (B17)",
+                ctx.response_id,
+            )
+            if task_run is not None:
+                try:
+                    await task_run.cancel()
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass
+            if execution_task is not None and not execution_task.done():
+                execution_task.cancel()
+            # Try to remove the record so GET returns 404. Best-effort; the
+            # record may already be evicted.
+            try:
+                await self._runtime_state.try_evict(ctx.response_id)
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass
+            ctx.span.end(None)
+            raise
+
+    async def _resolve_sync_client_disconnect(
+        self, ctx: _ExecutionContext, record: ResponseExecution, *, is_shutdown: bool
+    ) -> None:
+        """Handle a sync response's client disconnect (B17/B11/B14).
+
+        (Spec 033 §3.2 extract) When the cancellation signal is set due to a
+        client disconnect (NOT a server shutdown) and the record was not
+        explicitly cancelled: for ``store=true`` persist a ``cancelled`` terminal
+        (GET 200 + cancelled); for ``store=false`` discard the record (GET 404).
+        Either way raise ``CancelledError`` so the endpoint stops emitting a
+        snapshot to the gone client. A no-op otherwise.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param record: The sync execution record.
+        :type record: ResponseExecution
+        :keyword is_shutdown: True when ``context.shutdown`` is set (server
+            shutdown — preserve for recovery instead of discarding).
+        :paramtype is_shutdown: bool
+        """
+        if not (ctx.cancellation_signal.is_set() and not record.cancel_requested and not is_shutdown):
+            return
+        if ctx.store:
+            # B17 + B11: persist cancelled terminal so GET 200 + cancelled.
+            logger.info(
+                "Non-bg sync response %s cancelled on client disconnect (B17, store=true → cancelled retrievable)",
+                ctx.response_id,
+            )
+            cancelled_response = _build_cancelled_response(
+                ctx.response_id,
+                ctx.agent_reference,
+                ctx.model,
+                created_at=ctx.context.created_at if ctx.context else None,
+            )
+            record.set_response_snapshot(cancelled_response)
+            # Force terminal status — record may already be in a
+            # non-terminal state that doesn't allow normal transitions.
+            record.status = "cancelled"  # type: ignore[assignment]
+            # Persist to the response store so the in-memory record
+            # can be evicted later without losing the cancelled snapshot.
+            try:
+                await self._provider.update_response(
+                    cancelled_response,
+                    isolation=ctx.context.isolation if ctx.context else None,
+                )
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Provider cancelled-update failed on B17 disconnect "
+                    "(response_id=%s) — leaving in-memory record as "
+                    "authoritative source",
+                    ctx.response_id,
+                    exc_info=True,
+                )
+            ctx.span.end(None)
+            # Raise CancelledError so the endpoint stops emitting a
+            # snapshot to the (already-gone) client; the persisted
+            # cancelled terminal is the GET-visible source of truth.
+            raise asyncio.CancelledError()
+        # B14 + B17 store=false: discard the in-flight record so
+        # GET returns 404 (no persistence to honour).
+        logger.info(
+            "Non-bg sync response %s discarded on client disconnect (B17, store=false → GET 404)",
+            ctx.response_id,
+        )
+        try:
+            await self._runtime_state.try_evict(ctx.response_id)
+        except Exception:  # pylint: disable=broad-exception-caught
+            pass
+        ctx.span.end(None)
+        raise asyncio.CancelledError()
 
     async def run_sync(self, ctx: _ExecutionContext) -> dict[str, Any]:
         """Execute a synchronous (non-stream, non-background) create-response request.
@@ -2644,7 +3270,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 runtime_options=self._runtime_options,
             )
 
-        await self._start_durable_background(ctx, record, _runner, disposition="mark-failed")
+        await self._start_durable_background(
+            ctx,
+            record,
+            _runner,
+            disposition=decide_disposition(
+                background=ctx.background,
+                durable_background=self._runtime_options.durable_background,
+                store=ctx.store,
+            ),
+        )
 
         # Block until the handler emits its terminal:
         #   - If durable start succeeded, ``record.durable_task_run`` is set;
@@ -2656,64 +3291,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # as discarded — per B17, non-bg sync responses are not retrievable
         # after disconnect. The record is removed from runtime_state and the
         # store-side persistence is skipped (best-effort).
-        task_run = getattr(record, "durable_task_run", None)
-        execution_task = getattr(record, "execution_task", None)
-        try:
-            if task_run is not None:
-                try:
-                    await task_run.result()
-                except asyncio.CancelledError:
-                    raise
-                except Exception as task_exc:  # pylint: disable=broad-exception-caught
-                    # Durable task body raised. If the handler had a pre-creation
-                    # error (B8) → re-raise as _HandlerError below. Otherwise
-                    # (post-creation error / persistence error) the record already
-                    # reflects the failure state and the snapshot below carries
-                    # the response.failed details.
-                    if not getattr(record, "response_failed_before_events", False):
-                        logger.warning(
-                            "Durable task for sync response %s raised: %s",
-                            ctx.response_id,
-                            task_exc,
-                            exc_info=True,
-                        )
-            elif execution_task is not None:
-                try:
-                    await execution_task
-                except asyncio.CancelledError:
-                    raise
-                except Exception as task_exc:  # pylint: disable=broad-exception-caught
-                    if not getattr(record, "response_failed_before_events", False):
-                        logger.warning(
-                            "Fallback execution_task for sync response %s raised: %s",
-                            ctx.response_id,
-                            task_exc,
-                            exc_info=True,
-                        )
-        except asyncio.CancelledError:
-            # HTTP client disconnected — per B17, the non-bg sync response is
-            # discarded. Cancel the underlying task body (best-effort) so it
-            # doesn't continue running after the HTTP request is gone. Remove
-            # the record from runtime_state so subsequent GETs return 404.
-            logger.info(
-                "Non-bg sync response %s discarded due to HTTP client disconnect (B17)",
-                ctx.response_id,
-            )
-            if task_run is not None:
-                try:
-                    await task_run.cancel()
-                except Exception:  # pylint: disable=broad-exception-caught
-                    pass
-            if execution_task is not None and not execution_task.done():
-                execution_task.cancel()
-            # Try to remove the record so GET returns 404. Best-effort; the
-            # record may already be evicted.
-            try:
-                await self._runtime_state.try_evict(ctx.response_id)
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
-            ctx.span.end(None)
-            raise
+        await self._await_sync_durable_terminal(ctx, record)
 
         # B8 detection: if the handler failed BEFORE emitting any terminal
         # event, surface as _HandlerError → HTTP 500. Today's run_sync_inner
@@ -2744,56 +3322,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # server shutdown (preserve for recovery); not set means client
         # disconnect / explicit cancel (handled per B17 + B11).
         _is_shutdown = bool(ctx.context.shutdown.is_set()) if ctx.context else False
-        if ctx.cancellation_signal.is_set() and not record.cancel_requested and not _is_shutdown:
-            if ctx.store:
-                # B17 + B11: persist cancelled terminal so GET 200 + cancelled.
-                logger.info(
-                    "Non-bg sync response %s cancelled on client disconnect (B17, store=true → cancelled retrievable)",
-                    ctx.response_id,
-                )
-                cancelled_response = _build_cancelled_response(
-                    ctx.response_id,
-                    ctx.agent_reference,
-                    ctx.model,
-                    created_at=ctx.context.created_at if ctx.context else None,
-                )
-                record.set_response_snapshot(cancelled_response)
-                # Force terminal status — record may already be in a
-                # non-terminal state that doesn't allow normal transitions.
-                record.status = "cancelled"  # type: ignore[assignment]
-                # Persist to the response store so the in-memory record
-                # can be evicted later without losing the cancelled
-                # snapshot.
-                try:
-                    await self._provider.update_response(
-                        cancelled_response,
-                        isolation=ctx.context.isolation if ctx.context else None,
-                    )
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.debug(
-                        "Provider cancelled-update failed on B17 disconnect "
-                        "(response_id=%s) — leaving in-memory record as "
-                        "authoritative source",
-                        ctx.response_id,
-                        exc_info=True,
-                    )
-                ctx.span.end(None)
-                # Raise CancelledError so the endpoint stops emitting a
-                # snapshot to the (already-gone) client; the persisted
-                # cancelled terminal is the GET-visible source of truth.
-                raise asyncio.CancelledError()
-            # B14 + B17 store=false: discard the in-flight record so
-            # GET returns 404 (no persistence to honour).
-            logger.info(
-                "Non-bg sync response %s discarded on client disconnect (B17, store=false → GET 404)",
-                ctx.response_id,
-            )
-            try:
-                await self._runtime_state.try_evict(ctx.response_id)
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
-            ctx.span.end(None)
-            raise asyncio.CancelledError()
+        await self._resolve_sync_client_disconnect(ctx, record, is_shutdown=_is_shutdown)
 
         # On graceful shutdown: leave the response in_progress so next-lifetime
         # recovery can mark it failed. The HTTP request may still be in-flight
@@ -3052,7 +3581,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # The legacy ``asyncio.create_task(_shielded_runner)`` path
             # for Row 2 + the separate bookkeeping task are deleted —
             # one durable task per response covers both rows.
-            disposition = "re-invoke" if self._runtime_options.durable_background else "mark-failed"
+            disposition = decide_disposition(
+                background=ctx.background,
+                durable_background=self._runtime_options.durable_background,
+                store=ctx.store,
+            )
             await self._start_durable_background(ctx, record, _shielded_runner, disposition=disposition)
         else:
             # Row 4 — no store, no durable task. Plain asyncio.
@@ -3301,52 +3834,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 parent_orchestrator=self,
             )
 
-        # (Spec 024 Phase 2) `ensure_bookkeeping_event` pre-registration
-        # deleted. The bookkeeping pattern is gone — handler now runs
-        # inside the durable task body for all rows; no separate event
-        # registry is consulted by anyone.
-
-        # Build execution params dict for the task input
-        ctx_params: dict[str, Any] = {
-            "response_id": ctx.response_id,
-            # (Spec 014 FR-003 / FR-004) Disposition stamped into params
-            # at start so _execute_in_task can copy it into framework
-            # metadata on first entry; recovery dispatch reads from
-            # metadata thereafter (survives cross-process recovery).
-            "disposition": disposition,
-            # Object references (not serialized — only valid in same process)
-            "_record_ref": record,
-            "_context_ref": ctx.context,
-            "_parsed_ref": ctx.parsed,
-            "_cancel_ref": ctx.cancellation_signal,
-            "_runtime_state_ref": self._runtime_state,
-            # Serializable params (these survive cross-process recovery)
-            "agent_reference": ctx.agent_reference,
-            "model": ctx.model,
-            "store": ctx.store,
-            "agent_session_id": ctx.agent_session_id,
-            "conversation_id": ctx.conversation_id,
-            "previous_response_id": ctx.previous_response_id,
-            "history_limit": self._runtime_options.default_fetch_history_count,
-            "agent_name": getattr(self._runtime_options, "agent_name", "default"),
-            "session_id": ctx.agent_session_id or "",
-            # Spec 013 US1(a) reconstruction support — fields needed to rebuild
-            # ResponseExecution, ResponseContext, and the parsed request across
-            # a cross-process recovery. None of these touches the existing
-            # same-process path (which uses the _*_ref entries above).
-            "user_isolation_key": ctx.user_isolation_key,
-            "chat_isolation_key": ctx.chat_isolation_key,
-            "prefetched_history_ids": ctx.prefetched_history_ids,
-            "input_items": _serialize_for_recovery(ctx.input_items),
-            "parsed_payload": _serialize_for_recovery(ctx.parsed),
-            "stream": ctx.stream,
-            "background": ctx.background,
-        }
+        # (Spec 033 §3.4) Durable-task construction — the typed boundary + the
+        # process-local refs — is owned by the durability orchestrator; the
+        # response pipeline only supplies the per-request context and disposition.
+        durable_input, refs = self._durable_orchestrator.build_durable_input(ctx, record, disposition=disposition)
 
         try:
             freshly_started = await self._durable_orchestrator.start_durable(
                 record=record,
-                ctx_params=ctx_params,
+                durable_input=durable_input,
+                refs=refs,
             )
             if not freshly_started:
                 # Input was queued on already-active multi-turn steerable

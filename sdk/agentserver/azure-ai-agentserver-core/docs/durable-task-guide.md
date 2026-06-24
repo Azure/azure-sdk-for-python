@@ -281,6 +281,7 @@ class TaskRun(Generic[Output]):
     task_id: str
     input_id: str
     metadata: TaskMetadata                # live ref while the run is in-flight
+    is_queued: bool                       # True iff this is a queued steering input
 
     async def result(self) -> Output: ...
     async def cancel(self) -> None: ...
@@ -292,6 +293,14 @@ does **not** expose `.delete`, `.refresh`, `.status`, or
 `.lease_expiry_count` on the handle — for chain-level deletion use
 `MultiTurnTask.delete(task_id)`, and for status inspection consult
 the store directly via the task manager.
+
+`run.is_queued` is `True` only when `.start()` landed against an
+in-flight steerable chain and the input was **queued** (not yet
+promoted to an active turn); it is `False` for a freshly-started or
+active run. Cancelling a queued run removes its queued slot and
+resolves `result()` with `TaskCancelled` without disturbing the
+active turn. Composed protocol layers use it to decide whether to
+acknowledge a request as `queued`.
 
 ### 4.7 Steering (multi-turn only)
 

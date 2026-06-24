@@ -37,6 +37,12 @@ class TestTaskRunPublicShape:
         assert callable(TaskRun.__await__)
         assert "result" in inspect.getsource(TaskRun.__await__)
 
+    def test_taskrun_is_queued_is_bool_property(self) -> None:
+        descriptor = inspect.getattr_static(TaskRun, "is_queued")
+        assert isinstance(descriptor, property)
+        assert descriptor.fget is not None
+        assert get_type_hints(descriptor.fget).get("return") is bool
+
 
 class TestTaskRunRemovedMembers:
     """— TaskRun does NOT expose status, delete, refresh, lease_expiry_count."""
