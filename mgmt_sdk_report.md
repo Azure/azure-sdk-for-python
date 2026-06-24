@@ -1,6 +1,5 @@
 # Stable Management SDK Report
 
-Total kept SDKs: 35
 
 | id | sdk name | api version | sdk version | pr link | release date |
 | --- | --- | --- | --- | --- | --- |
