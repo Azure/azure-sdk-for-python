@@ -1,0 +1,33 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgname/providers/Microsoft.Kusto/clusters?api-version=2025-02-14",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "User-Agent": "azsdk-python-mgmt-kusto/4.0.0 Python/3.13.14 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "12",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 24 Jun 2026 05:46:36 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "19e08836-311d-4f75-bebb-7a6aa749d801",
+        "x-ms-ratelimit-remaining-subscription-resource-requests": "1099",
+        "x-ms-routing-request-id": "EASTUS:20260624T054636Z:19e08836-311d-4f75-bebb-7a6aa749d801",
+        "X-MSEdge-Ref": "Ref A: FA379EE09F364E61AE882E1F02E5939A Ref B: SIN221080712045 Ref C: 2026-06-24T05:46:35Z"
+      },
+      "ResponseBody": {
+        "value": []
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,2008 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.azure.com/providers/Microsoft.Kusto/operations?api-version=2025-02-14",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "User-Agent": "azsdk-python-mgmt-kusto/4.0.0 Python/3.13.14 (Windows-11-10.0.26200-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "43708",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 24 Jun 2026 05:47:31 GMT",
+        "Expires": "-1",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "93a76608-7e45-45af-a90c-6d02069f5d0a",
+        "x-ms-operation-identifier": "",
+        "x-ms-ratelimit-remaining-tenant-reads": "2199",
+        "x-ms-routing-request-id": "SOUTHEASTASIA:20260624T054731Z:93a76608-7e45-45af-a90c-6d02069f5d0a",
+        "X-MSEdge-Ref": "Ref A: D296C720D6D944868AF0DEB930ADD8A2 Ref B: SIN221080712045 Ref C: 2026-06-24T05:47:30Z"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Subscription",
+              "operation": "Subscription Registration Action",
+              "description": "Subscription Registration Action"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Check name availability resource type",
+              "operation": "Check name availability action",
+              "description": "Checks resource name availability."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "SKUs resource type"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Notify network security perimeter updates available",
+              "operation": "Notify network security perimeter updates available action",
+              "description": "Notify network security perimeter updates available."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Operations resource type",
+              "operation": "Read operations resources",
+              "description": "Reads operations resources"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Read cluster resource",
+              "description": "Reads a cluster resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Write cluster resource",
+              "description": "Writes a cluster resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Delete cluster resource",
+              "description": "Deletes a cluster resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Read diagnostic setting",
+              "description": "Gets the diagnostic settings for the resource"
+            },
+            "origin": "system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Write diagnostic setting",
+              "description": "Creates or updates the diagnostic setting for the resource"
+            },
+            "origin": "system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Cluster SKUs resource type",
+              "operation": "Read cluster SKU resource",
+              "description": "Reads a cluster SKU resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "SKUs resource type",
+              "operation": "Read SKU resource",
+              "description": "Reads a SKU resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connection proxies resource type",
+              "operation": "Read private endpoint connection proxy",
+              "description": "Reads a private endpoint connection proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connection proxies resource type",
+              "operation": "Write private endpoint connection proxy",
+              "description": "Writes a private endpoint connection proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connection proxies resource type",
+              "operation": "Delete private endpoint connection proxy",
+              "description": "Deletes a private endpoint connection proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connection proxies resource type",
+              "operation": "Validate private endpoint connection proxy",
+              "description": "Validates a private endpoint connection proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Cluster start action",
+              "description": "Starts the cluster."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Cluster stop action",
+              "description": "Stops the cluster."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Cluster activate action",
+              "description": "Starts the cluster."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Cluster deactivate action",
+              "description": "Stops the cluster."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Cluster check name availability action",
+              "description": "Checks the cluster name availability."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Cluster migrate action",
+              "description": "Migrates the cluster data to another cluster."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "Register action",
+              "description": "Registers the subscription to the Kusto Resource Provider."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "Unregister action",
+              "description": "Unregisters the subscription to the Kusto Resource Provider."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "Detach follower databases action",
+              "description": "Detaches follower's databases."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "List follower's databases action",
+              "description": "Lists the follower's databases."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "Add callout policies action",
+              "description": "Add callout policies."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "Remove callout policy action",
+              "description": "Remove callout policy."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "List callout policies action",
+              "description": "Lists the service callout policies."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "Diagnose virtual network.",
+              "description": "Diagnoses network connectivity status for external resources on which the service is dependent on."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "Lists language extensions action",
+              "description": "Lists language extensions."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "Add language extensions action",
+              "description": "Add language extensions."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "Remove language extensions action",
+              "description": "Remove language extensions."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "operation": "Private endpoint connections approval action",
+              "description": "Approval of private endpoint connections"
+            },
+            "origin": "user,system"
+          },
+          {
+            "properties": {
+              "serviceSpecification": {
+                "metricSpecifications": [
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Cache utilization (deprecated)",
+                    "displayDescription": "Utilization level in the cluster scope. The metric is deprecated and presented for backward compatibility only, you should use the 'Cache utilization factor' metric instead.",
+                    "unit": "Percent",
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Cluster health"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Cache utilization factor",
+                    "displayDescription": "Percentage of utilized disk space dedicated for hot cache in the cluster. 100% means that the disk space assigned to hot data is optimally utilized. No action is needed in terms of the cache size. More than 100% means that the cluster's disk space is not large enough to accommodate the hot data, as defined by your caching policies. To ensure that sufficient space is available for all the hot data, the amount of hot data needs to be reduced or the cluster needs to be scaled out. Enabling auto scale is recommended.",
+                    "unit": "Percent",
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Cluster health"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum",
+                      "Total"
+                    ],
+                    "internalMetricName": "QueryDuration",
+                    "name": "Sanitized",
+                    "displayName": "Query duration",
+                    "displayDescription": "Queries’ duration in seconds",
+                    "unit": "Milliseconds",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Query Status"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Query performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Ingestion utilization",
+                    "displayDescription": "Ratio of used ingestion slots in the cluster",
+                    "unit": "Percent",
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Cluster health"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Keep alive",
+                    "displayDescription": "Sanity check indicates the cluster responds to queries",
+                    "unit": "Count",
+                    "aggregationType": "Average",
+                    "fillGapWithZero": false,
+                    "category": "Cluster health"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Total",
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Ingestion Volume",
+                    "displayDescription": "Overall volume of ingested data to the cluster",
+                    "unit": "Bytes",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Ingestion Latency",
+                    "displayDescription": "Latency of data ingested, from the time the data was received in the cluster until it's ready for query. The ingestion latency period depends on the ingestion scenario.",
+                    "unit": "Seconds",
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Total"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Ingestion result",
+                    "displayDescription": "Total number of sources that either failed or succeeded to be ingested. Splitting the metric by status, you can get detailed information about the status of the ingestion operations.",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Status"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Failure Status Type"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "CPU",
+                    "displayDescription": "CPU utilization level",
+                    "unit": "Percent",
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Cluster health"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Total"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Continuous export – num of exported records",
+                    "displayDescription": "Number of records exported, fired for every storage artifact written during the export operation",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Continuous Export Name"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Export health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Export Utilization",
+                    "displayDescription": "Export utilization",
+                    "unit": "Percent",
+                    "aggregationType": "Maximum",
+                    "fillGapWithZero": true,
+                    "category": "Export health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Continuous Export Pending Count",
+                    "displayDescription": "The number of pending continuous export jobs ready for execution",
+                    "unit": "Count",
+                    "aggregationType": "Maximum",
+                    "fillGapWithZero": true,
+                    "category": "Export health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Continuous Export Max Lateness",
+                    "displayDescription": "The lateness (in minutes) reported by the continuous export jobs in the cluster",
+                    "unit": "Count",
+                    "aggregationType": "Maximum",
+                    "fillGapWithZero": true,
+                    "category": "Export health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Count"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Continuous Export Result",
+                    "displayDescription": "Indicates whether Continuous Export succeeded or failed",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Continuous Export Name"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Result"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      }
+                    ],
+                    "aggregationType": "Count",
+                    "fillGapWithZero": true,
+                    "category": "Export health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Minimum",
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Streaming Ingest Duration",
+                    "displayDescription": "Streaming ingest duration in milliseconds",
+                    "unit": "Milliseconds",
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Streaming Ingest"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Minimum",
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Streaming Ingest Data Rate",
+                    "displayDescription": "Streaming ingest data rate (MB per second)",
+                    "unit": "Count",
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Streaming Ingest"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "RateRequestsPerSecond"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Streaming Ingest Request Rate",
+                    "displayDescription": "Streaming ingest request rate (requests per second)",
+                    "unit": "Count",
+                    "aggregationType": "RateRequestsPerSecond",
+                    "fillGapWithZero": true,
+                    "category": "Streaming Ingest"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Count"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Streaming Ingest Result",
+                    "displayDescription": "Streaming ingest result",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Result"
+                      }
+                    ],
+                    "aggregationType": "Count",
+                    "fillGapWithZero": true,
+                    "category": "Streaming Ingest"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Total number of concurrent queries",
+                    "displayDescription": "Total number of concurrent queries",
+                    "unit": "Count",
+                    "aggregationType": "Maximum",
+                    "fillGapWithZero": true,
+                    "category": "Query performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum",
+                      "Total"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Total number of throttled queries",
+                    "displayDescription": "Total number of throttled queries",
+                    "unit": "Count",
+                    "aggregationType": "Maximum",
+                    "fillGapWithZero": true,
+                    "category": "Query performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum",
+                      "Total"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Total number of throttled commands",
+                    "displayDescription": "Total number of throttled commands",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Command Type"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Cluster health"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Total number of extents",
+                    "displayDescription": "Total number of data extents",
+                    "unit": "Count",
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Cluster health"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum",
+                      "Count",
+                      "Total"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Instance Count",
+                    "displayDescription": "Total instance count",
+                    "unit": "Count",
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Cluster health"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Total",
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Batches Processed",
+                    "displayDescription": "Number of batches aggregated for ingestion. Batching Type: whether the batch reached batching time, data size or number of files limit set by batching policy",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Batching Type"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Batch Size",
+                    "displayDescription": "Uncompressed expected data size in an aggregated batch for ingestion.",
+                    "unit": "Bytes",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Batch Blob Count",
+                    "displayDescription": "Number of data sources in an aggregated batch for ingestion.",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Batch Duration",
+                    "displayDescription": "The duration of the aggregation phase in the ingestion flow.",
+                    "unit": "Seconds",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Count"
+                    ],
+                    "internalMetricName": "QueryDuration",
+                    "name": "Sanitized",
+                    "displayName": "Query Result",
+                    "displayDescription": "Total number of queries.",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Status"
+                      }
+                    ],
+                    "aggregationType": "Count",
+                    "fillGapWithZero": true,
+                    "category": "Query performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Materialized View Age",
+                    "displayDescription": "The materialized view age in minutes",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Materialized View Name"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": false,
+                    "category": "Materialized View health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Minimum",
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Materialized View Age",
+                    "displayDescription": "The materialized view age in seconds",
+                    "unit": "Seconds",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Materialized View Name"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": false,
+                    "category": "Materialized View health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Materialized View Health",
+                    "displayDescription": "The health of the materialized view (1 for healthy, 0 for non-healthy)",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Materialized View Name"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": false,
+                    "category": "Materialized View health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Materialized View Result",
+                    "displayDescription": "The result of the materialization process",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Materialized View Name"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Result"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Materialized View health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Materialized View Records In Delta",
+                    "displayDescription": "The number of records in the non-materialized part of the view",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Materialized View Name"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": false,
+                    "category": "Materialized View health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Materialized View Extents Rebuild",
+                    "displayDescription": "Number of extents rebuild",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Materialized View Name"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Materialized View health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Materialized View Data Loss",
+                    "displayDescription": "Indicates potential data loss in materialized view",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Materialized View Name"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Kind"
+                      }
+                    ],
+                    "aggregationType": "Maximum",
+                    "fillGapWithZero": true,
+                    "category": "Materialized View health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Total",
+                      "Average",
+                      "Minimum",
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Blobs Received",
+                    "displayDescription": "Number of blobs received from input stream by a component.",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Name"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Total",
+                      "Average",
+                      "Minimum",
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Blobs Processed",
+                    "displayDescription": "Number of blobs processed by a component.",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Name"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Total",
+                      "Average",
+                      "Minimum",
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Blobs Dropped",
+                    "displayDescription": "Number of blobs permanently rejected by a component.",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Name"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Stage Latency",
+                    "displayDescription": "Cumulative time from when a message is discovered until it is received by the reporting component for processing (discovery time is set when message is enqueued for ingestion queue, or when discovered by data connection).",
+                    "unit": "Seconds",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": false,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Discovery Latency",
+                    "displayDescription": "Reported by data connections (if exist). Time in seconds from when a message is enqueued or event is created until it is discovered by data connection. This time is not included in the Azure Data Explorer total ingestion duration.",
+                    "unit": "Seconds",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Name"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": false,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Total",
+                      "Average",
+                      "Minimum",
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Events Received",
+                    "displayDescription": "Number of events received by data connection.",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Name"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Total",
+                      "Average",
+                      "Minimum",
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Events Processed",
+                    "displayDescription": "Number of events processed by the cluster",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Name"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Total",
+                      "Average",
+                      "Minimum",
+                      "Maximum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Events Dropped",
+                    "displayDescription": "Number of events dropped permanently by data connection. An Ingestion result metric with a failure reason will be sent.",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Name"
+                      }
+                    ],
+                    "aggregationType": "Total",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Total"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Received Data Size Bytes",
+                    "displayDescription": "Size of data received by data connection. This is the size of the data stream, or of raw data size if provided.",
+                    "unit": "Bytes",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Name"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Queue Length",
+                    "displayDescription": "Number of pending messages in a component's queue.",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Queue Oldest Message",
+                    "displayDescription": "Time in seconds from when the oldest message in queue was inserted.",
+                    "unit": "Count",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Component Type"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Ingestion health and performance"
+                  },
+                  {
+                    "enableRegionalMdmAccount": true,
+                    "sourceMdmNamespace": "CustomerMetrics",
+                    "sourceMdmAccount": "Kusto",
+                    "supportedAggregationTypes": [
+                      "Average",
+                      "Maximum",
+                      "Minimum"
+                    ],
+                    "name": "Sanitized",
+                    "displayName": "Weak consistency latency",
+                    "displayDescription": "The max latency between the previous metadata sync and the next one (in DB/node scope)",
+                    "unit": "Seconds",
+                    "dimensions": [
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Database"
+                      },
+                      {
+                        "name": "Sanitized",
+                        "displayName": "Node"
+                      }
+                    ],
+                    "aggregationType": "Average",
+                    "fillGapWithZero": true,
+                    "category": "Query performance"
+                  }
+                ]
+              }
+            },
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "The metric definition of Kusto",
+              "operation": "Reads Kusto metric definitions",
+              "description": "Gets the metric definitions of the resource"
+            },
+            "origin": "system"
+          },
+          {
+            "properties": {
+              "serviceSpecification": {
+                "logSpecifications": [
+                  {
+                    "name": "Sanitized",
+                    "displayName": "Successful ingest operations"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "displayName": "Failed ingest operations"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "displayName": "Ingestion batching"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "displayName": "Command"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "displayName": "Query"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "displayName": "Table usage statistics"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "displayName": "Table details"
+                  },
+                  {
+                    "name": "Sanitized",
+                    "displayName": "Journal"
+                  }
+                ]
+              }
+            },
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Clusters resource type",
+              "operation": "Read logs definitions",
+              "description": "Gets the diagnostic logs settings for the resource"
+            },
+            "origin": "system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Cluster principal assignments resource type",
+              "operation": "Read a Cluster principal assignments resource",
+              "description": "Reads a Cluster principal assignments resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Cluster principal assignments resource type",
+              "operation": "Write a Cluster principal assignments resource",
+              "description": "Writes a Cluster principal assignments resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Cluster principal assignments resource type",
+              "operation": "Delete a Cluster principal assignments resource",
+              "description": "Deletes a Cluster principal assignments resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Attached database configuration resource type",
+              "operation": "Read an attached database configuration resource",
+              "description": "Reads an attached database configuration resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Attached database configuration resource type",
+              "operation": "Write an attached database configuration resource",
+              "description": "Writes an attached database configuration resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Attached database configuration resource type",
+              "operation": "Delete an attached database configuration resource",
+              "description": "Deletes an attached database configuration resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Databases resource type",
+              "operation": "Read database resource",
+              "description": "Reads a database resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Databases resource type",
+              "operation": "Write database resource",
+              "description": "Writes a database resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Databases resource type",
+              "operation": "Delete database resource",
+              "description": "Deletes a database resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Databases resource type",
+              "operation": "List database principals action",
+              "description": "Lists database principals."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Databases resource type",
+              "operation": "Add database principals action",
+              "description": "Adds database principals."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Databases resource type",
+              "operation": "Remove database principals action",
+              "description": "Removes database principals."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Databases resource type",
+              "operation": "Data connection validation action",
+              "description": "Validates database data connection."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Databases resource type",
+              "operation": "Check name availability action for a given type",
+              "description": "Checks name availability for a given type."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Databases resource type",
+              "operation": "Event Hub connection validation action",
+              "description": "Validates database Event Hub connection."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Databases resource type"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Cluster data connections resource type",
+              "operation": "Read a cluster's data connections resource",
+              "description": "Reads a cluster's data connections resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Cluster data connections resource type",
+              "operation": "Write a cluster's data connections resource",
+              "description": "Writes a cluster's data connections resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Cluster data connections resource type",
+              "operation": "Delete a cluster's data connections resource",
+              "description": "Deletes a cluster's data connections resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Event Hub connections resource type",
+              "operation": "Read a Event Hub connections resource",
+              "description": "Reads a Event Hub connections resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Event Hub connections resource type",
+              "operation": "Write a Event Hub connections resource",
+              "description": "Writes an Event Hub connections resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Event Hub connections resource type",
+              "operation": "Delete a Event Hub connections resource",
+              "description": "Deletes a Event Hub connections resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Data connections resource type",
+              "operation": "Read a data connections resource",
+              "description": "Reads a data connections resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Data connections resource type",
+              "operation": "Write a data connections resource",
+              "description": "Writes a data connections resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Data connections resource type",
+              "operation": "Delete a data connections resource",
+              "description": "Deletes a data connections resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Script resource type",
+              "operation": "Read a script resource",
+              "description": "Reads a script resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Script resource type",
+              "operation": "Write a script resource",
+              "description": "Write a script resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Script resource type",
+              "operation": "Delete a script resource",
+              "description": "Delete a script resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Managed private endpoint resource type",
+              "operation": "Read managed private endpoint",
+              "description": "Reads a managed private endpoint"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Managed private endpoint resource type",
+              "operation": "Write managed private endpoint",
+              "description": "Writes a managed private endpoint"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Managed private endpoint resource type",
+              "operation": "Delete managed private endpoint",
+              "description": "Deletes a managed private endpoint"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Sandbox custom image resource type",
+              "operation": "Read a sandbox custom image",
+              "description": "Reads a sandbox custom image"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Sandbox custom image resource type",
+              "operation": "Write sandbox custom image",
+              "description": "Writes a sandbox custom image"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Sandbox custom image resource type",
+              "operation": "Delete sandbox custom image",
+              "description": "Deletes a sandbox custom image"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connections resource type",
+              "operation": "Read private endpoint connection",
+              "description": "Reads a private endpoint connection"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connections resource type",
+              "operation": "Write private endpoint connection",
+              "description": "Writes a private endpoint connection"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connections resource type",
+              "operation": "Delete private endpoint connection",
+              "description": "Deletes a private endpoint connection"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connection proxies resource type",
+              "operation": "Read private endpoint connection proxy",
+              "description": "Reads a private endpoint connection proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connection proxies resource type",
+              "operation": "Write private endpoint connection proxy",
+              "description": "Writes a private endpoint connection proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connection proxies resource type",
+              "operation": "Delete private endpoint connection proxy",
+              "description": "Deletes a private endpoint connection proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private endpoint connection proxies resource type",
+              "operation": "Validate private endpoint connection proxy",
+              "description": "Validates a private endpoint connection proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Network security perimeter association proxy",
+              "operation": "Read network security perimeter association proxy",
+              "description": "Reads a network security perimeter association proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Network security perimeter association proxy",
+              "operation": "Write network security perimeter association proxy",
+              "description": "Writes network security perimeter association proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Network security perimeter association proxy",
+              "operation": "Delete network security perimeter association proxy",
+              "description": "Deletes network security perimeter association proxy"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Network security perimeter configurations resource type",
+              "operation": "Read network security perimeter configurations",
+              "description": "Reads a network security perimeter configurations"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Network security perimeter configurations resource type",
+              "operation": "Write network security perimeter configurations",
+              "description": "Writes a network security perimeter configurations"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Outbound network dependencies endpoints",
+              "operation": "Gets outbound network dependencies endpoints",
+              "description": "Reads outbound network dependencies endpoints for a resource"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Database principal assignments resource type",
+              "operation": "Read a database principal assignments resource",
+              "description": "Reads a database principal assignments resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Database principal assignments resource type",
+              "operation": "Write a database principal assignments resource",
+              "description": "Writes a database principal assignments resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Database principal assignments resource type",
+              "operation": "Delete a database principal assignments resource",
+              "description": "Deletes a database principal assignments resource."
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Private link resources resource type",
+              "operation": "Reads private link resources",
+              "description": "Reads private link resources"
+            },
+            "origin": "user,system"
+          },
+          {
+            "name": "Sanitized",
+            "display": {
+              "provider": "Microsoft.Kusto",
+              "resource": "Operations resource type",
+              "operation": "Read operations resources",
+              "description": "Reads operations resources"
+            },
+            "origin": "user,system"
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}
