@@ -641,6 +641,30 @@ def build_header_int32_milliseconds_array_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
+def build_lossy_int_seconds_request(*, input: datetime.timedelta, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    # Construct URL
+    _url = "/encode/duration/lossy/int32-seconds"
+
+    # Construct parameters
+    _params["input"] = _SERIALIZER.query("input", input, "duration-seconds-int")
+
+    return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
+
+
+def build_lossy_int_milliseconds_request(*, input: datetime.timedelta, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    # Construct URL
+    _url = "/encode/duration/lossy/int32-milliseconds"
+
+    # Construct parameters
+    _params["input"] = _SERIALIZER.query("input", input, "duration-milliseconds-int")
+
+    return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
+
+
 class QueryOperations:
     """
     .. warning::
@@ -3796,6 +3820,122 @@ class HeaderOperations:
 
         _request = build_header_int32_milliseconds_array_request(
             duration=duration,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class LossyOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~encode.duration.DurationClient`'s
+        :attr:`lossy` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DurationClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def int_seconds(  # pylint: disable=inconsistent-return-statements
+        self, *, input: datetime.timedelta, **kwargs: Any
+    ) -> None:
+        """int_seconds.
+
+        :keyword input: Required.
+        :paramtype input: ~datetime.timedelta
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_lossy_int_seconds_request(
+            input=input,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def int_milliseconds(  # pylint: disable=inconsistent-return-statements
+        self, *, input: datetime.timedelta, **kwargs: Any
+    ) -> None:
+        """int_milliseconds.
+
+        :keyword input: Required.
+        :paramtype input: ~datetime.timedelta
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_lossy_int_milliseconds_request(
+            input=input,
             headers=_headers,
             params=_params,
         )

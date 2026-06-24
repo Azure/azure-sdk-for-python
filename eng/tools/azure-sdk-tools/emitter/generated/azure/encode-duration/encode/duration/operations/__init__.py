@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 from ._operations import QueryOperations  # type: ignore
 from ._operations import PropertyOperations  # type: ignore
 from ._operations import HeaderOperations  # type: ignore
+from ._operations import LossyOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -24,6 +25,7 @@ __all__ = [
     "QueryOperations",
     "PropertyOperations",
     "HeaderOperations",
+    "LossyOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
