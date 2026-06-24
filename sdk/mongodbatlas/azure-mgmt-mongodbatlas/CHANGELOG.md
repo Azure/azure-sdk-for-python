@@ -17,8 +17,8 @@
   - Added model `RegionsByTierResponse`
   - Added model `TierLimitReachedResponse`
   - Added model `TierRegions`
-  - Added model `ClustersOperations`
-  - Added model `ProjectsOperations`
+  - Added operation group `ClustersOperations`
+  - Added operation group `ProjectsOperations`
 
 ## 1.0.0 (2025-07-02)
 
