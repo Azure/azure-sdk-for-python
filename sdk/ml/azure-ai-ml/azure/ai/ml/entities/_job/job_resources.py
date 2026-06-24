@@ -4,7 +4,7 @@
 
 from typing import Any, List
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import JobResources as RestJobResources
+from azure.ai.ml._restclient.arm_ml_service.models import JobResources as RestJobResources
 
 
 class JobResources(RestTranslatableMixin):
