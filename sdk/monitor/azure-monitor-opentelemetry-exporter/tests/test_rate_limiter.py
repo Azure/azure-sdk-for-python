@@ -89,7 +89,7 @@ class TestTokenBucketRateLimiter(unittest.TestCase):
             try:
                 for _ in range(100):
                     limiter.try_consume(1)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 errors.append(e)
 
         threads = [threading.Thread(target=consume) for _ in range(10)]
@@ -141,7 +141,6 @@ class TestBaseExporterRateLimiting(unittest.TestCase):
 
     def test_transmit_rate_limited_batch_returns_retryable(self):
         """When the entire batch is rejected by the rate limiter, _transmit returns FAILED_RETRYABLE."""
-        from unittest import mock
         from datetime import datetime
         from azure.monitor.opentelemetry.exporter.export._base import (
             BaseExporter,

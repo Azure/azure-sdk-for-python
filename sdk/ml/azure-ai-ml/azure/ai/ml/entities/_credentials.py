@@ -8,20 +8,22 @@ from abc import ABC
 from typing import Any, Dict, List, Optional, Type, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
-from azure.ai.ml._restclient.v2022_01_01_preview.models import Identity as RestIdentityConfiguration
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ManagedIdentity as RestWorkspaceConnectionManagedIdentity
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    PersonalAccessToken as RestWorkspaceConnectionPersonalAccessToken,
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestIdentityConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    WorkspaceConnectionManagedIdentity as RestWorkspaceConnectionManagedIdentity,
 )
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    ServicePrincipal as RestWorkspaceConnectionServicePrincipal,
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    WorkspaceConnectionPersonalAccessToken as RestWorkspaceConnectionPersonalAccessToken,
 )
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    SharedAccessSignature as RestWorkspaceConnectionSharedAccessSignature,
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    WorkspaceConnectionServicePrincipal as RestWorkspaceConnectionServicePrincipal,
 )
-from azure.ai.ml._restclient.v2022_01_01_preview.models import UserAssignedIdentity as RestUserAssignedIdentity
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    UsernamePassword as RestWorkspaceConnectionUsernamePassword,
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    WorkspaceConnectionSharedAccessSignature as RestWorkspaceConnectionSharedAccessSignature,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserAssignedIdentity as RestUserAssignedIdentity
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    WorkspaceConnectionUsernamePassword as RestWorkspaceConnectionUsernamePassword,
 )
 from azure.ai.ml._restclient.arm_ml_service.models import (
     ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
