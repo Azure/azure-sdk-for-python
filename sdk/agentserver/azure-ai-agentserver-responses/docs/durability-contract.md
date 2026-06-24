@@ -119,6 +119,16 @@ the task so the recovery scan does not re-select it. This applies to **both
 runs before the stream-vs-non-stream dispatch. A transient/ambiguous store
 error is NOT a definitive absence and MUST NOT trigger a drop.
 
+**Recovered-input parity (recovery == fresh entry).** A recovered handler MUST
+observe the **identical request-scoped inputs** it would on fresh entry:
+`context.request` (every field, including request-only fields the stored response
+does not carry), `context.client_headers`, `context.query_parameters`, and
+`await context.get_input_items()` (resolved and unresolved) are equal to their
+fresh-entry values. The only handler-visible difference on recovery is
+`context.is_recovery == True` and the entry-only `context.persisted_response`
+snapshot — never dropped or altered inputs/metadata. (Design: durable-task input
+boundary, `responses-durability-spec.md` §5.3 / §8.2.)
+
 ---
 
 ## The matrix

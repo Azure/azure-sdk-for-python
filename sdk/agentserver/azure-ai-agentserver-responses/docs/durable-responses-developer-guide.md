@@ -245,6 +245,14 @@ on the response context for every handler invocation. The fields
 mirror the underlying task primitive's classifiers and are safe to
 read regardless of `is_recovery`:
 
+> **Recovered inputs are identical to fresh entry.** On a recovered
+> re-invocation the handler observes the *same* `request`, `client_headers`,
+> `query_parameters`, and `await context.get_input_items()` it saw on fresh
+> entry — nothing is dropped or altered. The only differences are
+> `context.is_recovery == True` and the entry-only `context.persisted_response`
+> snapshot. So recovery-aware code only needs to branch on `is_recovery`; it
+> never has to re-fetch or reconstruct the request itself.
+
 ```python
 @app.response_handler
 async def handler(request, context, cancellation_signal):

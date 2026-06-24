@@ -13,8 +13,9 @@ import pytest
 from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
     DurableResponseOrchestrator,
     _is_recovered_entry,
-    _split_runtime_refs,
 )
+from azure.ai.agentserver.responses.hosting._durable_input import DurableResponseInput
+from azure.ai.agentserver.responses.models._generated import CreateResponse
 
 
 class _FakeTaskMetadata(dict):
@@ -163,15 +164,14 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
-        ctx.pending_input_count = (
-            0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
-        )
+        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_123",
+            "request": {"input": "hi", "model": "gpt-4o", "store": True, "background": True},
             "_record_ref": MagicMock(),
             "_context_ref": MagicMock(),
             "_parsed_ref": MagicMock(),
@@ -238,6 +238,7 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_456",
+            "request": {"input": "hi"},
             "_record_ref": MagicMock(),
             "_context_ref": real_context,
             "_parsed_ref": MagicMock(),
@@ -262,9 +263,7 @@ class TestDurableOrchestratorExecuteInTask:
             _DeveloperMetadataFacade,
         )
 
-        assert isinstance(
-            real_context.conversation_chain_metadata, _DeveloperMetadataFacade
-        )
+        assert isinstance(real_context.conversation_chain_metadata, _DeveloperMetadataFacade)
 
     @pytest.mark.asyncio
     async def test_steerable_returns_none_for_implicit_suspend(self) -> None:
@@ -282,15 +281,14 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
-        ctx.pending_input_count = (
-            0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
-        )
+        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_789",
+            "request": {"input": "hi"},
             "_record_ref": MagicMock(),
             "_context_ref": MagicMock(),
             "_parsed_ref": MagicMock(),
@@ -324,15 +322,14 @@ class TestDurableOrchestratorExecuteInTask:
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
-        ctx.pending_input_count = (
-            0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
-        )
+        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_000",
+            "request": {"input": "hi"},
             "_record_ref": MagicMock(),
             "_context_ref": MagicMock(),
             "_parsed_ref": MagicMock(),
@@ -366,15 +363,14 @@ class TestDurableOrchestratorCancellationBridge:
         ctx.entry_mode = "fresh"
         ctx.retry_attempt = 0
         ctx.is_steered_turn = False  # Spec 016 FR-020: was_steered renamed
-        ctx.pending_input_count = (
-            0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
-        )
+        ctx.pending_input_count = 0  # Spec 016 FR-019: pending_inputs Sequence renamed to live int count
         ctx.metadata = _FakeTaskMetadata()
         ctx._cancellation_signal = asyncio.Event()
         ctx.shutdown = asyncio.Event()
         ctx.task_id = "test-task-id"
         ctx.input = {
             "response_id": "resp_cancel",
+            "request": {"input": "hi"},
             "_record_ref": MagicMock(),
             "_context_ref": MagicMock(),
             "_parsed_ref": MagicMock(),
@@ -459,12 +455,8 @@ class TestPrimitiveSelectionMatrix:
         )
 
         # Both primitives must exist (precondition for the matrix).
-        assert hasattr(
-            orch, "_one_shot_task_fn"
-        ), f"{case_id}: orchestrator must register a one-shot primitive."
-        assert hasattr(
-            orch, "_multi_turn_task_fn"
-        ), f"{case_id}: orchestrator must register a multi-turn primitive."
+        assert hasattr(orch, "_one_shot_task_fn"), f"{case_id}: orchestrator must register a one-shot primitive."
+        assert hasattr(orch, "_multi_turn_task_fn"), f"{case_id}: orchestrator must register a multi-turn primitive."
 
         ctx_params = {
             "response_id": "resp_test",
@@ -506,19 +498,14 @@ class TestOrchestratorConstructionValidation:
         )
 
         # Both registrations are present.
-        assert hasattr(
-            orch, "_one_shot_task_fn"
-        ), "Construction must register the one-shot primitive."
-        assert hasattr(
-            orch, "_multi_turn_task_fn"
-        ), "Construction must register the multi-turn primitive."
+        assert hasattr(orch, "_one_shot_task_fn"), "Construction must register the one-shot primitive."
+        assert hasattr(orch, "_multi_turn_task_fn"), "Construction must register the multi-turn primitive."
 
         # Names are distinct and well-formed.
         one_shot_name = orch._one_shot_task_fn._opts.name
         multi_turn_name = orch._multi_turn_task_fn._opts.name
         assert one_shot_name != multi_turn_name, (
-            f"Primitives must have distinct registration names "
-            f"(both got {one_shot_name!r})."
+            f"Primitives must have distinct registration names " f"(both got {one_shot_name!r})."
         )
         assert (
             "one_shot" in one_shot_name or "oneshot" in one_shot_name
@@ -530,8 +517,7 @@ class TestOrchestratorConstructionValidation:
         # The multi-turn primitive's steerable flag MUST match the
         # deployment's steerable_conversations option (per SOT §6.6).
         assert orch._multi_turn_task_fn._opts.steerable is False, (
-            "Multi-turn primitive's steerable flag must match "
-            "options.steerable_conversations."
+            "Multi-turn primitive's steerable flag must match " "options.steerable_conversations."
         )
 
     def test_orchestrator_multi_turn_steerable_flag_propagated(self) -> None:
@@ -569,29 +555,25 @@ class TestSplitRuntimeRefsSerializable:
 
         from azure.ai.agentserver.responses.models import AgentReference
 
-        ctx_params = {
-            "response_id": "caresp_abc",
-            "agent_name": "durable-responses-agent-demo",
-            "session_id": "sess_1",
-            "agent_reference": AgentReference(
-                name="durable-responses-agent-demo", version="29"
-            ),
-            # a runtime-only object ref that must be stripped, never persisted
-            "_record_ref": object(),
-        }
+        durable = DurableResponseInput(
+            request=CreateResponse({"input": "hi", "store": True, "background": True}),
+            response_id="caresp_abc",
+            disposition="re-invoke",
+            agent_reference=AgentReference(name="durable-responses-agent-demo", version="29"),
+            agent_session_id="sess_1",
+        )
 
-        refs, persisted = _split_runtime_refs(ctx_params)
+        persisted = durable.to_task_input()
 
-        # refs hold the non-serializable object reference; not persisted
-        assert "_record_ref" in refs
-        assert "_record_ref" not in persisted
+        # Runtime-only object references are NEVER part of the persisted input
+        # (Spec 033 §3.1 — they live in the out-of-band RuntimeRefs cache).
+        for ref_key in ("_record_ref", "_context_ref", "_parsed_ref", "_cancel_ref", "_runtime_state_ref"):
+            assert ref_key not in persisted
 
         # agent_reference survives in the persisted input (needed across
         # cross-process recovery) but normalized to a plain dict
         assert isinstance(persisted["agent_reference"], dict)
-        assert (
-            persisted["agent_reference"].get("name") == "durable-responses-agent-demo"
-        )
+        assert persisted["agent_reference"].get("name") == "durable-responses-agent-demo"
         assert persisted["agent_reference"].get("version") == "29"
 
         # the whole persisted input must JSON-serialize (this is what the
@@ -602,7 +584,13 @@ class TestSplitRuntimeRefsSerializable:
         import json
 
         # absent agent_reference is the ``{}`` sentinel — already serializable
-        _, persisted = _split_runtime_refs({"response_id": "r", "agent_reference": {}})
+        durable = DurableResponseInput(
+            request=CreateResponse({"input": "h"}),
+            response_id="r",
+            disposition="re-invoke",
+            agent_reference={},
+        )
+        persisted = durable.to_task_input()
         assert persisted["agent_reference"] == {}
         json.dumps(persisted)
 
@@ -610,9 +598,49 @@ class TestSplitRuntimeRefsSerializable:
         import json
 
         ar = {"type": "agent_reference", "name": "x", "version": "1"}
-        _, persisted = _split_runtime_refs({"response_id": "r", "agent_reference": ar})
+        durable = DurableResponseInput(
+            request=CreateResponse({"input": "h"}),
+            response_id="r",
+            disposition="re-invoke",
+            agent_reference=ar,
+        )
+        persisted = durable.to_task_input()
         assert persisted["agent_reference"] == ar
         json.dumps(persisted)
+
+
+class TestMalformedInputFailsClosed:
+    """Spec 033 FR-002f — a malformed persisted durable input fails closed to a
+    terminal (marks the response failed via the store) without re-invoking the
+    handler, rather than raising into a poison task."""
+
+    @pytest.mark.asyncio
+    async def test_malformed_input_marks_failed_without_handler(self) -> None:
+        orch = DurableResponseOrchestrator(
+            create_fn=AsyncMock(),
+            provider=MagicMock(),
+            options=MagicMock(steerable_conversations=False, default_fetch_history_count=100),
+        )
+        orch._persist_crash_failed = AsyncMock()  # type: ignore[method-assign]
+
+        ctx = MagicMock()
+        ctx.entry_mode = "recovered"
+        ctx.metadata = _FakeTaskMetadata()
+        ctx.task_id = "poison-task"
+        # Malformed: response_id present (addressable) but NO request.
+        ctx.input = {"response_id": "resp_malformed", "user_isolation_key": "u"}
+
+        with patch(
+            "azure.ai.agentserver.responses.hosting._orchestrator._run_background_non_stream",
+            new_callable=AsyncMock,
+        ) as mock_run_bg:
+            result = await orch._execute_in_task(ctx)
+
+        assert result is None
+        # Handler NOT re-invoked; response failed-closed via the store.
+        mock_run_bg.assert_not_called()
+        orch._persist_crash_failed.assert_awaited_once()
+        assert orch._persist_crash_failed.call_args[0][0] == "resp_malformed"
 
 
 class TestPersistCrashFailedRecovery:

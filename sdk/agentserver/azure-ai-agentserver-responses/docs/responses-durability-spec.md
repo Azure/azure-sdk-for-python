@@ -284,6 +284,41 @@ recovery-marker semantics for Rows 2/3.
 The same rule applies to any future key that affects recovery
 dispatch.
 
+### §5.3 — Durable-task input boundary (the recovery payload)
+
+Separate from the `_responses` metadata namespace (which carries control
+*flags*), the framework persists the **request-scoped state needed to rebuild
+the handler's execution context on cross-process recovery** as the durable
+task's **input**. This is a single typed object — the only value that crosses
+the crash boundary as task input:
+
+| Field | Why it is persisted |
+|---|---|
+| `request` — the full create-response request | The recovered handler needs the whole request as `context.request`; it is un-derivable from the response store (the stored response is handler *output*, missing request-only fields). The request carries `.input`, so the conversation input is persisted **once**. |
+| `client_headers`, `query_parameters` | Handler-facing request metadata; request-scoped and un-derivable. They MUST survive recovery so a recovered handler observes the identical metadata as fresh entry (§8). |
+| `user_isolation_key`, `chat_isolation_key` | Partition keys (from request headers); the isolation context is derived from these in exactly one place. |
+| `agent_reference`, `agent_session_id` | Gateway-injected / resolved values that are not functions of the request body. `agent_reference` is normalized to a plain serializable mapping. |
+| `response_id` | The stable response id (identity). |
+| `disposition` | Carried here solely to seed the first-entry `_responses.disposition` stamp (§5.1); the runtime routing source of truth is the metadata namespace thereafter. |
+
+Everything else the recovered handler needs is **re-derived** from the
+persisted `request` — these are pure functions of the request, identical to
+fresh entry, so they are NOT stored as parallel fields (which could drift):
+the mode flags (`store` / `stream` / `background`), `model`,
+`previous_response_id`, the resolved `conversation_id`, and the resolved input
+items. Conversation history is re-derived on demand via the store's
+history-id lookup; it is a prefetch optimization, not recovery state.
+
+The boundary is **fail-closed**: the object is JSON-serializable by
+construction (no runtime object references — those live in a separate
+process-local cache keyed by `response_id` and are never serialized), and a
+malformed/incomplete persisted input fails the recovered task deterministically
+rather than re-invoking the handler with partial state.
+
+> **Port note.** Oversized input (e.g. a large input-item array) rides the core
+> durable-task primitive's attachment-spill — the responses layer does not shard
+> or pointerize it.
+
 ---
 
 ## §6 — The perpetual conversation-scoped task
@@ -569,6 +604,16 @@ The recovery contract has three actors:
    model).
 3. **Client** — observes the reset-on-`in_progress` rule (§9.3);
    redraws its local response view from the reset event's payload.
+
+**Request-scoped input parity (recovery == fresh entry).** On a recovered
+re-invocation the handler observes the **identical** request-scoped state it
+would on fresh entry: `context.request`, `context.client_headers`,
+`context.query_parameters`, and `await context.get_input_items()` (resolved and
+unresolved) are equal to their fresh-entry values. The recovered handler is
+distinguished from a fresh one *only* by `context.is_recovery == True` and the
+entry-only `context.persisted_response` snapshot — never by missing or altered
+inputs/metadata. This parity is what the durable-task input boundary (§5.3)
+guarantees and is exercised end-to-end by the conformance suite.
 
 ### §8.3 — Naive fallback
 

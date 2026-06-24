@@ -207,3 +207,16 @@ is not JSON serializable` durable-start failure ship: every other durability
 test sends no `agent_reference` (`{}` sentinel) or a plain string, so none
 exercised the model form through the (provider-agnostic) durable-input
 serialization. Unit-level guard: `tests/unit/test_durable_orchestrator.py::TestSplitRuntimeRefsSerializable`.
+
+---
+
+## Conformance gap closure — recovered-input parity (Spec 033 FR-002b)
+
+| Clause | Test | Dimension |
+|---|---|---|
+| A recovered handler observes the IDENTICAL request-scoped inputs as fresh entry: `context.request` (incl. request-only fields), `client_headers`, `query_parameters`, and `get_input_items()` (resolved + unresolved) — none dropped or altered on recovery | `test_recovered_input_parity.py::test_recovered_input_parity` (Spec 033 — real SIGKILL; records & diffs lifetime-0 vs lifetime-1 observed inputs) | recovery; request-scoped input content |
+
+This closes the latent `client_headers` / `query_parameters` drop-to-`{}` bug on
+recovery and pins the typed durable-boundary's reconstruction fidelity
+(`responses-durability-spec.md` §5.3 / §8.2). Reconstruction-level unit guard:
+`tests/e2e/test_recovery_reconstruction.py::test_reconstruct_preserves_client_headers_and_query`.

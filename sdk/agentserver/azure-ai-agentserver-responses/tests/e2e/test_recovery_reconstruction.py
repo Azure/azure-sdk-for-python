@@ -17,41 +17,35 @@ import pytest
 
 
 def _build_params_for_recovery() -> dict:
-    """Build a serialized durable-task params dict matching what the orchestrator
-    stamps at fresh-entry, with all in-memory `_*_ref` entries set to None
-    (simulating cross-process recovery)."""
-    return {
-        "response_id": "resp_recover_001",
-        # In-memory refs intentionally None — this is what cross-process recovery sees.
-        "_record_ref": None,
-        "_context_ref": None,
-        "_parsed_ref": None,
-        "_cancel_ref": None,
-        "_runtime_state_ref": None,
-        # Serializable params
-        "agent_reference": "test-agent",
-        "model": "test-model",
-        "store": True,
-        "agent_session_id": "session_xyz",
-        "conversation_id": "conv_abc",
-        "previous_response_id": None,
-        "history_limit": 100,
-        "agent_name": "default",
-        "session_id": "session_xyz",
-        "user_isolation_key": None,
-        "chat_isolation_key": None,
-        "prefetched_history_ids": None,
-        "input_items": [{"role": "user", "content": "hello"}],
-        "parsed_payload": {
+    """Build a durable-task input dict via the single producer
+    (``DurableResponseInput.to_task_input``) — exactly what ``start_durable``
+    persists and what cross-process recovery reads back."""
+    from azure.ai.agentserver.responses.hosting._durable_input import (
+        DurableResponseInput,
+    )
+    from azure.ai.agentserver.responses.models._generated import CreateResponse
+
+    request = CreateResponse(
+        {
             "input": "hello",
             "model": "test-model",
             "stream": False,
             "store": True,
             "background": True,
-        },
-        "stream": False,
-        "background": True,
-    }
+            "conversation": "conv_abc",
+        }
+    )
+    return DurableResponseInput(
+        request=request,
+        response_id="resp_recover_001",
+        disposition="re-invoke",
+        agent_reference={"name": "test-agent"},
+        agent_session_id="session_xyz",
+        user_isolation_key=None,
+        chat_isolation_key=None,
+        client_headers={"client-trace-id": "abc"},
+        query_parameters={"q": "1"},
+    ).to_task_input()
 
 
 def test_reconstruct_from_params_returns_record_and_context() -> None:
@@ -84,6 +78,27 @@ def test_reconstruct_from_params_returns_record_and_context() -> None:
     assert context.mode_flags.store is True
 
 
+def test_reconstruct_preserves_client_headers_and_query(  # Spec 033 FR-002b
+) -> None:
+    """A recovered handler observes the SAME ``client_headers`` /
+    ``query_parameters`` as fresh entry — they MUST NOT be dropped to ``{}``
+    on recovery (the latent drop bug §3.1 fixes)."""
+    from azure.ai.agentserver.responses._options import ResponsesServerOptions
+    from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
+        _reconstruct_from_params,
+    )
+
+    _, context = _reconstruct_from_params(
+        params=_build_params_for_recovery(),
+        response_id="resp_recover_001",
+        provider=None,
+        runtime_state=None,
+        runtime_options=ResponsesServerOptions(),
+    )
+    assert context.client_headers == {"client-trace-id": "abc"}
+    assert context.query_parameters == {"q": "1"}
+
+
 def test_reconstruct_uses_response_id_from_params_not_regenerated() -> None:
     """Reconstruction must use params['response_id'], never generate a new one.
 
@@ -108,8 +123,9 @@ def test_reconstruct_uses_response_id_from_params_not_regenerated() -> None:
     assert context.response_id == "caresp_stable_id_123"
 
 
-def test_reconstruct_parsed_re_parses_payload() -> None:
-    """``_reconstruct_parsed_from_params`` re-hydrates the request model."""
+def test_reconstruct_parsed_re_parses_request() -> None:
+    """``_reconstruct_parsed_from_params`` re-hydrates the request model from
+    the single persisted ``request`` (Spec 033 §3.1)."""
     from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
         _reconstruct_parsed_from_params,
     )
@@ -120,13 +136,14 @@ def test_reconstruct_parsed_re_parses_payload() -> None:
     assert parsed.get("model") == "test-model"
 
 
-def test_reconstruct_parsed_raises_when_payload_missing() -> None:
-    """If parsed_payload is absent, reconstruction raises a clear error."""
+def test_reconstruct_parsed_raises_when_request_missing() -> None:
+    """If the persisted request is absent, reconstruction fails closed
+    (Spec 033 FR-002f)."""
     from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
         _reconstruct_parsed_from_params,
     )
 
-    with pytest.raises(RuntimeError, match="parsed_payload"):
+    with pytest.raises(ValueError, match="request"):
         _reconstruct_parsed_from_params({"response_id": "resp_no_payload"})
 
 

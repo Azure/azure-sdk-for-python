@@ -74,30 +74,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger("azure.ai.agentserver")
 
 
-def _serialize_for_recovery(value: Any) -> Any:
-    """Convert a model or list of models to a JSON-safe representation.
-
-    The durable task input is serialized as JSON. Objects that pass through
-    this helper survive a cross-process task re-fire — used by Spec 013 US1(a)
-    reconstruction.
-
-    :param value: Any object — typically a generated model with ``as_dict``,
-        a list of such models, or a plain value.
-    :type value: Any
-    :returns: A JSON-safe representation (dict, list, str, None, etc.).
-    :rtype: Any
-    """
-    if value is None:
-        return None
-    if isinstance(value, list):
-        return [_serialize_for_recovery(item) for item in value]
-    if isinstance(value, dict):
-        return dict(value)
-    if hasattr(value, "as_dict") and callable(value.as_dict):
-        return value.as_dict()
-    return value
-
-
 _STORAGE_ERROR_MESSAGE = (
     "An internal error occurred while storing the response. "
     "Subsequent retrieval is not guaranteed. Please retry the request."
@@ -3291,6 +3267,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         from ._durable_orchestrator import (
             DurableResponseOrchestrator,
         )  # pylint: disable=import-outside-toplevel
+        from ._durable_input import (
+            DurableResponseInput,
+            RuntimeRefs,
+        )  # pylint: disable=import-outside-toplevel
 
         if not hasattr(self, "_durable_orchestrator"):
             self._durable_orchestrator = DurableResponseOrchestrator(
@@ -3301,52 +3281,43 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 parent_orchestrator=self,
             )
 
-        # (Spec 024 Phase 2) `ensure_bookkeeping_event` pre-registration
-        # deleted. The bookkeeping pattern is gone — handler now runs
-        # inside the durable task body for all rows; no separate event
-        # registry is consulted by anyone.
+        # (Spec 033 §3.1) The single typed durable boundary — the ONLY value
+        # persisted as durable-task input. The full request is persisted once
+        # (it carries ``.input``); request-scoped scalars (model / store /
+        # stream / background / conversation_id / previous_response_id) are
+        # re-derived from it on recovery. ``client_headers`` / ``query_parameters``
+        # are persisted here so a recovered handler observes the identical
+        # request metadata as fresh entry (FR-002b — fixes the prior drop bug).
+        durable_input = DurableResponseInput(
+            request=ctx.parsed,
+            response_id=ctx.response_id,
+            # Disposition rides the input solely to seed the first-entry
+            # ``_responses`` metadata stamp; the runtime routing SOT is the
+            # metadata namespace thereafter (survives cross-process recovery).
+            disposition=disposition,
+            agent_reference=ctx.agent_reference,
+            agent_session_id=ctx.agent_session_id,
+            user_isolation_key=ctx.user_isolation_key,
+            chat_isolation_key=ctx.chat_isolation_key,
+            client_headers=dict(ctx.context.client_headers) if ctx.context is not None else {},
+            query_parameters=dict(ctx.context.query_parameters) if ctx.context is not None else {},
+        )
 
-        # Build execution params dict for the task input
-        ctx_params: dict[str, Any] = {
-            "response_id": ctx.response_id,
-            # (Spec 014 FR-003 / FR-004) Disposition stamped into params
-            # at start so _execute_in_task can copy it into framework
-            # metadata on first entry; recovery dispatch reads from
-            # metadata thereafter (survives cross-process recovery).
-            "disposition": disposition,
-            # Object references (not serialized — only valid in same process)
-            "_record_ref": record,
-            "_context_ref": ctx.context,
-            "_parsed_ref": ctx.parsed,
-            "_cancel_ref": ctx.cancellation_signal,
-            "_runtime_state_ref": self._runtime_state,
-            # Serializable params (these survive cross-process recovery)
-            "agent_reference": ctx.agent_reference,
-            "model": ctx.model,
-            "store": ctx.store,
-            "agent_session_id": ctx.agent_session_id,
-            "conversation_id": ctx.conversation_id,
-            "previous_response_id": ctx.previous_response_id,
-            "history_limit": self._runtime_options.default_fetch_history_count,
-            "agent_name": getattr(self._runtime_options, "agent_name", "default"),
-            "session_id": ctx.agent_session_id or "",
-            # Spec 013 US1(a) reconstruction support — fields needed to rebuild
-            # ResponseExecution, ResponseContext, and the parsed request across
-            # a cross-process recovery. None of these touches the existing
-            # same-process path (which uses the _*_ref entries above).
-            "user_isolation_key": ctx.user_isolation_key,
-            "chat_isolation_key": ctx.chat_isolation_key,
-            "prefetched_history_ids": ctx.prefetched_history_ids,
-            "input_items": _serialize_for_recovery(ctx.input_items),
-            "parsed_payload": _serialize_for_recovery(ctx.parsed),
-            "stream": ctx.stream,
-            "background": ctx.background,
-        }
+        # (Spec 033 §3.1) Process-local object references — never serialized;
+        # cached out-of-band by response_id and rebuilt on cross-process recovery.
+        refs = RuntimeRefs(
+            record=record,
+            context=ctx.context,
+            parsed=ctx.parsed,
+            cancel=ctx.cancellation_signal,
+            runtime_state=self._runtime_state,
+        )
 
         try:
             freshly_started = await self._durable_orchestrator.start_durable(
                 record=record,
-                ctx_params=ctx_params,
+                durable_input=durable_input,
+                refs=refs,
             )
             if not freshly_started:
                 # Input was queued on already-active multi-turn steerable

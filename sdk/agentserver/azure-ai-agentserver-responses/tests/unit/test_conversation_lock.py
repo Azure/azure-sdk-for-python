@@ -27,6 +27,31 @@ from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
 
 
 # Mimics callable TaskMetadata for fixtures (see test_durable_orchestrator.py).
+
+
+def _durable_input_from(ctx_params):
+    """Build a typed DurableResponseInput from a legacy ctx_params dict (test helper)."""
+    from azure.ai.agentserver.responses.hosting._durable_input import DurableResponseInput
+    from azure.ai.agentserver.responses.models._generated import CreateResponse
+
+    body = {"input": "hi"}
+    if ctx_params.get("conversation_id") is not None:
+        body["conversation"] = ctx_params["conversation_id"]
+    if ctx_params.get("previous_response_id") is not None:
+        body["previous_response_id"] = ctx_params["previous_response_id"]
+    return DurableResponseInput(
+        request=CreateResponse(body),
+        response_id=ctx_params["response_id"],
+        disposition="re-invoke",
+        agent_session_id=ctx_params.get("session_id"),
+    )
+
+
+def _empty_refs():
+    from azure.ai.agentserver.responses.hosting._durable_input import RuntimeRefs
+
+    return RuntimeRefs()
+
 class _FakeTaskMetadata(dict):
     def __init__(self, *args: object, **kwargs: object) -> None:
         super().__init__(*args, **kwargs)
@@ -81,7 +106,7 @@ class TestConflictHandling:
         }
 
         with pytest.raises(TaskConflictError) as excinfo:
-            await orch.start_durable(record=record, ctx_params=ctx_params)
+            await orch.start_durable(record=record, durable_input=_durable_input_from(ctx_params), refs=_empty_refs())
         assert excinfo.value.current_status == "in_progress"
 
     @pytest.mark.asyncio
@@ -123,7 +148,7 @@ class TestConflictHandling:
         }
 
         with pytest.raises(TaskConflictError):
-            await orch.start_durable(record=record, ctx_params=ctx_params)
+            await orch.start_durable(record=record, durable_input=_durable_input_from(ctx_params), refs=_empty_refs())
 
 
 class TestNonBackgroundRecovery:
@@ -151,6 +176,7 @@ class TestNonBackgroundRecovery:
         ctx.metadata(_RESPONSES_NS)[_RESP_BACKGROUND] = False
         ctx.input = {
             "response_id": "resp_nonbg",
+            "request": {"input": "hi", "store": True, "background": False},
             "_record_ref": None,
             "_context_ref": None,
             "_parsed_ref": None,
@@ -290,7 +316,7 @@ class TestRow5SequentialTurnsExtendChain:
             "previous_response_id": "resp_turn1",
         }
         # Should succeed — multi-turn primitive accepts the resume.
-        await orch.start_durable(record=record, ctx_params=ctx_params_turn2)
+        await orch.start_durable(record=record, durable_input=_durable_input_from(ctx_params_turn2), refs=_empty_refs())
         orch._multi_turn_task_fn.start.assert_called_once()
         # And no fallback path was taken (no one-shot start).
         if hasattr(orch, "_one_shot_task_fn"):
@@ -331,7 +357,7 @@ class TestRow5SequentialTurnsExtendChain:
         }
 
         with pytest.raises(TaskConflictError) as excinfo:
-            await orch.start_durable(record=record, ctx_params=ctx_params)
+            await orch.start_durable(record=record, durable_input=_durable_input_from(ctx_params), refs=_empty_refs())
         # Depth: status is in_progress (not completed) — the actual concurrent-lock case.
         assert (
             excinfo.value.current_status == "in_progress"

@@ -411,6 +411,7 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
     ctx.task_id = "task-drain"
     ctx.input = {
         "response_id": "resp_drain",
+        "request": {"input": "hi"},
         "_record_ref": MagicMock(),
         "_context_ref": real_context,
         "_parsed_ref": MagicMock(),
