@@ -13123,12 +13123,10 @@ class SessionLogEvent(_Model):
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
-    on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
-    connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -14274,7 +14272,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      or a Literal["required"] type.
     :vartype mode: str or str
     :ivar tools: Required. A list of tool definitions that the model should be allowed to call. For
-     the Responses API, the list of tool definitions might look like:
+     the Responses API, the list of tool definitions might look like the following. Required.
 
      .. code-block:: json
 
@@ -14295,7 +14293,7 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      Literal[\"required\"] type."""
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required. A list of tool definitions that the model should be allowed to call. For the
-     Responses API, the list of tool definitions might look like:
+     Responses API, the list of tool definitions might look like the following. Required.
      
      .. code-block:: json
      
