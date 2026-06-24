@@ -17,6 +17,15 @@
 # See GitHub issue: https://github.com/microsoft/typespec/issues/10311
 git restore pyproject.toml
 
+# Revert emitted MANIFEST.in, since it overrides changes I need to get the dist package (*.tar.gz) with required files.
+# I would like to keep these two lines, since I have test and sample data files I need:
+#   recursive-include tests *
+#   recursive-include samples *
+# But the emitter keeps changing it back to only include *.py and *.md files:
+#   recursive-include tests *.py
+#   recursive-include samples *.py *.md
+git restore MANIFEST.in
+
 # Force streaming in get_session_log_stream for both sync and async operations.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
@@ -48,35 +57,35 @@ foreach ($f in $files) {
 #          { "type": "image_generation" }
 #        ]. Required.
 # See GitHub issue: https://github.com/microsoft/typespec/issues/10314
-(Get-Content azure\ai\projects\models\_models.py) -replace 'Responses API, the list of tool definitions might look like:', 'Responses API, the list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py
-(Get-Content azure\ai\projects\models\_models.py) -replace 'list of tool definitions might look like:', 'list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py
-(Get-Content azure\ai\projects\models\_models.py) -replace '        \]\. Required\.', '        ]' | Set-Content azure\ai\projects\models\_models.py
+# (Get-Content azure\ai\projects\models\_models.py) -replace 'Responses API, the list of tool definitions might look like:', 'Responses API, the list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py
+# (Get-Content azure\ai\projects\models\_models.py) -replace 'list of tool definitions might look like:', 'list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py
+# (Get-Content azure\ai\projects\models\_models.py) -replace '        \]\. Required\.', '        ]' | Set-Content azure\ai\projects\models\_models.py
 
 # Fix Sphinx docutils warnings in class SessionLogEvent: the generated docstring wraps two long
 # ``data:`` JSON lines mid-string inside a ``.. code-block::`` section. The wrapped continuation
 # lines have wrong indentation (4 spaces instead of 7), causing "unexpected unindent" warnings.
 # Join each broken pair back into one line.
-$f = 'azure\ai\projects\models\_models.py'
-$c = Get-Content $f -Raw
-$c = $c -replace '(Starting server)\r?\n[ \t]+(on port 18080)', '$1 $2'
-$c = $c -replace '(Successfully)\r?\n[ \t]+(connected to container\"})\.?', '$1 $2'
-Set-Content $f $c -NoNewline
-$lines = Get-Content $f
-$out = @()
-foreach ($line in $lines) {
-    if ($line -match '^\s*on port 18080' -and $line -notmatch 'data:') { continue }
-    if ($line -match '^\s*connected to container' -and $line -notmatch 'data:') { continue }
-    if ($line -match '^\s*data: .*2026-03-10T09:33:17.121Z') {
-        $out += ('       ' + $line.TrimStart())
-        continue
-    }
-    if ($line -match '^\s*data: .*2026-03-10T09:34:52.714Z') {
-        $out += ('       ' + $line.TrimStart())
-        continue
-    }
-    $out += $line
-}
-Set-Content $f $out
+# $f = 'azure\ai\projects\models\_models.py'
+# $c = Get-Content $f -Raw
+# $c = $c -replace '(Starting server)\r?\n[ \t]+(on port 18080)', '$1 $2'
+# $c = $c -replace '(Successfully)\r?\n[ \t]+(connected to container\"})\.?', '$1 $2'
+# Set-Content $f $c -NoNewline
+# $lines = Get-Content $f
+# $out = @()
+# foreach ($line in $lines) {
+#     if ($line -match '^\s*on port 18080' -and $line -notmatch 'data:') { continue }
+#     if ($line -match '^\s*connected to container' -and $line -notmatch 'data:') { continue }
+#     if ($line -match '^\s*data: .*2026-03-10T09:33:17.121Z') {
+#         $out += ('       ' + $line.TrimStart())
+#         continue
+#     }
+#     if ($line -match '^\s*data: .*2026-03-10T09:34:52.714Z') {
+#         $out += ('       ' + $line.TrimStart())
+#         continue
+#     }
+#     $out += $line
+# }
+# Set-Content $f $out
 
 # Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + async).
 # The emitter wraps bullet/code-block lines with insufficient indentation.
