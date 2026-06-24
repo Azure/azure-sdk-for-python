@@ -749,6 +749,18 @@ stream got"; the framework MUST NOT maintain a parallel
 `last_sequence_number` watermark in task metadata (which could diverge
 from the events actually persisted).
 
+> **Implementation note — one authority per surface.** On the **streaming
+> wire** (the only cursor-replayed, client-visible surface) the cursor-seeded
+> `next_seq` is the **sole** `sequence_number` authority: the framework MUST
+> stamp it onto every event as it is appended, **overwriting** any value the
+> event builder produced. A builder's own per-stream counter therefore has no
+> wire effect on the streaming path and MUST NOT be relied upon. The
+> **non-stream background** path is not cursor-replayed — its snapshot is the
+> source of truth and is built with `sequence_number` removed — so it does not
+> carry a cursor and the builder's local counter is harmless there. A language
+> SDK MAY keep a builder-local counter for standalone event construction, but
+> it MUST NOT be a second authority on the streaming wire.
+
 ### §9.2 — Reconnection (`starting_after=`)
 
 `GET /responses/{id}?stream=true&starting_after=N` returns only events
