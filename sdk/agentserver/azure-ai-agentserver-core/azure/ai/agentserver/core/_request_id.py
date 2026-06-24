@@ -18,7 +18,7 @@ packages).
 from __future__ import annotations
 
 import uuid
-from typing import Any, MutableMapping
+from typing import Any, Mapping, MutableMapping
 
 from starlette.types import ASGIApp, Receive, Scope, Send
 
@@ -26,6 +26,25 @@ from ._middleware import _extract_header, _get_trace_id
 
 # Key used to store the resolved request ID in ASGI scope state.
 REQUEST_ID_STATE_KEY = "agentserver.request_id"
+
+
+def read_request_id(scope: "Mapping[str, Any]") -> "str | None":
+    """Return the request ID resolved by :class:`RequestIdMiddleware`.
+
+    Reads the value the middleware stored in the ASGI ``scope["state"]`` so
+    protocol packages can correlate a request without depending on the internal
+    state-key name. Returns ``None`` when the middleware is not installed or the
+    value is absent.
+
+    :param scope: The ASGI scope (or any mapping carrying a ``state`` dict).
+    :type scope: Mapping[str, Any]
+    :return: The resolved ``x-request-id`` value, or ``None``.
+    :rtype: str | None
+    """
+    state = scope.get("state")
+    if isinstance(state, dict):
+        return state.get(REQUEST_ID_STATE_KEY)
+    return None
 
 
 class RequestIdMiddleware:

@@ -2267,6 +2267,7 @@ The handle returned by `.start()`. Slim public surface:
 | `await run.result()` | `Output` | Block until terminal-for-this-caller; returns the handler's typed return value directly OR raises a typed exception (§39). |
 | `await run.cancel()` | `None` | Signal cooperative cancellation. MUST set `ctx.cancel_requested = True` BEFORE setting `ctx.cancel` (ordering invariant — handler observing `ctx.cancel` is guaranteed to see at least one cause boolean already True). The handler picks the terminal shape. |
 | `await run` | `Output` | Awaiting the run directly is sugar for `await run.result()`. |
+| `run.is_queued` | `bool` | `True` when this handle represents a *queued* (not-yet-promoted) steering input on a steerable chain — i.e. `.start()` landed mid-turn and the input is awaiting drain — and `False` for a freshly-started or active run. The supported way to distinguish a queued steering handle from a fresh one; cancelling a queued run removes the queued slot and resolves `result()` with `TaskCancelled` without affecting the active turn. |
 
 That is the entire surface. The handle deliberately has NO
 `status` / `delete` / `refresh` / `lease_expiry_count`:
