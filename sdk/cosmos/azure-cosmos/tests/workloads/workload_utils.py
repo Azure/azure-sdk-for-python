@@ -155,6 +155,49 @@ def read_item(container, excluded_locations, num_reads, stats=None):
         )
 
 
+def create_item(container, excluded_locations, num_creates, stats=None):
+    extra = _extra_kwargs(excluded_locations)
+    for _ in range(num_creates):
+        item = create_random_item()
+        _timed_call("CreateItem", stats, container.create_item, item, **extra)
+        # Delete the new item again (not timed) so the container does not grow
+        # without bound over a long run.
+        try:
+            container.delete_item(item["id"], item[PARTITION_KEY], **extra)
+        except Exception:
+            pass
+
+
+def replace_item(container, excluded_locations, num_replaces, stats=None):
+    extra = _extra_kwargs(excluded_locations)
+    for _ in range(num_replaces):
+        item = get_existing_random_item()
+        _timed_call("ReplaceItem", stats, container.replace_item, item["id"], item, **extra)
+
+
+def delete_item(container, excluded_locations, num_deletes, stats=None):
+    extra = _extra_kwargs(excluded_locations)
+    for _ in range(num_deletes):
+        item = create_random_item()
+        # Create the item first (not timed) so each delete has something to remove.
+        try:
+            container.create_item(item, **extra)
+        except Exception:
+            continue
+        _timed_call("DeleteItem", stats, container.delete_item, item["id"], item[PARTITION_KEY], **extra)
+
+
+def patch_item(container, excluded_locations, num_patches, stats=None):
+    extra = _extra_kwargs(excluded_locations)
+    for _ in range(num_patches):
+        item = get_existing_random_item()
+        operations = [{"op": "set", "path": "/value", "value": random.randint(1, 1000000000)}]
+        _timed_call(
+            "PatchItem", stats,
+            container.patch_item, item["id"], item[PARTITION_KEY], operations, **extra,
+        )
+
+
 def query_items(container, excluded_locations, num_queries, stats=None):
     extra = _extra_kwargs(excluded_locations)
     for _ in range(num_queries):
@@ -198,6 +241,62 @@ async def read_item_concurrently(container, excluded_locations, num_reads, stats
             item["id"], item[PARTITION_KEY], etag=None, match_condition=None, **extra,
         )
         tasks.append(_timed_call_async("ReadItem", stats, awaitable))
+    await asyncio.gather(*tasks, return_exceptions=True)
+
+
+async def create_item_concurrently(container, excluded_locations, num_creates, stats=None):
+    extra = _extra_kwargs(excluded_locations)
+    created = []
+    tasks = []
+    for _ in range(num_creates):
+        item = create_random_item()
+        created.append(item)
+        tasks.append(_timed_call_async("CreateItem", stats, container.create_item(item, **extra)))
+    await asyncio.gather(*tasks, return_exceptions=True)
+    # Delete the new items again (not timed) so the container does not grow
+    # without bound over a long run.
+    cleanup = [container.delete_item(it["id"], it[PARTITION_KEY], **extra) for it in created]
+    await asyncio.gather(*cleanup, return_exceptions=True)
+
+
+async def replace_item_concurrently(container, excluded_locations, num_replaces, stats=None):
+    extra = _extra_kwargs(excluded_locations)
+    tasks = []
+    for _ in range(num_replaces):
+        item = get_existing_random_item()
+        tasks.append(
+            _timed_call_async("ReplaceItem", stats, container.replace_item(item["id"], item, **extra))
+        )
+    await asyncio.gather(*tasks, return_exceptions=True)
+
+
+async def delete_item_concurrently(container, excluded_locations, num_deletes, stats=None):
+    extra = _extra_kwargs(excluded_locations)
+    items = [create_random_item() for _ in range(num_deletes)]
+    # Create the items first (not timed) so each delete has something to remove.
+    setup = [container.create_item(it, **extra) for it in items]
+    await asyncio.gather(*setup, return_exceptions=True)
+    tasks = [
+        _timed_call_async(
+            "DeleteItem", stats, container.delete_item(it["id"], it[PARTITION_KEY], **extra)
+        )
+        for it in items
+    ]
+    await asyncio.gather(*tasks, return_exceptions=True)
+
+
+async def patch_item_concurrently(container, excluded_locations, num_patches, stats=None):
+    extra = _extra_kwargs(excluded_locations)
+    tasks = []
+    for _ in range(num_patches):
+        item = get_existing_random_item()
+        operations = [{"op": "set", "path": "/value", "value": random.randint(1, 1000000000)}]
+        tasks.append(
+            _timed_call_async(
+                "PatchItem", stats,
+                container.patch_item(item["id"], item[PARTITION_KEY], operations, **extra),
+            )
+        )
     await asyncio.gather(*tasks, return_exceptions=True)
 
 

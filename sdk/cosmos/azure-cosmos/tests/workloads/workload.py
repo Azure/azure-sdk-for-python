@@ -74,12 +74,28 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
 
             while True:
                 try:
-                    if "write" in ops:
+                    if "create" in ops:
+                        await create_item_concurrently(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "upsert" in ops:
                         await upsert_item_concurrently(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "replace" in ops:
+                        await replace_item_concurrently(
                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
                         )
                     if "read" in ops:
                         await read_item_concurrently(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "patch" in ops:
+                        await patch_item_concurrently(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "delete" in ops:
+                        await delete_item_concurrently(
                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
                         )
                     if "query" in ops:
@@ -147,12 +163,28 @@ def run_workload_sync(client_id, client_logger):
 
             while True:
                 try:
-                    if "write" in ops:
+                    if "create" in ops:
+                        create_item(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "upsert" in ops:
                         upsert_item(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "replace" in ops:
+                        replace_item(
                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
                         )
                     if "read" in ops:
                         read_item(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "patch" in ops:
+                        patch_item(
+                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                        )
+                    if "delete" in ops:
+                        delete_item(
                             cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
                         )
                     if "query" in ops:

@@ -44,17 +44,27 @@ NUMBER_OF_LOGICAL_PARTITIONS = int(
 )
 THROUGHPUT = _safe_int(os.environ.get("COSMOS_THROUGHPUT", "100000"), 100000)  # For DR drills, set COSMOS_THROUGHPUT=1000000
 
-# Workload behavior
-_VALID_OPERATIONS = {"read", "write", "query"}
-WORKLOAD_OPERATIONS = frozenset(
+# Workload behavior. WORKLOAD_OPERATIONS picks which operations the loop runs:
+# any subset of the six point operations, plus "query" for context. Comma
+# separated, case-insensitive. "write" is a backward-compatible alias for
+# "upsert".
+_VALID_OPERATIONS = {"read", "create", "upsert", "replace", "delete", "patch", "query"}
+_OPERATION_ALIASES = {"write": "upsert"}
+_raw_operations = [
     op.strip().lower()
-    for op in os.environ.get("WORKLOAD_OPERATIONS", "read,write,query").split(",")
+    for op in os.environ.get(
+        "WORKLOAD_OPERATIONS", "read,create,upsert,replace,delete,patch"
+    ).split(",")
     if op.strip()
+]
+WORKLOAD_OPERATIONS = frozenset(
+    _OPERATION_ALIASES.get(op, op) for op in _raw_operations
 )
 _unknown_ops = WORKLOAD_OPERATIONS - _VALID_OPERATIONS
 if _unknown_ops:
     raise ValueError(
-        f"Unknown WORKLOAD_OPERATIONS: {_unknown_ops}. Valid: {_VALID_OPERATIONS}"
+        f"Unknown WORKLOAD_OPERATIONS: {_unknown_ops}. Valid: {sorted(_VALID_OPERATIONS)} "
+        f"(plus 'write' as an alias for 'upsert')."
     )
 WORKLOAD_USE_PROXY = os.environ.get("WORKLOAD_USE_PROXY", "false").lower() == "true"
 WORKLOAD_USE_SYNC = os.environ.get("WORKLOAD_USE_SYNC", "false").lower() == "true"
