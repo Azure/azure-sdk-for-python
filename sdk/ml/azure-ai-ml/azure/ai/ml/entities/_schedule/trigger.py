@@ -173,7 +173,7 @@ class CronTrigger(TriggerBase):
         )
         self.expression = expression
 
-    def _to_rest_object(self) -> RestCronTrigger:  # v2022_12_01.models.CronTrigger
+    def _to_rest_object(self) -> RestCronTrigger:  # v2023_04_01_preview.models.CronTrigger
         return RestCronTrigger(
             trigger_type=self.type,
             expression=self.expression,
@@ -182,7 +182,7 @@ class CronTrigger(TriggerBase):
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_cron_object(self) -> RestCronTrigger:  # v2022_12_01_preview.models.CronTrigger
+    def _to_rest_compute_cron_object(self) -> RestCronTrigger:  # v2023_04_01_preview.models.CronTrigger
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
@@ -254,7 +254,7 @@ class RecurrenceTrigger(TriggerBase):
         self.frequency = frequency
         self.interval = interval
 
-    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2022_12_01.models.RecurrenceTrigger
+    def _to_rest_object(self) -> RestRecurrenceTrigger:  # v2023_04_01_preview.models.RecurrenceTrigger
         return RestRecurrenceTrigger(
             frequency=snake_to_camel(self.frequency),
             interval=self.interval,
@@ -265,7 +265,7 @@ class RecurrenceTrigger(TriggerBase):
         )
 
     def _to_rest_compute_recurrence_object(self) -> RestRecurrenceTrigger:
-        # v2022_12_01_preview.models.RecurrenceTrigger
+        # v2023_04_01_preview.models.RecurrenceTrigger
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
