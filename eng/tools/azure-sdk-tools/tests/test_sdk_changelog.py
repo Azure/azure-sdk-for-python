@@ -198,7 +198,7 @@ def test_output_json_detector_mode_breaking(mock_get_changelog_content, temp_arm
         result = json.load(f)
     assert result["changes"] == md_output
     assert result["hasBreakingChange"] is True
-    assert result["breakingChangeItems"] == ["dropped bar"]
+    assert "breakingChangeItems" not in result
 
     # CHANGELOG.md must NOT be modified in detector mode
     with open(changelog_path, "r") as f:
@@ -220,7 +220,7 @@ def test_output_json_detector_mode_no_breaking(mock_get_changelog_content, temp_
         result = json.load(f)
     assert result["changes"] == md_output
     assert result["hasBreakingChange"] is False
-    assert result["breakingChangeItems"] == []
+    assert "breakingChangeItems" not in result
 
     # CHANGELOG.md must NOT be modified in detector mode
     with open(changelog_path, "r") as f:

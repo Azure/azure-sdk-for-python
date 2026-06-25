@@ -162,7 +162,6 @@ def main(
             result = {
                 "changes": md_output,
                 "hasBreakingChange": "Breaking Changes" in md_output,
-                "breakingChangeItems": extract_breaking_change(md_output),
             }
             output_json = Path(output_json)
             output_json.parent.mkdir(parents=True, exist_ok=True)
