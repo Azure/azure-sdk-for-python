@@ -203,7 +203,7 @@ the latest `response_id` you have seen for this conversation.
 
 ### Provider configuration for local-dev recovery testing
 
-Real cross-process recovery requires resilient storage that survives subprocess
+Real cross-process recovery requires persistent storage that survives subprocess
 restarts. The framework defaults provide this automatically; the
 sections below describe what they do and how to override them for
 specific scenarios.
@@ -389,7 +389,7 @@ context.conversation_chain_metadata["sent_msg"] = True
 await context.conversation_chain_metadata.flush()   # resilient BEFORE the side effect
 await upstream.send_message(...)                    # the non-idempotent call
 del context.conversation_chain_metadata["sent_msg"]
-await context.conversation_chain_metadata.flush()   # clear AFTER it resiliently committed
+await context.conversation_chain_metadata.flush()   # clear AFTER it persisted
 ```
 
 These compose: a handler may checkpoint its response output **and** watermark a
@@ -494,7 +494,7 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
     yield stream.emit_completed()
 ```
 
-`yield stream.checkpoint()` resiliently persists the current `stream.response`
+`yield stream.checkpoint()` persists the current `stream.response`
 snapshot (gated to resilient background responses; a no-op otherwise) and is
 backpressured — control does not return from the `yield` until the write
 completes. See the handler guide's

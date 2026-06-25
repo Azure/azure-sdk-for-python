@@ -669,7 +669,7 @@ def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> Non
 def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_timeout() -> None:
     """B11 race condition: handler eventually yields response.completed after cancel.
 
-    The resilient store must still reflect 'cancelled', not 'completed'.
+    The response store must still reflect 'cancelled', not 'completed'.
     """
     from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
@@ -715,7 +715,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
 
     time.sleep(2.0)
 
-    # GET from resilient store must show cancelled
+    # GET from response store must show cancelled
     get = client.get(f"/responses/{response_id}")
     assert get.status_code == 200
     assert get.json()["status"] == "cancelled", (

@@ -3,7 +3,7 @@
 """Contract tests for eager eviction of terminal response records.
 
 Once a response reaches terminal status (completed, failed, cancelled,
-incomplete) and has been persisted to resilient storage, the in-memory
+incomplete) and has been persisted to persistent storage, the in-memory
 runtime record should be immediately evicted.  Subsequent operations
 fall through to the provider (storage) path, freeing server memory.
 

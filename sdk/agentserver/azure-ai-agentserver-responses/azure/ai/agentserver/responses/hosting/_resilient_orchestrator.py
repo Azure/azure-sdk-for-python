@@ -906,7 +906,7 @@ class ResilientResponseOrchestrator:
         record: ResponseExecution | None = _ref("_record_ref")
         if record is None:
             # Cross-process recovery: in-memory references were lost when the
-            # task input was serialized to the resilient store. Reconstruct from
+            # task input was serialized to the task store. Reconstruct from
             # the serialized params (Spec 013 US1 deliverable (a)).
             record, context = _reconstruct_from_params(
                 params=params,

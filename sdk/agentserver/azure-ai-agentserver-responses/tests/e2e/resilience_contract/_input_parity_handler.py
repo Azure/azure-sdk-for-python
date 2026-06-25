@@ -13,7 +13,7 @@ it saw on fresh entry (no dropped headers / query / input, no altered request).
 Mechanism (real SIGKILL, no synthetic recovery):
 
 1. Record the observed-input digest BEFORE the crash window.
-2. Emit ``response.created`` so the response is resiliently persisted (recovery
+2. Emit ``response.created`` so the response is persisted (recovery
    re-invokes rather than drops).
 3. On lifetime 0, sleep so the harness can SIGKILL mid-run.
 4. On recovery (lifetime 1) record again, then complete normally.

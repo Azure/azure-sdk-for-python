@@ -142,7 +142,7 @@ deliver per the table below:
 
 The framework MUST implement Path B and Path C as independent fallbacks
 for each other (Path C is a complete fallback for Path B). A Path-B
-in-process marker that does not resiliently persist before the process
+in-process marker that does not persist before the process
 exits MUST be backed by a Path-C next-lifetime marker; the row 2/3
 recovery scanner closes that window.
 
@@ -655,7 +655,7 @@ rather than re-running the whole turn.
 yield stream.checkpoint()
 ```
 
-Yielding it resiliently persists the current `stream.response` snapshot (every
+Yielding it persists the current `stream.response` snapshot (every
 output item finished so far) via `provider.update_response`. It is a third
 write point alongside `response.created` and the terminal write (§9.1).
 Properties:
@@ -1130,7 +1130,7 @@ HTTP   ──► POST /v1/responses { stream: true, store, background } ──�
                                                                           │
        framework: task_fn.start(task_id, input=params)                    │
        framework: stamp _responses.disposition="re-invoke" in metadata    │
-                  (resiliently flushed before any await)                      │
+                  (flushed before any await)                      │
        framework: schedule task body; handler invoked                     │
        handler:   emit response.created (seq=1)                           │
        framework: persist response envelope → response store              │
@@ -1236,7 +1236,7 @@ The handler-facing metadata API MUST reject keys and namespace names
 starting with `_` per §5. The framework's `_responses` namespace MUST
 hold at least `response_id`, `background`, and `disposition` per §5.1.
 The `disposition` write at first
-entry MUST be resiliently flushed before any subsequent interruptible
+entry MUST be flushed before any subsequent interruptible
 await per §5.2.
 
 ### C-PERPETUAL — Perpetual task

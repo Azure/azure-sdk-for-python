@@ -1522,7 +1522,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             record.response.background = record.mode_flags.background
         record.transition_to("cancelled")
 
-        # Persist cancelled state to resilient store (B11: cancellation always wins)
+        # Persist cancelled state to the response store (B11: cancellation always wins)
         try:
             if record.response is not None:
                 await self._provider.update_response(record.response, isolation=_extract_isolation(request))
