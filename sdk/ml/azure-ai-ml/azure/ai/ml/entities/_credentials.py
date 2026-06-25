@@ -53,7 +53,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as R
 from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     WorkspaceConnectionAccessKey as RestWorkspaceConnectionAccessKey,
 )
-from azure.ai.ml._restclient.v2023_06_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     WorkspaceConnectionApiKey as RestWorkspaceConnectionApiKey,
 )
 

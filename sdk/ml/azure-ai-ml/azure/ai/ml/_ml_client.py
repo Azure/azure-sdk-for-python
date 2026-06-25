@@ -26,7 +26,6 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_06_01_preview import AzureMachineLearningWorkspaces as ServiceClient062023Preview
 from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
@@ -105,6 +104,7 @@ ServiceClient102023 = partial(MachineLearningServicesMgmtClient, api_version="20
 ServiceClient022022Preview = partial(MachineLearningServicesMgmtClient, api_version="2022-02-01-preview")
 ServiceClient102022Preview = partial(MachineLearningServicesMgmtClient, api_version="2022-10-01-preview")
 ServiceClient022023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-02-01-preview")
+ServiceClient062023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-06-01-preview")
 ServiceClient012025Preview = partial(MachineLearningServicesMgmtClient, api_version="2025-01-01-preview")
 ServiceClient102024PreviewTsp = partial(MachineLearningServicesMgmtClient, api_version="2024-10-01-preview")
 

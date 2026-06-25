@@ -10,13 +10,12 @@ from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union
 
 from typing_extensions import Literal
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import JobBase as RestJobBase
-from azure.ai.ml._restclient.v2023_06_01_preview.models import JobBaseProperties as RestJobBaseProperties
-from azure.ai.ml._restclient.v2023_06_01_preview.models import JobScheduleAction
-from azure.ai.ml._restclient.v2023_06_01_preview.models import PipelineJob as RestPipelineJob
-from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleActionType as RestScheduleActionType
-from azure.ai.ml._restclient.v2023_06_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as RestJobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobScheduleAction
+from azure.ai.ml._restclient.arm_ml_service.models import PipelineJob as RestPipelineJob
+from azure.ai.ml._restclient.arm_ml_service.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.arm_ml_service.models import ScheduleActionType as RestScheduleActionType
+from azure.ai.ml._restclient.arm_ml_service.models import ScheduleProperties
 from azure.ai.ml._restclient.v2024_01_01_preview.models import TriggerRunSubmissionDto as RestTriggerRunSubmissionDto
 from azure.ai.ml._schema.schedule.schedule import JobScheduleSchema
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
@@ -429,11 +428,11 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
             job_definition.source_job_id = self.create_job.id
         elif private_enabled and isinstance(self.create_job, (CommandJob, SparkJob)):
             job_definition = self.create_job._to_rest_object().properties
-            # CommandJob builds a shared arm_ml_service hybrid envelope, but the schedule is serialized
-            # by the v2023_06 msrest client; convert the hybrid job_definition back to msrest (via its
-            # camelCase wire dict) so it carries the ``_attribute_map`` the msrest serializer needs.
-            if getattr(job_definition, "_is_model", False) is True:
-                job_definition = RestJobBaseProperties.deserialize(job_definition.as_dict())
+            # SparkJob still builds a v2023_04 msrest envelope; CommandJob already builds the shared
+            # arm_ml_service hybrid. Convert any msrest job_definition to its camelCase wire dict so it
+            # fits inside the arm_ml_service schedule envelope without changing the wire body.
+            if getattr(job_definition, "_is_model", False) is not True:
+                job_definition = job_definition.serialize()
             # TODO: Merge this branch with PipelineJob after source job id move to JobBaseProperties
             # job_definition.source_job_id = self.create_job.id
         elif isinstance(self.create_job, str):  # arm id reference
