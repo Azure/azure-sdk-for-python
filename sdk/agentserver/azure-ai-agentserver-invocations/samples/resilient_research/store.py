@@ -1,19 +1,19 @@
 """File-backed checkpoint store for in-flight LLM content.
 
-``ctx.metadata`` on the durable-task primitive is a *small-watermark*
-store, not a bulk-data store (see ``core/docs/durable-task-guide.md``
+``ctx.metadata`` on the resilient-task primitive is a *small-watermark*
+store, not a bulk-data store (see ``core/docs/tasks-guide.md``
 §"Persistence Model"). For anything heavier than a few bytes — e.g.
 the partially-streamed text of the current phase's in-flight subcall
 chain — the application is expected to maintain its own per-app
 checkpoint store and just keep a *reference* in metadata.
 
-This file is the minimal local checkpoint store for the durable
+This file is the minimal local checkpoint store for the resilient
 research agent. Each in-flight invocation's text is a JSON blob keyed
 by ``invocation_id``. Writes are atomic (tempfile + rename) so a
 crash mid-write leaves either the old value or the new value, never a
 truncated file. The store is deliberately tiny — no metrics, no
 contention handling — because this is a sample, not a production
-component. In production, swap this for a real durable blob store
+component. In production, swap this for a real resilient blob store
 (Cosmos, blob storage, etc.).
 
 The store survives container restarts via the same on-disk directory

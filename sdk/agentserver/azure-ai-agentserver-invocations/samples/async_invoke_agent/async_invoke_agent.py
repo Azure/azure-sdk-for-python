@@ -13,7 +13,7 @@ Invocations run in background tasks; callers poll or cancel by ID.
 
     For production long-running invocations:
 
-    * Persist results to durable storage (Redis, Cosmos DB, etc.) inside
+    * Persist results to persistent storage (Redis, Cosmos DB, etc.) inside
       ``_do_work`` **before** the method returns.
     * On startup, rehydrate any incomplete work or mark it as failed.
     * Consider an external task queue (Celery, Azure Queue, etc.) instead

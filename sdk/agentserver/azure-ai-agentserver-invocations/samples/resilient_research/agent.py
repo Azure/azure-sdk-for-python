@@ -1,7 +1,7 @@
-"""The durable research task — crash-resilient, steerable, long-running.
+"""The resilient research task — crash-resilient, steerable, long-running.
 
 This is the standalone-sample shape of the larger
-``samples/durable-agent-demo/src/durable-research-agent`` reference
+``samples/resilient-agent-demo/src/resilient-research-agent`` reference
 demo. The reference demo includes deployment scaffolding (Dockerfile,
 agent.yaml) for the Foundry hosting platform; this sample strips all
 of that away and ships only the three files every invocations sample
@@ -16,8 +16,8 @@ recovery, ``stream.last_cursor()`` rehydrates the in-process sequence
 counter from disk so we resume numbering from where we left off — no
 gap, no duplicate cursor value.
 
-Per the durable-task primitive's persistence model (see
-``core/docs/durable-task-guide.md``), ``ctx.metadata`` is a
+Per the resilient-task primitive's persistence model (see
+``core/docs/tasks-guide.md``), ``ctx.metadata`` is a
 *small-watermark* store — never a bulk-data store. This handler
 keeps only three small integer watermarks in ``ctx.metadata``
 (``completed_phases``, ``in_progress_phase``, ``completed_subcalls``)
@@ -65,10 +65,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Awaitable, Callable
 
-from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
+from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
-from .store import CheckpointStore
+try:
+    from .store import CheckpointStore
+except ImportError:  # allows running the app as a script from inside this directory
+    from store import CheckpointStore
 
 logger = logging.getLogger(__name__)
 
@@ -139,7 +142,7 @@ def _get_client() -> Any:
 
 # --- File-backed checkpoint store (heavy artifacts live here) --------------
 
-_CHECKPOINT_DIR = Path.home() / ".durable" / "_checkpoints"
+_CHECKPOINT_DIR = Path.home() / ".agentserver" / "_checkpoints"
 _checkpoint_store = CheckpointStore(_CHECKPOINT_DIR)
 
 
@@ -199,7 +202,7 @@ def _phase_title(i: int) -> str:
     return PHASE_TITLES[i] if i < len(PHASE_TITLES) else f"Continued research (phase {i + 1})"
 
 
-# --- The durable task ------------------------------------------------------
+# --- The resilient task ------------------------------------------------------
 
 # Type alias: the per-turn emit function the helpers below take. It
 # wraps stream.emit() with auto-increment of ``sequence_number``.

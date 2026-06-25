@@ -1,6 +1,6 @@
-"""Steerable durable Copilot conversation agent (invocations protocol).
+"""Steerable resilient Copilot conversation agent (invocations protocol).
 
-Wraps the **GitHub Copilot SDK** in a steerable durable task and bridges
+Wraps the **GitHub Copilot SDK** in a steerable resilient task and bridges
 its session-event stream into the invocations transport.
 
 The handler delivers five key behaviors:
@@ -50,14 +50,17 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
+from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
-from .store import FileStore
+try:
+    from .store import FileStore
+except ImportError:  # allows running the app as a script from inside this directory
+    from store import FileStore
 
 logger = logging.getLogger(__name__)
 
-_DATA_DIR = Path.home() / ".durable-sessions"
+_DATA_DIR = Path.home() / ".agentserver-sessions"
 
 invocation_store = FileStore(_DATA_DIR / "copilot-invocations")
 
@@ -83,7 +86,7 @@ async def _open_session(client: Any, session_id: str, entry_mode: str) -> Any:
     failing outright — upstream-dependency hiccups must NOT propagate
     as task failures (which would orphan the invocation and fail any
     queued steers). This mirrors the
-    ``sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_durable_copilot.py``
+    ``sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_resilient_copilot.py``
     resilience pattern.
     """
     from copilot.session import PermissionHandler  # pylint: disable=import-outside-toplevel
@@ -180,7 +183,7 @@ async def _recovered_assistant_text(session: Any) -> str:
 
 
 # --------------------------------------------------------------------------
-# The durable task
+# The resilient task
 # --------------------------------------------------------------------------
 
 

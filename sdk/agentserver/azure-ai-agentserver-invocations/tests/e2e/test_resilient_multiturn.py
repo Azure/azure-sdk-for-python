@@ -1,16 +1,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""End-to-end test for the ``durable_multiturn`` sample.
+"""End-to-end test for the ``resilient_multiturn`` sample.
 
 The multi-turn sample is **fully self-contained** (no Azure OpenAI, no
-Copilot CLI, no Foundry endpoint) — it demonstrates the durable
+Copilot CLI, no Foundry endpoint) — it demonstrates the resilient
 primitive's named-namespace metadata feature with an in-process
 ``LocalFileTaskProvider`` rooted at the test's ``tmp_path``.
 
 This file is *not* a live test: it imports the sample's task directly
 and drives it through three turns + a recovery boundary in the same
 process. It exercises the  /  contract for the sample
-(the structure test in ``test_durable_samples_structure.py`` proves
+(the structure test in ``test_resilient_samples_structure.py`` proves
 the files exist; this file proves the task actually works).
 
 Coverage:
@@ -29,7 +29,7 @@ from pathlib import Path
 import pytest
 import pytest_asyncio
 
-# Force the local-file durable provider so the test is fully isolated
+# Force the local-file resilient provider so the test is fully isolated
 # from any hosted env vars in the shell.
 os.environ.pop("FOUNDRY_HOSTING_ENVIRONMENT", None)
 
@@ -41,10 +41,10 @@ async def task_manager(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
     tasks_dir = tmp_path / "tasks"
     tasks_dir.mkdir(parents=True, exist_ok=True)
-    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
     monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT", raising=False)
 
-    from azure.ai.agentserver.core.durable._manager import (  # noqa: WPS433
+    from azure.ai.agentserver.core.tasks._manager import (  # noqa: WPS433
         TaskManager,
         set_task_manager,
     )
@@ -70,7 +70,7 @@ async def task_manager(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
 
 def _ensure_sample_importable() -> None:
-    """Add the samples directory to sys.path so ``durable_multiturn`` resolves."""
+    """Add the samples directory to sys.path so ``resilient_multiturn`` resolves."""
     import sys
 
     samples = Path(__file__).resolve().parent.parent.parent / "samples"
@@ -85,7 +85,7 @@ async def test_session_workflow_runs_two_turns_and_accumulates_history(
 ) -> None:
     """Two consecutive turns share the same session namespace."""
     _ensure_sample_importable()
-    from durable_multiturn.agent import session_workflow  # noqa: WPS433
+    from resilient_multiturn.agent import session_workflow  # noqa: WPS433
 
     task_id = "session-turn-accumulate"
 
@@ -126,7 +126,7 @@ async def test_session_workflow_done_clears_history(
 ) -> None:
     """Sending ``"done"`` terminates the session and clears history."""
     _ensure_sample_importable()
-    from durable_multiturn.agent import session_workflow  # noqa: WPS433
+    from resilient_multiturn.agent import session_workflow  # noqa: WPS433
 
     task_id = "session-done"
 
@@ -169,7 +169,7 @@ async def test_invocation_status_persisted_to_default_namespace(
 ) -> None:
     """Default namespace records this-invocation status + output."""
     _ensure_sample_importable()
-    from durable_multiturn.agent import session_workflow  # noqa: WPS433
+    from resilient_multiturn.agent import session_workflow  # noqa: WPS433
 
     task_id = "session-statuses"
     run = await session_workflow.start(

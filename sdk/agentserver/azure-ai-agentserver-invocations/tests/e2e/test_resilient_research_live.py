@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Live e2e tests for the ``durable_research`` invocations sample.
+"""Live e2e tests for the ``resilient_research`` invocations sample.
 
 These tests spawn the sample as a subprocess via :class:`CrashHarness`
 and drive it via real HTTP. They require:
@@ -60,7 +60,7 @@ _SAMPLES_DIR = Path(__file__).resolve().parent.parent.parent / "samples"
 
 
 def _harness(tmp_path: Path, *, num_phases: int = 2) -> CrashHarness:
-    """Build a harness wired to the durable_research sample.
+    """Build a harness wired to the resilient_research sample.
 
     Overrides the sample's phase plan to a fast configuration so the
     live test completes in <60 s.
@@ -88,7 +88,7 @@ def _harness(tmp_path: Path, *, num_phases: int = 2) -> CrashHarness:
         (tmp_path / "home").mkdir(parents=True, exist_ok=True)
     (tmp_path / "streams").mkdir(parents=True, exist_ok=True)
     return CrashHarness(
-        sample_module="durable_research.app",
+        sample_module="resilient_research.app",
         tmp_path=tmp_path,
         env_extras=env_extras,
         readiness_timeout_seconds=20.0,

@@ -1,7 +1,7 @@
-"""HTTP host for the LangGraph durable agent with streaming and steering.
+"""HTTP host for the LangGraph resilient agent with streaming and steering.
 
-Wires the LangGraph durable task (``agent.py``) to the invocations framework.
-Per-invocation results are written by the durable task itself (inside the
+Wires the LangGraph resilient task (``agent.py``) to the invocations framework.
+Per-invocation results are written by the resilient task itself (inside the
 crash-resilient execution boundary), not by a background collector.
 
 Streaming
@@ -12,7 +12,7 @@ progress events (``node_progress``) plus lifecycle events (``queued``,
 ``running``).  Without the header you get the standard 202 JSON response for
 async polling via GET.
 
-Steering is handled by the framework: the durable task is declared with
+Steering is handled by the framework: the resilient task is declared with
 ``steerable=True``, so calling ``start()`` on an in-progress task **queues**
 the new input instead of raising ``TaskConflictError``.  The running function
 sees ``ctx.cancel`` set and short-circuits.  The framework then drains the
@@ -20,10 +20,8 @@ queue and re-enters the function with the next input.
 
 Usage::
 
+    # From inside this sample directory:
     pip install -r requirements.txt
-
-    python -m durable_langgraph.app
-    # — or —
     python app.py
 
     # Turn 1 — async
@@ -70,7 +68,10 @@ from azure.ai.agentserver.core.streaming import (
 )
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-from .agent import invocation_store, langgraph_session
+try:
+    from .agent import invocation_store, langgraph_session
+except ImportError:  # allows `python app.py` from inside this directory
+    from agent import invocation_store, langgraph_session
 
 logger = logging.getLogger(__name__)
 
@@ -159,7 +160,7 @@ async def handle_invoke(request: Request) -> Response:
 async def poll_invocation(request: Request) -> Response:
     """Poll a specific invocation's snapshot.
 
-    Returns the durable snapshot from the invocation store.  During streaming
+    Returns the persisted snapshot from the invocation store.  During streaming
     this includes ``last_node``; after completion it includes full output.
     Use this as the recovery path after an SSE disconnect.
     """
