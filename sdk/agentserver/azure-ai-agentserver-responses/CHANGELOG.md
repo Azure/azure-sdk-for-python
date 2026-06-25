@@ -23,7 +23,7 @@
   identifier shared by every turn of a conversation chain, usable as a key into
   application-side session state).
 
-- **Developer checkpoints.** `yield stream.checkpoint()` resiliently persists the
+- **Developer checkpoints.** `yield stream.checkpoint()` persists the
   current response snapshot at a developer-chosen boundary (gated to resilient
   background responses; a no-op otherwise; backpressured and idempotent). On a
   recovered entry, `context.persisted_response` exposes the last persisted
@@ -59,7 +59,7 @@
   (under `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/responses/`) when no `store=`
   is supplied in a non-hosted environment; pass
   `store=InMemoryResponseProvider()` to opt out. The `AGENTSERVER_STATE_ROOT`
-  environment variable sets the local resilient storage root. A typed
+  environment variable sets the local state storage root. A typed
   `ResponseAlreadyExistsError` is raised by the response-store providers on a
   duplicate `create_response` (the idempotent-create signal on recovery).
 
