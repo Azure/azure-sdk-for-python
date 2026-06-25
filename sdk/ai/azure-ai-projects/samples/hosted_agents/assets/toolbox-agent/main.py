@@ -64,7 +64,7 @@ async def main() -> None:
                 model=deployment,
                 credential=credential,
             ),
-            name=os.environ.get("AGENT_NAME", "TOOLBOX_AGRNT"),
+            name=os.environ.get("AGENT_NAME", "TOOLBOX_AGENT"),
             instructions=os.environ.get(
                 "AGENT_INSTRUCTIONS",
             ),
