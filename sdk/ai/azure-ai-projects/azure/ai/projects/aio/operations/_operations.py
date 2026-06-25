@@ -57,8 +57,8 @@ from ...operations._operations import (
     build_agents_list_session_files_request,
     build_agents_list_sessions_request,
     build_agents_list_versions_request,
-    build_agents_patch_agent_details_request,
     build_agents_stop_session_request,
+    build_agents_update_details_request,
     build_agents_upload_session_file_request,
     build_beta_agents_cancel_optimization_job_request,
     build_beta_agents_create_optimization_job_request,
@@ -1145,7 +1145,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def patch_agent_details(
+    async def update_details(
         self,
         agent_name: str,
         *,
@@ -1173,7 +1173,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def patch_agent_details(
+    async def update_details(
         self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Update an agent endpoint.
@@ -1193,7 +1193,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def patch_agent_details(
+    async def update_details(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Update an agent endpoint.
@@ -1213,7 +1213,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    async def patch_agent_details(
+    async def update_details(
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -1262,7 +1262,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_patch_agent_details_request(
+        _request = build_agents_update_details_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1661,7 +1661,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         agent_name: str,
         *,
         version_indicator: _models.VersionIndicator,
-        user_isolation_key: Optional[str] = None,
         content_type: str = "application/json",
         agent_session_id: Optional[str] = None,
         **kwargs: Any
@@ -1676,9 +1675,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :keyword version_indicator: Determines which agent version backs the session. Required.
         :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1692,13 +1688,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def create_session(
-        self,
-        agent_name: str,
-        body: JSON,
-        *,
-        user_isolation_key: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentSessionResource:
         """Create a session.
 
@@ -1710,9 +1700,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param body: Required.
         :type body: JSON
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1723,13 +1710,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def create_session(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        user_isolation_key: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentSessionResource:
         """Create a session.
 
@@ -1741,9 +1722,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param body: Required.
         :type body: IO[bytes]
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1759,7 +1737,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         version_indicator: _models.VersionIndicator = _Unset,
-        user_isolation_key: Optional[str] = None,
         agent_session_id: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AgentSessionResource:
@@ -1775,9 +1752,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type body: JSON or IO[bytes]
         :keyword version_indicator: Determines which agent version backs the session. Required.
         :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
         :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
          within the agent endpoint. Auto-generated if omitted. Default value is None.
         :paramtype agent_session_id: str
@@ -1813,7 +1787,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_agents_create_session_request(
             agent_name=agent_name,
-            user_isolation_key=user_isolation_key,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1857,9 +1830,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_session(
-        self, agent_name: str, session_id: str, *, user_isolation_key: Optional[str] = None, **kwargs: Any
-    ) -> _models.AgentSessionResource:
+    async def get_session(self, agent_name: str, session_id: str, **kwargs: Any) -> _models.AgentSessionResource:
         """Get a session.
 
         Retrieves the details of a hosted agent session by agent name and session identifier.
@@ -1868,9 +1839,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param session_id: The session identifier. Required.
         :type session_id: str
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
         :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentSessionResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1891,7 +1859,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request = build_agents_get_session_request(
             agent_name=agent_name,
             session_id=session_id,
-            user_isolation_key=user_isolation_key,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1933,9 +1900,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_session(
-        self, agent_name: str, session_id: str, *, user_isolation_key: Optional[str] = None, **kwargs: Any
-    ) -> None:
+    async def delete_session(self, agent_name: str, session_id: str, **kwargs: Any) -> None:
         """Delete a session.
 
         Deletes a session synchronously. Returns 204 No Content when the session is deleted or does not
@@ -1945,9 +1910,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param session_id: The session identifier. Required.
         :type session_id: str
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1968,7 +1930,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request = build_agents_delete_session_request(
             agent_name=agent_name,
             session_id=session_id,
-            user_isolation_key=user_isolation_key,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2059,7 +2020,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         agent_name: str,
         *,
-        user_isolation_key: Optional[str] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
@@ -2071,9 +2031,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
          default is 20. Default value is None.
@@ -2109,7 +2066,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
             _request = build_agents_list_sessions_request(
                 agent_name=agent_name,
-                user_isolation_key=user_isolation_key,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -2260,14 +2216,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def _upload_session_file(
-        self,
-        agent_name: str,
-        agent_session_id: str,
-        content: bytes,
-        *,
-        path: str,
-        user_isolation_key: Optional[str] = None,
-        **kwargs: Any
+        self, agent_name: str, agent_session_id: str, content: bytes, *, remote_path: str, **kwargs: Any
     ) -> _models.SessionFileWriteResult:
         """Upload a session file.
 
@@ -2280,12 +2229,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_session_id: str
         :param content: Required.
         :type content: bytes
-        :keyword path: The destination file path within the sandbox, relative to the session home
-         directory. Required.
-        :paramtype path: str
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
+        :keyword remote_path: The destination file path within the sandbox, relative to the session
+         home directory. Required.
+        :paramtype remote_path: str
         :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SessionFileWriteResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2309,8 +2255,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request = build_agents_upload_session_file_request(
             agent_name=agent_name,
             agent_session_id=agent_session_id,
-            path=path,
-            user_isolation_key=user_isolation_key,
+            remote_path=remote_path,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2355,13 +2300,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def download_session_file(
-        self,
-        agent_name: str,
-        agent_session_id: str,
-        *,
-        path: str,
-        user_isolation_key: Optional[str] = None,
-        **kwargs: Any
+        self, agent_name: str, agent_session_id: str, *, remote_path: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Download a session file.
 
@@ -2372,12 +2311,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param agent_session_id: The session ID. Required.
         :type agent_session_id: str
-        :keyword path: The file path to download from the sandbox, relative to the session home
+        :keyword remote_path: The file path to download from the sandbox, relative to the session home
          directory. Required.
-        :paramtype path: str
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
+        :paramtype remote_path: str
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2398,8 +2334,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request = build_agents_download_session_file_request(
             agent_name=agent_name,
             agent_session_id=agent_session_id,
-            path=path,
-            user_isolation_key=user_isolation_key,
+            remote_path=remote_path,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2443,8 +2378,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         agent_name: str,
         agent_session_id: str,
         *,
-        path: Optional[str] = None,
-        user_isolation_key: Optional[str] = None,
+        remote_path: Optional[str] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
@@ -2460,12 +2394,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param agent_session_id: The session ID. Required.
         :type agent_session_id: str
-        :keyword path: The directory path to list, relative to the session home directory. Defaults to
-         the home directory if not provided. Default value is None.
-        :paramtype path: str
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
+        :keyword remote_path: The directory path to list, relative to the session home directory.
+         Defaults to the home directory if not provided. Default value is None.
+        :paramtype remote_path: str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
          default is 20. Default value is None.
@@ -2503,8 +2434,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
             _request = build_agents_list_session_files_request(
                 agent_name=agent_name,
                 agent_session_id=agent_session_id,
-                path=path,
-                user_isolation_key=user_isolation_key,
+                remote_path=remote_path,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -2556,9 +2486,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         agent_name: str,
         agent_session_id: str,
         *,
-        path: str,
+        remote_path: str,
         recursive: Optional[bool] = None,
-        user_isolation_key: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Delete a session file.
@@ -2570,15 +2499,12 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param agent_session_id: The session ID. Required.
         :type agent_session_id: str
-        :keyword path: The file or directory path to delete, relative to the session home directory.
-         Required.
-        :paramtype path: str
+        :keyword remote_path: The file or directory path to delete, relative to the session home
+         directory. Required.
+        :paramtype remote_path: str
         :keyword recursive: Whether to recursively delete directory contents. The service defaults to
          ``false`` if a value is not specified by the caller. Default value is None.
         :paramtype recursive: bool
-        :keyword user_isolation_key: Opaque per-user isolation key used to scope endpoint-scoped data
-         (responses, conversations, sessions) to a specific end user. Default value is None.
-        :paramtype user_isolation_key: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2599,9 +2525,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request = build_agents_delete_session_file_request(
             agent_name=agent_name,
             agent_session_id=agent_session_id,
-            path=path,
+            remote_path=remote_path,
             recursive=recursive,
-            user_isolation_key=user_isolation_key,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4689,7 +4614,7 @@ class ToolboxesOperations:
         self,
         name: str,
         *,
-        tools: List[_models.Tool],
+        tools: List[_models.ToolboxTool],
         content_type: str = "application/json",
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -4705,7 +4630,7 @@ class ToolboxesOperations:
          Required.
         :type name: str
         :keyword tools: The list of tools to include in this version. Required.
-        :paramtype tools: list[~azure.ai.projects.models.Tool]
+        :paramtype tools: list[~azure.ai.projects.models.ToolboxTool]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4773,7 +4698,7 @@ class ToolboxesOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        tools: List[_models.Tool] = _Unset,
+        tools: List[_models.ToolboxTool] = _Unset,
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         skills: Optional[List[_models.ToolboxSkill]] = None,
@@ -4790,7 +4715,7 @@ class ToolboxesOperations:
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword tools: The list of tools to include in this version. Required.
-        :paramtype tools: list[~azure.ai.projects.models.Tool]
+        :paramtype tools: list[~azure.ai.projects.models.ToolboxTool]
         :keyword description: A human-readable description of the toolbox. Default value is None.
         :paramtype description: str
         :keyword metadata: Arbitrary key-value metadata to associate with the toolbox. Default value is
@@ -9466,6 +9391,7 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
+
             _request = build_beta_memory_stores_list_memories_request(
                 name=name,
                 kind=kind,

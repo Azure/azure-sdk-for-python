@@ -17,6 +17,15 @@
 # See GitHub issue: https://github.com/microsoft/typespec/issues/10311
 git restore pyproject.toml
 
+# Revert emitted MANIFEST.in, since it overrides changes I need to get the dist package (*.tar.gz) with required files.
+# I would like to keep these two lines, since I have test and sample data files I need:
+#   recursive-include tests *
+#   recursive-include samples *
+# But the emitter keeps changing it back to only include *.py and *.md files:
+#   recursive-include tests *.py
+#   recursive-include samples *.py *.md
+git restore MANIFEST.in
+
 # Force streaming in get_session_log_stream for both sync and async operations.
 $files = 'azure\ai\projects\operations\_operations.py', 'azure\ai\projects\aio\operations\_operations.py'
 foreach ($f in $files) {
@@ -37,20 +46,6 @@ foreach ($f in $files) {
     }
     Set-Content $f $lines
 }
-
-# Fix Sphinx issue in class ToolChoiceAllowed, in "tools" property doc string. The "Required" cannot come at the end of the code-block.
-# move it to the end of the text before the code block, and make sure there are no periods after "]".
-#     .. code-block:: json
-#
-#        [
-#          { "type": "function", "name": "get_weather" },
-#          { "type": "mcp", "server_label": "deepwiki" },
-#          { "type": "image_generation" }
-#        ]. Required.
-# See GitHub issue: https://github.com/microsoft/typespec/issues/10314
-(Get-Content azure\ai\projects\models\_models.py) -replace 'Responses API, the list of tool definitions might look like:', 'Responses API, the list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py
-(Get-Content azure\ai\projects\models\_models.py) -replace 'list of tool definitions might look like:', 'list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py
-(Get-Content azure\ai\projects\models\_models.py) -replace '        \]\. Required\.', '        ]' | Set-Content azure\ai\projects\models\_models.py
 
 # Fix Sphinx docutils warnings in class SessionLogEvent: the generated docstring wraps two long
 # ``data:`` JSON lines mid-string inside a ``.. code-block::`` section. The wrapped continuation

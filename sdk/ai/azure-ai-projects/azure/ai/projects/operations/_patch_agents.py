@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+import os
 from pathlib import Path
 from typing import Union, Optional, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
@@ -216,19 +217,75 @@ class AgentsOperations(GeneratedAgentsOperations):
                         raise new_exc from exc
             raise
 
+    @overload
+    def upload_session_file(
+        self,
+        agent_name: str,
+        session_id: str,
+        *,
+        content: bytes,
+        remote_path: str,
+        **kwargs: Any,
+    ) -> _models.SessionFileWriteResult:
+        """Upload binary content to the session sandbox.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword content: The binary content to upload. Required.
+        :paramtype content: bytes
+        :keyword remote_path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype remote_path: str
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        ...
+
+    @overload
+    def upload_session_file(
+        self,
+        agent_name: str,
+        session_id: str,
+        *,
+        file_path: Union[str, "os.PathLike[str]"],
+        remote_path: str,
+        **kwargs: Any,
+    ) -> _models.SessionFileWriteResult:
+        """Upload a file from disk to the session sandbox.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword file_path: The full path to a local file whose contents should be uploaded. Required.
+        :paramtype file_path: str or os.PathLike[str]
+        :keyword remote_path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype remote_path: str
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises FileNotFoundError: If *file_path* does not exist.
+        """
+        ...
+
     @distributed_trace
     def upload_session_file(  # type: ignore[override]
         self,
         agent_name: str,
         session_id: str,
-        content_or_file_path: "bytes | str",
         *,
-        path: str,
+        content: Optional[bytes] = None,
+        file_path: Optional[Union[str, "os.PathLike[str]"]] = None,
+        remote_path: str,
         **kwargs: Any,
     ) -> _models.SessionFileWriteResult:
         """Upload a file to the session sandbox.
 
-        Accepts either a ``bytes`` buffer or a local file path (``str``).
+        Accepts either binary content directly or a local file path.
         When a file path is provided the file is read from disk and its contents
         are forwarded to the service. Maximum file size is 50 MB. Uploads
         exceeding this limit return 413 Payload Too Large.
@@ -237,29 +294,81 @@ class AgentsOperations(GeneratedAgentsOperations):
         :type agent_name: str
         :param session_id: The session ID. Required.
         :type session_id: str
-        :param content_or_file_path: The binary content to upload, **or** the full path to a local
-         file whose contents should be uploaded. Required.
-        :type content_or_file_path: bytes or str
-        :keyword path: The destination file path within the sandbox, relative to the session home
+        :keyword content: The binary content to upload. Mutually exclusive with *file_path*.
+        :paramtype content: bytes
+        :keyword file_path: The full path to a local file whose contents should be uploaded.
+         Mutually exclusive with *content*.
+        :paramtype file_path: str or os.PathLike[str]
+        :keyword remote_path: The destination file path within the sandbox, relative to the session home
          directory. Required.
-        :paramtype path: str
-        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with
-         MutableMapping
+        :paramtype remote_path: str
+        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SessionFileWriteResult
         :raises ~azure.core.exceptions.HttpResponseError:
-        :raises FileNotFoundError: If *content_or_file_path* is a ``str`` and the file does not exist.
+        :raises ValueError: If both *content* and *file_path* are provided, or neither is provided.
+        :raises FileNotFoundError: If *file_path* is provided and does not exist.
         """
-        if isinstance(content_or_file_path, str):
+        if content is not None and file_path is not None:
+            raise ValueError("Specify either 'content' or 'file_path', not both.")
+        if content is None and file_path is None:
+            raise ValueError("Specify either 'content' or 'file_path'.")
 
-            file_path = Path(content_or_file_path)
-            if not file_path.exists():
-                raise ValueError(f"The provided file `{content_or_file_path}` does not exist.")
-            if file_path.is_dir():
-                raise ValueError(f"Provide a valid file path, not a folder path `{content_or_file_path}`.")
+        if file_path is not None:
+            p = Path(file_path)
+            if not p.exists():
+                raise FileNotFoundError(f"The provided file `{file_path}` does not exist.")
+            if p.is_dir():
+                raise ValueError(f"Provide a valid file path, not a folder path `{file_path}`.")
+            with open(file_path, "rb") as f:
+                content = f.read()
 
-            with open(content_or_file_path, "rb") as f:
-                content: bytes = f.read()
-        else:
-            content = content_or_file_path
+        assert content is not None  # Guaranteed by validation above
 
-        return super()._upload_session_file(agent_name, session_id, content, path=path, **kwargs)
+        return super()._upload_session_file(agent_name, session_id, content, remote_path=remote_path, **kwargs)
+
+    @distributed_trace
+    def download_session_file_to_disk(
+        self,
+        agent_name: str,
+        session_id: str,
+        *,
+        file_path: Union[str, "os.PathLike[str]"],
+        remote_path: str,
+        **kwargs: Any,
+    ) -> None:
+        """Download a session file directly to disk.
+
+        Downloads the file at the specified sandbox path and writes it to a local file.
+        The remote path is resolved relative to the session home directory.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword file_path: The full path to the local file where the content should be written. Required.
+        :paramtype file_path: str or os.PathLike[str]
+        :keyword remote_path: The file path to download from the sandbox, relative to the session home
+         directory. Required.
+        :paramtype remote_path: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ValueError: If *file_path* points to a directory.
+        :raises OSError: If the file cannot be written.
+        """
+        p = Path(file_path)
+        if p.exists() and p.is_dir():
+            raise ValueError(f"Provide a valid file path, not a folder path `{file_path}`.")
+
+        # Download the file content using the existing method
+        content_iterator = self.download_session_file(
+            agent_name=agent_name,
+            agent_session_id=session_id,
+            remote_path=remote_path,
+            **kwargs,
+        )
+
+        # Write the content to disk
+        with open(file_path, "wb") as f:
+            for chunk in content_iterator:
+                f.write(chunk)

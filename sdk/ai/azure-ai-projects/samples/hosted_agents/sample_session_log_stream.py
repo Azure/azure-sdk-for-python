@@ -33,16 +33,14 @@ USAGE:
 """
 
 import os
-
 from dotenv import load_dotenv
-
 from azure.identity import DefaultAzureCredential
-
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentEndpointConfig,
-    AgentEndpointProtocol,
     FixedRatioVersionSelectionRule,
+    ProtocolConfiguration,
+    ResponsesProtocolConfiguration,
     VersionSelector,
 )
 from azure.ai.projects.models import VersionRefIndicator
@@ -104,10 +102,10 @@ with (
                     FixedRatioVersionSelectionRule(agent_version=agent.version, traffic_percentage=100),
                 ]
             ),
-            protocols=[AgentEndpointProtocol.RESPONSES],
+            protocol_configuration=ProtocolConfiguration(responses=ResponsesProtocolConfiguration()),
         )
 
-        project_client.agents.patch_agent_details(
+        project_client.agents.update_details(
             agent_name=agent_name,
             agent_endpoint=endpoint_config,
         )
