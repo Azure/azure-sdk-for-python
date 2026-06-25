@@ -17,6 +17,8 @@
 * Input argument `path` renamed to `remote_path` in methods `.agents.delete_session_file`, `.agents.download_session_file`, `.agents.list_session_files` and `.agents.upload_session_file`. 
 * Agent Optimization methods `.beta.agents.*optimization*` were re-written. Updated from v1 to v2 preview, focusing on cleanup to better align with Foundry job guidelines and platform standards. The v1 surface accumulated unused candidate sub-resources, internal-detail properties, and custom operation patterns inconsistent with the Foundry platform. The v2 API removes redundant models and operations, adopts shared Foundry job patterns (`JobLike<>`, standard job verbs), and introduces typed discriminated unions for dataset inputs and evaluator references.
 * Method `.beta.agents.list_optimization_candidates` now returns `ItemPaged[OptimizationCandidate]` instead of `AgentsPagedResultOptimizationCandidate`. The `after` parameter has been removed (use continuation-token-based paging instead).
+* Property `default_ttl_seconds` on class `MemoryStoreDefaultOptions` has changed from type `int` to type `datetime.timedelta`.
+* Method ".beta.agents.patch_agent_details` moved out of the beta sub-client and renamed to `.agents.update_details`.
 
 
 ### Sample updates
