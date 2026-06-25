@@ -2087,59 +2087,6 @@ namespace azure.storage.fileshare
             ) -> JSON: ...
 
 
-    class azure.storage.fileshare.SignedIdentifier(DictMixin):
-        access_policy: Optional[AccessPolicy]
-        id: str
-
-        def __contains__(self, key): ...
-
-        def __delitem__(self, key): ...
-
-        def __eq__(self, other): ...
-
-        def __getitem__(self, key): ...
-
-        def __init__(
-                self, 
-                id: str, 
-                access_policy: Optional[AccessPolicy] = None
-            ) -> None: ...
-
-        def __len__(self): ...
-
-        def __ne__(self, other): ...
-
-        def __repr__(self): ...
-
-        def __setitem__(
-                self, 
-                key, 
-                item
-            ): ...
-
-        def __str__(self): ...
-
-        def get(
-                self, 
-                key, 
-                default = None
-            ): ...
-
-        def has_key(self, k): ...
-
-        def items(self): ...
-
-        def keys(self): ...
-
-        def update(
-                self, 
-                *args, 
-                **kwargs
-            ): ...
-
-        def values(self): ...
-
-
     class azure.storage.fileshare.SmbEncryptionInTransit(_BackCompatMixin):
         required: bool
 
