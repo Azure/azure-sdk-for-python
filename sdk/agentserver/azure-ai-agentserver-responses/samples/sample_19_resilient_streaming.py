@@ -197,7 +197,7 @@ async def handler(
 
         # ── Mid-stream cancellation/shutdown check ─────────────────
         # If cancelled or shutdown mid-phase, do NOT advance the watermark —
-        # the phase output is not resiliently committed from a recovery
+        # the phase output is not yet committed from a recovery
         # standpoint, and a recovered attempt should re-run this phase.
         if cancellation_signal.is_set() or context.shutdown.is_set():
             break

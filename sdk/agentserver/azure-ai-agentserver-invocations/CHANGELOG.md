@@ -4,14 +4,14 @@
 
 ### Samples
 
-- Added durable-task samples for the invocations protocol:
-  `durable_copilot` (streaming chat with crash recovery),
-  `durable_multiturn` (suspend/resume conversation),
-  `durable_langgraph` (LangGraph integration), and
-  `durable_research` (multi-stage research loop with checkpointing).
+- Added resilient-task samples for the invocations protocol:
+  `resilient_copilot` (streaming chat with crash recovery),
+  `resilient_multiturn` (suspend/resume conversation),
+  `resilient_langgraph` (LangGraph integration), and
+  `resilient_research` (multi-stage research loop with checkpointing).
   Each sample's `agent.py` / `app.py` module docstring covers what it
   demonstrates; see the
-  [core developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md)
+  [core developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md)
   for the underlying `@task` API.
 
 ### Bugs Fixed
@@ -21,14 +21,14 @@
   request to `request.state.session_id`, mirroring what the
   invoke endpoint already does. Without this, custom
   `@app.cancel_invocation_handler` / `@app.get_invocation_handler`
-  implementations that look up the per-session durable task via
+  implementations that look up the per-session resilient task via
   `request.state.session_id` would get an empty string and fail to
   find their task.
 
 ### Other Changes
 
 - Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b7`
-  (the version that introduces the durable-task primitive).
+  (the version that introduces the resilient-task primitive).
 
 ## 1.0.0b5 (2026-06-12)
 
