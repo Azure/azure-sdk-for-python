@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """RetryPolicy — configurable retry behaviour for resilient tasks.
 
-Aligned with industry conventions (Temporal, Azure Resilient Functions, Celery).
+Aligned with industry conventions (Temporal, Celery).
 Delay formula: ``min(initial_delay * backoff_coefficient ** attempt, max_delay)``
 With jitter: ``delay * uniform(0.75, 1.25)``
 """

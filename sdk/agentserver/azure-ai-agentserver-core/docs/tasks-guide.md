@@ -826,7 +826,7 @@ except LastInputIdPreconditionFailed as exc:
   at-most-once patterns (see §6.2).
 - **Not a workflow engine.** No fan-out / fan-in, no child-workflow
   orchestration, no first-class signals or timers. If you need
-  those, use Temporal / Resilient Functions and wrap resilient tasks
+  those, use Temporal and wrap resilient tasks
   inside them.
 - **Not a bulk data store.** `ctx.metadata` is intentionally small
   and JSON-only. Persist conversation history, LLM outputs, and
