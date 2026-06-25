@@ -6,11 +6,11 @@
 ###########
 
 # Catch all
-/sdk/ @lmazuel @lirenhe
+/sdk/ @xirzec @lirenhe
 
 # Core
 # PRLabel: %Core.Http
-/sdk/core/corehttp/                                                  @lmazuel @johanste @iscai-msft @kashifkhan
+/sdk/core/corehttp/                                                  @xirzec @johanste @iscai-msft @kashifkhan
 
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Core.Http
@@ -19,12 +19,12 @@
 # ServiceLabel: %Azure.Core
 
 # PRLabel: %Azure.Core
-/sdk/core/                                                           @lmazuel @johanste
-/sdk/core/azure-core/                                                @lmazuel @johanste @iscai-msft @kashifkhan
+/sdk/core/                                                           @xirzec @johanste
+/sdk/core/azure-core/                                                @xirzec @johanste @iscai-msft @kashifkhan
 /sdk/core/azure-mgmt-core/                                           @msyyc
 
 # Smoke Tests
-/common/smoketest/                                                   @lmazuel @chlowell @mccoyp @shurd @southpolesteve
+/common/smoketest/                                                   @xirzec @chlowell @mccoyp @shurd @southpolesteve
 
 ####################
 # Client Libraries
@@ -102,7 +102,7 @@
 /sdk/cognitivelanguage/    @ahmedaashour @bidisha-c @mikaelsitruk @quentinRobinson @sarkar-rajarshi
 
 # PRLabel: %Cognitive - Mgmt
-/sdk/cognitiveservices/    @lmazuel
+/sdk/cognitiveservices/    @xirzec
 
 # PRLabel: %Cognitive - Personalizer
 /sdk/personalizer/    @sharathmalladi
@@ -255,7 +255,7 @@
 # ServiceOwners: @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
 
 # PRLabel: %Graph
-/sdk/graphrbac/    @lmazuel
+/sdk/graphrbac/    @xirzec
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/    @idear1203
@@ -815,7 +815,7 @@
 /eng/tools/                                                          @danieljurek @mccoyp
 /.github/workflows/                                                  @Azure/azure-sdk-eng
 /.github/workflows/typespec-python-regenerate.yml                    @Azure/azure-sdk-eng @tadelesh @msyyc @iscai-msft @ChenxiJiang333
-/.github/CODEOWNERS                                                  @lmazuel @kashifkhan @Azure/azure-sdk-eng
+/.github/CODEOWNERS                                                  @xirzec @kashifkhan @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
 /.github/prompts/                                                    @mccoyp @l0lawrence @benbp
 /.github/skills/                                                     @mccoyp @l0lawrence @benbp @Azure/azsdk-cli
@@ -828,14 +828,14 @@
 /scripts/                                                            @danieljurek @mccoyp
 /scripts/breaking_changes_checker/                                   @catalinaperalta
 /doc/                                                                @danieljurek @Azure/azure-python-sdk
-/conda/                                                              @danieljurek @xiangyan99 @lmazuel
+/conda/                                                              @danieljurek @xiangyan99 @xirzec
 
 /shared_requirements.txt                                             @azure/azure-sdk-eng @kashifkhan @xirzec
 
 # Add owners for notifications for specific pipelines
-/eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
-/eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp
-/eng/common/pipelines/codeowners-linter.yml                          @lmazuel @mccoyp
+/eng/pipelines/templates/jobs/tests-nightly-python.yml               @xirzec @mccoyp
+/eng/pipelines/aggregate-reports.yml                                 @xirzec @mccoyp
+/eng/common/pipelines/codeowners-linter.yml                          @xirzec @mccoyp
 /eng/pipelines/docindex.yml                                          @danieljurek @benbp
 
 # Add approvers for typespec-python emitter version updates
@@ -843,10 +843,10 @@
 /eng/emitter-package-lock.json                                       @mccoyp @catalinaperalta @iscai-msft @msyyc @ChenxiJiang333
 
 # TypeSpec Python generated tests and regeneration workflow
-/eng/tools/emitter/                                                  @tadelesh @msyyc @iscai-msft @lmazuel @lirenhe @ChenxiJiang333
+/eng/tools/emitter/                                                  @tadelesh @msyyc @iscai-msft @xirzec @lirenhe @ChenxiJiang333
 
 /pylintrc                                                            @l0lawrence @danieljurek @mccoyp
-/sdk/**/ci.yml                                                       @msyyc @lmazuel @danieljurek
+/sdk/**/ci.yml                                                       @msyyc @xirzec @danieljurek
 
 # Add Johnathan Walker as code owner for Event Hubs SDK
 /sdk/eventhub/azure-eventhub/* @j7nw4r @SwayGom @sagar0207

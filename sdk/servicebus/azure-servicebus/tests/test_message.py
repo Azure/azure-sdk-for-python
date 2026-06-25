@@ -1,5 +1,7 @@
 import os
+import uuid
 from decimal import Decimal
+from unittest import mock
 import pytest
 
 try:
@@ -28,6 +30,7 @@ from azure.servicebus._common.utils import (
 from azure.servicebus.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType, AmqpMessageProperties, AmqpMessageHeader
 from azure.servicebus._pyamqp.message import Message
 from azure.servicebus._pyamqp._message_backcompat import LegacyBatchMessage
+from azure.servicebus._pyamqp._encode import encode_payload
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 
 from devtools_testutils import AzureMgmtRecordedTestCase
@@ -358,6 +361,50 @@ def test_servicebus_message_time_to_live():
     assert message.time_to_live == timedelta(seconds=30)
     message.time_to_live = timedelta(days=1)
     assert message.time_to_live == timedelta(days=1)
+
+
+def _pyamqp_encoded_inner_message(body=b"data"):
+    # Encode a minimal AMQP message payload, as the service wraps each
+    # deferred/peeked message inside the management-link response.
+    output = bytearray()
+    encode_payload(output, Message(data=[body]))
+    return bytes(output)
+
+
+def test_servicebus_received_message_deferred_has_lock_token():
+    # Regression test for #42454: receive_deferred_messages returned messages
+    # with lock_token=None. For deferred messages the service returns the
+    # lock-token alongside the message in the management-link response (not as a
+    # delivery-tag), so parse_received_message must read m[b"lock-token"].
+    lock_token = uuid.uuid4()
+    mgmt_response = Message(
+        value={b"messages": [{b"message": _pyamqp_encoded_inner_message(), b"lock-token": lock_token}]}
+    )
+    parsed = PyamqpTransport.parse_received_message(
+        mgmt_response,
+        ServiceBusReceivedMessage,
+        receiver=mock.Mock(),
+        is_deferred_message=True,
+        receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+    )
+    assert len(parsed) == 1
+    assert parsed[0].lock_token == lock_token
+
+
+def test_servicebus_received_message_peeked_has_no_lock_token():
+    # Peeked messages are not locked and carry no lock-token in the response,
+    # so lock_token must remain None (the deferred-only extraction must not leak
+    # into the peek path).
+    mgmt_response = Message(value={b"messages": [{b"message": _pyamqp_encoded_inner_message()}]})
+    parsed = PyamqpTransport.parse_received_message(
+        mgmt_response,
+        ServiceBusReceivedMessage,
+        receiver=mock.Mock(),
+        is_peeked_message=True,
+        receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
+    )
+    assert len(parsed) == 1
+    assert parsed[0].lock_token is None
 
 
 class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
