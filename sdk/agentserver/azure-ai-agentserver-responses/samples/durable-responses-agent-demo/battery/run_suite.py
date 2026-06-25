@@ -57,9 +57,10 @@ def token() -> str:
     if _token_cache["tok"] and time.time() < _token_cache["exp"] - 120:
         return _token_cache["tok"]
     out = subprocess.run(
-        ["az", "account", "get-access-token", "--resource", TOKEN_RESOURCE,
-         "--query", "accessToken", "-o", "tsv"],
-        capture_output=True, text=True, check=True,
+        ["az", "account", "get-access-token", "--resource", TOKEN_RESOURCE, "--query", "accessToken", "-o", "tsv"],
+        capture_output=True,
+        text=True,
+        check=True,
     ).stdout.strip()
     _token_cache["tok"] = out
     _token_cache["exp"] = time.time() + 50 * 60
@@ -75,16 +76,15 @@ def url(path: str = "") -> str:
     return f"{ENDPOINT_BASE}{path}{sep}api-version={API_VERSION}"
 
 
-def body(input_text: str, *, store: bool, background: bool, stream: bool,
-         prev: str | None = None) -> dict:
-    b = {"model": MODEL, "input": input_text, "store": store,
-         "background": background, "stream": stream}
+def body(input_text: str, *, store: bool, background: bool, stream: bool, prev: str | None = None) -> dict:
+    b = {"model": MODEL, "input": input_text, "store": store, "background": background, "stream": stream}
     if prev:
         b["previous_response_id"] = prev
     return b
 
 
 # ---- SSE parsing -----------------------------------------------------------
+
 
 def parse_sse(raw: str) -> list[dict]:
     """Parse SSE text into a list of {event, data} dicts."""
@@ -107,9 +107,9 @@ def parse_sse(raw: str) -> list[dict]:
 
     for line in raw.splitlines():
         if line.startswith("event:"):
-            cur_event = line[len("event:"):].strip()
+            cur_event = line[len("event:") :].strip()
         elif line.startswith("data:"):
-            data_lines.append(line[len("data:"):].strip())
+            data_lines.append(line[len("data:") :].strip())
         elif line == "":
             flush()
     flush()  # flush trailing event when stream closes without a final blank line
@@ -117,8 +117,7 @@ def parse_sse(raw: str) -> list[dict]:
 
 
 def event_types(events: list[dict]) -> list[str]:
-    return [e.get("event") or (e["data"].get("type") if isinstance(e["data"], dict) else None)
-            for e in events]
+    return [e.get("event") or (e["data"].get("type") if isinstance(e["data"], dict) else None) for e in events]
 
 
 def terminal_from_events(events: list[dict]) -> str | None:
@@ -139,14 +138,14 @@ def terminal_from_events(events: list[dict]) -> str | None:
 
 # ---- HTTP primitives -------------------------------------------------------
 
+
 def post_stream(b: dict, sse_path: Path, max_s: int = TERMINAL_TIMEOUT_S) -> dict:
     """POST a streaming create; tee raw SSE to file; return summary."""
     sid = rid = None
     chunks: list[str] = []
     t0 = time.time()
     with httpx.Client(http2=False, timeout=httpx.Timeout(max_s, read=max_s)) as c:
-        with c.stream("POST", url("/responses"), headers=headers(),
-                      json=b) as r:
+        with c.stream("POST", url("/responses"), headers=headers(), json=b) as r:
             sid = r.headers.get("x-agent-session-id")
             with sse_path.open("w") as f:
                 for line in r.iter_lines():
@@ -167,9 +166,14 @@ def post_stream(b: dict, sse_path: Path, max_s: int = TERMINAL_TIMEOUT_S) -> dic
                 if isinstance(resp, dict) and str(resp.get("id", "")).startswith(("resp_", "caresp_")):
                     rid = resp["id"]
                     break
-    return {"session_id": sid, "response_id": rid, "events": events,
-            "event_types": event_types(events), "elapsed": round(time.time() - t0, 1),
-            "terminal": terminal_from_events(events)}
+    return {
+        "session_id": sid,
+        "response_id": rid,
+        "events": events,
+        "event_types": event_types(events),
+        "elapsed": round(time.time() - t0, 1),
+        "terminal": terminal_from_events(events),
+    }
 
 
 def post_json(b: dict, max_s: int = TERMINAL_TIMEOUT_S) -> dict:
@@ -181,9 +185,13 @@ def post_json(b: dict, max_s: int = TERMINAL_TIMEOUT_S) -> dict:
         data = r.json()
     except Exception:
         data = {"_raw": r.text}
-    return {"status_code": r.status_code, "session_id": sid, "json": data,
-            "response_id": data.get("id") if isinstance(data, dict) else None,
-            "elapsed": round(time.time() - t0, 1)}
+    return {
+        "status_code": r.status_code,
+        "session_id": sid,
+        "json": data,
+        "response_id": data.get("id") if isinstance(data, dict) else None,
+        "elapsed": round(time.time() - t0, 1),
+    }
 
 
 def get_response(rid: str) -> dict:
@@ -195,17 +203,19 @@ def get_response(rid: str) -> dict:
         return {"status_code": r.status_code, "json": {"_raw": r.text}}
 
 
-def poll_terminal(rid: str, jsonl_path: Path, timeout: int = TERMINAL_TIMEOUT_S,
-                  interval: float = 5.0) -> dict:
+def poll_terminal(rid: str, jsonl_path: Path, timeout: int = TERMINAL_TIMEOUT_S, interval: float = 5.0) -> dict:
     t0 = time.time()
     last = None
     with jsonl_path.open("w") as f:
         while time.time() - t0 < timeout:
             res = get_response(rid)
-            status = (res["json"].get("status") if isinstance(res["json"], dict) else None)
-            rec = {"t": round(time.time() - t0, 1), "status_code": res["status_code"],
-                   "status": status,
-                   "n_output": len(res["json"].get("output", [])) if isinstance(res["json"], dict) else None}
+            status = res["json"].get("status") if isinstance(res["json"], dict) else None
+            rec = {
+                "t": round(time.time() - t0, 1),
+                "status_code": res["status_code"],
+                "status": status,
+                "n_output": len(res["json"].get("output", [])) if isinstance(res["json"], dict) else None,
+            }
             f.write(json.dumps(rec) + "\n")
             f.flush()
             last = res
@@ -215,8 +225,7 @@ def poll_terminal(rid: str, jsonl_path: Path, timeout: int = TERMINAL_TIMEOUT_S,
     return last or {}
 
 
-def reconnect_stream(rid: str, starting_after: int, sse_path: Path,
-                     max_s: int = TERMINAL_TIMEOUT_S) -> dict:
+def reconnect_stream(rid: str, starting_after: int, sse_path: Path, max_s: int = TERMINAL_TIMEOUT_S) -> dict:
     chunks: list[str] = []
     t0 = time.time()
     path = f"/responses/{rid}?stream=true&starting_after={starting_after}"
@@ -230,8 +239,13 @@ def reconnect_stream(rid: str, starting_after: int, sse_path: Path,
                     if time.time() - t0 > max_s:
                         break
     events = parse_sse("\n".join(chunks))
-    return {"status_code": sc, "events": events, "event_types": event_types(events),
-            "terminal": terminal_from_events(events), "elapsed": round(time.time() - t0, 1)}
+    return {
+        "status_code": sc,
+        "events": events,
+        "event_types": event_types(events),
+        "terminal": terminal_from_events(events),
+        "elapsed": round(time.time() - t0, 1),
+    }
 
 
 def cancel(rid: str) -> dict:
@@ -262,8 +276,13 @@ def fire_crash() -> dict:
                 sid = r.headers.get("x-agent-session-id")
                 for _ in r.iter_lines():
                     pass
-    except (httpx.ReadError, httpx.ReadTimeout, httpx.RemoteProtocolError,
-            httpx.ConnectError, httpx.RemoteProtocolError) as e:
+    except (
+        httpx.ReadError,
+        httpx.ReadTimeout,
+        httpx.RemoteProtocolError,
+        httpx.ConnectError,
+        httpx.RemoteProtocolError,
+    ) as e:
         dropped = True
         err = repr(e)
     except Exception as e:  # any transport drop counts as the sandbox dying
@@ -297,7 +316,9 @@ def capture_logs(session_id: str | None, out_path: Path) -> None:
     try:
         p = subprocess.run(
             ["azd", "ai", "agent", "monitor", AGENT, "--session-id", session_id],
-            capture_output=True, text=True, timeout=LOG_CAPTURE_S,
+            capture_output=True,
+            text=True,
+            timeout=LOG_CAPTURE_S,
         )
         out_path.write_text(p.stdout + ("\n--- stderr ---\n" + p.stderr if p.stderr else ""))
     except subprocess.TimeoutExpired as e:
@@ -313,7 +334,9 @@ def fetch_session_log(session_id: str | None, secs: int = LOG_CAPTURE_S) -> str:
     try:
         p = subprocess.run(
             ["azd", "ai", "agent", "monitor", AGENT, "--session-id", session_id],
-            capture_output=True, text=True, timeout=secs,
+            capture_output=True,
+            text=True,
+            timeout=secs,
         )
         return p.stdout or ""
     except subprocess.TimeoutExpired as e:
@@ -324,8 +347,8 @@ def fetch_session_log(session_id: str | None, secs: int = LOG_CAPTURE_S) -> str:
 
 # ---- progress helper: wait until N output items completed in a streaming run -
 
-def wait_progress_stream(b: dict, sse_path: Path, want_items: int,
-                         max_wait: int = 120) -> dict:
+
+def wait_progress_stream(b: dict, sse_path: Path, want_items: int, max_wait: int = 120) -> dict:
     """Stream a create until `want_items` output_item.done seen, then return
     (keeping the partial SSE). Used to time a crash/steer mid-run."""
     sid = rid = None
@@ -351,16 +374,26 @@ def wait_progress_stream(b: dict, sse_path: Path, want_items: int,
                     if time.time() - t0 > max_wait:
                         break
     events = parse_sse("\n".join(chunks))
-    return {"session_id": sid, "response_id": rid, "items_done": items_done,
-            "events": events, "event_types": event_types(events),
-            "elapsed": round(time.time() - t0, 1)}
+    return {
+        "session_id": sid,
+        "response_id": rid,
+        "items_done": items_done,
+        "events": events,
+        "event_types": event_types(events),
+        "elapsed": round(time.time() - t0, 1),
+    }
 
 
 # ---- case implementations --------------------------------------------------
 
+
 def case_normal_stream(d: Path, combo: dict) -> dict:
-    b = body(f"Research topic: the history of timekeeping [{combo['id']}]",
-             store=combo["store"], background=combo["background"], stream=True)
+    b = body(
+        f"Research topic: the history of timekeeping [{combo['id']}]",
+        store=combo["store"],
+        background=combo["background"],
+        stream=True,
+    )
     (d / "request.json").write_text(json.dumps({"url": url("/responses"), "body": b}, indent=2))
     res = post_stream(b, d / "stream.sse")
     # background streaming may end the POST connection before terminal; if so, reconnect
@@ -370,25 +403,36 @@ def case_normal_stream(d: Path, combo: dict) -> dict:
         res["terminal"] = res["terminal"] or rc["terminal"]
     created = sum(1 for t in res["event_types"] if t == "response.created")
     ok = res["terminal"] == "completed"
-    return {"ok": ok, "terminal": res["terminal"], "response_id": res["response_id"],
-            "session_id": res["session_id"], "n_events": len(res["event_types"]),
-            "n_created": created, "elapsed": res["elapsed"],
-            "assert": "terminal==completed", "first_events": res["event_types"][:8],
-            "last_events": res["event_types"][-6:]}
+    return {
+        "ok": ok,
+        "terminal": res["terminal"],
+        "response_id": res["response_id"],
+        "session_id": res["session_id"],
+        "n_events": len(res["event_types"]),
+        "n_created": created,
+        "elapsed": res["elapsed"],
+        "assert": "terminal==completed",
+        "first_events": res["event_types"][:8],
+        "last_events": res["event_types"][-6:],
+    }
 
 
 def case_normal_poll(d: Path, combo: dict) -> dict:
-    b = body(f"Research topic: deep-sea exploration [{combo['id']}]",
-             store=True, background=True, stream=False)
+    b = body(f"Research topic: deep-sea exploration [{combo['id']}]", store=True, background=True, stream=False)
     (d / "request.json").write_text(json.dumps({"url": url("/responses"), "body": b}, indent=2))
     cr = post_json(b)
     (d / "create.json").write_text(json.dumps(cr["json"], indent=2))
     rid = cr["response_id"]
     term = poll_terminal(rid, d / "poll.jsonl") if rid else {}
     status = term.get("json", {}).get("status") if term else None
-    return {"ok": status == "completed", "terminal": status, "response_id": rid,
-            "session_id": cr["session_id"], "create_status": cr["json"].get("status"),
-            "assert": "poll status==completed"}
+    return {
+        "ok": status == "completed",
+        "terminal": status,
+        "response_id": rid,
+        "session_id": cr["session_id"],
+        "create_status": cr["json"].get("status"),
+        "assert": "poll status==completed",
+    }
 
 
 def case_normal_sync(d: Path, combo: dict, stream: bool) -> dict:
@@ -409,14 +453,18 @@ def case_normal_sync(d: Path, combo: dict, stream: bool) -> dict:
     (d / "get_after.json").write_text(json.dumps(after, indent=2))
     expect_404 = not combo["store"]
     get_ok = (after["status_code"] == 404) if expect_404 else (after["status_code"] == 200)
-    return {"ok": term == "completed" and get_ok, "terminal": term, "response_id": rid,
-            "session_id": sid, "get_after_code": after["status_code"],
-            "assert": f"completed & GET-after={'404' if expect_404 else 'stored'}"}
+    return {
+        "ok": term == "completed" and get_ok,
+        "terminal": term,
+        "response_id": rid,
+        "session_id": sid,
+        "get_after_code": after["status_code"],
+        "assert": f"completed & GET-after={'404' if expect_404 else 'stored'}",
+    }
 
 
 def case_reconnect(d: Path, combo: dict) -> dict:
-    b = body("Research topic: the history of cartography [reconnect]",
-             store=True, background=True, stream=True)
+    b = body("Research topic: the history of cartography [reconnect]", store=True, background=True, stream=True)
     (d / "request.json").write_text(json.dumps({"url": url("/responses"), "body": b}, indent=2))
     # stream until 1 item done, then drop the connection
     p = wait_progress_stream(b, d / "stream.partial.sse", want_items=1, max_wait=120)
@@ -440,21 +488,34 @@ def case_reconnect(d: Path, combo: dict) -> dict:
     #    starting_after=0, so 0 is also valid)
     #  - exactly one response.in_progress reset
     #  - sequence numbers strictly increasing (no gaps/dups)
-    ok = (rc.get("terminal") == "completed" and created <= 1
-          and in_progress == 1 and monotonic and rc.get("status_code") == 200)
-    return {"ok": ok, "terminal": rc.get("terminal"), "response_id": rid, "session_id": sid,
-            "pre_items_done": p["items_done"], "n_created_assembled": created,
-            "n_in_progress_reset": in_progress, "seq_monotonic": monotonic,
-            "reconnect_status": rc.get("status_code"), "n_seqs": len(seqs),
-            "assert": "reconnect: terminal completed, <=1 created, 1 in_progress reset, monotonic seqs",
-            "pre_last": pre_events[-4:], "reconnect_first": rc.get("event_types", [])[:6]}
+    ok = (
+        rc.get("terminal") == "completed"
+        and created <= 1
+        and in_progress == 1
+        and monotonic
+        and rc.get("status_code") == 200
+    )
+    return {
+        "ok": ok,
+        "terminal": rc.get("terminal"),
+        "response_id": rid,
+        "session_id": sid,
+        "pre_items_done": p["items_done"],
+        "n_created_assembled": created,
+        "n_in_progress_reset": in_progress,
+        "seq_monotonic": monotonic,
+        "reconnect_status": rc.get("status_code"),
+        "n_seqs": len(seqs),
+        "assert": "reconnect: terminal completed, <=1 created, 1 in_progress reset, monotonic seqs",
+        "pre_last": pre_events[-4:],
+        "reconnect_first": rc.get("event_types", [])[:6],
+    }
 
 
 def case_crash_recovery(d: Path, combo: dict, stream: bool) -> dict:
     from verify_crash import ContinuousLogCapture  # lazy: avoid import cycle
 
-    b = body("Research topic: the evolution of writing systems [crash]",
-             store=True, background=True, stream=stream)
+    b = body("Research topic: the evolution of writing systems [crash]", store=True, background=True, stream=stream)
     (d / "request.json").write_text(json.dumps({"url": url("/responses"), "body": b}, indent=2))
     if stream:
         p = wait_progress_stream(b, d / "stream.precrash.sse", want_items=1, max_wait=120)
@@ -467,8 +528,7 @@ def case_crash_recovery(d: Path, combo: dict, stream: bool) -> dict:
         # let it make some progress
         time.sleep(20)
         snap = get_response(rid)
-        pre = {"create_status": cr["json"].get("status"),
-               "n_output_pre": len(snap["json"].get("output", []))}
+        pre = {"create_status": cr["json"].get("status"), "n_output_pre": len(snap["json"].get("output", []))}
     # capture the TARGET session's logs continuously across the restart so we
     # can PROVE recovery (reclaim/recover markers), not just observe completion
     cap = ContinuousLogCapture(sid, d / "server.continuous.log")
@@ -485,8 +545,11 @@ def case_crash_recovery(d: Path, combo: dict, stream: bool) -> dict:
         in_progress_reset = "response.in_progress" in rc["event_types"]
         created = sum(1 for t in rc["event_types"] if t == "response.created")
         term = rc["terminal"]
-        recov = {"reconnect_terminal": term, "n_created_assembled": created,
-                 "in_progress_reset_present": in_progress_reset}
+        recov = {
+            "reconnect_terminal": term,
+            "n_created_assembled": created,
+            "in_progress_reset_present": in_progress_reset,
+        }
     else:
         term_res = poll_terminal(rid, d / "poll.postcrash.jsonl")
         term = term_res.get("json", {}).get("status")
@@ -500,30 +563,46 @@ def case_crash_recovery(d: Path, combo: dict, stream: bool) -> dict:
     # session slice reconnects first — so we grep BOTH the target session log and
     # the crash request's session log.
     import re
+
     txt = (d / "server.continuous.log").read_text() if (d / "server.continuous.log").exists() else ""
     crash_log = fetch_session_log(crash.get("crash_session")) if crash.get("crash_session") else ""
     (d / "crash_session.log").write_text(crash_log)
     both = txt + "\n" + crash_log
     reclaim = len(re.findall(r"Reclaimed stale task", both))
     recovered = len(re.findall(r"Recovered task .* is now active", both))
-    recov.update({"reclaim_markers": reclaim, "recovered_markers": recovered,
-                  "recovery_markers_present": reclaim > 0 or recovered > 0})
+    recov.update(
+        {
+            "reclaim_markers": reclaim,
+            "recovered_markers": recovered,
+            "recovery_markers_present": reclaim > 0 or recovered > 0,
+        }
+    )
     ok = term == "completed"
-    res = {"ok": ok, "terminal": term, "response_id": rid, "session_id": sid,
-           "pre_crash": pre, "recovery": recov,
-           "assert": "single-sandbox: durable run recovered to completed after a mid-run crash"}
+    res = {
+        "ok": ok,
+        "terminal": term,
+        "response_id": rid,
+        "session_id": sid,
+        "pre_crash": pre,
+        "recovery": recov,
+        "assert": "single-sandbox: durable run recovered to completed after a mid-run crash",
+    }
     return res
 
 
 def case_steering(d: Path, combo: dict) -> dict:
-    b = body("Research topic: the history of bridges [steer-A]",
-             store=True, background=True, stream=True)
+    b = body("Research topic: the history of bridges [steer-A]", store=True, background=True, stream=True)
     (d / "request.json").write_text(json.dumps({"url": url("/responses"), "body": b}, indent=2))
     p = wait_progress_stream(b, d / "streamA.sse", want_items=1, max_wait=120)
     rid, sid = p["response_id"], p["session_id"]
     log(f"  steering rid={rid} with new topic ...")
-    sb = body("Actually research suspension-bridge engineering instead [steer-B]",
-              store=True, background=True, stream=False, prev=rid)
+    sb = body(
+        "Actually research suspension-bridge engineering instead [steer-B]",
+        store=True,
+        background=True,
+        stream=False,
+        prev=rid,
+    )
     (d / "steer.request.json").write_text(json.dumps(sb, indent=2))
     steer = post_json(sb)
     (d / "steer.response.json").write_text(json.dumps(steer["json"], indent=2))
@@ -533,22 +612,31 @@ def case_steering(d: Path, combo: dict) -> dict:
     status = term_res.get("json", {}).get("status")
     # also confirm original wound down (terminal or handed off)
     orig = get_response(rid)
-    return {"ok": status == "completed", "terminal": status, "response_id": rid,
-            "steered_response_id": steered_rid, "session_id": sid,
-            "orig_status": orig["json"].get("status") if isinstance(orig["json"], dict) else None,
-            "assert": "steered turn completes; original winds down"}
+    return {
+        "ok": status == "completed",
+        "terminal": status,
+        "response_id": rid,
+        "steered_response_id": steered_rid,
+        "session_id": sid,
+        "orig_status": orig["json"].get("status") if isinstance(orig["json"], dict) else None,
+        "assert": "steered turn completes; original winds down",
+    }
 
 
 def case_steering_crash(d: Path, combo: dict) -> dict:
     from verify_crash import ContinuousLogCapture  # lazy: avoid import cycle
 
-    b = body("Research topic: the history of clocks [steerXcrash-A]",
-             store=True, background=True, stream=True)
+    b = body("Research topic: the history of clocks [steerXcrash-A]", store=True, background=True, stream=True)
     (d / "request.json").write_text(json.dumps(b, indent=2))
     p = wait_progress_stream(b, d / "streamA.sse", want_items=1, max_wait=120)
     rid, sid = p["response_id"], p["session_id"]
-    sb = body("Switch to researching atomic-clock precision [steerXcrash-B]",
-              store=True, background=True, stream=False, prev=rid)
+    sb = body(
+        "Switch to researching atomic-clock precision [steerXcrash-B]",
+        store=True,
+        background=True,
+        stream=False,
+        prev=rid,
+    )
     steer = post_json(sb)
     (d / "steer.response.json").write_text(json.dumps(steer["json"], indent=2))
     steered_rid = steer["response_id"]
@@ -568,22 +656,28 @@ def case_steering_crash(d: Path, combo: dict) -> dict:
     cap.stop()
     time.sleep(2)
     import re
+
     txt = (d / "server.continuous.log").read_text() if (d / "server.continuous.log").exists() else ""
     crash_log = fetch_session_log(crash.get("crash_session")) if crash.get("crash_session") else ""
     (d / "crash_session.log").write_text(crash_log)
     both = txt + "\n" + crash_log
     reclaim = len(re.findall(r"Reclaimed stale task", both))
     recovered = len(re.findall(r"Recovered task .* is now active", both))
-    return {"ok": status == "completed", "terminal": status,
-            "response_id": rid, "steered_response_id": steered_rid, "session_id": sid,
-            "reclaim_markers": reclaim, "recovered_markers": recovered,
-            "recovery_markers_present": reclaim > 0 or recovered > 0,
-            "assert": "steered input survives single-sandbox crash; recovered run completes"}
+    return {
+        "ok": status == "completed",
+        "terminal": status,
+        "response_id": rid,
+        "steered_response_id": steered_rid,
+        "session_id": sid,
+        "reclaim_markers": reclaim,
+        "recovered_markers": recovered,
+        "recovery_markers_present": reclaim > 0 or recovered > 0,
+        "assert": "steered input survives single-sandbox crash; recovered run completes",
+    }
 
 
 def case_cancel(d: Path, combo: dict) -> dict:
-    b = body("Research topic: the history of the printing press [cancel]",
-             store=True, background=True, stream=True)
+    b = body("Research topic: the history of the printing press [cancel]", store=True, background=True, stream=True)
     (d / "request.json").write_text(json.dumps(b, indent=2))
     p = wait_progress_stream(b, d / "stream.precancel.sse", want_items=1, max_wait=120)
     rid, sid = p["response_id"], p["session_id"]
@@ -594,9 +688,14 @@ def case_cancel(d: Path, combo: dict) -> dict:
     final = get_response(rid)
     (d / "final.json").write_text(json.dumps(final["json"], indent=2))
     status = final["json"].get("status") if isinstance(final["json"], dict) else None
-    return {"ok": status == "cancelled", "terminal": status, "response_id": rid,
-            "session_id": sid, "cancel_code": cx["status_code"],
-            "assert": "terminal==cancelled"}
+    return {
+        "ok": status == "cancelled",
+        "terminal": status,
+        "response_id": rid,
+        "session_id": sid,
+        "cancel_code": cx["status_code"],
+        "assert": "terminal==cancelled",
+    }
 
 
 # ---- oversized-input / attachment-spill helpers ----------------------------
@@ -615,8 +714,8 @@ def make_oversized(marker: str, pad: str) -> tuple[str, int, str]:
 def _response_output_text(resp_json: dict) -> str:
     """Concatenate all output-item text from a GET /responses snapshot."""
     parts: list[str] = []
-    for item in (resp_json.get("output") or []):
-        for c in (item.get("content") or []):
+    for item in resp_json.get("output") or []:
+        for c in item.get("content") or []:
             if isinstance(c, dict) and isinstance(c.get("text"), str):
                 parts.append(c["text"])
     return "\n".join(parts)
@@ -642,10 +741,16 @@ def case_oversized_input(d: Path, combo: dict) -> dict:
     echoes = _parse_echoes(_response_output_text(final["json"]))
     status = final["json"].get("status") if isinstance(final["json"], dict) else None
     match = bool(echoes) and echoes[0] == (n, sha)
-    return {"ok": status == "completed" and match, "terminal": status, "response_id": rid,
-            "session_id": sid, "sent_len": n, "echoed": echoes[:1],
-            "spill_roundtrip_ok": match,
-            "assert": "oversized normal input spills + echoes back byte-identical (len+sha256)"}
+    return {
+        "ok": status == "completed" and match,
+        "terminal": status,
+        "response_id": rid,
+        "session_id": sid,
+        "sent_len": n,
+        "echoed": echoes[:1],
+        "spill_roundtrip_ok": match,
+        "assert": "oversized normal input spills + echoes back byte-identical (len+sha256)",
+    }
 
 
 def case_oversized_steering(d: Path, combo: dict) -> dict:
@@ -667,10 +772,17 @@ def case_oversized_steering(d: Path, combo: dict) -> dict:
     echoes = _parse_echoes(_response_output_text(final["json"]))
     status = final["json"].get("status") if isinstance(final["json"], dict) else None
     match = bool(echoes) and echoes[-1] == (n, sha)
-    return {"ok": status == "completed" and match, "terminal": status, "response_id": rid,
-            "steered_response_id": steered_rid, "session_id": sid, "sent_len": n,
-            "echoed": echoes[-1:], "spill_roundtrip_ok": match,
-            "assert": "oversized steering input spills + steered turn echoes it byte-identical"}
+    return {
+        "ok": status == "completed" and match,
+        "terminal": status,
+        "response_id": rid,
+        "steered_response_id": steered_rid,
+        "session_id": sid,
+        "sent_len": n,
+        "echoed": echoes[-1:],
+        "spill_roundtrip_ok": match,
+        "assert": "oversized steering input spills + steered turn echoes it byte-identical",
+    }
 
 
 def case_oversized_crash_recovery(d: Path, combo: dict) -> dict:
@@ -696,32 +808,50 @@ def case_oversized_crash_recovery(d: Path, combo: dict) -> dict:
     txt = (d / "server.continuous.log").read_text() if (d / "server.continuous.log").exists() else ""
     reclaim = len(re.findall(r"Reclaimed stale task", txt))
     recovered = len(re.findall(r"Recovered task .* is now active", txt))
-    # Diagnose the durable-task create: oversized (>threshold) inputs spill to a
-    # task attachment that is posted INLINE in POST /tasks. If the task-store
-    # rejects the large body (HTTP 500), the durable task is never created, so
-    # recovery is impossible — a hosted-only failure the local
-    # LocalFileTaskProvider suite cannot reproduce. Surface it explicitly.
+    # Diagnose the durable-task create. Oversized (>threshold) inputs spill to a
+    # task ``attachments`` entry. The hosted task-store offloads ANY attachment to
+    # an AzureML dataset blob store (POST .../datasets/.../startPendingUpload),
+    # which currently 403s — surfaced to the SDK as a 500 on POST /tasks. So the
+    # durable task is never created and recovery is impossible. Small inputs that
+    # stay INLINE in payload (no attachments field) create fine. This is a
+    # hosted-only, service-side failure the local LocalFileTaskProvider cannot
+    # reproduce. The captured 500 body names the failing dataset-offload target;
+    # see capture_oversized_task_trace.py / the __TASKTRACE__ route for the full
+    # untruncated request+response trace.
     create_500 = len(re.findall(r"task-store response: POST \S+/tasks\S* -> 500", txt))
     create_ok = len(re.findall(r"task-store response: POST \S+/tasks\S* -> 20[01]", txt))
+    offload_403 = len(re.findall(r"datasets/[^ ]*startPendingUpload", txt))
     durable_task_created = create_ok > 0
     echoes = _parse_echoes(_response_output_text(final["json"]))
     status = final["json"].get("status") if isinstance(final["json"], dict) else None
     # Expect 2 echoes: pre-crash + post-recovery, both byte-identical to the input.
-    parity_ok = (len(echoes) >= 2 and echoes[0] == (n, sha) and echoes[-1] == (n, sha))
+    parity_ok = len(echoes) >= 2 and echoes[0] == (n, sha) and echoes[-1] == (n, sha)
     diagnosis = None
     if not durable_task_created and create_500 > 0:
-        diagnosis = (f"DURABLE-TASK CREATE FAILED: {create_500} x POST /tasks -> 500 "
-                     f"(oversized {n}-byte attachment rejected by the hosted task-store; "
-                     f"0 successful creates) — recovery impossible for oversized inputs.")
-    return {"ok": status == "completed" and parity_ok, "terminal": status, "response_id": rid,
-            "session_id": sid, "sent_len": n, "echoes": echoes,
-            "spill_recovery_parity_ok": parity_ok,
-            "durable_task_created": durable_task_created,
-            "task_create_500_count": create_500, "task_create_ok_count": create_ok,
-            "diagnosis": diagnosis,
-            "reclaim_markers": reclaim, "recovered_markers": recovered,
-            "recovery_markers_present": reclaim > 0 or recovered > 0,
-            "assert": "oversized input survives crash: recovered handler re-reads byte-identical attachment"}
+        diagnosis = (
+            f"DURABLE-TASK CREATE FAILED: {create_500} x POST /tasks -> 500 "
+            f"(0 successful creates) — the {n}-byte input spilled to a task "
+            f"attachment, and the hosted task-store's attachment offload to the "
+            f"AzureML dataset store 403'd ({offload_403} startPendingUpload refs in "
+            f"log) — recovery impossible for any attachment-bearing (oversized) input."
+        )
+    return {
+        "ok": status == "completed" and parity_ok,
+        "terminal": status,
+        "response_id": rid,
+        "session_id": sid,
+        "sent_len": n,
+        "echoes": echoes,
+        "spill_recovery_parity_ok": parity_ok,
+        "durable_task_created": durable_task_created,
+        "task_create_500_count": create_500,
+        "task_create_ok_count": create_ok,
+        "diagnosis": diagnosis,
+        "reclaim_markers": reclaim,
+        "recovered_markers": recovered,
+        "recovery_markers_present": reclaim > 0 or recovered > 0,
+        "assert": "oversized input survives crash: recovered handler re-reads byte-identical attachment",
+    }
 
 
 def case_mark_failed(d: Path, combo: dict) -> dict:
@@ -737,30 +867,29 @@ def case_mark_failed(d: Path, combo: dict) -> dict:
     status = final["json"].get("status") if isinstance(final["json"], dict) else None
     err = final["json"].get("error") if isinstance(final["json"], dict) else None
     code = err.get("code") if isinstance(err, dict) else None
-    return {"ok": status == "failed" and code == "server_error", "terminal": status,
-            "response_id": rid, "session_id": sid, "error_code": code,
-            "assert": "terminal==failed with error.code==server_error"}
+    return {
+        "ok": status == "failed" and code == "server_error",
+        "terminal": status,
+        "response_id": rid,
+        "session_id": sid,
+        "error_code": code,
+        "assert": "terminal==failed with error.code==server_error",
+    }
 
 
 CASES = {
     "T1": ("C1", {"id": "C1", "store": True, "background": True}, case_normal_stream),
     "T2": ("C1", {"id": "C1", "store": True, "background": True}, case_reconnect),
-    "T3": ("C1", {"id": "C1", "store": True, "background": True},
-           lambda d, c: case_crash_recovery(d, c, stream=True)),
+    "T3": ("C1", {"id": "C1", "store": True, "background": True}, lambda d, c: case_crash_recovery(d, c, stream=True)),
     "T4": ("C1", {"id": "C1", "store": True, "background": True}, case_steering),
     "T5": ("C1", {"id": "C1", "store": True, "background": True}, case_steering_crash),
     "T6": ("C1", {"id": "C1", "store": True, "background": True}, case_cancel),
     "T7": ("C2", {"id": "C2", "store": True, "background": True}, case_normal_poll),
-    "T8": ("C2", {"id": "C2", "store": True, "background": True},
-           lambda d, c: case_crash_recovery(d, c, stream=False)),
-    "T9": ("C3", {"id": "C3", "store": True, "background": False},
-           lambda d, c: case_normal_sync(d, c, stream=True)),
-    "T10": ("C4", {"id": "C4", "store": True, "background": False},
-            lambda d, c: case_normal_sync(d, c, stream=False)),
-    "T11": ("C5", {"id": "C5", "store": False, "background": False},
-            lambda d, c: case_normal_sync(d, c, stream=True)),
-    "T12": ("C6", {"id": "C6", "store": False, "background": False},
-            lambda d, c: case_normal_sync(d, c, stream=False)),
+    "T8": ("C2", {"id": "C2", "store": True, "background": True}, lambda d, c: case_crash_recovery(d, c, stream=False)),
+    "T9": ("C3", {"id": "C3", "store": True, "background": False}, lambda d, c: case_normal_sync(d, c, stream=True)),
+    "T10": ("C4", {"id": "C4", "store": True, "background": False}, lambda d, c: case_normal_sync(d, c, stream=False)),
+    "T11": ("C5", {"id": "C5", "store": False, "background": False}, lambda d, c: case_normal_sync(d, c, stream=True)),
+    "T12": ("C6", {"id": "C6", "store": False, "background": False}, lambda d, c: case_normal_sync(d, c, stream=False)),
     # ── Oversized-input / attachment-spill + extra terminal coverage ──
     "T13": ("C7", {"id": "C7", "store": True, "background": True}, case_oversized_input),
     "T14": ("C7", {"id": "C7", "store": True, "background": True}, case_oversized_steering),
@@ -783,6 +912,7 @@ def run_case(run_dir: Path, name: str) -> dict:
         meta.update(result)
     except Exception as e:
         import traceback
+
         meta["ok"] = False
         meta["error"] = repr(e)
         meta["traceback"] = traceback.format_exc()
@@ -793,8 +923,10 @@ def run_case(run_dir: Path, name: str) -> dict:
     log(f"  capturing server logs (session={sid}) ...")
     capture_logs(sid, d / "server.log")
     (d / "meta.json").write_text(json.dumps(meta, indent=2))
-    log(f"=== {name} {'PASS' if meta.get('ok') else 'FAIL'} "
-        f"(terminal={meta.get('terminal')}, {meta['duration_s']}s) ===")
+    log(
+        f"=== {name} {'PASS' if meta.get('ok') else 'FAIL'} "
+        f"(terminal={meta.get('terminal')}, {meta['duration_s']}s) ==="
+    )
     return meta
 
 
@@ -811,7 +943,8 @@ def main() -> None:
     run_dir.mkdir(parents=True, exist_ok=True)
     (run_dir / "env.txt").write_text(
         f"endpoint={ENDPOINT_BASE}\napi_version={API_VERSION}\nmodel={MODEL}\n"
-        f"agent={AGENT}\ncases={names}\nstarted={ts}\n")
+        f"agent={AGENT}\ncases={names}\nstarted={ts}\n"
+    )
     log(f"run dir: {run_dir}")
     results = []
     for name in names:
@@ -820,8 +953,10 @@ def main() -> None:
     n_pass = sum(1 for r in results if r.get("ok"))
     log(f"\nSUMMARY: {n_pass}/{len(results)} passed")
     for r in results:
-        log(f"  {r['case']:4} {r['combo']:3} {'PASS' if r.get('ok') else 'FAIL':4} "
-            f"terminal={r.get('terminal')} {r['duration_s']}s")
+        log(
+            f"  {r['case']:4} {r['combo']:3} {'PASS' if r.get('ok') else 'FAIL':4} "
+            f"terminal={r.get('terminal')} {r['duration_s']}s"
+        )
     print(f"\nArtifacts: {run_dir}")
 
 

@@ -126,34 +126,46 @@ def _format(rec: dict, attach_bytes: int, attach_key: str) -> str:
     return "\n".join(out)
 
 
-async def capture_oversized_task_trace(project_endpoint: str, agent_name: str, attach_bytes: int = 300 * 1024) -> str:
-    """Issue one oversized ``POST /tasks`` with the hosted-agent credential and
-    return a fully-formatted, untruncated request+response trace.
+def _build_task_request(agent_name: str, attach_bytes: int, *, use_attachment: bool = True):
+    """Build a TaskCreateRequest faithful to the real durable path.
 
-    Mirrors the field set the real durable path builds (``_manager.py`` task
-    create): ``title``, ``payload`` (input ref + metadata + turn-start),
-    ``source``, ``tags``, and the oversized input spilled to
-    ``attachments["_input"]`` — so the request is faithful and only the spilled
-    attachment size differs.
+    When ``use_attachment`` is True the input is spilled to an ``_input``
+    attachment of ``attach_bytes`` bytes (the >threshold durable path). When
+    False the input stays INLINE in ``payload`` (the small-input path) and no
+    ``attachments`` field is sent — the control that isolates "any attachment"
+    as the trigger.
     """
     pad = "A long research input. "
-    big = (pad * ((attach_bytes // len(pad)) + 1))[:attach_bytes]
+    blob = (pad * ((attach_bytes // len(pad)) + 1))[:attach_bytes]
     session_id = f"task-trace-{uuid.uuid4().hex}"
     now_iso = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
-    req = TaskCreateRequest(
+    if use_attachment:
+        payload = {"input": {"_attachment": "_input"}, "metadata": {}, "_turn_started_at": now_iso}
+        attachments = {"_input": blob}
+    else:
+        payload = {"input": blob, "metadata": {}, "_turn_started_at": now_iso}
+        attachments = None
+    return TaskCreateRequest(
         agent_name=agent_name,
         session_id=session_id,
         status="in_progress",
         id=f"durable-resp-{uuid.uuid4().hex}",
         title="durable-response oversized task-trace diagnostic",
-        payload={"input": {"_attachment": "_input"}, "metadata": {}, "_turn_started_at": now_iso},
+        payload=payload,
         source={"type": "agentserver.task", "name": "handler", "server_version": "2.0.0b7"},
         tags={"_task_name": "handler"},
         lease_owner=f"{agent_name}|session:{session_id}",
         lease_instance_id=f"trace-{uuid.uuid4().hex[:12]}",
         lease_duration_seconds=60,
-        attachments={"_input": big},
+        attachments=attachments,
     )
+
+
+async def _capture_one(
+    project_endpoint: str, agent_name: str, attach_bytes: int, *, use_attachment: bool = True
+) -> tuple[dict, str | None]:
+    """Issue one POST /tasks; return (captured_record, sdk_error)."""
+    req = _build_task_request(agent_name, attach_bytes, use_attachment=use_attachment)
     cap = _CapturingTransport(AioHttpTransport())
     err = None
     async with DefaultAzureCredential() as cred:
@@ -162,9 +174,58 @@ async def capture_oversized_task_trace(project_endpoint: str, agent_name: str, a
             await provider.create(req)
         except Exception as exc:  # noqa: BLE001
             err = repr(exc)
-    if not cap.records:
-        return f"NO HTTP RECORD CAPTURED. SDK error: {err}"
-    text = _format(cap.records[-1], attach_bytes, "_input")
-    if err:
-        text += f"\n\nSDK raised: {err}\n"
-    return text
+    rec = cap.records[-1] if cap.records else {}
+    return rec, err
+
+
+async def capture_oversized_task_trace(project_endpoint: str, agent_name: str, attach_bytes: int = 300 * 1024) -> str:
+    """Capture an A/B pair of ``POST /tasks`` traces with the hosted-agent
+    credential, returning a single fully-formatted, untruncated trace for
+    service-side investigation:
+
+    - **CONTROL** — small input kept INLINE in ``payload`` (no ``attachments``
+      field); the small-input durable path (expected to SUCCEED, 201).
+    - **OVERSIZED** — input spilled to ``attachments["_input"]``; the >threshold
+      durable path (the FAILING case).
+
+    Both mirror the field set the real durable path builds (``_manager.py``):
+    ``title``, ``payload``, ``source``, ``tags``. The only difference is whether
+    the input is inline vs. an attachment — isolating "the task-store rejects any
+    attachment-bearing create" as the trigger.
+    """
+    control_bytes = 1024  # 1 KB inline control
+    sections: list[str] = []
+
+    control_rec, control_err = await _capture_one(project_endpoint, agent_name, control_bytes, use_attachment=False)
+    sections.append("##### CONTROL — SMALL INLINE INPUT, NO ATTACHMENT (expected to SUCCEED) #####")
+    if control_rec:
+        sections.append(_format(control_rec, control_bytes, "(inline, no attachment)"))
+    else:
+        sections.append(f"NO HTTP RECORD CAPTURED. SDK error: {control_err}")
+    if control_err:
+        sections.append(f"SDK raised (control): {control_err}")
+
+    over_rec, over_err = await _capture_one(project_endpoint, agent_name, attach_bytes, use_attachment=True)
+    sections.append("")
+    sections.append("##### OVERSIZED INPUT SPILLED TO ATTACHMENT (the FAILING case) #####")
+    if over_rec:
+        sections.append(_format(over_rec, attach_bytes, "_input"))
+    else:
+        sections.append(f"NO HTTP RECORD CAPTURED. SDK error: {over_err}")
+    if over_err:
+        sections.append(f"SDK raised (oversized): {over_err}")
+
+    # Summary line for quick triage.
+    cs = control_rec.get("status", "?") if control_rec else "?"
+    os_ = over_rec.get("status", "?") if over_rec else "?"
+    summary = (
+        "\n##### SUMMARY #####\n"
+        f"CONTROL  (inline payload, NO attachment, {control_bytes} bytes) -> POST /tasks {cs}\n"
+        f"OVERSIZED ({attach_bytes}-byte input spilled to _input attachment)  -> POST /tasks {os_}\n"
+        "The two requests are identical except the oversized one carries an `attachments` "
+        "field. The task-attachments SOT permits up to 2 MB per attachment. The oversized "
+        "500 wraps an upstream 403 from the task-store's attachment offload to the AzureML "
+        "dataset store (POST .../datasets/.../startPendingUpload -> 403 Forbidden) — a "
+        "service-side permission/config issue on attachment handling, not an SDK bug.\n"
+    )
+    return "\n".join(sections) + "\n" + summary
