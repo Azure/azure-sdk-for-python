@@ -1,4 +1,4 @@
-"""HTTP host for the LangGraph resilient agent with streaming and steering.
+r"""HTTP host for the LangGraph resilient agent with streaming and steering.
 
 Wires the LangGraph resilient task (``agent.py``) to the invocations framework.
 Per-invocation results are written by the resilient task itself (inside the
@@ -25,15 +25,15 @@ Usage::
     python app.py
 
     # Turn 1 — async
-    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
-        -H "Content-Type: application/json" \\
+    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \
+        -H "Content-Type: application/json" \
         -d '{"message": "I need help planning a trip to Tokyo"}'
     # → 202  (x-agent-invocation-id: <inv-1>)
 
     # Turn 1 — streaming
-    curl -N -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
-        -H "Content-Type: application/json" \\
-        -H "Accept: text/event-stream" \\
+    curl -N -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \
+        -H "Content-Type: application/json" \
+        -H "Accept: text/event-stream" \
         -d '{"message": "I need help planning a trip to Tokyo"}'
     # → SSE stream: lifecycle:queued → lifecycle:running → node_progress → done
 
@@ -42,13 +42,13 @@ Usage::
     # → {"invocation_id": "<inv-1>", "status": "completed", "output": {...}}
 
     # Steer — send a new invocation while a turn is still running.
-    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
-        -H "Content-Type: application/json" \\
+    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \
+        -H "Content-Type: application/json" \
         -d '{"message": "Actually, let us go to Paris instead"}'
 
     # End session
-    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
-        -H "Content-Type: application/json" \\
+    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \
+        -H "Content-Type: application/json" \
         -d '{"message": "done"}'
 """
 

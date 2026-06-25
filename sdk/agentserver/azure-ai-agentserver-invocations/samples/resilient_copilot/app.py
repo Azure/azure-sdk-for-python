@@ -1,4 +1,4 @@
-"""HTTP host for the Copilot resilient agent with steering and streaming.
+r"""HTTP host for the Copilot resilient agent with steering and streaming.
 
 Wires the Copilot resilient task (``agent.py``) to the invocations framework.
 With ``steerable=True``, calling ``start()`` on an in-progress task queues
@@ -19,22 +19,22 @@ Usage::
     python app.py
 
     # Turn 1 (async)
-    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
-        -H "Content-Type: application/json" \\
+    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \
+        -H "Content-Type: application/json" \
         -d '{"message": "Explain Python decorators"}'
 
     # Turn 1 (streaming)
-    curl -N -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
-        -H "Content-Type: application/json" \\
-        -H "Accept: text/event-stream" \\
+    curl -N -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \
+        -H "Content-Type: application/json" \
+        -H "Accept: text/event-stream" \
         -d '{"message": "Explain Python decorators"}'
 
     # Poll (recovery after disconnect)
     curl "http://localhost:8088/invocations/<inv-1>"
 
     # Steer (while turn 1 is still running)
-    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
-        -H "Content-Type: application/json" \\
+    curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \
+        -H "Content-Type: application/json" \
         -d '{"message": "Actually, explain async/await instead"}'
 """
 
