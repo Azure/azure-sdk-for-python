@@ -83,7 +83,7 @@ def build_kubernetes_compute_full():
         name="smoke-k8s-compute",
         description="smoke kubernetes compute",
         namespace="smoke-namespace",
-        properties={"key1": "value1"},
+        properties={"defaultInstanceType": "defaultInstanceType", "vcName": "smoke-vc"},
         identity=IdentityConfiguration(type="system_assigned"),
     )
 

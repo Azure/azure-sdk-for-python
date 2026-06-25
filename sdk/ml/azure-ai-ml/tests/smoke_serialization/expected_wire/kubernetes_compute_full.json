@@ -6,7 +6,9 @@
     "computeType": "Kubernetes",
     "description": "smoke kubernetes compute",
     "properties": {
-      "namespace": "smoke-namespace"
+      "defaultInstanceType": "defaultInstanceType",
+      "namespace": "smoke-namespace",
+      "vcName": "smoke-vc"
     }
   }
 }

@@ -9,11 +9,11 @@ import re
 import warnings
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeInstanceProperties
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AssignedUser
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeInstance as CIRest
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeInstanceProperties
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeInstanceSshSettings as CiSShSettings
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
     ResourceId,
@@ -317,10 +317,17 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown=idle_time_before_shutdown,
             enable_node_public_ip=self.enable_node_public_ip,
             enable_sso=self.enable_sso,
-            enable_root_access=self.enable_root_access,
-            release_quota_on_stop=self.release_quota_on_stop,
-            enable_os_patching=self.enable_os_patching,
         )
+        # enableRootAccess / releaseQuotaOnStop / enableOSPatching are in the 2023-08-01-preview swagger
+        # and were serialized by the legacy model, but were @removed from the shared arm_ml_service model
+        # (generated at api-version 2025-12-01). Set them via their wire keys to preserve the old wire.
+        compute_instance_prop["enableRootAccess"] = self.enable_root_access
+        compute_instance_prop["releaseQuotaOnStop"] = self.release_quota_on_stop
+        compute_instance_prop["enableOSPatching"] = self.enable_os_patching
+        # applicationSharingPolicy / computeInstanceAuthorizationType defaulted to "Shared" / "personal"
+        # on the legacy model and were serialized; preserve those defaults on the wire.
+        compute_instance_prop["applicationSharingPolicy"] = "Shared"
+        compute_instance_prop["computeInstanceAuthorizationType"] = "personal"
         compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
         if self.custom_applications:
@@ -483,18 +490,18 @@ class ComputeInstance(Compute):
                 prop.properties.enable_sso if (prop.properties and prop.properties.enable_sso is not None) else True
             ),
             enable_root_access=(
-                prop.properties.enable_root_access
-                if (prop.properties and prop.properties.enable_root_access is not None)
+                prop.properties.get("enableRootAccess")
+                if (prop.properties and prop.properties.get("enableRootAccess") is not None)
                 else True
             ),
             release_quota_on_stop=(
-                prop.properties.release_quota_on_stop
-                if (prop.properties and prop.properties.release_quota_on_stop is not None)
+                prop.properties.get("releaseQuotaOnStop")
+                if (prop.properties and prop.properties.get("releaseQuotaOnStop") is not None)
                 else False
             ),
             enable_os_patching=(
-                prop.properties.enable_os_patching
-                if (prop.properties and prop.properties.enable_os_patching is not None)
+                prop.properties.get("enableOSPatching")
+                if (prop.properties and prop.properties.get("enableOSPatching") is not None)
                 else False
             ),
         )
