@@ -134,7 +134,7 @@ def main(
 
     By default the generated changelog is written into ``CHANGELOG.md``. When
     ``output_json`` is provided, run in SDK change detector mode instead: write
-    {"changes": ..., "hasBreakingChange": ..., "breakingChangeItems": [...]} to that
+    {"changes": ..., "hasBreakingChange": ...} to that
     file and do NOT modify ``CHANGELOG.md``.
     """
 
