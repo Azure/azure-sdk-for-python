@@ -47,6 +47,7 @@ path.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import logging
 import os
 from typing import Any
@@ -249,6 +250,80 @@ async def handler(
         yield stream.emit_failed(
             code="server_error",
             message="Demo-mode crash trigger fired; process exiting in 300ms.",
+        )
+        return
+
+    # ── Demo-only input-integrity routes (DEMO_MODE) ─────────────────
+    # Let the hosted battery verify the durable-input attachment-spill path
+    # (payloads over the core inline threshold spill to ``task.attachments``).
+    # The handler echoes the EXACT bytes it observed — byte length + sha256 of
+    # ``get_input_text()`` — so the client can diff against what it sent and
+    # prove the spill round-trips losslessly for normal AND steering inputs.
+    if DEMO_MODE and topic.startswith("__ECHO_INPUT__"):
+        _n = len(topic)
+        _h = hashlib.sha256(topic.encode("utf-8")).hexdigest()
+        stream = ResponseEventStream(response_id=context.response_id, request=request)
+        yield stream.emit_created()
+        yield stream.emit_in_progress()
+        _msg = stream.add_output_item_message()
+        yield _msg.emit_added()
+        _t = _msg.add_text_content()
+        yield _t.emit_added()
+        yield _t.emit_delta(f"INPUT_LEN={_n} INPUT_SHA256={_h}")
+        yield _t.emit_text_done()
+        yield _t.emit_done()
+        yield _msg.emit_done()
+        yield stream.emit_completed()
+        return
+
+    # ── Oversized-input + crash-recovery parity route (DEMO_MODE) ────
+    # Fresh entry: echo the observed input integrity as one item, checkpoint it
+    # durably, then crash (no terminal). Recovery: re-read the (spilled) input
+    # and echo it AGAIN as a second item, then complete. The battery asserts the
+    # pre-crash and post-recovery echoes are identical — proving the recovered
+    # handler re-observed the byte-identical oversized input from the attachment.
+    if DEMO_MODE and topic.startswith("__ECHO_CRASH__"):
+        _n = len(topic)
+        _h = hashlib.sha256(topic.encode("utf-8")).hexdigest()
+        if context.is_recovery and context.persisted_response is not None:
+            stream = ResponseEventStream(response_id=context.response_id, response=context.persisted_response)
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+            _msg = stream.add_output_item_message()
+            yield _msg.emit_added()
+            _t = _msg.add_text_content()
+            yield _t.emit_added()
+            yield _t.emit_delta(f"RECOVERED_LEN={_n} RECOVERED_SHA256={_h}")
+            yield _t.emit_text_done()
+            yield _t.emit_done()
+            yield _msg.emit_done()
+            yield stream.emit_completed()
+            return
+        stream = ResponseEventStream(response_id=context.response_id, request=request)
+        yield stream.emit_created()
+        yield stream.emit_in_progress()
+        _msg = stream.add_output_item_message()
+        yield _msg.emit_added()
+        _t = _msg.add_text_content()
+        yield _t.emit_added()
+        yield _t.emit_delta(f"PRECRASH_LEN={_n} PRECRASH_SHA256={_h}")
+        yield _t.emit_text_done()
+        yield _t.emit_done()
+        yield _msg.emit_done()
+        yield stream.checkpoint()  # durably persist the pre-crash echo item
+        await asyncio.sleep(1.0)  # let the checkpoint flush, then crash mid-run
+        os._exit(137)
+
+    # ── Clean mark-failed route (DEMO_MODE) ──────────────────────────
+    # Emits a terminal ``response.failed`` with ``code=server_error`` WITHOUT
+    # crashing, so the battery can observe the failed terminal + error.code (the
+    # one terminal state the research path never produces on its own).
+    if DEMO_MODE and topic.startswith("__FAIL__"):
+        stream = ResponseEventStream(response_id=context.response_id, request=request)
+        yield stream.emit_created()
+        yield stream.emit_failed(
+            code="server_error",
+            message="Demo-mode clean failure route.",
         )
         return
 
