@@ -54,7 +54,7 @@ _MAX_TASK_ID_LENGTH = 256
 #: silently stripped to prevent collisions with auto-stamped tags.
 _RESERVED_TAG_PREFIX = "_task_"
 
-_logger = _logging.getLogger("azure.ai.agentserver.agentserver")
+_logger = _logging.getLogger("azure.ai.agentserver.tasks")
 
 # Global registry of resilient task descriptors for recovery purposes.
 # Populated at import time when @task decorates a function.

@@ -37,7 +37,7 @@ __all__ = [
     "TaskConflictError",
 ]
 
-logger = logging.getLogger("azure.ai.agentserver.agentserver")
+logger = logging.getLogger("azure.ai.agentserver.tasks")
 
 
 class _HostedConflict(Exception):

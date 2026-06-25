@@ -23,7 +23,7 @@ from ._provider import TaskProvider
 from ._client import TransportClassifiedError
 from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
 
-logger = logging.getLogger("azure.ai.agentserver.agentserver")
+logger = logging.getLogger("azure.ai.agentserver.tasks")
 
 
 def derive_lease_owner(agent_name: str, session_id: str) -> str:
