@@ -204,7 +204,7 @@ class JobOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client_02_2023_preview: Service client to allow end users to operate on Azure Machine Learning
         Workspace resources.
-    :type service_client_02_2023_preview: ~azure.ai.ml._restclient.v2023_02_01_preview.AzureMachineLearningWorkspaces
+    :type service_client_02_2023_preview: ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param all_operations: All operations classes of an MLClient object.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer
     :param credential: Credential to use for authentication.
