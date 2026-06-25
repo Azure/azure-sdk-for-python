@@ -1,20 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Unified storage paths for agentserver durable subsystems.
+"""Unified storage paths for agentserver state subsystems.
 
-Public module — both ``azure-ai-agentserver-core`` (durable tasks) and
+Public module — both ``azure-ai-agentserver-core`` (resilient tasks) and
 ``azure-ai-agentserver-responses`` (response store + stream store) resolve
 their on-disk storage locations through this single helper. The unified
 layout is::
 
     <root>/
-      tasks/      ← durable task records (core)
+      tasks/      ← resilient task records (core)
       streams/    ← SSE event store (responses)
       responses/  ← response object store (responses)
 
-where ``<root>`` is ``${AGENTSERVER_DURABLE_ROOT:-~/.durable}``.
+where ``<root>`` is ``${AGENTSERVER_STATE_ROOT:-~/.agentserver}``.
 
-The single env var ``AGENTSERVER_DURABLE_ROOT`` controls the root for
+The single env var ``AGENTSERVER_STATE_ROOT`` controls the root for
 all three subdirectories — there is intentionally no per-subdir override.
 Operators wanting per-subdir paths should symlink the desired locations
 into the root.
@@ -22,12 +22,12 @@ into the root.
 replaces the pre-migration per-subsystem
 env vars:
 
-  - ``AGENTSERVER_DURABLE_TASKS_PATH`` (was: ``~/.durable-tasks/``)
+  - ``AGENTSERVER_STATE_TASKS_PATH`` (was: ``~/.agentserver-tasks/``)
   - ``AGENTSERVER_STREAM_STORE_PATH``  (was: ``<tempdir>/agentserver_streams``)
   - ``AGENTSERVER_RESPONSE_STORE_PATH`` (was: no default; required for non-mem store)
 
 All three legacy env vars are deleted (not deprecated). The unified
-``AGENTSERVER_DURABLE_ROOT`` is the only operator knob.
+``AGENTSERVER_STATE_ROOT`` is the only operator knob.
 """
 
 from __future__ import annotations
@@ -37,53 +37,53 @@ from pathlib import Path
 from typing import Literal
 
 # Public type alias for the kinds of storage subdirectories the agentserver
-# durable subsystems own.
-DurableSubdir = Literal["tasks", "streams", "responses"]
+# state subsystems own.
+StateSubdir = Literal["tasks", "streams", "responses"]
 
-# Default root when ``AGENTSERVER_DURABLE_ROOT`` is unset.
-_DEFAULT_ROOT_RELATIVE = ".durable"
+# Default root when ``AGENTSERVER_STATE_ROOT`` is unset.
+_DEFAULT_ROOT_RELATIVE = ".agentserver"
 
 # Env var that overrides the root. Single var covers all subdirs.
-DURABLE_ROOT_ENV_VAR = "AGENTSERVER_DURABLE_ROOT"
+STATE_ROOT_ENV_VAR = "AGENTSERVER_STATE_ROOT"
 
 # The full set of valid subdirectory kinds.
 _VALID_SUBDIRS: frozenset[str] = frozenset({"tasks", "streams", "responses"})
 
 
-def resolve_durable_root() -> Path:
-    """Resolve the root directory for agentserver durable storage.
+def resolve_state_root() -> Path:
+    """Resolve the root directory for agentserver state storage.
 
-    Returns ``Path(os.environ['AGENTSERVER_DURABLE_ROOT'])`` if the env
-    var is set; otherwise ``Path.home() / ".durable"``.
+    Returns ``Path(os.environ['AGENTSERVER_STATE_ROOT'])`` if the env
+    var is set; otherwise ``Path.home() / ".agentserver"``.
 
     :returns: The resolved root path.
     :rtype: Path
     """
-    env_value = os.environ.get(DURABLE_ROOT_ENV_VAR)
+    env_value = os.environ.get(STATE_ROOT_ENV_VAR)
     if env_value:
         return Path(env_value)
     return Path.home() / _DEFAULT_ROOT_RELATIVE
 
 
-def resolve_durable_subdir(kind: DurableSubdir) -> Path:
-    """Resolve the on-disk path for a specific durable storage subdirectory.
+def resolve_state_subdir(kind: StateSubdir) -> Path:
+    """Resolve the on-disk path for a specific state storage subdirectory.
 
     :param kind: One of ``"tasks"`` (core), ``"streams"`` (responses),
         ``"responses"`` (responses).
-    :type kind: DurableSubdir
+    :type kind: StateSubdir
     :returns: The resolved absolute path. Created lazily on first write
         by the caller — this helper does not mkdir.
     :rtype: Path
     :raises ValueError: If ``kind`` is not one of the valid subdir kinds.
     """
     if kind not in _VALID_SUBDIRS:
-        raise ValueError(f"Unknown durable subdir kind: {kind!r}. " f"Valid kinds: {sorted(_VALID_SUBDIRS)}")
-    return resolve_durable_root() / kind
+        raise ValueError(f"Unknown resilient subdir kind: {kind!r}. " f"Valid kinds: {sorted(_VALID_SUBDIRS)}")
+    return resolve_state_root() / kind
 
 
 __all__ = [
-    "DurableSubdir",
-    "DURABLE_ROOT_ENV_VAR",
-    "resolve_durable_root",
-    "resolve_durable_subdir",
+    "StateSubdir",
+    "STATE_ROOT_ENV_VAR",
+    "resolve_state_root",
+    "resolve_state_subdir",
 ]

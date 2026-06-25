@@ -218,7 +218,7 @@ def resolve_graceful_shutdown_timeout(timeout: Optional[int]) -> int:
 
     Lower values force Hypercorn to cancel in-flight connections sooner
     on SIGTERM — useful for tests / operators that want shutdown handlers
-    (in-process markers, durable task checkpoints) to fire before
+    (in-process markers, resilient task checkpoints) to fire before
     long-running requests complete naturally.
 
     :param timeout: Explicitly requested timeout or None.

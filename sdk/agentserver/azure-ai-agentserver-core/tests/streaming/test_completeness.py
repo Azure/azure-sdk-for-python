@@ -150,14 +150,14 @@ class TestOldSurfaceAbsent:
     def test_old_stream_module_is_gone(self) -> None:
         """``_stream.py`` is deleted."""
         with pytest.raises(ImportError):
-            importlib.import_module("azure.ai.agentserver.core.durable._stream")
+            importlib.import_module("azure.ai.agentserver.core.tasks._stream")
 
     @pytest.mark.parametrize("name", ["StreamHandler", "QueueStreamHandler", "StreamHandlerFactory"])
-    def test_old_symbols_not_in_durable_public_surface(self, name: str) -> None:
-        from azure.ai.agentserver.core import durable
+    def test_old_symbols_not_in_resilient_public_surface(self, name: str) -> None:
+        from azure.ai.agentserver.core import tasks as resilient
 
-        assert not hasattr(durable, name), f"{name} MUST be removed from durable subpackage per "
-        assert name not in durable.__all__
+        assert not hasattr(resilient, name), f"{name} MUST be removed from resilient subpackage per "
+        assert name not in resilient.__all__
 
 
 class TestAtSignTaskHasNoStreamingKwarg:
@@ -165,7 +165,7 @@ class TestAtSignTaskHasNoStreamingKwarg:
     streaming-related public attribute."""
 
     def test_at_sign_task_signature_has_no_streaming_kwarg(self) -> None:
-        from azure.ai.agentserver.core.durable._decorator import task
+        from azure.ai.agentserver.core.tasks._decorator import task
 
         sig = inspect.signature(task)
         offenders = [
@@ -174,7 +174,7 @@ class TestAtSignTaskHasNoStreamingKwarg:
         assert offenders == [], f"@task MUST have NO streaming-related kwarg per SC-006a; " f"got: {offenders}"
 
     def test_task_context_has_no_stream_method(self) -> None:
-        from azure.ai.agentserver.core.durable import TaskContext
+        from azure.ai.agentserver.core.tasks import TaskContext
 
         assert not hasattr(TaskContext, "stream"), "TaskContext MUST NOT have a stream() method per SC-006a"
         # Also no _stream_handler slot
@@ -184,7 +184,7 @@ class TestAtSignTaskHasNoStreamingKwarg:
     def test_task_run_is_not_async_iterable(self) -> None:
         """``async for chunk in run`` is removed. Subscribers use
         ``await streams.get(invocation_id).subscribe()`` instead."""
-        from azure.ai.agentserver.core.durable import TaskRun
+        from azure.ai.agentserver.core.tasks import TaskRun
 
         assert not hasattr(TaskRun, "__aiter__"), (
             "TaskRun MUST NOT be async-iterable; " "consumers use streams.get(invocation_id).subscribe() instead"

@@ -113,12 +113,12 @@ export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
 
-### Durable long-running agents
+### Resilient long-running agents
 
 The `@task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
 
 ```python
-from azure.ai.agentserver.core.durable import task, TaskContext
+from azure.ai.agentserver.core.tasks import task, TaskContext
 
 @task
 async def process_document(ctx: TaskContext[dict]) -> dict:
@@ -134,7 +134,7 @@ result = await process_document.run(
 print(result.output)  # {"summary": "..."}
 ```
 
-See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 
 ## Troubleshooting
 
@@ -153,7 +153,7 @@ To report an issue with the client library, or request additional features, plea
 ## Next steps
 
 - Install [`azure-ai-agentserver-invocations`](https://pypi.org/project/azure-ai-agentserver-invocations/) to add the invocation protocol endpoints.
-- Read the [Durable Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md) for crash-resilient long-running agents.
+- Read the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for crash-resilient long-running agents.
 - See the [container image spec](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver) for the full hosted agent contract.
 
 ## Contributing
