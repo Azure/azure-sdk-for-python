@@ -425,6 +425,7 @@
         "azure.ai.projects.models.TelemetryDataKind": "Azure.AI.Projects.TelemetryDataKind",
         "azure.ai.projects.models.TelemetryEndpointAuthType": "Azure.AI.Projects.TelemetryEndpointAuthType",
         "azure.ai.projects.models.TelemetryTransportProtocol": "Azure.AI.Projects.TelemetryTransportProtocol",
+        "azure.ai.projects.models.AgentHarness": "Azure.AI.Projects.AgentHarness",
         "azure.ai.projects.models.ToolChoiceParamType": "OpenAI.ToolChoiceParamType",
         "azure.ai.projects.models.TextResponseFormatConfigurationType": "OpenAI.TextResponseFormatConfigurationType",
         "azure.ai.projects.models.AgentVersionStatus": "Azure.AI.Projects.AgentVersionStatus",
@@ -542,5 +543,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "630203b87422"
+    "CrossLanguageVersion": "16f1dd246bad"
 }

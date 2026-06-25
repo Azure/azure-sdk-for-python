@@ -82,6 +82,15 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WebSocket-based protocol for hosted voice and real-time streaming agents."""
 
 
+class AgentHarness(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The execution runtime for a agent. When omitted, the request is served by the existing prompt
+    agent runtime. When set, the request is routed to the corresponding managed runtime.
+    """
+
+    GHCP = "ghcp"
+    """GHCP-SDK based managed runtime."""
+
+
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentKind."""
 

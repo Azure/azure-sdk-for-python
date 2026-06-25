@@ -11760,6 +11760,10 @@ class PromptAgentDefinition(AgentDefinition, discriminator="prompt"):
     :vartype rai_config: ~azure.ai.projects.models.RaiConfig
     :ivar kind: Required. PROMPT.
     :vartype kind: str or ~azure.ai.projects.models.PROMPT
+    :ivar harness: The execution harness for the agent. When omitted (the default), the request is
+     served by the existing prompt agent runtime. When set to ``ghcp``, the agent runs on the
+     GHCP-SDK based managed runtime. "ghcp"
+    :vartype harness: str or ~azure.ai.projects.models.AgentHarness
     :ivar model: The model deployment to use for this agent. Required.
     :vartype model: str
     :ivar instructions: A system (or developer) message inserted into the model's context.
@@ -11793,6 +11797,12 @@ class PromptAgentDefinition(AgentDefinition, discriminator="prompt"):
 
     kind: Literal[AgentKind.PROMPT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. PROMPT."""
+    harness: Optional[Union[str, "_models.AgentHarness"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The execution harness for the agent. When omitted (the default), the request is served by the
+     existing prompt agent runtime. When set to ``ghcp``, the agent runs on the GHCP-SDK based
+     managed runtime. \"ghcp\""""
     model: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The model deployment to use for this agent. Required."""
     instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -11833,6 +11843,7 @@ class PromptAgentDefinition(AgentDefinition, discriminator="prompt"):
         *,
         model: str,
         rai_config: Optional["_models.RaiConfig"] = None,
+        harness: Optional[Union[str, "_models.AgentHarness"]] = None,
         instructions: Optional[str] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
