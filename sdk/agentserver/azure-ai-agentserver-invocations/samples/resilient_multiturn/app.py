@@ -1,4 +1,4 @@
-"""HTTP host for the resilient multi-turn agent.
+r"""HTTP host for the resilient multi-turn agent.
 
 Wires the resilient task (``agent.py``) to the invocations framework.
 Per-invocation results are written by the resilient task itself (inside the
@@ -11,8 +11,8 @@ Usage::
     python app.py
 
     # Turn 1
-    curl -X POST "http://localhost:8088/invocations?agent_session_id=trip-001" \\
-        -H "Content-Type: application/json" \\
+    curl -X POST "http://localhost:8088/invocations?agent_session_id=trip-001" \
+        -H "Content-Type: application/json" \
         -d '{"message": "I want to plan a vacation to Japan"}'
     # → 202  (x-agent-invocation-id: <inv-1>)
 
@@ -21,13 +21,13 @@ Usage::
     # → {"invocation_id": "<inv-1>", "status": "completed", "output": {...}}
 
     # Turn 2
-    curl -X POST "http://localhost:8088/invocations?agent_session_id=trip-001" \\
-        -H "Content-Type: application/json" \\
+    curl -X POST "http://localhost:8088/invocations?agent_session_id=trip-001" \
+        -H "Content-Type: application/json" \
         -d '{"message": "Budget is $5000, 2 weeks"}'
 
     # End session
-    curl -X POST "http://localhost:8088/invocations?agent_session_id=trip-001" \\
-        -H "Content-Type: application/json" \\
+    curl -X POST "http://localhost:8088/invocations?agent_session_id=trip-001" \
+        -H "Content-Type: application/json" \
         -d '{"message": "done"}'
 """
 
