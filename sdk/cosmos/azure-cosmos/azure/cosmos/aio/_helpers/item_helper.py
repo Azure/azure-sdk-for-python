@@ -70,6 +70,17 @@ class AsyncItemHelper:
         # directly.
         self._metadata = AsyncContainerMetadataProvider(client_connection, ensure_container_cached)
 
+    def _no_response_on_write_default(self) -> bool:
+        """Read the client-level ``no_response_on_write`` setting.
+
+        Async version of the sync helper method. The write preps fall back to
+        this client-level flag when a call passes no per-call ``no_response``.
+
+        :rtype: bool
+        """
+        policy = getattr(self.client_connection, "connection_policy", None)
+        return bool(getattr(policy, "ResponsePayloadOnWriteDisabled", False))
+
     async def _resolve_container_rid(
         self,
         container_link: str,
@@ -138,6 +149,7 @@ class AsyncItemHelper:
                 container_rid=container_rid,
                 enable_automatic_id_generation=enable_automatic_id_generation,
                 indexing_directive=indexing_directive,
+                no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
             backend_response = await self._backend.execute(prepared)
@@ -281,6 +293,7 @@ class AsyncItemHelper:
                 partition_key_value=partition_key_value,
                 container_rid=container_rid,
                 access_condition=request_options.get("accessCondition"),
+                no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
             backend_response = await self._backend.execute(prepared)
@@ -335,6 +348,7 @@ class AsyncItemHelper:
                 partition_key_value=partition_key_value,
                 container_rid=container_rid,
                 access_condition=request_options.get("accessCondition"),
+                no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
             backend_response = await self._backend.execute(prepared)
@@ -393,6 +407,7 @@ class AsyncItemHelper:
                 patch_operations=patch_operations,
                 partition_key_value=partition_key_value,
                 container_rid=container_rid,
+                no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
             backend_response = await self._backend.execute(prepared)

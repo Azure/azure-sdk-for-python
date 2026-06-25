@@ -1,10 +1,10 @@
-from collections import deque
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 """Thread-safe per-operation latency histogram and error tracking using HdrHistogram."""
 
 import threading
 import time
+from collections import deque
 
 try:
     from hdrh.histogram import HdrHistogram
@@ -32,7 +32,9 @@ class Stats:
         # min 1 microsecond, max 60 seconds (in microseconds), 3 significant digits
         self._histograms: dict[str, HdrHistogram] = {}
         self._error_counts: dict[str, int] = {}
-        self._errors: list[dict] = []
+        # Bounded from the start so a burst of errors before the first drain
+        # cannot grow this without limit. drain_all resets it to the same limit.
+        self._errors: deque = deque(maxlen=2000)
 
     def record(self, operation: str, duration_ms: float):
         """Record a successful operation with its duration in milliseconds."""
@@ -83,7 +85,7 @@ class Stats:
         error_status_code, error_sub_status_code, timestamp.
         """
         with self._lock:
-            summaries = []
+            summaries: list[dict] = []
             all_ops = set(
                 list(self._histograms.keys()) + list(self._error_counts.keys())
             )
@@ -128,7 +130,9 @@ class Stats:
             # Reset for next interval
             self._histograms.clear()
             self._error_counts.clear()
-            error_details = self._errors
+            # Copy into a list so the caller gets a stable copy and the return
+            # type matches the annotation, not the internal deque.
+            error_details: list[dict] = list(self._errors)
             self._errors = deque(maxlen=2000)
             return summaries, error_details
 

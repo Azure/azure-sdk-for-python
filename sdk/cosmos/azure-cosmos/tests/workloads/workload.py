@@ -191,7 +191,9 @@ async def run_multi_client_async(prefix, client_logger):
         for i in range(WORKLOAD_NUM_CLIENTS):
             client_id = f"{prefix}-c{i}"
             tasks.append(run_workload_async(client_id, client_logger, stats=stats, reporter=reporter))
-        await asyncio.gather(*tasks)
+        # return_exceptions=True so one client failing (for example, while it
+        # is being built) does not stop the others sharing this process.
+        await asyncio.gather(*tasks, return_exceptions=True)
     finally:
         if reporter:
             try:

@@ -10,6 +10,9 @@ import uuid
 from datetime import datetime, timezone
 
 import psutil
+from azure.cosmos import CosmosClient
+from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
+from azure.identity import DefaultAzureCredential
 
 from perf_config import _safe_int_env
 from perf_stats import Stats
@@ -116,30 +119,28 @@ class PerfReporter:
         logger.info("PerfReporter stopped")
 
     def _run(self):
-        """Reporter loop: wait for interval, then flush."""
-        try:
-            self._ensure_container()
-        except Exception as e:
-            logger.warning("PerfReporter failed to initialize Cosmos client: %s", e)
-            return
+        """Reporter loop: every interval, write the collected numbers out.
 
-        # Prime psutil CPU counters (first call always returns 0)
+        The results client is built on the first loop pass, so a results
+        account that is briefly unreachable at startup does not stop the
+        reporter for the whole run -- it just retries next interval.
+        """
+        # Warm up the psutil CPU counters; the first call always returns 0.
         _get_cpu_percent(self._process)
         _get_system_cpu_percent()
 
         while not self._stop_event.wait(timeout=self._config["report_interval"]):
             try:
                 with self._flush_lock:
+                    self._ensure_container()
                     self._flush()
             except Exception as e:
                 logger.warning("PerfReporter flush failed: %s", e)
 
     def _ensure_container(self):
-        """Lazily create the sync CosmosClient and get the container reference."""
+        """Create the results client and container on the first call."""
         if self._container is not None:
             return
-
-        from azure.cosmos import CosmosClient
 
         endpoint = self._config["results_endpoint"]
         if not endpoint:
@@ -149,10 +150,13 @@ class PerfReporter:
         if key:
             credential = key
         else:
-            from azure.identity import DefaultAzureCredential
             credential = DefaultAzureCredential()
 
-        self._client = CosmosClient(endpoint, credential)
+        # Force the results client to use core-python so it keeps working when
+        # the workload runs with COSMOS_BACKEND=rust. Otherwise the reporter
+        # would follow that variable and write its results over the rust path,
+        # which cannot read the account yet.
+        self._client = CosmosClient(endpoint, credential, _backend=BACKEND_NAME_CORE_PYTHON)
         db = self._client.get_database_client(self._config["results_database"])
         self._container = db.get_container_client(self._config["results_container"])
 
@@ -251,9 +255,3 @@ class PerfReporter:
             except Exception as e:
                 logger.warning("PerfReporter error upsert failed: %s", e)
 
-
-def _safe_int_env(name: str, default: int) -> int:
-    try:
-        return int(os.environ.get(name, str(default)))
-    except (ValueError, TypeError):
-        return default

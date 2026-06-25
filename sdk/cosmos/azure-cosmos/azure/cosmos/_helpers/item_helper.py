@@ -73,6 +73,20 @@ class ItemHelper:
         # directly.
         self._metadata = ContainerMetadataProvider(client_connection, ensure_container_cached)
 
+    def _no_response_on_write_default(self) -> bool:
+        """Read the client-level ``no_response_on_write`` setting.
+
+        This is the ``no_response_on_write=True`` flag the customer can set at
+        client construction (stored as
+        ``connection_policy.ResponsePayloadOnWriteDisabled``). The write preps
+        fall back to it when a call carries no per-call ``no_response``. A
+        connection without a policy reads as ``False``.
+
+        :rtype: bool
+        """
+        policy = getattr(self.client_connection, "connection_policy", None)
+        return bool(getattr(policy, "ResponsePayloadOnWriteDisabled", False))
+
     def _resolve_container_rid(
         self,
         container_link: str,
@@ -143,6 +157,7 @@ class ItemHelper:
                 container_rid=container_rid,
                 enable_automatic_id_generation=enable_automatic_id_generation,
                 indexing_directive=indexing_directive,
+                no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
             backend_response = self._backend.execute(prepared)
@@ -330,6 +345,7 @@ class ItemHelper:
                 partition_key_value=partition_key_value,
                 container_rid=container_rid,
                 access_condition=request_options.get("accessCondition"),
+                no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
             backend_response = self._backend.execute(prepared)
@@ -393,6 +409,7 @@ class ItemHelper:
                 partition_key_value=partition_key_value,
                 container_rid=container_rid,
                 access_condition=request_options.get("accessCondition"),
+                no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
             backend_response = self._backend.execute(prepared)
@@ -465,6 +482,7 @@ class ItemHelper:
                 patch_operations=patch_operations,
                 partition_key_value=partition_key_value,
                 container_rid=container_rid,
+                no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
             backend_response = self._backend.execute(prepared)

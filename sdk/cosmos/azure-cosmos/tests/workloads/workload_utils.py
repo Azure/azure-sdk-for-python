@@ -51,7 +51,12 @@ def _record_error(stats, operation, error):
 
 
 def _timed_call(op_name, stats, fn, *args, **kwargs):
-    """Call *fn* synchronously with timing and error recording."""
+    """Run *fn*, timing it and recording the result.
+
+    On success it records the latency; on failure it records the error and
+    returns None instead of raising, so one bad call cannot stop the rest
+    of the batch the caller is looping over.
+    """
     start = time.perf_counter_ns()
     try:
         result = fn(*args, **kwargs)
@@ -60,11 +65,16 @@ def _timed_call(op_name, stats, fn, *args, **kwargs):
         return result
     except Exception as e:
         _record_error(stats, op_name, e)
-        raise
+        return None
 
 
 async def _timed_call_async(op_name, stats, coroutine):
-    """Await *coroutine* with timing and error recording."""
+    """Await *coroutine*, timing it and recording the result.
+
+    On success it records the latency; on failure it records the error and
+    returns None instead of raising, so one bad call cannot stop the rest
+    of the batch run together.
+    """
     start = time.perf_counter_ns()
     try:
         result = await coroutine
@@ -73,7 +83,7 @@ async def _timed_call_async(op_name, stats, coroutine):
         return result
     except Exception as e:
         _record_error(stats, op_name, e)
-        raise
+        return None
 
 
 # ---------------------------------------------------------------------------
@@ -176,7 +186,7 @@ async def upsert_item_concurrently(container, excluded_locations, num_upserts, s
         item = _get_upsert_item()
         awaitable = container.upsert_item(item, etag=None, match_condition=None, **extra)
         tasks.append(_timed_call_async("UpsertItem", stats, awaitable))
-    await asyncio.gather(*tasks)
+    await asyncio.gather(*tasks, return_exceptions=True)
 
 
 async def read_item_concurrently(container, excluded_locations, num_reads, stats=None):
@@ -188,7 +198,7 @@ async def read_item_concurrently(container, excluded_locations, num_reads, stats
             item["id"], item[PARTITION_KEY], etag=None, match_condition=None, **extra,
         )
         tasks.append(_timed_call_async("ReadItem", stats, awaitable))
-    await asyncio.gather(*tasks)
+    await asyncio.gather(*tasks, return_exceptions=True)
 
 
 async def query_items_concurrently(container, excluded_locations, num_queries, stats=None):
@@ -210,7 +220,7 @@ async def query_items_concurrently(container, excluded_locations, num_queries, s
             return [item async for item in results]
 
         tasks.append(_timed_call_async("QueryItems", stats, _do_query()))
-    await asyncio.gather(*tasks)
+    await asyncio.gather(*tasks, return_exceptions=True)
 
 
 # ---------------------------------------------------------------------------

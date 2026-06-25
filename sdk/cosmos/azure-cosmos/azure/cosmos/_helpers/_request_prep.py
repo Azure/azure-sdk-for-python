@@ -86,11 +86,10 @@ _SEQUENCE_VALUED_OPTION_KEYS = frozenset({"preTriggerInclude", "postTriggerInclu
 
 # Internal option-keys the legacy ``_base.GetHeaders`` path emits only when the
 # value is *truthy* -- a ``0`` / ``None`` / ``""`` value omits the header
-# entirely (``indexingDirective``: GetHeaders L287; ``throughputBucket``:
-# GetHeaders L416). ``indexing_directive=IndexingDirective.Default`` is ``0``
-# and ``throughput_bucket=0`` is not a real bucket, so both must ship no header
-# to match v4. (``maxIntegratedCacheStaleness`` is also truthy-gated but keeps
-# its own wire-name branch in ``flatten_options_to_headers``.)
+# entirely. ``indexing_directive=IndexingDirective.Default`` is ``0`` and
+# ``throughput_bucket=0`` is not a real bucket, so both must send no header to
+# match v4. (``maxIntegratedCacheStaleness`` is also truthy-gated but keeps its
+# own wire-name branch in ``flatten_options_to_headers``.)
 _TRUTHY_GATED_OPTION_KEYS = frozenset({"indexingDirective", "throughputBucket"})
 
 
@@ -131,6 +130,10 @@ def flatten_options_to_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
     - ``maxIntegratedCacheStaleness`` becomes ``x-ms-dedicatedgateway-max-age``,
       emitted **only when truthy** -- ``0`` is a documented no-op, matching
       the legacy ``GetHeaders`` gate.
+    - ``consistencyLevel`` -- a per-request consistency override passed
+      through ``request_options`` -- becomes the ``x-ms-consistency-level``
+      header, emitted **only when truthy**. Without this step the raw
+      ``consistencyLevel`` key would be sent as a header the driver ignores.
     - ``preTriggerInclude`` / ``postTriggerInclude`` supplied as a list/tuple
       of trigger ids are comma-joined (see ``_normalize_option_value``).
     - ``indexingDirective`` / ``throughputBucket`` are emitted **only when
@@ -168,6 +171,14 @@ def flatten_options_to_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
             if option_value:
                 headers[HttpHeaders.DedicatedGatewayCacheStaleness] = str(option_value)
             continue
+        if option_key == "consistencyLevel":
+            # Translate the per-request override to the
+            # ``x-ms-consistency-level`` header. Emit only when truthy;
+            # None / "" sends no header. The raw key on its own would be a
+            # header the driver ignores.
+            if option_value:
+                headers[HttpHeaders.ConsistencyLevel] = option_value
+            continue
         if option_key in _TRUTHY_GATED_OPTION_KEYS and not option_value:
             # A falsy value (0 / None / "") omits the header, matching the
             # legacy GetHeaders truthy gate -- e.g. indexing_directive=
@@ -175,6 +186,29 @@ def flatten_options_to_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
             continue
         headers[option_key] = _normalize_option_value(option_key, option_value)
     return headers
+
+
+def apply_no_response_on_write_default(
+    options: Dict[str, Any], no_response_on_write_default: bool
+) -> None:
+    """Apply the client-level ``no_response_on_write`` setting as a fallback.
+
+    A per-call ``no_response`` always wins. The client-level default takes
+    effect only when the call passes no per-call value and that default is
+    truthy, so an explicit per-call ``no_response=False`` still returns the
+    document body. When it applies, this sets the
+    ``responsePayloadOnWriteDisabled`` option, which suppresses the write
+    response body.
+
+    :param options: The internal options dict. **Mutated** when the fallback
+        applies.
+    :type options: Dict[str, Any]
+    :param no_response_on_write_default: The client-level
+        ``connection_policy.ResponsePayloadOnWriteDisabled`` value.
+    :type no_response_on_write_default: bool
+    """
+    if no_response_on_write_default and "responsePayloadOnWriteDisabled" not in options:
+        options["responsePayloadOnWriteDisabled"] = True
 
 
 def build_create_item_prepared(
@@ -185,6 +219,7 @@ def build_create_item_prepared(
     container_rid: Optional[str],
     enable_automatic_id_generation: bool = True,
     indexing_directive: Optional[Any] = None,
+    no_response_on_write_default: bool = False,
     kwargs: Optional[Dict[str, Any]] = None,
 ) -> Tuple[PreparedRequest, str]:
     """Build a ``PreparedRequest`` for a single ``create_item`` call.
@@ -214,6 +249,10 @@ def build_create_item_prepared(
     :param indexing_directive: When supplied, written to
         ``options["indexingDirective"]``.
     :type indexing_directive: Optional[Any]
+    :param no_response_on_write_default: The client-level
+        ``no_response_on_write`` setting. Applied as a fallback only when the
+        call carries no per-call ``no_response``.
+    :type no_response_on_write_default: bool
     :param kwargs: Remaining customer kwargs. **Mutated** — recognised
         option-shortcut keys are popped via
         ``compose_options_from_kwargs``.
@@ -231,6 +270,10 @@ def build_create_item_prepared(
     options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
     if indexing_directive is not None:
         options["indexingDirective"] = indexing_directive
+
+    # Fall back to the client-level no_response_on_write setting when the
+    # call did not pass a per-call no_response.
+    apply_no_response_on_write_default(options, no_response_on_write_default)
 
     if container_rid is not None:
         stamp_container_rid(
@@ -436,6 +479,7 @@ def _build_write_with_body_prepared(
     container_rid: Optional[str],
     access_condition: Optional[Dict[str, Any]] = None,
     item_id: Optional[str] = None,
+    no_response_on_write_default: bool = False,
     kwargs: Optional[Dict[str, Any]] = None,
 ) -> PreparedRequest:
     """Build a ``PreparedRequest`` for a write-with-body op that never mints an id.
@@ -491,6 +535,10 @@ def _build_write_with_body_prepared(
         op names one explicitly (``replace_item``). ``None`` for ops that
         derive the id from the body (``upsert_item``).
     :type item_id: Optional[str]
+    :param no_response_on_write_default: The client-level
+        ``no_response_on_write`` setting. Applied as a fallback only when the
+        call carries no per-call ``no_response``.
+    :type no_response_on_write_default: bool
     :param kwargs: Remaining customer kwargs. **Mutated** -- recognised
         option-shortcut keys are popped via
         ``compose_options_from_kwargs``.
@@ -504,6 +552,10 @@ def _build_write_with_body_prepared(
     # Both ops target a specific id (the one inside the body), so neither
     # mints one -- the same value the legacy paths write unconditionally.
     options["disableAutomaticIdGeneration"] = True
+
+    # Fall back to the client-level no_response_on_write setting when the
+    # call did not pass a per-call no_response.
+    apply_no_response_on_write_default(options, no_response_on_write_default)
 
     # The caller computed the access-condition on the legacy options build
     # (``etag`` / ``match_condition`` -> accessCondition); inject it so the
@@ -557,6 +609,7 @@ def build_upsert_item_prepared(
     partition_key_value: Any,
     container_rid: Optional[str],
     access_condition: Optional[Dict[str, Any]] = None,
+    no_response_on_write_default: bool = False,
     kwargs: Optional[Dict[str, Any]] = None,
 ) -> PreparedRequest:
     """Build a ``PreparedRequest`` for a single ``upsert_item`` call.
@@ -580,6 +633,7 @@ def build_upsert_item_prepared(
         partition_key_value=partition_key_value,
         container_rid=container_rid,
         access_condition=access_condition,
+        no_response_on_write_default=no_response_on_write_default,
         kwargs=kwargs,
     )
 
@@ -592,6 +646,7 @@ def build_replace_item_prepared(
     partition_key_value: Any,
     container_rid: Optional[str],
     access_condition: Optional[Dict[str, Any]] = None,
+    no_response_on_write_default: bool = False,
     kwargs: Optional[Dict[str, Any]] = None,
 ) -> PreparedRequest:
     """Build a ``PreparedRequest`` for a single ``replace_item`` call.
@@ -627,6 +682,7 @@ def build_replace_item_prepared(
         container_rid=container_rid,
         access_condition=access_condition,
         item_id=item_id,
+        no_response_on_write_default=no_response_on_write_default,
         kwargs=kwargs,
     )
 
@@ -665,6 +721,7 @@ def build_patch_item_prepared(
     patch_operations: Any,
     partition_key_value: Any,
     container_rid: Optional[str],
+    no_response_on_write_default: bool = False,
     kwargs: Optional[Dict[str, Any]] = None,
 ) -> PreparedRequest:
     """Build a ``PreparedRequest`` for a single ``patch_item`` call.
@@ -694,6 +751,10 @@ def build_patch_item_prepared(
     :param container_rid: The container's resource id, or ``None`` to skip
         rid stamping.
     :type container_rid: Optional[str]
+    :param no_response_on_write_default: The client-level
+        ``no_response_on_write`` setting. Applied as a fallback only when the
+        call carries no per-call ``no_response``.
+    :type no_response_on_write_default: bool
     :param kwargs: Remaining customer kwargs. **Mutated** -- recognised
         option-shortcut keys are popped via ``compose_options_from_kwargs``.
     :type kwargs: Optional[Dict[str, Any]]
@@ -702,6 +763,10 @@ def build_patch_item_prepared(
     """
     # Translate kwarg shortcuts to internal option keys.
     options = compose_options_from_kwargs(kwargs if kwargs is not None else {})
+
+    # Patch carries a body like the other writes, so it honours the
+    # client-level no_response_on_write fallback too.
+    apply_no_response_on_write_default(options, no_response_on_write_default)
 
     if container_rid is not None:
         stamp_container_rid(
