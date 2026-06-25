@@ -234,7 +234,7 @@ def generate_main():
         default=None,
         help=(
             "Path to a JSON output file. When provided, run in SDK change detector mode: "
-            "generate the SDK changes, write {\"changes\": ..., \"hasBreakingChange\": ...} to this "
+            'generate the SDK changes, write {"changes": ..., "hasBreakingChange": ...} to this '
             "file and do NOT modify CHANGELOG.md. When omitted, update CHANGELOG.md as usual."
         ),
     )
