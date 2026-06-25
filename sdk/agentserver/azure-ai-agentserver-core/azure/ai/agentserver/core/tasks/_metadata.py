@@ -35,7 +35,7 @@ import logging
 from collections.abc import Iterator
 from typing import Any, Awaitable, Callable, Optional
 
-logger = logging.getLogger("azure.ai.agentserver.agentserver")
+logger = logging.getLogger("azure.ai.agentserver.tasks")
 
 # Sentinel to distinguish "not set" from None
 _NOT_SET = object()

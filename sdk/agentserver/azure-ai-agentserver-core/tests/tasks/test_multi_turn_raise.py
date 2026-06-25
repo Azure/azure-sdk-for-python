@@ -428,7 +428,7 @@ class TestStructuredFailureLog:
 
     @pytest.mark.asyncio
     async def test_failure_emits_structured_log_event(self, tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
-        caplog.set_level(logging.ERROR, logger="azure.ai.agentserver.agentserver")
+        caplog.set_level(logging.ERROR, logger="azure.ai.agentserver.tasks")
         manager, mgr_mod, _ = await _setup_manager(tmp_path)
         try:
 

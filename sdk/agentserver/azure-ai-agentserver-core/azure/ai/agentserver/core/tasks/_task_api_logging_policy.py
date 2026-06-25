@@ -28,7 +28,7 @@ from typing import Any
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
-logger = logging.getLogger("azure.ai.agentserver.agentserver.taskapi")
+logger = logging.getLogger("azure.ai.agentserver.tasks.taskapi")
 
 
 # Allow-listed operational headers. Logging anything else risks leaking
