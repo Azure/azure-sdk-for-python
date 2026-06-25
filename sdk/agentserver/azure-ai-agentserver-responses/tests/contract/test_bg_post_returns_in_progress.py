@@ -99,7 +99,9 @@ class TestBgNonStreamPostStatus:
         )
         assert r.status_code == 200
         body = r.json()
-        assert body["status"] in ("in_progress", "queued"), f"Expected in_progress or queued but got {body['status']!r}"
+        assert body["status"] in ("in_progress", "queued"), (
+            f"Expected in_progress or queued but got {body['status']!r}"
+        )
 
     def test_post_returns_in_progress_with_minimal_handler(self) -> None:
         """Minimal created → completed handler must still return in_progress."""
@@ -119,7 +121,9 @@ class TestBgNonStreamPostStatus:
         )
         assert r.status_code == 200
         body = r.json()
-        assert body["status"] in ("in_progress", "queued"), f"Expected in_progress or queued but got {body['status']!r}"
+        assert body["status"] in ("in_progress", "queued"), (
+            f"Expected in_progress or queued but got {body['status']!r}"
+        )
 
     def test_post_returns_in_progress_not_completed_after_handler_finishes(self) -> None:
         """Even after the handler fully completes, the POST snapshot must

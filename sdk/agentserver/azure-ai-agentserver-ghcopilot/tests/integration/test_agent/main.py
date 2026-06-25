@@ -4,7 +4,6 @@ import logging
 import os
 
 from dotenv import load_dotenv
-
 load_dotenv(override=False)
 
 logging.basicConfig(level=getattr(logging, os.environ.get("LOG_LEVEL", "INFO").upper(), logging.INFO))

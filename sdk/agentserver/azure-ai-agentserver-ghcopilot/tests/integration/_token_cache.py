@@ -32,10 +32,7 @@ def get_access_token(resource: str = "https://ai.azure.com") -> str:
     print("[token] Fetching new token...", file=sys.stderr)
     cmd = ["az", "account", "get-access-token", "--resource", resource, "-o", "json"]
     result = subprocess.run(
-        cmd,
-        capture_output=True,
-        encoding="utf-8",
-        errors="replace",
+        cmd, capture_output=True, encoding="utf-8", errors="replace",
         shell=(sys.platform == "win32"),
     )
     if result.returncode != 0:

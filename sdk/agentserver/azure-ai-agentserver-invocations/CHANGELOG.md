@@ -4,31 +4,15 @@
 
 ### Samples
 
-- Added resilient-task samples for the invocations protocol:
-  `resilient_copilot` (streaming chat with crash recovery),
-  `resilient_multiturn` (suspend/resume conversation),
-  `resilient_langgraph` (LangGraph integration), and
-  `resilient_research` (multi-stage research loop with checkpointing).
-  Each sample's `agent.py` / `app.py` module docstring covers what it
-  demonstrates; see the
-  [core developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md)
-  for the underlying `@task` API.
+- Added samples showing how to build crash-resilient invocation agents on top of the new core resilient-task primitive: `resilient_copilot` (streaming chat with crash recovery), `resilient_multiturn` (suspend/resume conversation), `resilient_langgraph` (LangGraph integration), and `resilient_research` (multi-stage research loop with checkpointing). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for the underlying API.
 
 ### Bugs Fixed
 
-- Cancel-invocation and get-invocation endpoints (`POST /invocations/{id}/cancel`,
-  `GET /invocations/{id}`) now propagate `agent_session_id` from the
-  request to `request.state.session_id`, mirroring what the
-  invoke endpoint already does. Without this, custom
-  `@app.cancel_invocation_handler` / `@app.get_invocation_handler`
-  implementations that look up the per-session resilient task via
-  `request.state.session_id` would get an empty string and fail to
-  find their task.
+- The cancel (`POST /invocations/{id}/cancel`) and get (`GET /invocations/{id}`) endpoints now resolve the session id consistently with the invoke endpoint, so custom cancel/get handlers can reliably look up per-session state.
 
 ### Other Changes
 
-- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b7`
-  (the version that introduces the resilient-task primitive).
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b7` (the release that introduces the resilient-task primitive).
 
 ## 1.0.0b5 (2026-06-12)
 

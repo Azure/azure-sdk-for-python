@@ -20,7 +20,6 @@ from azure.ai.agentserver.invocations._constants import InvocationConstants
 # Constants
 # ---------------------------------------------------------------------------
 
-
 def test_session_id_header_constant():
     """SESSION_ID_HEADER constant is correct."""
     assert InvocationConstants.SESSION_ID_HEADER == "x-agent-session-id"
@@ -29,7 +28,6 @@ def test_session_id_header_constant():
 # ---------------------------------------------------------------------------
 # POST /invocations response has x-agent-session-id header
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_post_invocations_has_session_id_header(echo_client):
@@ -43,7 +41,6 @@ async def test_post_invocations_has_session_id_header(echo_client):
 # ---------------------------------------------------------------------------
 # POST /invocations with query param uses that value
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_post_invocations_with_query_param():
@@ -67,7 +64,6 @@ async def test_post_invocations_with_query_param():
 # POST /invocations with env var
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_post_invocations_uses_env_var():
     """POST /invocations uses FOUNDRY_AGENT_SESSION_ID env var when no query param."""
@@ -88,7 +84,6 @@ async def test_post_invocations_uses_env_var():
 # GET /invocations/{id} does NOT have x-agent-session-id header
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_get_invocation_no_session_id_header(async_storage_client):
     """GET /invocations/{id} does NOT include x-agent-session-id."""
@@ -103,7 +98,6 @@ async def test_get_invocation_no_session_id_header(async_storage_client):
 # ---------------------------------------------------------------------------
 # POST /invocations/{id}/cancel does NOT have x-agent-session-id header
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_cancel_invocation_no_session_id_header(async_storage_client):

@@ -15,13 +15,8 @@ class FoundryDeployment:
     """Represents an Azure AI Foundry model deployment."""
 
     def __init__(
-        self,
-        name: str,
-        model_name: str,
-        model_version: str,
-        model_format: str = "",
-        status: str = "Succeeded",
-        token_rate_limit: int = 0,
+        self, name: str, model_name: str, model_version: str,
+        model_format: str = "", status: str = "Succeeded", token_rate_limit: int = 0,
         capabilities: Optional[Dict[str, Any]] = None,
     ):
         self.name = name
@@ -38,9 +33,10 @@ class FoundryDeployment:
 
     @property
     def supports_chat(self) -> bool:
-        return self.capabilities.get("chatCompletion") in ("true", True) or self.capabilities.get(
-            "chat_completion"
-        ) in ("true", True)
+        return (
+            self.capabilities.get("chatCompletion") in ("true", True)
+            or self.capabilities.get("chat_completion") in ("true", True)
+        )
 
     @property
     def wire_api(self) -> str:
@@ -85,9 +81,8 @@ async def discover_foundry_deployments(
         # Try Management API first (most reliable for deployments)
         if management_token:
             from urllib.parse import urlparse
-
             parsed = urlparse(resource_url)
-            resource_name = parsed.hostname.split(".")[0] if parsed.hostname else None
+            resource_name = parsed.hostname.split('.')[0] if parsed.hostname else None
 
             if resource_name:
                 logger.info(f"Trying Azure Management API for resource: {resource_name}")
@@ -130,10 +125,13 @@ async def _discover_via_management_api(resource_name: str, management_token: str
         base_url = "https://management.azure.com"
         api_version = "2023-05-01"
 
-        headers = {"Authorization": f"Bearer {management_token}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {management_token}",
+            "Content-Type": "application/json"
+        }
 
         # Validate resource_name to prevent Kusto injection
-        if not re.match(r"^[a-zA-Z0-9\-]+$", resource_name):
+        if not re.match(r'^[a-zA-Z0-9\-]+$', resource_name):
             logger.warning(f"Invalid resource name (contains unexpected characters): {resource_name!r}")
             return []
 
@@ -172,7 +170,9 @@ async def _discover_via_management_api(resource_name: str, management_token: str
                 location = resource_info.get("location")
 
                 logger.info(f"Found resource via Resource Graph: {resource_id}")
-                logger.info(f"  Subscription: {subscription_id}, RG: {resource_group}, Location: {location}")
+                logger.info(
+                    f"  Subscription: {subscription_id}, RG: {resource_group}, Location: {location}"
+                )
 
                 # Now fetch deployments for this resource
                 deployments_url = f"{base_url}{resource_id}/deployments?api-version={api_version}"
@@ -203,15 +203,14 @@ async def _discover_via_management_api(resource_name: str, management_token: str
                         # Filter: chat-capable or responses-capable models
                         capabilities = properties.get("capabilities", {})
 
-                        is_chat = capabilities.get("chatCompletion") in ("true", True) or capabilities.get(
-                            "chat_completion"
-                        ) in ("true", True)
+                        is_chat = (
+                            capabilities.get("chatCompletion") in ("true", True)
+                            or capabilities.get("chat_completion") in ("true", True)
+                        )
                         is_responses = capabilities.get("responses") in ("true", True)
 
                         if not is_chat and not is_responses:
-                            logger.debug(
-                                f"Skipping model without chat/responses: {name} (capabilities: {capabilities})"
-                            )
+                            logger.debug(f"Skipping model without chat/responses: {name} (capabilities: {capabilities})")
                             continue
 
                         # Note: no model_format filter — capability check above is sufficient
@@ -244,13 +243,15 @@ async def _discover_via_management_api(resource_name: str, management_token: str
                             key=lambda d: (
                                 d.token_rate_limit,  # Primary: highest rate limit
                                 format_priority.get(d.model_format, 0),  # Secondary: format preference
-                                d.name,  # Tertiary: alphabetical
+                                d.name  # Tertiary: alphabetical
                             ),
-                            reverse=True,
+                            reverse=True
                         )
 
                         logger.info(f"Discovered {len(deployments)} chat deployment(s) via Management API")
-                        logger.info(f"Selected model: {deployments[0].name} ({deployments[0].token_rate_limit} TPM)")
+                        logger.info(
+                            f"Selected model: {deployments[0].name} ({deployments[0].token_rate_limit} TPM)"
+                        )
                         return deployments
                     else:
                         logger.warning("No chat-capable deployments found")
@@ -280,7 +281,7 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
         # Try multiple endpoint formats and API versions
         parsed = urlparse(resource_url)
         hostname = parsed.hostname or ""
-        hostname_parts = hostname.split(".")
+        hostname_parts = hostname.split('.')
         resource_name = hostname_parts[0]
 
         # Try different URL formats and paths
@@ -296,7 +297,7 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
         headers = {
             "Authorization": f"Bearer {access_token}",
             "api-key": access_token,  # Some endpoints expect api-key header
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
         }
 
         logger.info(f"Testing {len(url_formats)} OpenAI API endpoints with {len(api_versions)} API versions each")
@@ -346,15 +347,14 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
                                 # Filter: chat-capable or responses-capable models
                                 capabilities = item.get("capabilities", {})
 
-                                is_chat = capabilities.get("chatCompletion") in ("true", True) or capabilities.get(
-                                    "chat_completion"
-                                ) in ("true", True)
+                                is_chat = (
+                                    capabilities.get("chatCompletion") in ("true", True)
+                                    or capabilities.get("chat_completion") in ("true", True)
+                                )
                                 is_responses = capabilities.get("responses") in ("true", True)
 
                                 if not is_chat and not is_responses:
-                                    logger.debug(
-                                        f"Skipping model without chat/responses: {name} (capabilities: {capabilities})"
-                                    )
+                                    logger.debug(f"Skipping model without chat/responses: {name} (capabilities: {capabilities})")
                                     continue
 
                                 # Note: no model_format filter — capability check above is sufficient
@@ -386,14 +386,15 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
                                     key=lambda d: (
                                         d.token_rate_limit,  # Primary: highest rate limit
                                         format_priority.get(d.model_format, 0),  # Secondary: format preference
-                                        d.name,  # Tertiary: alphabetical
+                                        d.name  # Tertiary: alphabetical
                                     ),
-                                    reverse=True,
+                                    reverse=True
                                 )
 
                                 logger.info(f"Discovered {len(deployments)} chat deployments via OpenAI API")
                                 logger.info(
-                                    f"Selected model: {deployments[0].name}" f" ({deployments[0].token_rate_limit} TPM)"
+                                    f"Selected model: {deployments[0].name}"
+                                    f" ({deployments[0].token_rate_limit} TPM)"
                                 )
                                 return deployments
                             else:
@@ -404,13 +405,16 @@ async def _discover_via_openai_api(resource_url: str, access_token: str) -> List
                                 logger.debug(f"Status {response.status}: {response_text[:100]}")
 
             logger.warning(
-                f"All OpenAI API endpoints failed. " f"Tried {len(url_formats)} URLs x {len(api_versions)} API versions"
+                f"All OpenAI API endpoints failed. "
+                f"Tried {len(url_formats)} URLs x {len(api_versions)} API versions"
             )
             return []
 
     except Exception as e:
         logger.error(f"OpenAI API discovery error: {e}", exc_info=True)
         return []
+
+
 
 
 def select_model_interactive(deployments: List[FoundryDeployment]) -> Optional[str]:
@@ -482,7 +486,10 @@ def get_default_model(deployments: List[FoundryDeployment]) -> Optional[str]:
 
     # Log alternatives for visibility
     if len(deployments) > 1:
-        alternatives = ", ".join([f"{d.name} ({d.token_rate_limit:,} TPM)" for d in deployments[1:4]])
+        alternatives = ", ".join([
+            f"{d.name} ({d.token_rate_limit:,} TPM)"
+            for d in deployments[1:4]
+        ])
         logger.info(f"Other options: {alternatives}")
 
     return selected.name

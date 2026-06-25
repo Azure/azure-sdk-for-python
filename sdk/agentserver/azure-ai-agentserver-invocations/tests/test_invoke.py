@@ -12,7 +12,6 @@ import pytest
 # Echo body
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_invoke_echo_body(echo_client):
     """POST /invocations echoes the request body."""
@@ -24,7 +23,6 @@ async def test_invoke_echo_body(echo_client):
 # ---------------------------------------------------------------------------
 # Headers
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_invoke_returns_invocation_id_header(echo_client):
@@ -70,7 +68,6 @@ async def test_invoke_accepts_custom_invocation_id(echo_client):
 # Streaming
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_streaming_returns_chunks(streaming_client):
     """Streaming handler returns 3 JSON chunks."""
@@ -94,7 +91,6 @@ async def test_streaming_has_invocation_id_header(streaming_client):
 # Empty body
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_invoke_empty_body(echo_client):
     """Empty body doesn't crash the server."""
@@ -106,7 +102,6 @@ async def test_invoke_empty_body(echo_client):
 # ---------------------------------------------------------------------------
 # Error handling
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_invoke_error_returns_500(failing_client):
@@ -128,7 +123,6 @@ async def test_invoke_error_has_invocation_id(failing_client):
 # ---------------------------------------------------------------------------
 # Error handling
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_error_hides_details_by_default(failing_client):

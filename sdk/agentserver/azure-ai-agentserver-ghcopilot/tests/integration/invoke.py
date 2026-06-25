@@ -39,14 +39,12 @@ def invoke_agent(endpoint: str, name: str, message: str, session_id: str | None 
 
     sid = session_id or generate_session_id()
 
-    body = json.dumps(
-        {
-            "input": message,
-            "agent": {"name": name, "type": "agent_reference"},
-            "session_id": sid,
-            "store": True,
-        }
-    ).encode()
+    body = json.dumps({
+        "input": message,
+        "agent": {"name": name, "type": "agent_reference"},
+        "session_id": sid,
+        "store": True,
+    }).encode()
 
     print(f"Invoking agent '{name}'...")
     print(f"  Session: {sid}")
@@ -55,9 +53,7 @@ def invoke_agent(endpoint: str, name: str, message: str, session_id: str | None 
 
     token = get_access_token()
     req = urllib.request.Request(
-        url,
-        data=body,
-        method="POST",
+        url, data=body, method="POST",
         headers={
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json",
@@ -97,7 +93,6 @@ def main():
         if env_path.exists():
             try:
                 from dotenv import load_dotenv
-
                 load_dotenv(env_path)
             except ImportError:
                 pass

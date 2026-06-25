@@ -60,9 +60,7 @@ def _clear():
 
 def _make_server_with_child_span():
     """Server whose handler creates a child span (simulating a framework)."""
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
@@ -77,9 +75,7 @@ def _make_server_with_child_span():
 
 def _make_streaming_server_with_child_span():
     """Server with streaming response whose handler creates a child span."""
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             app = InvocationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
@@ -87,10 +83,8 @@ def _make_streaming_server_with_child_span():
     @app.invoke_handler
     async def handle(request: Request) -> StreamingResponse:
         with child_tracer.start_as_current_span("framework_invoke_agent"):
-
             async def generate():
                 yield b"chunk\n"
-
             return StreamingResponse(generate(), media_type="text/plain")
 
     return app
@@ -188,9 +182,7 @@ def test_handler_span_is_child_of_real_caller_span():
     """
     from opentelemetry.propagate import inject
 
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             app = InvocationAgentServerHost()
 
@@ -221,16 +213,20 @@ def test_handler_span_is_child_of_real_caller_span():
     spans = _EXPORTER.get_finished_spans()
     span_by_name = {s.name: s for s in spans}
 
-    assert "CallerOperation" in span_by_name, f"Caller span not found. Spans: {[s.name for s in spans]}"
-    assert "HandleInvocation" in span_by_name, f"Handler span not found. Spans: {[s.name for s in spans]}"
+    assert "CallerOperation" in span_by_name, (
+        f"Caller span not found. Spans: {[s.name for s in spans]}"
+    )
+    assert "HandleInvocation" in span_by_name, (
+        f"Handler span not found. Spans: {[s.name for s in spans]}"
+    )
 
     caller = span_by_name["CallerOperation"]
     handler = span_by_name["HandleInvocation"]
 
     # Handler span must share the same trace ID as the caller
-    assert (
-        format(handler.context.trace_id, "032x") == caller_trace_id
-    ), "Handler span has a different trace ID — trace context was not propagated"
+    assert format(handler.context.trace_id, "032x") == caller_trace_id, (
+        "Handler span has a different trace ID — trace context was not propagated"
+    )
 
     # Handler span must be a child of the caller span
     assert handler.parent is not None, "Handler span has no parent"

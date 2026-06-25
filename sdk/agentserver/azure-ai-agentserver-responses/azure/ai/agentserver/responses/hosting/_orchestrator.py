@@ -18,9 +18,7 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
 
 import anyio
 
-from azure.ai.agentserver.core._platform_headers import (
-    PLATFORM_ERROR_TAG,
-)  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
 
 from .._options import ResponsesServerOptions
 from ..models import _generated as generated_models
@@ -97,10 +95,10 @@ async def _resolve_input_items_for_persistence(
 
 
 def _check_first_event_contract(normalized: generated_models.ResponseStreamEvent, response_id: str) -> str | None:
-    """Return an error message if the first handler event violates /, else None.
+    """Return an error message if the first handler event violates FR-006/FR-007, else None.
 
-    -: The first event MUST be ``response.created`` with matching ``id``.
-    -: The ``status`` in ``response.created`` MUST be non-terminal.
+    - FR-006: The first event MUST be ``response.created`` with matching ``id``.
+    - FR-007: The ``status`` in ``response.created`` MUST be non-terminal.
 
     :param normalized: Normalised first event (``ResponseStreamEvent`` model instance).
     :type normalized: ResponseStreamEvent
@@ -174,7 +172,7 @@ _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
 )
 
 # Response-level lifecycle events whose ``response`` field carries a full Response snapshot.
-# Used by  output manipulation detection.
+# Used by FR-008a output manipulation detection.
 _RESPONSE_SNAPSHOT_TYPES: frozenset[str] = frozenset(
     {
         generated_models.ResponseStreamEventType.RESPONSE_IN_PROGRESS.value,
@@ -299,7 +297,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                 if not first_event_processed:
                     first_event_processed = True
 
-                    #: output manipulation detection on response.created
+                    # FR-008a: output manipulation detection on response.created
                     created_response = normalized.get("response") or {}
                     created_output = created_response.get("output")
                     if isinstance(created_output, list) and len(created_output) != 0:
@@ -325,7 +323,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     _handler_initial_status = _initial_snapshot.get("status")
                     if _handler_initial_status == "queued":
                         record.status = "queued"  # type: ignore[assignment]
-                    # Persist at response.created time for bg+store
+                    # Persist at response.created time for bg+store (FR-003)
                     if store and provider is not None:
                         try:
                             _isolation = context.isolation if context else None
@@ -369,12 +367,12 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     # to return "completed" instead of "in_progress".
                     await asyncio.sleep(0)
                 else:
-                    # Track output_item.added events for
+                    # Track output_item.added events for FR-008a
                     _item_added = generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
                     if normalized.get("type") == _item_added.value:
                         output_item_count += 1
 
-                    #: detect direct Output manipulation on response.* events
+                    # FR-008a: detect direct Output manipulation on response.* events
                     n_type = normalized.get("type", "")
                     if n_type in _RESPONSE_SNAPSHOT_TYPES:
                         n_response = normalized.get("response") or {}
@@ -1175,7 +1173,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             conversation_id=ctx.conversation_id,
         )
 
-        # /: first-event contract validation.
+        # FR-006/FR-007: first-event contract validation.
         # Violations are treated the same as B8 pre-creation errors:
         # - streaming: yield a standalone 'error' event and return (no record created)
         # - sync: state.captured_error is set → run_sync raises _HandlerError → HTTP 500
@@ -1201,7 +1199,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         state.handler_events.append(first_normalized)
         state.validator.validate_next(first_normalized)
 
-        #: output manipulation detection on response.created.
+        # FR-008a: output manipulation detection on response.created.
         # If the handler directly added items to response.output instead of
         # using builder events, the output list will be non-empty.
         created_response = first_normalized.get("response") or {}
@@ -1248,7 +1246,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         output_item_count = 0
         try:
             async for raw in _iter_with_winddown(handler_iterator, ctx.cancellation_signal):
-                #: Pre-check for output manipulation BEFORE validation.
+                # FR-008a: Pre-check for output manipulation BEFORE validation.
                 # Must inspect the raw event first so that an offending terminal
                 # event (e.g. response.completed with manipulated output) is NOT
                 # appended to the state machine before we emit response.failed.
@@ -1558,7 +1556,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
             async def _bg_producer() -> None:
                 try:
-                    #: Shield the inner producer via asyncio.shield so
+                    # FR-013: Shield the inner producer via asyncio.shield so
                     # that Starlette's anyio cancel-scope cancellation (triggered
                     # by client disconnect) does NOT propagate into the handler.
                     # asyncio.shield() creates a new inner Task whose cancellation
@@ -1682,7 +1680,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         if state.captured_error is not None:
             # Only raise _HandlerError for pre-creation errors (B8) where no
             # terminal lifecycle event has been emitted.  Post-creation errors
-            # (S-035,) emit response.failed and should complete as
+            # (S-035, FR-008a) emit response.failed and should complete as
             # HTTP 200 with failed status — not an HTTP 500.
             if not self._has_terminal_event(state.handler_events):
                 ctx.span.end(state.captured_error)

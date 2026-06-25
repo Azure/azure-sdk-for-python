@@ -76,9 +76,7 @@ def _get_trace_id(headers: list[tuple[bytes, bytes]] | None = None) -> str | Non
     :rtype: str | None
     """
     try:
-        from opentelemetry import (
-            trace as _trace,
-        )  # pylint: disable=import-outside-toplevel
+        from opentelemetry import trace as _trace  # pylint: disable=import-outside-toplevel
 
         span = _trace.get_current_span()
         ctx = span.get_span_context()
@@ -149,10 +147,7 @@ class InboundRequestLoggingMiddleware:
             elapsed_ms = (time.monotonic() - start) * 1000
             logger.warning(
                 "Inbound %s %s failed with status 500 in %.1fms%s",
-                method,
-                path,
-                elapsed_ms,
-                extra_str,
+                method, path, elapsed_ms, extra_str,
             )
             raise
 
@@ -161,18 +156,10 @@ class InboundRequestLoggingMiddleware:
         if status_code is not None and status_code >= 400:
             logger.warning(
                 "Inbound %s %s completed with status %d in %.1fms%s",
-                method,
-                path,
-                status_code,
-                elapsed_ms,
-                extra_str,
+                method, path, status_code, elapsed_ms, extra_str,
             )
         else:
             logger.info(
                 "Inbound %s %s completed with status %s in %.1fms%s",
-                method,
-                path,
-                status_code,
-                elapsed_ms,
-                extra_str,
+                method, path, status_code, elapsed_ms, extra_str,
             )

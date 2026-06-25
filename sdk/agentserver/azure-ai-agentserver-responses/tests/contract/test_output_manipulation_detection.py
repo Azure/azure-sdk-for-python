@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Protocol conformance tests for detecting direct output manipulation.
+"""Protocol conformance tests for detecting direct output manipulation (FR-008a).
 
 Validates that when a handler directly adds/removes items from
 ResponseObject.Output without emitting corresponding output_item events,
@@ -49,7 +49,7 @@ def _collect_sse_events(response: Any) -> list[dict[str, Any]]:
 def _output_manipulation_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that directly manipulates Output without emitting output_item events.
 
-    This violates  — the SDK should detect this and fail.
+    This violates FR-008a — the SDK should detect this and fail.
     """
 
     async def _events():
@@ -57,7 +57,7 @@ def _output_manipulation_handler(request: Any, context: Any, cancellation_signal
         yield stream.emit_created()
 
         # Directly manipulate the response output list without using builder events
-        # This is an  violation
+        # This is an FR-008a violation
         stream.response.output.append(
             {
                 "id": "fake-item-id",
@@ -85,7 +85,7 @@ def _build_client(handler: Any) -> TestClient:
 
 
 def test_direct_output_add_without_builder_events_returns_bad_handler_error() -> None:
-    """— direct output manipulation detected → response fails with server_error.
+    """FR-008a — direct output manipulation detected → response fails with server_error.
 
     The handler directly adds an item to response.output without emitting
     output_item.added. The SDK should detect the inconsistency and fail.
@@ -109,7 +109,7 @@ def test_direct_output_add_without_builder_events_returns_bad_handler_error() ->
 
 
 def test_streaming_direct_output_add_emits_failed_event() -> None:
-    """— direct output manipulation in streaming mode emits response.failed."""
+    """FR-008a — direct output manipulation in streaming mode emits response.failed."""
     client = _build_client(_output_manipulation_handler)
 
     with client.stream("POST", "/responses", json={"model": "test", "stream": True}) as resp:

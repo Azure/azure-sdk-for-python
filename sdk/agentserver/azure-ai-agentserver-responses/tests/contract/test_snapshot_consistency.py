@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Protocol conformance tests for immutable event snapshots.
+"""Protocol conformance tests for immutable event snapshots (US1).
 
 Verifies that SSE events and GET responses contain point-in-time snapshot data,
 not mutable references that change with subsequent mutations.

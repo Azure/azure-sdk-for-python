@@ -19,7 +19,6 @@ import pytest
 # Header presence — success responses
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_invoke_returns_request_id_header(echo_client):
     """POST /invocations success response includes x-request-id."""
@@ -61,7 +60,6 @@ async def test_readiness_returns_request_id(echo_client):
 # ---------------------------------------------------------------------------
 # Error responses — header present, but NO body enrichment
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_error_response_has_request_id_header(failing_client):

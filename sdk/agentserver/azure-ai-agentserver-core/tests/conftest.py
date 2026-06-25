@@ -11,10 +11,7 @@ from azure.ai.agentserver.core import AgentServerHost
 
 
 def pytest_configure(config):
-    config.addinivalue_line(
-        "markers",
-        "tracing_e2e: end-to-end tracing tests requiring live Azure resources",
-    )
+    config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests requiring live Azure resources")
 
 
 @pytest.fixture()
