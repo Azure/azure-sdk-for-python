@@ -293,22 +293,13 @@ class TestAgentSessionFilesCrudAsync(TestBase):
         """
         print("\n")
 
-        agent_name = kwargs["foundry_hosted_agent_name"]
-        project_client = self.create_async_client(**kwargs)
+        foundry_project_endpoint = "https://fake-endpoint"
+        agent_name = "fake-agent-name"
+        session_id = "fake-session-id"
+
+        project_client = self.create_async_client(agent_name=agent_name, foundry_project_endpoint=foundry_project_endpoint)
 
         async with project_client:
-            # Get the latest active agent version
-            agent = await self._get_latest_active_agent_version_async(project_client, agent_name)
-            assert agent is not None, "Failed to get agent version"
-            print(f"Using agent: {agent_name}, version: {agent.version}")
-
-            # Create a session
-            session = await project_client.agents.create_session(
-                agent_name=agent_name,
-                version_indicator=VersionRefIndicator(agent_version=agent.version),
-            )
-            assert session is not None, "Session creation returned None"
-            print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
 
             try:
                 # --------------------------------------------------------------------------------------------------
@@ -321,7 +312,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 try:
                     await project_client.agents.upload_session_file(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=non_existing_file_str,  # str type pointing to non-existing file
                         remote_path="/remote/non_existing.txt",
                     )
@@ -336,7 +327,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 try:
                     await project_client.agents.upload_session_file(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=non_existing_file_pathlike,  # PathLike[str] type pointing to non-existing file
                         remote_path="/remote/non_existing.txt",
                     )
@@ -351,7 +342,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 try:
                     await project_client.agents.upload_session_file(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=upload_folder_path_str,  # str type pointing to a folder
                         remote_path="/remote/folder_upload.txt",
                     )
@@ -366,7 +357,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 try:
                     await project_client.agents.upload_session_file(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=upload_folder_path_pathlike,  # PathLike[str] type pointing to a folder
                         remote_path="/remote/folder_upload.txt",
                     )
@@ -387,7 +378,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 try:
                     await project_client.agents.download_session_file_to_disk(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=folder_path_str,  # str type pointing to a folder
                         remote_path="/remote/some_file.txt",
                     )
@@ -402,7 +393,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 try:
                     await project_client.agents.download_session_file_to_disk(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=folder_path_pathlike,  # PathLike[str] type pointing to a folder
                         remote_path="/remote/some_file.txt",
                     )
@@ -428,7 +419,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                     try:
                         await project_client.agents.download_session_file_to_disk(
                             agent_name=agent_name,
-                            session_id=session.agent_session_id,
+                            session_id=session_id,
                             file_path=existing_file_path,
                             remote_path="/remote/some_file.txt",
                         )
@@ -443,7 +434,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                     try:
                         await project_client.agents.download_session_file_to_disk(
                             agent_name=agent_name,
-                            session_id=session.agent_session_id,
+                            session_id=session_id,
                             file_path=existing_file_path,
                             overwrite=False,
                             remote_path="/remote/some_file.txt",
@@ -465,9 +456,5 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 print("All invalid input tests passed!")
 
             finally:
-                # Clean up: delete the session
-                await project_client.agents.delete_session(
-                    agent_name=agent_name,
-                    session_id=session.agent_session_id,
-                )
-                print(f"Session deleted (id: {session.agent_session_id})")
+                # Add any cleanup here
+                ...
