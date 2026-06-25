@@ -3,7 +3,7 @@
 """Spec 024 Phase 3a RED tests for the responses-side storage rename.
 
 Verifies that ``_configure_streams_registry`` and the response-store
-default-path resolution use the unified ``storage_paths.resolve_durable_subdir``
+default-path resolution use the unified ``storage_paths.resolve_state_subdir``
 helper from azure-ai-agentserver-core (NOT the legacy
 ``AGENTSERVER_STREAM_STORE_PATH`` / ``AGENTSERVER_RESPONSE_STORE_PATH``
 env vars).
@@ -28,8 +28,8 @@ def test_routing_source_no_legacy_stream_env_var() -> None:
     """``_routing.py`` must not USE ``AGENTSERVER_STREAM_STORE_PATH`` env var.
 
     Post-Phase-3a the stream store path is resolved via
-    ``storage_paths.resolve_durable_subdir('streams')`` — single env var
-    ``AGENTSERVER_DURABLE_ROOT`` covers all three subdirs. Comment
+    ``storage_paths.resolve_state_subdir('streams')`` — single env var
+    ``AGENTSERVER_STATE_ROOT`` covers all three subdirs. Comment
     references to the legacy var (historical migration notes) are
     permitted; only ``os.environ.get(...)`` reads of the legacy name
     are forbidden.
@@ -48,11 +48,11 @@ def test_routing_source_no_legacy_stream_env_var() -> None:
         assert pat not in src, (
             f"spec 024 Phase 3a: _routing.py must not read the legacy "
             f"AGENTSERVER_STREAM_STORE_PATH env var. Found '{pat}' in source. "
-            f"Use storage_paths.resolve_durable_subdir('streams') instead."
+            f"Use storage_paths.resolve_state_subdir('streams') instead."
         )
     assert "agentserver_streams" not in src or "deleted" in src.split("agentserver_streams")[0][-100:].lower(), (
         "spec 024 Phase 3a: _routing.py uses the legacy 'agentserver_streams' "
-        "temp-dir name as a fallback. Use storage_paths.resolve_durable_subdir('streams')."
+        "temp-dir name as a fallback. Use storage_paths.resolve_state_subdir('streams')."
     )
 
 
@@ -75,22 +75,22 @@ def test_routing_source_no_legacy_response_store_env_var() -> None:
 
 
 def test_streams_dir_uses_unified_root(monkeypatch, tmp_path) -> None:
-    """With ``AGENTSERVER_DURABLE_ROOT`` set, streams use ``<root>/streams/``."""
-    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+    """With ``AGENTSERVER_STATE_ROOT`` set, streams use ``<root>/streams/``."""
+    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
     monkeypatch.delenv("AGENTSERVER_STREAM_STORE_PATH", raising=False)
 
     from azure.ai.agentserver.core import storage_paths
 
-    streams_path = storage_paths.resolve_durable_subdir("streams")
+    streams_path = storage_paths.resolve_state_subdir("streams")
     assert streams_path == tmp_path / "streams"
 
 
 def test_responses_dir_uses_unified_root(monkeypatch, tmp_path) -> None:
-    """With ``AGENTSERVER_DURABLE_ROOT`` set, responses use ``<root>/responses/``."""
-    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+    """With ``AGENTSERVER_STATE_ROOT`` set, responses use ``<root>/responses/``."""
+    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
     monkeypatch.delenv("AGENTSERVER_RESPONSE_STORE_PATH", raising=False)
 
     from azure.ai.agentserver.core import storage_paths
 
-    responses_path = storage_paths.resolve_durable_subdir("responses")
+    responses_path = storage_paths.resolve_state_subdir("responses")
     assert responses_path == tmp_path / "responses"

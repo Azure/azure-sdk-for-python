@@ -24,7 +24,7 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
     flush_spans,
 )
-from azure.ai.agentserver.core.durable import (
+from azure.ai.agentserver.core.tasks import (
     LastInputIdPreconditionFailed,
     TaskConflictError,
 )
@@ -1382,7 +1382,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         isolation: "IsolationContext",
         headers: dict[str, str],
     ) -> Response | None:
-        """Delete a response from the durable provider (storage).
+        """Delete a response from the resilient provider (storage).
 
         Used by :meth:`handle_delete` in both the provider-fallback path
         (record already evicted from memory) and the eviction-race recovery
@@ -1522,7 +1522,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             record.response.background = record.mode_flags.background
         record.transition_to("cancelled")
 
-        # Persist cancelled state to durable store (B11: cancellation always wins)
+        # Persist cancelled state to resilient store (B11: cancellation always wins)
         try:
             if record.response is not None:
                 await self._provider.update_response(record.response, isolation=_extract_isolation(request))
@@ -1706,15 +1706,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         Shutdown behaviour depends on the response mode:
 
-        - **durable=True, background=True** (``store=True`` with
-          ``durable_background=True`` server option): The response is left in
-          whatever state the handler left it.  On restart the durable task
+        - **resilient=True, background=True** (``store=True`` with
+          ``resilient_background=True`` server option): The response is left in
+          whatever state the handler left it.  On restart the resilient task
           framework will re-enter the handler to resume work.
-        - **durable=True, background=False** (``store=True`` but foreground):
+        - **resilient=True, background=False** (``store=True`` but foreground):
           Best-effort mark as ``failed`` after the grace period expires.  If
           that did not succeed, restart re-entry marks it failed.  The handler
           is never re-entered.
-        - **store=False** (non-durable): Best-effort mark as ``failed`` after
+        - **store=False** (non-resilient): Best-effort mark as ``failed`` after
           the grace period (and return the same to the client if still
           connected).
 
@@ -1724,7 +1724,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         self._is_draining = True
         self._shutdown_requested.set()
 
-        is_durable_server = self._runtime_options.durable_background
+        is_resilient_server = self._runtime_options.resilient_background
 
         records = await self._runtime_state.list_records()
         for record in records:
@@ -1755,17 +1755,17 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 break
             await asyncio.sleep(0.05)
 
-        # After grace period: mark non-durable-background responses as failed.
-        # Durable+background responses are left as-is — the durable task
+        # After grace period: mark non-resilient-background responses as failed.
+        # Resilient+background responses are left as-is — the resilient task
         # framework will re-invoke the handler on restart.
         for record in records:
             if record.status not in {"queued", "in_progress"}:
                 continue
-            is_durable_background = is_durable_server and record.mode_flags.store and record.mode_flags.background
-            if is_durable_background:
+            is_resilient_background = is_resilient_server and record.mode_flags.store and record.mode_flags.background
+            if is_resilient_background:
                 # Leave in current state — will be re-entered on restart.
                 continue
-            # Non-durable or foreground: best-effort mark failed.
+            # Non-resilient or foreground: best-effort mark failed.
             failed_payload = build_failed_response(record.response_id, record.agent_reference, record.model)
             record.set_response_snapshot(failed_payload)
             record.transition_to("failed")

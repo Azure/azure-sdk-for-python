@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 """Spec 026 FR-026-2 — `response.created` provider-append gate (empty stream).
 
-Unit-level proof that the durable-stream append of `response.created` is
+Unit-level proof that the resilient-stream append of `response.created` is
 gated on the stream being empty: the framework appends it only when the
 stream provider has no events yet (`last_cursor() is None`), and suppresses
 it when the stream already carries events (a recovered entry). This is the
@@ -26,7 +26,7 @@ def _make_stream() -> ReplayEventStream:
 
 @pytest.mark.asyncio
 async def test_empty_stream_cursor_is_none_then_gate_permits_created() -> None:
-    """An empty durable stream reports last_cursor() is None → created is appended."""
+    """An empty resilient stream reports last_cursor() is None → created is appended."""
     stream = _make_stream()
     assert await stream.last_cursor() is None
     # The orchestrator's gate: `stream_is_empty = await subject.last_cursor() is None`.

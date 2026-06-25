@@ -3,9 +3,9 @@
 """Sample 18 invocation-pattern e2e suite (Spec 014 Phase 9).
 
 This suite is the user-facing complement to the framework-side conformance
-suite at ``tests/e2e/durability_contract/``. The conformance suite proves
+suite at ``tests/e2e/resilience_contract/``. The conformance suite proves
 that the framework honours every (row × cancellation-path) cell in the
-durability contract with a minimal test handler. THIS suite proves that
+resilience contract with a minimal test handler. THIS suite proves that
 sample 18 — the realistic copilot handler the documentation points users
 at — behaves correctly under every developer-invocation pattern the
 matrix admits.

@@ -4,10 +4,10 @@
 
 Verifies three distinct shutdown scenarios:
 
-1. **durable=True, background=True**: Response stays in whatever state the
-   handler left it (in_progress).  On restart the durable task framework
+1. **resilient=True, background=True**: Response stays in whatever state the
+   handler left it (in_progress).  On restart the resilient task framework
    re-enters the handler to resume.
-2. **durable_background=False or store=False**: Best-effort mark as
+2. **resilient_background=False or store=False**: Best-effort mark as
    ``failed`` after the grace period expires (handler didn't finish in time).
 3. Handler that completes within grace period → "completed" regardless.
 
@@ -57,7 +57,7 @@ async def _start_server(app, port: int) -> tuple[asyncio.Task, asyncio.Event]:
 
 
 # ---------------------------------------------------------------------------
-# Test 1: durable=True, background=True → stays in_progress after shutdown
+# Test 1: resilient=True, background=True → stays in_progress after shutdown
 #
 # Handler does NOT finish within grace period (simulates stuck handler).
 # With correct impl: response stays in_progress (will be re-entered on restart).
@@ -66,11 +66,11 @@ async def _start_server(app, port: int) -> tuple[asyncio.Task, asyncio.Event]:
 
 
 @pytest.mark.asyncio
-async def test_shutdown_durable_background_not_marked_failed() -> None:
-    """Durable background response is NOT marked failed on shutdown.
+async def test_shutdown_resilient_background_not_marked_failed() -> None:
+    """Resilient background response is NOT marked failed on shutdown.
 
     Handler ignores the shutdown signal (stuck). The framework should leave
-    the response in_progress — the durable task system re-enters on restart.
+    the response in_progress — the resilient task system re-enters on restart.
     """
     handler_started = asyncio.Event()
     handler_exited = asyncio.Event()
@@ -98,7 +98,7 @@ async def test_shutdown_durable_background_not_marked_failed() -> None:
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            durable_background=True,
+            resilient_background=True,
             shutdown_grace_period_seconds=1,
         ),
     )
@@ -112,7 +112,7 @@ async def test_shutdown_durable_background_not_marked_failed() -> None:
             base_url=f"http://127.0.0.1:{port}",
             timeout=httpx.Timeout(10.0),
         ) as client:
-            # Create a durable background response (store=True, background=True)
+            # Create a resilient background response (store=True, background=True)
             create_resp = await client.post(
                 "/responses",
                 json={
@@ -148,7 +148,7 @@ async def test_shutdown_durable_background_not_marked_failed() -> None:
             # Key assertion: The server shut down cleanly without the
             # "ValueError: invalid status transition: failed -> in_progress"
             # error that the old code produced. This proves handle_shutdown
-            # did NOT prematurely mark the durable+background record as failed.
+            # did NOT prematurely mark the resilient+background record as failed.
             # (If it had, the handler task would crash with ValueError when
             # trying to transition from failed -> in_progress)
 
@@ -161,18 +161,18 @@ async def test_shutdown_durable_background_not_marked_failed() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Test 3: durable_background=False, store=True → marked failed
+# Test 3: resilient_background=False, store=True → marked failed
 #
-# Handler is stuck. Server not configured for durable background.
+# Handler is stuck. Server not configured for resilient background.
 # Should be marked failed after grace period.
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
-async def test_shutdown_non_durable_server_marks_stored_background_failed() -> None:
-    """When durable_background=False, stored background responses are marked failed.
+async def test_shutdown_non_resilient_server_marks_stored_background_failed() -> None:
+    """When resilient_background=False, stored background responses are marked failed.
 
-    Even with store=True, if the server is NOT configured for durable background,
+    Even with store=True, if the server is NOT configured for resilient background,
     the framework marks responses failed after the grace period.
     """
     handler_started = asyncio.Event()
@@ -196,7 +196,7 @@ async def test_shutdown_non_durable_server_marks_stored_background_failed() -> N
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            durable_background=False,
+            resilient_background=False,
             shutdown_grace_period_seconds=1,
         ),
     )
@@ -283,7 +283,7 @@ async def test_shutdown_grace_period_allows_completion() -> None:
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            durable_background=True,
+            resilient_background=True,
             shutdown_grace_period_seconds=2,
         ),
     )
@@ -339,13 +339,13 @@ async def test_shutdown_grace_period_allows_completion() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Test 5: Durable handler that responds to signal and returns without terminal
+# Test 5: Resilient handler that responds to signal and returns without terminal
 # ---------------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
-async def test_shutdown_durable_responsive_handler_stays_in_progress() -> None:
-    """Durable handler responds to signal but emits NO terminal event.
+async def test_shutdown_resilient_responsive_handler_stays_in_progress() -> None:
+    """Resilient handler responds to signal but emits NO terminal event.
 
     Handler detects SHUTTING_DOWN, performs cleanup/checkpoint, returns
     without response.completed. Response should stay in_progress.
@@ -369,14 +369,14 @@ async def test_shutdown_durable_responsive_handler_stays_in_progress() -> None:
 
             # Checkpoint work done (e.g., save metadata) — return without
             # emitting response.completed. This leaves response in_progress
-            # for durable re-entry.
+            # for resilient re-entry.
             handler_exited.set()
 
         return _events()
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            durable_background=True,
+            resilient_background=True,
             shutdown_grace_period_seconds=2,
         ),
     )
@@ -413,14 +413,14 @@ async def test_shutdown_durable_responsive_handler_stays_in_progress() -> None:
             await asyncio.sleep(0.2)
 
             # GET — should NOT be failed. Handler returned without terminal,
-            # durable framework leaves it in_progress for re-entry.
+            # resilient framework leaves it in_progress for re-entry.
             try:
                 get_resp = await client.get(f"/responses/{response_id}")
                 assert get_resp.status_code == 200
                 status = get_resp.json()["status"]
                 assert (
                     status != "failed"
-                ), f"Durable handler returning without terminal must not be 'failed', got: {status}"
+                ), f"Resilient handler returning without terminal must not be 'failed', got: {status}"
             except httpx.ConnectError:
                 # Server closed during shutdown — acceptable.
                 # The key assertion is that we got here without ValueError
@@ -479,7 +479,7 @@ async def test_client_cancel_marks_cancelled() -> None:
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            durable_background=True,
+            resilient_background=True,
             shutdown_grace_period_seconds=5,
         ),
     )
@@ -567,7 +567,7 @@ async def test_shutdown_store_false_sync_returns_failed() -> None:
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            durable_background=True,
+            resilient_background=True,
             shutdown_grace_period_seconds=1,
         ),
     )
@@ -653,7 +653,7 @@ async def test_shutdown_store_false_stream_returns_failed_event() -> None:
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
-            durable_background=True,
+            resilient_background=True,
             shutdown_grace_period_seconds=1,
         ),
     )

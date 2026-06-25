@@ -11,7 +11,7 @@ the two paths shows they back *different* consumers:
 
 * **Streaming wire** (cursor-replayed, client-visible) — every event flows through
   ``_apply_stream_event_defaults(sequence_number=state.next_seq)``, which
-  **overwrites** any builder/SSE seq. So the durable stream + SSE wire derive seq
+  **overwrites** any builder/SSE seq. So the resilient stream + SSE wire derive seq
   *solely* from the cursor. This is the only surface where a "must-agree"
   divergence could ever reach a client, and it is already single-authority.
 * **Non-stream background** path has no cursor and is not cursor-replayed (the
@@ -20,7 +20,7 @@ the two paths shows they back *different* consumers:
 
 These tests pin the structural mechanism (a fast guard); the strict
 monotonic-across-recovery guarantee is additionally proven end-to-end by
-``tests/e2e/durability_contract/test_streaming_recovery_continuity.py``.
+``tests/e2e/resilience_contract/test_streaming_recovery_continuity.py``.
 """
 from __future__ import annotations
 

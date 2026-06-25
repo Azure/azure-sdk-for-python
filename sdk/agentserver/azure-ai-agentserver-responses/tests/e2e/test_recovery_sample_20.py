@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""E2E test for sample_20 — durable steerable handler with cancellation × recovery.
+"""E2E test for sample_20 — resilient steerable handler with cancellation × recovery.
 
 Pins:
 
@@ -28,7 +28,7 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
 )
 from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
+from azure.ai.agentserver.responses._resilience_context import _DeveloperMetadataFacade
 
 
 def _make_context(
@@ -79,7 +79,7 @@ def _event_type(e: Any) -> str | None:
 @pytest.mark.asyncio
 class TestSample20FreshEntry:
     async def test_fresh_entry_produces_message_and_completed(self) -> None:
-        from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
+        from samples.sample_20_resilient_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
         events = await _drive(handler, _make_request(), ctx)
@@ -98,7 +98,7 @@ class TestSample20Recovery:
     async def test_recovered_entry_emits_reset_in_progress_then_fresh_content(
         self,
     ) -> None:
-        from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
+        from samples.sample_20_resilient_steering import handler  # type: ignore[import-not-found]
 
         # Recovery: turn_count carried over from a prior attempt.
         ctx = _make_context(
@@ -124,7 +124,7 @@ class TestSample20Recovery:
 @pytest.mark.asyncio
 class TestSample20PreEntryCancellation:
     async def test_pre_entry_steered_emits_completed_no_output(self) -> None:
-        from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
+        from samples.sample_20_resilient_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
         # Steering: cancellation_signal fires AND pending_input_count > 0.
@@ -140,7 +140,7 @@ class TestSample20PreEntryCancellation:
         assert "response.output_item.added" not in types
 
     async def test_pre_entry_client_cancelled_returns_without_terminal(self) -> None:
-        from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
+        from samples.sample_20_resilient_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
         ctx.client_cancelled = True
@@ -159,7 +159,7 @@ class TestSample20PreEntryCancellation:
 class TestSample20Shutdown:
     async def test_pre_entry_shutdown_defers_to_recovery(self) -> None:
         from azure.ai.agentserver.responses import ResponseExitForRecovery
-        from samples.sample_20_durable_steering import handler  # type: ignore[import-not-found]
+        from samples.sample_20_resilient_steering import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
         # Shutdown does NOT fire cancellation_signal — they are distinct surfaces.

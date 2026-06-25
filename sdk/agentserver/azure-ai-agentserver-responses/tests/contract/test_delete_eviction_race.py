@@ -8,7 +8,7 @@ them, the background task's ``try_evict()`` can remove the record from
 in-memory state, causing ``delete()`` to return ``False`` and producing
 a spurious 404.
 
-The fix falls through to the durable provider when ``delete()`` returns
+The fix falls through to the resilient provider when ``delete()`` returns
 ``False`` — since ``try_evict`` only runs AFTER a provider persistence
 attempt, the provider will typically have the response at that point,
 though it may not if persistence failed.
@@ -105,7 +105,7 @@ class TestDeleteEvictionRace:
         monkeypatch.setattr(_RuntimeState, "delete", _racing_delete)
 
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_simple_handler)
         client = TestClient(app)
 
@@ -168,7 +168,7 @@ class TestDeleteEvictionRace:
         monkeypatch.setattr(RS, "get", _detecting_get)
 
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_simple_handler)
         client = TestClient(app)
 
@@ -227,7 +227,7 @@ class TestDeleteEvictionRace:
         monkeypatch.setattr(_RuntimeState, "delete", _racing_delete)
 
         provider = InMemoryResponseProvider()
-        app = ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=False), store=provider)
+        app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
         app.response_handler(_simple_handler)
         client = TestClient(app)
 

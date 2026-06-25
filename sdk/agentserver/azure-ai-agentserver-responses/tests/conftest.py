@@ -27,32 +27,32 @@ def pytest_configure(config):
 
 
 @pytest.fixture(autouse=True)
-def _isolated_durable_tasks_root(tmp_path):
+def _isolated_resilient_tasks_root(tmp_path):
     """Isolate the LocalFileTaskProvider's default storage per test.
 
     (Spec 013) Without this, the LocalFileTaskProvider defaults to
-    ``~/.durable-tasks`` which is shared across all test runs and lets
-    in-progress task state leak between tests — when durable_background
+    ``~/.agentserver-tasks`` which is shared across all test runs and lets
+    in-progress task state leak between tests — when resilient_background
     actually works, recovery on startup fires for these stale tasks and
     breaks tests that assume a clean slate.
 
-    Per-test scope (autouse) so every test starts with a clean durable
+    Per-test scope (autouse) so every test starts with a clean resilient
     task store.
 
-    (Spec 024 Phase 3a) Uses ``AGENTSERVER_DURABLE_ROOT`` — the unified
+    (Spec 024 Phase 3a) Uses ``AGENTSERVER_STATE_ROOT`` — the unified
     env var that controls tasks/responses/streams subdirs together.
     """
-    root = tmp_path / "durable-tasks-isolated"
+    root = tmp_path / "resilient-tasks-isolated"
     root.mkdir(parents=True, exist_ok=True)
-    prior = os.environ.get("AGENTSERVER_DURABLE_ROOT")
-    os.environ["AGENTSERVER_DURABLE_ROOT"] = str(root)
+    prior = os.environ.get("AGENTSERVER_STATE_ROOT")
+    os.environ["AGENTSERVER_STATE_ROOT"] = str(root)
     try:
         yield
     finally:
         if prior is None:
-            os.environ.pop("AGENTSERVER_DURABLE_ROOT", None)
+            os.environ.pop("AGENTSERVER_STATE_ROOT", None)
         else:
-            os.environ["AGENTSERVER_DURABLE_ROOT"] = prior
+            os.environ["AGENTSERVER_STATE_ROOT"] = prior
 
 
 @pytest.fixture(autouse=True, scope="session")

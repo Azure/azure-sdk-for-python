@@ -14,10 +14,10 @@ storage directory; restarts find the files exactly as they were left.
 and history-item indexes. Streaming concerns are handled by the
 process-wide ``azure.ai.agentserver.core.streaming.streams`` registry,
 configured by the responses hosting layer with a file-backed or
-in-memory replay backing depending on ``durable_background``.
+in-memory replay backing depending on ``resilient_background``.
 Cancellation / execution-record state is not part of any protocol; it
 lives in the in-process ``_RuntimeState`` (for live execution) and in
-the durable task layer's ``_steering`` payload (for crash recovery) —
+the resilient task layer's ``_steering`` payload (for crash recovery) —
 neither requires anything from the response store.
 
 **Drop-in for InMemoryResponseProvider.** Within the scope of
@@ -62,7 +62,7 @@ and ``get_input_items`` resolve item content from ``items/``;
 store. Writers persist items **before** the pointerized envelope, so a
 crash can never leave the envelope referencing a missing item file.
 
-Atomic-write semantics mirror the pattern used by the durable task store's
+Atomic-write semantics mirror the pattern used by the resilient task store's
 ``_local_provider.py``: write to a tempfile, then ``os.replace()`` it into
 place.
 """
@@ -625,7 +625,7 @@ class FileResponseStore(ResponseProviderProtocol):
         :rtype: dict[str, Any]
         :raises RuntimeError: If a pointer references an item file that is
             missing. This is **not** a ``KeyError`` / not-found: the response
-            envelope exists (was durably created), so the durable recovery
+            envelope exists (was resiliently created), so the resilient recovery
             prefetch must treat this as transient corruption, not as the
             spec-026 "never persisted" drop signal.
         """

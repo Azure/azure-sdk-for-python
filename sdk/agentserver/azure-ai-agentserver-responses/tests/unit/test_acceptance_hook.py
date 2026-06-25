@@ -31,7 +31,7 @@ class TestAcceptanceHookRegistration:
     def test_register_acceptor_via_decorator(self) -> None:
         """@app.response_acceptor registers the hook on the app."""
         options = ResponsesServerOptions(
-            durable_background=True,
+            resilient_background=True,
             steerable_conversations=True,
         )
         app = ResponsesAgentServerHost(options=options)
@@ -45,7 +45,7 @@ class TestAcceptanceHookRegistration:
 
     def test_no_acceptor_by_default(self) -> None:
         """Without @response_acceptor, the hook is None."""
-        options = ResponsesServerOptions(durable_background=True)
+        options = ResponsesServerOptions(resilient_background=True)
         app = ResponsesAgentServerHost(options=options)
         assert app._acceptance_hook is None
 

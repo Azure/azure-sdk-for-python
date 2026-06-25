@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 """Spec 013 US2 — Steerable chain validation E2E test (T-039).
 
-Verifies the HTTP layer translation: when the durable orchestrator raises
+Verifies the HTTP layer translation: when the resilient orchestrator raises
 :class:`LastInputIdPreconditionFailed` (the framework's input-precondition
 primitive at the core layer), the responses endpoint surfaces HTTP 409 with
 the documented wire shape:
@@ -11,7 +11,7 @@ param: "previous_response_id"}``.
 
 The deep end-to-end (turn 1 → turn 2 valid → turn 3 stale → 409) is
 covered by the core-layer unit tests in
-:mod:`tests.durable.test_input_precondition`. This file proves the wire
+:mod:`tests.tasks.test_input_precondition`. This file proves the wire
 contract specifically.
 """
 
@@ -24,7 +24,7 @@ from unittest.mock import patch
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.core.durable import LastInputIdPreconditionFailed
+from azure.ai.agentserver.core.tasks import LastInputIdPreconditionFailed
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -37,7 +37,7 @@ from azure.ai.agentserver.responses._id_generator import IdGenerator
 
 def _make_steerable_app(handler) -> TestClient:
     options = ResponsesServerOptions(
-        durable_background=True,
+        resilient_background=True,
         steerable_conversations=True,
     )
     app = ResponsesAgentServerHost(options=options)

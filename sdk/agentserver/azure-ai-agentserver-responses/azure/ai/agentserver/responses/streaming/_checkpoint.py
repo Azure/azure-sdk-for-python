@@ -1,10 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Internal checkpoint event for developer-driven durable persistence.
+"""Internal checkpoint event for developer-driven resilient persistence.
 
 ``ResponseEventStream.checkpoint()`` returns a :class:`ResponseCheckpointEvent`
 that the handler yields like any other stream event. The orchestrator intercepts
-it (before event coercion/validation), durably persists the carried response
+it (before event coercion/validation), resiliently persists the carried response
 snapshot via the storage provider, and does NOT forward it to the SSE wire — it
 is purely an internal control signal, never part of the response event taxonomy.
 """
@@ -18,10 +18,10 @@ if TYPE_CHECKING:
 
 
 class ResponseCheckpointEvent:
-    """A yielded request to durably persist the current response snapshot.
+    """A yielded request to resiliently persist the current response snapshot.
 
     Carries a reference to the stream's live ``ResponseObject``; the orchestrator
-    snapshots and persists it (for durable background responses only). Never
+    snapshots and persists it (for resilient background responses only). Never
     serialised to the wire.
     """
 

@@ -41,7 +41,7 @@ sys.path.insert(0, str(_RESPONSES_DIR))
 from tests.e2e._crash_harness import CrashHarness  # noqa: E402
 
 
-_SAMPLE = _RESPONSES_DIR / "samples" / "sample_18_durable_copilot.py"
+_SAMPLE = _RESPONSES_DIR / "samples" / "sample_18_resilient_copilot.py"
 # A prompt that takes Copilot a noticeable amount of time (several
 # minutes) — counting/enumeration with descriptions is a reliable choice.
 _PROMPT = (
@@ -88,15 +88,11 @@ async def _capture_initial(
     response_id = ""
     delta_count = 0
     max_seq = -1
-    long_timeout = httpx.Timeout(
-        connect=10.0, read=_INITIAL_WAIT_BUDGET_S, write=10.0, pool=10.0
-    )
+    long_timeout = httpx.Timeout(connect=10.0, read=_INITIAL_WAIT_BUDGET_S, write=10.0, pool=10.0)
 
     print(f"[{_ts()}] POST /responses (stream=true, bg=true, store=true)")
     with out.open("wb") as fh:
-        async with harness.client.stream(
-            "POST", "/responses", json=body, timeout=long_timeout
-        ) as resp:
+        async with harness.client.stream("POST", "/responses", json=body, timeout=long_timeout) as resp:
             assert resp.status_code == 200, f"POST failed: {resp.status_code}"
             buf = bytearray()
             async for chunk in resp.aiter_bytes():
@@ -122,14 +118,10 @@ async def _capture_initial(
                             rid = payload.get("response", {}).get("id")
                             if rid:
                                 response_id = rid
-                                print(
-                                    f"[{_ts()}] captured response_id={response_id}"
-                                )
+                                print(f"[{_ts()}] captured response_id={response_id}")
                         if "output_text.delta" in t:
                             delta_count += 1
-                            print(
-                                f"[{_ts()}] delta {delta_count} (seq={seq})"
-                            )
+                            print(f"[{_ts()}] delta {delta_count} (seq={seq})")
                             if delta_count >= _DELTAS_BEFORE_CRASH:
                                 done_parsing = True
                                 break
@@ -148,15 +140,11 @@ async def _capture_resumed(
 
     Returns highest sequence number seen.
     """
-    print(
-        f"[{_ts()}] GET /responses/{response_id}?stream=true&starting_after={starting_after}"
-    )
+    print(f"[{_ts()}] GET /responses/{response_id}?stream=true&starting_after={starting_after}")
     max_seq = starting_after
     terminal = False
     deadline = time.monotonic() + _RECOVERY_BUDGET_S
-    long_timeout = httpx.Timeout(
-        connect=10.0, read=_RECOVERY_BUDGET_S, write=10.0, pool=10.0
-    )
+    long_timeout = httpx.Timeout(connect=10.0, read=_RECOVERY_BUDGET_S, write=10.0, pool=10.0)
     with out.open("wb") as fh:
         async with harness.client.stream(
             "GET",
@@ -165,8 +153,7 @@ async def _capture_resumed(
             timeout=long_timeout,
         ) as resp:
             assert resp.status_code == 200, (
-                f"GET reconnect failed: {resp.status_code} "
-                f"{(await resp.aread()).decode('utf-8', errors='replace')}"
+                f"GET reconnect failed: {resp.status_code} " f"{(await resp.aread()).decode('utf-8', errors='replace')}"
             )
             buf = bytearray()
             async for chunk in resp.aiter_bytes():
@@ -193,16 +180,11 @@ async def _capture_resumed(
                             "response.cancelled",
                         ):
                             terminal = True
-                            print(
-                                f"[{_ts()}] resumed stream terminal: {t} (seq={seq})"
-                            )
+                            print(f"[{_ts()}] resumed stream terminal: {t} (seq={seq})")
                 if terminal:
                     return max_seq
                 if time.monotonic() > deadline:
-                    print(
-                        f"[{_ts()}] WARN: recovery budget exhausted, "
-                        f"max_seq={max_seq}"
-                    )
+                    print(f"[{_ts()}] WARN: recovery budget exhausted, " f"max_seq={max_seq}")
                     return max_seq
     return max_seq
 
@@ -213,14 +195,10 @@ async def _capture_full_replay(
     out: Path,
 ) -> int:
     """Final GET ?stream=true&starting_after=0 — capture the full event log."""
-    print(
-        f"[{_ts()}] GET /responses/{response_id}?stream=true&starting_after=0  (full replay)"
-    )
+    print(f"[{_ts()}] GET /responses/{response_id}?stream=true&starting_after=0  (full replay)")
     max_seq = -1
     deadline = time.monotonic() + _REPLAY_BUDGET_S
-    long_timeout = httpx.Timeout(
-        connect=10.0, read=_REPLAY_BUDGET_S, write=10.0, pool=10.0
-    )
+    long_timeout = httpx.Timeout(connect=10.0, read=_REPLAY_BUDGET_S, write=10.0, pool=10.0)
     with out.open("wb") as fh:
         async with harness.client.stream(
             "GET",
@@ -251,9 +229,7 @@ async def _capture_full_replay(
                         if isinstance(seq, int) and seq > max_seq:
                             max_seq = seq
                 if time.monotonic() > deadline:
-                    print(
-                        f"[{_ts()}] WARN: replay budget exhausted, max_seq={max_seq}"
-                    )
+                    print(f"[{_ts()}] WARN: replay budget exhausted, max_seq={max_seq}")
                     return max_seq
     return max_seq
 
@@ -306,9 +282,7 @@ async def _run(out_dir: Path) -> None:
         # Give it a beat for the recovery scanner to reclaim the task.
         await asyncio.sleep(1.0)
 
-        resumed_max_seq = await _capture_resumed(
-            harness, response_id, last_seq, stream_2
-        )
+        resumed_max_seq = await _capture_resumed(harness, response_id, last_seq, stream_2)
         summary["resumed_stream_max_seq"] = resumed_max_seq
         summary["resumed_stream_bytes"] = stream_2.stat().st_size
 

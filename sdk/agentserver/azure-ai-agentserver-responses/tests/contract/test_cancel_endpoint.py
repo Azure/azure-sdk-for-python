@@ -617,14 +617,14 @@ def test_cancel__provider_fallback_returns_400_for_completed_after_restart() -> 
     provider = InMemoryResponseProvider()
 
     # First app instance: create and complete a response
-    app1 = ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=False), store=provider)
+    app1 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
     app1.response_handler(_noop_response_handler)
     client1 = TestClient(app1)
     response_id = _create_background_response(client1)
     _wait_for_status(client1, response_id, "completed")
 
     # Second app instance (simulating restart): fresh runtime state, same provider
-    app2 = ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=False), store=provider)
+    app2 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
     app2.response_handler(_noop_response_handler)
     client2 = TestClient(app2)
 
@@ -645,14 +645,14 @@ def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> Non
     provider = InMemoryResponseProvider()
 
     # First app instance: create a response that fails
-    app1 = ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=False), store=provider)
+    app1 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
     app1.response_handler(_raising_response_handler)
     client1 = TestClient(app1)
     response_id = _create_background_response(client1)
     _wait_for_status(client1, response_id, "failed")
 
     # Second app instance (simulating restart)
-    app2 = ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=False), store=provider)
+    app2 = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
     app2.response_handler(_noop_response_handler)
     client2 = TestClient(app2)
 
@@ -669,7 +669,7 @@ def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> Non
 def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_timeout() -> None:
     """B11 race condition: handler eventually yields response.completed after cancel.
 
-    The durable store must still reflect 'cancelled', not 'completed'.
+    The resilient store must still reflect 'cancelled', not 'completed'.
     """
     from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
@@ -694,7 +694,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
 
         return _events()
 
-    app = ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=False), store=provider)
+    app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=False), store=provider)
     app.response_handler(_uncooperative_handler)
     client = TestClient(app)
 
@@ -715,7 +715,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
 
     time.sleep(2.0)
 
-    # GET from durable store must show cancelled
+    # GET from resilient store must show cancelled
     get = client.get(f"/responses/{response_id}")
     assert get.status_code == 200
     assert get.json()["status"] == "cancelled", (

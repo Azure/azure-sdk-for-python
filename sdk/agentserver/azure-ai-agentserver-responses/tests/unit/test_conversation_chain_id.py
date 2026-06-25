@@ -150,4 +150,4 @@ def test_task_id_remains_stable_after_chain_extraction() -> None:
     )
     # Same chain (same previous_response_id) -> same task id.
     assert tid1 == tid2
-    assert tid1.startswith("durable-resp-")
+    assert tid1.startswith("resilient-resp-")

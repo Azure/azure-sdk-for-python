@@ -8,7 +8,7 @@ Each turn references the prior turn's id; the framework derives a stable
 session id is the same across all turns. Crash recovery during turn 2
 must preserve the chain — turn 3 still chains correctly post-recovery.
 
-Exercised under Row 1 (durable+bg+stream=True) to confirm the durable
+Exercised under Row 1 (resilient+bg+stream=True) to confirm the resilient
 streaming path preserves chain semantics through recovery.
 
 Coverage:

@@ -135,9 +135,9 @@ The library orchestrates the complete response lifecycle: `created` → `in_prog
 
 For detailed handler implementation guidance, see [docs/handler-implementation-guide.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md).
 
-### Durability
+### Resilience
 
-Crash recovery is **opt-in** via `ResponsesServerOptions(durable_background=True)`. When opted in, background responses with `store=True` are crash-recoverable: the handler is re-invoked on restart and the recovered context exposes `context.is_recovery == True`. Stream events are persisted incrementally so clients can reconnect and resume from where they left off. Without the opt-in (the default), a crash mid-handler marks the response `failed` instead of re-invoking the handler. For advanced scenarios (metadata checkpointing, multi-turn steering), see the [Durable Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/durable-responses-developer-guide.md).
+Crash recovery is **opt-in** via `ResponsesServerOptions(resilient_background=True)`. When opted in, background responses with `store=True` are crash-recoverable: the handler is re-invoked on restart and the recovered context exposes `context.is_recovery == True`. Stream events are persisted incrementally so clients can reconnect and resume from where they left off. Without the opt-in (the default), a crash mid-handler marks the response `failed` instead of re-invoking the handler. For advanced scenarios (metadata checkpointing, multi-turn steering), see the [Resilient Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilient-responses-developer-guide.md).
 
 ## Examples
 
@@ -212,7 +212,7 @@ app = ResponsesAgentServerHost(options=options)
 ### Common errors
 
 - **400 Bad Request**: The request body failed validation. Check that optional fields such as `model` (when provided) are valid and that `input` items are well-formed.
-- **404 Not Found**: The response ID does not exist. In hosted deployments persisted responses live in the Foundry hosted responses store; in local development they live under `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/` by default. A missing record may indicate the response was never persisted or was deleted via `DELETE /responses/{id}`.
+- **404 Not Found**: The response ID does not exist. In hosted deployments persisted responses live in the Foundry hosted responses store; in local development they live under `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/responses/` by default. A missing record may indicate the response was never persisted or was deleted via `DELETE /responses/{id}`.
 - **400 Bad Request** (cancel): The response was not created with `background=true`, or it has already reached a terminal state.
 
 ### Reporting issues
@@ -238,11 +238,11 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 | [File Inputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_14_file_inputs.py) | Receive files via base64 data URL, URL, or file ID |
 | [Annotations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | Attach file_path, file_citation, and url_citation annotations |
 | [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | Return structured JSON as a `structured_outputs` item |
-| [Durable Copilot](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_durable_copilot.py) | GitHub Copilot SDK with `durable_background=True, steerable_conversations=True` |
-| [Durable Streaming](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_durable_streaming.py) | Three-phase streaming handler with `durable_background=True` and `context.conversation_chain_metadata` watermarks |
-| [Durable Steering](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_durable_steering.py) | `context.is_steered_turn` on the drain re-entry with `durable_background=True, steerable_conversations=True` |
-| [Durable LangGraph](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_21_durable_langgraph.py) | LangGraph integration with `durable_background=True, steerable_conversations=True` |
-| [Durable Multi-turn](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_22_durable_multiturn.py) | Multi-turn conversation with `durable_background=True, steerable_conversations=False` |
+| [Resilient Copilot](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_18_resilient_copilot.py) | GitHub Copilot SDK with `resilient_background=True, steerable_conversations=True` |
+| [Resilient Streaming](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_19_resilient_streaming.py) | Three-phase streaming handler with `resilient_background=True` and `context.conversation_chain_metadata` watermarks |
+| [Resilient Steering](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_20_resilient_steering.py) | `context.is_steered_turn` on the drain re-entry with `resilient_background=True, steerable_conversations=True` |
+| [Resilient LangGraph](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_21_resilient_langgraph.py) | LangGraph integration with `resilient_background=True, steerable_conversations=True` |
+| [Resilient Multi-turn](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_22_resilient_multiturn.py) | Multi-turn conversation with `resilient_background=True, steerable_conversations=False` |
 
 - [Handler implementation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) — Detailed reference for building handlers
 

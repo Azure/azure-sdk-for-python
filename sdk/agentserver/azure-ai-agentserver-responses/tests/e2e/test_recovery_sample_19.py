@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""E2E test for sample_19 — durable streaming with handler-managed checkpoints.
+"""E2E test for sample_19 — resilient streaming with handler-managed checkpoints.
 
 Pins the contract the sample claims to follow:
 
@@ -16,7 +16,7 @@ Pins the contract the sample claims to follow:
 
 Full crash-restart injection (real process kill + restart) is deferred to
 Phase 5 (``_crash_harness.py``); these tests synthesize a recovered
-``DurabilityContext`` directly and drive the handler.
+``ResilienceContext`` directly and drive the handler.
 """
 
 from __future__ import annotations
@@ -32,7 +32,7 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
 )
 from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
+from azure.ai.agentserver.responses._resilience_context import _DeveloperMetadataFacade
 
 # ---------------------------------------------------------------------------
 # Test scaffolding
@@ -95,7 +95,7 @@ class TestSample19FreshEntry:
     """A fresh entry runs all three phases."""
 
     async def test_fresh_entry_runs_all_phases(self) -> None:
-        from samples.sample_19_durable_streaming import handler  # type: ignore[import-not-found]
+        from samples.sample_19_resilient_streaming import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(response_id=IdGenerator.new_response_id())
         signal = asyncio.Event()
@@ -123,7 +123,7 @@ class TestSample19RecoveryAfterAnalyze:
     """Recovered entry with analyze complete runs only generate + refine."""
 
     async def test_recovery_with_one_phase_done_runs_remaining_two(self) -> None:
-        from samples.sample_19_durable_streaming import handler  # type: ignore[import-not-found]
+        from samples.sample_19_resilient_streaming import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(
             response_id=IdGenerator.new_response_id(),
@@ -169,7 +169,7 @@ class TestSample19RecoveryAfterGenerate:
     """Recovered entry with two phases done runs only the final phase."""
 
     async def test_recovery_with_two_phases_done_runs_only_refine(self) -> None:
-        from samples.sample_19_durable_streaming import handler  # type: ignore[import-not-found]
+        from samples.sample_19_resilient_streaming import handler  # type: ignore[import-not-found]
 
         ctx = _make_context(
             response_id=IdGenerator.new_response_id(),

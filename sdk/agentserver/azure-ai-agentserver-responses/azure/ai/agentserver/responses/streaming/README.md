@@ -16,7 +16,7 @@ knowing how the wiring works.
 from azure.ai.agentserver.core.streaming import streams
 
 # Inside the host:
-streams.use_file_backed_replay(           # if durable_background=True
+streams.use_file_backed_replay(           # if resilient_background=True
     storage_dir=stream_dir,
     cursor_fn=lambda event: int(event["sequence_number"]),
     ttl_seconds=_REPLAY_EVENT_TTL_SECONDS,  # hardcoded 600.0
@@ -24,7 +24,7 @@ streams.use_file_backed_replay(           # if durable_background=True
     deserializer=_deserialize_event_payload,
 )
 # OR
-streams.use_in_memory_replay(             # if durable_background=False
+streams.use_in_memory_replay(             # if resilient_background=False
     cursor_fn=lambda event: int(event["sequence_number"]),
     ttl_seconds=_REPLAY_EVENT_TTL_SECONDS,  # hardcoded 600.0
 )
@@ -40,7 +40,7 @@ Why these choices:
 
 ## Persistence file layout
 
-When the host is configured with `durable_background=True`, the
+When the host is configured with `resilient_background=True`, the
 file-backed backing writes one JSONL file per response under the
 configured `storage_dir`:
 
@@ -53,12 +53,12 @@ Each line is a single JSON object of the form
 a terminator record `{"emit_time": <float>, "__terminal__": true}` once
 the stream is closed. The directory is created on first use.
 
-Operators select the durable root directory via
-`AGENTSERVER_DURABLE_ROOT` (defaults to `~/.durable`); the responses
+Operators select the resilient root directory via
+`AGENTSERVER_STATE_ROOT` (defaults to `~/.agentserver`); the responses
 host derives the streams subdirectory as
-`${AGENTSERVER_DURABLE_ROOT:-~/.durable}/streams/`. There is no
-per-stream directory override — the unified `AGENTSERVER_DURABLE_ROOT`
-is the single environment variable that controls all durable
+`${AGENTSERVER_STATE_ROOT:-~/.agentserver}/streams/`. There is no
+per-stream directory override — the unified `AGENTSERVER_STATE_ROOT`
+is the single environment variable that controls all resilient
 subdirectories (`tasks/`, `streams/`, `responses/`).
 
 ## Recovery on restart

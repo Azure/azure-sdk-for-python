@@ -16,7 +16,7 @@ flat field is explicitly called out as an unknown_parameter error.
 The response object exposes a ``conversation`` (ConversationReference)
 property, not a flat ``conversation_id``.
 
-Exercised under Row 1 (durable+bg+stream=True).
+Exercised under Row 1 (resilient+bg+stream=True).
 
 Coverage:
 

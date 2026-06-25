@@ -42,9 +42,9 @@ def _make_stream_app(
     replay_ttl: float = 600,
     **kwargs,
 ) -> TestClient:
-    """Create a TestClient with durable streaming support."""
+    """Create a TestClient with resilient streaming support."""
     options = ResponsesServerOptions(
-        durable_background=True,
+        resilient_background=True,
     )
     app = ResponsesAgentServerHost(options=options, **kwargs)
     app.response_handler(handler)
@@ -98,7 +98,7 @@ def _base_payload(input_text: str = "stream test", **overrides) -> dict[str, Any
 
 
 class TestStreamRecoveryBaseline:
-    """Verify streaming works end-to-end in durable mode."""
+    """Verify streaming works end-to-end in resilient mode."""
 
     def test_stream_completes_with_all_events(self) -> None:
         """Full stream delivers created → in_progress → content → completed."""
