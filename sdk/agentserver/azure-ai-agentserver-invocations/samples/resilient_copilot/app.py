@@ -16,6 +16,7 @@ Usage::
 
     pip install -r requirements.txt
 
+    # Run from the parent ``samples/`` directory (so the package is importable):
     python -m resilient_copilot.app
 
     # Turn 1 (async)

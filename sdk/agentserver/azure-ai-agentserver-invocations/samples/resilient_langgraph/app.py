@@ -22,6 +22,7 @@ Usage::
 
     pip install -r requirements.txt
 
+    # Run from the parent ``samples/`` directory (so the package is importable):
     python -m resilient_langgraph.app
     # — or —
     python app.py

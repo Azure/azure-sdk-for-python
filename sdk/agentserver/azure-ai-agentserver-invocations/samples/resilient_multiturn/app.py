@@ -8,6 +8,7 @@ Usage::
 
     pip install azure-ai-agentserver-invocations
 
+    # Run from the parent ``samples/`` directory (so the package is importable):
     python -m resilient_multiturn.app
     # — or —
     python app.py
