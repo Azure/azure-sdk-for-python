@@ -408,9 +408,11 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         reply = "".join(reply_parts)
 
     # The turn is finished — close this invocation's stream so every SSE
-    # subscriber's ``async for`` ends cleanly. The in-memory-live backing does
-    # not close on its own when the producer stops (unlike file-backed), so we
-    # must close it explicitly here.
+    # subscriber's ``async for`` ends. An EventStream never terminates a
+    # subscriber just because the producer stops emitting: for every backing
+    # the iterator blocks until it receives a close/terminate signal. So the
+    # producer must close explicitly here (same as resilient_research's
+    # ``_finish_turn``); otherwise the SSE response hangs open.
     await stream.close()
 
     # ── Phase 3: Save result + decide suspended-state envelope ────
