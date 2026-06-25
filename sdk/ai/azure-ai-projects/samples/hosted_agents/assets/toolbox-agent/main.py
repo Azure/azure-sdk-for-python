@@ -64,14 +64,9 @@ async def main() -> None:
                 model=deployment,
                 credential=credential,
             ),
-            name=os.environ.get("AGENT_NAME", "hosted-toolbox-mcp-skills"),
+            name=os.environ.get("AGENT_NAME", "TOOLBOX_AGRNT"),
             instructions=os.environ.get(
                 "AGENT_INSTRUCTIONS",
-                (
-                    "Use available toolbox skills to answer pricing questions. "
-                    "For shipping cost requests, follow the skill formula exactly "
-                    "and show the formula used."
-                ),
             ),
             context_providers=[skills_provider],
             default_options={"store": store_responses},

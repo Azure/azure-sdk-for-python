@@ -13,7 +13,7 @@ DESCRIPTION:
     The sample:
     1. Creates a shipping-cost skill.
     2. Creates a toolbox version that references the skill.
-    3. Packages ``assets/toolbox-mcp-skills-agent/`` source as a zip at runtime
+    3. Packages ``assets/toolbox-agent/`` source as a zip at runtime
        (REMOTE_BUILD - the service resolves dependencies from requirements.txt).
     4. Deploys a new Hosted Agent version, forwarding the project endpoint,
        model name, and toolbox MCP URL to the hosted code.
@@ -80,7 +80,7 @@ model_name = os.environ["FOUNDRY_MODEL_NAME"]
 agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
 
-_HOSTED_AGENT_SOURCE_DIR = Path(__file__).parent / "assets" / "toolbox-mcp-skills-agent"
+_HOSTED_AGENT_SOURCE_DIR = Path(__file__).parent / "assets" / "toolbox-agent"
 
 SKILL_NAME = "shipping-cost-skill"
 TOOLBOX_NAME = "toolbox_with_skill"
@@ -128,7 +128,7 @@ def main() -> None:
 
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
 
-        zip_filename = "hosted-toolbox-mcp-skills-agent.zip"
+        zip_filename = "hosted-toolbox-agent.zip"
         zip_bytes, zip_sha256, _ = zip(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
 
         content = CreateAgentVersionFromCodeContent(
