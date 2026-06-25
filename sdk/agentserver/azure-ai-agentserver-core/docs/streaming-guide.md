@@ -128,7 +128,7 @@ conversation. Pick the per-turn identifier from your framework:
 | Inside `azure-ai-agentserver-responses` | `response_id` |
 | Bare-Python / custom | Any per-turn `str` you control end-to-end |
 
-**Do NOT use a durable `task_id` as the stream id.** A durable task
+**Do NOT use a resilient `task_id` as the stream id.** A resilient task
 can span multiple turns (steering, recovery). Reusing the id across
 turns means the second turn finds the previous turn's already-closed
 stream and `emit` raises `EventStreamClosedError`. Always scope the
@@ -510,11 +510,11 @@ Consumers explicitly choose which registry they want:
 
 ## See also
 
-- [`durable-task-guide.md`](./durable-task-guide.md) — `@task` developer
+- [`tasks-guide.md`](./tasks-guide.md) — `@task` developer
   guide; Pattern E shows the streaming integration end-to-end.
-- `samples/durable_streaming/durable_streaming.py` (in this package)
+- `samples/resilient_streaming/resilient_streaming.py` (in this package)
   — minimal standalone sample.
-- `azure-ai-agentserver-invocations/samples/durable_research/`,
-  `durable_langgraph/`, `durable_copilot/` — HTTP-server samples
+- `azure-ai-agentserver-invocations/samples/resilient_research/`,
+  `resilient_langgraph/`, `resilient_copilot/` — HTTP-server samples
   exercising the registry + per-turn `invocation_id` +
   subscribe-before-start pattern end-to-end.

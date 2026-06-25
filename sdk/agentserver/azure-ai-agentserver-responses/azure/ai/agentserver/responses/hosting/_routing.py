@@ -120,10 +120,10 @@ _REPLAY_EVENT_TTL_SECONDS = 600.0
 def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None:
     """Pick the registry backing for SSE event streams at compose time.
 
-    - ``durable_background=True`` → file-backed replay under
-      ``${AGENTSERVER_DURABLE_ROOT:-~/.durable}/streams/`` (spec 024
+    - ``resilient_background=True`` → file-backed replay under
+      ``${AGENTSERVER_STATE_ROOT:-~/.agentserver}/streams/`` (spec 024
       Phase 3a unified storage layout).
-    - ``durable_background=False`` → in-memory replay (events live in
+    - ``resilient_background=False`` → in-memory replay (events live in
       process; replay survives eager eviction within the TTL window).
 
     The configurator is a process-wide singleton — last call wins for
@@ -131,17 +131,17 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
     the per-test fixtures snapshot/restore the registry's private state.
     """
     from azure.ai.agentserver.core.storage_paths import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
-        resolve_durable_subdir,
+        resolve_state_subdir,
     )
     from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
         streams,
     )
 
-    if runtime_options.durable_background:
+    if runtime_options.resilient_background:
         # (Spec 024 Phase 3a) Stream store path resolves via the unified
         # storage-paths helper; legacy ``AGENTSERVER_STREAM_STORE_PATH``
         # env var + per-temp-dir default are deleted.
-        stream_dir = resolve_durable_subdir("streams")
+        stream_dir = resolve_state_subdir("streams")
         streams.use_file_backed_replay(
             storage_dir=stream_dir,
             cursor_fn=_stream_cursor,
@@ -312,10 +312,10 @@ class ResponsesAgentServerHost(AgentServerHost):
                     )
 
         # (Spec 024 Phase 3a) When no explicit store is supplied, default
-        # to a file-backed store under ``${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/``.
+        # to a file-backed store under ``${AGENTSERVER_STATE_ROOT:-~/.agentserver}/responses/``.
         # The legacy ``AGENTSERVER_RESPONSE_STORE_PATH`` env var is
         # deleted — operators control the location via the unified
-        # ``AGENTSERVER_DURABLE_ROOT``. This enables cross-process
+        # ``AGENTSERVER_STATE_ROOT``. This enables cross-process
         # recovery in local-dev / crash-harness tests without standing
         # up Foundry. Note: this implements Phase 3b's "file-backed
         # response default" together with Phase 3a's rename because the
@@ -323,40 +323,40 @@ class ResponsesAgentServerHost(AgentServerHost):
         # root resolution).
         if store is None:
             from azure.ai.agentserver.core.storage_paths import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
-                resolve_durable_subdir,
+                resolve_state_subdir,
             )
 
             from ..store._file import (
                 FileResponseStore,
             )  # pylint: disable=import-outside-toplevel
 
-            store = FileResponseStore(storage_dir=resolve_durable_subdir("responses"))
+            store = FileResponseStore(storage_dir=resolve_state_subdir("responses"))
 
         resolved_provider: ResponseProviderProtocol = store if store is not None else InMemoryResponseProvider()
 
-        # Composition guard: when ``durable_background=True`` AND the
+        # Composition guard: when ``resilient_background=True`` AND the
         # caller EXPLICITLY supplied a non-persistent ``store=`` argument,
         # refuse to start. The operator chose a store that contradicts
-        # their durable_background opt-in and we won't silently degrade.
+        # their resilient_background opt-in and we won't silently degrade.
         #
         # The default path (``store=None`` → ``FileResponseStore`` under
-        # ``${AGENTSERVER_DURABLE_ROOT}/responses/``) is now persistent
+        # ``${AGENTSERVER_STATE_ROOT}/responses/``) is now persistent
         # and never triggers this guard. Pre-Phase-3a the default was
         # ``InMemoryResponseProvider`` and operators had to set
         # ``AGENTSERVER_RESPONSE_STORE_PATH`` to upgrade — that env var
         # is now deleted in favour of the unified default.
-        if runtime_options.durable_background and store is not None and isinstance(store, InMemoryResponseProvider):
+        if runtime_options.resilient_background and store is not None and isinstance(store, InMemoryResponseProvider):
             raise ValueError(
                 "ResponsesAgentServerHost refused to start: "
-                "``durable_background=True`` was configured with an "
+                "``resilient_background=True`` was configured with an "
                 "explicit ``store=`` argument "
                 f"({type(store).__name__}) that does not persist across "
-                "process crashes — durable_background cannot honour its "
+                "process crashes — resilient_background cannot honour its "
                 "recovery promise. Either (a) supply a persistent store "
                 "(FileResponseStore, FoundryStorageProvider, etc.), "
                 "(b) omit ``store=`` to use the default file-backed store "
-                "under ``${AGENTSERVER_DURABLE_ROOT}/responses/``, or "
-                "(c) set ``durable_background=False`` to opt out of "
+                "under ``${AGENTSERVER_STATE_ROOT}/responses/``, or "
+                "(c) set ``resilient_background=False`` to opt out of "
                 "crash recovery."
             )
 
@@ -387,14 +387,14 @@ class ResponsesAgentServerHost(AgentServerHost):
         )
         # Wire the endpoint's shutdown flag into the orchestrator so the
         # exception/cancellation handlers can detect "we're inside the
-        # graceful-shutdown grace window" before the durable task's
+        # graceful-shutdown grace window" before the resilient task's
         # ctx.shutdown event propagates. Without this, an upstream-client
         # exception triggered by SIGTERM-via-killpg (e.g. an LLM SDK
         # subprocess in the server's process group dying instantly)
         # would be misclassified as a regular handler failure and bake
-        # a "failed" terminal into the durable task — instead of leaving
+        # a "failed" terminal into the resilient task — instead of leaving
         # the task in_progress for next-lifetime recovery as the spec /
-        # user-facing durability contract requires.
+        # user-facing resilience contract requires.
         orchestrator._shutdown_event = endpoint._shutdown_requested  # pylint: disable=protected-access
 
         # Build response protocol routes

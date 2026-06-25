@@ -16,22 +16,22 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from azure.ai.agentserver.core.durable import TaskConflictError
+from azure.ai.agentserver.core.tasks import TaskConflictError
 
-from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
-    DurableResponseOrchestrator,
+from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
+    ResilientResponseOrchestrator,
     _RESPONSES_NS,
     _RESP_BACKGROUND,
     _is_recovered_entry,
 )
 
 
-# Mimics callable TaskMetadata for fixtures (see test_durable_orchestrator.py).
+# Mimics callable TaskMetadata for fixtures (see test_resilient_orchestrator.py).
 
 
-def _durable_input_from(ctx_params):
-    """Build a typed DurableResponseInput from a legacy ctx_params dict (test helper)."""
-    from azure.ai.agentserver.responses.hosting._durable_input import DurableResponseInput
+def _resilient_input_from(ctx_params):
+    """Build a typed ResilientResponseInput from a legacy ctx_params dict (test helper)."""
+    from azure.ai.agentserver.responses.hosting._resilient_input import ResilientResponseInput
     from azure.ai.agentserver.responses.models._generated import CreateResponse
 
     body = {"input": "hi"}
@@ -39,7 +39,7 @@ def _durable_input_from(ctx_params):
         body["conversation"] = ctx_params["conversation_id"]
     if ctx_params.get("previous_response_id") is not None:
         body["previous_response_id"] = ctx_params["previous_response_id"]
-    return DurableResponseInput(
+    return ResilientResponseInput(
         request=CreateResponse(body),
         response_id=ctx_params["response_id"],
         disposition="re-invoke",
@@ -48,7 +48,7 @@ def _durable_input_from(ctx_params):
 
 
 def _empty_refs():
-    from azure.ai.agentserver.responses.hosting._durable_input import RuntimeRefs
+    from azure.ai.agentserver.responses.hosting._resilient_input import RuntimeRefs
 
     return RuntimeRefs()
 
@@ -75,8 +75,8 @@ class TestConflictHandling:
     """TaskConflictError from .start() → HTTP 409."""
 
     @pytest.mark.asyncio
-    async def test_task_conflict_propagates_from_start_durable(self) -> None:
-        """Spec 023 — ``start_durable`` PROPAGATES TaskConflictError from
+    async def test_task_conflict_propagates_from_start_resilient(self) -> None:
+        """Spec 023 — ``start_resilient`` PROPAGATES TaskConflictError from
         the underlying primitive (was: swallowed before the migration).
 
         Under the new per-request dispatch model, TaskConflictError ALWAYS
@@ -86,7 +86,7 @@ class TestConflictHandling:
         ``MultiTurnTask(steerable=True).start()`` without raising TCE.
         """
         opts = MagicMock(steerable_conversations=False, max_pending=10, default_fetch_history_count=100)
-        orch = DurableResponseOrchestrator(
+        orch = ResilientResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=opts,
@@ -107,7 +107,9 @@ class TestConflictHandling:
         }
 
         with pytest.raises(TaskConflictError) as excinfo:
-            await orch.start_durable(record=record, durable_input=_durable_input_from(ctx_params), refs=_empty_refs())
+            await orch.start_resilient(
+                record=record, resilient_input=_resilient_input_from(ctx_params), refs=_empty_refs()
+            )
         assert excinfo.value.current_status == "in_progress"
 
     @pytest.mark.asyncio
@@ -130,7 +132,7 @@ class TestConflictHandling:
         the endpoint handler can return HTTP 409 rather than silently
         falling back."""
         opts = MagicMock(steerable_conversations=False, max_pending=10, default_fetch_history_count=100)
-        orch = DurableResponseOrchestrator(
+        orch = ResilientResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=opts,
@@ -149,7 +151,9 @@ class TestConflictHandling:
         }
 
         with pytest.raises(TaskConflictError):
-            await orch.start_durable(record=record, durable_input=_durable_input_from(ctx_params), refs=_empty_refs())
+            await orch.start_resilient(
+                record=record, resilient_input=_resilient_input_from(ctx_params), refs=_empty_refs()
+            )
 
 
 class TestNonBackgroundRecovery:
@@ -159,7 +163,7 @@ class TestNonBackgroundRecovery:
     async def test_non_bg_recovery_persists_failed_without_handler(self) -> None:
         """On recovery of a non-background task, response becomes 'failed'
         without re-invoking the handler."""
-        orch = DurableResponseOrchestrator(
+        orch = ResilientResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=MagicMock(steerable_conversations=False, max_pending=10),
@@ -206,9 +210,9 @@ class TestStartupLifecycle:
         Spec 023: there are now TWO registrations (one-shot + multi-turn);
         both must be present so recovery can dispatch to the right primitive.
         """
-        from azure.ai.agentserver.core.durable._decorator import _REGISTERED_DESCRIPTORS
+        from azure.ai.agentserver.core.tasks._decorator import _REGISTERED_DESCRIPTORS
 
-        orch = DurableResponseOrchestrator(
+        orch = ResilientResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=MagicMock(steerable_conversations=False, max_pending=10),
@@ -216,8 +220,8 @@ class TestStartupLifecycle:
 
         # Both tasks should be registered
         names = [name for name, _, _ in _REGISTERED_DESCRIPTORS]
-        assert "responses_durable_one_shot" in names
-        assert "responses_durable_multi_turn" in names
+        assert "responses_resilient_one_shot" in names
+        assert "responses_resilient_multi_turn" in names
 
 
 # ════════════════════════════════════════════════════════════
@@ -271,7 +275,7 @@ class TestRow5SequentialTurnsExtendChain:
         # Orchestrator that has both primitives wired up. ``_pick_primitive``
         # MUST return the multi-turn primitive when ``conversation_id`` is
         # present, regardless of ``steerable_conversations``.
-        orch = DurableResponseOrchestrator(
+        orch = ResilientResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=opts,
@@ -320,7 +324,9 @@ class TestRow5SequentialTurnsExtendChain:
             "previous_response_id": "resp_turn1",
         }
         # Should succeed — multi-turn primitive accepts the resume.
-        await orch.start_durable(record=record, durable_input=_durable_input_from(ctx_params_turn2), refs=_empty_refs())
+        await orch.start_resilient(
+            record=record, resilient_input=_resilient_input_from(ctx_params_turn2), refs=_empty_refs()
+        )
         orch._multi_turn_task_fn.start.assert_called_once()
         # And no fallback path was taken (no one-shot start).
         if hasattr(orch, "_one_shot_task_fn"):
@@ -340,7 +346,7 @@ class TestRow5SequentialTurnsExtendChain:
         primitive.
         """
         opts = MagicMock(steerable_conversations=False, max_pending=10, default_fetch_history_count=100)
-        orch = DurableResponseOrchestrator(
+        orch = ResilientResponseOrchestrator(
             create_fn=AsyncMock(),
             provider=MagicMock(),
             options=opts,
@@ -349,7 +355,7 @@ class TestRow5SequentialTurnsExtendChain:
         # Wire up the multi-turn primitive to raise TaskConflictError
         # against an ``in_progress`` status (the legitimate concurrent-overlap case).
         orch._multi_turn_task_fn = MagicMock()
-        orch._multi_turn_task_fn.start = AsyncMock(side_effect=TaskConflictError("durable-resp-row5", "in_progress"))
+        orch._multi_turn_task_fn.start = AsyncMock(side_effect=TaskConflictError("resilient-resp-row5", "in_progress"))
 
         record = MagicMock()
         ctx_params = {
@@ -361,7 +367,9 @@ class TestRow5SequentialTurnsExtendChain:
         }
 
         with pytest.raises(TaskConflictError) as excinfo:
-            await orch.start_durable(record=record, durable_input=_durable_input_from(ctx_params), refs=_empty_refs())
+            await orch.start_resilient(
+                record=record, resilient_input=_resilient_input_from(ctx_params), refs=_empty_refs()
+            )
         # Depth: status is in_progress (not completed) — the actual concurrent-lock case.
         assert (
             excinfo.value.current_status == "in_progress"

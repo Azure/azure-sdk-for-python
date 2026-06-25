@@ -2,8 +2,8 @@
 # Licensed under the MIT license.
 """Shared fixtures for the sample 18 invocation-pattern e2e suite (Spec 014).
 
-This module mirrors the structure of ``tests/e2e/durability_contract/
-conftest.py`` but spawns ``sample_18_durable_copilot.py`` (the realistic
+This module mirrors the structure of ``tests/e2e/resilience_contract/
+conftest.py`` but spawns ``sample_18_resilient_copilot.py`` (the realistic
 copilot handler) instead of the minimal conformance test handler. The
 timing constants are widened because Copilot's natural latency dominates
 the test runtime.
@@ -91,20 +91,20 @@ copilot = pytest.importorskip(
 @pytest.fixture
 def sample18_module() -> str:
     """Absolute path to the sample 18 module (subprocess target)."""
-    return str(Path(__file__).parent.parent.parent.parent / "samples" / "sample_18_durable_copilot.py")
+    return str(Path(__file__).parent.parent.parent.parent / "samples" / "sample_18_resilient_copilot.py")
 
 
 @pytest.fixture
 def make_harness(tmp_path: Path, sample18_module: str) -> Callable[..., CrashHarness]:
     """Factory for constructing a ``CrashHarness`` rooted at sample 18.
 
-    Sample 18 is intentionally fixed at ``durable_background=True`` +
+    Sample 18 is intentionally fixed at ``resilient_background=True`` +
     ``steerable_conversations=True`` — that's the configuration it's
     designed to showcase. Tests in this suite cover the per-request
     flag combinations and cancellation paths that combination admits.
-    Variations on the server options (``durable_background=False``,
+    Variations on the server options (``resilient_background=False``,
     ``store_disabled=True``, etc.) are framework-level concerns
-    covered by the conformance suite at ``tests/e2e/durability_contract/``
+    covered by the conformance suite at ``tests/e2e/resilience_contract/``
     against the minimal test handler.
 
     Keyword args (all optional):
@@ -183,7 +183,7 @@ def payload(
 # conformance conftest so the two suites stay in sync without
 # duplicating logic.
 
-from tests.e2e.durability_contract.conftest import (  # noqa: E402,F401
+from tests.e2e.resilience_contract.conftest import (  # noqa: E402,F401
     poll_until_terminal,
     post_and_get_response_id,
     post_stream_to_terminal,

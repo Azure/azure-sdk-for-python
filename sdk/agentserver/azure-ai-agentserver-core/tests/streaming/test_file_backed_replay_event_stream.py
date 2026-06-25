@@ -40,7 +40,7 @@ pytestmark = pytest.mark.asyncio(loop_scope="function")
 
 class TestPersistBeforeFanout:
     async def test_emit_persists_before_returning(self, tmp_path: Path) -> None:
-        """Rule 26 — emit() returns only after payload is durably
+        """Rule 26 — emit() returns only after payload is resiliently
         persisted; subscribers receive payload only after persistence."""
         p = tmp_path / "fb-pbf.jsonl"
         s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"], ttl_seconds=600)

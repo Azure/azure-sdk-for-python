@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- **Durable background responses.** `ResponsesServerOptions(durable_background=True)`
+- **Resilient background responses.** `ResponsesServerOptions(resilient_background=True)`
   makes `store=true`, `background=true` responses survive process crashes:
   the framework persists handler progress and re-invokes the registered
   handler on the next process start when a prior attempt did not reach a
@@ -17,14 +17,14 @@
   invocation, and the turns are linked in a stable conversation chain.
   Defaults to `False`.
 
-- **`ResponseContext` durability + steering surface.** Flat fields stamped on
+- **`ResponseContext` resilience + steering surface.** Flat fields stamped on
   each invocation: `context.is_recovery`, `context.is_steered_turn`,
   `context.pending_input_count`, and `context.conversation_chain_id` (a stable
   identifier shared by every turn of a conversation chain, usable as a key into
   application-side session state).
 
-- **Developer checkpoints.** `yield stream.checkpoint()` durably persists the
-  current response snapshot at a developer-chosen boundary (gated to durable
+- **Developer checkpoints.** `yield stream.checkpoint()` resiliently persists the
+  current response snapshot at a developer-chosen boundary (gated to resilient
   background responses; a no-op otherwise; backpressured and idempotent). On a
   recovered entry, `context.persisted_response` exposes the last persisted
   snapshot so the handler can seed its stream and resume — the basis of the
@@ -38,7 +38,7 @@
   `ResponseObject.metadata`.
 
 - **`context.conversation_chain_metadata`.** Cross-turn, named-scope,
-  explicit-`flush()` durable metadata over a conversation chain, typed by the
+  explicit-`flush()` resilient metadata over a conversation chain, typed by the
   public `ConversationChainMetadataNamespace` Protocol.
 
 - **`await context.exit_for_recovery()`.** A single uniform graceful-shutdown
@@ -56,10 +56,10 @@
 
 - **Storage.** `FileResponseStore` is exported from
   `azure.ai.agentserver.responses` and is the default local-development store
-  (under `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/`) when no `store=`
+  (under `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/responses/`) when no `store=`
   is supplied in a non-hosted environment; pass
-  `store=InMemoryResponseProvider()` to opt out. The `AGENTSERVER_DURABLE_ROOT`
-  environment variable sets the local durable storage root. A typed
+  `store=InMemoryResponseProvider()` to opt out. The `AGENTSERVER_STATE_ROOT`
+  environment variable sets the local resilient storage root. A typed
   `ResponseAlreadyExistsError` is raised by the response-store providers on a
   duplicate `create_response` (the idempotent-create signal on recovery).
 
@@ -71,21 +71,21 @@
   handler with the `(request, context, cancellation_signal)` signature so it can
   observe the `asyncio.Event` cancellation signal.
 
-- Added durable samples demonstrating real SDK integrations (Claude Agent SDK,
-  Copilot SDK, LangGraph) and durable streaming / steering / multi-turn
+- Added resilient samples demonstrating real SDK integrations (Claude Agent SDK,
+  Copilot SDK, LangGraph) and resilient streaming / steering / multi-turn
   patterns.
 
 ### Bugs Fixed
 
-- **Durable background streaming responses now engage durability even when SSE
-  keep-alive is enabled.** Previously the durable task was created only on the
+- **Resilient background streaming responses now engage resilience even when SSE
+  keep-alive is enabled.** Previously the resilient task was created only on the
   no-keep-alive streaming path, so when SSE keep-alive was enabled (e.g. the
   hosted platform sets `SSE_KEEPALIVE_INTERVAL`), a `store=true`,
   `background=true`, `stream=true` response ran the handler inline on the
-  request connection and never created a durable task. Such responses could
+  request connection and never created a resilient task. Such responses could
   hang `in_progress` on a client/proxy disconnect and were not recoverable.
-  Stored responses now always run via the durable task; keep-alive comments are
-  interleaved into the wire stream while the durable body runs independently of
+  Stored responses now always run via the resilient task; keep-alive comments are
+  interleaved into the wire stream while the resilient body runs independently of
   the client connection.
 
 ## 1.0.0b5 (2026-04-22)
@@ -110,7 +110,7 @@
 
 ### Bugs Fixed
 
-- `DELETE /responses/{id}` no longer returns intermittent 404 when the background task's eager eviction races with the delete handler. Previously, `try_evict` could remove the record from in-memory state between the handler's `get()` and `delete()` calls, causing `delete()` to return `False` and producing a spurious 404. The handler now falls through to the durable provider when the in-memory delete fails due to a concurrent eviction.
+- `DELETE /responses/{id}` no longer returns intermittent 404 when the background task's eager eviction races with the delete handler. Previously, `try_evict` could remove the record from in-memory state between the handler's `get()` and `delete()` calls, causing `delete()` to return `False` and producing a spurious 404. The handler now falls through to the resilient provider when the in-memory delete fails due to a concurrent eviction.
 - `POST /responses` with `background=true, stream=false` now correctly returns `status: "in_progress"` instead of `"completed"`. Handlers that yield events synchronously (no `await` between yields — the normal pattern with `ResponseEventStream`) would cause the background task to run to completion before `run_background` captured the initial snapshot. A cooperative yield after `response_created_signal.set()` now ensures the POST handler resumes promptly.
 - Conversation history IDs (`previous_response_id`, `conversation_id`) are now validated eagerly before the handler is invoked. A nonexistent reference now returns a 404 error to the client immediately, instead of being silently ignored or surfacing as an opaque error deep inside the handler. The prefetched IDs are reused by `ResponseContext.get_history()`, eliminating a redundant provider call.
 

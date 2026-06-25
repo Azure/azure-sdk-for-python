@@ -189,13 +189,13 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         return self._response.internal_metadata  # type: ignore[attr-defined,no-any-return]
 
     def checkpoint(self) -> "ResponseCheckpointEvent":
-        """Return a checkpoint event to ``yield`` for durable persistence.
+        """Return a checkpoint event to ``yield`` for resilient persistence.
 
-        Usage (inside a durable background response handler)::
+        Usage (inside a resilient background response handler)::
 
             yield stream.checkpoint()
 
-        Yielding the event durably persists the current ``stream.response``
+        Yielding the event resiliently persists the current ``stream.response``
         snapshot via the storage provider. It is processed by the orchestrator
         and is NOT forwarded to the SSE wire (internal control signal).
 
@@ -206,8 +206,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         - **Backpressure** — because the orchestrator fully processes the event
           (awaiting the provider write) before requesting the next event, the
           handler is suspended at the yield until the persist completes.
-        - **Durable background only** — persists only when the deployment has
-          ``durable_background=True`` and the request is ``background=True``
+        - **Resilient background only** — persists only when the deployment has
+          ``resilient_background=True`` and the request is ``background=True``
           (⇒ ``store=True``); a no-op otherwise.
         - **Idempotent** — a snapshot byte-identical to the last persisted one
           is skipped.

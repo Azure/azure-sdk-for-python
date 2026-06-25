@@ -11,7 +11,7 @@ Gaps closed by this file:
 1. ``test_default_store_is_file_backed`` — spec 024 work item #1.
    ``ResponsesAgentServerHost()`` with no ``store=`` arg MUST use
    ``FileResponseStore`` under
-   ``${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/``.
+   ``${AGENTSERVER_STATE_ROOT:-~/.agentserver}/responses/``.
    (Pinned in audit step 65 — implementation existed but no test.)
 
 2. ``test_client_cancelled_observed_by_handler_after_cancel_endpoint``
@@ -53,8 +53,8 @@ from azure.ai.agentserver.responses import (
 
 def test_default_store_is_file_backed(tmp_path, monkeypatch) -> None:
     """``ResponsesAgentServerHost()`` with no ``store=`` arg uses
-    ``FileResponseStore`` under ``${AGENTSERVER_DURABLE_ROOT}/responses``."""
-    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+    ``FileResponseStore`` under ``${AGENTSERVER_STATE_ROOT}/responses``."""
+    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
 
     app = ResponsesAgentServerHost()
     provider = app._endpoint._orchestrator._provider  # pylint: disable=protected-access
@@ -62,27 +62,27 @@ def test_default_store_is_file_backed(tmp_path, monkeypatch) -> None:
     assert isinstance(provider, FileResponseStore), (
         f"Default response store MUST be FileResponseStore; got " f"{type(provider).__name__}"
     )
-    # Storage root resolves under the AGENTSERVER_DURABLE_ROOT/responses subpath.
+    # Storage root resolves under the AGENTSERVER_STATE_ROOT/responses subpath.
     root = str(provider._root)  # pylint: disable=protected-access
     assert "responses" in root and str(tmp_path) in root, (
-        f"FileResponseStore root must resolve under the responses subdir " f"of the durable root; got {root}"
+        f"FileResponseStore root must resolve under the responses subdir " f"of the resilient root; got {root}"
     )
 
 
-def test_default_store_uses_default_durable_root_when_env_unset(
+def test_default_store_uses_default_state_root_when_env_unset(
     monkeypatch,
 ) -> None:
-    """When ``AGENTSERVER_DURABLE_ROOT`` is unset, the file-backed store
-    falls back to ``~/.durable/responses/`` per the unified storage layout."""
-    monkeypatch.delenv("AGENTSERVER_DURABLE_ROOT", raising=False)
+    """When ``AGENTSERVER_STATE_ROOT`` is unset, the file-backed store
+    falls back to ``~/.agentserver/responses/`` per the unified storage layout."""
+    monkeypatch.delenv("AGENTSERVER_STATE_ROOT", raising=False)
 
     app = ResponsesAgentServerHost()
     provider = app._endpoint._orchestrator._provider  # pylint: disable=protected-access
 
     assert isinstance(provider, FileResponseStore)
     root = str(provider._root)  # pylint: disable=protected-access
-    assert ".durable" in root and "responses" in root, (
-        f"Fallback storage root must be under ~/.durable/responses/; " f"got {root}"
+    assert ".agentserver" in root and "responses" in root, (
+        f"Fallback storage root must be under ~/.agentserver/responses/; " f"got {root}"
     )
 
 
@@ -104,7 +104,7 @@ def test_client_cancelled_observed_by_handler_after_cancel_endpoint(tmp_path, mo
 
     from starlette.testclient import TestClient
 
-    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
 
     captured: dict[str, Any] = {}
     context_ref: list[ResponseContext] = []
@@ -226,7 +226,7 @@ def test_concrete_metadata_facade_satisfies_protocol_at_runtime() -> None:
     """The internal ``_DeveloperMetadataFacade`` MUST satisfy every
     Protocol method at runtime (so handlers can call them on the live
     facade returned by ``context.conversation_chain_metadata``)."""
-    from azure.ai.agentserver.responses._durability_context import (
+    from azure.ai.agentserver.responses._resilience_context import (
         _DeveloperMetadataFacade,
     )
 
@@ -285,18 +285,18 @@ def test_handler_signature_rejects_kwargs_only() -> None:
 
 
 def test_exit_for_recovery_sentinel_propagates_through_dispatch(tmp_path, monkeypatch) -> None:
-    """End-to-end: a durable handler that does
+    """End-to-end: a resilient handler that does
     ``return await context.exit_for_recovery()`` MUST leave the
     response retrievable (not marked completed prematurely) — proving
     the sentinel propagates through dispatch and is recognised by the
     framework's recovery path.
 
-    For the TestClient path (no real TaskManager), the durable start
+    For the TestClient path (no real TaskManager), the resilient start
     falls back to ``asyncio.create_task``, so ``exit_for_recovery()``
     raises ``RuntimeError`` (no task context). This test pins THAT
-    behaviour — handlers outside a durable context are told their
+    behaviour — handlers outside a resilient context are told their
     deferral intent cannot be honoured."""
-    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
 
     from starlette.testclient import TestClient
 
@@ -342,8 +342,8 @@ def test_exit_for_recovery_sentinel_propagates_through_dispatch(tmp_path, monkey
 
     # Verify the handler observed the runtime error (proves the
     # sentinel-bearing call was dispatched).
-    assert "durable response handler" in captured.get("exit_runtime_error", ""), (
-        f"Handler MUST hit the RuntimeError guard for non-durable contexts; " f"captured={captured}"
+    assert "resilient response handler" in captured.get("exit_runtime_error", ""), (
+        f"Handler MUST hit the RuntimeError guard for non-resilient contexts; " f"captured={captured}"
     )
 
 
@@ -353,14 +353,14 @@ def test_exit_for_recovery_sentinel_propagates_through_dispatch(tmp_path, monkey
 
 
 def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
-    """The durable orchestrator's ``_execute_in_task`` MUST set
+    """The resilient orchestrator's ``_execute_in_task`` MUST set
     ``context.is_steered_turn = ctx.is_steered_turn`` on every entry,
     so the drain re-entry (where the framework signals is_steered_turn=True)
     is observable to the handler.
 
     Unit-level coverage that replays the spec 024 Phase 5 wire-up
     contract. Full e2e steering coverage lives in
-    ``test_durable_steering_e2e.py``.
+    ``test_resilient_steering_e2e.py``.
     """
     import asyncio
     from unittest.mock import AsyncMock, MagicMock, patch
@@ -369,8 +369,8 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
         IsolationContext,
         ResponseContext,
     )
-    from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
-        DurableResponseOrchestrator,
+    from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
+        ResilientResponseOrchestrator,
     )
     from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
@@ -388,7 +388,7 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
         async def flush(self) -> None:
             return None
 
-    orch = DurableResponseOrchestrator(
+    orch = ResilientResponseOrchestrator(
         create_fn=AsyncMock(),
         provider=MagicMock(),
         options=MagicMock(steerable_conversations=True),
@@ -444,32 +444,32 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_proposal_9_steerable_durable_off_does_not_raise() -> None:
+def test_proposal_9_steerable_resilient_off_does_not_raise() -> None:
     """spec 024 Proposal #9: ``steerable_conversations=True`` AND
-    ``durable_background=False`` is a VALID composition (pre-spec-024
+    ``resilient_background=False`` is a VALID composition (pre-spec-024
     raised ValueError). This is the negative-equivalent of the
     pre-Phase-4 composition guard."""
     from azure.ai.agentserver.responses import ResponsesServerOptions
 
     # No exception MUST be raised — the composition guard is deleted.
-    opts = ResponsesServerOptions(steerable_conversations=True, durable_background=False)
+    opts = ResponsesServerOptions(steerable_conversations=True, resilient_background=False)
     assert opts.steerable_conversations is True
-    assert opts.durable_background is False
+    assert opts.resilient_background is False
 
 
-def test_proposal_9_steerable_durable_off_host_constructs_cleanly(tmp_path, monkeypatch) -> None:
+def test_proposal_9_steerable_resilient_off_host_constructs_cleanly(tmp_path, monkeypatch) -> None:
     """``ResponsesAgentServerHost`` MUST construct successfully with
-    ``steerable_conversations=True`` + ``durable_background=False`` —
+    ``steerable_conversations=True`` + ``resilient_background=False`` —
     the composition guard is gone, so the host wires up both the
-    steering primitive and the non-durable disposition together."""
+    steering primitive and the non-resilient disposition together."""
     from azure.ai.agentserver.responses import ResponsesServerOptions
 
-    monkeypatch.setenv("AGENTSERVER_DURABLE_ROOT", str(tmp_path))
+    monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
 
     app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(
             steerable_conversations=True,
-            durable_background=False,
+            resilient_background=False,
         ),
     )
     # Construction must not raise; the orchestrator + endpoint are wired.

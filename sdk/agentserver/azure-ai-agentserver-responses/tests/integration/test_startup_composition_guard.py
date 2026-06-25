@@ -31,16 +31,16 @@ from azure.ai.agentserver.responses.store._memory import (
 def _clear_env_overrides() -> Iterator[None]:
     """Strip env-var overrides for the duration of each test.
 
-    (Spec 024 Phase 3a) Single ``AGENTSERVER_DURABLE_ROOT`` env var
+    (Spec 024 Phase 3a) Single ``AGENTSERVER_STATE_ROOT`` env var
     covers tasks/streams/responses subdirs.
     """
     saved = {
         key: os.environ.pop(key, None)
         for key in (
-            "AGENTSERVER_DURABLE_ROOT",
+            "AGENTSERVER_STATE_ROOT",
             "AGENTSERVER_RESPONSE_STORE_PATH",
             "AGENTSERVER_STREAM_STORE_PATH",
-            "AGENTSERVER_DURABLE_TASKS_PATH",
+            "AGENTSERVER_STATE_TASKS_PATH",
         )
     }
     try:
@@ -52,14 +52,14 @@ def _clear_env_overrides() -> Iterator[None]:
 
 
 @pytest.mark.asyncio
-async def test_durable_background_explicit_inmemory_store_fails_construction() -> None:
+async def test_resilient_background_explicit_inmemory_store_fails_construction() -> None:
     """Spec 014 FR-006 integration: the host MUST refuse to construct
     (and therefore MUST NOT start serving traffic) when an operator
-    deliberately configures ``durable_background=True`` with an
+    deliberately configures ``resilient_background=True`` with an
     explicit in-memory store. End-to-end check that no path bypasses
     the guard.
     """
-    options = ResponsesServerOptions(durable_background=True)
+    options = ResponsesServerOptions(resilient_background=True)
     with pytest.raises(ValueError) as excinfo:
         # Even if the operator's startup sequence is to construct in an
         # async context (e.g. inside an existing event loop), the
@@ -69,10 +69,10 @@ async def test_durable_background_explicit_inmemory_store_fails_construction() -
             options=options,
             store=InMemoryResponseProvider(),
         )
-    assert "durable_background" in str(excinfo.value)
+    assert "resilient_background" in str(excinfo.value)
 
 
-def test_durable_background_default_construction_works() -> None:
+def test_resilient_background_default_construction_works() -> None:
     """Backward-compat regression: ``ResponsesAgentServerHost()`` with
     all defaults continues to construct successfully — the guard does
     NOT fire on the default path (in-process tests / local dev).

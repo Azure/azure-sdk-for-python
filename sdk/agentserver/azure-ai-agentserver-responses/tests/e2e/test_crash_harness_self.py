@@ -114,7 +114,7 @@ async def test_harness_kill_then_restart_round_trip(tmp_path: Path, echo_server_
 
 
 @pytest.mark.asyncio
-async def test_harness_durable_storage_dirs_persist(tmp_path: Path, echo_server_path: Path) -> None:
+async def test_harness_resilient_storage_dirs_persist(tmp_path: Path, echo_server_path: Path) -> None:
     """tmp_path subdirectories survive kill + restart."""
     harness = CrashHarness(sample_module=echo_server_path, tmp_path=tmp_path)
     await harness.start()

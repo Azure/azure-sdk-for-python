@@ -2,10 +2,10 @@
 # Licensed under the MIT license.
 """Checkpoint primitive conformance (spec 025 §A.3 / §7.3).
 
-Covers the durable-background gate (no-op matrix), idempotency, failure
+Covers the resilient-background gate (no-op matrix), idempotency, failure
 swallowing, terminal drop, status-as-is, and that the checkpoint never reaches
 the wire — exercised through the public HTTP surface and the shared persist
-helper. End-to-end crash recovery is covered by the durability_contract suite.
+helper. End-to-end crash recovery is covered by the resilience_contract suite.
 """
 
 from __future__ import annotations
@@ -41,16 +41,14 @@ class _RecordingProvider:
 
 
 def _event(**md) -> ResponseCheckpointEvent:
-    resp = ResponseObject(
-        {"id": "r1", "object": "response", "status": "in_progress", "output": [], "model": "m"}
-    )
+    resp = ResponseObject({"id": "r1", "object": "response", "status": "in_progress", "output": [], "model": "m"})
     for k, v in md.items():
         resp.internal_metadata[k] = v
     return ResponseCheckpointEvent(resp)
 
 
-def _opts(durable_background: bool) -> ResponsesServerOptions:
-    return ResponsesServerOptions(durable_background=durable_background)
+def _opts(resilient_background: bool) -> ResponsesServerOptions:
+    return ResponsesServerOptions(resilient_background=resilient_background)
 
 
 # --------------------------------------------------------------------------
@@ -63,29 +61,57 @@ async def test_t18_no_op_matrix():
     # (a) store=False
     p = _RecordingProvider()
     await _do_checkpoint_persist(
-        _event(), provider=p, runtime_options=_opts(True), store=False, background=True,
-        isolation=None, response_id="r1", last_snapshot=None, terminal_seen=False,
+        _event(),
+        provider=p,
+        runtime_options=_opts(True),
+        store=False,
+        background=True,
+        isolation=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=False,
     )
     assert p.updates == []
     # (b) background=False
     p = _RecordingProvider()
     await _do_checkpoint_persist(
-        _event(), provider=p, runtime_options=_opts(True), store=True, background=False,
-        isolation=None, response_id="r1", last_snapshot=None, terminal_seen=False,
+        _event(),
+        provider=p,
+        runtime_options=_opts(True),
+        store=True,
+        background=False,
+        isolation=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=False,
     )
     assert p.updates == []
-    # (c) durable_background=False
+    # (c) resilient_background=False
     p = _RecordingProvider()
     await _do_checkpoint_persist(
-        _event(), provider=p, runtime_options=_opts(False), store=True, background=True,
-        isolation=None, response_id="r1", last_snapshot=None, terminal_seen=False,
+        _event(),
+        provider=p,
+        runtime_options=_opts(False),
+        store=True,
+        background=True,
+        isolation=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=False,
     )
     assert p.updates == []
-    # durable background → persists
+    # resilient background → persists
     p = _RecordingProvider()
     snap = await _do_checkpoint_persist(
-        _event(cp=1), provider=p, runtime_options=_opts(True), store=True, background=True,
-        isolation=None, response_id="r1", last_snapshot=None, terminal_seen=False,
+        _event(cp=1),
+        provider=p,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        isolation=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=False,
     )
     assert len(p.updates) == 1
     assert snap is not None
@@ -96,13 +122,27 @@ async def test_t20_idempotent_when_snapshot_unchanged():
     p = _RecordingProvider()
     ev = _event(cp=1)
     snap = await _do_checkpoint_persist(
-        ev, provider=p, runtime_options=_opts(True), store=True, background=True,
-        isolation=None, response_id="r1", last_snapshot=None, terminal_seen=False,
+        ev,
+        provider=p,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        isolation=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=False,
     )
     # Second call with the same snapshot bytes → no provider call.
     await _do_checkpoint_persist(
-        ev, provider=p, runtime_options=_opts(True), store=True, background=True,
-        isolation=None, response_id="r1", last_snapshot=snap, terminal_seen=False,
+        ev,
+        provider=p,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        isolation=None,
+        response_id="r1",
+        last_snapshot=snap,
+        terminal_seen=False,
     )
     assert len(p.updates) == 1
 
@@ -113,8 +153,15 @@ async def test_t21_status_as_is_in_snapshot():
     ev = _event(cp=1)
     ev.response.status = "in_progress"
     await _do_checkpoint_persist(
-        ev, provider=p, runtime_options=_opts(True), store=True, background=True,
-        isolation=None, response_id="r1", last_snapshot=None, terminal_seen=False,
+        ev,
+        provider=p,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        isolation=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=False,
     )
     assert p.updates[0]["status"] == "in_progress"
     # Reserved internal_metadata is in the persisted snapshot (storage retains it).
@@ -128,8 +175,15 @@ async def test_t22_failure_swallowed_and_tagged():
     p = _RecordingProvider(fail=True)
     # Must not raise; last_snapshot unchanged.
     snap = await _do_checkpoint_persist(
-        _event(cp=1), provider=p, runtime_options=_opts(True), store=True, background=True,
-        isolation=None, response_id="r1", last_snapshot=b"prev", terminal_seen=False,
+        _event(cp=1),
+        provider=p,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        isolation=None,
+        response_id="r1",
+        last_snapshot=b"prev",
+        terminal_seen=False,
     )
     assert snap == b"prev"
     del PLATFORM_ERROR_TAG  # symbol exists
@@ -139,8 +193,15 @@ async def test_t22_failure_swallowed_and_tagged():
 async def test_t22b_drop_after_terminal():
     p = _RecordingProvider()
     snap = await _do_checkpoint_persist(
-        _event(cp=1), provider=p, runtime_options=_opts(True), store=True, background=True,
-        isolation=None, response_id="r1", last_snapshot=None, terminal_seen=True,
+        _event(cp=1),
+        provider=p,
+        runtime_options=_opts(True),
+        store=True,
+        background=True,
+        isolation=None,
+        response_id="r1",
+        last_snapshot=None,
+        terminal_seen=True,
     )
     assert p.updates == []
     assert snap is None
@@ -152,7 +213,7 @@ async def test_t22b_drop_after_terminal():
 
 
 def _bg_client(handler) -> TestClient:
-    app = ResponsesAgentServerHost(options=ResponsesServerOptions(durable_background=True))
+    app = ResponsesAgentServerHost(options=ResponsesServerOptions(resilient_background=True))
     app.response_handler(handler)
     return TestClient(app)
 
@@ -224,13 +285,17 @@ def test_t22d_no_implicit_checkpoints_zero_checkpoint_handler():
         async def delete_response(self, response_id, *, isolation=None):  # noqa: ANN001
             self._inner.pop(response_id, None)
 
-        async def get_input_items(self, response_id, limit=20, ascending=False, after=None, before=None, *, isolation=None):  # noqa: ANN001,E501
+        async def get_input_items(
+            self, response_id, limit=20, ascending=False, after=None, before=None, *, isolation=None
+        ):  # noqa: ANN001,E501
             return []
 
         async def get_items(self, item_ids, *, isolation=None):  # noqa: ANN001
             return [None for _ in item_ids]
 
-        async def get_history_item_ids(self, previous_response_id, conversation_id, limit, *, isolation=None):  # noqa: ANN001,E501
+        async def get_history_item_ids(
+            self, previous_response_id, conversation_id, limit, *, isolation=None
+        ):  # noqa: ANN001,E501
             return []
 
     async def handler(request, context, cancellation_signal):
@@ -245,7 +310,7 @@ def test_t22d_no_implicit_checkpoints_zero_checkpoint_handler():
         return _events()
 
     app = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(durable_background=True),
+        options=ResponsesServerOptions(resilient_background=True),
         store=_CountingProvider(),
     )
     app.response_handler(handler)

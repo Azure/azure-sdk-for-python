@@ -4,7 +4,7 @@
 
 Covers spec 013 US1 deliverable (a) acceptance scenario 1: when the in-memory
 references (`_record_ref`, `_context_ref`, `_parsed_ref`, `_cancel_ref`,
-`_runtime_state_ref`) are missing from the durable task input (as they would
+`_runtime_state_ref`) are missing from the resilient task input (as they would
 be after a cross-process restart), the orchestrator reconstructs them from
 the serialized params and proceeds.
 """
@@ -17,11 +17,11 @@ import pytest
 
 
 def _build_params_for_recovery() -> dict:
-    """Build a durable-task input dict via the single producer
-    (``DurableResponseInput.to_task_input``) — exactly what ``start_durable``
+    """Build a resilient-task input dict via the single producer
+    (``ResilientResponseInput.to_task_input``) — exactly what ``start_resilient``
     persists and what cross-process recovery reads back."""
-    from azure.ai.agentserver.responses.hosting._durable_input import (
-        DurableResponseInput,
+    from azure.ai.agentserver.responses.hosting._resilient_input import (
+        ResilientResponseInput,
     )
     from azure.ai.agentserver.responses.models._generated import CreateResponse
 
@@ -35,7 +35,7 @@ def _build_params_for_recovery() -> dict:
             "conversation": "conv_abc",
         }
     )
-    return DurableResponseInput(
+    return ResilientResponseInput(
         request=request,
         response_id="resp_recover_001",
         disposition="re-invoke",
@@ -51,7 +51,7 @@ def _build_params_for_recovery() -> dict:
 def test_reconstruct_from_params_returns_record_and_context() -> None:
     """``_reconstruct_from_params`` rebuilds ResponseExecution and ResponseContext."""
     from azure.ai.agentserver.responses._options import ResponsesServerOptions
-    from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
+    from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
         _reconstruct_from_params,
     )
 
@@ -78,13 +78,12 @@ def test_reconstruct_from_params_returns_record_and_context() -> None:
     assert context.mode_flags.store is True
 
 
-def test_reconstruct_preserves_client_headers_and_query(  # Spec 033 FR-002b
-) -> None:
+def test_reconstruct_preserves_client_headers_and_query() -> None:  # Spec 033 FR-002b
     """A recovered handler observes the SAME ``client_headers`` /
     ``query_parameters`` as fresh entry — they MUST NOT be dropped to ``{}``
     on recovery (the latent drop bug §3.1 fixes)."""
     from azure.ai.agentserver.responses._options import ResponsesServerOptions
-    from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
+    from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
         _reconstruct_from_params,
     )
 
@@ -105,7 +104,7 @@ def test_reconstruct_uses_response_id_from_params_not_regenerated() -> None:
     Spec US1 scenario 7 — response-id stability regression guard.
     """
     from azure.ai.agentserver.responses._options import ResponsesServerOptions
-    from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
+    from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
         _reconstruct_from_params,
     )
 
@@ -126,7 +125,7 @@ def test_reconstruct_uses_response_id_from_params_not_regenerated() -> None:
 def test_reconstruct_parsed_re_parses_request() -> None:
     """``_reconstruct_parsed_from_params`` re-hydrates the request model from
     the single persisted ``request`` (Spec 033 §3.1)."""
-    from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
+    from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
         _reconstruct_parsed_from_params,
     )
 
@@ -139,7 +138,7 @@ def test_reconstruct_parsed_re_parses_request() -> None:
 def test_reconstruct_parsed_raises_when_request_missing() -> None:
     """If the persisted request is absent, reconstruction fails closed
     (Spec 033 FR-002f)."""
-    from azure.ai.agentserver.responses.hosting._durable_orchestrator import (
+    from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
         _reconstruct_parsed_from_params,
     )
 
@@ -162,7 +161,7 @@ def test_no_record_ref_early_exit_removed() -> None:
         / "agentserver"
         / "responses"
         / "hosting"
-        / "_durable_orchestrator.py"
+        / "_resilient_orchestrator.py"
     ).read_text()
     # The "Phase 1 (no recovery yet)" framing must be replaced.
     assert "Phase 1 (no recovery yet)" not in src

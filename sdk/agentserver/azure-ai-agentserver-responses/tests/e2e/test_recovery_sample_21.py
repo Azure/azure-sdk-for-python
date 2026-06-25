@@ -1,8 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""E2E test for sample_21 — durable LangGraph handler.
+"""E2E test for sample_21 — resilient LangGraph handler.
 
-Pins the recovery contract for the "upstream framework owns durability"
+Pins the recovery contract for the "upstream framework owns resilience"
 shape:
 
 1. Fresh entry runs the graph from start and emits at least one AI
@@ -31,7 +31,7 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
 )
 from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
+from azure.ai.agentserver.responses._resilience_context import _DeveloperMetadataFacade
 
 try:
     from langchain_core.messages import AIMessage, HumanMessage
@@ -93,7 +93,7 @@ def _make_state_stub(ai_messages: list[str]) -> MagicMock:
 class TestSample21Recovery:
     async def test_recovered_entry_resumes_from_graph_state(self) -> None:
         """Recovery: resumption response contains AI messages from graph state."""
-        from samples import sample_21_durable_langgraph as mod  # type: ignore[import-not-found]
+        from samples import sample_21_resilient_langgraph as mod  # type: ignore[import-not-found]
 
         # Stub the graph to return state with one prior AI message.
         prior_state = _make_state_stub(ai_messages=["Prior AI response"])
@@ -130,7 +130,7 @@ class TestSample21Recovery:
 @pytest.mark.asyncio
 class TestSample21PreEntryCancellation:
     async def test_pre_entry_steered_emits_completed(self) -> None:
-        from samples import sample_21_durable_langgraph as mod  # type: ignore[import-not-found]
+        from samples import sample_21_resilient_langgraph as mod  # type: ignore[import-not-found]
 
         with patch.object(mod, "_graph"):
             ctx = _make_context(
@@ -148,7 +148,7 @@ class TestSample21PreEntryCancellation:
             assert "response.completed" in types
 
     async def test_pre_entry_shutdown_returns_no_terminal(self) -> None:
-        from samples import sample_21_durable_langgraph as mod  # type: ignore[import-not-found]
+        from samples import sample_21_resilient_langgraph as mod  # type: ignore[import-not-found]
 
         with patch.object(mod, "_graph"):
             ctx = _make_context(

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Deterministic task ID derivation for durable responses."""
+"""Deterministic task ID derivation for resilient responses."""
 
 from __future__ import annotations
 
@@ -88,7 +88,7 @@ def derive_task_id(
         previous_response_id is present, response_id is used instead
         (enabling parallel forks).
     :paramtype steerable: bool
-    :returns: A deterministic string suitable as a durable task ID.
+    :returns: A deterministic string suitable as a resilient task ID.
     :rtype: str
     """
     # Reuse the chain derivation so both helpers stay in lockstep.
@@ -113,4 +113,4 @@ def derive_task_id(
 
     # Produce a stable hash
     digest = hashlib.sha256(composite.encode("utf-8")).hexdigest()[:32]
-    return f"durable-resp-{digest}"
+    return f"resilient-resp-{digest}"

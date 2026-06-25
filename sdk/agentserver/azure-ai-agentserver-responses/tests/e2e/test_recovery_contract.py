@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""E2E tests for the Durable Response Recovery Contract (Spec 012).
+"""E2E tests for the Resilient Response Recovery Contract (Spec 012).
 
 Pins the framework-side guarantees the spec promises so Phase 5 framework
 changes have a precise red→green target.
@@ -14,7 +14,7 @@ Each test pins to a specific FR from spec.md; see the section headers.
 
 Note on infrastructure: full crash injection (process kill + restart) is
 covered by ``_crash_harness.py`` and used by ``test_recovery_sample_19.py``.
-The tests in this file simulate recovery by directly invoking the durable
+The tests in this file simulate recovery by directly invoking the resilient
 orchestrator's recovered code path with ``entry_mode="recovered"`` —
 this is enough to pin the framework-side contract.
 """
@@ -125,9 +125,9 @@ class _AsyncAsgiClient:
 # ---------------------------------------------------------------------------
 
 
-def _build_client(handler, *, steerable: bool = False, durable: bool = True) -> _AsyncAsgiClient:
+def _build_client(handler, *, steerable: bool = False, resilient: bool = True) -> _AsyncAsgiClient:
     options = ResponsesServerOptions(
-        durable_background=durable,
+        resilient_background=resilient,
         steerable_conversations=steerable,
     )
     app = ResponsesAgentServerHost(options=options)
@@ -163,7 +163,7 @@ def _build_resumption_response(
 def _set_recovery_state(context: ResponseContext, *, is_recovery: bool = False) -> None:
     """Flat-field helper for tests that want to mark a context as recovered.
 
-    Replaces the pre-spec-024 ``_make_durability_context`` helper.
+    Replaces the pre-spec-024 ``_make_resilience_context`` helper.
     """
     context.is_recovery = is_recovery
     context.is_steered_turn = False
@@ -198,7 +198,7 @@ class TestFreshEntryBaseline:
 
             return _gen()
 
-        client = _build_client(handler, durable=True)
+        client = _build_client(handler, resilient=True)
         resp = await client.post(
             "/responses",
             json_body={
@@ -440,7 +440,7 @@ class TestRecoveryAwareHandlerProducesCleanFinalResponse:
 
             return _gen()
 
-        client = _build_client(handler, durable=True)
+        client = _build_client(handler, resilient=True)
         # First request — expect failure (simulated crash).
         try:
             await client.post(
@@ -456,7 +456,7 @@ class TestRecoveryAwareHandlerProducesCleanFinalResponse:
         except Exception:
             pass  # expected
 
-        # Second request — recovery path. (Real recovery is via the durable
+        # Second request — recovery path. (Real recovery is via the resilient
         # orchestrator on restart; here we use a second POST with the same
         # body as a stand-in for "re-invocation".)
         resp = await client.post(
@@ -515,7 +515,7 @@ class TestNaiveHandlerFallback:
 
             return _gen()
 
-        client = _build_client(handler, durable=True)
+        client = _build_client(handler, resilient=True)
         resp = await client.post(
             "/responses",
             json_body={
@@ -565,7 +565,7 @@ class TestRecoveryWithClientCancelled:
 
             return _gen()
 
-        client = _build_client(handler, durable=True)
+        client = _build_client(handler, resilient=True)
         resp = await client.post(
             "/responses",
             json_body={
@@ -610,7 +610,7 @@ class TestRecoveryWithSteered:
 
             return _gen()
 
-        client = _build_client(handler, durable=True)
+        client = _build_client(handler, resilient=True)
         await client.post(
             "/responses",
             json_body={
@@ -657,7 +657,7 @@ class TestRecoveryWithShutdown:
 
             return _gen()
 
-        client = _build_client(handler, durable=True)
+        client = _build_client(handler, resilient=True)
         await client.post(
             "/responses",
             json_body={

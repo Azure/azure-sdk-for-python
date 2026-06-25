@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Contract tests for durability/steering options validation."""
+"""Contract tests for resilience/steering options validation."""
 
 from __future__ import annotations
 
@@ -9,26 +9,26 @@ import pytest
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 
 
-class TestDurabilityOptionsDefaults:
-    """Verify default values for durability options."""
+class TestResilienceOptionsDefaults:
+    """Verify default values for resilience options."""
 
-    def test_durable_background_defaults_false(self) -> None:
+    def test_resilient_background_defaults_false(self) -> None:
         """(Spec 024 Phase 4 — work item #3) Default flips to False.
 
-        Pre-Phase-4: defaulted to True (durability assumed-on).
+        Pre-Phase-4: defaulted to True (resilience assumed-on).
         Post-Phase-4: defaults to False — handler authors must explicitly
-        opt into crash recovery via `durable_background=True`. Documented
+        opt into crash recovery via `resilient_background=True`. Documented
         breaking change; CHANGELOG entry required.
         """
         options = ResponsesServerOptions()
-        assert options.durable_background is False
+        assert options.resilient_background is False
 
     def test_steerable_conversations_defaults_false(self) -> None:
         options = ResponsesServerOptions()
         assert options.steerable_conversations is False
 
 
-class TestDurabilityOptionsValidation:
+class TestResilienceOptionsValidation:
     """Verify fail-fast validation at construction time."""
 
     def test_steerable_without_store_disabled_succeeds(self) -> None:
@@ -36,25 +36,25 @@ class TestDurabilityOptionsValidation:
         options = ResponsesServerOptions(steerable_conversations=True)
         assert options.steerable_conversations is True
 
-    def test_durable_background_false_disables_durability(self) -> None:
-        """durable_background=False is a valid opt-out."""
-        options = ResponsesServerOptions(durable_background=False)
-        assert options.durable_background is False
+    def test_resilient_background_false_disables_resilience(self) -> None:
+        """resilient_background=False is a valid opt-out."""
+        options = ResponsesServerOptions(resilient_background=False)
+        assert options.resilient_background is False
 
-    def test_steerable_with_durable_background_off_does_not_raise(self) -> None:
+    def test_steerable_with_resilient_background_off_does_not_raise(self) -> None:
         """(Spec 024 Phase 4 — Proposal #9 relaxed composition)
 
-        steerable_conversations=True + durable_background=False is now
+        steerable_conversations=True + resilient_background=False is now
         a VALID combination. Pre-Phase-4 this raised ValueError because
-        the framework assumed steering required durable recovery; per
+        the framework assumed steering required resilient recovery; per
         spec 024 §A Proposal #9 the two options are independent.
         """
         options = ResponsesServerOptions(
             steerable_conversations=True,
-            durable_background=False,
+            resilient_background=False,
         )
         assert options.steerable_conversations is True
-        assert options.durable_background is False
+        assert options.resilient_background is False
 
     # (Spec 024 Phase 5 — Proposal #5) ``store_disabled`` and
     # ``max_pending`` options were DELETED. The pre-Phase-5 validation

@@ -5,7 +5,7 @@
 Maps each §10 cause trigger to its observable boolean / event shape on
 ``ResponseContext``. Drives the orchestrator end-to-end via TestClient
 (unit-test-grade Path A scenarios) and verifies the cause-boolean
-matrix from `docs/responses-durability-spec.md` §10.
+matrix from `docs/responses-resilience-spec.md` §10.
 
 Cause matrix (covered by tests below):
 
@@ -210,7 +210,7 @@ def test_two_arg_sync_handler_hard_rejected() -> None:
 # ──────────────────────────────────────────────────────────────────────
 
 
-def test_exit_for_recovery_raises_outside_durable_context() -> None:
+def test_exit_for_recovery_raises_outside_resilient_context() -> None:
     """exit_for_recovery() requires a task context; raises RuntimeError otherwise."""
     from azure.ai.agentserver.responses._response_context import IsolationContext
     from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
@@ -221,11 +221,11 @@ def test_exit_for_recovery_raises_outside_durable_context() -> None:
         request=None,
         isolation=IsolationContext(),
     )
-    # _task_context is None for non-durable / unit-test contexts.
+    # _task_context is None for non-resilient / unit-test contexts.
     assert ctx._task_context is None  # type: ignore[attr-defined]
 
     async def _check() -> None:
-        with pytest.raises(RuntimeError, match="durable response handler"):
+        with pytest.raises(RuntimeError, match="resilient response handler"):
             await ctx.exit_for_recovery()
 
     asyncio.run(_check())
@@ -241,8 +241,8 @@ def test_exit_for_recovery_sentinel_is_not_none() -> None:
     assert ExitForRecoverySignal is not None
 
 
-def test_exit_for_recovery_raises_response_exit_for_recovery_in_durable_context() -> None:
-    """Spec 025 §A.4 (T29) — inside a durable task body
+def test_exit_for_recovery_raises_response_exit_for_recovery_in_resilient_context() -> None:
+    """Spec 025 §A.4 (T29) — inside a resilient task body
     ``await context.exit_for_recovery()`` raises ``ResponseExitForRecovery``
     (NoReturn); it never returns a value."""
     from azure.ai.agentserver.responses import ResponseExitForRecovery
@@ -255,7 +255,7 @@ def test_exit_for_recovery_raises_response_exit_for_recovery_in_durable_context(
         request=None,
         isolation=IsolationContext(),
     )
-    # Simulate a durable task body: a non-None task context.
+    # Simulate a resilient task body: a non-None task context.
     ctx._task_context = object()  # type: ignore[attr-defined]
 
     async def _check() -> None:
@@ -334,4 +334,3 @@ def test_exit_for_recovery_works_in_async_generator_handler() -> None:
             await gen.__anext__()
 
     asyncio.run(_check())
-

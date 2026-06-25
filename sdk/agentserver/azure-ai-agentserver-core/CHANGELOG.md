@@ -2,9 +2,9 @@
 
 ## 2.0.0b7 (Unreleased)
 
-### Durable-task primitive redesign
+### Resilient-task primitive redesign
 
-The durable-task primitive is reshaped on this release. The
+The resilient-task primitive is reshaped on this release. The
 authoritative behavior contract lives at
 [`docs/task-and-streaming-spec.md`](docs/task-and-streaming-spec.md).
 Highlights:
@@ -43,7 +43,7 @@ Highlights:
   `ValueError` (leading underscore reserved for the framework).
 - **Handler signature validation**: first parameter MUST be
   named `ctx`.
-- **Structured failure log**  — `durable_task_handler_failure`
+- **Structured failure log**  — `resilient_task_handler_failure`
   ERROR event with `task_id`/`input_id`/`error_type`/`error_message`
   fields emitted on every handler failure.
 - **Multi-turn raise → `suspended`**  — chain stays
@@ -82,10 +82,10 @@ Highlights:
 
 - **Unified local-development storage layout via
   `azure.ai.agentserver.core.storage_paths`.** New public module
-  exposing `resolve_durable_root()` and `resolve_durable_subdir(kind)`
+  exposing `resolve_state_root()` and `resolve_state_subdir(kind)`
   for the layout
-  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/{tasks,streams,responses}/`.
-  A single `AGENTSERVER_DURABLE_ROOT` env-var replaces the previous
+  `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/{tasks,streams,responses}/`.
+  A single `AGENTSERVER_STATE_ROOT` env-var replaces the previous
   per-subsystem path overrides; the per-subsystem env vars are gone.
   Hosted environments are unaffected — the local-dev layout exists
   to keep the development loop self-contained without external
@@ -123,7 +123,7 @@ Highlights:
   ```
 
 - **Per-output payloads up to 2 MB** for both `return` values from
-  durable-task handlers and `ctx.suspend(output=...)` values. Outputs
+  resilient-task handlers and `ctx.suspend(output=...)` values. Outputs
   are stored entirely in a framework-managed attachment slot, so they
   never compete with the shared 1 MB task-payload budget. New
   developer-facing exception:
@@ -180,7 +180,7 @@ Highlights:
   to bound long-running stream memory.
 
 - `AttachmentTooLarge` and `AttachmentLimitExceeded` are no longer
-  exported from `azure.ai.agentserver.core.durable`. Attachments are
+  exported from `azure.ai.agentserver.core.tasks`. Attachments are
   a framework storage-layer concept that developers never name;
   surfacing the attachment-vocabulary errors on the developer API
   leaked the internal split between `payload` and `attachments`. The
@@ -223,7 +223,7 @@ Highlights:
   urators; external callers obtain stream instances exclusively via
   `await streams.get_or_create(id)` and program against the Protocol.
 
-- **Durable tasks** — new `@task` decorator and supporting types
+- **Resilient tasks** — new `@task` decorator and supporting types
   (`TaskContext`, `TaskResult`, `TaskRun`, `RetryPolicy`,
   `TaskConflictError`, `TaskFailed`, `TaskCancelled`) for
   crash-resilient long-running agents. Tasks survive container
@@ -235,7 +235,7 @@ Highlights:
   tasks via `@task(steerable=True)`. For streaming, handlers use the
   new `streams` registry (above) — `@task` itself has no streaming-
   related kwarg. See the
-  [developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md)
+  [developer guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md)
   for the full API and patterns reference.
 
 ### Other Changes
@@ -308,7 +308,7 @@ Highlights:
   package anymore.
 
 - **Removed the `samples/` directory.** The standalone in-process
-  samples (`durable_retry`, `durable_streaming`, `selfhosted_invocation`)
+  samples (`resilient_retry`, `resilient_streaming`, `selfhosted_invocation`)
   have been deleted. End-to-end usage of the `@task` and streaming
   primitives is demonstrated in the runnable HTTP-host samples shipped
   with `azure-ai-agentserver-invocations` and

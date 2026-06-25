@@ -2,7 +2,7 @@
 # Licensed under the MIT license.
 """Spec 013 US1 — Phase 8 live Copilot crash-recovery tests (T-130..T-136).
 
-End-to-end tests against sample 18 (durable Copilot) using a real
+End-to-end tests against sample 18 (resilient Copilot) using a real
 ``gh copilot`` upstream. These tests SPAWN sample 18 as a subprocess via
 ``CrashHarness`` and drive the full POST → kill → restart → re-POST loop
 against a real Copilot session.
@@ -42,7 +42,7 @@ pytestmark = pytest.mark.live
 
 
 _MODEL = os.environ.get("COPILOT_MODEL", "gpt-5-mini")
-_SAMPLE_MODULE = Path(__file__).parent.parent.parent / "samples" / "sample_18_durable_copilot.py"
+_SAMPLE_MODULE = Path(__file__).parent.parent.parent / "samples" / "sample_18_resilient_copilot.py"
 
 
 def _payload(input_text: str, **overrides) -> dict:
@@ -134,14 +134,14 @@ async def test_full_crash_then_recovery_round_trip(tmp_path: Path) -> None:
         # Kill the subprocess mid-flight (SIGKILL via process group).
         await harness.kill()
 
-        # Sanity: the in-flight response was persisted by the durable task
+        # Sanity: the in-flight response was persisted by the resilient task
         # path to the file response store, even though we crashed.
         resp_file = tmp_path / "responses" / "responses" / f"{response_id}.json"
         # Note: layout from FileResponseStore. The file may not be there
         # YET if we crashed before the first response.created persist;
         # restart and the recovered handler will produce a terminal.
 
-        # Restart the subprocess. Durable framework should re-enter the
+        # Restart the subprocess. Resilient framework should re-enter the
         # task in "recovered" mode and produce a terminal.
         await harness.restart()
 

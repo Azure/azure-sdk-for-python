@@ -8,8 +8,8 @@ Verifies the three cancellation rules:
    framework auto-emits ``response.failed``. If handler emits terminal, that wins.
 
 2. **Shutdown cancellations** — If handler returns terminal, that wins. Otherwise:
-   - durable=True, background=True: leave in_progress for re-entry on restart
-   - durable=True, background=False: best-effort mark failed after grace period
+   - resilient=True, background=True: leave in_progress for re-entry on restart
+   - resilient=True, background=False: best-effort mark failed after grace period
    - store=False: best-effort mark failed after grace period
 
 3. **Client explicit cancellation** (/cancel for bg, disconnect for non-bg) —
@@ -129,10 +129,10 @@ class _AsyncAsgiClient:
 # ---------------------------------------------------------------------------
 
 
-def _build_client(handler, *, steerable: bool = False, durable: bool = False) -> _AsyncAsgiClient:
+def _build_client(handler, *, steerable: bool = False, resilient: bool = False) -> _AsyncAsgiClient:
     """Build an async ASGI test client with the given handler and options."""
     options = ResponsesServerOptions(
-        durable_background=durable,
+        resilient_background=resilient,
         steerable_conversations=steerable,
     )
     app = ResponsesAgentServerHost(options=options)
@@ -170,7 +170,7 @@ class TestSteeringCancellation:
         Status must NOT be 'cancelled' (reserved for explicit cancel).
 
         Simulates steering by having the handler stamp STEERED reason
-        and fire the cancellation signal (same as durable orchestrator does).
+        and fire the cancellation signal (same as resilient orchestrator does).
         """
 
         started = asyncio.Event()
@@ -182,7 +182,7 @@ class TestSteeringCancellation:
                 yield stream.emit_in_progress()
                 started.set()
                 # Simulate steering: stamp reason then fire signal
-                # (in production, DurableResponseOrchestrator does this)
+                # (in production, ResilientResponseOrchestrator does this)
                 # Spec 024 Phase 5: steering pressure → no cause flag, cancel event only.
                 cancellation_signal.set()
                 # Give framework a tick to notice
@@ -192,7 +192,7 @@ class TestSteeringCancellation:
 
             return _gen()
 
-        client = _build_client(handler, durable=True)
+        client = _build_client(handler, resilient=True)
 
         response_id = IdGenerator.new_response_id()
 
@@ -250,7 +250,7 @@ class TestSteeringCancellation:
 
             return _gen()
 
-        client = _build_client(handler, durable=True)
+        client = _build_client(handler, resilient=True)
 
         response_id = IdGenerator.new_response_id()
 
@@ -290,8 +290,8 @@ class TestShutdownNeverCancelled:
     """Shutdown NEVER produces 'cancelled' status — always 'failed' or stays in_progress."""
 
     @pytest.mark.asyncio
-    async def test_shutdown_non_durable_bg_produces_failed_not_cancelled(self) -> None:
-        """Rule 2: Non-durable bg shutdown → failed (never cancelled)."""
+    async def test_shutdown_non_resilient_bg_produces_failed_not_cancelled(self) -> None:
+        """Rule 2: Non-resilient bg shutdown → failed (never cancelled)."""
         started = asyncio.Event()
 
         async def handler(request: Any, context: ResponseContext, cancellation_signal: asyncio.Event):
@@ -307,7 +307,7 @@ class TestShutdownNeverCancelled:
 
             return _gen()
 
-        client = _build_client(handler, durable=False)
+        client = _build_client(handler, resilient=False)
 
         response_id = IdGenerator.new_response_id()
 

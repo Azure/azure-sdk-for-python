@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Mocked e2e test for sample_18 — durable Copilot SDK handler.
+"""Mocked e2e test for sample_18 — resilient Copilot SDK handler.
 
 Pins:
 
@@ -34,7 +34,7 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
 )
 from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses._durability_context import _DeveloperMetadataFacade
+from azure.ai.agentserver.responses._resilience_context import _DeveloperMetadataFacade
 
 try:
     import copilot  # type: ignore[import-untyped]  # noqa: F401
@@ -193,7 +193,7 @@ def _make_assistant_event(text: str) -> Any:
 @pytest.mark.asyncio
 class TestSample18FreshEntry:
     async def test_fresh_entry_creates_session_and_sends_once(self) -> None:
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
 
         stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
@@ -214,7 +214,7 @@ class TestSample18FreshEntry:
 @pytest.mark.asyncio
 class TestSample18RecoveryUsesResumeSession:
     async def test_recovery_uses_resume_session_not_create(self) -> None:
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
 
         # History already has our input — recovery skips send.
         history = [_make_user_event("test prompt")]
@@ -240,7 +240,7 @@ class TestSample18RecoveryUsesResumeSession:
 @pytest.mark.asyncio
 class TestSample18RecoveryWithMissingInput:
     async def test_recovery_sends_when_input_not_in_history(self) -> None:
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
 
         # History has a prior turn but not the current input.
         history = [
@@ -268,7 +268,7 @@ class TestSample18LiveDeltas:
         """On a fresh send, the assistant content arrives as an
         output_text.delta event (not silently accumulated and dumped at
         the end)."""
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
 
         stub_client, send_calls, _create_calls, _resume_calls = _make_session_stub_classes(reply_text="hello world")
         with patch.object(mod, "CopilotClient", stub_client):
@@ -288,7 +288,7 @@ class TestSample18LiveDeltas:
         """On recovery with upstream assistant content already present
         for the current turn, the handler emits a single replay delta
         containing the accumulated text *before* any new live deltas."""
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
 
         # Upstream session already has: user "test prompt" → assistant "partial".
         # On recovery the handler should replay "partial" as a single delta.
@@ -324,7 +324,7 @@ class TestSample18LiveDeltas:
         """If the upstream session has no assistant content for the
         current turn (e.g. crashed pre-response.in_progress), recovery
         should NOT emit a spurious replay delta."""
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
 
         # Upstream has only the user message, no assistant content yet.
         history = [_make_user_event("test prompt")]
@@ -349,7 +349,7 @@ class TestSample18LiveDeltas:
     async def test_handler_uses_queue_for_live_streaming(self) -> None:
         """Source-level guard: the handler uses an asyncio.Queue for
         live delta forwarding rather than a batched list pattern."""
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
         import inspect
 
         src = inspect.getsource(mod.handler)
@@ -365,7 +365,7 @@ class TestSample18LiveDeltas:
     async def test_handler_recovery_replay_helper_is_invoked(self) -> None:
         """Source-level guard: the handler invokes the dedicated
         recovery-replay helper for upstream accumulated text."""
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
         import inspect
 
         src = inspect.getsource(mod.handler)
@@ -378,7 +378,7 @@ class TestSample18LiveDeltas:
 @pytest.mark.asyncio
 class TestSample18NoWatermarkOrFlush:
     async def test_no_last_processed_input_item_id(self) -> None:
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
         import inspect
 
         src = inspect.getsource(mod)
@@ -388,7 +388,7 @@ class TestSample18NoWatermarkOrFlush:
         )
 
     async def test_no_metadata_flush_call(self) -> None:
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
         import inspect
 
         src = inspect.getsource(mod)
@@ -400,7 +400,7 @@ class TestSample18NoWatermarkOrFlush:
 @pytest.mark.asyncio
 class TestSample18PreEntrySteeredPreservesInput:
     async def test_pre_entry_steered_sends_input_and_completes(self) -> None:
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
 
         stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
@@ -420,7 +420,7 @@ class TestSample18PreEntrySteeredPreservesInput:
 @pytest.mark.asyncio
 class TestSample18PreEntryOtherCancellationDoesNotTouchSDK:
     async def test_pre_entry_client_cancelled_does_not_touch_sdk(self) -> None:
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
 
         stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):
@@ -439,7 +439,7 @@ class TestSample18PreEntryOtherCancellationDoesNotTouchSDK:
         assert "response.completed" not in [_event_type(e) for e in events]
 
     async def test_pre_entry_shutdown_does_not_touch_sdk(self) -> None:
-        from samples import sample_18_durable_copilot as mod  # type: ignore[import-not-found]
+        from samples import sample_18_resilient_copilot as mod  # type: ignore[import-not-found]
 
         stub_client, send_calls, create_calls, resume_calls = _make_session_stub_classes()
         with patch.object(mod, "CopilotClient", stub_client):

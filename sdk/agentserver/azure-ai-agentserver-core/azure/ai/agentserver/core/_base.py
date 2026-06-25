@@ -42,7 +42,7 @@ def _read_task_manager_shutdown_grace() -> float:
 
     Reads ``AGENTSERVER_SHUTDOWN_GRACE_SECONDS``. Defaults to 25.0 when
     unset. Allows tests (and operators) to keep shutdown fast when no
-    long-running durable handlers need to checkpoint — for example the
+    long-running resilient handlers need to checkpoint — for example the
     conformance suite runs with a 1s grace so the in-process shutdown
     marker fires before the handler completes naturally.
 
@@ -265,10 +265,10 @@ class AgentServerHost(Starlette):
                 protocols,
             )
 
-            # --- Durable task manager auto-initialization ---
+            # --- Resilient task manager auto-initialization ---
             task_manager = None
             try:
-                from .durable._manager import (  # pylint: disable=import-outside-toplevel
+                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
                     TaskManager,
                     set_task_manager,
                 )
@@ -282,7 +282,7 @@ class AgentServerHost(Starlette):
                 await task_manager.startup()
                 logger.info("TaskManager initialized automatically")
             except ImportError:
-                pass  # durable module not available
+                pass  # resilient module not available
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning("Failed to initialize TaskManager", exc_info=True)
 
@@ -317,13 +317,13 @@ class AgentServerHost(Starlette):
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Error in on_shutdown", exc_info=True)
 
-            # Shutdown task manager AFTER on_shutdown so durable handlers
+            # Shutdown task manager AFTER on_shutdown so resilient handlers
             # have had time to checkpoint via the responses layer's
             # ``handle_shutdown``.
             if task_manager is not None:
                 try:
                     await task_manager.shutdown()
-                    from .durable._manager import (  # pylint: disable=import-outside-toplevel
+                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
                         set_task_manager as _clear_manager,
                     )
 

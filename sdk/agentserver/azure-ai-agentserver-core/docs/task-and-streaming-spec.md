@@ -1,9 +1,9 @@
-# Durable Task & Streaming Primitives — Design Specification
+# Resilient Task & Streaming Primitives — Design Specification
 
 **Status:** Authoritative, source-of-truth specification.
-**Scope:** The **`@task` durable-task primitive** and the **`streams`
+**Scope:** The **`@task` resilient-task primitive** and the **`streams`
 streaming primitive** in `azure-ai-agentserver-core` — i.e.
-everything that ships under `azure.ai.agentserver.core.durable.*`
+everything that ships under `azure.ai.agentserver.core.tasks.*`
 and `azure.ai.agentserver.core.streaming.*`. NOT a spec for the
 rest of the core package (the hosting foundation, middleware,
 logging, tracing, server-side ASGI plumbing, etc. are outside
@@ -41,7 +41,7 @@ it layers on top.
 - §4. Glossary (forward-reference)
 
 ### Part II — Programming model (developer-facing concepts)
-- §5. The durable task primitive
+- §5. The resilient task primitive
 - §6. Lifecycle and entry mode
 - §7. Identity (`task_id`, `agent_name`, `session_id`, lease owner)
 - §8. Inputs, outputs, and per-input size limit
@@ -126,9 +126,9 @@ it layers on top.
 
 ### §1. Purpose and design goals
 
-The durable-task primitive turns a single async agent function into a
+The resilient-task primitive turns a single async agent function into a
 **crash-resilient, steerable, long-running** unit of work backed by a
-durable task store. It exists to close the gap between:
+resilient task store. It exists to close the gap between:
 
 - **What the platform sees.** A unit of work it can place, restart,
   liveness-check, and reclaim.
@@ -138,7 +138,7 @@ durable task store. It exists to close the gap between:
   checkpoint, recovery, or steering plumbing.
 
 The streaming primitive (`azure.ai.agentserver.core.streaming`) is a
-**peer** to the durable primitive — it does *not* nest under
+**peer** to the resilient primitive — it does *not* nest under
 `@task`. It exists to give every async producer/consumer pair in the
 agentserver family a single Protocol to program against (in-memory live
 fan-out, in-memory replay with cursor, file-backed crash-recoverable
@@ -146,14 +146,14 @@ replay), independent of whether the producer happens to be a `@task`.
 
 Five design goals constrain every decision in this document:
 
-1. **Single invariant for the durable primitive.** For any given
+1. **Single invariant for the resilient primitive.** For any given
    `task_id`, at most one handler runs at a time. Every other behavior
    falls out of this invariant.
 2. **Crash-recovery is first-class, not a feature.** Every API
    decision is evaluated against the question "what does this look
    like after a crash?" A primitive that disappears at the crash
    boundary (a per-call kwarg, an in-memory listener, a closure-only
-   state) is not acceptable; it must be reified into the durable
+   state) is not acceptable; it must be reified into the resilient
    record or it must be on the developer.
 3. **Cooperative everywhere.** The framework signals; it does not
    preempt. Cancellation, timeout, and steering all reduce to "set
@@ -179,13 +179,13 @@ re-scoping:
 
 1. **Not deterministic replay.** No record-and-replay of effects.
    After a crash the handler is re-invoked from the top; only
-   durable state (`ctx.input`, `ctx.metadata`, framework counters)
+   resilient state (`ctx.input`, `ctx.metadata`, framework counters)
    survives. Determinism inside the handler is the developer's
    responsibility — the standard at-most-once side-effect pattern in
    §10 covers the common case.
 2. **Not a workflow engine.** No fan-out/fan-in, no child workflows,
    no signals or timers as first-class primitives. Use Temporal /
-   Durable Functions / Orleans for that — `@task` can live inside
+   Resilient Functions / Orleans for that — `@task` can live inside
    such an engine but does not replace it.
 3. **Not a bulk-data store.** `ctx.metadata` is small (tens of KB
    per namespace; the whole task payload caps at 1 MB). It is a
@@ -242,7 +242,7 @@ Boxes are types/objects; arrows show the dominant call direction.
                                                                                     │
                                   ┌────────────────────────────────────────┐        │
                                   │  Local file provider (dev/test only)   │ ◀──────┘
-                                  │  (~/.durable-tasks/<agent>/<sess>/…)   │
+                                  │  (~/.agentserver-tasks/<agent>/<sess>/…)   │
                                   └────────────────────────────────────────┘
 
    ┌──────────────────────────────────────────────────────────────────┐
@@ -267,10 +267,10 @@ Boxes are types/objects; arrows show the dominant call direction.
   `@task` decorator; the singleton `TaskManager` is the *runtime*
   that owns the active-task table, the periodic recovery loop, and
   the provider.
-- The `TaskProvider` is an abstraction over the durable store. Two
+- The `TaskProvider` is an abstraction over the resilient store. Two
   concrete providers ship: `HostedTaskProvider` (HTTP-backed, used
   when the platform is detected) and `LocalFileTaskProvider`
-  (JSON-on-disk under `~/.durable-tasks/<agent>/<session>/<task>.json`
+  (JSON-on-disk under `~/.agentserver-tasks/<agent>/<session>/<task>.json`
   by default; used otherwise). The framework auto-selects.
 - The `TaskContext` is what the handler receives; it is wired by the
   manager and exposes both inputs (`input`, `metadata`, `entry_mode`)
@@ -282,14 +282,14 @@ Boxes are types/objects; arrows show the dominant call direction.
 - The streaming subpackage is independent. Handlers that want to
   stream do `await streams.get_or_create(id)` and `emit` / `close`
   on the returned object; the HTTP layer attaches `subscribe(after=…)`
-  consumers. The framework never touches a stream from the durable
+  consumers. The framework never touches a stream from the resilient
   path.
 
 ### §4. Glossary (forward-referenced)
 
 | Term | Meaning |
 |---|---|
-| **Task** | A unit of durable work, identified by `task_id`, persisted in the task store. |
+| **Task** | A unit of resilient work, identified by `task_id`, persisted in the task store. |
 | **Lifetime** | One contiguous in-memory execution of a task by a particular process. A task can have multiple lifetimes over its life (each crash starts a new lifetime). |
 | **Turn** | One handler invocation. A fresh task with no resume/recover is one turn. A suspend/resume cycle is two turns. A steering-driven re-entry is the next turn. |
 | **Generation / sequence number** | Monotonic counter inside the steering queue used to derive attachment keys; never reused (see §23). |
@@ -312,9 +312,9 @@ This part is the developer-facing mental model. It is normative for
 behavior visible to handler code, but the *wire-level realization* of
 each concept lives in Part III.
 
-### §5. The durable task primitive
+### §5. The resilient task primitive
 
-A durable task is created by decorating a single async function:
+A resilient task is created by decorating a single async function:
 
 ```
 @task(name="my_task")              # decorator
@@ -588,7 +588,7 @@ continue:
 2. NO `payload["error"]` is written — the chain record does not
    carry the per-turn failure diagnostic.
 3. The framework emits a structured ERROR log named
-   `durable_task_handler_failure` with `task_id`, `input_id`,
+   `resilient_task_handler_failure` with `task_id`, `input_id`,
    `error_type`, `error_message`.
 4. The caller's `await run.result()` raises
    `TaskFailed(error=TaskErrorDict(...))`.
@@ -858,7 +858,7 @@ the failure handler runs:
   chain with a fresh retry budget.
 
 The framework emits a structured ERROR log named
-`durable_task_handler_failure` on every handler raise (including
+`resilient_task_handler_failure` on every handler raise (including
 non-final attempts). Observers learn "what just failed, which
 attempt am I on" from logs, NOT from a persisted `error` field on
 the record.
@@ -894,7 +894,7 @@ responses:
 | `return X` (multi-turn) | Handler reached a clean checkpoint AND wants to expose `X` to the caller. | `suspended` (caller can `.run()` again to drive the next turn). | `X` (typed as `Output`). |
 | `raise asyncio.CancelledError()` | Handler decided to abort. | One-shot: record deleted. Multi-turn: chain transitions to `suspended` (stays alive). | `TaskCancelled()`. |
 
-`ctx.exit_for_recovery()` is the durable-deferral primitive. The
+`ctx.exit_for_recovery()` is the resilient-deferral primitive. The
 method:
 
 1. Flushes all touched metadata namespaces.
@@ -921,7 +921,7 @@ ends in error, not silently `in_progress`).
 ### §17. Metadata namespaces
 
 `ctx.metadata` is a **callable namespace facade** for the small,
-durable, per-task state the handler owns:
+resilient, per-task state the handler owns:
 
 - `ctx.metadata["key"] = value` — read/write the **default**
   namespace, persisted at `payload["metadata"]`.
@@ -935,7 +935,7 @@ other; `flush()` on one persists only that namespace's data.
 `metadata.flush()` is the fence the developer uses to make
 at-most-once side-effect patterns work across a crash. The framework
 **auto-flushes** all touched namespaces at every terminal-of-turn
-boundary, so writes the developer forgets to flush are still durable
+boundary, so writes the developer forgets to flush are still resilient
 across a graceful boundary. Explicit `flush()` is for mid-handler
 fence semantics.
 
@@ -961,7 +961,7 @@ plus:
   via the provider.
 - `append(key, value)` — append to a list-valued key. Same
   in-memory semantics as `increment`: atomic within the namespace
-  object, NOT atomic against the durable record.
+  object, NOT atomic against the resilient record.
 
 Flush failures are logged, not raised — a failed flush should not
 crash a handler. The framework retries on the next flush call or
@@ -973,7 +973,7 @@ auto-flush boundary.
 ## Part III — Storage contract (wire-level)
 
 This part documents how the framework projects the programming model
-onto the durable task record. The HTTP routes, request/response
+onto the resilient task record. The HTTP routes, request/response
 envelopes, and server-side merge rules themselves are defined by the
 *Foundry Task Storage Protocol* specification; this section names which
 fields the framework reads/writes and what the framework-reserved
@@ -1040,7 +1040,7 @@ the following top-level keys, all starting with `_` or named
 | `metadata:<ns>` | object | Same as above. | NAMED user metadata namespace `<ns>`. |
 | `_last_input_id` | string \| null | Set when caller supplies `input_id`. | Chain-head tracking (§11). |
 | `_turn_started_at` | ISO-8601 UTC string | Set at every turn-start boundary; NEVER re-stamped on recovery. | Source of truth for the per-turn watchdog (§14). |
-| `_retry_attempt` | integer | Incremented on handler raise; reset to 0 on steering drain. (Not also reset on success in the canonical Python implementation.) | Durable retry counter (§15). |
+| `_retry_attempt` | integer | Incremented on handler raise; reset to 0 on steering drain. (Not also reset on success in the canonical Python implementation.) | Resilient retry counter (§15). |
 | `_steering` | object (see below) | Only present on steerable tasks. | Steering mechanism state (§12). |
 
 The framework does NOT persist the handler's return value in the
@@ -1054,7 +1054,7 @@ returning.
 
 Likewise, `error` from a handler raise is NOT persisted. The
 framework emits a structured ERROR log (named
-`durable_task_handler_failure`) on every handler raise, but the
+`resilient_task_handler_failure`) on every handler raise, but the
 chain record itself does not carry the per-turn diagnostic.
 
 `_steering` object shape:
@@ -1063,7 +1063,7 @@ chain record itself does not carry the per-turn diagnostic.
 |---|---|---|
 | `pending_inputs` | array of input values OR refs (§23) | FIFO of queued steering inputs. |
 | `next_input_seq` | integer | Monotonic counter for promoted-attachment key allocation (NEVER reused). |
-| `cancel_requested` | boolean | Durable cancel signal; set on steering append; cleared after drain when pending is empty. |
+| `cancel_requested` | boolean | Resilient cancel signal; set on steering append; cleared after drain when pending is empty. |
 | `drain_in_progress` | boolean | True between the start of a drain PATCH and the next turn-start; protects against partial drain on crash. |
 | `active_input` | any JSON value OR ref | The single input being drained (mirror copy used by the race-recovery contract). Cleared at suspend / terminal. |
 
@@ -1342,7 +1342,7 @@ exceptions based on which channel the violation occurs on:
 
 Internal exceptions `_AttachmentTooLarge` and
 `_AttachmentLimitExceeded` are **provider-internal** — they are
-NOT exported from `durable/__init__.py`. The framework catches
+NOT exported from `tasks/__init__.py`. The framework catches
 `_AttachmentTooLarge` and re-raises the appropriate developer-
 facing exception based on the attachment key prefix (`_input` /
 `_steering_input_*` → `InputTooLarge`).
@@ -1378,7 +1378,7 @@ These transitions MUST be single PATCHes carrying BOTH `payload` and
    with `suspension_reason="run_completion"`. No `payload["error"]`
    is written; the per-turn failure surfaces to the caller via
    `TaskFailed(error=...)` and via the structured log
-   `durable_task_handler_failure`.
+   `resilient_task_handler_failure`.
 8. **Resume (suspended → in_progress)**: status="in_progress",
    `_turn_started_at` re-stamped, `_retry_attempt` reset to 0.
    New input written (inline or as ref + attachment per §23.2).
@@ -1641,7 +1641,7 @@ with the persisted `payload["input"]` and
 > the public surface defined in Part V — in the canonical Python
 > implementation, all of these live in `_`-prefixed modules
 > (`_provider.py`, `_client.py`, `_local_provider.py`) and are
-> NOT re-exported from `durable/__init__.py`'s `__all__`. The
+> NOT re-exported from `tasks/__init__.py`'s `__all__`. The
 > abstraction exists to keep the manager testable and to let the
 > framework swap hosted vs. local backends — but framework
 > consumers are not expected (and not supported) to construct or
@@ -1846,8 +1846,8 @@ framework never patches them (they're set at create-time).
 
 Selected when `FOUNDRY_HOSTING_ENVIRONMENT` is NOT set (i.e. local
 dev, tests). State lives under
-`~/.durable-tasks/<agent_name>/<session_id>/<task_id>.json` by
-default; override with `AGENTSERVER_DURABLE_TASKS_PATH`.
+`~/.agentserver-tasks/<agent_name>/<session_id>/<task_id>.json` by
+default; override with `AGENTSERVER_STATE_TASKS_PATH`.
 
 Implementation MUST:
 
@@ -2358,11 +2358,11 @@ named with a leading underscore (`_flush_all`) on every public
 surface — both as a method on `TaskMetadata` and anywhere the
 framework calls it. The manager invokes `_flush_all` at suspend
 / complete / fail / drain / `exit_for_recovery` boundaries to
-make every namespace the handler touched durable in one PATCH.
+make every namespace the handler touched resilient in one PATCH.
 
 The underscore prefix is the Python-canonical signal for
 "package-private; not part of the documented developer surface."
-It is NOT exported from `durable/__init__.py`, has no developer
+It is NOT exported from `tasks/__init__.py`, has no developer
 guide entry, and has no documented use case at the developer
 layer: per-namespace `metadata.flush()` is the only fence pattern
 developers should reach for (to commit a specific namespace before
@@ -2404,7 +2404,7 @@ API.
 - **Framework-only auto-flush** at every terminal-of-turn boundary
   walks every dirty namespace (the internal `_flush_all` helper
   described in §37). Handlers do not need explicit flushes for
-  durability across a graceful boundary; explicit `flush()` is
+  resilience across a graceful boundary; explicit `flush()` is
   for mid-handler fence semantics across a CRASH.
 - Flush failures are logged at WARN, not raised. A failed flush
   retries on the next flush call or the next auto-flush boundary.
@@ -2787,7 +2787,7 @@ Three SDK-bundled implementations:
 |---|---|---|
 | `BroadcastEventStream` | Live consumers attach before the producer starts. | No buffer. `subscribe(after=...)` is accepted but the `after` argument is silently ignored. Late subscribers miss earlier events. `subscribe()` returns an iterator over events emitted AFTER attach. Multi-subscriber (each gets a private cursor/queue). Goes away ONLY via explicit `delete(id)` — no TTL auto-tombstone. |
 | `ReplayEventStream` | Late subscribers need history. | Per-stream buffer retains all events. `subscribe(after=N)` is honored iff `cursor_fn` was supplied to the configurator; otherwise `after` is ignored. `ttl_seconds`, if supplied, drives per-event eviction (regardless of Active/Closed — events older than `now - ttl_seconds` are evicted from the buffer; see §46). When Closed AND `close_time + ttl_seconds` elapses, the registry auto-tombstones the id. |
-| `FileBackedReplayEventStream` | Crash-recoverable history (multi-turn UIs, durable response streaming). | Persists each emit to `storage_dir/<id>.jsonl`. **Constructor rehydrates** from an existing file if present — restart-safe. Same per-event TTL + close-clock semantics as `ReplayEventStream`. Optional `serializer: Callable[[Any], bytes]` and `deserializer: Callable[[bytes], Any]` for non-JSON payloads (default JSON). `delete()` (and TTL-since-close auto-tombstone) clean up the file BEFORE the registry tombstones the id. |
+| `FileBackedReplayEventStream` | Crash-recoverable history (multi-turn UIs, resilient response streaming). | Persists each emit to `storage_dir/<id>.jsonl`. **Constructor rehydrates** from an existing file if present — restart-safe. Same per-event TTL + close-clock semantics as `ReplayEventStream`. Optional `serializer: Callable[[Any], bytes]` and `deserializer: Callable[[bytes], Any]` for non-JSON payloads (default JSON). `delete()` (and TTL-since-close auto-tombstone) clean up the file BEFORE the registry tombstones the id. |
 
 Per-backing TTL + tombstone matrix:
 
@@ -3159,7 +3159,7 @@ Phase 2 — Handler re-entry (in-memory only):
 Phase 3 — "Drain end" PATCH (after handler re-entered):
  18. steering['drain_in_progress'] = False
  19. payload['_steering']          = steering
- 20. payload['_retry_attempt']     = 0     # Drain resets retry budget durably
+ 20. payload['_retry_attempt']     = 0     # Drain resets retry budget resiliently
  21. PATCH(task_id, payload=payload, lease piggyback)
      (No attachments touched in Phase 3.)
 
@@ -3232,7 +3232,7 @@ When a multi-turn handler ends a turn with `return X`:
 Properties this guarantees:
 
 - **No output persistence.** Whether the handler returns a value or
-  not, nothing about that value lands on the durable record. After
+  not, nothing about that value lands on the resilient record. After
   suspend the record reflects `status=suspended`, no `output` key.
   Awaiters of `TaskRun.result()` receive the value in-process before
   the chain enters its next turn; replay-after-crash returns to the
@@ -3436,7 +3436,7 @@ invariant holds across all transitions (today's framework can).
 This section enumerates the invariants every conformant implementation
 MUST satisfy. The items are testable; the canonical Python
 implementation has a regression test covering each (see
-`azure-ai-agentserver-core/tests/durable/` and `tests/streaming/`).
+`azure-ai-agentserver-core/tests/tasks/` and `tests/streaming/`).
 
 Items are grouped by area. Each item is identified `C-AREA-N`
 (e.g. `C-LCM-1` = Lifecycle item #1).
@@ -3673,8 +3673,8 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   `traceback` MUST be present.
 - **C-RET-6.** No persisted `error` field on the chain record.
   The framework's structured ERROR log (named
-  `durable_task_handler_failure`, with `task_id`, `input_id`,
-  `error_type`, `error_message`) is the durable failure
+  `resilient_task_handler_failure`, with `task_id`, `input_id`,
+  `error_type`, `error_message`) is the resilient failure
   observability surface; the chain record itself does not
   carry the per-turn diagnostic.
 
@@ -4057,7 +4057,7 @@ outputs that must survive crashes are the handler's responsibility
   drain`, `orphan attachment cleanup`. Log level minimum `INFO`
   except where noted.
 - **C-OBS-2.** Logger names MUST be hierarchical under
-  `azure.ai.agentserver.durable` (or language-equivalent).
+  `azure.ai.agentserver.agentserver` (or language-equivalent).
 
 ---
 
@@ -4069,15 +4069,15 @@ outputs that must survive crashes are the handler's responsibility
   envelopes, server-side merge rules, authentication, activation,
   ETag/CAS, error codes). The framework conforms to that contract;
   this document only describes how the framework *uses* the store.
-- **Speckit specs (historical, dev-side only)** — `001-durable-tasks`
+- **Speckit specs (historical, dev-side only)** — `001-resilient-tasks`
   through `018-task-attachments` under contributor `specs/` working
   trees. Each is a point-in-time record of how a specific feature
   was scoped and built; the current state of every feature lives
   in THIS document. These are not source-controlled and are
   intentionally not linked.
 - **Canonical Python implementation:**
-  `sdk/agentserver/azure-ai-agentserver-core/azure/ai/agentserver/core/durable/`
-  and `.../streaming/`. Tests at `tests/durable/` and
+  `sdk/agentserver/azure-ai-agentserver-core/azure/ai/agentserver/core/tasks/`
+  and `.../streaming/`. Tests at `tests/tasks/` and
   `tests/streaming/` cover the conformance items in Part VIII.
 
 ## Part X — Appendices (informative)
@@ -4118,13 +4118,13 @@ metadata namespaces are populated, framework state slots are set.
 {
   "object": "task",
   "id": "research-session-abc123",
-  "agent_name": "durable-research-agent",
+  "agent_name": "resilient-research-agent",
   "session_id": "session-abc123",
   "title": "Deep research on transformer trends 2026",
   "status": "in_progress",
 
   "lease": {
-    "owner": "durable-research-agent|session:session-abc123",
+    "owner": "resilient-research-agent|session:session-abc123",
     "instance_id": "worker-12-3f8a9d-1780912345",
     "generation": 7,
     "expires_at": "2026-06-09T04:05:30.123Z",
@@ -4226,7 +4226,7 @@ What this single document demonstrates:
 | Monotonic seq invariant (§23.5) | `next_input_seq: 5` with live keys `_3` + `_4` — one drain consumed `_0`/`_1`/`_2`, no renumbering |
 | Steering mechanism state (§12) | `cancel_requested`, `drain_in_progress`, `active_input` |
 | Per-turn watchdog source of truth (§14) | `_turn_started_at` |
-| Durable retry counter (§15) | `_retry_attempt` |
+| Resilient retry counter (§15) | `_retry_attempt` |
 | Last-input-id chain (§11) | `_last_input_id` |
 | ETag CAS (§25) | `etag` |
 | Worst-case attachment count (§23.2) | 4 of 20 slots used here; framework reserves at most 11 (1 + 9 + 1) |

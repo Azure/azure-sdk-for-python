@@ -3,7 +3,7 @@
 """ResponseContext for user-defined response execution.
 
 (Spec 024 Phase 5) Flat handler-facing surface — the pre-Phase-5
-``DurabilityContext`` indirection is collapsed; recovery + steering
+``ResilienceContext`` indirection is collapsed; recovery + steering
 fields live directly on :class:`ResponseContext`. The cancellation
 surface mirrors the task primitive's composing-cause shape (separate
 ``cancel`` + ``shutdown`` events, independent cause booleans).
@@ -17,7 +17,7 @@ from typing import TYPE_CHECKING, Any, NoReturn, Optional, Protocol, Sequence
 
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 
-from ._durability_context import _DeveloperMetadataFacade
+from ._resilience_context import _DeveloperMetadataFacade
 from .models._generated import (
     CreateResponse,
     Item,
@@ -31,7 +31,7 @@ from .models._helpers import get_input_expanded, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
 
 if TYPE_CHECKING:
-    from azure.ai.agentserver.core.durable import TaskContext as _CoreTaskContext
+    from azure.ai.agentserver.core.tasks import TaskContext as _CoreTaskContext
 
     from .store._base import ResponseProviderProtocol
 
@@ -41,11 +41,11 @@ if TYPE_CHECKING:
 # next-lifetime recovery. The public handler idiom is
 # ``await context.exit_for_recovery()`` which raises
 # :class:`ResponseExitForRecovery`; the orchestrator translates that to this
-# core sentinel at the durable task boundary.
+# core sentinel at the resilient task boundary.
 # Falls back to ``Any`` when the core module is unavailable at import
 # time (e.g. for type-stub generation).
 try:
-    from azure.ai.agentserver.core.durable._context import _ExitForRecovery as _ExitForRecoverySentinel
+    from azure.ai.agentserver.core.tasks._context import _ExitForRecovery as _ExitForRecoverySentinel
 except ImportError:  # pragma: no cover - defensive
     _ExitForRecoverySentinel = Any  # type: ignore[assignment,misc]
 
@@ -62,7 +62,7 @@ class ResponseExitForRecovery(BaseException):
     Subclasses :class:`BaseException` (NOT :class:`Exception`) — like
     :class:`asyncio.CancelledError` / :class:`GeneratorExit` — so a handler's
     broad ``except Exception`` cannot accidentally swallow the recovery signal.
-    ``try/finally`` cleanup still runs. The framework catches it at the durable
+    ``try/finally`` cleanup still runs. The framework catches it at the resilient
     task boundary and leaves the response ``in_progress`` for the next-lifetime
     recovery scanner.
 
@@ -90,7 +90,7 @@ class ConversationChainMetadataNamespace(Protocol):
     adds two namespace-specific operations:
 
     - ``__call__(name)`` returns a sibling namespace facade.
-    - ``await flush()`` forces the underlying durable write to land
+    - ``await flush()`` forces the underlying resilient write to land
       before the handler proceeds with a side effect.
     """
 
@@ -254,7 +254,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self.persisted_response: "ResponseObject | None" = None
         # Default-namespace metadata facade; framework code (in the
         # orchestrator) swaps the backing to the TaskContext.metadata
-        # when the response runs inside a durable task body.
+        # when the response runs inside a resilient task body.
         self.conversation_chain_metadata: ConversationChainMetadataNamespace = _DeveloperMetadataFacade({})
 
         # Composing cancellation surface. ``_cancellation_signal`` is
@@ -273,7 +273,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self.client_cancelled: bool = False
 
         # Private link to the underlying TaskContext (set by the
-        # orchestrator on durable paths) — enables exit_for_recovery to
+        # orchestrator on resilient paths) — enables exit_for_recovery to
         # delegate to the framework's recovery sentinel.
         self._task_context: "_CoreTaskContext[Any] | None" = None
 
@@ -293,7 +293,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         (e.g., upstream SDK session ids, per-conversation rate limits,
         application-side conversation indexes). The value is deterministic
         across turns and stable across crash recovery, so storing it in a
-        durable side store and looking it up on recovery is sufficient to
+        resilient side store and looking it up on recovery is sufficient to
         re-attach to the prior session.
 
         The chain id derivation matches the deployment's
@@ -324,16 +324,16 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
                 await context.exit_for_recovery()
 
         It **raises** :class:`ResponseExitForRecovery` internally — it NEVER
-        returns. The framework catches the signal at the durable task boundary
+        returns. The framework catches the signal at the resilient task boundary
         and leaves the response ``in_progress`` so the handler is re-invoked on
-        the next process start (for ``durable_background=True`` responses).
+        the next process start (for ``resilient_background=True`` responses).
 
         (Streaming handlers that simply ``return`` without emitting a terminal
         while ``context.shutdown`` is set also recover via the implicit
         fallback; ``await context.exit_for_recovery()`` is the explicit,
         recommended form.)
 
-        :raises RuntimeError: When called outside a durable task body (e.g. on a
+        :raises RuntimeError: When called outside a resilient task body (e.g. on a
             ``store=false`` request where there is no task to defer).
         :raises ResponseExitForRecovery: Always, on success — the control-flow
             signal the framework catches.
@@ -341,7 +341,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         """
         if self._task_context is None:
             raise RuntimeError(
-                "context.exit_for_recovery() can only be called inside a durable "
+                "context.exit_for_recovery() can only be called inside a resilient "
                 "response handler (store=true). For store=false responses there is "
                 "no task to defer for recovery."
             )

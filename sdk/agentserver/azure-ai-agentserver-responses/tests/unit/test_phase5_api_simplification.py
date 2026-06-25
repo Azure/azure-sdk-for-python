@@ -6,7 +6,7 @@ Tests all approved §A proposals (#4, #5, #6, #8, #10, #11, #12, #13):
 
 - Proposal #4: Remove `max_pending` from ResponsesServerOptions
 - Proposal #5: Remove `context.shutdown.is_set()` (subsumed by #11)
-- Proposal #6 + #10: Flatten `context.durability.*` into top-level fields
+- Proposal #6 + #10: Flatten `context.resilience.*` into top-level fields
 - Proposal #8: Remove `store_disabled` from ResponsesServerOptions
 - Proposal #11: New cancellation surface (cause booleans + events +
   exit_for_recovery). Hard-reject 3-arg handler signatures. Drop
@@ -109,7 +109,7 @@ def test_replay_event_ttl_hardcoded_at_least_600() -> None:
 
 
 # ─────────────────────────────────────────────────────────────────────
-# Proposal #6 + #10 — Flatten DurabilityContext into ResponseContext
+# Proposal #6 + #10 — Flatten ResilienceContext into ResponseContext
 # ─────────────────────────────────────────────────────────────────────
 
 
@@ -124,7 +124,7 @@ def _make_response_context():
     )
 
 
-def test_durability_fields_flat_on_context() -> None:
+def test_resilience_fields_flat_on_context() -> None:
     """Flattened fields directly on ResponseContext (post-Proposal #10)."""
     ctx = _make_response_context()
     assert hasattr(ctx, "is_recovery")
@@ -137,10 +137,10 @@ def test_durability_fields_flat_on_context() -> None:
     assert ctx.pending_input_count == 0
 
 
-def test_durability_property_removed_from_context() -> None:
-    """`context.durability` nested property is gone (Proposal #10)."""
+def test_resilience_property_removed_from_context() -> None:
+    """`context.resilience` nested property is gone (Proposal #10)."""
     ctx = _make_response_context()
-    assert not hasattr(ctx, "durability")
+    assert not hasattr(ctx, "resilience")
 
 
 def test_legacy_field_names_removed() -> None:
@@ -162,20 +162,20 @@ def test_entry_mode_removed_from_context() -> None:
     assert not hasattr(ctx, "entry_mode")
 
 
-def test_durability_entry_mode_alias_removed() -> None:
-    """`DurabilityEntryMode` Literal alias removed (Proposal #13)."""
+def test_resilience_entry_mode_alias_removed() -> None:
+    """`ResilienceEntryMode` Literal alias removed (Proposal #13)."""
     with pytest.raises(ImportError):
-        from azure.ai.agentserver.responses._durability_context import (  # noqa: F401
-            DurabilityEntryMode,
+        from azure.ai.agentserver.responses._resilience_context import (  # noqa: F401
+            ResilienceEntryMode,
         )
 
 
-def test_durability_context_class_removed() -> None:
-    """`DurabilityContext` class deleted (Proposal #10 flatten)."""
-    from azure.ai.agentserver.responses import _durability_context
+def test_resilience_context_class_removed() -> None:
+    """`ResilienceContext` class deleted (Proposal #10 flatten)."""
+    from azure.ai.agentserver.responses import _resilience_context
 
-    assert not hasattr(_durability_context, "DurabilityContext"), (
-        "spec 024 Proposal #10: DurabilityContext class must be deleted; " "fields are flattened onto ResponseContext"
+    assert not hasattr(_resilience_context, "ResilienceContext"), (
+        "spec 024 Proposal #10: ResilienceContext class must be deleted; " "fields are flattened onto ResponseContext"
     )
 
 
