@@ -215,12 +215,12 @@ async def test_cancel_bg_response_persisted_state_matches_returned_state() -> No
     get_resp = await client.get(f"/responses/{response_id}")
     assert get_resp.status_code == 200
     persisted = get_resp.json()
-    assert persisted["status"] == "cancelled", (
-        f"Persisted status should match cancel return: expected 'cancelled', got '{persisted['status']}'"
-    )
-    assert persisted["output"] == [], (
-        f"Persisted output should match cancel return: expected [], got {persisted['output']}"
-    )
+    assert (
+        persisted["status"] == "cancelled"
+    ), f"Persisted status should match cancel return: expected 'cancelled', got '{persisted['status']}'"
+    assert (
+        persisted["output"] == []
+    ), f"Persisted output should match cancel return: expected [], got {persisted['output']}"
 
 
 # ════════════════════════════════════════════════════════════

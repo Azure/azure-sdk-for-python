@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 # pylint: disable=too-many-statements
@@ -18,7 +19,9 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
 
 import anyio
 
-from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core._platform_headers import (
+    PLATFORM_ERROR_TAG,
+)  # pylint: disable=import-error,no-name-in-module
 
 from .._options import ResponsesServerOptions
 from ..models import _generated as generated_models

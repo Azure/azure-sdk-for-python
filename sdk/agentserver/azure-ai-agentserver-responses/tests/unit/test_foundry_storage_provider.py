@@ -674,9 +674,7 @@ async def test_pipeline__does_not_include_content_decode_policy(credential: Any)
                 policies_in_chain = list(chain)
                 break
 
-        assert policies_in_chain, (
-            "Could not find policy list on the pipeline; azure-core internals may have changed."
-        )
+        assert policies_in_chain, "Could not find policy list on the pipeline; azure-core internals may have changed."
 
         # Each chain entry wraps a policy via ``._policy`` or is the policy itself.
         policy_classes = []
@@ -685,8 +683,7 @@ async def test_pipeline__does_not_include_content_decode_policy(credential: Any)
             policy_classes.append(type(policy))
 
         assert ContentDecodePolicy not in policy_classes, (
-            "ContentDecodePolicy must not be in the Foundry storage pipeline; "
-            "it crashes on binary response bodies."
+            "ContentDecodePolicy must not be in the Foundry storage pipeline; " "it crashes on binary response bodies."
         )
     finally:
         await provider.aclose()

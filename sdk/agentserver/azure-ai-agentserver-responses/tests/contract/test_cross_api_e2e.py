@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 """Cross-API E2E behavioural tests exercising multi-endpoint flows on a single response.
@@ -572,9 +573,9 @@ class TestC1SyncStored:
 
             # Non-bg in-flight responses are not persisted → GET returns 404
             get_resp = await client.get(f"/responses/{response_id}")
-            assert get_resp.status_code == 404, (
-                f"Expected 404 for disconnected non-bg sync response, got {get_resp.status_code}"
-            )
+            assert (
+                get_resp.status_code == 404
+            ), f"Expected 404 for disconnected non-bg sync response, got {get_resp.status_code}"
 
 
 # ════════════════════════════════════════════════════════════
@@ -681,9 +682,9 @@ class TestC2StreamStored:
 
             # Non-bg streaming response cancelled by disconnect → not persisted → 404
             get_resp = await client.get(f"/responses/{response_id}")
-            assert get_resp.status_code == 404, (
-                f"Expected 404 for disconnected non-bg streaming response, got {get_resp.status_code}"
-            )
+            assert (
+                get_resp.status_code == 404
+            ), f"Expected 404 for disconnected non-bg streaming response, got {get_resp.status_code}"
 
 
 # ════════════════════════════════════════════════════════════

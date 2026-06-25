@@ -426,9 +426,9 @@ def test_delete__second_delete_returns_404() -> None:
 
     # Second DELETE – response is gone, must return 404
     second_delete = client.delete(f"/responses/{response_id}")
-    assert second_delete.status_code == 404, (
-        "Second DELETE on an already-deleted response must return 404 (response no longer exists)"
-    )
+    assert (
+        second_delete.status_code == 404
+    ), "Second DELETE on an already-deleted response must return 404 (response no longer exists)"
     payload = second_delete.json()
     assert payload["error"].get("type") == "invalid_request_error"
     assert payload["error"].get("code") == "invalid_request_error"
@@ -471,6 +471,6 @@ def test_delete__deletes_completed_background_response() -> None:
     payload = delete.json()
     assert payload["id"] == response_id
     assert payload["deleted"] is True
-    assert payload.get("object") == "response", (
-        f"DELETE result must have object='response', got: {payload.get('object')}"
-    )
+    assert (
+        payload.get("object") == "response"
+    ), f"DELETE result must have object='response', got: {payload.get('object')}"

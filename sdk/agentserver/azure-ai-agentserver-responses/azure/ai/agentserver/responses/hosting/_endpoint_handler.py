@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
 # pylint: disable=too-many-return-statements
@@ -532,9 +533,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return JSONResponse(
                     exc.response_body,
                     status_code=500,
-                    headers=_apply_error_source_headers(
-                        _hdrs, ERROR_SOURCE_PLATFORM, format_error_detail(exc)
-                    ),
+                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_PLATFORM, format_error_detail(exc)),
                 )
             return _error_response(exc, _hdrs)
         except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -664,9 +663,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
                 # B17: monitor client disconnect for non-background streams
                 if not ctx.background:
-                    disconnect_task = asyncio.create_task(
-                        self._monitor_disconnect(request, ctx.cancellation_signal)
-                    )
+                    disconnect_task = asyncio.create_task(self._monitor_disconnect(request, ctx.cancellation_signal))
                     raw_iter = body_iter
 
                     async def _iter_with_cleanup():  # type: ignore[return]
@@ -743,9 +740,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return JSONResponse(
                 err_body,
                 status_code=500,
-                headers=_apply_error_source_headers(
-                    self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
-                ),
+                headers=_apply_error_source_headers(self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM),
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
