@@ -139,7 +139,7 @@ To distinguish steering from a client cancel inside the cancel branch:
 ```python
 if cancellation_signal.is_set() and context.pending_input_count > 0:
     # Steering pressure — a new turn is queued. Emit completed with
-    # whatever output is resiliently committed; the framework re-enters with
+    # whatever output is persisted; the framework re-enters with
     # the new input as ctx.input.
     yield stream.emit_completed()
     return

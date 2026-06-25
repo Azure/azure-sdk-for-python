@@ -19,7 +19,7 @@ STAGING_DIR="$SCRIPT_DIR/src/resilient-research-agent/wheels"
 
 if [[ ! -d "$CENTRAL_WHEELS" ]] || ! ls "$CENTRAL_WHEELS"/*.whl >/dev/null 2>&1; then
     echo "ERROR: no checked-in wheels found at $CENTRAL_WHEELS" >&2
-    echo "       Did you pull the latest from feature/agentserver-resilient-agent-demo?" >&2
+    echo "       Did you pull the latest from the agentserver demo branch?" >&2
     exit 1
 fi
 

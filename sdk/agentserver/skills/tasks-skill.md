@@ -142,7 +142,7 @@ non-side-effectful part of the handler, do that.
 | `"dedup_token": "uuid-abc"` | Vector embeddings |
 
 Always call `await ctx.metadata.flush()` at the end of a checkpoint
-boundary. That's the resilient persistence point — a crash before flush
+boundary. That's the persistence point — a crash before flush
 re-runs the phase; a crash after flush skips it.
 
 ## Hosted vs local

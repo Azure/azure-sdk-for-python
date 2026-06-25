@@ -207,5 +207,5 @@ def test_resilient_copilot_closes_the_five_implementation_gaps() -> None:
 # The earlier ``test_resilient_agent_demo_preserved`` assertion lived here while
 # the ``resilient-agent-demo`` azd-deployable sample was tracked alongside the
 # core/invocations packages. The demo has been split into its own branch
-# (``feature/agentserver-resilient-agent-demo``) and is no longer part of this
+# and is no longer part of this
 # package's shipping surface, so the structural guard is no longer relevant.
