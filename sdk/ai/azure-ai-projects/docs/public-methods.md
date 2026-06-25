@@ -77,8 +77,8 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .agents.list_session_files
 .agents.list_sessions
 .agents.list_versions
-.agents.update_details
 .agents.stop_session
+.agents.update_details
 .agents.upload_session_file*
 
 .connections.get*
