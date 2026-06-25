@@ -15,12 +15,13 @@ The handler delivers five key behaviors:
 3. The handler forwards ``SessionIdleData`` (turn-complete) as a
    ``session_idle`` chunk so consumers can deterministically detect
    end-of-turn without polling.
-4. Upstream-history **dedup**: before sending the user's message, the
-   handler reads the Copilot session's persisted event log via
-   ``session.get_messages()`` and skips the send when the most-recent
-   user message already matches this turn's input. This is the source
-   of truth for "did I already send this turn" — no separate metadata
-   watermark, no flush-ordering race.
+4. Invocation-scoped **dedup**: each turn persists the Copilot ``messageId``
+   returned by ``session.send`` under its ``invocation_id`` (a durable,
+   file-backed marker). Dedup keys on that marker — NOT message content — so
+   only a crash-recovered invocation (same ``invocation_id``, marker present)
+   skips the re-send, while a brand-new turn always sends even if its text
+   repeats a previous one. The marker is the source of truth for "did *this*
+   invocation already send".
 5. Recovery **replay**: on ``ctx.entry_mode == "recovered"`` the
    handler emits the assistant text the previous lifetime had already
    accumulated (read from ``session.get_messages()``) as a single
@@ -116,33 +117,6 @@ async def _open_session(client: Any, session_id: str, entry_mode: str) -> Any:
     )
 
 
-async def _last_user_message_matches(session: Any, message: str) -> bool:
-    """upstream-history dedup.
-
-    Read the session's persisted event log; the user-turn was already
-    sent if the most recent ``UserMessageData`` event's content equals
-    this turn's input. The upstream session is the source of truth.
-    """
-    from copilot.generated.session_events import (  # pylint: disable=import-outside-toplevel
-        UserMessageData,
-    )
-
-    try:
-        events = await session.get_messages()
-    except (AttributeError, RuntimeError):
-        # SDK has no get_messages (older SDK build): cannot dedup; skip safely.
-        # Re-send is acceptable because Copilot tolerates duplicate-user-message
-        # on the same turn.
-        return False
-
-    for ev in reversed(events or []):
-        data = getattr(ev, "data", None)
-        if isinstance(data, UserMessageData):
-            content = (getattr(data, "content", "") or "").strip()
-            return content == message.strip()
-    return False
-
-
 async def _recovered_assistant_text(session: Any) -> str:
     """recovery replay snapshot.
 
@@ -182,6 +156,49 @@ async def _recovered_assistant_text(session: Any) -> str:
     return "".join(parts)
 
 
+async def _completed_assistant_reply(session: Any) -> str | None:
+    """Return the assistant reply IF the last user turn already finished.
+
+    Reads the upstream session log: if the most recent user message is
+    followed by a final ``AssistantMessageData`` (the assembled, turn-complete
+    envelope), the turn is done and its text is returned. Returns ``None`` when
+    the turn is still in-flight (no final assistant message yet), so the caller
+    knows it must wait for ``SessionIdle`` instead.
+
+    This guards the skip-send path: a ``SessionIdle`` only fires for an
+    *in-flight* turn, so blindly waiting for one after an already-completed
+    turn hangs forever.
+    """
+    from copilot.generated.session_events import (  # pylint: disable=import-outside-toplevel
+        AssistantMessageData,
+        AssistantMessageDeltaData,
+        UserMessageData,
+    )
+
+    try:
+        events = await session.get_messages()
+    except (AttributeError, RuntimeError):
+        return None
+
+    parts: list[str] = []
+    saw_user = False
+    saw_final = False
+    for ev in events or []:
+        data = getattr(ev, "data", None)
+        if isinstance(data, UserMessageData):
+            saw_user = True
+            parts = []
+            saw_final = False
+        elif not saw_user:
+            continue
+        elif isinstance(data, AssistantMessageDeltaData):
+            parts.append(getattr(data, "delta_content", "") or "")
+        elif isinstance(data, AssistantMessageData):
+            parts = [getattr(data, "content", "") or ""]
+            saw_final = True
+    return "".join(parts) if saw_final else None
+
+
 # --------------------------------------------------------------------------
 # The resilient task
 # --------------------------------------------------------------------------
@@ -202,7 +219,20 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     message: str = ctx.input["message"]
     invocation_id: str = ctx.input["invocation_id"]
 
-    invocation_store.save(invocation_id, {"status": "running"})
+    # ``copilot_message_id`` is our durable, invocation-scoped "already
+    # delivered to Copilot" marker (file-backed, survives crashes). It is the
+    # dedup source of truth — NOT the message content. A crash-recovered
+    # invocation re-runs with the SAME invocation_id and carries the marker
+    # forward, so we skip the re-send; a brand-new turn (``resumed``) gets a
+    # fresh invocation_id with no marker and therefore always sends, even if its
+    # text repeats a previous turn (content matching would wrongly skip it).
+    prior = invocation_store.load(invocation_id) or {}
+    sent_message_id: str | None = prior.get("copilot_message_id")
+
+    invocation_store.save(
+        invocation_id,
+        {"status": "running", "copilot_message_id": sent_message_id},
+    )
     stream = await streams.get_or_create(invocation_id)
     await stream.emit({"type": "lifecycle", "status": "running"})
 
@@ -238,10 +268,10 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
         # ── Phase 1: Pre-entry cancel (rapid-fire steering) ────────
         if ctx.cancel.is_set():
             logger.info("Skipping steered=%s — cancel pre-set", ctx.is_steered_turn)
-            # Still send so the message is preserved in upstream history —
-            # but go through dedup so we don't double-send on recovery.
-            if not await _last_user_message_matches(session, message):
-                await session.send(message)
+            # Still send so the message is preserved in upstream history — but
+            # only if THIS invocation hasn't already delivered it (recovery).
+            if sent_message_id is None:
+                sent_message_id = await session.send(message)
             await session.abort()
             invocation_store.save(
                 invocation_id,
@@ -249,26 +279,63 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                     "status": "cancelled",
                     "reason": "steered",
                     "message_preserved": True,
+                    "copilot_message_id": sent_message_id,
                 },
             )
             return None
-        # ── upstream-history dedup ──────────────────
-        # Send the message only if the upstream session does not already
-        # have it as the most recent user message.
-        already_sent = await _last_user_message_matches(session, message)
-        if not already_sent:
-            await session.send(message)
+        # ── send vs. skip (dedup by invocation_id, not content) ─────
+        # A fresh or resumed *new* turn always sends. Only a crash-recovered
+        # invocation that already delivered its message (marker present) skips
+        # the send. When it skips and the turn already finished upstream, return
+        # that reply — a SessionIdle only fires for an in-flight turn, so waiting
+        # for one after completion would hang forever.
+        if sent_message_id is not None:
+            completed_reply = await _completed_assistant_reply(session)
+            if completed_reply is not None:
+                logger.info(
+                    "Recovered invocation %s already complete upstream (%d chars) — "
+                    "returning without waiting for SessionIdle",
+                    invocation_id,
+                    len(completed_reply),
+                )
+                # The recovery-replay block above already streamed this text to
+                # SSE consumers, so don't re-emit it here — just mark done.
+                await stream.emit({"type": "session_idle"})
+                output = {
+                    "invocation_id": invocation_id,
+                    "reply": completed_reply,
+                    "partial": False,
+                }
+                invocation_store.save(invocation_id, {"status": "completed", "output": output})
+                return output
+            logger.info(
+                "Recovered invocation %s already sent; turn in-flight — waiting for SessionIdle",
+                invocation_id,
+            )
         else:
-            logger.info("Skipping session.send — upstream history already has this turn")
+            sent_message_id = await session.send(message)
+            invocation_store.save(
+                invocation_id,
+                {"status": "running", "copilot_message_id": sent_message_id},
+            )
+            logger.info(
+                "Sent message to Copilot (messageId=%s) for invocation %s; awaiting events…",
+                sent_message_id,
+                invocation_id,
+            )
 
         # ── Phase 2: Stream the Copilot turn, checking cancel ──────
         reply_parts: list[str] = []
         idle_event = asyncio.Event()
         loop = asyncio.get_event_loop()
+        _event_count = 0
 
         def on_event(event: Any) -> None:
             """SDK callback — emit deltas live, signal on idle."""
+            nonlocal _event_count
+            _event_count += 1
             data = event.data
+            logger.debug("on_event #%d: %s", _event_count, type(data).__name__)
             if isinstance(data, AssistantMessageDeltaData):
                 delta = getattr(data, "delta_content", "") or ""
                 reply_parts.append(delta)
@@ -282,6 +349,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                     loop.create_task(_stream_and_persist(stream, invocation_id, content, reply_parts))
             elif isinstance(data, SessionIdleData):
                 # emit session_idle to consumers and unblock us.
+                logger.info("SessionIdle received — turn complete (events=%d)", _event_count)
                 loop.create_task(stream.emit({"type": "session_idle"}))
                 idle_event.set()
 
@@ -295,6 +363,12 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
             done, pending = await asyncio.wait(
                 {cancel_task, idle_task},
                 return_when=asyncio.FIRST_COMPLETED,
+            )
+            logger.info(
+                "Turn wait resolved: idle=%s cancelled=%s events_seen=%d",
+                idle_task in done,
+                cancel_task in done,
+                _event_count,
             )
             for t in pending:
                 t.cancel()
