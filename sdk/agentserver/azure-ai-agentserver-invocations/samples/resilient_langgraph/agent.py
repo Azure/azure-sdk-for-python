@@ -362,12 +362,15 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                             invocation_id,
                             {"status": "cancelled", "reason": "steered"},
                         )
+                        await stream.close()
                         return None
+                    await stream.close()
                     return await _finalize_invocation(ctx, thread_config, invocation_id)
 
     # ── Phase 1: Pre-entry cancel ───────────────────────────────────
     if ctx.cancel.is_set():
         invocation_store.save(invocation_id, {"status": "cancelled", "reason": "steered"})
+        await stream.close()
         return None
     # ── Phase 2: Invoke graph with inter-node cancellation ──────────
     state = await asyncio.to_thread(_graph.get_state, thread_config)
@@ -410,6 +413,8 @@ async def langgraph_session(ctx: TaskContext[dict]) -> dict[str, Any]:
     # ── Phase 3: Post-completion cancel check ───────────────────────
     if not completed or ctx.cancel.is_set():
         invocation_store.save(invocation_id, {"status": "cancelled", "reason": "steered"})
+        await stream.close()
         return None
     # Normal completion
+    await stream.close()
     return await _finalize_invocation(ctx, thread_config, invocation_id)
