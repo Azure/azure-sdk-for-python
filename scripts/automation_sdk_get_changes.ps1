@@ -53,9 +53,11 @@ $absolutePackagePath = Resolve-Path -Path $PackagePath
 Write-Host "absolutePackagePath: $absolutePackagePath"
 
 # Resolve the output JSON path to an absolute path (the file may not exist yet)
-$absoluteOutputJsonFile = [System.IO.Path]::GetFullPath((Join-Path (Get-Location).Path $OutputJsonFile))
 if ([System.IO.Path]::IsPathRooted($OutputJsonFile)) {
     $absoluteOutputJsonFile = $OutputJsonFile
+}
+else {
+    $absoluteOutputJsonFile = [System.IO.Path]::GetFullPath((Join-Path (Get-Location).Path $OutputJsonFile))
 }
 Write-Host "absoluteOutputJsonFile: $absoluteOutputJsonFile"
 
