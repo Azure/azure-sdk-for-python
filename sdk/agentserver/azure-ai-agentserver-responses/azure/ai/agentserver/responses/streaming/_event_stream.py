@@ -189,13 +189,13 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         return self._response.internal_metadata  # type: ignore[attr-defined,no-any-return]
 
     def checkpoint(self) -> "ResponseCheckpointEvent":
-        """Return a checkpoint event to ``yield`` for resilient persistence.
+        """Return a checkpoint event to ``yield`` for persistence.
 
         Usage (inside a resilient background response handler)::
 
             yield stream.checkpoint()
 
-        Yielding the event resiliently persists the current ``stream.response``
+        Yielding the event persists the current ``stream.response``
         snapshot via the storage provider. It is processed by the orchestrator
         and is NOT forwarded to the SSE wire (internal control signal).
 

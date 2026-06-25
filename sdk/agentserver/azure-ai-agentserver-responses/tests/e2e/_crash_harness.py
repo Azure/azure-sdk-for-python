@@ -166,7 +166,7 @@ class CrashHarness:
     def _build_env(self) -> dict[str, str]:
         """Compose the subprocess environment.
 
-        Wires PORT and the three resilient storage paths so the
+        Wires PORT and the three state storage paths so the
         sample can pick them up. Specific environment variable names are a
         convention the sample author honours.
 

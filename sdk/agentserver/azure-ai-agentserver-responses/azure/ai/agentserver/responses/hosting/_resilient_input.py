@@ -188,7 +188,7 @@ class ResilientResponseInput:
         """Serialize to the resilient-task input dict — the single producer.
 
         Asserts JSON-safety + ref-freeness: a non-serializable field raises
-        ``TypeError`` here rather than silently leaking into the resilient store.
+        ``TypeError`` here rather than silently leaking into the task store.
 
         :returns: A JSON-serializable dict suitable for the resilient-task input.
         :rtype: dict[str, Any]

@@ -286,7 +286,7 @@ app = ResponsesAgentServerHost()
 app = ResponsesAgentServerHost(store=MyCustomProvider())
 ```
 
-When deployed to Azure AI Foundry, resilient persistence is enabled automatically —
+When deployed to Azure AI Foundry, persistence is enabled automatically —
 no custom provider registration is needed.
 
 ---
@@ -1237,7 +1237,7 @@ Platform environment variables (read once at startup via `AgentConfig`):
 | `SSE_KEEPALIVE_INTERVAL` | Disabled | Interval (seconds) between SSE keep-alive comments |
 | `PORT` | `8088` | HTTP listen port |
 | `DEFAULT_FETCH_HISTORY_ITEM_COUNT` | `100` | Override for `default_fetch_history_count` |
-| `FOUNDRY_PROJECT_ENDPOINT` | — | Foundry project endpoint (enables resilient persistence) |
+| `FOUNDRY_PROJECT_ENDPOINT` | — | Foundry project endpoint (enables persistence) |
 | `FOUNDRY_AGENT_SESSION_ID` | — | Platform-supplied session ID |
 | `FOUNDRY_AGENT_NAME` | — | Agent name for tracing |
 | `FOUNDRY_AGENT_VERSION` | — | Agent version for tracing |
@@ -1323,7 +1323,7 @@ together.
 When the server restarts after a crash and your handler is re-invoked:
 
 1. The library calls your handler with `context.is_recovery == True`.
-2. You query upstream (and your own `context.conversation_chain_metadata` watermarks) to determine the **resumption point** — the most recent state you are confident is resiliently committed.
+2. You query upstream (and your own `context.conversation_chain_metadata` watermarks) to determine the **resumption point** — the most recent state you are confident is persisted.
 3. You build a **resumption response**: a `ResponseObject` reflecting only the output items you trust at the resumption point. **In-flight items from the crashed attempt are excluded.** Construct this from upstream framework state + your own metadata watermarks — the library does NOT give you a snapshot of the prior attempt's in-flight state, because none exists in a useful form.
 4. You construct `ResponseEventStream(response=resumption_response, ...)` instead of the usual `request=request` form.
 5. You emit `response.created` exactly as you would on a fresh attempt — the framework dedups the response-store write so it happens exactly once across all recovery attempts. You do not need to branch on `is_recovery` to decide whether to emit `response.created`.
@@ -1358,7 +1358,7 @@ is the naive fallback (see below).
 - Constructs `ResponseEventStream(response=resumption_response)` on recovered entry.
 - Emits `response.in_progress` early in the recovered path (this is the reset).
 - Uses upstream framework's native resume facility (e.g. session resume, checkpoint replay) — never re-runs a side-effecting upstream call without checking a watermark first.
-- Watermarks any upstream side-effecting call by writing a small marker to `context.conversation_chain_metadata` **before** the call and clearing it **after** the call has been resiliently committed upstream. Call `await context.conversation_chain_metadata.flush()` between the watermark write and the side effect to ensure the marker survives a crash.
+- Watermarks any upstream side-effecting call by writing a small marker to `context.conversation_chain_metadata` **before** the call and clearing it **after** the call has been persisted upstream. Call `await context.conversation_chain_metadata.flush()` between the watermark write and the side effect to ensure the marker survives a crash.
 - For upstream-session-id needs: `context.conversation_chain_id` is a derived, stable chain identifier — the framework computes it so every turn of the same conversation resolves to the same value (anchored to the conversation's root: a `conversation_id`, or the head of a `previous_response_id` chain, falling back to a first turn's own `response_id`), stable across all attempts of a turn. It's a convenient session id to pass to upstream frameworks (Copilot `session_id`, LangGraph `thread_id`) — using it avoids allocating and persisting your own UUID, though you may use your own identifier if you prefer.
 
 ### Stream Checkpoints
@@ -1573,7 +1573,7 @@ idempotent source), the fallback is fine.
 
 Many stateful upstream SDKs expose their persisted conversation log directly —
 e.g. `claude_agent_sdk.get_session_messages(session_id)` returns the list of
-messages the SDK has resiliently committed, and Copilot's `session.get_messages()`
+messages the SDK has persisted, and Copilot's `session.get_messages()`
 does the same for its event log. When that API is available, use it as the
 source of truth for "did my prior attempt already send this turn?" — no handler
 metadata, no watermark, no flush ordering.
@@ -1612,13 +1612,13 @@ below.
 ### Watermark Pattern (fallback when upstream exposes no persisted history)
 
 When the upstream SDK does **not** expose its committed log — or does not
-distinguish "queued but unacked" from "resiliently committed" — the framework
+distinguish "queued but unacked" from "persisted" — the framework
 cannot know which of your calls have side effects, so you stamp a marker in
 `context.conversation_chain_metadata` before the call and clear it after the upstream commit.
 
 The strict at-most-once pattern is **write → flush → side effect → write →
 flush**. The explicit `await metadata.flush()` ensures the watermark hits
-resilient storage before the side effect runs; without it, the framework only
+persistent storage before the side effect runs; without it, the framework only
 snapshots metadata at resilient-task lifecycle boundaries
 (start/suspend/complete/fail/cancel), so a crash between "side effect issued"
 and the next lifecycle boundary would leave the watermark in memory only and
@@ -1638,7 +1638,7 @@ async for chunk in upstream.receive_response():
         break
     yield ...emit_delta(chunk)
 
-# Clear AFTER the upstream resiliently committed the result
+# Clear AFTER the upstream persisted the result
 # (e.g. assistant message landed in the upstream's session log), and
 # FLUSH so the cleared marker survives a subsequent crash.
 context.conversation_chain_metadata["upstream_query_in_flight"] = False
@@ -1670,7 +1670,7 @@ client-visible reset point. How much you build depends on your resume model.
 
 **Simplest case — return the persisted snapshot as-is.** If you used framework
 checkpoints (`stream.checkpoint()`), `context.persisted_response` already holds
-exactly the items that were resiliently committed at the last checkpoint. You can
+exactly the items that were persisted at the last checkpoint. You can
 seed straight from it, no construction needed:
 
 ```python

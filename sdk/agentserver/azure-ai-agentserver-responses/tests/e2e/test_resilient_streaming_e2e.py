@@ -5,7 +5,7 @@
 Tests:
 - Full streaming completion with all events
 - Cooperative cancellation stops mid-stream
-- Stream events resiliently persisted for replay
+- Stream events persisted for replay
 """
 
 from __future__ import annotations

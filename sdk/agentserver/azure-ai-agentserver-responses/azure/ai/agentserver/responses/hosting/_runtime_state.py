@@ -101,7 +101,7 @@ class _RuntimeState:
         """Mark a response ID as deleted without requiring a runtime record.
 
         Used by the delete handler's provider fallback path when the record
-        has already been evicted from memory but still exists in resilient storage.
+        has already been evicted from memory but still exists in persistent storage.
 
         :param response_id: The response ID to mark as deleted.
         :type response_id: str

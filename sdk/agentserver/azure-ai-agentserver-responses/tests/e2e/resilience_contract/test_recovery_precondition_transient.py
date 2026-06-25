@@ -13,7 +13,7 @@ case (→ drop → GET 404). This module covers the NEGATIVE (transient → proc
 case the contract also requires (``resilience-contract.md`` recovery gate;
 ``responses-resilience-spec.md`` §7.1).
 
-Real signal only: a real SIGKILL after the response is resiliently persisted, then a
+Real signal only: a real SIGKILL after the response is persisted, then a
 store wrapper that raises a transient ``RuntimeError`` from the recovery
 pre-fetch ``get_response`` exactly once (no mocked crash, no fabricated context).
 """
@@ -51,7 +51,7 @@ async def _wait_marker_lines(marker: Path, n: int, timeout: float = 20.0) -> str
 
 
 async def _wait_persisted(base_url: str, response_id: str, timeout: float = 20.0) -> None:
-    """Poll GET until the response is resiliently persisted (200)."""
+    """Poll GET until the response is persisted (200)."""
     deadline = asyncio.get_event_loop().time() + timeout
     async with httpx.AsyncClient(base_url=base_url, timeout=10.0) as c:
         while asyncio.get_event_loop().time() < deadline:

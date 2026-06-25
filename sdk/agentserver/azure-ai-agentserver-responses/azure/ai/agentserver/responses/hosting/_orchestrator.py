@@ -260,7 +260,7 @@ async def _do_checkpoint_persist(
     last_snapshot: "bytes | None",
     terminal_seen: bool,
 ) -> "bytes | None":
-    """Resiliently persist a developer checkpoint snapshot (spec 025 §A.3).
+    """Persist a developer checkpoint snapshot (spec 025 §A.3).
 
     Shared by both handler-draining paths. Persists only for resilient background
     responses; idempotent (byte-compare); failures logged + tagged, never
@@ -941,7 +941,7 @@ async def _bg_drain_handler_events(
             create_fn(parsed, context, cancellation_signal), cancellation_signal
         ):
             # Intercept developer ``stream.checkpoint()`` events (spec 025 §A.3):
-            # resiliently persist (resilient background only) and never forward them.
+            # persist (resilient background only) and never forward them.
             if isinstance(handler_event, ResponseCheckpointEvent):
                 st.checkpoint_snapshot = await _do_checkpoint_persist(
                     handler_event,
@@ -1955,7 +1955,7 @@ class _ResponseOrchestrator:
     ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Drain the handler, intercepting + persisting ``checkpoint()`` events.
 
-        Checkpoint events are handled here (resilient persistence) and are NOT
+        Checkpoint events are handled here (persistence) and are NOT
         re-yielded, so the downstream pipeline never coerces/validates/forwards
         them. All other events pass through unchanged.
 
@@ -1980,7 +1980,7 @@ class _ResponseOrchestrator:
         state: "_PipelineState",
         event: ResponseCheckpointEvent,
     ) -> None:
-        """Resiliently persist a developer checkpoint snapshot (spec 025 §A.3).
+        """Persist a developer checkpoint snapshot (spec 025 §A.3).
 
         Persists only for resilient background responses; idempotent; failures are
         logged + tagged and never raised into the handler. Snapshots the
@@ -2171,7 +2171,7 @@ class _ResponseOrchestrator:
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         # Intercept developer ``stream.checkpoint()`` events (spec 025 §A.3)
-        # BEFORE any coercion/validation/forwarding: they are resiliently persisted
+        # BEFORE any coercion/validation/forwarding: they are persisted
         # by the orchestrator and never reach the wire or the event taxonomy.
         handler_iterator = self._intercept_checkpoints(ctx, state, handler_iterator)
         # --- First event acquisition (StopAsyncIteration / cancel / B8) ---
