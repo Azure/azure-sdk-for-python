@@ -57,8 +57,8 @@ from ...operations._operations import (
     build_agents_list_session_files_request,
     build_agents_list_sessions_request,
     build_agents_list_versions_request,
-    build_agents_patch_agent_details_request,
     build_agents_stop_session_request,
+    build_agents_update_details_request,
     build_agents_upload_session_file_request,
     build_beta_agents_cancel_optimization_job_request,
     build_beta_agents_create_optimization_job_request,
@@ -1145,7 +1145,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def patch_agent_details(
+    async def update_details(
         self,
         agent_name: str,
         *,
@@ -1173,7 +1173,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def patch_agent_details(
+    async def update_details(
         self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Update an agent endpoint.
@@ -1193,7 +1193,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def patch_agent_details(
+    async def update_details(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Update an agent endpoint.
@@ -1213,7 +1213,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    async def patch_agent_details(
+    async def update_details(
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -1262,7 +1262,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_patch_agent_details_request(
+        _request = build_agents_update_details_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1587,7 +1587,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ApiErrorResponse,
@@ -1644,7 +1644,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ApiErrorResponse,
@@ -2123,23 +2123,29 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         Each SSE frame contains:
 
         * `event`: always `"log"`
-        * `data`: a plain-text log line (currently JSON-formatted, but the schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+        is not contractual and may include additional keys or change format
+        over time — clients should treat it as an opaque string)
 
         Example SSE frames:
 
         .. code-block::
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting FoundryCBAgent server on port 8088"}
+           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting
+        FoundryCBAgent server on port 8088"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application startup complete."}
+           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application
+        startup complete."}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+        connected to container"}
 
            event: log
-           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since last 60 seconds"}
+           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since
+        last 60 seconds"}
 
         The stream remains open until the client disconnects or the server
         terminates the connection. Clients should handle reconnection as needed.
@@ -2181,7 +2187,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = True
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -9391,6 +9397,7 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
+
             _request = build_beta_memory_stores_list_memories_request(
                 name=name,
                 kind=kind,
