@@ -115,46 +115,6 @@ def get_changelog_content(
     return md_output, last_version
 
 
-def get_change_detection_result(
-    package_path: Path, *, enable_changelog: bool = True, timeout: int = 900
-) -> dict:
-    """Detect SDK changes for the given package without modifying CHANGELOG.md.
-
-    Compares the package against the latest release (preview tags compare against the
-    latest preview release, stable tags against the latest stable release, matching the
-    behavior of the changelog generation) and returns a result dict:
-
-    {
-        "changes": "<changelog markdown>",
-        "hasBreakingChange": true/false,
-        "breakingChangeItems": ["..."]
-    }
-    """
-    package_result: dict = {}
-    md_output, _ = get_changelog_content(package_path, package_result, enable_changelog, timeout=timeout)
-    return {
-        "changes": md_output,
-        "hasBreakingChange": "Breaking Changes" in md_output,
-        "breakingChangeItems": extract_breaking_change(md_output),
-    }
-
-
-def run_change_detection(
-    package_path: Path, output_json: Path, *, enable_changelog: bool = True, timeout: int = 900
-) -> dict:
-    """Run the SDK change detector and write the result to ``output_json``.
-
-    This does NOT modify CHANGELOG.md; it only produces the JSON output file.
-    """
-    result = get_change_detection_result(package_path, enable_changelog=enable_changelog, timeout=timeout)
-    output_json = Path(output_json)
-    output_json.parent.mkdir(parents=True, exist_ok=True)
-    with open(output_json, "w", encoding="utf-8") as f:
-        json.dump(result, f, indent=2)
-    _LOGGER.info(f"[PACKAGE]({package_path.name})[SDK CHANGES] written to {output_json}: {json.dumps(result)}")
-    return result
-
-
 def log_failed_message(message: str, enable_log_error: bool):
     if enable_log_error:
         _LOGGER.error(message)
@@ -162,7 +122,21 @@ def log_failed_message(message: str, enable_log_error: bool):
         _LOGGER.warning(message)
 
 
-def main(package_path: Path, *, enable_changelog: bool = True, package_result: dict = {}, timeout: int = 900):
+def main(
+    package_path: Path,
+    *,
+    enable_changelog: bool = True,
+    package_result: dict = {},
+    timeout: int = 900,
+    output_json: Path = None,
+):
+    """Generate SDK changes for a package.
+
+    By default the generated changelog is written into ``CHANGELOG.md``. When
+    ``output_json`` is provided, run in SDK change detector mode instead: write
+    {"changes": ..., "hasBreakingChange": ..., "breakingChangeItems": [...]} to that
+    file and do NOT modify ``CHANGELOG.md``.
+    """
 
     package_name = package_path.name
     # When package_result is provided, it means this function is called in pipeline and we should not log error
@@ -182,6 +156,20 @@ def main(package_path: Path, *, enable_changelog: bool = True, package_result: d
             package_result["version"] = last_version
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
+
+        # SDK change detector mode: write JSON result and skip editing CHANGELOG.md
+        if output_json is not None:
+            result = {
+                "changes": md_output,
+                "hasBreakingChange": "Breaking Changes" in md_output,
+                "breakingChangeItems": extract_breaking_change(md_output),
+            }
+            output_json = Path(output_json)
+            output_json.parent.mkdir(parents=True, exist_ok=True)
+            with open(output_json, "w", encoding="utf-8") as f:
+                json.dump(result, f, indent=2)
+            _LOGGER.info(f"[PACKAGE]({package_name})[SDK CHANGES] written to {output_json}: {json.dumps(result)}")
+            return
 
         # edit CHANGELOG.md with generated content
         version_line = "## 0.0.0 (UnReleased)\n\n"
@@ -272,10 +260,8 @@ def generate_main():
     if not package_path.is_absolute():
         raise ValueError("--package-path must be an absolute path")
 
-    if args.output_json:
-        run_change_detection(package_path, Path(args.output_json), timeout=args.timeout)
-    else:
-        main(package_path, timeout=args.timeout)
+    output_json = Path(args.output_json) if args.output_json else None
+    main(package_path, timeout=args.timeout, output_json=output_json)
 
 
 if __name__ == "__main__":
