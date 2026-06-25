@@ -47,45 +47,31 @@ foreach ($f in $files) {
     Set-Content $f $lines
 }
 
-# Fix Sphinx issue in class ToolChoiceAllowed, in "tools" property doc string. The "Required" cannot come at the end of the code-block.
-# move it to the end of the text before the code block, and make sure there are no periods after "]".
-#     .. code-block:: json
-#
-#        [
-#          { "type": "function", "name": "get_weather" },
-#          { "type": "mcp", "server_label": "deepwiki" },
-#          { "type": "image_generation" }
-#        ]. Required.
-# See GitHub issue: https://github.com/microsoft/typespec/issues/10314
-# (Get-Content azure\ai\projects\models\_models.py) -replace 'Responses API, the list of tool definitions might look like:', 'Responses API, the list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py
-# (Get-Content azure\ai\projects\models\_models.py) -replace 'list of tool definitions might look like:', 'list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py
-# (Get-Content azure\ai\projects\models\_models.py) -replace '        \]\. Required\.', '        ]' | Set-Content azure\ai\projects\models\_models.py
-
 # Fix Sphinx docutils warnings in class SessionLogEvent: the generated docstring wraps two long
 # ``data:`` JSON lines mid-string inside a ``.. code-block::`` section. The wrapped continuation
 # lines have wrong indentation (4 spaces instead of 7), causing "unexpected unindent" warnings.
 # Join each broken pair back into one line.
-# $f = 'azure\ai\projects\models\_models.py'
-# $c = Get-Content $f -Raw
-# $c = $c -replace '(Starting server)\r?\n[ \t]+(on port 18080)', '$1 $2'
-# $c = $c -replace '(Successfully)\r?\n[ \t]+(connected to container\"})\.?', '$1 $2'
-# Set-Content $f $c -NoNewline
-# $lines = Get-Content $f
-# $out = @()
-# foreach ($line in $lines) {
-#     if ($line -match '^\s*on port 18080' -and $line -notmatch 'data:') { continue }
-#     if ($line -match '^\s*connected to container' -and $line -notmatch 'data:') { continue }
-#     if ($line -match '^\s*data: .*2026-03-10T09:33:17.121Z') {
-#         $out += ('       ' + $line.TrimStart())
-#         continue
-#     }
-#     if ($line -match '^\s*data: .*2026-03-10T09:34:52.714Z') {
-#         $out += ('       ' + $line.TrimStart())
-#         continue
-#     }
-#     $out += $line
-# }
-# Set-Content $f $out
+$f = 'azure\ai\projects\models\_models.py'
+$c = Get-Content $f -Raw
+$c = $c -replace '(Starting server)\r?\n[ \t]+(on port 18080)', '$1 $2'
+$c = $c -replace '(Successfully)\r?\n[ \t]+(connected to container\"})\.?', '$1 $2'
+Set-Content $f $c -NoNewline
+$lines = Get-Content $f
+$out = @()
+foreach ($line in $lines) {
+    if ($line -match '^\s*on port 18080' -and $line -notmatch 'data:') { continue }
+    if ($line -match '^\s*connected to container' -and $line -notmatch 'data:') { continue }
+    if ($line -match '^\s*data: .*2026-03-10T09:33:17.121Z') {
+        $out += ('       ' + $line.TrimStart())
+        continue
+    }
+    if ($line -match '^\s*data: .*2026-03-10T09:34:52.714Z') {
+        $out += ('       ' + $line.TrimStart())
+        continue
+    }
+    $out += $line
+}
+Set-Content $f $out
 
 # Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + async).
 # The emitter wraps bullet/code-block lines with insufficient indentation.

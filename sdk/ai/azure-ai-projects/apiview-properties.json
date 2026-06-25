@@ -459,8 +459,8 @@
         "azure.ai.projects.aio.operations.AgentsOperations.delete_version": "Azure.AI.Projects.Agents.deleteAgentVersion",
         "azure.ai.projects.operations.AgentsOperations.list_versions": "Azure.AI.Projects.Agents.listAgentVersions",
         "azure.ai.projects.aio.operations.AgentsOperations.list_versions": "Azure.AI.Projects.Agents.listAgentVersions",
-        "azure.ai.projects.operations.AgentsOperations.patch_agent_details": "Azure.AI.Projects.Agents.patchAgentObject",
-        "azure.ai.projects.aio.operations.AgentsOperations.patch_agent_details": "Azure.AI.Projects.Agents.patchAgentObject",
+        "azure.ai.projects.operations.AgentsOperations.update_details": "Azure.AI.Projects.Agents.patchAgentObject",
+        "azure.ai.projects.aio.operations.AgentsOperations.update_details": "Azure.AI.Projects.Agents.patchAgentObject",
         "azure.ai.projects.operations.AgentsOperations.create_version_from_code": "Azure.AI.Projects.Agents.createAgentVersionFromCode",
         "azure.ai.projects.aio.operations.AgentsOperations.create_version_from_code": "Azure.AI.Projects.Agents.createAgentVersionFromCode",
         "azure.ai.projects.operations.AgentsOperations.download_code": "Azure.AI.Projects.Agents.downloadAgentCode",
@@ -542,5 +542,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "54ac8b2ecf44"
+    "CrossLanguageVersion": "630203b87422"
 }

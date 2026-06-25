@@ -57,8 +57,8 @@ from ...operations._operations import (
     build_agents_list_session_files_request,
     build_agents_list_sessions_request,
     build_agents_list_versions_request,
-    build_agents_patch_agent_details_request,
     build_agents_stop_session_request,
+    build_agents_update_details_request,
     build_agents_upload_session_file_request,
     build_beta_agents_cancel_optimization_job_request,
     build_beta_agents_create_optimization_job_request,
@@ -1145,7 +1145,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def patch_agent_details(
+    async def update_details(
         self,
         agent_name: str,
         *,
@@ -1173,7 +1173,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def patch_agent_details(
+    async def update_details(
         self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Update an agent endpoint.
@@ -1193,7 +1193,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @overload
-    async def patch_agent_details(
+    async def update_details(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Update an agent endpoint.
@@ -1213,7 +1213,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace_async
-    async def patch_agent_details(
+    async def update_details(
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -1262,7 +1262,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_patch_agent_details_request(
+        _request = build_agents_update_details_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -9391,6 +9391,7 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         def prepare_request(_continuation_token=None):
+
             _request = build_beta_memory_stores_list_memories_request(
                 name=name,
                 kind=kind,

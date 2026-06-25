@@ -127,6 +127,10 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
      connection stores authentication and other connection details needed to connect to the A2A
      server.
     :vartype project_connection_id: str
+    :ivar send_credentials_for_agent_card: When ``true``, Foundry sends its credentials when
+     fetching the remote agent's Agent Card. The service defaults to ``false`` if a value is not
+     specified by the caller (anonymous fetch).
+    :vartype send_credentials_for_agent_card: bool
     """
 
     type: Literal[ToolType.A2A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -139,6 +143,11 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
     project_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The connection ID in the project for the A2A server. The connection stores authentication and
      other connection details needed to connect to the A2A server."""
+    send_credentials_for_agent_card: Optional[bool] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When ``true``, Foundry sends its credentials when fetching the remote agent's Agent Card. The
+     service defaults to ``false`` if a value is not specified by the caller (anonymous fetch)."""
 
     @overload
     def __init__(
@@ -147,6 +156,7 @@ class A2APreviewTool(Tool, discriminator="a2a_preview"):
         base_url: Optional[str] = None,
         agent_card_path: Optional[str] = None,
         project_connection_id: Optional[str] = None,
+        send_credentials_for_agent_card: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -244,6 +254,10 @@ class A2APreviewToolboxTool(ToolboxTool, discriminator="a2a_preview"):
      connection stores authentication and other connection details needed to connect to the A2A
      server.
     :vartype project_connection_id: str
+    :ivar send_credentials_for_agent_card: When ``true``, Foundry sends its credentials when
+     fetching the remote agent's Agent Card. The service defaults to ``false`` if a value is not
+     specified by the caller (anonymous fetch).
+    :vartype send_credentials_for_agent_card: bool
     """
 
     type: Literal[ToolboxToolType.A2A_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -256,6 +270,11 @@ class A2APreviewToolboxTool(ToolboxTool, discriminator="a2a_preview"):
     project_connection_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The connection ID in the project for the A2A server. The connection stores authentication and
      other connection details needed to connect to the A2A server."""
+    send_credentials_for_agent_card: Optional[bool] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When ``true``, Foundry sends its credentials when fetching the remote agent's Agent Card. The
+     service defaults to ``false`` if a value is not specified by the caller (anonymous fetch)."""
 
     @overload
     def __init__(
@@ -267,6 +286,7 @@ class A2APreviewToolboxTool(ToolboxTool, discriminator="a2a_preview"):
         base_url: Optional[str] = None,
         agent_card_path: Optional[str] = None,
         project_connection_id: Optional[str] = None,
+        send_credentials_for_agent_card: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -9532,7 +9552,7 @@ class MemoryStoreDefaultOptions(_Model):
     :vartype procedural_memory_enabled: bool
     :ivar default_ttl_seconds: The default time-to-live for memories in seconds. A value of ``0``
      indicates that memories do not expire. Defaults to ``0``.
-    :vartype default_ttl_seconds: int
+    :vartype default_ttl_seconds: ~datetime.timedelta
     """
 
     user_profile_enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -9544,7 +9564,9 @@ class MemoryStoreDefaultOptions(_Model):
     procedural_memory_enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable procedural memory extraction and storage. The service defaults to ``true`` if
      a value is not specified by the caller."""
-    default_ttl_seconds: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    default_ttl_seconds: Optional[datetime.timedelta] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="duration-seconds-int"
+    )
     """The default time-to-live for memories in seconds. A value of ``0`` indicates that memories do
      not expire. Defaults to ``0``."""
 
@@ -9556,7 +9578,7 @@ class MemoryStoreDefaultOptions(_Model):
         chat_summary_enabled: bool,
         user_profile_details: Optional[str] = None,
         procedural_memory_enabled: Optional[bool] = None,
-        default_ttl_seconds: Optional[int] = None,
+        default_ttl_seconds: Optional[datetime.timedelta] = None,
     ) -> None: ...
 
     @overload
@@ -14249,8 +14271,8 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      the model to call one or more of the allowed tools. Required. Is either a Literal["auto"] type
      or a Literal["required"] type.
     :vartype mode: str or str
-    :ivar tools: A list of tool definitions that the model should be allowed to call. For the
-     Responses API, the list of tool definitions might look like the following. Required.
+    :ivar tools: Required. A list of tool definitions that the model should be allowed to call. For
+     the Responses API, the list of tool definitions might look like:
 
      .. code-block:: json
 
@@ -14270,8 +14292,8 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      call one or more of the allowed tools. Required. Is either a Literal[\"auto\"] type or a
      Literal[\"required\"] type."""
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A list of tool definitions that the model should be allowed to call. For the Responses API, the
-     list of tool definitions might look like the following. Required.
+    """Required. A list of tool definitions that the model should be allowed to call. For the
+     Responses API, the list of tool definitions might look like:
      
      .. code-block:: json
      
