@@ -7,7 +7,7 @@
 #         the wheels are checked in. See README.md for consumption.
 #
 # Wheels included (azure-ai-agentserver-{core, invocations, responses}):
-#   - core         — durable-task primitives + storage_paths
+#   - core         — resilient-task primitives + storage_paths
 #   - invocations  — invocations protocol HTTP host
 #   - responses    — responses protocol HTTP host
 #

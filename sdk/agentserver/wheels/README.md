@@ -1,7 +1,7 @@
 # Checked-in preview wheels
 
 This directory ships the three `azure-ai-agentserver-*` packages as
-locally-built wheels so the `durable-agent-demo` docker image can
+locally-built wheels so the `resilient-agent-demo` docker image can
 `pip install /tmp/wheels/*.whl` without needing to publish each
 preview to PyPI.
 
@@ -13,8 +13,8 @@ preview to PyPI.
 
 ## Consumption
 
-The `durable-agent-demo/build.sh` copies these wheels into the docker
-build context (`samples/durable-agent-demo/src/.../wheels/`). The
+The `resilient-agent-demo/build.sh` copies these wheels into the docker
+build context (`samples/resilient-agent-demo/src/.../wheels/`). The
 sample's `Dockerfile` then runs `pip install --no-cache-dir /tmp/wheels/*.whl`
 to pull them in.
 

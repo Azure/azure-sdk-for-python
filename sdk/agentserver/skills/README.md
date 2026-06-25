@@ -6,14 +6,14 @@ enough context to use each primitive correctly.
 
 | Skill | What it teaches | Companion package |
 |-------|-----------------|-------------------|
-| [`durable-task-skill.md`](durable-task-skill.md) | The `@task` durable primitive — crash-resilient long-running handlers, lease + recovery, steering, multi-turn | `azure-ai-agentserver-core` |
-| [`streaming-skill.md`](streaming-skill.md) | The `streams` registry — producer/subscriber fan-out, replay backings, durable streaming, `Last-Event-ID` reconnect | `azure-ai-agentserver-core` |
+| [`tasks-skill.md`](tasks-skill.md) | The `@task` resilient primitive — crash-resilient long-running handlers, lease + recovery, steering, multi-turn | `azure-ai-agentserver-core` |
+| [`streaming-skill.md`](streaming-skill.md) | The `streams` registry — producer/subscriber fan-out, replay backings, resilient streaming, `Last-Event-ID` reconnect | `azure-ai-agentserver-core` |
 | [`invocations-skill.md`](invocations-skill.md) | The `InvocationAgentServerHost` — free-form invocations protocol HTTP + WebSocket host, long-running + polling, multi-turn via `agent_session_id` | `azure-ai-agentserver-invocations` |
-| [`responses-skill.md`](responses-skill.md) | The `ResponsesAgentServerHost` — OpenAI Responses API host, builder events, durable + steerable conversations | `azure-ai-agentserver-responses` |
+| [`responses-skill.md`](responses-skill.md) | The `ResponsesAgentServerHost` — OpenAI Responses API host, builder events, resilient + steerable conversations | `azure-ai-agentserver-responses` |
 
 The two **host** skills (invocations, responses) are alternatives —
 pick the one whose wire protocol matches your client. The two **core**
-skills (durable-task, streaming) are usually composed *with* whichever
+skills (resilient-task, streaming) are usually composed *with* whichever
 host you pick, to add crash recovery and producer/subscriber streaming
 respectively.
 
@@ -29,12 +29,11 @@ markdown file next to your code and Copilot picks it up.
 
 Skills + the [preview wheels](../wheels/) form a single distribution
 unit: the skill teaches the API, the wheels provide the implementation.
-Both live on this branch (`feature/agentserver-durable-agent-demo`)
-so a downstream project can clone one branch and get everything it
-needs to build durable / streaming / Responses-API agents.
+Both live on this branch so a downstream project can clone one branch and get everything it
+needs to build resilient / streaming / Responses-API agents.
 
 The long-form developer guides each skill references
-(`durable-task-guide.md`, `streaming-guide.md`,
+(`tasks-guide.md`, `streaming-guide.md`,
 `handler-implementation-guide.md`, etc.) live in the corresponding
 package's `docs/` folder — they're SOT reference documentation tied
 to the package, while the skills are portable.

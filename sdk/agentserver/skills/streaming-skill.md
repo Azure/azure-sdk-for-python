@@ -1,6 +1,6 @@
 ---
 name: agentserver-streaming
-description: 'Emit events from one coroutine and fan them out to one or more subscribers (typically: your `@task` handler produces, your HTTP layer fans out as SSE / WebSocket / long-poll) using the `streams` registry from `azure-ai-agentserver-core`. WHEN: "stream tokens / progress events from my agent", "SSE endpoint", "fan an agent stream out to N subscribers", "let a late subscriber catch up via replay", "reconnect from `Last-Event-ID` cursor", "stream survives container crash + recovery", "bridge a single-consumer LLM SDK stream to N HTTP subscribers", "subscribe before invoke pattern", "durable streaming + checkpointed sequence numbers". DO NOT USE FOR: persisting business state (use `ctx.metadata` for tiny watermarks, your own store for content), cross-process pub/sub (one registry per process — use a real message bus), competing-consumer fan-out (every subscriber sees every event — not work-stealing), arbitrary back-pressure between producer and consumer (subscribers buffer per-subscriber; slow consumers grow their queue, not back-pressure the producer). PRIVATE PREVIEW: the `streaming` subpackage ships only via pre-release wheels checked into this branch (see references); the surrounding `azure-ai-agentserver-*` packages are on PyPI at stable versions.'
+description: 'Emit events from one coroutine and fan them out to one or more subscribers (typically: your `@task` handler produces, your HTTP layer fans out as SSE / WebSocket / long-poll) using the `streams` registry from `azure-ai-agentserver-core`. WHEN: "stream tokens / progress events from my agent", "SSE endpoint", "fan an agent stream out to N subscribers", "let a late subscriber catch up via replay", "reconnect from `Last-Event-ID` cursor", "stream survives container crash + recovery", "bridge a single-consumer LLM SDK stream to N HTTP subscribers", "subscribe before invoke pattern", "resilient streaming + checkpointed sequence numbers". DO NOT USE FOR: persisting business state (use `ctx.metadata` for tiny watermarks, your own store for content), cross-process pub/sub (one registry per process — use a real message bus), competing-consumer fan-out (every subscriber sees every event — not work-stealing), arbitrary back-pressure between producer and consumer (subscribers buffer per-subscriber; slow consumers grow their queue, not back-pressure the producer). PRIVATE PREVIEW: the `streaming` subpackage ships only via pre-release wheels checked into this branch (see references); the surrounding `azure-ai-agentserver-*` packages are on PyPI at stable versions.'
 ---
 
 # Agentserver Streaming (`streams`) — Standalone Skill
@@ -35,7 +35,7 @@ Use `streams` when **any** of these apply:
 - The handler runs under `@task`, can **crash mid-stream**, and you
   want a fresh subscriber after the recovery boundary to see the full
   pre-crash + post-crash history (use the file-backed replay backing
-  plus the [Durable streaming primer](#durable-streaming-primer-task--streams)
+  plus the [Resilient streaming primer](#resilient-streaming-primer-task--streams)
   below).
 
 ## When NOT to use
@@ -57,7 +57,7 @@ Use `streams` when **any** of these apply:
   *reconnect catch-up*, not as your system of record. Persist
   business state through your agent framework's store and through
   `@task` metadata watermarks.
-- **Stream durability across the registry's TTL / process boundary.**
+- **Stream resilience across the registry's TTL / process boundary.**
   `use_in_memory_replay(ttl_seconds=...)` evicts on TTL.
   `use_file_backed_replay(...)` survives a process restart only for
   the same stream id within the same on-disk directory.
@@ -106,7 +106,7 @@ backings mid-process.
 ## Pick the right stream id
 
 The stream id is the **per-turn natural identifier** — never the
-durable task id, because a `task_id` outlives a single turn:
+resilient task id, because a `task_id` outlives a single turn:
 
 | Framework | Stream id | Source |
 |---|---|---|
@@ -174,7 +174,7 @@ itself comes from `cursor_fn(event)` you pass to the configurator —
 typically a monotonically increasing `sequence_number` you put on
 every event in your producer.
 
-## Durable streaming primer (`@task` + `streams`)
+## Resilient streaming primer (`@task` + `streams`)
 
 The streaming registry is the natural pair for `@task`. The recipe:
 
@@ -188,7 +188,7 @@ The streaming registry is the natural pair for `@task`. The recipe:
    the file-backed replay backing replays the gap, then live-tails
    from there.
 
-The `samples/durable-agent-demo/` end-to-end run demonstrates the full
+The `samples/resilient-agent-demo/` end-to-end run demonstrates the full
 flow: subscriber connects mid-run, witnesses pre-crash events, sees
 the recovery boundary (`type=recovered`), then continues monotonically
 through the post-crash events with no gaps.
@@ -214,18 +214,18 @@ until it goes GA — installing the regular PyPI version of
 
 Consume the checked-in wheels per:
 
-- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/wheels)
+- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/wheels)
 
 ## Authoritative references
 
 | Topic | Link |
 |---|---|
-| **Full streaming developer guide** (configurators, EventStream Protocol, lifecycle, registry API, exception/wire mapping, recovery patterns, BYO impl) | [`docs/streaming-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md) |
-| **Durable task developer guide** (the natural pair: `@task` produces, `streams` fans out) | [`docs/durable-task-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md) |
-| Bare-Python streaming sample | [`samples/durable_streaming/durable_streaming.py`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/samples/durable_streaming/durable_streaming.py) |
-| End-to-end **long-running + crash + steer + SSE** demo (Foundry hosted) | [`samples/durable-agent-demo/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo) |
-| Invocations streaming sample (research agent — SSE on POST + GET + `?last_event_id` reconnect) | [`samples/durable_research/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_research) |
-| Invocations streaming sample (copilot agent — optional SSE on POST, polling fallback) | [`samples/durable_copilot/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_copilot) |
+| **Full streaming developer guide** (configurators, EventStream Protocol, lifecycle, registry API, exception/wire mapping, recovery patterns, BYO impl) | [`docs/streaming-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md) |
+| **Resilient task developer guide** (the natural pair: `@task` produces, `streams` fans out) | [`docs/tasks-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) |
+| Bare-Python streaming sample | [`samples/resilient_streaming/resilient_streaming.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/samples/resilient_streaming/resilient_streaming.py) |
+| End-to-end **long-running + crash + steer + SSE** demo (Foundry hosted) | [`samples/resilient-agent-demo/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/resilient-agent-demo) |
+| Invocations streaming sample (research agent — SSE on POST + GET + `?last_event_id` reconnect) | [`samples/resilient_research/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/resilient_research) |
+| Invocations streaming sample (copilot agent — optional SSE on POST, polling fallback) | [`samples/resilient_copilot/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/resilient_copilot) |
 
 Read the streaming developer guide first — it covers the full
 `EventStream` Protocol, the ACTIVE → CLOSED → GONE lifecycle, the

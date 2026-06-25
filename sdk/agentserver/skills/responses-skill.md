@@ -1,6 +1,6 @@
 ---
 name: agentserver-responses
-description: 'Build OpenAI Responses API-compatible agents using the `ResponsesAgentServerHost` from `azure-ai-agentserver-responses`. WHEN: "expose my agent as an OpenAI Responses API endpoint", "implement /responses POST + GET + cancel + delete", "stream agent output as Responses SSE events (response.created, response.in_progress, response.output_text.delta, response.completed, etc.)", "emit Responses output items (messages, function calls, reasoning, structured outputs)", "background responses with SSE replay", "durable + crash-recoverable Responses API agent", "steerable Responses API multi-turn conversations (queue a new turn while one is running)", "Foundry-hosted Responses-API agent". DO NOT USE FOR: building agents on a different wire protocol (the invocations protocol — use `agentserver-durable-tasks` + `agentserver-streaming` skills; the OpenAI Chat Completions API — different host; raw `@task` durable computation that does NOT need a Responses-API HTTP surface). PRIVATE PREVIEW: ships only via pre-release wheels checked into this branch (see references); the regular PyPI version of `azure-ai-agentserver-responses` predates this surface and does not include `durable_background` / `steerable_conversations` / the per-request primitive dispatch.'
+description: 'Build OpenAI Responses API-compatible agents using the `ResponsesAgentServerHost` from `azure-ai-agentserver-responses`. WHEN: "expose my agent as an OpenAI Responses API endpoint", "implement /responses POST + GET + cancel + delete", "stream agent output as Responses SSE events (response.created, response.in_progress, response.output_text.delta, response.completed, etc.)", "emit Responses output items (messages, function calls, reasoning, structured outputs)", "background responses with SSE replay", "resilient + crash-recoverable Responses API agent", "steerable Responses API multi-turn conversations (queue a new turn while one is running)", "Foundry-hosted Responses-API agent". DO NOT USE FOR: building agents on a different wire protocol (the invocations protocol — use `agentserver-resilient-tasks` + `agentserver-streaming` skills; the OpenAI Chat Completions API — different host; raw `@task` resilient computation that does NOT need a Responses-API HTTP surface). PRIVATE PREVIEW: ships only via pre-release wheels checked into this branch (see references); the regular PyPI version of `azure-ai-agentserver-responses` predates this surface and does not include `resilient_background` / `steerable_conversations` / the per-request primitive dispatch.'
 ---
 
 # Agentserver Responses (`ResponsesAgentServerHost`) — Standalone Skill
@@ -17,7 +17,7 @@ The `ResponsesAgentServerHost` class in
 HTTP host. You register a single `@app.response_handler`-decorated
 coroutine; the framework owns the wire protocol (SSE event ordering,
 terminal-status invariants, background-mode lifecycle, GET-after-completion
-snapshots, /cancel semantics, /delete cleanup, the durable +
+snapshots, /cancel semantics, /delete cleanup, the resilient +
 steerable lifecycle when opted in).
 
 ## When to use
@@ -35,9 +35,9 @@ Use `ResponsesAgentServerHost` when **any** of these apply:
   Responses API's cursor convention — `N` is the
   `sequence_number` of the last event the client received).
 - You need crash-recoverable agents (opt-in via
-  `ResponsesServerOptions(durable_background=True)`) — backed by the
+  `ResponsesServerOptions(resilient_background=True)`) — backed by the
   `@task` primitive under the covers, but you write a normal
-  handler instead of touching the durable primitive directly.
+  handler instead of touching the resilient primitive directly.
 - You need steerable multi-turn conversations (opt-in via
   `ResponsesServerOptions(steerable_conversations=True)`) — a new turn
   posted on an in-flight conversation cooperatively winds down the
@@ -51,14 +51,14 @@ Use `ResponsesAgentServerHost` when **any** of these apply:
 
 - **Agents that speak a different wire protocol.** If you're building
   for the invocations protocol (free-form request/response shape, no
-  OpenAI compatibility), use the `agentserver-durable-tasks` +
-  `agentserver-streaming` skills directly — that gives you the durable
+  OpenAI compatibility), use the `agentserver-resilient-tasks` +
+  `agentserver-streaming` skills directly — that gives you the resilient
   primitive + HTTP wrapper without the Responses-API surface.
 - **OpenAI Chat Completions API agents.** Different protocol; this
   host implements Responses (`/responses`), not Chat Completions
   (`/chat/completions`).
-- **Raw `@task` durable computation** with no HTTP surface. Use the
-  `@task` decorator from `azure-ai-agentserver-core.durable` directly.
+- **Raw `@task` resilient computation** with no HTTP surface. Use the
+  `@task` decorator from `azure-ai-agentserver-core.agentserver` directly.
 - **Custom HTTP paths.** `ResponsesAgentServerHost` owns
   `/responses*`. If you need additional endpoints, compose via
   Starlette mounting or co-host another `AgentServerHost` subclass
@@ -130,7 +130,7 @@ Two **distinct** surfaces, two **distinct** handler responses:
 | Surface | Fires on | Handler should |
 |---|---|---|
 | `cancellation_signal` (3rd handler arg, `asyncio.Event`) | `/cancel` API call, non-bg POST disconnect, steering pressure | break work loop → close builders → emit `response.completed` (the framework overrides to `response.cancelled` if `context.client_cancelled is True`) |
-| `context.shutdown` (`asyncio.Event`) | server shutdown (SIGTERM, graceful drain) | `return await context.exit_for_recovery()` (durable + bg) or emit a quick terminal (others) |
+| `context.shutdown` (`asyncio.Event`) | server shutdown (SIGTERM, graceful drain) | `return await context.exit_for_recovery()` (resilient + bg) or emit a quick terminal (others) |
 
 Shutdown does NOT fire the cancellation signal. Handlers that care
 about both must observe each independently.
@@ -139,19 +139,19 @@ To distinguish steering from a client cancel inside the cancel branch:
 ```python
 if cancellation_signal.is_set() and context.pending_input_count > 0:
     # Steering pressure — a new turn is queued. Emit completed with
-    # whatever output is durably committed; the framework re-enters with
+    # whatever output is resiliently committed; the framework re-enters with
     # the new input as ctx.input.
     yield stream.emit_completed()
     return
 ```
 
-## Durable + steerable (opt-in)
+## Resilient + steerable (opt-in)
 
 ```python
 from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 
 app = ResponsesAgentServerHost(options=ResponsesServerOptions(
-    durable_background=True,        # background responses survive process crashes
+    resilient_background=True,        # background responses survive process crashes
     steerable_conversations=True,   # accept new turns on in-flight conversations
 ))
 ```
@@ -172,16 +172,16 @@ Both modes are auto-detected via `FOUNDRY_HOSTING_ENVIRONMENT`:
 
 - **Hosted** (Foundry Hosted Agent platform): response store auto-binds
   to the Foundry hosted responses storage API; stream replay uses
-  file-backed storage under `${AGENTSERVER_DURABLE_ROOT}/streams/`;
-  durable task store uses the Foundry hosted task storage API; lease
+  file-backed storage under `${AGENTSERVER_STATE_ROOT}/streams/`;
+  resilient task store uses the Foundry hosted task storage API; lease
   renewal extends the sandbox idle-reclaim timer past the eviction
   window.
 - **Local dev**: response store defaults to file-backed under
-  `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/responses/`; stream replay
-  uses in-memory (durable_background=False) or file-backed
-  (durable_background=True) under
-  `${AGENTSERVER_DURABLE_ROOT}/streams/`; durable task store is
-  file-backed under `${AGENTSERVER_DURABLE_ROOT}/tasks/`.
+  `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/responses/`; stream replay
+  uses in-memory (resilient_background=False) or file-backed
+  (resilient_background=True) under
+  `${AGENTSERVER_STATE_ROOT}/streams/`; resilient task store is
+  file-backed under `${AGENTSERVER_STATE_ROOT}/tasks/`.
 
 Operator override: `AGENTSERVER_TASKS_BACKEND=local|hosted` forces
 the task provider regardless of hosting detection. Useful for debugging
@@ -190,13 +190,13 @@ hosted-only scenarios on a local workstation.
 ## Packaging — private preview wheels
 
 The PyPI version of `azure-ai-agentserver-responses` predates the
-durable + steerable surface. **The current Responses API host with
+resilient + steerable surface. **The current Responses API host with
 crash recovery, steering, and the per-request primitive dispatch
 ships only via the pre-release wheels checked into this branch.**
 
 Consume the checked-in wheels per:
 
-- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/wheels)
+- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/wheels)
 
 The wheels bundle all three preview packages (`core`,
 `invocations`, `responses`) so a single
@@ -206,13 +206,13 @@ The wheels bundle all three preview packages (`core`,
 
 | Topic | Link |
 |---|---|
-| **Handler implementation guide** (full patterns, builder API, terminal-status rules, cancellation matrix) | [`docs/handler-implementation-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-responses-spec016/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) |
-| **Durable responses developer guide** (recovery contract, watermark patterns, upstream-framework integration, the `is_recovery` / `is_steered_turn` / `pending_input_count` surface) | [`docs/durable-responses-developer-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-responses-spec016/sdk/agentserver/azure-ai-agentserver-responses/docs/durable-responses-developer-guide.md) |
-| **Source-of-truth durability spec** (language-agnostic protocol contract) | [`docs/responses-durability-spec.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-responses-spec016/sdk/agentserver/azure-ai-agentserver-responses/docs/responses-durability-spec.md) |
-| Minimal handler examples (TextResponse, ResponseEventStream, function calling, multi-output, streaming upstream) | [`samples/sample_01_getting_started.py`..`sample_16_structured_outputs.py`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-responses-spec016/sdk/agentserver/azure-ai-agentserver-responses/samples) |
-| Durable + steerable patterns (Copilot SDK, three-phase streaming with watermarks, steering drain, LangGraph integration, multi-turn) | [`samples/sample_18_durable_copilot.py`..`sample_22_durable_multiturn.py`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-responses-spec016/sdk/agentserver/azure-ai-agentserver-responses/samples) |
-| Companion: durable-task primitive skill (the `@task` underneath) | [`durable-task-skill.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/skills/durable-task-skill.md) |
-| Companion: streaming registry skill (the `streams` registry underneath) | [`streaming-skill.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/skills/streaming-skill.md) |
+| **Handler implementation guide** (full patterns, builder API, terminal-status rules, cancellation matrix) | [`docs/handler-implementation-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) |
+| **Resilient responses developer guide** (recovery contract, watermark patterns, upstream-framework integration, the `is_recovery` / `is_steered_turn` / `pending_input_count` surface) | [`docs/resilient-responses-developer-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilient-responses-developer-guide.md) |
+| **Source-of-truth resilience spec** (language-agnostic protocol contract) | [`docs/responses-resilience-spec.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/responses-resilience-spec.md) |
+| Minimal handler examples (TextResponse, ResponseEventStream, function calling, multi-output, streaming upstream) | [`samples/sample_01_getting_started.py`..`sample_16_structured_outputs.py`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples) |
+| Resilient + steerable patterns (Copilot SDK, three-phase streaming with watermarks, steering drain, LangGraph integration, multi-turn) | [`samples/sample_18_resilient_copilot.py`..`sample_22_resilient_multiturn.py`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples) |
+| Companion: resilient-task primitive skill (the `@task` underneath) | [`tasks-skill.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/skills/tasks-skill.md) |
+| Companion: streaming registry skill (the `streams` registry underneath) | [`streaming-skill.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/skills/streaming-skill.md) |
 
 Read the handler implementation guide first — it covers the full
 event taxonomy (every SSE event type the host accepts, the builder
@@ -226,9 +226,9 @@ in working code.
 |---|---|---|
 | Expose agent as OpenAI Responses API endpoint | ✅ | This is the host. |
 | Background response with SSE replay (POST + GET ?stream=true) | ✅ | Framework owns the per-response stream registry + cursor. |
-| Multi-turn chat that survives container restart | ✅ | Opt into `durable_background=True` + `steerable_conversations=True`. |
+| Multi-turn chat that survives container restart | ✅ | Opt into `resilient_background=True` + `steerable_conversations=True`. |
 | Steerable long generation (user can change topic mid-run) | ✅ | Opt into `steerable_conversations=True`; observe `cancellation_signal` + `pending_input_count`. |
 | OpenAI Chat Completions API endpoint | ❌ | Different protocol — use a different host. |
-| Free-form invocations-protocol agent | ❌ | Use the `agentserver-durable-tasks` + `agentserver-streaming` skills directly. |
+| Free-form invocations-protocol agent | ❌ | Use the `agentserver-resilient-tasks` + `agentserver-streaming` skills directly. |
 | Server-to-server background job with no HTTP surface | ❌ | Use the `@task` primitive directly. |
 | Persist conversation history in `context.conversation_chain_metadata` | ❌ | Wrong — `conversation_chain_metadata` is for small watermarks. Use your own DB or framework store (LangGraph SqliteSaver, etc.) for content. |

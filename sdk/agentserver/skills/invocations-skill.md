@@ -1,6 +1,6 @@
 ---
 name: agentserver-invocations
-description: 'Build agent HTTP / WebSocket endpoints that speak the Azure AI Hosted Agents invocations protocol, using `InvocationAgentServerHost` from `azure-ai-agentserver-invocations`. WHEN: "expose my agent as a Foundry Hosted Agent invocations endpoint", "free-form POST /invocations + GET /invocations/{id} status + POST /invocations/{id}/cancel", "stream agent output as SSE", "bidirectional WebSocket streaming via /invocations_ws", "long-running invocations with polling", "publish an OpenAPI spec at /invocations/docs/openapi.json", "multi-turn conversations via agent_session_id grouping", "Foundry-hosted agent that needs platform-injected invocation/session IDs". DO NOT USE FOR: building OpenAI Responses API agents (use the `agentserver-responses` skill — the responses host adds the OpenAI wire protocol on top); OpenAI Chat Completions (different protocol, different host); raw `@task` durable computation with no HTTP surface (use the `@task` primitive from `agentserver-durable-tasks` skill directly); pure RPC microservices without per-invocation lifecycle (just use Starlette / FastAPI directly).'
+description: 'Build agent HTTP / WebSocket endpoints that speak the Azure AI Hosted Agents invocations protocol, using `InvocationAgentServerHost` from `azure-ai-agentserver-invocations`. WHEN: "expose my agent as a Foundry Hosted Agent invocations endpoint", "free-form POST /invocations + GET /invocations/{id} status + POST /invocations/{id}/cancel", "stream agent output as SSE", "bidirectional WebSocket streaming via /invocations_ws", "long-running invocations with polling", "publish an OpenAPI spec at /invocations/docs/openapi.json", "multi-turn conversations via agent_session_id grouping", "Foundry-hosted agent that needs platform-injected invocation/session IDs". DO NOT USE FOR: building OpenAI Responses API agents (use the `agentserver-responses` skill — the responses host adds the OpenAI wire protocol on top); OpenAI Chat Completions (different protocol, different host); raw `@task` resilient computation with no HTTP surface (use the `@task` primitive from `agentserver-resilient-tasks` skill directly); pure RPC microservices without per-invocation lifecycle (just use Starlette / FastAPI directly).'
 ---
 
 # Agentserver Invocations (`InvocationAgentServerHost`) — Standalone Skill
@@ -61,9 +61,9 @@ Use `InvocationAgentServerHost` when **any** of these apply:
   contract.
 - **OpenAI Chat Completions API agents.** Different protocol
   (`/chat/completions`); neither host implements it.
-- **Raw `@task` durable computation** with no HTTP surface. Use the
-  `@task` decorator from `azure-ai-agentserver-core.durable` directly.
-  See the `agentserver-durable-tasks` skill.
+- **Raw `@task` resilient computation** with no HTTP surface. Use the
+  `@task` decorator from `azure-ai-agentserver-core.agentserver` directly.
+  See the `agentserver-resilient-tasks` skill.
 - **Pure RPC microservices** without per-invocation lifecycle
   (no invocation_id, no session_id, no platform header echoing).
   Use Starlette or FastAPI directly — the host's value is the
@@ -149,7 +149,7 @@ async def stream(request: Request) -> Response:
     return StreamingResponse(generate(), media_type="text/event-stream")
 ```
 
-For durable-streaming patterns where the producer (inside `@task`)
+For resilient-streaming patterns where the producer (inside `@task`)
 fans out to N HTTP subscribers via SSE, with replay + reconnect, see
 the [`agentserver-streaming` skill](streaming-skill.md).
 
@@ -181,20 +181,20 @@ session is implicit (env-var sourced). The framework resolves it from
 `FOUNDRY_AGENT_SESSION_ID` and stamps it on
 `request.state.session_id` for your handler regardless.
 
-## Composing with the durable primitive
+## Composing with the resilient primitive
 
 Pairing `InvocationAgentServerHost` with the `@task` primitive (see
-the [`agentserver-durable-tasks`](durable-task-skill.md) skill) is the
+the [`agentserver-resilient-tasks`](tasks-skill.md) skill) is the
 canonical pattern for crash-resilient hosted agents:
 
 ```python
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
-from azure.ai.agentserver.core.durable import multi_turn_task, TaskContext
+from azure.ai.agentserver.core.tasks import multi_turn_task, TaskContext
 
 app = InvocationAgentServerHost()
 
 
-@multi_turn_task(steerable=True)  # crash-resilient + steerable durable primitive
+@multi_turn_task(steerable=True)  # crash-resilient + steerable resilient primitive
 async def research(ctx: TaskContext[dict]) -> dict:
     # ctx.input is one turn's payload; ctx.entry_mode tells you whether
     # this is a fresh turn, a resumed turn, or a crash-recovered re-entry.
@@ -205,7 +205,7 @@ async def research(ctx: TaskContext[dict]) -> dict:
 @app.invoke_handler
 async def handle(request: Request) -> Response:
     payload = await request.json()
-    task_id = request.state.session_id   # one durable task per session
+    task_id = request.state.session_id   # one resilient task per session
     input_id = request.state.invocation_id  # per-turn id
     await research.start(task_id=task_id, input=payload, input_id=input_id)
     return JSONResponse({"status": "started", "invocation_id": input_id}, status_code=202)
@@ -222,7 +222,7 @@ async def cancel(request: Request) -> Response:
     return JSONResponse({"status": "cancelled"})
 ```
 
-The [`durable-agent-demo`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo)
+The [`resilient-agent-demo`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/resilient-agent-demo)
 sample wires this end-to-end with SSE streaming, file-backed task
 storage, and crash recovery.
 
@@ -243,14 +243,14 @@ Auto-detected via `FOUNDRY_HOSTING_ENVIRONMENT`:
 ## Packaging — private preview wheels
 
 The current invocations host with the cancel/get session-id propagation
-fix (per the invocation protocol spec) and the durable-task integration
+fix (per the invocation protocol spec) and the resilient-task integration
 ships only via the pre-release wheels checked into this branch. The
 regular PyPI version of `azure-ai-agentserver-invocations` predates
 these.
 
 Consume the checked-in wheels per:
 
-- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/wheels)
+- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/wheels)
 
 The wheels bundle all three preview packages (`core`,
 `invocations`, `responses`) so a single
@@ -260,15 +260,15 @@ The wheels bundle all three preview packages (`core`,
 
 | Topic | Link |
 |---|---|
-| **Package README** (decorator catalog, request/response headers, distributed tracing, WebSocket lifecycle) | [`README.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/README.md) |
+| **Package README** (decorator catalog, request/response headers, distributed tracing, WebSocket lifecycle) | [`README.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-invocations/README.md) |
 | **Invocation protocol spec** (the wire contract — POST/GET/cancel routes, headers, query params, session-id resolution, response headers, OpenAPI spec endpoint, error format) | [`invocation-protocol-spec.md`](https://github.com/Azure/foundrysdk_specs/blob/main/specs/hosted-agents/container-spec/docs/invocation-protocol-spec.md) |
-| Minimal echo agent | [`samples/simple_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/simple_invoke_agent) |
-| Long-running + polling | [`samples/async_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent) |
-| SSE streaming | [`samples/streaming_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/streaming_invoke_agent) |
-| WebSocket (echo + bidirectional) | [`samples/ws_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_invoke_agent), [`samples/ws_bidirectional_streaming_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_bidirectional_streaming_agent) |
-| Multi-turn (suspend / resume on top of `@multi_turn_task`) | [`samples/multiturn_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/multiturn_invoke_agent), [`samples/durable_multiturn/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_multiturn) |
-| End-to-end **long-running + crash + steer** demo (Foundry hosted) | [`samples/durable-agent-demo/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo) |
-| Companion: durable-task primitive skill (the `@task` underneath) | [`durable-task-skill.md`](durable-task-skill.md) |
+| Minimal echo agent | [`samples/simple_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/simple_invoke_agent) |
+| Long-running + polling | [`samples/async_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent) |
+| SSE streaming | [`samples/streaming_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/streaming_invoke_agent) |
+| WebSocket (echo + bidirectional) | [`samples/ws_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_invoke_agent), [`samples/ws_bidirectional_streaming_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_bidirectional_streaming_agent) |
+| Multi-turn (suspend / resume on top of `@multi_turn_task`) | [`samples/multiturn_invoke_agent/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/multiturn_invoke_agent), [`samples/resilient_multiturn/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/resilient_multiturn) |
+| End-to-end **long-running + crash + steer** demo (Foundry hosted) | [`samples/resilient-agent-demo/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/resilient-agent-demo) |
+| Companion: resilient-task primitive skill (the `@task` underneath) | [`tasks-skill.md`](tasks-skill.md) |
 | Companion: streaming registry skill (producer/subscriber fan-out + replay) | [`streaming-skill.md`](streaming-skill.md) |
 | Companion: responses-API host skill (when you need OpenAI Responses API wire format instead) | [`responses-skill.md`](responses-skill.md) |
 
@@ -290,4 +290,4 @@ the API in working code.
 | OpenAI Chat Completions endpoint | ❌ | Different protocol — different host. |
 | Server-to-server background job, no HTTP | ❌ | Use the `@task` primitive directly. |
 | Pure RPC, no invocation_id / session_id / platform headers | ❌ | Use Starlette / FastAPI directly. |
-| Crash-resilient long-running agent | ⚠️ | Compose with `@task` / `@multi_turn_task` — see the "Composing with the durable primitive" section. |
+| Crash-resilient long-running agent | ⚠️ | Compose with `@task` / `@multi_turn_task` — see the "Composing with the resilient primitive" section. |

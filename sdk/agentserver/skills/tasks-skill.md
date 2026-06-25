@@ -1,17 +1,17 @@
 ---
-name: agentserver-durable-tasks
-description: 'Build crash-resilient long-running agent handlers using the `@task` primitive from `azure-ai-agentserver-core`. WHEN: "make my agent crash-resilient", "resume after restart", "long-running agent (>15 min)", "steer / interrupt a running agent turn", "multi-turn conversation that survives container restarts", "hosted agent that needs lease + checkpoint recovery", "agent with cancel / cooperative shutdown", "pass large inputs up to 2 MB to a task (function or steering inputs)". DO NOT USE FOR: persisting conversation history (use LangGraph / your DB), storing large checkpoints (`ctx.metadata` is intentionally small — watermarks only), workflow orchestration (use Temporal / Durable Functions), or competing-consumer queues. PRIVATE PREVIEW: the `@task` primitive ships only via pre-release wheels checked into this branch (see references); the surrounding `azure-ai-agentserver-*` packages are on PyPI at stable versions.'
+name: agentserver-resilient-tasks
+description: 'Build crash-resilient long-running agent handlers using the `@task` primitive from `azure-ai-agentserver-core`. WHEN: "make my agent crash-resilient", "resume after restart", "long-running agent (>15 min)", "steer / interrupt a running agent turn", "multi-turn conversation that survives container restarts", "hosted agent that needs lease + checkpoint recovery", "agent with cancel / cooperative shutdown", "pass large inputs up to 2 MB to a task (function or steering inputs)". DO NOT USE FOR: persisting conversation history (use LangGraph / your DB), storing large checkpoints (`ctx.metadata` is intentionally small — watermarks only), workflow orchestration (use Temporal), or competing-consumer queues. PRIVATE PREVIEW: the `@task` primitive ships only via pre-release wheels checked into this branch (see references); the surrounding `azure-ai-agentserver-*` packages are on PyPI at stable versions.'
 ---
 
-# Agentserver Durable Tasks (`@task`) — Standalone Skill
+# Agentserver Resilient Tasks (`@task`) — Standalone Skill
 
 > **Standalone document.** Copy this file into your project to give your
 > AI coding agent (GitHub Copilot, etc.) the context it needs to use the
 > `@task` primitive correctly. Pair it with the checked-in pre-release
 > wheels (see *Packaging* below) — that's all your project needs to start
-> building durable agents.
+> building resilient agents.
 
-The `@task` decorator in `azure-ai-agentserver-core.durable` turns a single
+The `@task` decorator in `azure-ai-agentserver-core.agentserver` turns a single
 agent function into a **crash-resilient, steerable, long-running** primitive
 backed by a hosted task store. The framework handles lease acquisition,
 recovery from container restarts, checkpoint metadata persistence, and
@@ -41,15 +41,15 @@ Use `@task` when **any** of these apply:
   log store — it's for small watermarks and dedup tokens (max ~tens of
   KB). Persist messages, tool outputs, and large state through your
   agent framework's native store (LangGraph `SqliteSaver`, your own DB,
-  etc.). The two are complementary: `@task` provides the *durable
+  etc.). The two are complementary: `@task` provides the *resilient
   outer boundary*; your framework provides the *content store*.
 - **Large checkpoint state.** Same reason. If you want to snapshot
   20 MB of intermediate computation between checkpoints, write it to
   your own storage and put only a pointer (object ID, URL) in
   `ctx.metadata`.
 - **Workflow orchestration.** Fan-out/fan-in, child workflows, signals,
-  timers as first-class primitives → use Temporal or Durable Functions.
-  `@task` is the thin durable boundary around a *single* agent function;
+  timers as first-class primitives → use Temporal.
+  `@task` is the thin resilient boundary around a *single* agent function;
   it can live *inside* such an engine but doesn't replace it.
 - **Competing-consumer queues.** A `task_id` identifies one logical
   unit of work owned by one current lifetime. If you want N workers
@@ -62,13 +62,13 @@ Use `@task` when **any** of these apply:
 ## Minimal pattern
 
 ```python
-from azure.ai.agentserver.core.durable import task, TaskContext
+from azure.ai.agentserver.core.tasks import task, TaskContext
 
 @task(name="my_agent", steerable=True)
 async def my_agent(ctx: TaskContext[dict]) -> dict:
     topic = ctx.input["topic"]
 
-    # ctx.metadata is small, durable, survives crashes
+    # ctx.metadata is small, resilient, survives crashes
     completed = ctx.metadata.get("completed_phases", 0)
     results: list = ctx.metadata.get("results", [])
 
@@ -95,9 +95,9 @@ async def my_agent(ctx: TaskContext[dict]) -> dict:
 **Dispatching** from your HTTP handler:
 
 ```python
-from azure.ai.agentserver.core.durable import TaskConflictError
+from azure.ai.agentserver.core.tasks import TaskConflictError
 
-# One durable task per session — steering finds the active run.
+# One resilient task per session — steering finds the active run.
 try:
     await my_agent.start(task_id=session_id, input={"topic": topic})
     status = "started"
@@ -142,7 +142,7 @@ non-side-effectful part of the handler, do that.
 | `"dedup_token": "uuid-abc"` | Vector embeddings |
 
 Always call `await ctx.metadata.flush()` at the end of a checkpoint
-boundary. That's the durable persistence point — a crash before flush
+boundary. That's the resilient persistence point — a crash before flush
 re-runs the phase; a crash after flush skips it.
 
 ## Hosted vs local
@@ -152,8 +152,8 @@ In hosted environments (`FOUNDRY_HOSTING_ENVIRONMENT` set by the platform)
 task-storage API automatically — no opt-in env var required.
 
 In local development (no `FOUNDRY_HOSTING_ENVIRONMENT`) `@task` uses
-`LocalFileTaskProvider` rooted at `${AGENTSERVER_DURABLE_ROOT:-~/.durable}/tasks/`
-(override the root with `AGENTSERVER_DURABLE_ROOT`). No service dependency for
+`LocalFileTaskProvider` rooted at `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/tasks/`
+(override the root with `AGENTSERVER_STATE_ROOT`). No service dependency for
 local iteration. To force the local backend even when hosted-detection would
 otherwise pick the hosted provider, set `AGENTSERVER_TASKS_BACKEND=local`.
 
@@ -161,27 +161,27 @@ otherwise pick the hosted provider, set `AGENTSERVER_TASKS_BACKEND=local`.
 
 The surrounding `azure-ai-agentserver-core` and
 `azure-ai-agentserver-invocations` packages are published on PyPI at
-stable versions. **The `@task` durable primitive is in private preview**
+stable versions. **The `@task` resilient primitive is in private preview**
 and ships *only* via the pre-release wheels checked into this branch.
 There is no PyPI release for the `@task` API until it goes GA — installing
 the regular PyPI version of `azure-ai-agentserver-core` will not give you
-`azure.ai.agentserver.core.durable`.
+`azure.ai.agentserver.core.tasks`.
 
 Consume the checked-in wheels per:
 
-- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/wheels)
+- Wheel directory + README: [`sdk/agentserver/wheels/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/wheels)
 
 ## Authoritative references
 
 | Topic | Link |
 |---|---|
-| **Full developer guide** (mental model, lifecycle, API reference, patterns) | [`docs/durable-task-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/docs/durable-task-guide.md) |
-| **Streaming developer guide** (registry API, backings, per-turn id convention, exception/wire mapping) | [`docs/streaming-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md) |
-| Minimal retry sample | [`samples/durable_retry/durable_retry.py`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/samples/durable_retry/durable_retry.py) |
-| Streaming via the `streams` registry | [`samples/durable_streaming/durable_streaming.py`](https://github.com/Azure/azure-sdk-for-python/blob/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-core/samples/durable_streaming/durable_streaming.py) |
-| End-to-end **long-running + crash + steer** demo (Foundry hosted) | [`samples/durable-agent-demo/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-agent-demo/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable-agent-demo) |
-| Multi-turn (suspend / resume) | [`samples/durable_multiturn/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_multiturn) |
-| LangGraph integration | [`samples/durable_langgraph/`](https://github.com/Azure/azure-sdk-for-python/tree/refs/heads/feature/agentserver-durable-tasks/sdk/agentserver/azure-ai-agentserver-invocations/samples/durable_langgraph) |
+| **Full developer guide** (mental model, lifecycle, API reference, patterns) | [`docs/tasks-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) |
+| **Streaming developer guide** (registry API, backings, per-turn id convention, exception/wire mapping) | [`docs/streaming-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/streaming-guide.md) |
+| Minimal retry sample | [`samples/resilient_retry/resilient_retry.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/samples/resilient_retry/resilient_retry.py) |
+| Streaming via the `streams` registry | [`samples/resilient_streaming/resilient_streaming.py`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/samples/resilient_streaming/resilient_streaming.py) |
+| End-to-end **long-running + crash + steer** demo (Foundry hosted) | [`samples/resilient-agent-demo/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/resilient-agent-demo) |
+| Multi-turn (suspend / resume) | [`samples/resilient_multiturn/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/resilient_multiturn) |
+| LangGraph integration | [`samples/resilient_langgraph/`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/resilient_langgraph) |
 
 Read the developer guide first — it covers `EntryMode`, retry semantics,
 multi-turn suspend/resume, steering queue backpressure, cancel-cause booleans
@@ -198,5 +198,5 @@ samples ground the API in working code.
 | Single short-lived (<30s) request/response | ❌ | Overkill — just write a normal handler |
 | Persist 100 MB of intermediate artifacts | ❌ | Use your own object store; put the pointer in metadata |
 | Pull jobs off a shared queue across N workers | ❌ | Wrong primitive — use a queue |
-| Fan-out 10 child workflows and join | ❌ | Use Temporal / Durable Functions |
+| Fan-out 10 child workflows and join | ❌ | Use Temporal |
 | Want exactly-once side effects | ⚠️ | Use the at-most-once pattern in the guide; framework provides at-most-once via dedup token, not exactly-once |
