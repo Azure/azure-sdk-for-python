@@ -4057,7 +4057,7 @@ outputs that must survive crashes are the handler's responsibility
   drain`, `orphan attachment cleanup`. Log level minimum `INFO`
   except where noted.
 - **C-OBS-2.** Logger names MUST be hierarchical under
-  `azure.ai.agentserver.agentserver` (or language-equivalent).
+  `azure.ai.agentserver.tasks` (or language-equivalent).
 
 ---
 

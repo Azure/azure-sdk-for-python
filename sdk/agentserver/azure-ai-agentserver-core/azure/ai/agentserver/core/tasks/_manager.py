@@ -51,7 +51,7 @@ from ._run import TaskRun
 from .._version import VERSION as _CORE_VERSION
 from .._server_version import build_server_version as _build_server_version
 
-logger = logging.getLogger("azure.ai.agentserver.agentserver")
+logger = logging.getLogger("azure.ai.agentserver.tasks")
 
 #: Auto-stamped source type for all tasks created by this framework.
 _SOURCE_TYPE = "agentserver.task"

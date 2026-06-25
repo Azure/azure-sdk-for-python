@@ -34,7 +34,7 @@ from ._models import (
     TaskStatus,
 )
 
-logger = logging.getLogger("azure.ai.agentserver.agentserver")
+logger = logging.getLogger("azure.ai.agentserver.tasks")
 
 
 class _LocalEtagMismatch(_HostedConflict, ValueError):

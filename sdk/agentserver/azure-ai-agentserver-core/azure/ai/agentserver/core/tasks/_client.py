@@ -58,7 +58,7 @@ from ._models import (
 )
 from ._task_api_logging_policy import TaskApiLoggingPolicy
 
-logger = logging.getLogger("azure.ai.agentserver.agentserver")
+logger = logging.getLogger("azure.ai.agentserver.tasks")
 
 _AUTH_SCOPE = "https://ai.azure.com/.default"
 _API_VERSION = "v1"
