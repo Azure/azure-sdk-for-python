@@ -309,6 +309,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                     "message_preserved": True,
                 },
             )
+            await stream.close()
             return None
 
         # ── send vs. skip ──────────────────────────────────────────
@@ -334,6 +335,7 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                     "partial": False,
                 }
                 invocation_store.save(invocation_id, {"status": "completed", "output": output})
+                await stream.close()
                 return output
             logger.info("Recovered turn in-flight upstream — waiting for SessionIdle")
         else:
@@ -404,6 +406,12 @@ async def copilot_session(ctx: TaskContext[dict]) -> dict[str, Any]:
                     t.cancel()
 
         reply = "".join(reply_parts)
+
+    # The turn is finished — close this invocation's stream so every SSE
+    # subscriber's ``async for`` ends cleanly. The in-memory-live backing does
+    # not close on its own when the producer stops (unlike file-backed), so we
+    # must close it explicitly here.
+    await stream.close()
 
     # ── Phase 3: Save result + decide suspended-state envelope ────
     output = {

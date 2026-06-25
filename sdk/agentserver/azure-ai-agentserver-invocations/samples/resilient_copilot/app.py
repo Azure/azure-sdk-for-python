@@ -85,12 +85,6 @@ async def _sse_from_iter(
     try:
         async for chunk in subscription:
             yield f"data: {json.dumps(chunk)}\n\n".encode()
-            # The per-invocation stream is a long-lived broadcast channel that
-            # does not end on its own when the turn finishes, so stop iterating
-            # once the terminal ``session_idle`` chunk is seen — otherwise the
-            # SSE response hangs open after the reply is complete.
-            if isinstance(chunk, dict) and chunk.get("type") == "session_idle":
-                break
         done_data = {"type": "done", "invocation_id": invocation_id}
         yield f"event: done\ndata: {json.dumps(done_data)}\n\n".encode()
     except EventStreamNotFoundError:
