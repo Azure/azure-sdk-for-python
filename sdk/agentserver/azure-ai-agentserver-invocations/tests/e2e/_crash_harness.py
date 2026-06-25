@@ -4,8 +4,8 @@
 
 Spawns an HTTP server as a subprocess, exposes ``kill()`` (SIGKILL) and
 ``restart()`` APIs, plus an ``httpx.AsyncClient`` for POST + reconnect. Wires
-the subprocess against ``LocalDurableProvider`` + ``FileResponseStore`` + the file-backed
-streams registry backing against a common ``tmp_path`` so durable state
+the subprocess against ``LocalResilientProvider`` + ``FileResponseStore`` + the file-backed
+streams registry backing against a common ``tmp_path`` so resilient state
 survives the kill.
 
 POSIX-only (uses ``os.kill(pid, SIGKILL)``). See  §Q1 for the
@@ -18,7 +18,7 @@ Usage in a test:
     @pytest.mark.asyncio
     async def test_recovery(tmp_path: Path) -> None:
         harness = CrashHarness(
-            sample_module="azure_ai_agentserver_responses_samples.sample_18_durable_copilot",
+            sample_module="azure_ai_agentserver_responses_samples.sample_18_resilient_copilot",
             tmp_path=tmp_path,
         )
         await harness.start()
@@ -51,7 +51,7 @@ class CrashHarness:
     """Spawn-and-kill harness for cross-process recovery testing.
 
     :param sample_module: Importable module name (e.g.
-        ``"my_pkg.sample_18_durable_copilot"``) or a Python file path. The
+        ``"my_pkg.sample_18_resilient_copilot"``) or a Python file path. The
         subprocess runs ``python -m <module>`` if given a module name, or
         ``python <path>`` if given a file path.
     :type sample_module: str | ~types.ModuleType | ~pathlib.Path
@@ -166,7 +166,7 @@ class CrashHarness:
     def _build_env(self) -> dict[str, str]:
         """Compose the subprocess environment.
 
-        Wires PORT and the three durable storage paths so the
+        Wires PORT and the three state storage paths so the
         sample can pick them up. Specific environment variable names are a
         convention the sample author honours.
 
@@ -179,7 +179,16 @@ class CrashHarness:
         """
         env = dict(os.environ)
         env["PORT"] = str(self._port)
-        env["AGENTSERVER_DURABLE_TASKS_PATH"] = str(self._tmp_path / "tasks")
+        env["AGENTSERVER_STATE_ROOT"] = str(self._tmp_path)
+        # (Spec 024 Phase 3a) Strip legacy per-subdir env vars that may
+        # be inherited from the parent test runner — only the unified
+        # AGENTSERVER_STATE_ROOT should be in effect.
+        for _legacy in (
+            "AGENTSERVER_STATE_TASKS_PATH",
+            "AGENTSERVER_RESPONSE_STORE_PATH",
+            "AGENTSERVER_STREAM_STORE_PATH",
+        ):
+            env.pop(_legacy, None)
         env["AGENTSERVER_RESPONSE_STORE_PATH"] = str(self._tmp_path / "responses")
         env["AGENTSERVER_STREAM_STORE_PATH"] = str(self._tmp_path / "streams")
         # The package root (parent of tests/) — _crash_harness.py lives at
@@ -301,7 +310,7 @@ class CrashHarness:
     async def restart(self) -> None:
         """Restart the subprocess at the same ``tmp_path`` and same port.
 
-        Equivalent to a fresh ``start()`` after a ``kill()``. The durable
+        Equivalent to a fresh ``start()`` after a ``kill()``. The resilient
         storage under ``tmp_path/{tasks,responses,streams}`` survives, so
         the new subprocess sees the prior state.
         """
@@ -328,7 +337,7 @@ class CrashHarness:
         test controls via the ``AGENTSERVER_SHUTDOWN_GRACE_SECONDS`` env
         var passed in ``env_extras``).
 
-        Use cases (per ``durability-contract.md`` §Termination paths):
+        Use cases (per ``resilience-contract.md`` §Termination paths):
 
         - **Path A** — pass a long ``wait_seconds`` and configure a long
           grace; the handler completes naturally before grace expires.

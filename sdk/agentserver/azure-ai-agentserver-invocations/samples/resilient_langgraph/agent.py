@@ -1,6 +1,6 @@
-"""LangGraph conversation agent with durable task lifecycle and steering.
+"""LangGraph conversation agent with resilient task lifecycle and steering.
 
-Wraps a LangGraph ``StateGraph`` in a steerable durable task.
+Wraps a LangGraph ``StateGraph`` in a steerable resilient task.
 Demonstrates the **checkpoint-and-fork** cancel pattern:
 
 1. Pre-entry check  — short-circuit if cancel is pre-set
@@ -8,7 +8,7 @@ Demonstrates the **checkpoint-and-fork** cancel pattern:
 3. Fork-on-steer    — roll back to the last stable checkpoint and fork
    with the new message
 
-LangGraph owns the conversation flow; the durable task owns crash
+LangGraph owns the conversation flow; the resilient task owns crash
 resilience and steering orchestration.
 """
 
@@ -25,16 +25,19 @@ from langgraph.graph import END, START, StateGraph, add_messages
 from langgraph.types import Command, interrupt
 from typing_extensions import TypedDict
 
-from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
+from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
-from .store import FileStore
+try:
+    from .store import FileStore
+except ImportError:  # allows running the app as a script from inside this directory
+    from store import FileStore
 
 logger = logging.getLogger(__name__)
 
-_DATA_DIR = Path.home() / ".durable-sessions"
+_DATA_DIR = Path.home() / ".agentserver-sessions"
 
-# Invocation result store — written inside the durable task so it survives crashes
+# Invocation result store — written inside the resilient task so it survives crashes
 invocation_store = FileStore(_DATA_DIR / "invocations")
 
 
@@ -300,7 +303,7 @@ async def _finalize_invocation(
 
 
 # ---------------------------------------------------------------------------
-# Durable task — bridges LangGraph with HTTP lifecycle
+# Resilient task — bridges LangGraph with HTTP lifecycle
 # ---------------------------------------------------------------------------
 
 

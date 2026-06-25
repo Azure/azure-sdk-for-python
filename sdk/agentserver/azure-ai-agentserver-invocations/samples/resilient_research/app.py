@@ -1,6 +1,6 @@
-"""HTTP host for the durable deep-research agent.
+"""HTTP host for the resilient deep-research agent.
 
-Exposes the ``deep_research`` durable task over the invocations
+Exposes the ``deep_research`` resilient task over the invocations
 protocol with the FULL pattern matrix:
 
 - ``POST /invocations`` with body ``{"topic": "..."}`` and an
@@ -54,6 +54,12 @@ The new turn gets a new ``invocation_id`` from the platform; the
 new ``invocation_id`` is the new stream id. The HTTP layer does not
 need to distinguish steered turns from fresh turns — see
 ``agent.py`` for the discipline.
+
+Usage::
+
+    # From inside this sample directory:
+    pip install -r requirements.txt
+    python app.py
 """
 
 from __future__ import annotations
@@ -76,7 +82,10 @@ from azure.ai.agentserver.core.streaming import (
 )
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-from .agent import deep_research
+try:
+    from .agent import deep_research
+except ImportError:  # allows `python app.py` from inside this directory
+    from agent import deep_research
 
 logger = logging.getLogger(__name__)
 
@@ -89,11 +98,11 @@ logger = logging.getLogger(__name__)
 # all its events have aged out, the registry destroys it and removes
 # the file.
 # (Spec 024 Phase 3a) Default streams dir lives under the unified
-# AGENTSERVER_DURABLE_ROOT layout at ``<root>/streams/`` — same place
+# AGENTSERVER_STATE_ROOT layout at ``<root>/streams/`` — same place
 # the responses package puts its SSE event store.
-from azure.ai.agentserver.core.storage_paths import resolve_durable_subdir
+from azure.ai.agentserver.core.storage_paths import resolve_state_subdir
 
-_STREAM_DIR = Path(os.environ.get("AGENTSERVER_STREAMS_DIR", str(resolve_durable_subdir("streams"))))
+_STREAM_DIR = Path(os.environ.get("AGENTSERVER_STREAMS_DIR", str(resolve_state_subdir("streams"))))
 _STREAM_DIR.mkdir(parents=True, exist_ok=True)
 
 streams.use_file_backed_replay(
@@ -168,7 +177,7 @@ async def handle_invoke(request: Request) -> Response:
 
     invocation_id: str = request.state.invocation_id
     session_id: str = request.state.session_id
-    # ONE durable task per session so steering finds the active run.
+    # ONE resilient task per session so steering finds the active run.
     # invocation_id labels THIS turn; session_id labels the long-
     # lived task.
     task_id = f"research-{session_id}"
@@ -258,7 +267,7 @@ async def handle_get(request: Request) -> Response:
     task_id = f"research-{session_id}"
     # Task.get + TaskSnapshot removed. Use the
     # provider directly for read-only inspection (returns TaskInfo).
-    from azure.ai.agentserver.core.durable._manager import get_task_manager
+    from azure.ai.agentserver.core.tasks._manager import get_task_manager
 
     mgr = get_task_manager()
     info: Any = await mgr.provider.get(task_id)
@@ -278,7 +287,7 @@ async def handle_get(request: Request) -> Response:
 async def handle_cancel(request: Request) -> Response:
     """Cancel the running research task.
 
-    Cancel applies to the per-session durable task (``task_id ==
+    Cancel applies to the per-session resilient task (``task_id ==
     f"research-{session_id}"``). The handler observes
     ``ctx.cancel.is_set()`` and runs its cooperative wind-down at
     the next checkpoint, which closes the per-turn stream before

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Live e2e tests for the ``durable_copilot`` invocations sample.
+"""Live e2e tests for the ``resilient_copilot`` invocations sample.
 
 These tests spawn the sample as a subprocess via :class:`CrashHarness`
 and drive it via real HTTP. They require:
@@ -53,22 +53,22 @@ _SAMPLES_DIR = Path(__file__).resolve().parent.parent.parent / "samples"
 
 
 def _harness(tmp_path: Path) -> CrashHarness:
-    """Build a harness wired to the durable_copilot sample.
+    """Build a harness wired to the resilient_copilot sample.
 
-    Spawns ``python -m durable_copilot.app`` with the samples directory
-    on PYTHONPATH and ``AGENTSERVER_DURABLE_TASKS_PATH`` rooted at
-    ``tmp_path / "tasks"`` so the durable provider is isolated per
+    Spawns ``python -m resilient_copilot.app`` with the samples directory
+    on PYTHONPATH and ``AGENTSERVER_STATE_ROOT`` rooted at
+    ``tmp_path / "tasks"`` so the resilient provider is isolated per
     test.
     """
     env_extras = {
         "PYTHONPATH": (f"{_SAMPLES_DIR}{os.pathsep}{os.environ.get('PYTHONPATH', '')}").rstrip(os.pathsep),
         # Do NOT override HOME — the Copilot CLI needs to find its auth
         # config under the real user's $HOME. We accept a per-test bleed
-        # in ~/.durable-sessions/copilot-invocations; each test uses a
+        # in ~/.agentserver-sessions/copilot-invocations; each test uses a
         # different ``agent_session_id`` so they don't collide.
     }
     return CrashHarness(
-        sample_module="durable_copilot.app",
+        sample_module="resilient_copilot.app",
         tmp_path=tmp_path,
         env_extras=env_extras,
         readiness_timeout_seconds=20.0,

@@ -1,6 +1,6 @@
-"""Durable multi-turn session agent (invocations protocol).
+"""Resilient multi-turn session agent (invocations protocol).
 
-Defines the durable task that powers a sticky conversation session.
+Defines the resilient task that powers a sticky conversation session.
 Each invocation runs this function from the top — ``ctx.entry_mode``
 tells us whether this is a fresh start, a resume, or a crash recovery.
 
@@ -12,11 +12,11 @@ This sample demonstrates the **named-namespace metadata** facility:
   state — the full conversation history that persists across many
   invocations of the same session.
 
-Both namespaces are durable. On ``ctx.entry_mode == "recovered"`` the
+Both namespaces are resilient. On ``ctx.entry_mode == "recovered"`` the
 handler reads the session history out of the named namespace (it was
 already flushed by a prior lifetime), appends the current turn, and
 flushes again before suspending. There is no external file-store
-involved — the durable primitive owns the persistence.
+involved — the resilient primitive owns the persistence.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from azure.ai.agentserver.core.durable import TaskContext, multi_turn_task
+from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,7 @@ def _generate_reply(turn: int, last_msg: str) -> str:
 
 @multi_turn_task(name="session_workflow")
 async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
-    """Single durable function for the entire session.
+    """Single resilient function for the entire session.
 
     Each invocation runs this function from the top.
     ``ctx.entry_mode`` tells us why we were entered.
@@ -99,7 +99,7 @@ async def session_workflow(ctx: TaskContext[dict]) -> dict[str, Any]:
     session["turn_count"] = turn_count
     await session.flush()
 
-    # Persist invocation result BEFORE suspending (inside durable boundary).
+    # Persist invocation result BEFORE suspending (inside resilient boundary).
     output = {"reply": reply, "turn": turn_count}
     ctx.metadata["status"] = "completed"
     ctx.metadata["output"] = output

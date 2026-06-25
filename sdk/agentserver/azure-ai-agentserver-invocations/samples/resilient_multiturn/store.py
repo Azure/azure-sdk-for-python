@@ -1,7 +1,7 @@
 """File-based key→JSON store for powering the invocation API.
 
 This module provides a minimal persistence layer that the HTTP host uses to
-store per-invocation results.  It is **not** part of the durable task
+store per-invocation results.  It is **not** part of the resilient task
 framework — it is the developer's own persistence for powering the API
 contract (``GET /invocations/{invocation_id}``).
 
