@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.commvaultcontentstore import ContentStoreClient
+from azure.mgmt.commvaultcontentstore import CommvaultContentStoreMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.commvaultcontentstore import ContentStoreClient
 
 
 def main():
-    client = ContentStoreClient(
+    client = CommvaultContentStoreMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

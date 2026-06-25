@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.commvaultcontentstore.aio import ContentStoreClient
+from azure.mgmt.commvaultcontentstore import CommvaultContentStoreMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContentStoreProtectedItemsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestCommvaultContentStoreMgmtProtectedItemsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContentStoreClient, is_async=True)
+        self.client = self.create_mgmt_client(CommvaultContentStoreMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_protected_items_get(self, resource_group):
-        response = await self.client.protected_items.get(
+    @recorded_by_proxy
+    def test_protected_items_get(self, resource_group):
+        response = self.client.protected_items.get(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
             protection_group_name="str",
@@ -33,21 +32,21 @@ class TestContentStoreProtectedItemsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_protected_items_list_by_protection_group(self, resource_group):
+    @recorded_by_proxy
+    def test_protected_items_list_by_protection_group(self, resource_group):
         response = self.client.protected_items.list_by_protection_group(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
             protection_group_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_protected_items_get_restore_points(self, resource_group):
-        response = await self.client.protected_items.get_restore_points(
+    @recorded_by_proxy
+    def test_protected_items_get_restore_points(self, resource_group):
+        response = self.client.protected_items.get_restore_points(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
             protection_group_name="str",
@@ -58,9 +57,9 @@ class TestContentStoreProtectedItemsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_protected_items_restore(self, resource_group):
-        response = await self.client.protected_items.restore(
+    @recorded_by_proxy
+    def test_protected_items_restore(self, resource_group):
+        response = self.client.protected_items.restore(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
             protection_group_name="str",

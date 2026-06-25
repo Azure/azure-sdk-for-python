@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.commvaultcontentstore import ContentStoreClient
+from azure.mgmt.commvaultcontentstore import CommvaultContentStoreMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContentStoreStoragesOperations(AzureMgmtRecordedTestCase):
+class TestCommvaultContentStoreMgmtPlansOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContentStoreClient)
+        self.client = self.create_mgmt_client(CommvaultContentStoreMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_storages_get(self, resource_group):
-        response = self.client.storages.get(
+    def test_plans_get(self, resource_group):
+        response = self.client.plans.get(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
-            storage_name="str",
+            plan_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,20 +32,46 @@ class TestContentStoreStoragesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_storages_begin_create_or_update(self, resource_group):
-        response = self.client.storages.begin_create_or_update(
+    def test_plans_begin_create_orupdate(self, resource_group):
+        response = self.client.plans.begin_create_orupdate(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
-            storage_name="str",
+            plan_name="str",
             resource={
                 "id": "str",
                 "name": "str",
                 "properties": {
-                    "class": "str",
                     "location": "str",
-                    "storageType": "str",
-                    "vendor": "str",
+                    "storagePlans": [
+                        {
+                            "name": "str",
+                            "backupRuleType": "str",
+                            "copyName": "str",
+                            "copyPrecedence": 0,
+                            "extendedRetention": [
+                                {"backupRuleType": "str", "retentionPeriod": 0, "retentionTime": "str"}
+                            ],
+                            "retentionPeriod": 0,
+                            "retentionTime": "str",
+                            "storagePoolId": "str",
+                        }
+                    ],
                     "provisioningState": "str",
+                    "retention": {"numberOfSnapshots": 0},
+                    "schedules": [
+                        {
+                            "backupType": "str",
+                            "dayOfMonth": 0,
+                            "dayOfWeek": "str",
+                            "frequency": "str",
+                            "monthOfYear": "str",
+                            "runsEvery": 0,
+                            "time": "str",
+                            "timeZone": "str",
+                            "weekOfMonth": "str",
+                            "weeklyDays": ["str"],
+                        }
+                    ],
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -64,11 +90,11 @@ class TestContentStoreStoragesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_storages_begin_delete(self, resource_group):
-        response = self.client.storages.begin_delete(
+    def test_plans_begin_delete(self, resource_group):
+        response = self.client.plans.begin_delete(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
-            storage_name="str",
+            plan_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -76,8 +102,8 @@ class TestContentStoreStoragesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_storages_list_by_cloud_account(self, resource_group):
-        response = self.client.storages.list_by_cloud_account(
+    def test_plans_list_by_cloud_account(self, resource_group):
+        response = self.client.plans.list_by_cloud_account(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
         )

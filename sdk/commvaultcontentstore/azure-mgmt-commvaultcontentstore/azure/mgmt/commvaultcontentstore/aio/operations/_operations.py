@@ -74,7 +74,7 @@ from ...operations._operations import (
     build_storages_get_request,
     build_storages_list_by_cloud_account_request,
 )
-from .._configuration import ContentStoreClientConfiguration
+from .._configuration import CommvaultContentStoreMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -88,14 +88,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.commvaultcontentstore.aio.ContentStoreClient`'s
+        :class:`~azure.mgmt.commvaultcontentstore.aio.CommvaultContentStoreMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContentStoreClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CommvaultContentStoreMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -199,14 +201,16 @@ class CloudAccountsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.commvaultcontentstore.aio.ContentStoreClient`'s
+        :class:`~azure.mgmt.commvaultcontentstore.aio.CommvaultContentStoreMgmtClient`'s
         :attr:`cloud_accounts` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContentStoreClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CommvaultContentStoreMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1448,14 +1452,16 @@ class SaaSOperationGroupOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.commvaultcontentstore.aio.ContentStoreClient`'s
+        :class:`~azure.mgmt.commvaultcontentstore.aio.CommvaultContentStoreMgmtClient`'s
         :attr:`saa_soperation_group` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContentStoreClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CommvaultContentStoreMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1660,14 +1666,16 @@ class StoragesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.commvaultcontentstore.aio.ContentStoreClient`'s
+        :class:`~azure.mgmt.commvaultcontentstore.aio.CommvaultContentStoreMgmtClient`'s
         :attr:`storages` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContentStoreClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CommvaultContentStoreMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2231,14 +2239,16 @@ class PlansOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.commvaultcontentstore.aio.ContentStoreClient`'s
+        :class:`~azure.mgmt.commvaultcontentstore.aio.CommvaultContentStoreMgmtClient`'s
         :attr:`plans` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContentStoreClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CommvaultContentStoreMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2806,14 +2816,16 @@ class ProtectionGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.commvaultcontentstore.aio.ContentStoreClient`'s
+        :class:`~azure.mgmt.commvaultcontentstore.aio.CommvaultContentStoreMgmtClient`'s
         :attr:`protection_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContentStoreClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CommvaultContentStoreMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4124,14 +4136,16 @@ class ProtectedItemsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.commvaultcontentstore.aio.ContentStoreClient`'s
+        :class:`~azure.mgmt.commvaultcontentstore.aio.CommvaultContentStoreMgmtClient`'s
         :attr:`protected_items` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContentStoreClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CommvaultContentStoreMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4633,14 +4647,16 @@ class ProtectedItemsOperationGroupOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.commvaultcontentstore.aio.ContentStoreClient`'s
+        :class:`~azure.mgmt.commvaultcontentstore.aio.CommvaultContentStoreMgmtClient`'s
         :attr:`protected_items_operation_group` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContentStoreClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CommvaultContentStoreMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4786,14 +4802,16 @@ class RoleMappingsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.commvaultcontentstore.aio.ContentStoreClient`'s
+        :class:`~azure.mgmt.commvaultcontentstore.aio.CommvaultContentStoreMgmtClient`'s
         :attr:`role_mappings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContentStoreClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: CommvaultContentStoreMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

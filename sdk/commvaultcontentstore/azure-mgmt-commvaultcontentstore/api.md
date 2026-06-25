@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.commvaultcontentstore
 
-    class azure.mgmt.commvaultcontentstore.ContentStoreClient: implements ContextManager 
+    class azure.mgmt.commvaultcontentstore.CommvaultContentStoreMgmtClient: implements ContextManager 
         cloud_accounts: CloudAccountsOperations
         operations: Operations
         plans: PlansOperations
@@ -37,7 +37,7 @@ namespace azure.mgmt.commvaultcontentstore
 
 namespace azure.mgmt.commvaultcontentstore.aio
 
-    class azure.mgmt.commvaultcontentstore.aio.ContentStoreClient: implements AsyncContextManager 
+    class azure.mgmt.commvaultcontentstore.aio.CommvaultContentStoreMgmtClient: implements AsyncContextManager 
         cloud_accounts: CloudAccountsOperations
         operations: Operations
         plans: PlansOperations

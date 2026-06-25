@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.commvaultcontentstore.aio import ContentStoreClient
+from azure.mgmt.commvaultcontentstore.aio import CommvaultContentStoreMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContentStorePlansOperationsAsync(AzureMgmtRecordedTestCase):
+class TestCommvaultContentStoreMgmtStoragesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContentStoreClient, is_async=True)
+        self.client = self.create_mgmt_client(CommvaultContentStoreMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_plans_get(self, resource_group):
-        response = await self.client.plans.get(
+    async def test_storages_get(self, resource_group):
+        response = await self.client.storages.get(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
-            plan_name="str",
+            storage_name="str",
         )
 
         # please add some check logic here by yourself
@@ -33,47 +33,21 @@ class TestContentStorePlansOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_plans_begin_create_orupdate(self, resource_group):
+    async def test_storages_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.plans.begin_create_orupdate(
+            await self.client.storages.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 cloud_account_name="str",
-                plan_name="str",
+                storage_name="str",
                 resource={
                     "id": "str",
                     "name": "str",
                     "properties": {
+                        "class": "str",
                         "location": "str",
-                        "storagePlans": [
-                            {
-                                "name": "str",
-                                "backupRuleType": "str",
-                                "copyName": "str",
-                                "copyPrecedence": 0,
-                                "extendedRetention": [
-                                    {"backupRuleType": "str", "retentionPeriod": 0, "retentionTime": "str"}
-                                ],
-                                "retentionPeriod": 0,
-                                "retentionTime": "str",
-                                "storagePoolId": "str",
-                            }
-                        ],
+                        "storageType": "str",
+                        "vendor": "str",
                         "provisioningState": "str",
-                        "retention": {"numberOfSnapshots": 0},
-                        "schedules": [
-                            {
-                                "backupType": "str",
-                                "dayOfMonth": 0,
-                                "dayOfWeek": "str",
-                                "frequency": "str",
-                                "monthOfYear": "str",
-                                "runsEvery": 0,
-                                "time": "str",
-                                "timeZone": "str",
-                                "weekOfMonth": "str",
-                                "weeklyDays": ["str"],
-                            }
-                        ],
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -93,12 +67,12 @@ class TestContentStorePlansOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_plans_begin_delete(self, resource_group):
+    async def test_storages_begin_delete(self, resource_group):
         response = await (
-            await self.client.plans.begin_delete(
+            await self.client.storages.begin_delete(
                 resource_group_name=resource_group.name,
                 cloud_account_name="str",
-                plan_name="str",
+                storage_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -107,8 +81,8 @@ class TestContentStorePlansOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_plans_list_by_cloud_account(self, resource_group):
-        response = self.client.plans.list_by_cloud_account(
+    async def test_storages_list_by_cloud_account(self, resource_group):
+        response = self.client.storages.list_by_cloud_account(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
         )

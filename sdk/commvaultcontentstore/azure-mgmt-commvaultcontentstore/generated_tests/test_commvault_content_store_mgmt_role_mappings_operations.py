@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.commvaultcontentstore.aio import ContentStoreClient
+from azure.mgmt.commvaultcontentstore import CommvaultContentStoreMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContentStoreRoleMappingsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestCommvaultContentStoreMgmtRoleMappingsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContentStoreClient, is_async=True)
+        self.client = self.create_mgmt_client(CommvaultContentStoreMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_role_mappings_get(self, resource_group):
-        response = await self.client.role_mappings.get(
+    @recorded_by_proxy
+    def test_role_mappings_get(self, resource_group):
+        response = self.client.role_mappings.get(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
         )
@@ -31,9 +30,9 @@ class TestContentStoreRoleMappingsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_role_mappings_create_or_update(self, resource_group):
-        response = await self.client.role_mappings.create_or_update(
+    @recorded_by_proxy
+    def test_role_mappings_create_or_update(self, resource_group):
+        response = self.client.role_mappings.create_or_update(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
             resource={
@@ -61,9 +60,9 @@ class TestContentStoreRoleMappingsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_role_mappings_delete(self, resource_group):
-        response = await self.client.role_mappings.delete(
+    @recorded_by_proxy
+    def test_role_mappings_delete(self, resource_group):
+        response = self.client.role_mappings.delete(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
         )
@@ -72,12 +71,12 @@ class TestContentStoreRoleMappingsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_role_mappings_list(self, resource_group):
+    @recorded_by_proxy
+    def test_role_mappings_list(self, resource_group):
         response = self.client.role_mappings.list(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

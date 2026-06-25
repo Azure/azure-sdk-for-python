@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.commvaultcontentstore.aio import ContentStoreClient
+from azure.mgmt.commvaultcontentstore.aio import CommvaultContentStoreMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,14 +15,18 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContentStoreOperationsAsync(AzureMgmtRecordedTestCase):
+class TestCommvaultContentStoreMgmtSaaSOperationGroupOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContentStoreClient, is_async=True)
+        self.client = self.create_mgmt_client(CommvaultContentStoreMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_operations_list(self, resource_group):
-        response = self.client.operations.list()
-        result = [r async for r in response]
+    async def test_saa_soperation_group_begin_activate_resource(self, resource_group):
+        response = await (
+            await self.client.saa_soperation_group.begin_activate_resource(
+                body={"saaSGuid": "str"},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
         # please add some check logic here by yourself
         # ...

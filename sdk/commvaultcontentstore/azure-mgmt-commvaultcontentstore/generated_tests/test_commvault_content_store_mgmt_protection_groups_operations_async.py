@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.commvaultcontentstore import ContentStoreClient
+from azure.mgmt.commvaultcontentstore.aio import CommvaultContentStoreMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContentStoreProtectionGroupsOperations(AzureMgmtRecordedTestCase):
+class TestCommvaultContentStoreMgmtProtectionGroupsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContentStoreClient)
+        self.client = self.create_mgmt_client(CommvaultContentStoreMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_protection_groups_get(self, resource_group):
-        response = self.client.protection_groups.get(
+    @recorded_by_proxy_async
+    async def test_protection_groups_get(self, resource_group):
+        response = await self.client.protection_groups.get(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
             protection_group_name="str",
@@ -31,86 +32,92 @@ class TestContentStoreProtectionGroupsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_protection_groups_begin_create_orupdate(self, resource_group):
-        response = self.client.protection_groups.begin_create_orupdate(
-            resource_group_name=resource_group.name,
-            cloud_account_name="str",
-            protection_group_name="str",
-            resource={
-                "id": "str",
-                "name": "str",
-                "properties": {
-                    "dataSourceType": "AzureVM",
-                    "plan": "str",
-                    "resources": {
-                        "manual": ["str"],
-                        "matchRules": {
-                            "matchType": "str",
-                            "rules": [{"operator": "str", "property": "str", "value": "str"}],
+    @recorded_by_proxy_async
+    async def test_protection_groups_begin_create_orupdate(self, resource_group):
+        response = await (
+            await self.client.protection_groups.begin_create_orupdate(
+                resource_group_name=resource_group.name,
+                cloud_account_name="str",
+                protection_group_name="str",
+                resource={
+                    "id": "str",
+                    "name": "str",
+                    "properties": {
+                        "dataSourceType": "AzureVM",
+                        "plan": "str",
+                        "resources": {
+                            "manual": ["str"],
+                            "matchRules": {
+                                "matchType": "str",
+                                "rules": [{"operator": "str", "property": "str", "value": "str"}],
+                            },
                         },
+                        "backupActivityStatus": "str",
+                        "lastBackUpTime": 0,
+                        "numberOfProtectedItems": 0,
+                        "protectionStatus": "str",
+                        "provisioningState": "str",
                     },
-                    "backupActivityStatus": "str",
-                    "lastBackUpTime": 0,
-                    "numberOfProtectedItems": 0,
-                    "protectionStatus": "str",
-                    "provisioningState": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "type": "str",
                 },
-                "systemData": {
-                    "createdAt": "2020-02-20 00:00:00",
-                    "createdBy": "str",
-                    "createdByType": "str",
-                    "lastModifiedAt": "2020-02-20 00:00:00",
-                    "lastModifiedBy": "str",
-                    "lastModifiedByType": "str",
-                },
-                "type": "str",
-            },
+            )
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_protection_groups_begin_delete(self, resource_group):
-        response = self.client.protection_groups.begin_delete(
-            resource_group_name=resource_group.name,
-            cloud_account_name="str",
-            protection_group_name="str",
+    @recorded_by_proxy_async
+    async def test_protection_groups_begin_delete(self, resource_group):
+        response = await (
+            await self.client.protection_groups.begin_delete(
+                resource_group_name=resource_group.name,
+                cloud_account_name="str",
+                protection_group_name="str",
+            )
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_protection_groups_list_by_cloud_account(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_protection_groups_list_by_cloud_account(self, resource_group):
         response = self.client.protection_groups.list_by_cloud_account(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_protection_groups_begin_stop_backup(self, resource_group):
-        response = self.client.protection_groups.begin_stop_backup(
-            resource_group_name=resource_group.name,
-            cloud_account_name="str",
-            protection_group_name="str",
-            request={"reason": "str", "comment": "str"},
+    @recorded_by_proxy_async
+    async def test_protection_groups_begin_stop_backup(self, resource_group):
+        response = await (
+            await self.client.protection_groups.begin_stop_backup(
+                resource_group_name=resource_group.name,
+                cloud_account_name="str",
+                protection_group_name="str",
+                request={"reason": "str", "comment": "str"},
+            )
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_protection_groups_restore(self, resource_group):
-        response = self.client.protection_groups.restore(
+    @recorded_by_proxy_async
+    async def test_protection_groups_restore(self, resource_group):
+        response = await self.client.protection_groups.restore(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
             protection_group_name="str",
@@ -142,9 +149,9 @@ class TestContentStoreProtectionGroupsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_protection_groups_resume_backup(self, resource_group):
-        response = self.client.protection_groups.resume_backup(
+    @recorded_by_proxy_async
+    async def test_protection_groups_resume_backup(self, resource_group):
+        response = await self.client.protection_groups.resume_backup(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
             protection_group_name="str",
@@ -154,9 +161,9 @@ class TestContentStoreProtectionGroupsOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_protection_groups_backup(self, resource_group):
-        response = self.client.protection_groups.backup(
+    @recorded_by_proxy_async
+    async def test_protection_groups_backup(self, resource_group):
+        response = await self.client.protection_groups.backup(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
             protection_group_name="str",

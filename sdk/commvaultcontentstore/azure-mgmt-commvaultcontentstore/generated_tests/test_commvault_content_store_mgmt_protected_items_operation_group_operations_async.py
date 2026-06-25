@@ -6,22 +6,25 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.commvaultcontentstore import ContentStoreClient
+from azure.mgmt.commvaultcontentstore.aio import CommvaultContentStoreMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContentStoreOperations(AzureMgmtRecordedTestCase):
+class TestCommvaultContentStoreMgmtProtectedItemsOperationGroupOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContentStoreClient)
+        self.client = self.create_mgmt_client(CommvaultContentStoreMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_operations_list(self, resource_group):
-        response = self.client.operations.list()
-        result = [r for r in response]
+    @recorded_by_proxy_async
+    async def test_protected_items_operation_group_count_by_protection_groups(self, resource_group):
+        response = await self.client.protected_items_operation_group.count_by_protection_groups(
+            body={"resourceIds": ["str"]},
+        )
+
         # please add some check logic here by yourself
         # ...

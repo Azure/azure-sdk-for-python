@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.commvaultcontentstore import ContentStoreClient
+from azure.mgmt.commvaultcontentstore import CommvaultContentStoreMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,16 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContentStoreRoleMappingsOperations(AzureMgmtRecordedTestCase):
+class TestCommvaultContentStoreMgmtStoragesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContentStoreClient)
+        self.client = self.create_mgmt_client(CommvaultContentStoreMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_role_mappings_get(self, resource_group):
-        response = self.client.role_mappings.get(
+    def test_storages_get(self, resource_group):
+        response = self.client.storages.get(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
+            storage_name="str",
         )
 
         # please add some check logic here by yourself
@@ -31,18 +32,20 @@ class TestContentStoreRoleMappingsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_role_mappings_create_or_update(self, resource_group):
-        response = self.client.role_mappings.create_or_update(
+    def test_storages_begin_create_or_update(self, resource_group):
+        response = self.client.storages.begin_create_or_update(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
+            storage_name="str",
             resource={
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "class": "str",
+                    "location": "str",
+                    "storageType": "str",
+                    "vendor": "str",
                     "provisioningState": "str",
-                    "roles": [
-                        {"entities": [{"displayName": "str", "entityType": "str", "id": "str"}], "roleName": "str"}
-                    ],
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -54,26 +57,27 @@ class TestContentStoreRoleMappingsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-        )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_role_mappings_delete(self, resource_group):
-        response = self.client.role_mappings.delete(
+    def test_storages_begin_delete(self, resource_group):
+        response = self.client.storages.begin_delete(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
-        )
+            storage_name="str",
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_role_mappings_list(self, resource_group):
-        response = self.client.role_mappings.list(
+    def test_storages_list_by_cloud_account(self, resource_group):
+        response = self.client.storages.list_by_cloud_account(
             resource_group_name=resource_group.name,
             cloud_account_name="str",
         )
