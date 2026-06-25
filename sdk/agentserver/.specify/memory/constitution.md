@@ -105,9 +105,9 @@ All new feature code follows test-driven development:
 
 ```python
 # ✅ GOOD — test written first, defines expected behavior
-async def test_durable_task_resumes_after_crash():
+async def test_resilient_task_resumes_after_crash():
     """Handler is re-invoked with metadata intact after simulated crash."""
-    app = create_test_app(durable_background=True)
+    app = create_test_app(resilient_background=True)
     # ... setup, crash simulation, assertion ...
     assert response.status == "completed"
     assert response.output[0].content == "resumed result"
@@ -132,12 +132,12 @@ This principle is adjacent to TDD (Principle VII) but distinct: TDD validates be
 
 **The loop:**
 
-1. **Write or update the guide first.** Before writing or rewriting a sample, write or update the relevant section of the developer guide (e.g. `handler-implementation-guide.md`, `durable-responses-developer-guide.md`). The guide defines the mental model, rules, and layered responsibilities (library ↔ handler ↔ upstream framework). The guide does NOT teach individual upstream frameworks; it teaches the contract.
+1. **Write or update the guide first.** Before writing or rewriting a sample, write or update the relevant section of the developer guide (e.g. `handler-implementation-guide.md`, `resilient-responses-developer-guide.md`). The guide defines the mental model, rules, and layered responsibilities (library ↔ handler ↔ upstream framework). The guide does NOT teach individual upstream frameworks; it teaches the contract.
 2. **Write the sample by mechanically applying the guide.** Pretend you are a developer reading the guide for the first time. Implement the sample using *only* the guidance in the guide. Do not import knowledge that isn't in the guide.
 3. **If the sample comes out wrong, the guide is wrong.** Fix the guide first. Do not patch the sample to work around guide gaps.
 4. **Re-derive the sample from the corrected guide.** Repeat until both guide and sample are internally consistent.
 5. **Test the guide via samples.** Every guide section that prescribes a pattern must have at least one sample that demonstrates that pattern end-to-end, with an automated test asserting the prescribed outcome.
-6. **Run the applicable review checklist.** Before marking a sample done, run the relevant checklist from `.specify/templates/` against it. For durable response samples, that is `durability-sample-checklist-template.md`. A sample with any failing checklist item is incomplete — triage the failure (guide gap / sample bug / test gap / spec gap) and loop back to the earliest applicable step.
+6. **Run the applicable review checklist.** Before marking a sample done, run the relevant checklist from `.specify/templates/` against it. For resilient response samples, that is `resilience-sample-checklist-template.md`. A sample with any failing checklist item is incomplete — triage the failure (guide gap / sample bug / test gap / spec gap) and loop back to the earliest applicable step.
 
 **Guide responsibilities:**
 
@@ -158,7 +158,7 @@ This principle is adjacent to TDD (Principle VII) but distinct: TDD validates be
 
 Mechanical review of samples uses checklists stored under `.specify/templates/`:
 
-- `durability-sample-checklist-template.md` — for any durable response handler sample (covers crash, shutdown, steering, client cancel). Required before any durable sample is shipped.
+- `resilience-sample-checklist-template.md` — for any resilient response handler sample (covers crash, shutdown, steering, client cancel). Required before any resilient sample is shipped.
 
 New canonical sample categories MUST get a matching checklist template. Each checklist item references the constitutional principle or spec FR it enforces, so a checklist failure is traceable to a specific contract.
 
@@ -173,11 +173,11 @@ Every spec that touches developer-facing samples MUST include a "Docs ↔ Sample
 ```python
 # ✅ GOOD — guide first, sample derived from guide, checklist closes the loop
 # 1. handler-implementation-guide.md updated with recovery contract.
-# 2. sample_17_durable_claude.py implemented by following the guide.
+# 2. sample_17_resilient_claude.py implemented by following the guide.
 # 3. Sample's test fails → guide is missing the "claude_query_in_flight watermark" pattern.
 # 4. Guide updated with the watermark pattern.
 # 5. Sample re-derived from updated guide → test passes.
-# 6. durability-sample-checklist run against sample → 30/30 pass → sample marked done.
+# 6. resilience-sample-checklist run against sample → 30/30 pass → sample marked done.
 
 # ❌ BAD — sample first, guide retro-fitted, no checklist
 # 1. sample_17 written by reading Claude SDK source.
@@ -187,37 +187,37 @@ Every spec that touches developer-facing samples MUST include a "Docs ↔ Sample
 #    gap that was already "fixed" — because no checklist ever caught it.
 ```
 
-### X. Durability Contract Conformance (NON-NEGOTIABLE)
+### X. Resilience Contract Conformance (NON-NEGOTIABLE)
 
-The durability behavior of `azure-ai-agentserver-responses` is specified in the source-of-truth durability contract. Every row of its matrix has an observable contract; every contract MUST be backed by a behavioral test that exercises it end-to-end through real signals.
+The resilience behavior of `azure-ai-agentserver-responses` is specified in the source-of-truth resilience contract. Every row of its matrix has an observable contract; every contract MUST be backed by a behavioral test that exercises it end-to-end through real signals.
 
-**Why this principle exists**: the framework's documented durability matrix once diverged silently from its implementation for three rows. Five overlapping failure modes let those divergences ship: tests asserted helper behavior instead of contract behavior, crash-injection tests were deferred and never picked up, helpers were built without wiring, no single contract validated the matrix as an end-to-end seam, and no structural guard required matrix coverage. This principle is the structural guard.
+**Why this principle exists**: the framework's documented resilience matrix once diverged silently from its implementation for three rows. Five overlapping failure modes let those divergences ship: tests asserted helper behavior instead of contract behavior, crash-injection tests were deferred and never picked up, helpers were built without wiring, no single contract validated the matrix as an end-to-end seam, and no structural guard required matrix coverage. This principle is the structural guard.
 
 **The rule:**
 
-1. **Every row of `durability-contract.md` §The matrix MUST have a behavioral test in `tests/e2e/durability_contract/` exercising every applicable termination path via real signals:**
+1. **Every row of `resilience-contract.md` §The matrix MUST have a behavioral test in `tests/e2e/resilience_contract/` exercising every applicable termination path via real signals:**
    - **Path A** (graceful shutdown, handler completes within grace): SIGTERM with grace period set sufficiently long for the handler to complete naturally.
    - **Path B** (graceful shutdown, grace exhausted): SIGTERM with grace period set deliberately short so the handler is still running at grace expiry, forcing the in-process marker / hand-off to fire before subprocess exit.
    - **Path C** (crash, or Path-B failure): SIGKILL via `_crash_harness` mid-handler, followed by subprocess restart.
 2. **Where the matrix collapses `stream`, the test MUST run its assertions for both `stream=False` and `stream=True`** (parametrized).
-3. **The `test_contract_completeness.py` meta-test** parses `durability-contract.md` and fails CI if any (row, applicable path) is missing a paired test module, OR if any module is missing one of the parametrize ids the matrix requires.
-4. **Any spec or pull request that affects code in the durability surface** (orchestrator routing, in-process shutdown loop, durable-task primitive integration, stream provider, response store terminal-persist hooks) **MUST land its conformance tests RED before the implementation commit goes green.** The reviewer verifies test-first ordering from the commit history.
+3. **The `test_contract_completeness.py` meta-test** parses `resilience-contract.md` and fails CI if any (row, applicable path) is missing a paired test module, OR if any module is missing one of the parametrize ids the matrix requires.
+4. **Any spec or pull request that affects code in the resilience surface** (orchestrator routing, in-process shutdown loop, resilient-task primitive integration, stream provider, response store terminal-persist hooks) **MUST land its conformance tests RED before the implementation commit goes green.** The reviewer verifies test-first ordering from the commit history.
 5. **Synthetic-crash shortcuts are explicitly disallowed for conformance tests:**
    - MUST NOT mock `_crash_harness`.
-   - MUST NOT fabricate a `DurabilityContext` to simulate recovery.
+   - MUST NOT fabricate a `ResilienceContext` to simulate recovery.
    - MUST NOT call internal failure-marker functions (e.g. `_persist_crash_failed`) directly to simulate Path B or Path C.
    - MUST NOT use a test-only injection to control grace timing; use the framework's real `shutdown_grace_period_seconds` configuration.
 
-**Adding or modifying a row:** any spec that adds a new row to the matrix, or modifies the contract on an existing row, MUST follow `durability-contract.md` §Change control: amend the contract doc, update the conformance suite (RED first, then GREEN after implementation), and update the dev guide / handler guide in the same PR as the implementation.
+**Adding or modifying a row:** any spec that adds a new row to the matrix, or modifies the contract on an existing row, MUST follow `resilience-contract.md` §Change control: amend the contract doc, update the conformance suite (RED first, then GREEN after implementation), and update the dev guide / handler guide in the same PR as the implementation.
 
-**Reviewer checklist for PRs touching durability:**
+**Reviewer checklist for PRs touching resilience:**
 
-- [ ] Which rows of `durability-contract.md` §The matrix does this change affect?
+- [ ] Which rows of `resilience-contract.md` §The matrix does this change affect?
 - [ ] Are the conformance tests for those rows in the PR?
 - [ ] Did those tests land RED before the implementation commit (verifiable from git history)?
 - [ ] Did the dev guide / handler guide need updates? Are they in this PR?
 
-This principle is referenced by `durability-contract.md` §Test discipline; the two stay in sync via cross-reference. The durability test suite, meta-test, Constitution principle, and template gate implement the structural pieces.
+This principle is referenced by `resilience-contract.md` §Test discipline; the two stay in sync via cross-reference. The resilience test suite, meta-test, Constitution principle, and template gate implement the structural pieces.
 
 ### XI. Contract-Surface Test Depth (NON-NEGOTIABLE)
 
@@ -236,15 +236,15 @@ Principle X (every cell has a paired test) was satisfied. Principle XI is the de
    - **For cells with `stream=true`:** event sequence ordering, per-event content (delta text, item shape, content-part fields), sequence-number monotonicity across recovery attempts, and the final terminal event's `response` payload. Pre-crash events MUST be verified to survive in the persisted stream for cells where the contract claims cross-attempt continuity (Row 1).
    - **For cells with `stream=false`:** `response.status`, `response.output` (the assembled output items including their content text), and `response.error` (for failure cells). For polled / background cells, the polled snapshot IS the contract surface; the test MUST assert on its content, not just its terminal type.
 
-2. **The conformance test handler MUST emit per-lifetime-identifiable content** so cross-attempt assertions are sensitive to drift. The current handler at `tests/e2e/durability_contract/_test_handler.py` tags every delta with `f"L{lifetime}_..."` and the final text with a composite `f"L{lifetime}_done|pre=N|chain=…|visited=…"` — tests parse these markers to confirm which lifetime produced which event. Content like `"ok"` that's identical across lifetimes is DISALLOWED in this handler.
+2. **The conformance test handler MUST emit per-lifetime-identifiable content** so cross-attempt assertions are sensitive to drift. The current handler at `tests/e2e/resilience_contract/_test_handler.py` tags every delta with `f"L{lifetime}_..."` and the final text with a composite `f"L{lifetime}_done|pre=N|chain=…|visited=…"` — tests parse these markers to confirm which lifetime produced which event. Content like `"ok"` that's identical across lifetimes is DISALLOWED in this handler.
 
-3. **The contract coverage matrix at `tests/e2e/durability_contract/CONTRACT_COVERAGE.md` MUST map every normative clause in `durability-contract.md` to the test(s) that verify it.** Cells marked `**GAP**` are explicit findings; they MUST be filled or explicitly justified (with a `n/a` rationale) before the next contract amendment ships.
+3. **The contract coverage matrix at `tests/e2e/resilience_contract/CONTRACT_COVERAGE.md` MUST map every normative clause in `resilience-contract.md` to the test(s) that verify it.** Cells marked `**GAP**` are explicit findings; they MUST be filled or explicitly justified (with a `n/a` rationale) before the next contract amendment ships.
 
 4. **The `test_contract_coverage_matrix_exists_and_is_non_trivial` meta-test** enforces that every conformance test file is referenced in the matrix. New tests added without a matrix entry fail CI.
 
 5. **The `test_per_cell_tests_assert_more_than_just_status` meta-test** is a SHOULD-gate (warning, not hard fail) that surfaces per-cell tests asserting only on `terminal["status"]` without any other depth signal (event content, response.output, sequence numbers, etc.). It guides reviewers toward adding depth assertions when the cross-cutting tests don't already cover them.
 
-**Adding a new contract clause** (per `durability-contract.md` § Change control):
+**Adding a new contract clause** (per `resilience-contract.md` § Change control):
 
 1. Add the clause to the contract doc.
 2. Add a coverage matrix entry mapping the clause to the test(s) that verify it.
@@ -255,32 +255,32 @@ This principle was added as a follow-up to the conformance-depth reflection. The
 
 ### XII. Core-Primitive TDD Discipline (NON-NEGOTIABLE)
 
-The public surface of the core durable-task primitive (`azure-ai-agentserver-core/azure/ai/agentserver/core/durable/`) is consumed by every higher layer (invocations samples, responses framework, future end-user durable handlers). Drift between the primitive's documented contract and its actual behavior cascades silently into all consumers. This principle is the test-first gate against that drift.
+The public surface of the core resilient-task primitive (`azure-ai-agentserver-core/azure/ai/agentserver/core/tasks/`) is consumed by every higher layer (invocations samples, responses framework, future end-user resilient handlers). Drift between the primitive's documented contract and its actual behavior cascades silently into all consumers. This principle is the test-first gate against that drift.
 
-**Why this principle exists**: Principle X locks the responses-layer durability matrix against drift. The core primitive has the same shape of problem one layer down — its `TaskContext` fields, decorator arguments, exception types, and metadata namespaces are a public contract whose drift produces silent miscompiles in consumer code. Prior hardening surfaced concrete examples: `run_attempt` semantics ambiguous between in-process retries and durable failure-retry budget; `previous_input` shipped without being populated; `TaskSuspended` exported but unused; `_FilteredMetadata` filtering the wrong direction. None of these were caught by the existing suite because the suite asserted helper behavior, not the primitive's contract surface. This principle is the structural fix.
+**Why this principle exists**: Principle X locks the responses-layer resilience matrix against drift. The core primitive has the same shape of problem one layer down — its `TaskContext` fields, decorator arguments, exception types, and metadata namespaces are a public contract whose drift produces silent miscompiles in consumer code. Prior hardening surfaced concrete examples: `run_attempt` semantics ambiguous between in-process retries and resilient failure-retry budget; `previous_input` shipped without being populated; `TaskSuspended` exported but unused; `_FilteredMetadata` filtering the wrong direction. None of these were caught by the existing suite because the suite asserted helper behavior, not the primitive's contract surface. This principle is the structural fix.
 
 **The rule:**
 
-1. **Every public symbol in `azure-ai-agentserver-core/azure/ai/agentserver/core/durable/__init__.py` MUST have at least one paired test in `azure-ai-agentserver-core/tests/durable/` asserting:**
+1. **Every public symbol in `azure-ai-agentserver-core/azure/ai/agentserver/core/tasks/__init__.py` MUST have at least one paired test in `azure-ai-agentserver-core/tests/tasks/` asserting:**
    - The symbol's exact name, location, and presence in `__all__`.
-   - Each field's name, type, and behavior under the modes the contract documents (e.g. `TaskContext.retry_attempt` durability across process restart; `TaskContext.recovery_count` increment-on-recovery semantics).
+   - Each field's name, type, and behavior under the modes the contract documents (e.g. `TaskContext.retry_attempt` resilience across process restart; `TaskContext.recovery_count` increment-on-recovery semantics).
    - Each decorator argument's behavior (accepted-and-honored vs rejected-with-TypeError).
    - Each exception type's raise sites and message shape.
 
-2. **The `test_contract_completeness.py` meta-test** (in `tests/durable/`) parses the consolidated developer guide for the durable-task primitive AND the test directory, and fails CI if any documented contract clause lacks a paired test reference, OR if any public symbol lacks a surface-test entry.
+2. **The `test_contract_completeness.py` meta-test** (in `tests/tasks/`) parses the consolidated developer guide for the resilient-task primitive AND the test directory, and fails CI if any documented contract clause lacks a paired test reference, OR if any public symbol lacks a surface-test entry.
 
-3. **Any spec or pull request that affects the public surface of the core durable-task primitive** (decorator signature, `TaskContext` fields, exception types, metadata namespaces, retry policy) **MUST land its conformance tests RED before the implementation commit goes green.** The reviewer verifies test-first ordering from the commit history.
+3. **Any spec or pull request that affects the public surface of the core resilient-task primitive** (decorator signature, `TaskContext` fields, exception types, metadata namespaces, retry policy) **MUST land its conformance tests RED before the implementation commit goes green.** The reviewer verifies test-first ordering from the commit history.
 
-4. **The non-duplication rule:** when an existing test in `tests/durable/` already covers the surface area being changed, the new conformance must EXTEND the existing test file rather than creating a parallel test file. A new test file is justified only when no existing home exists for the contract surface; the justification MUST be recorded in the conformance tracking document.
+4. **The non-duplication rule:** when an existing test in `tests/tasks/` already covers the surface area being changed, the new conformance must EXTEND the existing test file rather than creating a parallel test file. A new test file is justified only when no existing home exists for the contract surface; the justification MUST be recorded in the conformance tracking document.
 
 5. **Synthetic-bypass shortcuts are explicitly disallowed for conformance tests:**
    - MUST NOT monkey-patch `TaskContext` fields to simulate values that the runtime would produce.
    - MUST NOT instantiate `TaskContext` directly outside the framework's wiring to test behavior that the framework provides.
    - MUST NOT call internal `_` -prefixed APIs to bypass public-surface contract enforcement.
 
-**Adding or modifying a public-surface symbol:** any spec that adds, renames, drops, or changes the semantics of a public symbol in the core durable-task primitive MUST: amend the consolidated dev guide, update the conformance suite (RED first, then GREEN after implementation), and update the spec template's exit checklist verification in the same PR as the implementation.
+**Adding or modifying a public-surface symbol:** any spec that adds, renames, drops, or changes the semantics of a public symbol in the core resilient-task primitive MUST: amend the consolidated dev guide, update the conformance suite (RED first, then GREEN after implementation), and update the spec template's exit checklist verification in the same PR as the implementation.
 
-**Reviewer checklist for PRs touching the core durable-task primitive's public surface:**
+**Reviewer checklist for PRs touching the core resilient-task primitive's public surface:**
 
 - [ ] Which public symbols (decorator args, `TaskContext` fields, exception types, metadata namespaces) does this change affect?
 - [ ] Are the conformance tests for those symbols in the PR?
@@ -294,7 +294,7 @@ This principle is the core-layer mirror of Principle X. The two stay in sync via
 
 Multi-phase implementations land hacks. Each phase, working in isolation, will accept a workaround that LOOKS LOCAL but degrades the overall code shape — a premature abstraction the next phase has to fight, an under-design that propagates scaffolding forward, a silent drift from the spec's design invariants that no per-phase reviewer would catch. This principle is the structural guard: code review is a sequencing fence, not an end-of-PR check.
 
-**Why this principle exists**: durable-task primitive contract hardening surfaced this risk during task planning. The implementation had multiple user stories landing across many phases on one cohesive PR; the user observed that without continuous review, each phase would "just focus on solving its own problem" while collectively shipping a degraded surface. The fix — interleaved per-phase, cross-phase, and final reviews via the `code-review` agent — must apply to every multi-phase contract change. This principle is that generalization.
+**Why this principle exists**: resilient-task primitive contract hardening surfaced this risk during task planning. The implementation had multiple user stories landing across many phases on one cohesive PR; the user observed that without continuous review, each phase would "just focus on solving its own problem" while collectively shipping a degraded surface. The fix — interleaved per-phase, cross-phase, and final reviews via the `code-review` agent — must apply to every multi-phase contract change. This principle is that generalization.
 
 **The rule:**
 
@@ -514,4 +514,4 @@ This constitution governs all development within `sdk/agentserver`. All code cha
 - Reference the [Azure SDK Python Design Guidelines](https://azure.github.io/azure-sdk/python_design.html) as the authoritative source for any questions not covered here.
 - For detailed tooling instructions, see the [Tool Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md) and [CONTRIBUTING.md](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md).
 
-**Version**: 1.6.0 | **Ratified**: 2026-05-22 | **Amended**: 2026-06-01 (Principle XIII — Continuous Code Review Discipline; minor version bump for the new principle)
+**Version**: 1.7.0 | **Ratified**: 2026-05-22 | **Amended**: 2026-06-25 (Spec 034 — terminology reframe: Principle X renamed to "Resilience Contract Conformance", Principle XII prose reframed to task/resilience vocabulary, path references repointed; minor version bump for the renamed principle)
