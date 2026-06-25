@@ -281,7 +281,6 @@ class TestAgentSessionFilesCrud(TestBase):
     # To run this test:
     # pytest tests\sessions\test_agent_session_files_crud.py::TestAgentSessionFilesCrud::test_agent_session_files_invalid_input -s
     @servicePreparer()
-    @recorded_by_proxy()
     def test_agent_session_files_invalid_input(self, **kwargs):
         """
         Test that upload_session_file and download_session_file_to_disk raise appropriate
@@ -409,6 +408,56 @@ class TestAgentSessionFilesCrud(TestBase):
                 assert "folder" in str(e).lower(), f"Error message should mention 'folder': {e}"
 
             print("download_session_file_to_disk folder path validation tests passed!")
+
+            # --------------------------------------------------------------------------------------------------
+            # Test download_session_file_to_disk with existing file (overwrite behavior)
+            # --------------------------------------------------------------------------------------------------
+
+            # Create a temporary file that already exists
+            existing_file_path = os.path.join(tempfile.gettempdir(), "existing_file_for_overwrite_test.txt")
+            with open(existing_file_path, "w", encoding="utf-8") as f:
+                f.write("This file already exists")
+
+            try:
+                # Test that download_session_file_to_disk raises FileExistsError when file exists (default overwrite=False)
+                print(f"Testing download_session_file_to_disk with existing file (default overwrite): {existing_file_path}")
+                try:
+                    project_client.agents.download_session_file_to_disk(
+                        agent_name=agent_name,
+                        session_id=session.agent_session_id,
+                        file_path=existing_file_path,
+                        remote_path="/remote/some_file.txt",
+                    )
+                    assert False, "Expected FileExistsError when file already exists (default overwrite=False)"
+                except FileExistsError as e:
+                    print(f"Got expected FileExistsError (default overwrite): {e}")
+                    assert "already exists" in str(e).lower(), f"Error message should mention 'already exists': {e}"
+                    assert "overwrite=True" in str(e), f"Error message should mention 'overwrite=True': {e}"
+
+                # Test that download_session_file_to_disk raises FileExistsError when file exists with explicit overwrite=False
+                print(f"Testing download_session_file_to_disk with existing file (explicit overwrite=False): {existing_file_path}")
+                try:
+                    project_client.agents.download_session_file_to_disk(
+                        agent_name=agent_name,
+                        session_id=session.agent_session_id,
+                        file_path=existing_file_path,
+                        overwrite=False,
+                        remote_path="/remote/some_file.txt",
+                    )
+                    assert False, "Expected FileExistsError when file already exists (explicit overwrite=False)"
+                except FileExistsError as e:
+                    print(f"Got expected FileExistsError (explicit overwrite=False): {e}")
+                    assert "already exists" in str(e).lower(), f"Error message should mention 'already exists': {e}"
+                    assert "overwrite=True" in str(e), f"Error message should mention 'overwrite=True': {e}"
+
+                print("download_session_file_to_disk overwrite validation tests passed!")
+
+            finally:
+                # Clean up the temporary file
+                if os.path.exists(existing_file_path):
+                    os.remove(existing_file_path)
+                    print(f"Cleaned up temp file: {existing_file_path}")
+
             print("All invalid input tests passed!")
 
         finally:
