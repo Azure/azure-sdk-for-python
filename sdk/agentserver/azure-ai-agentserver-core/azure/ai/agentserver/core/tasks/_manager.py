@@ -2286,9 +2286,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         :keyword partial_output: Output from the previously-running generation,
             delivered in-process via ``TaskResult(output=..., status="superseded")``
             to whoever was awaiting the steered-out turn's result_future
-            (see ``_manager.py`` line ~1386). NOT resiliently persisted — if the
+            (see ``_manager.py`` line ~1386). NOT persisted — if the
             process crashes between completion and delivery, this output is
-            lost. (scenario 11: the previously-existing resilient
+            lost. (scenario 11: the previously-existing
             backup write at ``_steering["generation_results"]`` was removed
             because no consumer existed.)
         :keyword _conflict_attempt: Internal recursion-depth counter

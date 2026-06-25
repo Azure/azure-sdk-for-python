@@ -267,7 +267,7 @@ Boxes are types/objects; arrows show the dominant call direction.
   `@task` decorator; the singleton `TaskManager` is the *runtime*
   that owns the active-task table, the periodic recovery loop, and
   the provider.
-- The `TaskProvider` is an abstraction over the resilient store. Two
+- The `TaskProvider` is an abstraction over the task store. Two
   concrete providers ship: `HostedTaskProvider` (HTTP-backed, used
   when the platform is detected) and `LocalFileTaskProvider`
   (JSON-on-disk under `~/.agentserver-tasks/<agent>/<session>/<task>.json`
@@ -3159,7 +3159,7 @@ Phase 2 — Handler re-entry (in-memory only):
 Phase 3 — "Drain end" PATCH (after handler re-entered):
  18. steering['drain_in_progress'] = False
  19. payload['_steering']          = steering
- 20. payload['_retry_attempt']     = 0     # Drain resets retry budget resiliently
+ 20. payload['_retry_attempt']     = 0     # Drain resets retry budget
  21. PATCH(task_id, payload=payload, lease piggyback)
      (No attachments touched in Phase 3.)
 
