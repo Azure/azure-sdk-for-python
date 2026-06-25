@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Sample 19 — Resilient streaming with handler-managed phase checkpoints.
+r"""Sample 19 — Resilient streaming with handler-managed phase checkpoints.
 
 A resilient response handler with NO upstream framework — checkpoints are
 managed entirely via ``context.conversation_chain_metadata``. This is the teaching shape
@@ -35,8 +35,8 @@ Usage::
 
     python sample_19_resilient_streaming.py
 
-    curl -N -X POST http://localhost:8088/responses \\
-        -H "Content-Type: application/json" \\
+    curl -N -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
         -d '{"model": "streamer", "input": "Tell me a joke",
              "stream": true, "store": true, "background": true}'
 

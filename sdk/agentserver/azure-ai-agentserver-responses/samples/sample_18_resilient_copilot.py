@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Sample 18 — Resilient Copilot (stateful conversation via GitHub Copilot SDK).
+r"""Sample 18 — Resilient Copilot (stateful conversation via GitHub Copilot SDK).
 
 Wraps the **GitHub Copilot Python SDK** (``github-copilot-sdk``) in a
 steerable resilient response handler.  The Copilot SDK is the upstream
@@ -78,14 +78,14 @@ Usage::
 
     python sample_18_resilient_copilot.py
 
-    curl -N -X POST http://localhost:8088/responses \\
-        -H "Content-Type: application/json" \\
+    curl -N -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
         -d '{"model": "copilot", "input": "Write a Python fibonacci function",
              "stream": true, "store": true, "background": true}'
 
     # Steer with a follow-up
-    curl -N -X POST http://localhost:8088/responses \\
-        -H "Content-Type: application/json" \\
+    curl -N -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
         -d '{"model": "copilot", "input": "Make it iterative instead",
              "stream": true, "store": true, "background": true,
              "previous_response_id": "<id>"}'
