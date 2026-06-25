@@ -101,7 +101,6 @@ def _upload_range_from_url_options(
 
 
 def _get_ranges_options(
-    snapshot: Optional[str],
     offset: Optional[int] = None,
     length: Optional[int] = None,
     previous_sharesnapshot: Optional[Union[str, Dict[str, Any]]] = None,
@@ -118,7 +117,6 @@ def _get_ranges_options(
             content_range = f"bytes={offset}-"
 
     options = {
-        "sharesnapshot": snapshot,
         "lease_id": lease_id,
         "timeout": kwargs.pop("timeout", None),
         "range": content_range,

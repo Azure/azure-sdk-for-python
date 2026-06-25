@@ -20,7 +20,7 @@ from ._generated import FileClient as AzureFileStorage
 from ._generated.models import DeleteSnapshotsOptionType, ShareStats, SignedIdentifier, SignedIdentifiers
 from ._lease import ShareLeaseClient
 from ._models import AccessPolicy, ShareProtocols
-from ._parser import _parse_snapshot, _strip_snapshot_from_url
+from ._parser import _parse_snapshot
 from ._serialize import get_api_version, get_lease_id
 from ._share_client_helpers import _create_permission_for_share_options, _format_url, _from_share_url, _parse_url
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
@@ -116,7 +116,7 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            url=_strip_snapshot_from_url(self.url),
+            url=self.url,
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )
@@ -524,7 +524,6 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
         try:
             self._client.share.delete(
                 timeout=timeout,
-                sharesnapshot=self.snapshot,
                 lease_id=lease_id,
                 delete_snapshots=delete_include,
                 file_request_intent=self.file_request_intent,
@@ -572,7 +571,6 @@ class ShareClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-
                 "ShareProperties",
                 self._client.share.get_properties(
                     timeout=timeout,
-                    sharesnapshot=self.snapshot,
                     cls=deserialize_share_properties,
                     lease_id=lease_id,
                     file_request_intent=self.file_request_intent,

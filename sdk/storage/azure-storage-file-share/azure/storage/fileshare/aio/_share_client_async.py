@@ -20,7 +20,7 @@ from .._deserialize import deserialize_permission, deserialize_share_properties
 from .._generated.aio import FileClient as AzureFileStorage
 from .._generated.models import DeleteSnapshotsOptionType, ShareStats, SignedIdentifier, SignedIdentifiers
 from .._models import AccessPolicy, ShareProtocols
-from .._parser import _parse_snapshot, _strip_snapshot_from_url
+from .._parser import _parse_snapshot
 from .._share_client_helpers import _create_permission_for_share_options, _format_url, _from_share_url, _parse_url
 from .._shared.policies_async import ExponentialRetry
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
@@ -126,7 +126,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            url=_strip_snapshot_from_url(self.url),
+            url=self.url,
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )
@@ -524,7 +524,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         try:
             await self._client.share.delete(
                 timeout=timeout,
-                sharesnapshot=self.snapshot,
                 delete_snapshots=delete_include,
                 lease_id=lease_id,
                 file_request_intent=self.file_request_intent,
@@ -572,7 +571,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
                 "ShareProperties",
                 await self._client.share.get_properties(
                     timeout=timeout,
-                    sharesnapshot=self.snapshot,
                     cls=deserialize_share_properties,
                     lease_id=lease_id,
                     file_request_intent=self.file_request_intent,

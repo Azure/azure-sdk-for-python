@@ -22,7 +22,7 @@ from ._directory_client_helpers import _format_url, _from_directory_url, _parse_
 from ._file_client import ShareFileClient
 from ._generated import FileClient as AzureFileStorage
 from ._models import DirectoryPropertiesPaged, Handle, HandlesPaged
-from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot, _strip_snapshot_from_url
+from ._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from ._serialize import get_api_version, get_dest_lease_id, get_rename_smb_properties
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
 from ._shared.request_handlers import add_metadata_headers
@@ -129,7 +129,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            url=_strip_snapshot_from_url(self.url),
+            url=self.url,
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )
@@ -623,7 +623,6 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
             self._client.directory.list_files_and_directories_segment,
-            sharesnapshot=self.snapshot,
             timeout=timeout,
             allow_trailing_dot=self.allow_trailing_dot,
             file_request_intent=self.file_request_intent,
@@ -656,7 +655,6 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
             self._client.directory.list_handles,
-            sharesnapshot=self.snapshot,
             timeout=timeout,
             recursive=recursive,
             allow_trailing_dot=self.allow_trailing_dot,
@@ -694,7 +692,6 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                 handle_id=handle_id,
                 marker=None,
                 recursive=None,
-                sharesnapshot=self.snapshot,
                 cls=return_response_headers,
                 allow_trailing_dot=self.allow_trailing_dot,
                 file_request_intent=self.file_request_intent,
@@ -740,7 +737,6 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                     timeout=timeout,
                     marker=continuation_token,
                     recursive=recursive,
-                    sharesnapshot=self.snapshot,
                     cls=return_response_headers,
                     allow_trailing_dot=self.allow_trailing_dot,
                     file_request_intent=self.file_request_intent,
@@ -780,7 +776,6 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
                     cls=deserialize_directory_properties,
                     allow_trailing_dot=self.allow_trailing_dot,
                     file_request_intent=self.file_request_intent,
-                    sharesnapshot=self.snapshot,
                     **kwargs,
                 ),
             )
@@ -844,7 +839,6 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             self._client.directory.get_properties(
                 allow_trailing_dot=self.allow_trailing_dot,
                 file_request_intent=self.file_request_intent,
-                sharesnapshot=self.snapshot,
                 **kwargs,
             )
             return True

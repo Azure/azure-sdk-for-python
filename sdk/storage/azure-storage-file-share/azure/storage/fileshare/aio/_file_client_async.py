@@ -44,7 +44,7 @@ from .._file_client_helpers import (
     _upload_range_from_url_options,
 )
 from .._generated.aio import FileClient as AzureFileStorage
-from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot, _strip_snapshot_from_url
+from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._serialize import (
     get_api_version,
     get_lease_id,
@@ -219,7 +219,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            url=_strip_snapshot_from_url(self.url),
+            url=self.url,
             version=get_api_version(kwargs),
             pipeline=self._pipeline,
         )
@@ -384,7 +384,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             await self._client.file.get_properties(
                 allow_trailing_dot=self.allow_trailing_dot,
                 file_request_intent=self.file_request_intent,
-                sharesnapshot=self.snapshot,
                 **kwargs,
             )
             return True
@@ -978,11 +977,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
         lease_id = get_lease_id(kwargs.pop("lease", None))
 
-        # download doesn't accept sharesnapshot as a kwarg, inject via params
-        if self.snapshot:
-            params = kwargs.pop("params", {}) or {}
-            params["sharesnapshot"] = self.snapshot
-            kwargs["params"] = params
         validate_content = parse_validation_option(kwargs.pop("validate_content", None))
 
         # Decompression is not supported with CRC64 content validation
@@ -1209,7 +1203,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             file_props = cast(
                 FileProperties,
                 await self._client.file.get_properties(
-                    sharesnapshot=self.snapshot,
                     lease_id=lease_id,
                     timeout=timeout,
                     cls=deserialize_file_properties,
@@ -1564,7 +1557,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             A list of valid ranges.
         :rtype: List[dict[str, int]]
         """
-        options = _get_ranges_options(snapshot=self.snapshot, offset=offset, length=length, **kwargs)
+        options = _get_ranges_options(offset=offset, length=length, **kwargs)
         options["allow_trailing_dot"] = self.allow_trailing_dot
         options["file_request_intent"] = self.file_request_intent
         try:
@@ -1617,7 +1610,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :rtype: tuple[list[dict[str, int]], list[dict[str, int]]]
         """
         options = _get_ranges_options(
-            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
@@ -1748,7 +1740,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
             self._client.file.list_handles,
-            sharesnapshot=self.snapshot,
             timeout=timeout,
             allow_trailing_dot=self.allow_trailing_dot,
             file_request_intent=self.file_request_intent,
@@ -1784,7 +1775,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             response = await self._client.file.force_close_handles(
                 handle_id=handle_id,
                 marker=None,
-                sharesnapshot=self.snapshot,
                 cls=return_response_headers,
                 allow_trailing_dot=self.allow_trailing_dot,
                 file_request_intent=self.file_request_intent,
@@ -1827,7 +1817,6 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                     handle_id="*",
                     timeout=timeout,
                     marker=continuation_token,
-                    sharesnapshot=self.snapshot,
                     cls=return_response_headers,
                     allow_trailing_dot=self.allow_trailing_dot,
                     file_request_intent=self.file_request_intent,

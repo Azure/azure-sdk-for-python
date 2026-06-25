@@ -94,8 +94,6 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         try:
             lease_duration = kwargs.pop("lease_duration", -1)
-            if self._snapshot:
-                kwargs["sharesnapshot"] = self._snapshot
             if self._allow_trailing_dot is not None:
                 kwargs["allow_trailing_dot"] = self._allow_trailing_dot
             response = self._client.acquire_lease(
@@ -138,7 +136,6 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
             response = self._client.renew_lease(
                 lease_id=self.id,
                 timeout=kwargs.pop("timeout", None),
-                sharesnapshot=self._snapshot,
                 file_request_intent=self._file_request_intent,
                 cls=return_response_headers,
                 **kwargs
@@ -164,8 +161,6 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         :return: None
         """
         try:
-            if self._snapshot:
-                kwargs["sharesnapshot"] = self._snapshot
             if self._allow_trailing_dot is not None:
                 kwargs["allow_trailing_dot"] = self._allow_trailing_dot
             response = self._client.release_lease(
@@ -198,8 +193,6 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         :return: None
         """
         try:
-            if self._snapshot:
-                kwargs["sharesnapshot"] = self._snapshot
             if self._allow_trailing_dot is not None:
                 kwargs["allow_trailing_dot"] = self._allow_trailing_dot
             response = self._client.change_lease(
@@ -250,8 +243,6 @@ class ShareLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         try:
             lease_break_period = kwargs.pop("lease_break_period", None)
-            if self._snapshot:
-                kwargs["sharesnapshot"] = self._snapshot
             if isinstance(self._client, ShareOperations):
                 kwargs["break_period"] = lease_break_period
             if isinstance(self._client, FileOperations) and lease_break_period:
