@@ -444,7 +444,7 @@ class _ReplayIterator:
 
 
 # ---------------------------------------------------------------
-# FileBackedReplayEventStream — durable, jsonl, single-writer
+# FileBackedReplayEventStream — resilient, jsonl, single-writer
 # ---------------------------------------------------------------
 
 
