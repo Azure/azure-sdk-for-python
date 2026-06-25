@@ -8,7 +8,7 @@ from pathlib import Path
 import sys
 import time
 
-from typing import Any
+from typing import Any, Optional
 from .package_utils import (
     change_log_generate,
     extract_breaking_change,
@@ -128,7 +128,7 @@ def main(
     enable_changelog: bool = True,
     package_result: dict = {},
     timeout: int = 900,
-    output_json: Path = None,
+    output_json: Optional[Path] = None,
 ):
     """Generate SDK changes for a package.
 
