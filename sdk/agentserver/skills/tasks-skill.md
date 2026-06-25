@@ -11,7 +11,7 @@ description: 'Build crash-resilient long-running agent handlers using the `@task
 > wheels (see *Packaging* below) — that's all your project needs to start
 > building resilient agents.
 
-The `@task` decorator in `azure-ai-agentserver-core.agentserver` turns a single
+The `@task` decorator in `azure-ai-agentserver-core.tasks` turns a single
 agent function into a **crash-resilient, steerable, long-running** primitive
 backed by a hosted task store. The framework handles lease acquisition,
 recovery from container restarts, checkpoint metadata persistence, and

@@ -58,7 +58,7 @@ Use `ResponsesAgentServerHost` when **any** of these apply:
   host implements Responses (`/responses`), not Chat Completions
   (`/chat/completions`).
 - **Raw `@task` resilient computation** with no HTTP surface. Use the
-  `@task` decorator from `azure-ai-agentserver-core.agentserver` directly.
+  `@task` decorator from `azure-ai-agentserver-core.tasks` directly.
 - **Custom HTTP paths.** `ResponsesAgentServerHost` owns
   `/responses*`. If you need additional endpoints, compose via
   Starlette mounting or co-host another `AgentServerHost` subclass

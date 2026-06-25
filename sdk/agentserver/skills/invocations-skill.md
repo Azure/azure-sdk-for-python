@@ -62,7 +62,7 @@ Use `InvocationAgentServerHost` when **any** of these apply:
 - **OpenAI Chat Completions API agents.** Different protocol
   (`/chat/completions`); neither host implements it.
 - **Raw `@task` resilient computation** with no HTTP surface. Use the
-  `@task` decorator from `azure-ai-agentserver-core.agentserver` directly.
+  `@task` decorator from `azure-ai-agentserver-core.tasks` directly.
   See the `agentserver-resilient-tasks` skill.
 - **Pure RPC microservices** without per-invocation lifecycle
   (no invocation_id, no session_id, no platform header echoing).
