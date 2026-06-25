@@ -17,7 +17,7 @@ the supported public surface instead:
 Scope is production source under ``azure/`` (white-box tests may still import
 internals). The two reaches deliberately out of FR-007's enumerated scope —
 the same-package ``ResponseContext._task_context`` attribute and the
-defensively-coded ``core.agentserver._context._ExitForRecovery`` sentinel type that
+defensively-coded ``core.tasks._context._ExitForRecovery`` sentinel type that
 backs the public ``ExitForRecoverySignal`` alias — are documented groundings and
 are not asserted here.
 """
