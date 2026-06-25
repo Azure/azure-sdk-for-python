@@ -30,7 +30,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -41,7 +41,6 @@ from ...operations._operations import (
 )
 from .._configuration import CombinedClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -138,7 +137,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: Union[_models.VirtualMachine, JSON, IO[bytes]],
+        resource: Union[_models.VirtualMachine, _types.VirtualMachine, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -247,7 +246,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: JSON,
+        resource: _types.VirtualMachine,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -261,7 +260,7 @@ class VirtualMachinesOperations:
         :param vm_name: The name of the VirtualMachine. Required.
         :type vm_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.resourcemanager.multiservicesharedmodels.combined.types.VirtualMachine
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -307,7 +306,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         vm_name: str,
-        resource: Union[_models.VirtualMachine, JSON, IO[bytes]],
+        resource: Union[_models.VirtualMachine, _types.VirtualMachine, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.VirtualMachine]:
         """The operation to create or update a virtual machine. Please note some properties can be set
@@ -318,10 +317,10 @@ class VirtualMachinesOperations:
         :type resource_group_name: str
         :param vm_name: The name of the VirtualMachine. Required.
         :type vm_name: str
-        :param resource: Resource create parameters. Is one of the following types: VirtualMachine,
-         JSON, IO[bytes] Required.
+        :param resource: Resource create parameters. Is either a VirtualMachine type or a IO[bytes]
+         type. Required.
         :type resource: ~azure.resourcemanager.multiservicesharedmodels.combined.models.VirtualMachine
-         or JSON or IO[bytes]
+         or ~azure.resourcemanager.multiservicesharedmodels.combined.types.VirtualMachine or IO[bytes]
         :return: An instance of AsyncLROPoller that returns VirtualMachine. The VirtualMachine is
          compatible with MutableMapping
         :rtype:
@@ -475,7 +474,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        resource: Union[_models.StorageAccount, JSON, IO[bytes]],
+        resource: Union[_models.StorageAccount, _types.StorageAccount, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -583,7 +582,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        resource: JSON,
+        resource: _types.StorageAccount,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -596,7 +595,7 @@ class StorageAccountsOperations:
         :param account_name: The name of the StorageAccount. Required.
         :type account_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.resourcemanager.multiservicesharedmodels.combined.types.StorageAccount
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -641,7 +640,7 @@ class StorageAccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        resource: Union[_models.StorageAccount, JSON, IO[bytes]],
+        resource: Union[_models.StorageAccount, _types.StorageAccount, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StorageAccount]:
         """Creates or updates a storage account.
@@ -651,10 +650,10 @@ class StorageAccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the StorageAccount. Required.
         :type account_name: str
-        :param resource: Resource create parameters. Is one of the following types: StorageAccount,
-         JSON, IO[bytes] Required.
+        :param resource: Resource create parameters. Is either a StorageAccount type or a IO[bytes]
+         type. Required.
         :type resource: ~azure.resourcemanager.multiservicesharedmodels.combined.models.StorageAccount
-         or JSON or IO[bytes]
+         or ~azure.resourcemanager.multiservicesharedmodels.combined.types.StorageAccount or IO[bytes]
         :return: An instance of AsyncLROPoller that returns StorageAccount. The StorageAccount is
          compatible with MutableMapping
         :rtype:

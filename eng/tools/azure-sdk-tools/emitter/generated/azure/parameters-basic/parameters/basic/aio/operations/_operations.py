@@ -24,15 +24,15 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import build_explicit_body_simple_request, build_implicit_body_simple_request
 from .._configuration import BasicClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 
 
@@ -68,11 +68,11 @@ class ExplicitBodyOperations:
         """
 
     @overload
-    async def simple(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def simple(self, body: _types.User, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """simple.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.basic.types.User
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -96,11 +96,11 @@ class ExplicitBodyOperations:
         """
 
     @distributed_trace_async
-    async def simple(self, body: Union[_models.User, JSON, IO[bytes]], **kwargs: Any) -> None:
+    async def simple(self, body: Union[_models.User, _types.User, IO[bytes]], **kwargs: Any) -> None:
         """simple.
 
-        :param body: Is one of the following types: User, JSON, IO[bytes] Required.
-        :type body: ~parameters.basic.models.User or JSON or IO[bytes]
+        :param body: Is either a User type or a IO[bytes] type. Required.
+        :type body: ~parameters.basic.models.User or ~parameters.basic.types.User or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -184,11 +184,13 @@ class ImplicitBodyOperations:
         """
 
     @overload
-    async def simple(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def simple(
+        self, body: _types.SimpleRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """simple.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.basic.types.SimpleRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -212,11 +214,13 @@ class ImplicitBodyOperations:
         """
 
     @distributed_trace_async
-    async def simple(self, body: Union[JSON, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any) -> None:
+    async def simple(
+        self, body: Union[JSON, _types.SimpleRequest, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
+    ) -> None:
         """simple.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SimpleRequest, IO[bytes] Required.
+        :type body: JSON or ~parameters.basic.types.SimpleRequest or IO[bytes]
         :keyword name: Required.
         :paramtype name: str
         :return: None

@@ -26,14 +26,13 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import PreviewVersionClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 from .._validation import api_version_validation
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -211,14 +210,19 @@ class _PreviewVersionClientOperationsMixin(
 
     @overload
     def update_widget_color(
-        self, id: str, color_update: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+        self,
+        id: str,
+        color_update: _types.UpdateWidgetColorRequest,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> Optional[_models.Widget]:
         """Update widget color (preview only).
 
         :param id: Required.
         :type id: str
         :param color_update: Required.
-        :type color_update: JSON
+        :type color_update: ~specs.azure.versioning.previewversion.types.UpdateWidgetColorRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
@@ -252,16 +256,18 @@ class _PreviewVersionClientOperationsMixin(
         api_versions_list=["2024-12-01-preview"],
     )
     def update_widget_color(
-        self, id: str, color_update: Union[_models.UpdateWidgetColorRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        id: str,
+        color_update: Union[_models.UpdateWidgetColorRequest, _types.UpdateWidgetColorRequest, IO[bytes]],
+        **kwargs: Any
     ) -> Optional[_models.Widget]:
         """Update widget color (preview only).
 
         :param id: Required.
         :type id: str
-        :param color_update: Is one of the following types: UpdateWidgetColorRequest, JSON, IO[bytes]
-         Required.
+        :param color_update: Is either a UpdateWidgetColorRequest type or a IO[bytes] type. Required.
         :type color_update: ~specs.azure.versioning.previewversion.models.UpdateWidgetColorRequest or
-         JSON or IO[bytes]
+         ~specs.azure.versioning.previewversion.types.UpdateWidgetColorRequest or IO[bytes]
         :return: Widget or None. The Widget is compatible with MutableMapping
         :rtype: ~specs.azure.versioning.previewversion.models.Widget or None
         :raises ~azure.core.exceptions.HttpResponseError:

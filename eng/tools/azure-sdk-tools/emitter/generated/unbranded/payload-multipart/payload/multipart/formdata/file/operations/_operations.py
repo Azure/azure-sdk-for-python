@@ -15,13 +15,12 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models1
+from .. import models as _models1, types as _types_models1
 from ...._configuration import MultiPartClientConfiguration
 from ...._utils.model_base import Model as _Model
 from ...._utils.serialization import Deserializer, Serializer
 from ...._utils.utils import prepare_multipart_form_data
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -91,24 +90,28 @@ class FormDataFileOperations:
         """
 
     @overload
-    def upload_file_specific_content_type(self, body: JSON, **kwargs: Any) -> None:
+    def upload_file_specific_content_type(
+        self, body: _types_models1.UploadFileSpecificContentTypeRequest, **kwargs: Any
+    ) -> None:
         """upload_file_specific_content_type.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~payload.multipart.formdata.file.types.UploadFileSpecificContentTypeRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def upload_file_specific_content_type(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models1.UploadFileSpecificContentTypeRequest, JSON], **kwargs: Any
+        self,
+        body: Union[_models1.UploadFileSpecificContentTypeRequest, _types_models1.UploadFileSpecificContentTypeRequest],
+        **kwargs: Any,
     ) -> None:
         """upload_file_specific_content_type.
 
-        :param body: Is either a UploadFileSpecificContentTypeRequest type or a JSON type. Required.
+        :param body: Is one of the following types: UploadFileSpecificContentTypeRequest Required.
         :type body: ~payload.multipart.formdata.file.models.UploadFileSpecificContentTypeRequest or
-         JSON
+         ~payload.multipart.formdata.file.types.UploadFileSpecificContentTypeRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -165,23 +168,28 @@ class FormDataFileOperations:
         """
 
     @overload
-    def upload_file_required_filename(self, body: JSON, **kwargs: Any) -> None:
+    def upload_file_required_filename(
+        self, body: _types_models1.UploadFileRequiredFilenameRequest, **kwargs: Any
+    ) -> None:
         """upload_file_required_filename.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~payload.multipart.formdata.file.types.UploadFileRequiredFilenameRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def upload_file_required_filename(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models1.UploadFileRequiredFilenameRequest, JSON], **kwargs: Any
+        self,
+        body: Union[_models1.UploadFileRequiredFilenameRequest, _types_models1.UploadFileRequiredFilenameRequest],
+        **kwargs: Any,
     ) -> None:
         """upload_file_required_filename.
 
-        :param body: Is either a UploadFileRequiredFilenameRequest type or a JSON type. Required.
-        :type body: ~payload.multipart.formdata.file.models.UploadFileRequiredFilenameRequest or JSON
+        :param body: Is one of the following types: UploadFileRequiredFilenameRequest Required.
+        :type body: ~payload.multipart.formdata.file.models.UploadFileRequiredFilenameRequest or
+         ~payload.multipart.formdata.file.types.UploadFileRequiredFilenameRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -238,23 +246,24 @@ class FormDataFileOperations:
         """
 
     @overload
-    def upload_file_array(self, body: JSON, **kwargs: Any) -> None:
+    def upload_file_array(self, body: _types_models1.UploadFileArrayRequest, **kwargs: Any) -> None:
         """upload_file_array.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~payload.multipart.formdata.file.types.UploadFileArrayRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     def upload_file_array(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models1.UploadFileArrayRequest, JSON], **kwargs: Any
+        self, body: Union[_models1.UploadFileArrayRequest, _types_models1.UploadFileArrayRequest], **kwargs: Any
     ) -> None:
         """upload_file_array.
 
-        :param body: Is either a UploadFileArrayRequest type or a JSON type. Required.
-        :type body: ~payload.multipart.formdata.file.models.UploadFileArrayRequest or JSON
+        :param body: Is one of the following types: UploadFileArrayRequest Required.
+        :type body: ~payload.multipart.formdata.file.models.UploadFileArrayRequest or
+         ~payload.multipart.formdata.file.types.UploadFileArrayRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

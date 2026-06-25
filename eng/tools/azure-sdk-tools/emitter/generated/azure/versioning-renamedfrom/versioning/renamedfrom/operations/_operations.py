@@ -26,13 +26,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import RenamedFromClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -113,12 +112,12 @@ class NewInterfaceOperations:
 
     @overload
     def new_op_in_new_interface(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.NewModel, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.NewModel:
         """new_op_in_new_interface.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~versioning.renamedfrom.types.NewModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -145,12 +144,13 @@ class NewInterfaceOperations:
 
     @distributed_trace
     def new_op_in_new_interface(
-        self, body: Union[_models.NewModel, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.NewModel, _types.NewModel, IO[bytes]], **kwargs: Any
     ) -> _models.NewModel:
         """new_op_in_new_interface.
 
-        :param body: Is one of the following types: NewModel, JSON, IO[bytes] Required.
-        :type body: ~versioning.renamedfrom.models.NewModel or JSON or IO[bytes]
+        :param body: Is either a NewModel type or a IO[bytes] type. Required.
+        :type body: ~versioning.renamedfrom.models.NewModel or ~versioning.renamedfrom.types.NewModel
+         or IO[bytes]
         :return: NewModel. The NewModel is compatible with MutableMapping
         :rtype: ~versioning.renamedfrom.models.NewModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -240,12 +240,12 @@ class _RenamedFromClientOperationsMixin(
 
     @overload
     def new_op(
-        self, body: JSON, *, new_query: str, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.NewModel, *, new_query: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.NewModel:
         """new_op.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~versioning.renamedfrom.types.NewModel
         :keyword new_query: Required.
         :paramtype new_query: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -276,12 +276,13 @@ class _RenamedFromClientOperationsMixin(
 
     @distributed_trace
     def new_op(
-        self, body: Union[_models.NewModel, JSON, IO[bytes]], *, new_query: str, **kwargs: Any
+        self, body: Union[_models.NewModel, _types.NewModel, IO[bytes]], *, new_query: str, **kwargs: Any
     ) -> _models.NewModel:
         """new_op.
 
-        :param body: Is one of the following types: NewModel, JSON, IO[bytes] Required.
-        :type body: ~versioning.renamedfrom.models.NewModel or JSON or IO[bytes]
+        :param body: Is either a NewModel type or a IO[bytes] type. Required.
+        :type body: ~versioning.renamedfrom.models.NewModel or ~versioning.renamedfrom.types.NewModel
+         or IO[bytes]
         :keyword new_query: Required.
         :paramtype new_query: str
         :return: NewModel. The NewModel is compatible with MutableMapping

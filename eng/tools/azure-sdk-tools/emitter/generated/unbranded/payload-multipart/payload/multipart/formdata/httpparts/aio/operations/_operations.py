@@ -14,7 +14,7 @@ from corehttp.rest import AsyncHttpResponse, HttpRequest
 from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 
-from ..... import models as _models4
+from ..... import models as _models4, types as _types_models4
 from ....._utils.model_base import Model as _Model
 from ....._utils.serialization import Deserializer, Serializer
 from ....._utils.utils import prepare_multipart_form_data
@@ -23,7 +23,6 @@ from ...contenttype.aio.operations._operations import FormDataHttpPartsContentTy
 from ...nonstring.aio.operations._operations import FormDataHttpPartsNonStringOperations
 from ...operations._operations import build_form_data_http_parts_json_array_and_file_array_request
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -64,23 +63,26 @@ class FormDataHttpPartsOperations:
         """
 
     @overload
-    async def json_array_and_file_array(self, body: JSON, **kwargs: Any) -> None:
+    async def json_array_and_file_array(self, body: _types_models4.ComplexHttpPartsModelRequest, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for mixed scenarios.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~payload.multipart.types.ComplexHttpPartsModelRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     async def json_array_and_file_array(
-        self, body: Union[_models4.ComplexHttpPartsModelRequest, JSON], **kwargs: Any
+        self,
+        body: Union[_models4.ComplexHttpPartsModelRequest, _types_models4.ComplexHttpPartsModelRequest],
+        **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data for mixed scenarios.
 
-        :param body: Is either a ComplexHttpPartsModelRequest type or a JSON type. Required.
-        :type body: ~payload.multipart.models.ComplexHttpPartsModelRequest or JSON
+        :param body: Is one of the following types: ComplexHttpPartsModelRequest Required.
+        :type body: ~payload.multipart.models.ComplexHttpPartsModelRequest or
+         ~payload.multipart.types.ComplexHttpPartsModelRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

@@ -17,7 +17,7 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import DocumentationClientConfiguration
 from .._utils.model_base import SdkJSONEncoder
 from .._utils.serialization import Deserializer, Serializer
@@ -171,11 +171,13 @@ class ListsOperations:
         """
 
     @overload
-    def bullet_points_model(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def bullet_points_model(
+        self, body: _types.BulletPointsModelRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """bullet_points_model.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.documentation.types.BulletPointsModelRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -199,12 +201,16 @@ class ListsOperations:
         """
 
     def bullet_points_model(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, input: _models.BulletPointsModel = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, _types.BulletPointsModelRequest, IO[bytes]] = _Unset,
+        *,
+        input: _models.BulletPointsModel = _Unset,
+        **kwargs: Any
     ) -> None:
         """bullet_points_model.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, BulletPointsModelRequest, IO[bytes] Required.
+        :type body: JSON or ~specs.documentation.types.BulletPointsModelRequest or IO[bytes]
         :keyword input: Required.
         :paramtype input: ~specs.documentation.models.BulletPointsModel
         :return: None

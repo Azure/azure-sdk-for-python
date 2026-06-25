@@ -20,7 +20,7 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -142,11 +142,11 @@ class StringsOnlyOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(self, body: _types.SendRequest1, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.union.types.SendRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -170,12 +170,16 @@ class StringsOnlyOperations:
         """
 
     async def send(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, prop: Literal["a", "b", "c"] = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, _types.SendRequest1, IO[bytes]] = _Unset,
+        *,
+        prop: Literal["a", "b", "c"] = _Unset,
+        **kwargs: Any
     ) -> None:
         """send.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SendRequest1, IO[bytes] Required.
+        :type body: JSON or ~typetest.union.types.SendRequest1 or IO[bytes]
         :keyword prop: Is one of the following types: Literal["a"], Literal["b"], Literal["c"]
          Required.
         :paramtype prop: str or str or str
@@ -321,11 +325,11 @@ class StringExtensibleOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(self, body: _types.SendRequest1, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.union.types.SendRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -350,15 +354,15 @@ class StringExtensibleOperations:
 
     async def send(
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.SendRequest1, IO[bytes]] = _Unset,
         *,
         prop: Union[Literal["b"], Literal["c"], str] = _Unset,
         **kwargs: Any
     ) -> None:
         """send.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SendRequest1, IO[bytes] Required.
+        :type body: JSON or ~typetest.union.types.SendRequest1 or IO[bytes]
         :keyword prop: Is one of the following types: Literal["b"], Literal["c"], str Required.
         :paramtype prop: str or str or str
         :return: None
@@ -507,11 +511,11 @@ class StringExtensibleNamedOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(self, body: _types.SendRequest1, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.union.types.SendRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -536,15 +540,15 @@ class StringExtensibleNamedOperations:
 
     async def send(
         self,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.SendRequest1, IO[bytes]] = _Unset,
         *,
         prop: Union[str, _models.StringExtensibleNamedUnion] = _Unset,
         **kwargs: Any
     ) -> None:
         """send.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SendRequest1, IO[bytes] Required.
+        :type body: JSON or ~typetest.union.types.SendRequest1 or IO[bytes]
         :keyword prop: Known values are: "b" and "c". Required.
         :paramtype prop: str or ~typetest.union.models.StringExtensibleNamedUnion
         :return: None
@@ -687,11 +691,11 @@ class IntsOnlyOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(self, body: _types.SendRequest1, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.union.types.SendRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -715,12 +719,16 @@ class IntsOnlyOperations:
         """
 
     async def send(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, prop: Literal[1, 2, 3] = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, _types.SendRequest1, IO[bytes]] = _Unset,
+        *,
+        prop: Literal[1, 2, 3] = _Unset,
+        **kwargs: Any
     ) -> None:
         """send.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SendRequest1, IO[bytes] Required.
+        :type body: JSON or ~typetest.union.types.SendRequest1 or IO[bytes]
         :keyword prop: Is one of the following types: Literal[1], Literal[2], Literal[3] Required.
         :paramtype prop: int or int or int
         :return: None
@@ -863,11 +871,11 @@ class FloatsOnlyOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(self, body: _types.SendRequest1, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.union.types.SendRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -890,11 +898,13 @@ class FloatsOnlyOperations:
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def send(self, body: Union[JSON, IO[bytes]] = _Unset, *, prop: float = _Unset, **kwargs: Any) -> None:
+    async def send(
+        self, body: Union[JSON, _types.SendRequest1, IO[bytes]] = _Unset, *, prop: float = _Unset, **kwargs: Any
+    ) -> None:
         """send.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SendRequest1, IO[bytes] Required.
+        :type body: JSON or ~typetest.union.types.SendRequest1 or IO[bytes]
         :keyword prop: Is one of the following types: float Required.
         :paramtype prop: float or float or float
         :return: None
@@ -1039,11 +1049,11 @@ class ModelsOnlyOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(self, body: _types.SendRequest1, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.union.types.SendRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1067,12 +1077,16 @@ class ModelsOnlyOperations:
         """
 
     async def send(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, prop: Union[_models.Cat, _models.Dog] = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, _types.SendRequest1, IO[bytes]] = _Unset,
+        *,
+        prop: Union[_models.Cat, _models.Dog] = _Unset,
+        **kwargs: Any
     ) -> None:
         """send.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SendRequest1, IO[bytes] Required.
+        :type body: JSON or ~typetest.union.types.SendRequest1 or IO[bytes]
         :keyword prop: Is either a Cat type or a Dog type. Required.
         :paramtype prop: ~typetest.union.models.Cat or ~typetest.union.models.Dog
         :return: None
@@ -1217,11 +1231,11 @@ class EnumsOnlyOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(self, body: _types.SendRequest1, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.union.types.SendRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1245,12 +1259,16 @@ class EnumsOnlyOperations:
         """
 
     async def send(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, prop: _models.EnumsOnlyCases = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, _types.SendRequest1, IO[bytes]] = _Unset,
+        *,
+        prop: _models.EnumsOnlyCases = _Unset,
+        **kwargs: Any
     ) -> None:
         """send.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SendRequest1, IO[bytes] Required.
+        :type body: JSON or ~typetest.union.types.SendRequest1 or IO[bytes]
         :keyword prop: Required.
         :paramtype prop: ~typetest.union.models.EnumsOnlyCases
         :return: None
@@ -1395,11 +1413,11 @@ class StringAndArrayOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(self, body: _types.SendRequest1, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.union.types.SendRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1423,12 +1441,16 @@ class StringAndArrayOperations:
         """
 
     async def send(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, prop: _models.StringAndArrayCases = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, _types.SendRequest1, IO[bytes]] = _Unset,
+        *,
+        prop: _models.StringAndArrayCases = _Unset,
+        **kwargs: Any
     ) -> None:
         """send.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SendRequest1, IO[bytes] Required.
+        :type body: JSON or ~typetest.union.types.SendRequest1 or IO[bytes]
         :keyword prop: Required.
         :paramtype prop: ~typetest.union.models.StringAndArrayCases
         :return: None
@@ -1573,11 +1595,11 @@ class MixedLiteralsOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(self, body: _types.SendRequest1, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.union.types.SendRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1601,12 +1623,16 @@ class MixedLiteralsOperations:
         """
 
     async def send(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, prop: _models.MixedLiteralsCases = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, _types.SendRequest1, IO[bytes]] = _Unset,
+        *,
+        prop: _models.MixedLiteralsCases = _Unset,
+        **kwargs: Any
     ) -> None:
         """send.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SendRequest1, IO[bytes] Required.
+        :type body: JSON or ~typetest.union.types.SendRequest1 or IO[bytes]
         :keyword prop: Required.
         :paramtype prop: ~typetest.union.models.MixedLiteralsCases
         :return: None
@@ -1751,11 +1777,11 @@ class MixedTypesOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(self, body: _types.SendRequest1, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.union.types.SendRequest1
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1779,12 +1805,16 @@ class MixedTypesOperations:
         """
 
     async def send(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, prop: _models.MixedTypesCases = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, _types.SendRequest1, IO[bytes]] = _Unset,
+        *,
+        prop: _models.MixedTypesCases = _Unset,
+        **kwargs: Any
     ) -> None:
         """send.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SendRequest1, IO[bytes] Required.
+        :type body: JSON or ~typetest.union.types.SendRequest1 or IO[bytes]
         :keyword prop: Required.
         :paramtype prop: ~typetest.union.models.MixedTypesCases
         :return: None

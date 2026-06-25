@@ -26,13 +26,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import RemovedClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -93,11 +92,11 @@ class _RemovedClientOperationsMixin(
         """
 
     @overload
-    def v2(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.ModelV2:
+    def v2(self, body: _types.ModelV2, *, content_type: str = "application/json", **kwargs: Any) -> _models.ModelV2:
         """v2.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~versioning.removed.types.ModelV2
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -121,11 +120,12 @@ class _RemovedClientOperationsMixin(
         """
 
     @distributed_trace
-    def v2(self, body: Union[_models.ModelV2, JSON, IO[bytes]], **kwargs: Any) -> _models.ModelV2:
+    def v2(self, body: Union[_models.ModelV2, _types.ModelV2, IO[bytes]], **kwargs: Any) -> _models.ModelV2:
         """v2.
 
-        :param body: Is one of the following types: ModelV2, JSON, IO[bytes] Required.
-        :type body: ~versioning.removed.models.ModelV2 or JSON or IO[bytes]
+        :param body: Is either a ModelV2 type or a IO[bytes] type. Required.
+        :type body: ~versioning.removed.models.ModelV2 or ~versioning.removed.types.ModelV2 or
+         IO[bytes]
         :return: ModelV2. The ModelV2 is compatible with MutableMapping
         :rtype: ~versioning.removed.models.ModelV2
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -208,12 +208,14 @@ class _RemovedClientOperationsMixin(
         """
 
     @overload
-    def model_v3(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.ModelV3:
+    def model_v3(
+        self, body: _types.ModelV3, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ModelV3:
         """This operation will pass different paths and different request bodies based on different
         versions.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~versioning.removed.types.ModelV3
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -238,12 +240,13 @@ class _RemovedClientOperationsMixin(
         """
 
     @distributed_trace
-    def model_v3(self, body: Union[_models.ModelV3, JSON, IO[bytes]], **kwargs: Any) -> _models.ModelV3:
+    def model_v3(self, body: Union[_models.ModelV3, _types.ModelV3, IO[bytes]], **kwargs: Any) -> _models.ModelV3:
         """This operation will pass different paths and different request bodies based on different
         versions.
 
-        :param body: Is one of the following types: ModelV3, JSON, IO[bytes] Required.
-        :type body: ~versioning.removed.models.ModelV3 or JSON or IO[bytes]
+        :param body: Is either a ModelV3 type or a IO[bytes] type. Required.
+        :type body: ~versioning.removed.models.ModelV3 or ~versioning.removed.types.ModelV3 or
+         IO[bytes]
         :return: ModelV3. The ModelV3 is compatible with MutableMapping
         :rtype: ~versioning.removed.models.ModelV3
         :raises ~azure.core.exceptions.HttpResponseError:

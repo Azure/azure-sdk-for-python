@@ -29,13 +29,12 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._operations._operations import build_rpc_long_running_rpc_request
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import RpcClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -45,7 +44,7 @@ class _RpcClientOperationsMixin(
 ):
 
     async def _long_running_rpc_initial(
-        self, body: Union[_models.GenerationOptions, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.GenerationOptions, _types.GenerationOptions, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -127,14 +126,14 @@ class _RpcClientOperationsMixin(
 
     @overload
     async def begin_long_running_rpc(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.GenerationOptions, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.GenerationResult]:
         """Generate data.
 
         Generate data.
 
         :param body: The body parameter. Required.
-        :type body: JSON
+        :type body: ~specs.azure.core.lro.rpc.types.GenerationOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -165,15 +164,16 @@ class _RpcClientOperationsMixin(
 
     @distributed_trace_async
     async def begin_long_running_rpc(
-        self, body: Union[_models.GenerationOptions, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.GenerationOptions, _types.GenerationOptions, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.GenerationResult]:
         """Generate data.
 
         Generate data.
 
-        :param body: The body parameter. Is one of the following types: GenerationOptions, JSON,
-         IO[bytes] Required.
-        :type body: ~specs.azure.core.lro.rpc.models.GenerationOptions or JSON or IO[bytes]
+        :param body: The body parameter. Is either a GenerationOptions type or a IO[bytes] type.
+         Required.
+        :type body: ~specs.azure.core.lro.rpc.models.GenerationOptions or
+         ~specs.azure.core.lro.rpc.types.GenerationOptions or IO[bytes]
         :return: An instance of AsyncLROPoller that returns GenerationResult. The GenerationResult is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~specs.azure.core.lro.rpc.models.GenerationResult]

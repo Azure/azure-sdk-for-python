@@ -26,12 +26,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models1
+from .. import models as _models1, types as _types_models1
 from ..._configuration import ExactNameClientConfiguration
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -90,11 +89,13 @@ class PropertyOperations:
         """
 
     @overload
-    def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models1.ScopedModel:
+    def send(
+        self, body: _types_models1.ScopedModel, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models1.ScopedModel:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.azure.clientgenerator.core.exactname.property.types.ScopedModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -118,12 +119,14 @@ class PropertyOperations:
         """
 
     @distributed_trace
-    def send(self, body: Union[_models1.ScopedModel, JSON, IO[bytes]], **kwargs: Any) -> _models1.ScopedModel:
+    def send(
+        self, body: Union[_models1.ScopedModel, _types_models1.ScopedModel, IO[bytes]], **kwargs: Any
+    ) -> _models1.ScopedModel:
         """send.
 
-        :param body: Is one of the following types: ScopedModel, JSON, IO[bytes] Required.
-        :type body: ~specs.azure.clientgenerator.core.exactname.property.models.ScopedModel or JSON or
-         IO[bytes]
+        :param body: Is either a ScopedModel type or a IO[bytes] type. Required.
+        :type body: ~specs.azure.clientgenerator.core.exactname.property.models.ScopedModel or
+         ~specs.azure.clientgenerator.core.exactname.property.types.ScopedModel or IO[bytes]
         :return: ScopedModel. The ScopedModel is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.exactname.property.models.ScopedModel
         :raises ~azure.core.exceptions.HttpResponseError:

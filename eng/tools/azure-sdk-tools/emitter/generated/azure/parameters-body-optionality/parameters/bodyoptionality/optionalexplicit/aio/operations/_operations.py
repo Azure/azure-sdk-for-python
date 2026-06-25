@@ -24,13 +24,12 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from .... import models as _models3
+from .... import models as _models3, types as _types_models3
 from ...._utils.model_base import SdkJSONEncoder
 from ...._utils.serialization import Deserializer, Serializer
 from ....aio._configuration import BodyOptionalityClientConfiguration
 from ...operations._operations import build_optional_explicit_omit_request, build_optional_explicit_set_request
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -69,11 +68,13 @@ class OptionalExplicitOperations:
         """
 
     @overload
-    async def set(self, body: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def set(
+        self, body: Optional[_types_models3.BodyModel] = None, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """set.
 
         :param body: Default value is None.
-        :type body: JSON
+        :type body: ~parameters.bodyoptionality.types.BodyModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -99,11 +100,14 @@ class OptionalExplicitOperations:
         """
 
     @distributed_trace_async
-    async def set(self, body: Optional[Union[_models3.BodyModel, JSON, IO[bytes]]] = None, **kwargs: Any) -> None:
+    async def set(
+        self, body: Optional[Union[_models3.BodyModel, _types_models3.BodyModel, IO[bytes]]] = None, **kwargs: Any
+    ) -> None:
         """set.
 
-        :param body: Is one of the following types: BodyModel, JSON, IO[bytes] Default value is None.
-        :type body: ~parameters.bodyoptionality.models.BodyModel or JSON or IO[bytes]
+        :param body: Is either a BodyModel type or a IO[bytes] type. Default value is None.
+        :type body: ~parameters.bodyoptionality.models.BodyModel or
+         ~parameters.bodyoptionality.types.BodyModel or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -175,11 +179,13 @@ class OptionalExplicitOperations:
         """
 
     @overload
-    async def omit(self, body: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def omit(
+        self, body: Optional[_types_models3.BodyModel] = None, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """omit.
 
         :param body: Default value is None.
-        :type body: JSON
+        :type body: ~parameters.bodyoptionality.types.BodyModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -205,11 +211,14 @@ class OptionalExplicitOperations:
         """
 
     @distributed_trace_async
-    async def omit(self, body: Optional[Union[_models3.BodyModel, JSON, IO[bytes]]] = None, **kwargs: Any) -> None:
+    async def omit(
+        self, body: Optional[Union[_models3.BodyModel, _types_models3.BodyModel, IO[bytes]]] = None, **kwargs: Any
+    ) -> None:
         """omit.
 
-        :param body: Is one of the following types: BodyModel, JSON, IO[bytes] Default value is None.
-        :type body: ~parameters.bodyoptionality.models.BodyModel or JSON or IO[bytes]
+        :param body: Is either a BodyModel type or a IO[bytes] type. Default value is None.
+        :type body: ~parameters.bodyoptionality.models.BodyModel or
+         ~parameters.bodyoptionality.types.BodyModel or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

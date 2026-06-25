@@ -17,6 +17,7 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
+from ... import types as _types_models2
 from ...._utils.model_base import SdkJSONEncoder
 from ...._utils.serialization import Deserializer, Serializer
 from ....aio._configuration import SpecialWordsClientConfiguration
@@ -60,11 +61,13 @@ class ReservedOperationBodyParamsOperations:
         """
 
     @overload
-    async def with_items(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def with_items(
+        self, body: _types_models2.WithItemsRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """with_items.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specialwords.reservedoperationbodyparams.types.WithItemsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -88,12 +91,17 @@ class ReservedOperationBodyParamsOperations:
         """
 
     async def with_items(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, items: list[str] = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, _types_models2.WithItemsRequest, IO[bytes]] = _Unset,
+        *,
+        items: list[str] = _Unset,
+        **kwargs: Any
     ) -> None:
         """with_items.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, WithItemsRequest, IO[bytes] Required.
+        :type body: JSON or ~specialwords.reservedoperationbodyparams.types.WithItemsRequest or
+         IO[bytes]
         :keyword items: Required.
         :paramtype items: list[str]
         :return: None

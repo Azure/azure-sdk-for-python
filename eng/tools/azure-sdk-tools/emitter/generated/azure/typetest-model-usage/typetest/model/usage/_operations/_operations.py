@@ -26,13 +26,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import UsageClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -102,11 +101,11 @@ class _UsageClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Htt
         """
 
     @overload
-    def input(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def input(self, input: _types.InputRecord, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """input.
 
         :param input: Required.
-        :type input: JSON
+        :type input: ~typetest.model.usage.types.InputRecord
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -131,12 +130,13 @@ class _UsageClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Htt
 
     @distributed_trace
     def input(  # pylint: disable=inconsistent-return-statements
-        self, input: Union[_models.InputRecord, JSON, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.InputRecord, _types.InputRecord, IO[bytes]], **kwargs: Any
     ) -> None:
         """input.
 
-        :param input: Is one of the following types: InputRecord, JSON, IO[bytes] Required.
-        :type input: ~typetest.model.usage.models.InputRecord or JSON or IO[bytes]
+        :param input: Is either a InputRecord type or a IO[bytes] type. Required.
+        :type input: ~typetest.model.usage.models.InputRecord or
+         ~typetest.model.usage.types.InputRecord or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -262,12 +262,12 @@ class _UsageClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Htt
 
     @overload
     def input_and_output(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.InputOutputRecord, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.InputOutputRecord:
         """input_and_output.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~typetest.model.usage.types.InputOutputRecord
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -294,12 +294,13 @@ class _UsageClientOperationsMixin(ClientMixinABC[PipelineClient[HttpRequest, Htt
 
     @distributed_trace
     def input_and_output(
-        self, body: Union[_models.InputOutputRecord, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.InputOutputRecord, _types.InputOutputRecord, IO[bytes]], **kwargs: Any
     ) -> _models.InputOutputRecord:
         """input_and_output.
 
-        :param body: Is one of the following types: InputOutputRecord, JSON, IO[bytes] Required.
-        :type body: ~typetest.model.usage.models.InputOutputRecord or JSON or IO[bytes]
+        :param body: Is either a InputOutputRecord type or a IO[bytes] type. Required.
+        :type body: ~typetest.model.usage.models.InputOutputRecord or
+         ~typetest.model.usage.types.InputOutputRecord or IO[bytes]
         :return: InputOutputRecord. The InputOutputRecord is compatible with MutableMapping
         :rtype: ~typetest.model.usage.models.InputOutputRecord
         :raises ~azure.core.exceptions.HttpResponseError:

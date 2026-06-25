@@ -14,14 +14,13 @@ from corehttp.rest import AsyncHttpResponse, HttpRequest
 from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 
-from ... import models as _models2
+from ... import models as _models2, types as _types_models2
 from ......_utils.model_base import Model as _Model
 from ......_utils.serialization import Deserializer, Serializer
 from ......_utils.utils import prepare_multipart_form_data
 from ......aio._configuration import MultiPartClientConfiguration
 from ...operations._operations import build_form_data_http_parts_non_string_float_request
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -55,21 +54,22 @@ class FormDataHttpPartsNonStringOperations:
         """
 
     @overload
-    async def float(self, body: JSON, **kwargs: Any) -> None:
+    async def float(self, body: _types_models2.FloatRequest, **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for non string.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~payload.multipart.formdata.httpparts.nonstring.types.FloatRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def float(self, body: Union[_models2.FloatRequest, JSON], **kwargs: Any) -> None:
+    async def float(self, body: Union[_models2.FloatRequest, _types_models2.FloatRequest], **kwargs: Any) -> None:
         """Test content-type: multipart/form-data for non string.
 
-        :param body: Is either a FloatRequest type or a JSON type. Required.
-        :type body: ~payload.multipart.formdata.httpparts.nonstring.models.FloatRequest or JSON
+        :param body: Is one of the following types: FloatRequest Required.
+        :type body: ~payload.multipart.formdata.httpparts.nonstring.models.FloatRequest or
+         ~payload.multipart.formdata.httpparts.nonstring.types.FloatRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

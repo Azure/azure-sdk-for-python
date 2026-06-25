@@ -27,13 +27,12 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._operations._operations import build_recursive_get_request, build_recursive_put_request
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import RecursiveClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -57,11 +56,11 @@ class _RecursiveClientOperationsMixin(
         """
 
     @overload
-    async def put(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def put(self, input: _types.Extension, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put.
 
         :param input: Required.
-        :type input: JSON
+        :type input: ~generation.subdir._generated.types.Extension
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -85,11 +84,12 @@ class _RecursiveClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def put(self, input: Union[_models.Extension, JSON, IO[bytes]], **kwargs: Any) -> None:
+    async def put(self, input: Union[_models.Extension, _types.Extension, IO[bytes]], **kwargs: Any) -> None:
         """put.
 
-        :param input: Is one of the following types: Extension, JSON, IO[bytes] Required.
-        :type input: ~generation.subdir._generated.models.Extension or JSON or IO[bytes]
+        :param input: Is either a Extension type or a IO[bytes] type. Required.
+        :type input: ~generation.subdir._generated.models.Extension or
+         ~generation.subdir._generated.types.Extension or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

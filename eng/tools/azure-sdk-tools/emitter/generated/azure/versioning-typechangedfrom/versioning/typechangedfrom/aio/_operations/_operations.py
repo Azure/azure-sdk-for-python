@@ -27,13 +27,12 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._operations._operations import build_type_changed_from_test_request
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import TypeChangedFromClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -62,12 +61,12 @@ class _TypeChangedFromClientOperationsMixin(
 
     @overload
     async def test(
-        self, body: JSON, *, param: str, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.TestModel, *, param: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.TestModel:
         """test.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~versioning.typechangedfrom.types.TestModel
         :keyword param: Required.
         :paramtype param: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -98,12 +97,13 @@ class _TypeChangedFromClientOperationsMixin(
 
     @distributed_trace_async
     async def test(
-        self, body: Union[_models.TestModel, JSON, IO[bytes]], *, param: str, **kwargs: Any
+        self, body: Union[_models.TestModel, _types.TestModel, IO[bytes]], *, param: str, **kwargs: Any
     ) -> _models.TestModel:
         """test.
 
-        :param body: Is one of the following types: TestModel, JSON, IO[bytes] Required.
-        :type body: ~versioning.typechangedfrom.models.TestModel or JSON or IO[bytes]
+        :param body: Is either a TestModel type or a IO[bytes] type. Required.
+        :type body: ~versioning.typechangedfrom.models.TestModel or
+         ~versioning.typechangedfrom.types.TestModel or IO[bytes]
         :keyword param: Required.
         :paramtype param: str
         :return: TestModel. The TestModel is compatible with MutableMapping

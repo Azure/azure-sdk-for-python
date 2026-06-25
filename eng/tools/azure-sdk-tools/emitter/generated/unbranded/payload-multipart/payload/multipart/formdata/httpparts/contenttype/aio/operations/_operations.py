@@ -14,7 +14,7 @@ from corehttp.rest import AsyncHttpResponse, HttpRequest
 from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 
-from ...... import models as _models5
+from ...... import models as _models5, types as _types_models5
 from ......_utils.model_base import Model as _Model
 from ......_utils.serialization import Deserializer, Serializer
 from ......_utils.utils import prepare_multipart_form_data
@@ -25,7 +25,6 @@ from ...operations._operations import (
     build_form_data_http_parts_content_type_required_content_type_request,
 )
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -61,24 +60,32 @@ class FormDataHttpPartsContentTypeOperations:
         """
 
     @overload
-    async def image_jpeg_content_type(self, body: JSON, **kwargs: Any) -> None:
+    async def image_jpeg_content_type(
+        self, body: _types_models5.FileWithHttpPartSpecificContentTypeRequest, **kwargs: Any
+    ) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~payload.multipart.types.FileWithHttpPartSpecificContentTypeRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     async def image_jpeg_content_type(
-        self, body: Union[_models5.FileWithHttpPartSpecificContentTypeRequest, JSON], **kwargs: Any
+        self,
+        body: Union[
+            _models5.FileWithHttpPartSpecificContentTypeRequest,
+            _types_models5.FileWithHttpPartSpecificContentTypeRequest,
+        ],
+        **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is either a FileWithHttpPartSpecificContentTypeRequest type or a JSON type.
+        :param body: Is one of the following types: FileWithHttpPartSpecificContentTypeRequest
          Required.
-        :type body: ~payload.multipart.models.FileWithHttpPartSpecificContentTypeRequest or JSON
+        :type body: ~payload.multipart.models.FileWithHttpPartSpecificContentTypeRequest or
+         ~payload.multipart.types.FileWithHttpPartSpecificContentTypeRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -137,24 +144,32 @@ class FormDataHttpPartsContentTypeOperations:
         """
 
     @overload
-    async def required_content_type(self, body: JSON, **kwargs: Any) -> None:
+    async def required_content_type(
+        self, body: _types_models5.FileWithHttpPartRequiredContentTypeRequest, **kwargs: Any
+    ) -> None:
         """Test content-type: multipart/form-data.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~payload.multipart.types.FileWithHttpPartRequiredContentTypeRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     async def required_content_type(
-        self, body: Union[_models5.FileWithHttpPartRequiredContentTypeRequest, JSON], **kwargs: Any
+        self,
+        body: Union[
+            _models5.FileWithHttpPartRequiredContentTypeRequest,
+            _types_models5.FileWithHttpPartRequiredContentTypeRequest,
+        ],
+        **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data.
 
-        :param body: Is either a FileWithHttpPartRequiredContentTypeRequest type or a JSON type.
+        :param body: Is one of the following types: FileWithHttpPartRequiredContentTypeRequest
          Required.
-        :type body: ~payload.multipart.models.FileWithHttpPartRequiredContentTypeRequest or JSON
+        :type body: ~payload.multipart.models.FileWithHttpPartRequiredContentTypeRequest or
+         ~payload.multipart.types.FileWithHttpPartRequiredContentTypeRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -213,24 +228,32 @@ class FormDataHttpPartsContentTypeOperations:
         """
 
     @overload
-    async def optional_content_type(self, body: JSON, **kwargs: Any) -> None:
+    async def optional_content_type(
+        self, body: _types_models5.FileWithHttpPartOptionalContentTypeRequest, **kwargs: Any
+    ) -> None:
         """Test content-type: multipart/form-data for optional content type.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~payload.multipart.types.FileWithHttpPartOptionalContentTypeRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
     async def optional_content_type(
-        self, body: Union[_models5.FileWithHttpPartOptionalContentTypeRequest, JSON], **kwargs: Any
+        self,
+        body: Union[
+            _models5.FileWithHttpPartOptionalContentTypeRequest,
+            _types_models5.FileWithHttpPartOptionalContentTypeRequest,
+        ],
+        **kwargs: Any
     ) -> None:
         """Test content-type: multipart/form-data for optional content type.
 
-        :param body: Is either a FileWithHttpPartOptionalContentTypeRequest type or a JSON type.
+        :param body: Is one of the following types: FileWithHttpPartOptionalContentTypeRequest
          Required.
-        :type body: ~payload.multipart.models.FileWithHttpPartOptionalContentTypeRequest or JSON
+        :type body: ~payload.multipart.models.FileWithHttpPartOptionalContentTypeRequest or
+         ~payload.multipart.types.FileWithHttpPartOptionalContentTypeRequest
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
