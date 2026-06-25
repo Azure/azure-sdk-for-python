@@ -16,5 +16,5 @@
         "azure.contoso.widgetmanager.operations.WidgetsOperations.list_widgets": "Azure.Contoso.WidgetManager.Widgets.listWidgets",
         "azure.contoso.widgetmanager.aio.operations.WidgetsOperations.list_widgets": "Azure.Contoso.WidgetManager.Widgets.listWidgets"
     },
-    "CrossLanguageVersion": "3b1ed3b297a6"
+    "CrossLanguageVersion": "81925f35bc8c"
 }
