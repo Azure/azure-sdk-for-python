@@ -4,7 +4,7 @@ license: MIT
 metadata:
   version: "1.0.0"
   distribution: local
-description: "Emit the azure-ai-projects Python SDK from TypeSpec, apply post-emitter fixes, update changelog, and create a Pull Request. WHEN: \"emit SDK from TypeSpec\", \"generate azure-ai-projects SDK\", \"update azure-ai-projects from TypeSpec\", \"emit from TypeSpec\", \"regenerate azure-ai-projects\". DO NOT USE FOR: other Azure SDK packages, manual code edits without TypeSpec. INVOKES: azsdk-common-generate-sdk-locally skill, post-emitter-fixes.cmd script, git commands, gh CLI for PR creation."
+description: "Emit the azure-ai-projects Python SDK from TypeSpec, apply post-emitter fixes, and create a Pull Request. WHEN: \"emit SDK from TypeSpec\", \"generate azure-ai-projects SDK\", \"update azure-ai-projects from TypeSpec\", \"emit from TypeSpec\", \"regenerate azure-ai-projects\". DO NOT USE FOR: other Azure SDK packages, manual code edits without TypeSpec. INVOKES: PostEmitter.ps1 script, git commands, gh CLI for PR creation."
 compatibility:
   requires: "azure-sdk-mcp server, local azure-sdk-for-python clone, git, gh CLI"
 ---
@@ -15,10 +15,6 @@ This skill guides Copilot through emitting the azure-ai-projects Python SDK from
 applying post-emitter fixes, updating the changelog, installing package from sources and creating a Pull Request.
 
 **Working directory:** `sdk/ai/azure-ai-projects`
-
-**Skills:** This workflow relies on skills defined under `.github/skills/` at the root of the repository. Use those skills for SDK generation, building, changelog updates, and other SDK lifecycle operations instead of running commands directly. In particular:
-
-- **`azsdk-common-generate-sdk-locally`** – For generating SDK from TypeSpec, building, running checks/tests, updating changelog, metadata, and version.
 
 ---
 
@@ -42,10 +38,9 @@ Ask the user to choose **one** of the following three options for the TypeSpec s
 
 1. **Latest commit on `feature/foundry-release`** – Automatically find the latest commit to the `feature/foundry-release` branch in [Azure/azure-rest-api-specs](https://github.com/Azure/azure-rest-api-specs) that touched files under `specification/ai-foundry/data-plane/Foundry`, and use that commit hash. This should be the default option. If you press enter without typing anything, this option will be selected.
 
-2. **Local TypeSpec folder** – Emit from a local clone of the [azure-rest-api-specs](https://github.com/Azure/azure-rest-api-specs) repository. If selected, ask for the **full folder path** to the TypeSpec project. This is the folder ending with `\specification\ai-foundry\data-plane\Foundry`. If it does not end with that string, stop and report the error to the user. Do not continue.
+2. **Local TypeSpec folder** – Emit from a local clone of the [azure-rest-api-specs](https://github.com/Azure/azure-rest-api-specs) repository. If selected, ask for the **full folder path** to the TypeSpec project. This is the folder ending with `\specification\ai-foundry\data-plane\Foundry\src\sdk-python-js-azure-ai-projects`. If it does not end with that string, stop and report the error to the user. Do not continue.
 
 3. **TypeSpec commit hash** – Emit from a specific commit in the [azure-rest-api-specs](https://github.com/Azure/azure-rest-api-specs) repository. If selected, ask for the **full commit SHA** (40 characters).
-
 
 ---
 
@@ -76,17 +71,12 @@ Replace `<topic-branch>` with the name provided by the user in Step 1a.
 
 ## Step 4: Emit SDK from TypeSpec
 
-Use the **`azsdk-common-generate-sdk-locally`** skill to generate the SDK code. The skill knows how to invoke `azsdk_package_generate_code` and related MCP tools.
+If you are emitting from latest commit or a given commit number, edit file `tsp-location.yaml` to update the full hash commit number, then in the folder `sdk/ai/azure-ai-projects` run the command: `tsp-client update --debug`
 
-Provide the skill with the TypeSpec source selected by the user. With is either:
-
-- **Local folder:** Pass the local spec repo path for local generation. Or,
-- **Commit hash:** Update `commit:` in `tsp-location.yaml` to the full SHA first, then invoke the skill for generation.
+If you are emitting from a local TypeSpec folder, do not edit the file `tsp-location.yaml`. Run the command: `tsp-client update --debug --local-spec-repo <local-folder-path>`, where `<local-folder-path>` is the full path to the local TypeSpec folder ending with `specification\ai-foundry\data-plane\Foundry\src\sdk-python-js-azure-ai-projects`.
 
 Note:
 - You are only allowed to use the `tsp-client update` command. Do not use any of the other `tsp-client` commands.
-- If you are generating from local TypeSpec folder, do not edit the file `tsp-location.yaml`. Leave it as is. It should not be used by the emitter.
-- If you are generating from local TypeSpec folder, make sure that the local folder path you provide `tsp-client update --local-spec-repo` ends with `specification\ai-foundry\data-plane\Foundry`.
 - **If the generation fails**, stop and report the error to the user. Do not continue.
 
 ---
