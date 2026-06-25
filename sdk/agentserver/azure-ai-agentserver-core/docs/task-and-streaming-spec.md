@@ -185,7 +185,7 @@ re-scoping:
    §10 covers the common case.
 2. **Not a workflow engine.** No fan-out/fan-in, no child workflows,
    no signals or timers as first-class primitives. Use Temporal /
-   Resilient Functions / Orleans for that — `@task` can live inside
+   Orleans for that — `@task` can live inside
    such an engine but does not replace it.
 3. **Not a bulk-data store.** `ctx.metadata` is small (tens of KB
    per namespace; the whole task payload caps at 1 MB). It is a
