@@ -117,9 +117,8 @@ given the expressiveness of Python as a language. So, in practice, what should y
     - set `[tool.setuptools.package-data]` in `pyproject.toml` to include the `py.typed` file. For example:
       ```toml
       [tool.setuptools.package-data]
-      "azure.core" = ["py.typed"]
+      pytyped = ["py.typed"]
       ```
-      Note that the key should be the namespace of where the `py.typed` file is found.
 
 2) Add type hints anywhere in the source code where unit tests are worth writing. Consider typing/mypy as "free" tests
    for your library so focusing typing on high density/important areas of the code helps in detecting bugs.
