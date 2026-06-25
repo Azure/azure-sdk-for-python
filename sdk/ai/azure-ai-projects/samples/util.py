@@ -4,45 +4,53 @@
 # ------------------------------------
 
 import hashlib
-import io
+import os
 import tempfile
 import zipfile
 from pathlib import Path
 from typing import Optional, Tuple
 
 
-def _read_zip_member_bytes(file_path: Path) -> bytes:
-    file_bytes = file_path.read_bytes()
-    if b"\0" in file_bytes:
-        return file_bytes
+def _resolve_zip_file(zip_file: str) -> Path:
+    zip_path = Path(zip_file)
+    if zip_path.is_absolute():
+        return zip_path
 
-    try:
-        text = file_bytes.decode("utf-8")
-    except UnicodeDecodeError:
-        return file_bytes
+    for base_path in (Path.cwd(), Path(__file__).resolve().parent, Path(__file__).resolve().parents[1]):
+        candidate = base_path / zip_path
+        if candidate.exists():
+            return candidate.resolve()
 
-    return text.replace("\r\n", "\n").replace("\r", "\n").encode("utf-8")
+    return (Path.cwd() / zip_path).resolve()
 
 
-def build_skill_zip(source_dir: Path, zip_filename: Optional[str] = None) -> Tuple[bytes, str, Path]:
-    """Zip all files in *source_dir* deterministically and return ``(zip_bytes, sha256_hex, zip_path)``."""
-    # Build a byte-stable zip for test-proxy recording/playback: use sorted POSIX
-    # member paths, fixed timestamps, stored entries, Unix creator metadata, and
-    # fixed 0644 permissions so Windows, Linux, and macOS produce the same archive
-    # bytes. Text files are normalized to LF while binary files are preserved unchanged.
-    buf = io.BytesIO()
-    with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_STORED) as zf:
-        for file_path in sorted(source_dir.rglob("*")):
-            if file_path.is_file():
-                arcname = file_path.relative_to(source_dir).as_posix()
-                zip_info = zipfile.ZipInfo(arcname, date_time=(1980, 1, 1, 0, 0, 0))
-                zip_info.create_system = 3
-                zip_info.compress_type = zipfile.ZIP_STORED
-                zip_info.external_attr = 0o644 << 16
-                zf.writestr(zip_info, _read_zip_member_bytes(file_path))
-    zip_bytes = buf.getvalue()
-    zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
+def zip(
+    source_dir: Path, zip_filename: Optional[str] = None, *, env_var: str = "ZIP_FILE_PATH"
+) -> Tuple[bytes, str, Path]:
+    """Return zip bytes, SHA-256, and path for a source directory.
+
+    Direct sample runs create a normal zip from ``source_dir`` in the temp folder.
+    Callers can set ``env_var`` to load an existing zip file instead of creating
+    a new archive.
+    """
+    configured_zip_file = os.environ.get(env_var)
+    if configured_zip_file:
+        zip_path = _resolve_zip_file(configured_zip_file)
+        zip_bytes = zip_path.read_bytes()
+        zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
+        print(f"Loaded zip from {zip_path}: {len(zip_bytes)} bytes, sha256={zip_sha256}")
+        return zip_bytes, zip_sha256, zip_path
+
     zip_path = Path(tempfile.gettempdir()).resolve() / (zip_filename or f"{source_dir.name}.zip")
-    zip_path.write_bytes(zip_bytes)
-    print(f"Built skill zip from {source_dir}: " f"{len(zip_bytes)} bytes, sha256={zip_sha256}, path={zip_path}")
+    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        for file_path in sorted(source_dir.rglob("*")):
+            if not file_path.is_file():
+                continue
+            if "__pycache__" in file_path.parts or file_path.suffix == ".pyc" or file_path.name == "README.md":
+                continue
+            zf.write(file_path, file_path.relative_to(source_dir).as_posix())
+
+    zip_bytes = zip_path.read_bytes()
+    zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
+    print(f"Built zip from {source_dir}: {len(zip_bytes)} bytes, sha256={zip_sha256}, path={zip_path}")
     return zip_bytes, zip_sha256, zip_path

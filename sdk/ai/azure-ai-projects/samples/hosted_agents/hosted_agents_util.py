@@ -9,7 +9,7 @@ _SAMPLES_DIR = Path(__file__).resolve().parents[1]
 if str(_SAMPLES_DIR) not in sys.path:
     sys.path.insert(0, str(_SAMPLES_DIR))
 
-from util import build_skill_zip
+from util import zip as zip_directory
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
@@ -40,7 +40,8 @@ def select_echo_agent_code_zip(
 
     if use_remote_build:
         zip_filename = "echo-agent.zip"
-        zip_bytes, zip_sha256, _ = build_skill_zip(_ASSETS_DIR / "echo-agent", zip_filename)
+        zip_bytes, zip_sha256, zip_path = zip_directory(_ASSETS_DIR / "echo-agent", zip_filename)
+        zip_filename = zip_path.name
     else:
         zip_filename = "echo-agent-prebuilt.zip"
         zip_path = _ASSETS_DIR / zip_filename
