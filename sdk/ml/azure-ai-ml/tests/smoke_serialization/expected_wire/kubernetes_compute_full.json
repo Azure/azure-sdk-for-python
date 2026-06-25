@@ -1,0 +1,12 @@
+{
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "properties": {
+    "computeType": "Kubernetes",
+    "description": "smoke kubernetes compute",
+    "properties": {
+      "namespace": "smoke-namespace"
+    }
+  }
+}
