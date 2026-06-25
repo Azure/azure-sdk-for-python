@@ -53,7 +53,10 @@ from typing import Any
 from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
-from .store import FileStore
+try:
+    from .store import FileStore
+except ImportError:  # allows running the app as a script from inside this directory
+    from store import FileStore
 
 logger = logging.getLogger(__name__)
 

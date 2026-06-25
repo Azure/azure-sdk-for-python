@@ -14,10 +14,9 @@ and the Copilot CLI installed and authenticated (``gh auth login``).
 
 Usage::
 
+    # From inside this sample directory:
     pip install -r requirements.txt
-
-    # Run from the parent ``samples/`` directory (so the package is importable):
-    python -m resilient_copilot.app
+    python app.py
 
     # Turn 1 (async)
     curl -X POST "http://localhost:8088/invocations?agent_session_id=demo-001" \\
@@ -55,7 +54,10 @@ from azure.ai.agentserver.core.streaming import (
 )
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-from .agent import copilot_session, invocation_store
+try:
+    from .agent import copilot_session, invocation_store
+except ImportError:  # allows `python app.py` from inside this directory
+    from agent import copilot_session, invocation_store
 
 logger = logging.getLogger(__name__)
 

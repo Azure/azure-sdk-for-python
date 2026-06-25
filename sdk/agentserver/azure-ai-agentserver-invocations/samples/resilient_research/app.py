@@ -54,6 +54,12 @@ The new turn gets a new ``invocation_id`` from the platform; the
 new ``invocation_id`` is the new stream id. The HTTP layer does not
 need to distinguish steered turns from fresh turns — see
 ``agent.py`` for the discipline.
+
+Usage::
+
+    # From inside this sample directory:
+    pip install -r requirements.txt
+    python app.py
 """
 
 from __future__ import annotations
@@ -76,7 +82,10 @@ from azure.ai.agentserver.core.streaming import (
 )
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-from .agent import deep_research
+try:
+    from .agent import deep_research
+except ImportError:  # allows `python app.py` from inside this directory
+    from agent import deep_research
 
 logger = logging.getLogger(__name__)
 

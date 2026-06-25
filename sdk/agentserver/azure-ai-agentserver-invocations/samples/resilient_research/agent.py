@@ -68,7 +68,10 @@ from typing import Any, Awaitable, Callable
 from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
-from .store import CheckpointStore
+try:
+    from .store import CheckpointStore
+except ImportError:  # allows running the app as a script from inside this directory
+    from store import CheckpointStore
 
 logger = logging.getLogger(__name__)
 

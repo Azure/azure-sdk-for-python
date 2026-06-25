@@ -20,11 +20,8 @@ queue and re-enters the function with the next input.
 
 Usage::
 
+    # From inside this sample directory:
     pip install -r requirements.txt
-
-    # Run from the parent ``samples/`` directory (so the package is importable):
-    python -m resilient_langgraph.app
-    # — or —
     python app.py
 
     # Turn 1 — async
@@ -71,7 +68,10 @@ from azure.ai.agentserver.core.streaming import (
 )
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-from .agent import invocation_store, langgraph_session
+try:
+    from .agent import invocation_store, langgraph_session
+except ImportError:  # allows `python app.py` from inside this directory
+    from agent import invocation_store, langgraph_session
 
 logger = logging.getLogger(__name__)
 

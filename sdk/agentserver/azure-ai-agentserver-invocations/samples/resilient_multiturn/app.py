@@ -6,11 +6,8 @@ crash-resilient execution boundary), not by a background collector.
 
 Usage::
 
-    pip install azure-ai-agentserver-invocations
-
-    # Run from the parent ``samples/`` directory (so the package is importable):
-    python -m resilient_multiturn.app
-    # — or —
+    # From inside this sample directory:
+    pip install -r requirements.txt
     python app.py
 
     # Turn 1
@@ -42,7 +39,10 @@ from starlette.responses import JSONResponse, Response
 from azure.ai.agentserver.core.tasks import TaskConflictError
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
-from .agent import session_workflow
+try:
+    from .agent import session_workflow
+except ImportError:  # allows `python app.py` from inside this directory
+    from agent import session_workflow
 
 app = InvocationAgentServerHost()
 
