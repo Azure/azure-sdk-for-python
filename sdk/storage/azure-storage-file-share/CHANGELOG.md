@@ -7,6 +7,7 @@
 ### Other Changes
 - Custom transports that use legacy azure-core Request/Response types will not be supported moving forward
 - Return type of AccessPolicies in get_share_access_policies is now the public AccessPolicy model
+- Removed support for Python 3.9, Python 3.10 or later is required to use this package
 
 ## 12.26.0 (2026-06-08)
 
