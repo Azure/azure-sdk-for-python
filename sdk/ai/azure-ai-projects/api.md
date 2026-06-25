@@ -3072,13 +3072,19 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.AzureAISearchTool(Tool, discriminator='azure_ai_search'):
         azure_ai_search: AzureAISearchToolResource
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.AZURE_AI_SEARCH]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                azure_ai_search: AzureAISearchToolResource
+                azure_ai_search: AzureAISearchToolResource, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -3189,13 +3195,15 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.AzureFunctionTool(Tool, discriminator='azure_function'):
         azure_function: AzureFunctionDefinition
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.AZURE_FUNCTION]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                azure_function: AzureFunctionDefinition
+                azure_function: AzureFunctionDefinition, 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -3322,13 +3330,19 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.BingGroundingTool(Tool, discriminator='bing_grounding'):
         bing_grounding: BingGroundingSearchToolParameters
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.BING_GROUNDING]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                bing_grounding: BingGroundingSearchToolParameters
+                bing_grounding: BingGroundingSearchToolParameters, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -3459,14 +3473,20 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.CaptureStructuredOutputsTool(Tool, discriminator='capture_structured_outputs'):
+        description: Optional[str]
+        name: Optional[str]
         outputs: StructuredOutputDefinition
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.CAPTURE_STRUCTURED_OUTPUTS]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                outputs: StructuredOutputDefinition
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                outputs: StructuredOutputDefinition, 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -3601,13 +3621,19 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.CodeInterpreterTool(Tool, discriminator='code_interpreter'):
         container: Optional[Union[str, AutoCodeInterpreterToolParam]]
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.CODE_INTERPRETER]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ...
+                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -5308,9 +5334,12 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.FileSearchTool(Tool, discriminator='file_search'):
+        description: Optional[str]
         filters: Optional[Filters]
         max_num_results: Optional[int]
+        name: Optional[str]
         ranking_options: Optional[RankingOptions]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.FILE_SEARCH]
         vector_store_ids: list[str]
 
@@ -5318,9 +5347,12 @@ namespace azure.ai.projects.models
         def __init__(
                 self, 
                 *, 
+                description: Optional[str] = ..., 
                 filters: Optional[Filters] = ..., 
                 max_num_results: Optional[int] = ..., 
+                name: Optional[str] = ..., 
                 ranking_options: Optional[RankingOptions] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
                 vector_store_ids: list[str]
             ) -> None: ...
 
@@ -5444,14 +5476,20 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.FunctionShellToolParam(Tool, discriminator='shell'):
+        description: Optional[str]
         environment: Optional[FunctionShellToolParamEnvironment]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.SHELL]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                environment: Optional[FunctionShellToolParamEnvironment] = ...
+                description: Optional[str] = ..., 
+                environment: Optional[FunctionShellToolParamEnvironment] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -5685,15 +5723,18 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.ImageGenTool(Tool, discriminator='image_generation'):
         action: Optional[Union[str, ImageGenAction]]
         background: Optional[Literal["transparent", "opaque", "auto"]]
+        description: Optional[str]
         input_fidelity: Optional[Union[str, InputFidelity]]
         input_image_mask: Optional[ImageGenToolInputImageMask]
         model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-5"], str]]
         moderation: Optional[Literal["auto", "low"]]
+        name: Optional[str]
         output_compression: Optional[int]
         output_format: Optional[Literal["png", "webp", "jpeg"]]
         partial_images: Optional[int]
         quality: Optional[Literal["low", "medium", "high", "auto"]]
         size: Optional[Union[Literal["1024x1024"], Literal["1024x1536"], Literal["1536x1024"], Literal["auto"], str]]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.IMAGE_GENERATION]
 
         @overload
@@ -5702,15 +5743,18 @@ namespace azure.ai.projects.models
                 *, 
                 action: Optional[Union[str, ImageGenAction]] = ..., 
                 background: Optional[Literal[transparent, opaque, auto]] = ..., 
+                description: Optional[str] = ..., 
                 input_fidelity: Optional[Union[str, InputFidelity]] = ..., 
                 input_image_mask: Optional[ImageGenToolInputImageMask] = ..., 
                 model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], str]] = ..., 
                 moderation: Optional[Literal[auto, low]] = ..., 
+                name: Optional[str] = ..., 
                 output_compression: Optional[int] = ..., 
                 output_format: Optional[Literal[png, webp, jpeg]] = ..., 
                 partial_images: Optional[int] = ..., 
                 quality: Optional[Literal[low, medium, high, auto]] = ..., 
-                size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ...
+                size: Optional[Union[Literal[1024x1024], Literal[1024x1536], Literal[1536x1024], Literal[auto], str]] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -6058,10 +6102,19 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.LocalShellToolParam(Tool, discriminator='local_shell'):
+        description: Optional[str]
+        name: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.LOCAL_SHELL]
 
         @overload
-        def __init__(self) -> None: ...
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -6116,6 +6169,7 @@ namespace azure.ai.projects.models
         server_description: Optional[str]
         server_label: str
         server_url: Optional[str]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.MCP]
 
         @overload
@@ -6131,7 +6185,8 @@ namespace azure.ai.projects.models
                 require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
                 server_description: Optional[str] = ..., 
                 server_label: str, 
-                server_url: Optional[str] = ...
+                server_url: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -6922,13 +6977,15 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.OpenApiTool(Tool, discriminator='openapi'):
         openapi: OpenApiFunctionDefinition
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.OPENAPI]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                openapi: OpenApiFunctionDefinition
+                openapi: OpenApiFunctionDefinition, 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
             ) -> None: ...
 
         @overload
@@ -9236,8 +9293,11 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.WebSearchTool(Tool, discriminator='web_search'):
         custom_search_configuration: Optional[WebSearchConfiguration]
+        description: Optional[str]
         filters: Optional[WebSearchToolFilters]
+        name: Optional[str]
         search_context_size: Optional[Literal["low", "medium", "high"]]
+        tool_configs: Optional[dict[str, ToolConfig]]
         type: Literal[ToolType.WEB_SEARCH]
         user_location: Optional[WebSearchApproximateLocation]
 
@@ -9246,8 +9306,11 @@ namespace azure.ai.projects.models
                 self, 
                 *, 
                 custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
+                description: Optional[str] = ..., 
                 filters: Optional[WebSearchToolFilters] = ..., 
+                name: Optional[str] = ..., 
                 search_context_size: Optional[Literal[low, medium, high]] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ..., 
                 user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
