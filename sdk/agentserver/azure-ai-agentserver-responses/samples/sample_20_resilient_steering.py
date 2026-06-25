@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Sample 20 — Resilient steering with cancellation × recovery composition.
+r"""Sample 20 — Resilient steering with cancellation × recovery composition.
 
 A steerable resilient handler with NO upstream framework. Demonstrates how
 the cancellation policy and the crash recovery contract compose when
@@ -41,14 +41,14 @@ Usage::
     python sample_20_resilient_steering.py
 
     # Turn 1
-    curl -N -X POST http://localhost:8088/responses \\
-        -H "Content-Type: application/json" \\
+    curl -N -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
         -d '{"model": "agent", "input": "Explain quantum computing",
              "store": true, "background": true}'
 
     # Steer (supersede turn 1)
-    curl -X POST http://localhost:8088/responses \\
-        -H "Content-Type: application/json" \\
+    curl -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
         -d '{"model": "agent", "input": "Actually explain relativity",
              "store": true, "background": true, "previous_response_id": "<id>"}'
 

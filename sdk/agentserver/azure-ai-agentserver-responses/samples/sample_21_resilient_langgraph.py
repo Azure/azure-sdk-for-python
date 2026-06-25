@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Sample 21 — Resilient LangGraph with SqliteSaver checkpointing.
+r"""Sample 21 — Resilient LangGraph with SqliteSaver checkpointing.
 
 Wraps a LangGraph ``StateGraph`` in a steerable resilient response handler.
 LangGraph's ``SqliteSaver`` checkpointer is the canonical example of an
@@ -39,14 +39,14 @@ Usage::
     python sample_21_resilient_langgraph.py
 
     # Turn 1
-    curl -N -X POST http://localhost:8088/responses \\
-        -H "Content-Type: application/json" \\
+    curl -N -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
         -d '{"model": "langgraph", "input": "Research quantum computing",
              "stream": true, "store": true, "background": true}'
 
     # Steer (fork from stable checkpoint with new message)
-    curl -N -X POST http://localhost:8088/responses \\
-        -H "Content-Type: application/json" \\
+    curl -N -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
         -d '{"model": "langgraph", "input": "Focus on error correction",
              "stream": true, "store": true, "background": true,
              "previous_response_id": "<id>"}'
