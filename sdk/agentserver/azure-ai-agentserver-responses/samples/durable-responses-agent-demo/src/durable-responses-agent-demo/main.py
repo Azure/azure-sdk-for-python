@@ -327,6 +327,32 @@ async def handler(
         )
         return
 
+    # ── In-container oversized-task-create HTTP trace (DEMO_MODE) ─────
+    # Captures a full, untruncated request+response trace of POST /tasks with an
+    # oversized attachment, using the hosted-agent credential (external callers
+    # get 403 hosted_agent_required, so the real 500 is only observable here).
+    # Emits the trace as the response output for service-side investigation.
+    if DEMO_MODE and topic.startswith("__TASKTRACE__"):
+        from _task_trace import capture_oversized_task_trace  # local module, copied into image
+
+        trace = await capture_oversized_task_trace(
+            project_endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"],
+            agent_name=os.environ.get("AGENT_NAME", "durable-responses-agent-demo"),
+        )
+        stream = ResponseEventStream(response_id=context.response_id, request=request)
+        yield stream.emit_created()
+        yield stream.emit_in_progress()
+        _msg = stream.add_output_item_message()
+        yield _msg.emit_added()
+        _t = _msg.add_text_content()
+        yield _t.emit_added()
+        yield _t.emit_delta(trace)
+        yield _t.emit_text_done()
+        yield _t.emit_done()
+        yield _msg.emit_done()
+        yield stream.emit_completed()
+        return
+
     # ── Recovery branch: seed from the persisted snapshot ────────────
     # Each completed subcall is one persisted output item, so the item
     # count is the subcall watermark.
