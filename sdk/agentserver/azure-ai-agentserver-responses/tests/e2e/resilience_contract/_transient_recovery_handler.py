@@ -38,7 +38,7 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
 )
 from azure.ai.agentserver.responses.store._file import FileResponseStore
-from azure.ai.agentserver.core.storage_paths import resolve_state_subdir
+from azure.ai.agentserver.core._config import resolve_state_subdir
 
 
 def _env_int(name: str, default: int) -> int:
