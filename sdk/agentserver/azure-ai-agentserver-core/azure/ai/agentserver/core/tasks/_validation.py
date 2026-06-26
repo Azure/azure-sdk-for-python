@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import json
 import re
-from typing import Any
+from typing import Any, NoReturn
 
 from ._exceptions_internal import _HostedConflict
 
@@ -75,12 +75,17 @@ IMMUTABLE_PATCH_FIELDS = frozenset({"id", "agent_name", "session_id", "title", "
 # ── Helpers ──────────────────────────────────────────────────────────
 
 
-def _reject(code: str, message: str) -> None:
+def _reject(code: str, message: str) -> NoReturn:
     """Raise an ``invalid_request``-coded :class:`_HostedConflict`.
 
     All validation rejections funnel through here so the wire-status
     and code are uniform. The framework's translation layer converts
     this to the developer-facing :class:`TaskPreconditionFailed`.
+
+    :param code: The wire error code to attach to the conflict.
+    :type code: str
+    :param message: The human-readable rejection message.
+    :type message: str
     """
     raise _HostedConflict(_code=code, status_code=400, message=message)
 
@@ -90,12 +95,23 @@ def _canonical_json_bytes(value: Any) -> int:
 
     Canonicalization matches the service's measurement:
     ``sort_keys=True`` + compact separators (no whitespace).
+
+    :param value: The value to measure as canonical JSON.
+    :type value: Any
+    :return: The UTF-8 byte length of the canonical-JSON encoding.
+    :rtype: int
     """
     return len(json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8"))
 
 
 def normalize_legacy_status(status: str | None) -> str | None:
-    """Map legacy status aliases to canonical values (§28a.5)."""
+    """Map legacy status aliases to canonical values (§28a.5).
+
+    :param status: The status to normalize, or None.
+    :type status: str | None
+    :return: The canonical status, or None when ``status`` is None.
+    :rtype: str | None
+    """
     if status is None:
         return None
     return _LEGACY_STATUS_ALIASES.get(status, status)
@@ -105,7 +121,11 @@ def normalize_legacy_status(status: str | None) -> str | None:
 
 
 def validate_task_id(task_id: str) -> None:
-    """C-VAL-1: task id MUST match ``^[a-zA-Z0-9_-]{1,128}$``."""
+    """C-VAL-1: task id MUST match ``^[a-zA-Z0-9_-]{1,128}$``.
+
+    :param task_id: The task id to validate.
+    :type task_id: str
+    """
     if not task_id or not _TASK_ID_RE.match(task_id):
         _reject(
             "invalid_request",
@@ -115,7 +135,15 @@ def validate_task_id(task_id: str) -> None:
 
 def validate_required_string(value: str | None, field_name: str, max_len: int) -> None:
     """C-VAL-2 / §28a.1: a required string field is non-empty after trim
-    and at or under ``max_len``."""
+    and at or under ``max_len``.
+
+    :param value: The field value to validate.
+    :type value: str | None
+    :param field_name: The field name used in rejection messages.
+    :type field_name: str
+    :param max_len: The maximum allowed length.
+    :type max_len: int
+    """
     if value is None or not value.strip():
         _reject("invalid_request", f"{field_name} must be provided.")
     if len(value.strip()) > max_len:
@@ -126,7 +154,15 @@ def validate_required_string(value: str | None, field_name: str, max_len: int) -
 
 
 def validate_optional_string(value: str | None, field_name: str, max_len: int) -> None:
-    """§28a.1: an optional string field, when present, is at or under ``max_len``."""
+    """§28a.1: an optional string field, when present, is at or under ``max_len``.
+
+    :param value: The field value to validate, or None.
+    :type value: str | None
+    :param field_name: The field name used in rejection messages.
+    :type field_name: str
+    :param max_len: The maximum allowed length.
+    :type max_len: int
+    """
     if value is None:
         return
     if len(value.strip()) > max_len:
@@ -137,7 +173,11 @@ def validate_optional_string(value: str | None, field_name: str, max_len: int) -
 
 
 def validate_tags(tags: dict[str, Any] | None) -> None:
-    """C-VAL-5: tag key regex, value length, total entry count."""
+    """C-VAL-5: tag key regex, value length, total entry count.
+
+    :param tags: The tags mapping to validate, or None.
+    :type tags: dict[str, Any] | None
+    """
     if tags is None:
         return
     if len(tags) > MAX_TAG_ENTRIES:
@@ -164,7 +204,11 @@ def validate_tags(tags: dict[str, Any] | None) -> None:
 
 
 def validate_payload_size(payload: Any) -> None:
-    """C-VAL-6: payload canonical-JSON byte count ≤ 1 MB."""
+    """C-VAL-6: payload canonical-JSON byte count ≤ 1 MB.
+
+    :param payload: The payload to measure and validate.
+    :type payload: Any
+    """
     if payload is None:
         return
     if _canonical_json_bytes(payload) > MAX_PAYLOAD_BYTES:
@@ -175,7 +219,11 @@ def validate_payload_size(payload: Any) -> None:
 
 
 def validate_error(error: dict[str, Any] | None) -> None:
-    """C-VAL-6 / C-VAL-8: error JSON ≤ 64 KB; required message + type."""
+    """C-VAL-6 / C-VAL-8: error JSON ≤ 64 KB; required message + type.
+
+    :param error: The error object to validate, or None.
+    :type error: dict[str, Any] | None
+    """
     if error is None:
         return
     if not isinstance(error, dict):
@@ -196,6 +244,11 @@ def validate_error(error: dict[str, Any] | None) -> None:
 def normalize_error(error: dict[str, Any] | None) -> dict[str, Any] | None:
     """C-VAL-8: error PATCH defaults ``code`` to ``"error"`` if missing.
     Returns the canonicalized dict (a copy with defaults applied).
+
+    :param error: The error object to canonicalize, or None.
+    :type error: dict[str, Any] | None
+    :return: The canonicalized error dict, or None when ``error`` is None.
+    :rtype: dict[str, Any] | None
     """
     if error is None:
         return None
@@ -206,7 +259,11 @@ def normalize_error(error: dict[str, Any] | None) -> dict[str, Any] | None:
 
 
 def validate_source(source: dict[str, Any] | None) -> None:
-    """C-VAL-6 / C-VAL-7: source ≤ 4 KB and has non-empty ``type``."""
+    """C-VAL-6 / C-VAL-7: source ≤ 4 KB and has non-empty ``type``.
+
+    :param source: The source object to validate, or None.
+    :type source: dict[str, Any] | None
+    """
     if source is None:
         return
     if not isinstance(source, dict):
@@ -222,7 +279,11 @@ def validate_source(source: dict[str, Any] | None) -> None:
 
 
 def validate_attachment_key(key: str) -> None:
-    """C-ATT-8: attachment keys MUST match the regex; non-empty after trim."""
+    """C-ATT-8: attachment keys MUST match the regex; non-empty after trim.
+
+    :param key: The attachment key to validate.
+    :type key: str
+    """
     if not key or not key.strip() or not _ATTACHMENT_KEY_RE.match(key.strip()):
         _reject(
             "invalid_request",
@@ -231,7 +292,11 @@ def validate_attachment_key(key: str) -> None:
 
 
 def validate_attachment_keys(attachments: dict[str, Any] | None) -> None:
-    """Validate every key in an attachments dict."""
+    """Validate every key in an attachments dict.
+
+    :param attachments: The attachments mapping whose keys to validate.
+    :type attachments: dict[str, Any] | None
+    """
     if not attachments:
         return
     for key in attachments.keys():
@@ -245,12 +310,17 @@ def validate_create_status(status: str | None) -> str:
     create. Empty/None defaults to ``pending``. ``"done"`` normalizes
     to ``"completed"`` but is then rejected (create→completed is not
     allowed). ``"failed"`` is rejected outright per §28a.5.
+
+    :param status: The requested create status, or None.
+    :type status: str | None
+    :return: The normalized, validated status.
+    :rtype: str
     """
     status = (status or "pending").strip().lower()
     if status == "failed":
         _reject(
             "invalid_request",
-            "Unsupported status 'failed'. Represent failures as completed tasks " "with a non-null error.",
+            "Unsupported status 'failed'. Represent failures as completed tasks with a non-null error.",
         )
     normalized = _LEGACY_STATUS_ALIASES.get(status, status)
     if normalized not in {"pending", "in_progress"}:
@@ -263,6 +333,11 @@ def validate_patch_status(status: str | None) -> str | None:
 
     Per §24 / C-VAL-9. ``"failed"`` rejected, ``"done"`` normalized.
     Returns the normalized status (or None when not patching status).
+
+    :param status: The requested patch status, or None.
+    :type status: str | None
+    :return: The normalized status, or None when not patching status.
+    :rtype: str | None
     """
     if status is None:
         return None
@@ -270,7 +345,7 @@ def validate_patch_status(status: str | None) -> str | None:
     if status == "failed":
         _reject(
             "invalid_request",
-            "Unsupported status 'failed'. Represent failures as completed tasks " "with a non-null error.",
+            "Unsupported status 'failed'. Represent failures as completed tasks with a non-null error.",
         )
     normalized = _LEGACY_STATUS_ALIASES.get(status, status)
     if normalized not in _LEGAL_STATUSES:
@@ -279,7 +354,13 @@ def validate_patch_status(status: str | None) -> str | None:
 
 
 def validate_transition(current: str, target: str) -> None:
-    """C-LCM-5: enforce the §24.1 transition matrix."""
+    """C-LCM-5: enforce the §24.1 transition matrix.
+
+    :param current: The current task status.
+    :type current: str
+    :param target: The requested target status.
+    :type target: str
+    """
     current = normalize_legacy_status(current) or current
     target = normalize_legacy_status(target) or target
     allowed = _ALLOWED_TRANSITIONS.get(current, set())
@@ -303,22 +384,31 @@ def validate_lease_params(
 
     Returns the normalized triplet when all three are supplied, ``None``
     when none are supplied. Raises ``_HostedConflict`` when partial.
+
+    :param owner: The lease owner, or None.
+    :type owner: str | None
+    :param instance_id: The lease instance id, or None.
+    :type instance_id: str | None
+    :param duration_seconds: The lease duration in seconds, or None.
+    :type duration_seconds: int | None
+    :return: The normalized triplet when all three are supplied, else None.
+    :rtype: tuple[str, str, int] | None
     """
     any_set = bool(owner) or bool(instance_id) or duration_seconds is not None
     all_set = bool(owner) and bool(instance_id) and duration_seconds is not None
     if any_set and not all_set:
         _reject(
             "invalid_request",
-            "lease_owner, lease_instance_id, and lease_duration_seconds must " "be provided together.",
+            "lease_owner, lease_instance_id, and lease_duration_seconds must be provided together.",
         )
     if not all_set:
         return None
     assert owner is not None and instance_id is not None  # type narrowing
     assert duration_seconds is not None
-    if duration_seconds != 0 and not (LEASE_DURATION_MIN <= duration_seconds <= LEASE_DURATION_MAX):
+    if duration_seconds != 0 and not LEASE_DURATION_MIN <= duration_seconds <= LEASE_DURATION_MAX:
         _reject(
             "invalid_request",
-            f"lease_duration_seconds must be 0 or between {LEASE_DURATION_MIN} " f"and {LEASE_DURATION_MAX}.",
+            f"lease_duration_seconds must be 0 or between {LEASE_DURATION_MIN} and {LEASE_DURATION_MAX}.",
         )
     if len(owner) > MAX_LEASE_IDENTITY_LEN:
         _reject(

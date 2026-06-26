@@ -331,7 +331,7 @@ class TaskMetadata(collections.abc.MutableMapping):
 # Public type alias exported via tasks.__init__. TaskMetadata values
 # SHOULD be JSON-serializable; this alias documents the value space.
 
-from typing import Union, List, Dict
+from typing import Union, List, Dict  # pylint: disable=wrong-import-position
 
 try:
     from typing import TypeAlias  # Python 3.10+

@@ -13,21 +13,21 @@ import pytest
 # which depends on the Copilot SDK (may not be installed in test envs).
 import sys
 import importlib
-
-_toolbox = (
-    importlib.import_module("azure.ai.agentserver.githubcopilot._toolbox")
-    if "azure.ai.agentserver.githubcopilot._toolbox" in sys.modules
-    else None
-)
+_toolbox = importlib.import_module(
+    "azure.ai.agentserver.githubcopilot._toolbox"
+) if "azure.ai.agentserver.githubcopilot._toolbox" in sys.modules else None
 
 if _toolbox is None:
     import importlib.util
     import pathlib
 
     _mod_path = (
-        pathlib.Path(__file__).resolve().parents[2] / "azure" / "ai" / "agentserver" / "githubcopilot" / "_toolbox.py"
+        pathlib.Path(__file__).resolve().parents[2]
+        / "azure" / "ai" / "agentserver" / "githubcopilot" / "_toolbox.py"
     )
-    _spec = importlib.util.spec_from_file_location("azure.ai.agentserver.githubcopilot._toolbox", _mod_path)
+    _spec = importlib.util.spec_from_file_location(
+        "azure.ai.agentserver.githubcopilot._toolbox", _mod_path
+    )
     _toolbox = importlib.util.module_from_spec(_spec)
     _spec.loader.exec_module(_toolbox)
 
@@ -129,13 +129,10 @@ class TestDiscoverMcpServers:
 
     def test_no_env_vars_read(self, tmp_path):
         """Verify env vars are not consulted — the old behaviour is removed."""
-        with mock.patch.dict(
-            "os.environ",
-            {
-                "FOUNDRY_AGENT_TOOLBOX_ENDPOINT": "https://should-be-ignored.com",
-                "TOOLBOX_MCP_ENDPOINT": "https://also-ignored.com",
-            },
-        ):
+        with mock.patch.dict("os.environ", {
+            "FOUNDRY_AGENT_TOOLBOX_ENDPOINT": "https://should-be-ignored.com",
+            "TOOLBOX_MCP_ENDPOINT": "https://also-ignored.com",
+        }):
             result = discover_mcp_servers(tmp_path)
         assert result == {}
 

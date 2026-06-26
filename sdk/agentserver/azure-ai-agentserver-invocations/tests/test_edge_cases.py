@@ -64,7 +64,6 @@ def _make_large_payload_agent() -> InvocationAgentServerHost:
 # Method not allowed tests
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_get_invocations_returns_405():
     """GET /invocations returns 405 Method Not Allowed."""
@@ -129,7 +128,6 @@ async def test_post_openapi_json_returns_405():
 # Response header tests
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_custom_invocation_id_overwritten():
     """Handler-set x-agent-invocation-id is overwritten by the server."""
@@ -178,7 +176,6 @@ async def test_invocation_id_generated_when_empty(echo_client):
 # Payload edge cases
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_large_payload():
     """Large payload (1MB) is handled correctly."""
@@ -213,7 +210,6 @@ async def test_binary_payload(echo_client):
 # Streaming edge cases
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_empty_streaming():
     """Empty streaming response doesn't crash."""
@@ -246,7 +242,6 @@ async def test_streaming_has_invocation_id():
 # ---------------------------------------------------------------------------
 # Invocation lifecycle
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_multiple_gets(async_storage_client):
@@ -287,7 +282,6 @@ async def test_invoke_cancel_get(async_storage_client):
 # ---------------------------------------------------------------------------
 # Concurrency
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_concurrent_invocations_get_unique_ids():

@@ -70,12 +70,9 @@ def _get_spans():
 # Helper: create tracing-enabled server
 # ---------------------------------------------------------------------------
 
-
 def _make_tracing_server(**kwargs):
     """Create an InvocationAgentServerHost with tracing enabled."""
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost(**kwargs)
 
@@ -89,9 +86,7 @@ def _make_tracing_server(**kwargs):
 
 def _make_tracing_server_with_get_cancel(**kwargs):
     """Create a tracing-enabled server with get/cancel handlers."""
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost(**kwargs)
 
@@ -123,9 +118,7 @@ def _make_tracing_server_with_get_cancel(**kwargs):
 
 def _make_failing_tracing_server(**kwargs):
     """Create a tracing-enabled server whose handler raises."""
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost(**kwargs)
 
@@ -138,9 +131,7 @@ def _make_failing_tracing_server(**kwargs):
 
 def _make_streaming_tracing_server(**kwargs):
     """Create a tracing-enabled server with streaming response."""
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost(**kwargs)
 
@@ -158,7 +149,6 @@ def _make_streaming_tracing_server(**kwargs):
 # ---------------------------------------------------------------------------
 # Tracing disabled by default
 # ---------------------------------------------------------------------------
-
 
 def test_tracing_disabled_by_default():
     """No invoke_agent span is created — only framework/user spans appear."""
@@ -184,7 +174,6 @@ def test_tracing_disabled_by_default():
 # Tracing enabled — no invoke_agent span created
 # ---------------------------------------------------------------------------
 
-
 def test_tracing_enabled_no_invoke_span():
     """Tracing enabled does NOT create an invoke_agent span (context-only propagation)."""
     server = _make_tracing_server()
@@ -200,7 +189,6 @@ def test_tracing_enabled_no_invoke_span():
 # Invoke error returns 500
 # ---------------------------------------------------------------------------
 
-
 def test_invoke_error_returns_500():
     """When handler raises, a 500 response is returned."""
     server = _make_failing_tracing_server()
@@ -212,7 +200,6 @@ def test_invoke_error_returns_500():
 # ---------------------------------------------------------------------------
 # GET/cancel endpoints still work
 # ---------------------------------------------------------------------------
-
 
 def test_get_invocation_returns_response():
     """GET /invocations/{id} returns the stored response."""
@@ -238,12 +225,9 @@ def test_cancel_invocation_returns_response():
 # Tracing via env var
 # ---------------------------------------------------------------------------
 
-
 def test_tracing_via_appinsights_env_var():
     """Tracing is enabled when APPLICATIONINSIGHTS_CONNECTION_STRING is set."""
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             app = InvocationAgentServerHost()
 
@@ -263,7 +247,6 @@ def test_tracing_via_appinsights_env_var():
 # ---------------------------------------------------------------------------
 # No tracing when no endpoints configured
 # ---------------------------------------------------------------------------
-
 
 def test_no_tracing_when_no_endpoints():
     """When no connection string or OTLP endpoint is set, configure_observability
@@ -294,7 +277,6 @@ def test_no_tracing_when_no_endpoints():
 # Traceparent propagation — context is set even without a span
 # ---------------------------------------------------------------------------
 
-
 def test_traceparent_propagation():
     """Server propagates traceparent header into OTel context for framework spans.
 
@@ -307,9 +289,7 @@ def test_traceparent_propagation():
     captured_trace_id = None
     captured_parent_id = None
 
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost()
 
@@ -346,7 +326,6 @@ def test_traceparent_propagation():
 # ---------------------------------------------------------------------------
 # Streaming responses still work
 # ---------------------------------------------------------------------------
-
 
 def test_streaming_returns_response():
     """Streaming response is returned successfully."""
@@ -429,16 +408,13 @@ def test_streaming_wrapper_resets_contextvars():
 # Incoming W3C baggage propagation
 # ---------------------------------------------------------------------------
 
-
 def test_incoming_baggage_merged_into_context():
     """Incoming W3C baggage header entries are merged into OTel context."""
     from opentelemetry import baggage as _otel_baggage
 
     captured_baggage = {}
 
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost()
 
@@ -465,9 +441,7 @@ def test_sdk_set_baggage_available_in_handler():
 
     captured_baggage = {}
 
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost()
 
@@ -506,9 +480,7 @@ def test_incoming_baggage_does_not_break_span_parenting():
     captured_trace_id = None
     captured_parent_id = None
 
-    with patch.dict(
-        os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}
-    ):
+    with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"}):
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):
             server = InvocationAgentServerHost()
 
@@ -606,6 +578,6 @@ def test_incoming_baggage_stamped_on_handler_spans():
 # Project endpoint attribute
 # ---------------------------------------------------------------------------
 
-
 def test_project_endpoint_env_var():
     """FOUNDRY_PROJECT_ENDPOINT constant matches the expected env var name."""
+

@@ -23,19 +23,11 @@ from __future__ import annotations
 
 import logging
 
-from ._exceptions import (
+from ._exceptions import (  # pylint: disable=unused-import  # TaskNotFound re-exported for in-tree callers
     TaskConflictError,
     TaskNotFound,
     TaskPreconditionFailed,
 )
-
-__all__ = [
-    "_HostedConflict",
-    "_translate_hosted_conflict",
-    "TaskNotFound",
-    "TaskPreconditionFailed",
-    "TaskConflictError",
-]
 
 logger = logging.getLogger("azure.ai.agentserver.tasks")
 
@@ -105,7 +97,7 @@ class _HostedConflict(Exception):
 __all__: list[str] = []
 
 
-def _translate_hosted_conflict(
+def _translate_hosted_conflict(  # pylint: disable=too-many-return-statements
     exc: "_HostedConflict",
     task_id: str | None = None,
     observed_status: str | None = None,
@@ -115,9 +107,20 @@ def _translate_hosted_conflict(
     Returns None for transient codes the caller should retry
     (``etag_mismatch``, ``lease_ownership_changed``). Otherwise returns the
     public exception the caller should raise.
+
+    :param exc: The internal hosted-conflict to translate.
+    :type exc: _HostedConflict
+    :param task_id: Task id to attribute the error to, when known.
+    :type task_id: str | None
+    :param observed_status: The task status observed by the caller, used
+        to disambiguate ``task_already_exists`` conflicts.
+    :type observed_status: str | None
+    :return: The developer-facing exception to raise, or None for
+        transient codes the caller should retry.
+    :rtype: Exception | None
     """
     effective_task_id = task_id or exc.task_id or "<unknown>"
-    code = exc._code
+    code = exc._code  # pylint: disable=protected-access
 
     if code in {"etag_mismatch", "lease_ownership_changed"}:
         return None

@@ -362,7 +362,7 @@ class TaskCreateRequest:  # pylint: disable=too-many-instance-attributes
         self.attachments = attachments
 
 
-class TaskPatchRequest:
+class TaskPatchRequest:  # pylint: disable=too-many-instance-attributes
     """Request body for patching a task.
 
         Only non-``None`` fields are included in the PATCH payload.

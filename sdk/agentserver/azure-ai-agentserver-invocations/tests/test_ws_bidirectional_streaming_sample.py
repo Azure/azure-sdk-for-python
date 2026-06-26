@@ -29,7 +29,9 @@ _SAMPLE_PATH = (
 @pytest.fixture
 def sample(monkeypatch):
     """Load the sample as a module and zero out the per-token delay."""
-    spec = importlib.util.spec_from_file_location("ws_bidirectional_streaming_agent_sample", _SAMPLE_PATH)
+    spec = importlib.util.spec_from_file_location(
+        "ws_bidirectional_streaming_agent_sample", _SAMPLE_PATH
+    )
     assert spec and spec.loader
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module
@@ -43,7 +45,6 @@ def sample(monkeypatch):
 # Handshake
 # ---------------------------------------------------------------------------
 
-
 def test_ws_bidirectional_sends_ready_on_connect(sample):
     """The handler immediately sends a ``{"type": "ready"}`` frame on connect."""
     client = TestClient(sample.app)
@@ -56,7 +57,6 @@ def test_ws_bidirectional_sends_ready_on_connect(sample):
 # ---------------------------------------------------------------------------
 # Prompt streaming
 # ---------------------------------------------------------------------------
-
 
 def _drain_until_done(ws, prompt_id: str):
     """Collect token frames until the matching ``done`` (or ``cancelled``) arrives."""
@@ -126,7 +126,6 @@ def test_ws_bidirectional_invalid_json_emits_error(sample):
 # Cancellation
 # ---------------------------------------------------------------------------
 
-
 def test_ws_bidirectional_cancel_interrupts_in_flight_prompt(sample):
     """A ``cancel`` frame mid-stream surfaces a ``cancelled`` event."""
     client = TestClient(sample.app)
@@ -169,7 +168,6 @@ def test_ws_bidirectional_cancel_unknown_id_is_noop(sample):
 # Graceful shutdown
 # ---------------------------------------------------------------------------
 
-
 def test_ws_bidirectional_bye_closes_connection(sample):
     """A ``bye`` frame causes the handler to return → SDK closes cleanly."""
     client = TestClient(sample.app)
@@ -184,7 +182,6 @@ def test_ws_bidirectional_bye_closes_connection(sample):
 # ---------------------------------------------------------------------------
 # HTTP parity
 # ---------------------------------------------------------------------------
-
 
 def test_ws_bidirectional_http_invoke_still_works(sample):
     """The same host still serves ``POST /invocations`` for HTTP parity."""

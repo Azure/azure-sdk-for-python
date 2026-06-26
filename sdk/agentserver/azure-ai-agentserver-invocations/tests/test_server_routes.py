@@ -18,7 +18,6 @@ from conftest import SAMPLE_OPENAPI_SPEC
 # POST /invocations returns 200
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_post_invocations_returns_200(echo_client):
     """POST /invocations returns 200 OK."""
@@ -29,7 +28,6 @@ async def test_post_invocations_returns_200(echo_client):
 # ---------------------------------------------------------------------------
 # POST /invocations returns invocation-id header (UUID)
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_post_invocations_returns_uuid_invocation_id(echo_client):
@@ -44,7 +42,6 @@ async def test_post_invocations_returns_uuid_invocation_id(echo_client):
 # GET openapi spec returns 404 when not set
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_get_openapi_spec_returns_404_when_not_set(no_spec_client):
     """GET /invocations/docs/openapi.json returns 404 when no spec registered."""
@@ -55,7 +52,6 @@ async def test_get_openapi_spec_returns_404_when_not_set(no_spec_client):
 # ---------------------------------------------------------------------------
 # GET openapi spec returns spec when registered
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_get_openapi_spec_returns_spec_when_registered():
@@ -77,7 +73,6 @@ async def test_get_openapi_spec_returns_spec_when_registered():
 # GET /invocations/{id} returns 404 default
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_get_invocation_returns_404_default(echo_client):
     """GET /invocations/{id} returns 404 when no get handler registered."""
@@ -89,7 +84,6 @@ async def test_get_invocation_returns_404_default(echo_client):
 # POST /invocations/{id}/cancel returns 404 default
 # ---------------------------------------------------------------------------
 
-
 @pytest.mark.asyncio
 async def test_cancel_invocation_returns_404_default(echo_client):
     """POST /invocations/{id}/cancel returns 404 when no cancel handler."""
@@ -100,7 +94,6 @@ async def test_cancel_invocation_returns_404_default(echo_client):
 # ---------------------------------------------------------------------------
 # Unknown route returns 404
 # ---------------------------------------------------------------------------
-
 
 @pytest.mark.asyncio
 async def test_unknown_route_returns_404(echo_client):

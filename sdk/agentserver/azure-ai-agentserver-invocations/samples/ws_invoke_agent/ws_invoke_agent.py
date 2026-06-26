@@ -24,7 +24,6 @@ Usage::
     # > hello
     # < hello
 """
-
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.websockets import WebSocket

@@ -23,7 +23,6 @@ from conftest import _make_echo_ws_app, _make_failing_ws_app
 # Accept happens automatically
 # ---------------------------------------------------------------------------
 
-
 def test_ws_sdk_accepts_connection_before_handler_runs():
     """The SDK calls ``websocket.accept()`` before invoking the user handler.
 
@@ -45,7 +44,6 @@ def test_ws_sdk_accepts_connection_before_handler_runs():
 # ---------------------------------------------------------------------------
 # Echo round-trip
 # ---------------------------------------------------------------------------
-
 
 def test_ws_echo_round_trip():
     """End-to-end: send a frame, receive it echoed back."""
@@ -76,7 +74,6 @@ def test_ws_multiple_frames_per_connection():
 # ---------------------------------------------------------------------------
 # Close codes
 # ---------------------------------------------------------------------------
-
 
 def test_ws_handler_exception_maps_to_close_code_1011():
     """Uncaught handler exceptions must surface as RFC 6455 close code 1011."""
@@ -119,7 +116,6 @@ def test_ws_clean_return_uses_close_code_1000():
 # ---------------------------------------------------------------------------
 # Bidirectional streaming (WebSocket-only feature)
 # ---------------------------------------------------------------------------
-
 
 def test_ws_bidirectional_concurrent_send_receive():
     """Reader and writer coroutines run concurrently on the same socket."""

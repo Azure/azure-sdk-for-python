@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Protocol conformance tests for cancel consistency (,,).
+"""Protocol conformance tests for cancel consistency (US6, FR-014, FR-015).
 
-Verifies  (SetCancelled applied exactly once) and
- (persisted state matches returned state on cancel).
+Verifies FR-014 (SetCancelled applied exactly once) and
+FR-015 (persisted state matches returned state on cancel).
 
 Python port of CancelConsistencyTests.
 
@@ -173,7 +173,7 @@ def _make_cancellable_bg_handler():
 async def test_cancel_bg_response_persisted_state_matches_returned_state() -> None:
     """T055 — cancel bg response: persisted state matches returned cancel snapshot.
 
-    : The cancel endpoint return value must match the persisted state.
+    FR-015: The cancel endpoint return value must match the persisted state.
     """
     handler = _make_cancellable_bg_handler()
     client = _build_client(handler)
@@ -194,7 +194,7 @@ async def test_cancel_bg_response_persisted_state_matches_returned_state() -> No
 
         # Cancel the response
         cancel_resp = await client.post(f"/responses/{response_id}/cancel")
-        assert cancel_resp.status_code == 200
+        assert cancel_resp.status_code == 200  # FR-015
 
         cancel_doc = cancel_resp.json()
         returned_status = cancel_doc["status"]
@@ -215,12 +215,12 @@ async def test_cancel_bg_response_persisted_state_matches_returned_state() -> No
     get_resp = await client.get(f"/responses/{response_id}")
     assert get_resp.status_code == 200
     persisted = get_resp.json()
-    assert (
-        persisted["status"] == "cancelled"
-    ), f"Persisted status should match cancel return: expected 'cancelled', got '{persisted['status']}'"
-    assert (
-        persisted["output"] == []
-    ), f"Persisted output should match cancel return: expected [], got {persisted['output']}"
+    assert persisted["status"] == "cancelled", (
+        f"Persisted status should match cancel return: expected 'cancelled', got '{persisted['status']}'"
+    )
+    assert persisted["output"] == [], (
+        f"Persisted output should match cancel return: expected [], got {persisted['output']}"
+    )
 
 
 # ════════════════════════════════════════════════════════════
@@ -232,8 +232,8 @@ async def test_cancel_bg_response_persisted_state_matches_returned_state() -> No
 async def test_cancel_bg_stream_response_persisted_state_matches() -> None:
     """T056 — cancel bg+stream: persisted state matches cancel endpoint return value.
 
-    : SetCancelled applied exactly once.
-    : Persisted state = returned state.
+    FR-014: SetCancelled applied exactly once.
+    FR-015: Persisted state = returned state.
     """
     handler = _make_cancellable_bg_handler()
     client = _build_client(handler)

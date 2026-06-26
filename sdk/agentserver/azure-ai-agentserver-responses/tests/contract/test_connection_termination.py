@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Protocol conformance tests for connection termination behavior.
+"""Protocol conformance tests for connection termination behavior (US3).
 
 Validates that client disconnects are handled correctly for each mode:
 - Non-bg streaming disconnect → handler cancelled

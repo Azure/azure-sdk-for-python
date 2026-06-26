@@ -74,7 +74,6 @@ async def _extract_input_with_attachments(context: ResponseContext) -> str:
                 file_data = getattr(part, "file_data", None) or ""
                 if file_data:
                     import base64
-
                     try:
                         decoded = base64.b64decode(file_data).decode("utf-8", errors="replace")
                         attachment_parts.append(f"\n[Attached file: {filename}]\n{decoded}")
@@ -97,14 +96,12 @@ async def _extract_input_with_attachments(context: ResponseContext) -> str:
 
     return text
 
-
 _COGNITIVE_SERVICES_SCOPE = "https://cognitiveservices.azure.com/.default"
 
 
 # ---------------------------------------------------------------------------
 # URL derivation
 # ---------------------------------------------------------------------------
-
 
 def _get_project_endpoint() -> Optional[str]:
     """Read the Foundry project endpoint from environment variables.
@@ -140,7 +137,6 @@ def _derive_resource_url_from_project_endpoint(project_endpoint: str) -> str:
 # ---------------------------------------------------------------------------
 # Session config builder
 # ---------------------------------------------------------------------------
-
 
 def _build_session_config() -> Dict[str, Any]:
     """Build a session config dict from environment variables.
@@ -203,7 +199,6 @@ def _build_session_config() -> Dict[str, Any]:
 # CopilotAdapter — core adapter
 # ---------------------------------------------------------------------------
 
-
 class CopilotAdapter:
     """Adapter bridging a GitHub Copilot SDK session to Azure AI Agent Server.
 
@@ -249,7 +244,8 @@ class CopilotAdapter:
             self._acl = ToolAcl.from_env("TOOL_ACL_PATH")
             if self._acl is None:
                 logger.warning(
-                    "No tool ACL configured (TOOL_ACL_PATH not set). " "All tool requests will be auto-approved."
+                    "No tool ACL configured (TOOL_ACL_PATH not set). "
+                    "All tool requests will be auto-approved."
                 )
 
         # Multi-turn: conversation_id -> live CopilotSession
@@ -262,13 +258,13 @@ class CopilotAdapter:
             and not os.getenv("GITHUB_TOKEN")
         )
         _has_mcp_auto_auth = any(
-            s.get("headers", {}).get("_auto_auth") for s in self._session_config.get("mcp_servers", {}).values()
+            s.get("headers", {}).get("_auto_auth")
+            for s in self._session_config.get("mcp_servers", {}).values()
         )
         if credential is not None:
             self._credential = credential
         elif _has_byok_provider or _has_mcp_auto_auth:
             from azure.identity import DefaultAzureCredential
-
             self._credential = DefaultAzureCredential()
         else:
             self._credential = None
@@ -340,7 +336,8 @@ class CopilotAdapter:
         if conversation_id:
             self._sessions[conversation_id] = session
         logger.info(
-            "Created new Copilot session" + (f" for conversation {conversation_id!r}" if conversation_id else "")
+            "Created new Copilot session"
+            + (f" for conversation {conversation_id!r}" if conversation_id else "")
         )
         return session
 
@@ -473,16 +470,11 @@ class CopilotAdapter:
                     event_text = getattr(data, "delta_content", "") or getattr(data, "content", "") or ""
 
                 # Rich logging
-                if (
-                    event_name in ("TOOL_EXECUTION_START", "TOOL_EXECUTION_COMPLETE", "TOOL_EXECUTION_PARTIAL_RESULT")
-                    and data
-                ):
+                if event_name in ("TOOL_EXECUTION_START", "TOOL_EXECUTION_COMPLETE", "TOOL_EXECUTION_PARTIAL_RESULT") and data:
                     tool_name = getattr(data, "tool_name", None) or getattr(data, "name", "")
                     call_id = getattr(data, "call_id", "")
                     args = str(getattr(data, "arguments", ""))[:500]
-                    logger.info(
-                        f"Copilot #{event_count:03d}: {event_name} tool={tool_name!r} call_id={call_id!r} args={args}"
-                    )
+                    logger.info(f"Copilot #{event_count:03d}: {event_name} tool={tool_name!r} call_id={call_id!r} args={args}")
                 elif event_name == "SESSION_TOOLS_UPDATED" and data:
                     raw_tools = getattr(data, "tools", None) or []
                     tool_names = [getattr(t, "name", str(t)) for t in raw_tools]
@@ -494,22 +486,16 @@ class CopilotAdapter:
                         srv_status = getattr(srv, "status", "?")
                         srv_error = getattr(srv, "error", None)
                         if srv_error:
-                            logger.warning(
-                                f"Copilot #{event_count:03d}: MCP server {srv_name!r} {srv_status}: {srv_error}"
-                            )
+                            logger.warning(f"Copilot #{event_count:03d}: MCP server {srv_name!r} {srv_status}: {srv_error}")
                         else:
                             logger.info(f"Copilot #{event_count:03d}: MCP server {srv_name!r} {srv_status}")
                 elif "REASONING" in event_name:
-                    logger.info(
-                        f"Copilot #{event_count:03d}: {event_name} len={len(getattr(data, 'delta_content', '') or getattr(data, 'reasoning_text', '') or '')}"
-                    )
+                    logger.info(f"Copilot #{event_count:03d}: {event_name} len={len(getattr(data, 'delta_content', '') or getattr(data, 'reasoning_text', '') or '')}")
                 elif event_name == "EXTERNAL_TOOL_REQUESTED" and data:
                     req_id = getattr(data, "request_id", "?")
                     tool = getattr(data, "tool_name", "?")
                     args = str(getattr(data, "arguments", ""))[:300]
-                    logger.info(
-                        f"Copilot #{event_count:03d}: {event_name} request_id={req_id!r} tool_name={tool!r} args={args}"
-                    )
+                    logger.info(f"Copilot #{event_count:03d}: {event_name} request_id={req_id!r} tool_name={tool!r} args={args}")
                 elif event_text:
                     logger.info(f"Copilot #{event_count:03d}: {event_name} len={len(event_text)}")
                 else:
@@ -662,7 +648,6 @@ class CopilotAdapter:
 # GitHubCopilotAdapter — convenience subclass
 # ---------------------------------------------------------------------------
 
-
 class GitHubCopilotAdapter(CopilotAdapter):
     """CopilotAdapter with skill directory discovery and history bootstrap.
 
@@ -742,12 +727,12 @@ class GitHubCopilotAdapter(CopilotAdapter):
         # Ensure credential is available for toolbox auth
         if self._credential is None and self._session_config.get("mcp_servers"):
             needs_auth = any(
-                s.get("headers", {}).get("_auto_auth") for s in self._session_config["mcp_servers"].values()
+                s.get("headers", {}).get("_auto_auth")
+                for s in self._session_config["mcp_servers"].values()
             )
             if needs_auth:
                 try:
                     from azure.identity import DefaultAzureCredential
-
                     self._credential = DefaultAzureCredential()
                     logger.info("Created credential for MCP server auto-auth")
                 except Exception:
@@ -840,17 +825,13 @@ class GitHubCopilotAdapter(CopilotAdapter):
 
             try:
                 bridge, tools = await connect_toolbox(
-                    url,
-                    headers=headers,
-                    credential=self._credential,
-                    name=name,
+                    url, headers=headers, credential=self._credential, name=name,
                 )
                 self._toolbox_bridges.append(bridge)
                 self._session_config.setdefault("tools", []).extend(tools)
                 logger.info(
                     "Connected toolbox %r: %d tools registered",
-                    name,
-                    len(tools),
+                    name, len(tools),
                 )
             except Exception:
                 logger.warning("Failed to connect toolbox %r at %s", name, url, exc_info=True)
@@ -894,8 +875,7 @@ class GitHubCopilotAdapter(CopilotAdapter):
         configured_model = self._session_config.get("model")
         logger.info(
             "Starting model discovery for %s (configured model: %s)",
-            resource_url,
-            configured_model or "<none>",
+            resource_url, configured_model or "<none>",
         )
 
         try:
@@ -926,8 +906,7 @@ class GitHubCopilotAdapter(CopilotAdapter):
                         dep._cached_wire_api = raw["wire_api"]
                 logger.info(
                     "Using cached deployments (%d, age: %.1fh)",
-                    len(deployments),
-                    cached["age_hours"],
+                    len(deployments), cached["age_hours"],
                 )
             elif cached and cached.get("selected_model"):
                 # Older cache format: selected_model without deployments list
@@ -936,8 +915,7 @@ class GitHubCopilotAdapter(CopilotAdapter):
                     self._session_config["model"] = cached_model
                 logger.info(
                     "Using cached model (no deployments): %s (age: %.1fh)",
-                    cached_model,
-                    cached["age_hours"],
+                    cached_model, cached["age_hours"],
                 )
                 return
 
@@ -966,13 +944,8 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 caps = {k: v for k, v in d.capabilities.items() if not k.startswith("_")} if d.capabilities else {}
                 logger.info(
                     "  - %s (model=%s, version=%s, format=%s, TPM=%s, wire_api=%s, capabilities=%s)",
-                    d.name,
-                    d.model_name,
-                    d.model_version,
-                    d.model_format,
-                    d.token_rate_limit,
-                    d.wire_api,
-                    caps,
+                    d.name, d.model_name, d.model_version,
+                    d.model_format, d.token_rate_limit, d.wire_api, caps,
                 )
 
             # Match configured model against discovered deployments
@@ -983,17 +956,12 @@ class GitHubCopilotAdapter(CopilotAdapter):
                         matched_deployment = d
                         break
                 if matched_deployment:
-                    logger.info(
-                        "Configured model '%s' found in deployments (wire_api=%s)",
-                        configured_model,
-                        matched_deployment.wire_api,
-                    )
+                    logger.info("Configured model '%s' found in deployments (wire_api=%s)",
+                                configured_model, matched_deployment.wire_api)
                 else:
-                    logger.warning(
-                        "Configured model '%s' NOT found in deployments — " "available: %s",
-                        configured_model,
-                        ", ".join(d.name for d in deployments),
-                    )
+                    logger.warning("Configured model '%s' NOT found in deployments — "
+                                   "available: %s", configured_model,
+                                   ", ".join(d.name for d in deployments))
 
             # Auto-select if no model configured or configured model not found
             if not matched_deployment:
@@ -1012,24 +980,22 @@ class GitHubCopilotAdapter(CopilotAdapter):
             # Set wire_api based on matched deployment capabilities
             if matched_deployment and "provider" in self._session_config:
                 self._session_config["provider"]["wire_api"] = matched_deployment.wire_api
-                logger.info("Set wire_api=%s for model %s", matched_deployment.wire_api, matched_deployment.name)
+                logger.info("Set wire_api=%s for model %s",
+                            matched_deployment.wire_api, matched_deployment.name)
 
             # Update cache
             cache.set_selected_model(
                 resource_url=resource_url,
                 model_name=self._session_config.get("model", configured_model),
-                deployments=[
-                    {
-                        "name": d.name,
-                        "model_name": d.model_name,
-                        "model_version": d.model_version,
-                        "model_format": d.model_format,
-                        "token_rate_limit": d.token_rate_limit,
-                        "wire_api": d.wire_api,
-                        "capabilities": d.capabilities,
-                    }
-                    for d in deployments
-                ],
+                deployments=[{
+                    "name": d.name,
+                    "model_name": d.model_name,
+                    "model_version": d.model_version,
+                    "model_format": d.model_format,
+                    "token_rate_limit": d.token_rate_limit,
+                    "wire_api": d.wire_api,
+                    "capabilities": d.capabilities,
+                } for d in deployments],
             )
 
         except Exception:
@@ -1152,7 +1118,6 @@ class GitHubCopilotAdapter(CopilotAdapter):
             self._session_config.pop("model", None)
             try:
                 from ._model_cache import ModelCache
-
                 cache = ModelCache()
                 cache.invalidate(resource_url)
                 logger.info(f"Cleared model cache for resource: {resource_url}")

@@ -84,7 +84,6 @@ def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
         return _ERROR_SOURCE_PLATFORM, detail
     return _ERROR_SOURCE_UPSTREAM, None
 
-
 # Maximum length and allowed characters for user-provided IDs (defense in depth).
 _MAX_ID_LENGTH = 256
 _VALID_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
@@ -244,7 +243,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     # Handler decorators
     # ------------------------------------------------------------------
 
-    def invoke_handler(self, fn: Callable[[Request], Awaitable[Response]]) -> Callable[[Request], Awaitable[Response]]:
+    def invoke_handler(
+        self, fn: Callable[[Request], Awaitable[Response]]
+    ) -> Callable[[Request], Awaitable[Response]]:
         """Register a function as the invoke handler.
 
         Usage::
@@ -312,14 +313,15 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     async def _dispatch_invoke(self, request: Request) -> Response:
         if self._invoke_fn is not None:
             return await self._invoke_fn(request)
-        raise NotImplementedError("No invoke handler registered. Use the @invocations.invoke_handler decorator.")
+        raise NotImplementedError(
+            "No invoke handler registered. Use the @invocations.invoke_handler decorator."
+        )
 
     async def _dispatch_get_invocation(self, request: Request) -> Response:
         if self._get_invocation_fn is not None:
             return await self._get_invocation_fn(request)
         return create_error_response(
-            "not_found",
-            "get_invocation not implemented",
+            "not_found", "get_invocation not implemented",
             status_code=404,
             headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
         )
@@ -328,8 +330,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         if self._cancel_invocation_fn is not None:
             return await self._cancel_invocation_fn(request)
         return create_error_response(
-            "not_found",
-            "cancel_invocation not implemented",
+            "not_found", "cancel_invocation not implemented",
             status_code=404,
             headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
         )
@@ -350,8 +351,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         spec = self.get_openapi_spec()
         if spec is None:
             return create_error_response(
-                "not_found",
-                "No OpenAPI spec registered",
+                "not_found", "No OpenAPI spec registered",
                 status_code=404,
                 headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
             )
@@ -386,9 +386,7 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error(
                     "Error processing invocation %s: %s",
-                    invocation_id,
-                    exc,
-                    exc_info=True,
+                    invocation_id, exc, exc_info=True,
                 )
                 # Record the exception on the current span.
                 span = trace.get_current_span()
@@ -411,7 +409,11 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         request.state.invocation_id = invocation_id
 
         # Session ID: query param overrides env var / generated UUID
-        raw_session_id = request.query_params.get("agent_session_id") or self.config.session_id or ""
+        raw_session_id = (
+            request.query_params.get("agent_session_id")
+            or self.config.session_id
+            or ""
+        )
         session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
         request.state.session_id = session_id
 
@@ -424,14 +426,10 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         # Add protocol-specific baggage entries for this invocation.
         ctx = _otel_context.get_current()
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.invocation_id",
-            invocation_id,
-            context=ctx,
+            "azure.ai.agentserver.invocation_id", invocation_id, context=ctx,
         )
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id",
-            session_id,
-            context=ctx,
+            "azure.ai.agentserver.session_id", session_id, context=ctx,
         )
         baggage_token = _otel_context.attach(ctx)
 
@@ -543,7 +541,11 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             _session_id_var.reset(session_token)
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:
-        return await self._traced_invocation_endpoint(request, "get_invocation", self._dispatch_get_invocation)
+        return await self._traced_invocation_endpoint(
+            request, "get_invocation", self._dispatch_get_invocation
+        )
 
     async def _cancel_invocation_endpoint(self, request: Request) -> Response:
-        return await self._traced_invocation_endpoint(request, "cancel_invocation", self._dispatch_cancel_invocation)
+        return await self._traced_invocation_endpoint(
+            request, "cancel_invocation", self._dispatch_cancel_invocation
+        )

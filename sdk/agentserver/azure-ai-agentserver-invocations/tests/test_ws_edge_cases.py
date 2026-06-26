@@ -23,7 +23,6 @@ from conftest import _make_echo_ws_app, _records_with_ws_extras
 # Client-initiated disconnect (clean)
 # ---------------------------------------------------------------------------
 
-
 def test_ws_client_disconnect_does_not_log_as_error(caplog):
     """A client-initiated disconnect is a normal close, not a 1011 error."""
     app = _make_echo_ws_app()
@@ -44,7 +43,6 @@ def test_ws_client_disconnect_does_not_log_as_error(caplog):
 # ---------------------------------------------------------------------------
 # Client-initiated close with a custom (non-1000) code
 # ---------------------------------------------------------------------------
-
 
 def test_ws_client_initiated_close_with_custom_code_is_reported(caplog):
     """When the client closes with a non-1000 code, the server surfaces the client's code (not 1011)."""
@@ -76,7 +74,6 @@ def test_ws_client_initiated_close_with_custom_code_is_reported(caplog):
 # ---------------------------------------------------------------------------
 # Handler-managed close
 # ---------------------------------------------------------------------------
-
 
 def test_ws_handler_explicit_close_does_not_double_close(caplog, monkeypatch):
     """If the handler closes the WS itself, the SDK does NOT attempt a second close."""
@@ -120,7 +117,6 @@ def test_ws_handler_explicit_close_does_not_double_close(caplog, monkeypatch):
 # ---------------------------------------------------------------------------
 # Empty connection (no frames sent)
 # ---------------------------------------------------------------------------
-
 
 def test_ws_empty_connection_closes_normally(caplog):
     """A connection that immediately disconnects closes cleanly (1000)."""
