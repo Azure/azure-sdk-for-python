@@ -39,15 +39,11 @@ USAGE:
        REMOTE_BUILD; defaults to `false` (BUNDLED).
 """
 
-import hashlib
 import os
 import tempfile
 from pathlib import Path
-
 from dotenv import load_dotenv
-
 from azure.identity import DefaultAzureCredential
-
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeConfiguration,
@@ -71,7 +67,7 @@ dependency_resolution, zip_filename, code_zip_bytes, code_zip_sha256 = select_ec
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     content = CreateAgentVersionFromCodeContent(
         metadata=CreateAgentVersionFromCodeMetadata(
@@ -112,15 +108,14 @@ with (
 
     # Download the zip for the version we just created, streaming to a temp file.
     version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
-    sha = hashlib.sha256()
-    with open(version_zip_path, "wb") as f:
-        for chunk in project_client.agents.download_code(
-            agent_name=agent_name,
-            agent_version=created.version,
-        ):
-            f.write(chunk)
-            sha.update(chunk)
-    downloaded_version_sha256 = sha.hexdigest()
+
+    downloaded_version_sha256 = project_client.agents.download_code_to_disk(
+        agent_name=agent_name,
+        agent_version=created.version,
+        file_path=version_zip_path,
+        overwrite=True,
+    )
+
     print(
         f"Downloaded version code zip to {version_zip_path}: {version_zip_path.stat().st_size} bytes, "
         f"sha256={downloaded_version_sha256} (matches uploaded: {downloaded_version_sha256 == code_zip_sha256})"

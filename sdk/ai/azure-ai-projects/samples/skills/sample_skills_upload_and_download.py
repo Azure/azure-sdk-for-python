@@ -80,13 +80,13 @@ with (
     #   # 1) bare IO[bytes] - filename derived from the file handle's `.name`
     #   files=[skill_zip_path.open("rb")]
     #
-    #   # 2) (filename, bytes)
+    #   # 2) (str, bytes)
     #   files=[(skill_zip_filename, skill_zip_bytes)]
     #
-    #   # 3) (filename, IO[bytes])
+    #   # 3) (str, IO[bytes])
     #   files=[(skill_zip_filename, skill_zip_path.open("rb"))]
     #
-    #   # 4) (filename, bytes, content_type)
+    #   # 4) (str, bytes, content_type)
     #   files=[(skill_zip_filename, skill_zip_bytes, "application/zip")]
     #
     imported = project_client.beta.skills.create_from_files(

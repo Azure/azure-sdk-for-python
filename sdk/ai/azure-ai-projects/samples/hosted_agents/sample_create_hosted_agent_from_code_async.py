@@ -41,15 +41,11 @@ USAGE:
 """
 
 import asyncio
-import hashlib
 import os
 import tempfile
 from pathlib import Path
-
 from dotenv import load_dotenv
-
 from azure.identity.aio import DefaultAzureCredential
-
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     CodeConfiguration,
@@ -61,7 +57,6 @@ from azure.ai.projects.models import (
 
 from hosted_agents_util import select_echo_agent_code_zip, wait_for_agent_version_active_async
 from rbac_util import ensure_agent_identity_rbac_async
-
 
 async def main() -> None:
     load_dotenv()
@@ -75,7 +70,7 @@ async def main() -> None:
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
         content = CreateAgentVersionFromCodeContent(
             metadata=CreateAgentVersionFromCodeMetadata(
@@ -118,16 +113,14 @@ async def main() -> None:
 
         # Download the zip for the version we just created, streaming to a temp file.
         version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
-        sha = hashlib.sha256()
-        version_stream = await project_client.agents.download_code(
+
+        downloaded_version_sha256 = await project_client.agents.download_code_to_disk(
             agent_name=agent_name,
             agent_version=created.version,
+            file_path=version_zip_path,
+            overwrite=True,
         )
-        with open(version_zip_path, "wb") as f:
-            async for chunk in version_stream:
-                f.write(chunk)
-                sha.update(chunk)
-        downloaded_version_sha256 = sha.hexdigest()
+
         print(
             f"Downloaded version code zip to {version_zip_path}: {version_zip_path.stat().st_size} bytes, "
             f"sha256={downloaded_version_sha256} (matches uploaded: {downloaded_version_sha256 == code_zip_sha256})"

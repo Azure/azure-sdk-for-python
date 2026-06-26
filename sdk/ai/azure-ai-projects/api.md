@@ -269,7 +269,7 @@ namespace azure.ai.projects.aio.operations
                 file_path: Union[str, PathLike[str]], 
                 overwrite: bool = False, 
                 **kwargs: Any
-            ) -> None: ...
+            ) -> str: ...
 
         @distributed_trace_async
         async def download_session_file(
@@ -9566,7 +9566,7 @@ namespace azure.ai.projects.operations
                 file_path: Union[str, PathLike[str]], 
                 overwrite: bool = False, 
                 **kwargs: Any
-            ) -> None: ...
+            ) -> str: ...
 
         @distributed_trace
         def download_session_file(

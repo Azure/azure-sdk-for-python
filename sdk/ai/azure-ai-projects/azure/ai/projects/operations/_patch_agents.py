@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+import hashlib
 import os
 from pathlib import Path
 from typing import Union, Optional, Any, IO, overload
@@ -390,7 +391,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         overwrite: bool = False,
         agent_version: Optional[str] = None,
         **kwargs: Any,
-    ) -> None:
+    ) -> str:
         """Download agent code directly to disk.
 
         Downloads the code zip for a code-based hosted agent and writes it to a local file.
@@ -408,8 +409,8 @@ class AgentsOperations(GeneratedAgentsOperations):
         :keyword agent_version: The version of the agent whose code zip should be downloaded.
          If omitted, the latest version's code zip is downloaded. Default value is None.
         :paramtype agent_version: str
-        :return: None
-        :rtype: None
+        :return: The SHA-256 hex digest of the downloaded file.
+        :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
         :raises FileExistsError: If *file_path* already exists and *overwrite* is False.
         :raises ValueError: If *file_path* points to a directory.
@@ -429,7 +430,11 @@ class AgentsOperations(GeneratedAgentsOperations):
             **kwargs,
         )
 
-        # Write the content to disk
+        # Write the content to disk and calculate SHA-256
+        sha = hashlib.sha256()
         with open(file_path, "wb") as f:
             for chunk in content_iterator:
                 f.write(chunk)
+                sha.update(chunk)
+
+        return sha.hexdigest()
