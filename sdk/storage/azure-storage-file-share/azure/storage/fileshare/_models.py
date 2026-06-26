@@ -26,6 +26,7 @@ from ._generated.models import ShareNfsSettingsEncryptionInTransit as GeneratedN
 from ._generated.models import ShareProtocolSettings as GeneratedShareProtocolSettings
 from ._generated.models import ShareSmbSettings as GeneratedShareSmbSettings
 from ._generated.models import ShareSmbSettingsEncryptionInTransit as GeneratedSmbEncryptionInTransit
+from ._generated.models import SignedIdentifier as GeneratedSignedIdentifier
 from ._generated.models import SmbMultichannel as GeneratedSmbMultichannel
 from ._generated.models import StorageServiceProperties as GeneratedStorageServiceProperties
 from ._shared.models import DictMixin, get_enum_value
@@ -645,6 +646,37 @@ class AccessPolicy(_BackCompatMixin):
             permission=generated.permission,
             expiry=generated.expiry,
             start=generated.start,
+        )
+
+
+class SignedIdentifier(DictMixin):
+    """Signed identifier representing a stored access policy associated with a share.
+
+    :param str id:
+        A unique id.
+    :param access_policy:
+        The access policy associated with the id.
+    :type access_policy: ~azure.storage.fileshare.AccessPolicy
+    """
+
+    id: str
+    """A unique id."""
+    access_policy: Optional[AccessPolicy]
+    """The access policy associated with the id."""
+
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        access_policy: Optional[AccessPolicy] = None,
+    ) -> None:
+        self.id = id
+        self.access_policy = access_policy
+
+    @classmethod
+    def _from_generated(cls, generated: GeneratedSignedIdentifier) -> "SignedIdentifier":
+        return cls(
+            id=generated.id,
+            access_policy=AccessPolicy._from_generated(generated.access_policy),  # pylint: disable=protected-access
         )
 
 

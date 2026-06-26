@@ -41,6 +41,7 @@ from ._models import (
     SmbEncryptionInTransit,
     ShareProtocolSettings,
     ShareProtocols,
+    SignedIdentifier,
 )
 from ._generated.models import ShareAccessTier, ShareRootSquash
 
@@ -81,6 +82,7 @@ __all__ = [
     "ShareSasPermissions",
     "ShareServiceClient",
     "ShareSmbSettings",
+    "SignedIdentifier",
     "SmbEncryptionInTransit",
     "SmbMultichannel",
     "StorageErrorCode",

@@ -18,8 +18,13 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._deserialize import deserialize_permission, deserialize_share_properties
 from .._generated.aio import FileClient as AzureFileStorage
-from .._generated.models import DeleteSnapshotsOptionType, ShareStats, SignedIdentifier, SignedIdentifiers
-from .._models import AccessPolicy, ShareProtocols
+from .._generated.models import (
+    DeleteSnapshotsOptionType,
+    ShareStats,
+    SignedIdentifier as GenSignedIdentifier,
+    SignedIdentifiers,
+)
+from .._models import AccessPolicy, ShareProtocols, SignedIdentifier
 from .._parser import _parse_snapshot
 from .._share_client_helpers import _create_permission_for_share_options, _format_url, _from_share_url, _parse_url
 from .._shared.policies_async import ExponentialRetry
@@ -800,12 +805,11 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         except HttpResponseError as error:
             process_storage_error(error)
         items = identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
-        for si in items or []:
-            if si.access_policy is not None:
-                si.access_policy = AccessPolicy._from_generated(si.access_policy)  # pylint: disable=protected-access
         return {
             "public_access": response.get("share_public_access"),
-            "signed_identifiers": items or [],
+            "signed_identifiers": [
+                SignedIdentifier._from_generated(si) for si in items or []  # pylint: disable=protected-access
+            ],
         }
 
     @distributed_trace_async
@@ -848,7 +852,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         identifiers = []
         for key, value in signed_identifiers.items():
             identifiers.append(
-                SignedIdentifier(
+                GenSignedIdentifier(
                     id=key,
                     access_policy=value._to_generated() if value else None,  # pylint: disable=protected-access
                 )
