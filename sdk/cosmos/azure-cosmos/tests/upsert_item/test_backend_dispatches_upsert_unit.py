@@ -19,7 +19,7 @@ without a real Cosmos account. Sibling of
 ``tests/common/test_backend_wiring_unit.py``.
 """
 import asyncio
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -59,20 +59,23 @@ def test_sync_rust_backend_dispatches_upsert_to_binding(monkeypatch):
 
 
 def test_async_rust_backend_dispatches_upsert_to_binding(monkeypatch):
-    """Async sibling: the upsert op is offloaded to the binding's
-    ``upsert_item`` on the default executor. A 201 here models the
-    insert half."""
+    """Async sibling: the upsert op is awaited on the binding's async
+    ``upsert_item_async`` function, never the sync ``upsert_item`` and never
+    ``create_item_async``. A 201 here models the insert half."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "handle-1"
-    fake_module.upsert_item.return_value = (201, 0, {"etag": "v1"}, b'{"id":"order-42"}')
+    fake_module.upsert_item_async = AsyncMock(
+        return_value=(201, 0, {"etag": "v1"}, b'{"id":"order-42"}')
+    )
     monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
 
     async def _run():
         backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
         prepared = _upsert_prepared()
         resp = await backend.execute(prepared)
-        fake_module.upsert_item.assert_called_once_with("handle-1", prepared)
-        fake_module.create_item.assert_not_called()
+        fake_module.upsert_item_async.assert_awaited_once_with("handle-1", prepared)
+        fake_module.create_item_async.assert_not_called()
+        fake_module.upsert_item.assert_not_called()
         assert resp.status_code == 201
         assert resp.body == b'{"id":"order-42"}'
 

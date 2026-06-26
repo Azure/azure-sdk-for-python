@@ -43,32 +43,28 @@ except ImportError:
     )
 
 
-# Map each op name to its bound Rust function once, at import, so each call is a
-# dict lookup instead of a getattr. Empty when the compiled module is absent.
-_OP_DISPATCH = {}
-if _rust_module is not None:
-    for _op, _method in OP_TO_BINDING_METHOD.items():
-        _fn = getattr(_rust_module, _method, None)
-        if _fn is not None:
-            _OP_DISPATCH[_op] = _fn
+# Look up the binding's function for an operation. Read live from ``_rust_module``
+# rather than cached at import, so the tests can swap in a fake binding; the extra
+# getattr per call is tiny next to the network round trip.
+def _resolve_dispatch(op: str) -> Optional[Any]:
+    """Return the binding's ``<op>`` function, or ``None`` if the op is unsupported
+    or the compiled module is absent."""
+    method = OP_TO_BINDING_METHOD.get(op)
+    if method is None or _rust_module is None:
+        return None
+    return getattr(_rust_module, method, None)
 
 
 class RustBackend(CosmosBackend):
     """Sends operations to the Rust driver.
 
-    Takes the account endpoint and key. The client handle -- the opaque
-    token ``init_client`` returns, which references the live client the
-    Rust driver builds from that endpoint and key -- is built once, on the
-    first operation, and then reused; every operation passes it back to the
-    Rust module. Python never inspects the handle, it just hands it back.
-    Each operation is routed by its kind; when the compiled module is
-    missing, every operation raises ``NotImplementedError``.
-
-    Note: the handle is **not** the ``CosmosClient``. ``CosmosClient`` is the
-    public Python object the customer holds; the handle is just an opaque
-    reference, several layers below it, to the driver-side client (which owns
-    the connection pool, auth, and routing). One is the API you call; the
-    other is the engine it talks to.
+    The handle that init_client returns -- an opaque token naming the driver-side
+    client built from the endpoint and key -- is built on the first operation and
+    reused; every operation passes it back. The handle is not the ``CosmosClient``:
+    it is a reference to the driver-side client (which owns the connection pool,
+    auth, and routing), several layers below the public object. Operations route by
+    kind; when the compiled module is missing, every operation raises
+    ``NotImplementedError``.
     """
 
     name = BACKEND_NAME_RUST
@@ -82,30 +78,24 @@ class RustBackend(CosmosBackend):
     ) -> None:
         self._endpoint = endpoint
         self._master_key = master_key
-        # A token credential (e.g. an azure-identity credential), or ``None`` for
-        # master-key auth. Exactly one of ``master_key`` / ``token_credential`` is
-        # set by the factory. When present it is handed to init_client, which wraps
-        # it so the Rust driver can call its ``get_token`` during request signing.
-        # For an async credential the factory passes an
-        # ``AsyncTokenCredentialBridge`` here -- it exposes the same synchronous
-        # ``get_token`` and is torn down in ``close`` (see
-        # ``_close_token_credential_bridge``).
+        # A token credential (e.g. from azure-identity), or ``None`` for master-key
+        # auth; the factory sets exactly one. It is passed to init_client so the
+        # driver can call get_token when signing requests. An async credential
+        # arrives wrapped as AsyncTokenCredentialBridge, which exposes a sync
+        # get_token and is closed in _close_token_credential_bridge.
         self._token_credential = token_credential
-        # Client-construction settings (e.g. preferred_locations) carried into
-        # the driver on the first init_client call. ``None`` means "nothing to
-        # carry" -- init_client then behaves exactly as the two-argument form.
+        # Client settings (e.g. preferred_locations) passed to the first init_client
+        # call. ``None`` means there are none to pass.
         self._client_config = client_config
-        # Opaque token from init_client() that names the live Rust-side client
-        # (it owns the connection pool, auth, and routing). Built lazily on the
-        # first operation and reused; None means "not built yet". The lock lets
-        # only the first concurrent caller build it, so two callers don't each
-        # build (and leak) a separate client.
+        # The handle init_client returns, naming the driver-side client (which owns
+        # the connection pool, auth, and routing). Built on the first operation and
+        # reused; ``None`` until then. The lock lets only the first caller build it,
+        # so two callers don't each build a separate client.
         self._handle: Optional[str] = None
         self._handle_lock = threading.Lock()
         # Register this client against its endpoint so a second client to the same
-        # account with a different config gets a SharedDriverConfigWarning instead
-        # of silently inheriting this one's engine/config. Released once on
-        # close/finalization; the flag keeps that release idempotent.
+        # account with a different config gets a SharedDriverConfigWarning instead of
+        # silently inheriting this one's config. Released once on close.
         self._config_released = False
         register_client_config(self._endpoint, self._client_config)
 
@@ -179,9 +169,8 @@ class RustBackend(CosmosBackend):
             pass
 
     def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
-        """Entry point every point operation (read/create/upsert/replace/delete/patch) goes through to reach the Rust driver."""
+        """Send one point operation (read/create/upsert/replace/delete/patch) to the Rust driver."""
         if prepared is None:
-            # Nothing to send.
             return None
         if _rust_module is None:
             raise NotImplementedError(
@@ -192,9 +181,8 @@ class RustBackend(CosmosBackend):
             )
 
         handle = self._ensure_handle()
-        # Look the bound function up in the dict built at import (see
-        # _OP_DISPATCH) instead of a getattr per call.
-        dispatch = _OP_DISPATCH.get(prepared.op)
+        # Look up the binding's function for this op; None if unsupported.
+        dispatch = _resolve_dispatch(prepared.op)
         if dispatch is None:
             raise NotImplementedError(
                 "RustBackend.execute does not yet support op={!r}.".format(prepared.op)

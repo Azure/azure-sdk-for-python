@@ -25,7 +25,7 @@ import threading
 import time
 import warnings
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -346,11 +346,11 @@ def test_async_rust_backend_returns_none_for_no_prepared_request():
 
 
 def test_async_rust_backend_dispatches_to_binding(monkeypatch):
-    """Async version: the backend runs the call on a worker thread and wraps
-    the result the same way."""
+    """Async version: the backend awaits the binding's async ``create_item_async``
+    and wraps the result the same way -- no worker thread per call."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "handle-1"
-    fake_module.create_item.return_value = (201, 0, {"etag": "v1"}, b'{"id":"x"}')
+    fake_module.create_item_async = AsyncMock(return_value=(201, 0, {"etag": "v1"}, b'{"id":"x"}'))
     monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
 
     async def _run():
@@ -364,7 +364,7 @@ def test_async_rust_backend_dispatches_to_binding(monkeypatch):
         )
         resp = await backend.execute(prepared)
         fake_module.init_client.assert_called_once()
-        fake_module.create_item.assert_called_once_with("handle-1", prepared)
+        fake_module.create_item_async.assert_awaited_once_with("handle-1", prepared)
         assert resp.status_code == 201
         assert resp.body == b'{"id":"x"}'
     asyncio.run(_run())
@@ -375,11 +375,13 @@ def test_async_rust_backend_returns_structured_http_failure_tuple(monkeypatch):
     error."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "handle-1"
-    fake_module.create_item.return_value = (
-        404,
-        0,
-        {"x-ms-activity-id": "act-404"},
-        b'{"code":"NotFound","message":"missing"}',
+    fake_module.create_item_async = AsyncMock(
+        return_value=(
+            404,
+            0,
+            {"x-ms-activity-id": "act-404"},
+            b'{"code":"NotFound","message":"missing"}',
+        )
     )
     monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
 
@@ -404,7 +406,7 @@ def test_async_rust_backend_propagates_transport_runtime_error(monkeypatch):
     """Async version: a real driver failure is raised as an error."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "handle-1"
-    fake_module.create_item.side_effect = RuntimeError("driver execute_operation failed: TLS handshake failed")
+    fake_module.create_item_async = AsyncMock(side_effect=RuntimeError("driver execute_operation failed: TLS handshake failed"))
     monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
 
     async def _run():
@@ -438,6 +440,231 @@ def test_async_rust_backend_raises_when_binding_not_built(monkeypatch):
         with pytest.raises(NotImplementedError, match="not present"):
             await backend.execute(prepared)
     asyncio.run(_run())
+
+
+def test_async_backend_coalesces_concurrent_first_init_to_one_call(monkeypatch):
+    """A burst of concurrent first-operations builds the client handle exactly
+    once: every first-caller awaits one shared init future instead of each
+    scheduling its own ``init_client`` build on a background thread."""
+    init_calls = []
+    fake_module = MagicMock()
+
+    def _slow_init(*args):
+        # Block briefly so the whole burst reaches _ensure_handle while the first
+        # init is still in flight on the executor thread -- the window in which
+        # uncoalesced callers would each schedule their own offload.
+        init_calls.append(args)
+        time.sleep(0.05)
+        return "handle-1"
+
+    fake_module.init_client.side_effect = _slow_init
+    fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    prepared = PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key_header='["a"]',
+        headers={},
+        item_id="x",
+    )
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        await asyncio.gather(*(backend.execute(prepared) for _ in range(50)))
+
+    asyncio.run(_run())
+    assert len(init_calls) == 1, f"init_client should run once, ran {len(init_calls)} times"
+    assert fake_module.read_item_async.await_count == 50
+
+
+def test_async_backend_retries_init_after_failure(monkeypatch):
+    """A failed init is not cached on the shared future: the next operation retries
+    ``init_client`` rather than handing back the first failure forever."""
+    attempts = []
+    fake_module = MagicMock()
+
+    def _flaky_init(*args):
+        attempts.append(args)
+        if len(attempts) == 1:
+            raise RuntimeError("init boom")
+        return "handle-1"
+
+    fake_module.init_client.side_effect = _flaky_init
+    fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    prepared = PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key_header='["a"]',
+        headers={},
+        item_id="x",
+    )
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        # First op: init fails and surfaces to the caller.
+        with pytest.raises(RuntimeError, match="init boom"):
+            await backend.execute(prepared)
+        # Second op: init is retried (not a cached failure) and succeeds.
+        resp = await backend.execute(prepared)
+        assert resp.status_code == 200
+
+    asyncio.run(_run())
+    assert len(attempts) == 2, f"init should be retried after failure, attempts={len(attempts)}"
+
+
+def test_async_backend_close_during_init_closes_built_handle(monkeypatch):
+    """If close() runs while the first init_client is still building, the handle the
+    build produces is closed (not left open), close() does not wait for the build to
+    finish, and the operation that triggered the build fails with a closed-client
+    error."""
+    init_in_flight = threading.Event()
+    allow_init_finish = threading.Event()
+    closed = []
+    fake_module = MagicMock()
+
+    def _slow_init(*args):
+        init_in_flight.set()
+        allow_init_finish.wait(5)  # hold the build open until the test lets it finish
+        return "handle-1"
+
+    fake_module.init_client.side_effect = _slow_init
+    fake_module.close_client.side_effect = closed.append
+    fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    prepared = PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key_header='["a"]',
+        headers={},
+        item_id="x",
+    )
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        op = asyncio.ensure_future(backend.execute(prepared))
+        # Wait until init_client is running on the build thread.
+        await asyncio.get_running_loop().run_in_executor(None, init_in_flight.wait, 5)
+        # close() returns without waiting for the build to finish: the build does not
+        # hold _handle_lock during init_client, so close() takes that lock right away.
+        await asyncio.wait_for(backend.close(), timeout=2)
+        # Let the build finish; it sees the client is closing and closes the handle it
+        # built instead of leaving it open.
+        allow_init_finish.set()
+        with pytest.raises(Exception):
+            await op
+
+    asyncio.run(_run())
+    assert closed == ["handle-1"], f"handle built during close should be closed, got {closed}"
+    fake_module.init_client.assert_called_once()
+
+
+def test_async_backend_propagates_cancellation_into_binding(monkeypatch):
+    """Cancelling an awaited ``execute()`` cancels the underlying binding awaitable
+    rather than swallowing the cancellation or shielding the call.
+
+    This is the Python half of cancellation propagation: the Rust async path
+    (``wire.rs``) aborts the spawned Tokio driver task when the awaitable it
+    returned is dropped on cancellation, so a client-side timeout actually stops
+    the in-flight operation instead of detaching it to run to completion. That
+    abort only fires if the Python layer lets the cancellation reach the awaitable
+    -- which this test pins down so a future change (e.g. wrapping dispatch in
+    ``asyncio.shield``) can't silently defeat it."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    dispatch_cancelled = []
+
+    async def _slow_read(_handle, _prepared):
+        try:
+            await asyncio.sleep(10)
+        except asyncio.CancelledError:
+            dispatch_cancelled.append(True)
+            raise
+        return (200, 0, {}, b"{}")  # pragma: no cover - cancelled before here
+
+    fake_module.read_item_async = _slow_read
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    prepared = PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key_header='["a"]',
+        headers={},
+        item_id="x",
+    )
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        op = asyncio.ensure_future(backend.execute(prepared))
+        # Let the op build the handle and reach the dispatch await, then cancel it.
+        await asyncio.sleep(0.05)
+        op.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await op
+
+    asyncio.run(_run())
+    assert dispatch_cancelled == [True], (
+        "execute() must let cancellation reach the binding awaitable, so the Rust "
+        "layer can abort the spawned driver task"
+    )
+
+
+def test_async_backend_finalizer_does_not_block_event_loop(monkeypatch):
+    """If the finalizer fires while an event loop is running on this thread (GC
+    collecting the client mid-run), the blocking driver close must be offloaded to
+    a daemon thread, not run inline on the loop thread -- otherwise close_client
+    would stall the loop. The config drop stays inline (it does not block)."""
+    close_started = threading.Event()
+    close_may_finish = threading.Event()
+    close_thread_names = []
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
+
+    def _blocking_close(_handle):
+        close_thread_names.append(threading.current_thread().name)
+        close_started.set()
+        close_may_finish.wait(5)  # hold the close open to expose any inline block
+
+    fake_module.close_client.side_effect = _blocking_close
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    prepared = PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key_header='["a"]',
+        headers={},
+        item_id="x",
+    )
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        await backend.execute(prepared)  # build the handle so the finalizer has work
+        main_thread = threading.current_thread().name
+        # Fire the finalizer while this loop is running.
+        backend.__del__()
+        # The offloaded close should start on another thread; meanwhile the loop
+        # must keep turning even though close_client is still blocked.
+        assert close_started.wait(2), "offloaded close did not start"
+        for _ in range(5):
+            await asyncio.sleep(0)  # would hang here if the close blocked the loop
+        close_may_finish.set()
+        return main_thread
+
+    main_thread = asyncio.run(_run())
+    assert close_thread_names, "close_client was never called"
+    assert close_thread_names[0] != main_thread, (
+        f"close ran on the loop thread {close_thread_names[0]!r}; must be offloaded"
+    )
+    assert close_thread_names[0] == "cosmos-rust-finalizer"
 
 
 def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
@@ -1157,7 +1384,7 @@ def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
     """Async version: a call on a Rust client reaches the Rust backend."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "h"
-    fake_module.create_item.return_value = (201, 0, {}, b"{}")
+    fake_module.create_item_async = AsyncMock(return_value=(201, 0, {}, b"{}"))
     monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
 
     mock_cc = MagicMock()
@@ -1174,7 +1401,7 @@ def test_async_container_dispatch_routes_to_async_rust_backend(monkeypatch):
             await container.create_item(body={"id": "x", "pk": "a"})
         except Exception:
             pass
-        assert fake_module.create_item.called, "async Rust path should have been taken"
+        assert fake_module.create_item_async.called, "async Rust path should have been taken"
 
     asyncio.run(_run())
 

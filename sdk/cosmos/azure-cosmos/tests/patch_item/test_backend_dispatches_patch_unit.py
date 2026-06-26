@@ -16,7 +16,7 @@ account or a built ``_rust.pyd``. The key assertion is that an
 """
 import asyncio
 import sys
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
@@ -79,20 +79,24 @@ def test_sync_rust_backend_patch_surfaces_404(monkeypatch):
 
 
 def test_async_rust_backend_dispatches_patch_to_binding(monkeypatch):
-    """Async sibling: the patch op is offloaded to the binding's
-    ``patch_item`` on the default executor."""
+    """Async sibling: the patch op is awaited on the binding's async
+    ``patch_item_async`` function, never the sync ``patch_item`` and never
+    ``replace_item_async``."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "handle-1"
-    fake_module.patch_item.return_value = (200, 0, {"etag": "v2"}, b'{"id":"order-42","status":"shipped"}')
+    fake_module.patch_item_async = AsyncMock(
+        return_value=(200, 0, {"etag": "v2"}, b'{"id":"order-42","status":"shipped"}')
+    )
     monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
 
     async def _run():
         backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
         prepared = _patch_prepared()
         resp = await backend.execute(prepared)
-        fake_module.patch_item.assert_called_once_with("handle-1", prepared)
-        fake_module.replace_item.assert_not_called()
-        fake_module.create_item.assert_not_called()
+        fake_module.patch_item_async.assert_awaited_once_with("handle-1", prepared)
+        fake_module.replace_item_async.assert_not_called()
+        fake_module.create_item_async.assert_not_called()
+        fake_module.patch_item.assert_not_called()
         assert resp.status_code == 200
         assert resp.body == b'{"id":"order-42","status":"shipped"}'
 

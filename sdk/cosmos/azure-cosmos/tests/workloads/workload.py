@@ -12,6 +12,7 @@ Environment variables:
 import logging
 import os
 import asyncio
+import gc
 import time
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
@@ -20,6 +21,26 @@ from azure.core.pipeline.transport import AioHttpTransport
 
 from workload_utils import *
 from workload_configs import *
+
+
+_gc_frozen = False
+
+
+def _maybe_freeze_gc(client_logger):
+    """Optionally freeze the GC once per process, after warmup.
+
+    gc.freeze() moves every object that already exists into a permanent
+    generation that the collector never rescans, so steady-state GC work (and the
+    pauses it adds to the latency tail) shrinks. We only do this when explicitly
+    asked (WORKLOAD_GC_FREEZE=true) because the default run should measure the SDK
+    as it really behaves, GC included. Idempotent: the module flag ensures we
+    freeze a single, consistent snapshot even when many clients share the process.
+    """
+    global _gc_frozen
+    if WORKLOAD_GC_FREEZE and not _gc_frozen:
+        _gc_frozen = True
+        gc.freeze()
+        client_logger.info("GC frozen after warmup (WORKLOAD_GC_FREEZE=true)")
 
 
 async def run_workload_async(client_id, client_logger, stats=None, reporter=None):
@@ -54,7 +75,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
         client_kwargs = dict(
             preferred_locations=PREFERRED_LOCATIONS,
             excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
-            enable_diagnostics_logging=True,
+            enable_diagnostics_logging=ENABLE_DIAGNOSTICS_LOGGING,
             logger=client_logger,
             user_agent=get_user_agent(client_id),
         )
@@ -71,40 +92,80 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
             db = client.get_database_client(COSMOS_DATABASE)
             cont = db.get_container_client(COSMOS_CONTAINER)
             await asyncio.sleep(1)
+            _maybe_freeze_gc(client_logger)
 
-            while True:
-                try:
-                    if "create" in ops:
-                        await create_item_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "upsert" in ops:
-                        await upsert_item_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "replace" in ops:
-                        await replace_item_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "read" in ops:
-                        await read_item_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "patch" in ops:
-                        await patch_item_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "delete" in ops:
-                        await delete_item_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                        )
-                    if "query" in ops:
-                        await query_items_concurrently(
-                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
-                        )
-                except Exception as e:
-                    client_logger.info("Exception in application layer")
-                    client_logger.error(e)
+            # One event-loop lag monitor per process. Only the single-client direct
+            # path (owns_reporter) starts it here; in multi-client mode it is
+            # started once in run_multi_client_async so N clients do not spawn N
+            # monitors all writing the same gauge.
+            monitor_task = None
+            if owns_reporter and WORKLOAD_LOOP_LAG_MONITOR and stats is not None:
+                monitor_task = asyncio.create_task(_loop_lag_monitor(stats))
+
+            try:
+                if WORKLOAD_ARRIVAL_RATE > 0:
+                    # Open-loop, constant-arrival load (WORKLOAD_ARRIVAL_RATE ops/sec
+                    # PER CLIENT). Unlike the closed-loop driver below it does not
+                    # wait between waves and times each op from its intended arrival,
+                    # so the tail reflects coordinated omission. See
+                    # docs/RUST_PYTHON_SLA.md, "Measurement caveats".
+                    await run_open_loop(
+                        cont, REQUEST_EXCLUDED_LOCATIONS, stats, ops,
+                        WORKLOAD_ARRIVAL_RATE, WORKLOAD_MAX_INFLIGHT,
+                    )
+                else:
+                    # Closed-loop, batched-wave load: each op below launches
+                    # CONCURRENT_REQUESTS calls and waits for the WHOLE wave (an
+                    # asyncio.gather barrier inside each *_concurrently) before the
+                    # next op runs. Two consequences for throughput: (1) a wave does
+                    # not refill as calls finish — it is gated by its SLOWEST call
+                    # (the tail, not the mean), so in-flight decays from N toward 0
+                    # each wave; and (2) the enabled ops run in SEQUENTIAL phases, so
+                    # with all six each is in flight only ~1/6 of the time. Real
+                    # req/s is therefore well below the open-loop (concurrency /
+                    # per_op) formula — read achieved req/s from the rows as
+                    # count / window_seconds, not from the formula. See
+                    # docs/RUST_PYTHON_SLA.md, "Concurrency is not throughput".
+                    while True:
+                        try:
+                            if "create" in ops:
+                                await create_item_concurrently(
+                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                )
+                            if "upsert" in ops:
+                                await upsert_item_concurrently(
+                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                )
+                            if "replace" in ops:
+                                await replace_item_concurrently(
+                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                )
+                            if "read" in ops:
+                                await read_item_concurrently(
+                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                )
+                            if "patch" in ops:
+                                await patch_item_concurrently(
+                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                )
+                            if "delete" in ops:
+                                await delete_item_concurrently(
+                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                )
+                            if "query" in ops:
+                                await query_items_concurrently(
+                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
+                                )
+                        except Exception as e:
+                            client_logger.info("Exception in application layer")
+                            client_logger.error(e)
+            finally:
+                if monitor_task is not None:
+                    monitor_task.cancel()
+                    try:
+                        await monitor_task
+                    except Exception:
+                        pass
         finally:
             if not WORKLOAD_SKIP_CLOSE:
                 await client.__aexit__(None, None, None)
@@ -153,7 +214,7 @@ def run_workload_sync(client_id, client_logger):
             connection_policy=connection_policy,
             preferred_locations=PREFERRED_LOCATIONS,
             excluded_locations=CLIENT_EXCLUDED_LOCATIONS,
-            enable_diagnostics_logging=True,
+            enable_diagnostics_logging=ENABLE_DIAGNOSTICS_LOGGING,
             logger=client_logger,
             user_agent=get_user_agent(client_id),
         ) as client:
@@ -161,6 +222,11 @@ def run_workload_sync(client_id, client_logger):
             cont = db.get_container_client(COSMOS_CONTAINER)
             time.sleep(1)
 
+            # Sync mode is FULLY SERIAL: each op below runs its CONCURRENT_REQUESTS
+            # calls in a plain for-loop, one at a time, so real concurrency is 1
+            # regardless of CONCURRENT_REQUESTS and throughput is ~ 1 / mean_op
+            # latency. Use async mode to drive real concurrency. See
+            # docs/RUST_PYTHON_SLA.md, "Concurrency is not throughput".
             while True:
                 try:
                     if "create" in ops:
@@ -223,9 +289,22 @@ async def run_multi_client_async(prefix, client_logger):
         for i in range(WORKLOAD_NUM_CLIENTS):
             client_id = f"{prefix}-c{i}"
             tasks.append(run_workload_async(client_id, client_logger, stats=stats, reporter=reporter))
-        # return_exceptions=True so one client failing (for example, while it
-        # is being built) does not stop the others sharing this process.
-        await asyncio.gather(*tasks, return_exceptions=True)
+        # One process-wide event-loop lag monitor for all clients sharing this loop
+        # (the per-client path skips it because owns_reporter is False here).
+        monitor_task = None
+        if WORKLOAD_LOOP_LAG_MONITOR and stats is not None:
+            monitor_task = asyncio.create_task(_loop_lag_monitor(stats))
+        try:
+            # return_exceptions=True so one client failing (for example, while it
+            # is being built) does not stop the others sharing this process.
+            await asyncio.gather(*tasks, return_exceptions=True)
+        finally:
+            if monitor_task is not None:
+                monitor_task.cancel()
+                try:
+                    await monitor_task
+                except Exception:
+                    pass
     finally:
         if reporter:
             try:

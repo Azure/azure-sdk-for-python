@@ -123,6 +123,14 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(documents::delete_item, m)?)?;
     m.add_function(wrap_pyfunction!(documents::read_item, m)?)?;
     m.add_function(wrap_pyfunction!(documents::patch_item, m)?)?;
+    // Async siblings: each returns a Python awaitable that completes on the
+    // driver's runtime, so the async backend holds no worker thread per call.
+    m.add_function(wrap_pyfunction!(documents::create_item_async, m)?)?;
+    m.add_function(wrap_pyfunction!(documents::upsert_item_async, m)?)?;
+    m.add_function(wrap_pyfunction!(documents::replace_item_async, m)?)?;
+    m.add_function(wrap_pyfunction!(documents::delete_item_async, m)?)?;
+    m.add_function(wrap_pyfunction!(documents::read_item_async, m)?)?;
+    m.add_function(wrap_pyfunction!(documents::patch_item_async, m)?)?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     Ok(())
 }

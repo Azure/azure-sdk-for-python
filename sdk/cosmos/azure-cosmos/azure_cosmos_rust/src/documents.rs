@@ -16,7 +16,7 @@ use azure_data_cosmos_driver::models::CosmosOperation;
 
 use crate::wire::{
     extract_body_bytes, extract_common_prepared_inputs, extract_item_id, extract_required_item_id,
-    run_item_operation,
+    run_item_operation, run_item_operation_async,
 };
 
 // create_item: write-with-body; the id is read from the body.
@@ -184,6 +184,170 @@ pub(crate) fn patch_item<'py>(
     )?;
 
     run_item_operation(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "patch_item",
+        true,
+        move |item_ref| CosmosOperation::patch_item(item_ref).with_body(body_bytes),
+    )
+}
+
+// ---------------------------------------------------------------------------
+// Async entry points
+// ---------------------------------------------------------------------------
+//
+// One `*_item_async` per operation, mirroring the sync six above but returning a
+// Python awaitable (the binding spawns the driver future on the shared runtime
+// and bridges it to asyncio -- no per-call worker thread). Input extraction is
+// identical; only the runner differs (`run_item_operation_async`). The Python
+// async backend (`aio/_backend/rust.py`) dispatches to these.
+
+#[pyfunction]
+pub(crate) fn create_item_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (container_link, partition_key_header, modifiers) =
+        extract_common_prepared_inputs(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    let item_id = extract_item_id(&body_bytes)?;
+
+    run_item_operation_async(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "create_item",
+        true,
+        move |item_ref| CosmosOperation::create_item(item_ref).with_body(body_bytes),
+    )
+}
+
+#[pyfunction]
+pub(crate) fn upsert_item_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (container_link, partition_key_header, modifiers) =
+        extract_common_prepared_inputs(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    let item_id = extract_item_id(&body_bytes)?;
+
+    run_item_operation_async(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "upsert_item",
+        true,
+        move |item_ref| CosmosOperation::upsert_item(item_ref).with_body(body_bytes),
+    )
+}
+
+#[pyfunction]
+pub(crate) fn replace_item_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (container_link, partition_key_header, modifiers) =
+        extract_common_prepared_inputs(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    let item_id = extract_required_item_id(
+        prepared,
+        "replace_item: PreparedRequest.item_id is required (the id of the document to overwrite, resolved from the `item` argument)",
+    )?;
+
+    run_item_operation_async(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "replace_item",
+        true,
+        move |item_ref| CosmosOperation::replace_item(item_ref).with_body(body_bytes),
+    )
+}
+
+#[pyfunction]
+pub(crate) fn delete_item_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (container_link, partition_key_header, modifiers) =
+        extract_common_prepared_inputs(prepared)?;
+    let item_id = extract_required_item_id(
+        prepared,
+        "delete_item: PreparedRequest.item_id is required for delete operations",
+    )?;
+
+    run_item_operation_async(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "delete_item",
+        false,
+        CosmosOperation::delete_item,
+    )
+}
+
+#[pyfunction]
+pub(crate) fn read_item_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (container_link, partition_key_header, modifiers) =
+        extract_common_prepared_inputs(prepared)?;
+    let item_id = extract_required_item_id(
+        prepared,
+        "read_item: PreparedRequest.item_id is required for read operations",
+    )?;
+
+    run_item_operation_async(
+        py,
+        handle,
+        &container_link,
+        &partition_key_header,
+        modifiers,
+        item_id,
+        "read_item",
+        false,
+        CosmosOperation::read_item,
+    )
+}
+
+#[pyfunction]
+pub(crate) fn patch_item_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let (container_link, partition_key_header, modifiers) =
+        extract_common_prepared_inputs(prepared)?;
+    let body_bytes = extract_body_bytes(prepared)?;
+    let item_id = extract_required_item_id(
+        prepared,
+        "patch_item: PreparedRequest.item_id is required (the id of the document to patch, resolved from the `item` argument)",
+    )?;
+
+    run_item_operation_async(
         py,
         handle,
         &container_link,

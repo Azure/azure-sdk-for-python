@@ -16,6 +16,7 @@ use pyo3::types::{PyBytes, PyDict, PyTuple};
 
 use azure_core::http::headers::{HeaderName, HeaderValue};
 use azure_data_cosmos_driver::{
+    driver::CosmosDriver,
     error::CosmosError,
     models::{
         ActivityId, CosmosOperation, CosmosResponse, ItemReference, PartitionKey,
@@ -54,7 +55,122 @@ pub(crate) fn run_item_operation<'py>(
     honor_content_response: bool,
     build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let driver = drivers()
+    let driver = lookup_driver(handle)?;
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let partition_key = parse_partition_key_header(partition_key_header)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    // Sync path: block the calling thread on the shared runtime until the driver
+    // finishes. (The async sibling below spawns the very same future instead, so
+    // both paths run identical driver work.)
+    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
+        runtime_ctx.tokio_rt.block_on(run_singleton_future(
+            driver,
+            database_name,
+            container_name,
+            partition_key,
+            item_id,
+            modifiers,
+            honor_content_response,
+            build_op,
+        ))
+    });
+
+    tuple_from_result(py, response_result)
+}
+
+/// Async sibling of `run_item_operation`: same inputs and identical driver work,
+/// but instead of blocking a worker thread it spawns the driver future on the
+/// shared runtime (the same one the driver was built on, so its connection pool
+/// and timers stay on that runtime) and hands the asyncio event loop an awaitable
+/// that resolves to the `BackendResponse` 4-tuple. Awaiting it uses no Python
+/// thread per in-flight call.
+/// Aborts the spawned driver task if this guard is dropped before the task has
+/// finished. The bridged Python awaitable owns one of these; when asyncio cancels
+/// the `await` (for example a client-side timeout, or the surrounding task being
+/// cancelled) `pyo3-async-runtimes` drops the bridging future, which drops this
+/// guard, which aborts the Tokio task -- so the in-flight driver operation is
+/// actually cancelled (its connection released, no further work or RU spent)
+/// instead of being detached and left to run to completion with its result thrown
+/// away. On normal completion the task is already finished, so `abort()` is a
+/// harmless no-op.
+struct AbortOnDrop(tokio::task::AbortHandle);
+
+impl Drop for AbortOnDrop {
+    fn drop(&mut self) {
+        self.0.abort();
+    }
+}
+
+pub(crate) fn run_item_operation_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    container_link: &str,
+    partition_key_header: &str,
+    modifiers: OpModifiers,
+    item_id: String,
+    op_name: &str,
+    honor_content_response: bool,
+    build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send + 'static,
+) -> PyResult<Bound<'py, PyAny>> {
+    // Synchronous extraction (GIL held) -- identical to the sync path. Errors
+    // here surface when the coroutine is created, before it is awaited.
+    let driver = lookup_driver(handle)?;
+    let (database_name, container_name) = parse_container_link(container_link)?;
+    let partition_key = parse_partition_key_header(partition_key_header)?;
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    // Spawn the driver work on the shared runtime; `join` is a cheap handle the
+    // bridge below awaits without holding the GIL or pinning a worker thread.
+    let join = runtime_ctx.tokio_rt.spawn(run_singleton_future(
+        driver,
+        database_name,
+        container_name,
+        partition_key,
+        item_id,
+        modifiers,
+        honor_content_response,
+        build_op,
+    ));
+
+    // Propagate Python-side cancellation to the driver. Without this, cancelling
+    // the awaitable would only drop the JoinHandle -- which *detaches* the Tokio
+    // task, letting the operation run to completion in the background (holding a
+    // connection, spending RU) with its result discarded. Holding this guard for
+    // the lifetime of the bridging future means a cancelled `await` drops the
+    // guard and aborts the task instead, so a client-side timeout actually stops
+    // the work.
+    let abort_guard = AbortOnDrop(join.abort_handle());
+
+    // Bridge the Rust JoinHandle to a Python asyncio awaitable. The response
+    // tuple is built under the GIL after the future resolves, exactly like the
+    // sync path's `tuple_from_result`.
+    pyo3_async_runtimes::tokio::future_into_py(py, async move {
+        // Keep the abort guard alive for exactly as long as we await the task; if
+        // the Python future is cancelled, this block is dropped, dropping the
+        // guard and aborting the task (see AbortOnDrop).
+        let _abort_guard = abort_guard;
+        let response_result = join.await.map_err(|join_error| {
+            if join_error.is_cancelled() {
+                PyRuntimeError::new_err(
+                    "cosmos async operation was cancelled before it completed",
+                )
+            } else {
+                PyRuntimeError::new_err(format!(
+                    "cosmos async operation task failed: {join_error}"
+                ))
+            }
+        })?;
+        Python::with_gil(|py| {
+            tuple_from_result(py, response_result).map(|tuple| tuple.into_any().unbind())
+        })
+    })
+}
+
+/// Look up the cached driver for a client handle, or raise if `init_client`
+/// has not run yet (or the client was already closed).
+fn lookup_driver(handle: &str) -> PyResult<Arc<CosmosDriver>> {
+    drivers()
         .read()
         .unwrap()
         .get(handle)
@@ -63,52 +179,64 @@ pub(crate) fn run_item_operation<'py>(
             PyRuntimeError::new_err(format!(
                 "no driver registered for handle {handle:?}; call init_client first"
             ))
-        })?;
-
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let partition_key = parse_partition_key_header(partition_key_header)?;
-
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(async {
-            let container = driver
-                .resolve_container(&database_name, &container_name)
-                .await?;
-            let item_ref = ItemReference::from_name(&container, partition_key, item_id);
-            let mut op = build_op(item_ref);
-
-            if let Some(activity) = modifiers.activity_header.as_ref() {
-                if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
-                    op = op.with_activity_id(ActivityId::from(uuid.to_string()));
-                }
-            }
-            if let Some(session) = modifiers.session_header.as_ref() {
-                op = op.with_session_token(SessionToken::from(session.clone()));
-            }
-
-            // no_response=True only applies to writes; delete / read pass
-            // honor_content_response=false and keep the driver default.
-            let content_response = if honor_content_response {
-                Some(modifiers.content_response_on_write)
-            } else {
-                None
-            };
-            let options = build_operation_options(
-                content_response,
-                modifiers.excluded_regions_value,
-                modifiers.end_to_end_timeout,
-                modifiers.custom_headers,
-            );
-
-            driver.execute_singleton_operation(op, options).await
         })
-    });
+}
 
-    // A CosmosError carrying a wire response (404 / 409 / 412 / ...) becomes the
-    // same 4-tuple as success so the Python parser can raise the right typed
-    // exception; only a response-less error (transport failure, client-side
-    // validation) becomes a RuntimeError.
+/// The driver work shared by the sync and async runners: resolve the container,
+/// build the operation from the per-op closure, apply the typed activity-id /
+/// session-token / content-response / options, and execute it. Returns the raw
+/// driver result; the callers turn it into the Python tuple under the GIL.
+async fn run_singleton_future(
+    driver: Arc<CosmosDriver>,
+    database_name: String,
+    container_name: String,
+    partition_key: PartitionKey,
+    item_id: String,
+    modifiers: OpModifiers,
+    honor_content_response: bool,
+    build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send,
+) -> Result<CosmosResponse, CosmosError> {
+    let container = driver
+        .resolve_container(&database_name, &container_name)
+        .await?;
+    let item_ref = ItemReference::from_name(&container, partition_key, item_id);
+    let mut op = build_op(item_ref);
+
+    if let Some(activity) = modifiers.activity_header.as_ref() {
+        if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
+            op = op.with_activity_id(ActivityId::from(uuid.to_string()));
+        }
+    }
+    if let Some(session) = modifiers.session_header.as_ref() {
+        op = op.with_session_token(SessionToken::from(session.clone()));
+    }
+
+    // no_response=True only applies to writes; delete / read pass
+    // honor_content_response=false and keep the driver default.
+    let content_response = if honor_content_response {
+        Some(modifiers.content_response_on_write)
+    } else {
+        None
+    };
+    let options = build_operation_options(
+        content_response,
+        modifiers.excluded_regions_value,
+        modifiers.end_to_end_timeout,
+        modifiers.custom_headers,
+    );
+
+    driver.execute_singleton_operation(op, options).await
+}
+
+/// Turn the driver's `Result<CosmosResponse, CosmosError>` into the
+/// `BackendResponse` 4-tuple. A CosmosError carrying a wire response (404 / 409
+/// / 412 / ...) becomes the same 4-tuple as success so the Python parser raises
+/// the right typed exception; only a response-less error (transport failure,
+/// client-side validation) becomes a RuntimeError.
+fn tuple_from_result<'py>(
+    py: Python<'py>,
+    response_result: Result<CosmosResponse, CosmosError>,
+) -> PyResult<Bound<'py, PyTuple>> {
     match response_result {
         Ok(response) => backend_response_tuple_from_success(py, response),
         Err(cosmos_error) => {
