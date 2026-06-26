@@ -52,7 +52,7 @@ class TaskCancelled(Exception):
     # NO __slots__ + NO instance state —   requires no fields.
     # __str__ is hardcoded; legacy positional task_id is accepted and discarded.
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         super().__init__()  # args MUST be ()
 
     def __str__(self) -> str:  # pragma: no cover -- minor str formatting
@@ -115,7 +115,7 @@ class EtagConflict(RuntimeError):
 class SteeringQueueFull(RuntimeError):
     """Raised when the steering pending-input queue is at capacity (: bare)."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         super().__init__("Steering queue is full")
 
 
@@ -140,30 +140,26 @@ class LastInputIdPreconditionFailed(TaskPreconditionFailed):
 
     __slots__ = ("actual_last_input_id",)
 
-    def __init__(
+    def __init__(  # pylint: disable=super-init-not-called,unused-argument
         self,
         *args: Any,
         actual_last_input_id: str | None = None,
         expected_last_input_id: str | None = None,  # accepted, discarded
         task_id: str | None = None,  # accepted, discarded
     ) -> None:
-        legacy_task_id = task_id
         if args:
             if len(args) == 1:
                 if actual_last_input_id is None and expected_last_input_id is None:
                     actual_last_input_id = args[0]
-                else:
-                    legacy_task_id = args[0]
             elif len(args) == 3:
-                legacy_task_id = args[0]
                 actual_last_input_id = args[2]
         self.actual_last_input_id = actual_last_input_id
         # IMPORTANT: do NOT call super().__init__ — the parent
         # TaskPreconditionFailed sets ``self.task_id``, which
         #  forbids on public exceptions. Initialise via the
         # RuntimeError base directly.
-        msg = f"if_last_input_id precondition failed: " f"actual last_input_id={actual_last_input_id!r}"
-        RuntimeError.__init__(self, msg)
+        msg = f"if_last_input_id precondition failed: actual last_input_id={actual_last_input_id!r}"
+        RuntimeError.__init__(self, msg)  # pylint: disable=non-parent-init-called
 
 
 LastInputIdPreconditionFailed.__signature__ = inspect.Signature(  # type: ignore[attr-defined]
@@ -174,7 +170,7 @@ LastInputIdPreconditionFailed.__signature__ = inspect.Signature(  # type: ignore
 class InputTooLarge(ValueError):
     """Raised when an input's serialized size exceeds the per-input cap (: bare)."""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         super().__init__("Input exceeds the per-input cap")
 
 
@@ -242,7 +238,7 @@ AttachmentLimitExceeded = _AttachmentLimitExceeded
 # =========================================================================
 
 try:
-    from typing import Literal, TypedDict
+    from typing import Literal, TypedDict  # pylint: disable=ungrouped-imports
 except ImportError:  # pragma: no cover
     from typing_extensions import Literal, TypedDict  # type: ignore[assignment]
 
@@ -255,7 +251,7 @@ class TaskDeferred(Exception):
     lifetime. Bare exception.
     """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         super().__init__("Task deferred to next process lifetime")
 
 

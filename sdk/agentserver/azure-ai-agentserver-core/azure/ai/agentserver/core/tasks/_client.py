@@ -478,7 +478,7 @@ class HostedTaskProvider:
         :return: The wire HTTP response.
         :rtype: Any
         """
-        pipeline_response = await self._client._pipeline.run(
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
             request
         )  # pylint: disable=protected-access  # noqa: SLF001
         return pipeline_response.http_response
@@ -717,6 +717,20 @@ class HostedTaskProvider:
         :paramtype tag: dict[str, str] | None
         :keyword source_type: Optional source-type filter.
         :paramtype source_type: str | None
+        :keyword has_error: Optional filter for tasks that have a recorded error.
+        :paramtype has_error: bool | None
+        :keyword lease_expired: Optional filter for tasks whose lease has expired.
+        :paramtype lease_expired: bool | None
+        :keyword limit: Page size for cursor pagination.
+        :paramtype limit: int | None
+        :keyword after: Return tasks after this pagination cursor.
+        :paramtype after: str | None
+        :keyword before: Return tasks before this pagination cursor.
+        :paramtype before: str | None
+        :keyword order: Sort order for the returned tasks.
+        :paramtype order: str | None
+        :keyword omit_attachment_values: When True, omit attachment values from results.
+        :paramtype omit_attachment_values: bool
         :return: All matching tasks across all pages.
         :rtype: list[TaskInfo]
         """

@@ -603,7 +603,7 @@ class LocalFileTaskProvider:
         path.unlink(missing_ok=True)
         logger.debug("Deleted local task %s", task_id)
 
-    async def list(
+    async def list(  # pylint: disable=too-many-branches
         self,
         *,
         agent_name: str | None = None,
@@ -620,7 +620,37 @@ class LocalFileTaskProvider:
         order: str | None = None,
         omit_attachment_values: bool = False,
     ) -> list[TaskInfo]:
-        """List tasks from the filesystem."""
+        """List tasks from the filesystem.
+
+        :keyword agent_name: Filter to tasks owned by this agent name.
+        :paramtype agent_name: str | None
+        :keyword session_id: Filter to tasks for this session ID.
+        :paramtype session_id: str | None
+        :keyword status: Optional status filter.
+        :paramtype status: TaskStatus | str | None
+        :keyword lease_owner: Optional lease-owner filter.
+        :paramtype lease_owner: str | None
+        :keyword tag: Optional tag-equality filter.
+        :paramtype tag: dict[str, str] | None
+        :keyword source_type: Optional source-type filter.
+        :paramtype source_type: str | None
+        :keyword has_error: Optional filter for tasks that have a recorded error.
+        :paramtype has_error: bool | None
+        :keyword lease_expired: Optional filter for tasks whose lease has expired.
+        :paramtype lease_expired: bool | None
+        :keyword limit: Page size for pagination.
+        :paramtype limit: int | None
+        :keyword after: Return tasks after this pagination cursor.
+        :paramtype after: str | None
+        :keyword before: Return tasks before this pagination cursor (unsupported).
+        :paramtype before: str | None
+        :keyword order: Sort order (``asc`` or ``desc``).
+        :paramtype order: str | None
+        :keyword omit_attachment_values: When True, omit attachment values from results.
+        :paramtype omit_attachment_values: bool
+        :return: All matching tasks.
+        :rtype: list[TaskInfo]
+        """
         if before is not None:
             _invalid_request("before is not supported for task list.")
         page_size = 20 if limit is None else limit

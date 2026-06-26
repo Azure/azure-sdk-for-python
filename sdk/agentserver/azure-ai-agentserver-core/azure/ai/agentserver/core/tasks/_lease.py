@@ -76,7 +76,7 @@ def generate_instance_id() -> str:
     return f"worker-{os.getpid()}-{uuid.uuid4().hex[:8]}-{int(time.time())}"
 
 
-async def lease_renewal_loop(
+async def lease_renewal_loop(  # pylint: disable=too-many-statements
     provider: TaskProvider,
     task_id: str,
     *,

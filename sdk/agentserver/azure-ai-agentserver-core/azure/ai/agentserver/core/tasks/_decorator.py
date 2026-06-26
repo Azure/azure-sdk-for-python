@@ -75,7 +75,7 @@ def _strip_reserved_tags(tags: dict[str, str]) -> dict[str, str]:
     reserved = [k for k in tags if k.startswith(_RESERVED_TAG_PREFIX)]
     if reserved:
         _logger.warning(
-            "Ignoring reserved tag(s) %s — tags prefixed with %r are " "framework-owned and cannot be overridden",
+            "Ignoring reserved tag(s) %s — tags prefixed with %r are framework-owned and cannot be overridden",
             reserved,
             _RESERVED_TAG_PREFIX,
         )
@@ -208,7 +208,7 @@ def _read_stored_last_input_id(task_info: Any) -> str | None:
     return value if isinstance(value, str) else None
 
 
-def _check_input_precondition(
+def _check_input_precondition(  # pylint: disable=unused-argument
     *,
     existing: Any,
     task_id: str,
@@ -386,7 +386,7 @@ class Task(Generic[Input, Output]):
             try:
                 _live_manager._resume_callbacks[opts.name] = fn  # noqa: SLF001
                 _live_manager._resume_opts[opts.name] = opts  # noqa: SLF001
-            except Exception:  # noqa: BLE001
+            except Exception:  # noqa: BLE001  # pylint: disable=broad-except
                 pass
 
     def _resolve_title(self, input_val: Input, task_id: str) -> str:
@@ -501,7 +501,7 @@ class Task(Generic[Input, Output]):
         _validate_task_id(task_id)
         if if_last_input_id is not None and input_id is None:
             raise TypeError(
-                "if_last_input_id requires input_id (a precondition without an " "advancing id is not meaningful)"
+                "if_last_input_id requires input_id (a precondition without an advancing id is not meaningful)"
             )
         handle = await self._lifecycle_start(
             task_id=task_id,
@@ -579,7 +579,7 @@ class Task(Generic[Input, Output]):
         _validate_task_id(task_id)
         if if_last_input_id is not None and input_id is None:
             raise TypeError(
-                "if_last_input_id requires input_id (a precondition without an " "advancing id is not meaningful)"
+                "if_last_input_id requires input_id (a precondition without an advancing id is not meaningful)"
             )
         return await self._lifecycle_start(
             task_id=task_id,
@@ -608,7 +608,7 @@ class Task(Generic[Input, Output]):
         )
 
         manager = get_task_manager()
-        return await manager._provider_get_tracked(task_id)  # noqa: SLF001
+        return await manager._provider_get_tracked(task_id)  # noqa: SLF001  # pylint: disable=protected-access
 
     async def get_active_run(self, task_id: str) -> TaskRun[Output] | None:
         """Return a TaskRun handle for an active (in-progress) task.
@@ -685,7 +685,7 @@ class Task(Generic[Input, Output]):
             status=status,
         )
 
-    async def _append_steering_input(  # pylint: disable=protected-access
+    async def _append_steering_input(  # pylint: disable=protected-access,too-many-locals,too-many-statements
         self,
         manager: Any,
         *,
@@ -928,7 +928,7 @@ class Task(Generic[Input, Output]):
         except _HostedConflict as exc:
             translated = _translate_hosted_conflict(exc, task_id=task_id)
             if translated is None:
-                if exc._code == "lease_ownership_changed":
+                if exc._code == "lease_ownership_changed":  # pylint: disable=protected-access
                     raise TaskConflictError(task_id, "in_progress") from exc
                 raise RuntimeError(f"Task {task_id!r} operation did not converge after retryable conflict") from exc
             raise translated from exc
@@ -938,7 +938,7 @@ class Task(Generic[Input, Output]):
                 raise TaskConflictError(task_id, "in_progress") from exc
             raise
 
-    async def _lifecycle_start_inner(  # pylint: disable=too-many-locals,too-many-statements
+    async def _lifecycle_start_inner(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
         self,
         *,
         task_id: str,
@@ -1339,7 +1339,11 @@ def task(
 
 
 def _validate_title(title: object) -> None:
-    """/  — title must be `str | None`. Callable form REMOVED."""
+    """/  — title must be `str | None`. Callable form REMOVED.
+
+    :param title: The title value to validate.
+    :type title: object
+    """
     if title is not None and not isinstance(title, str):
         raise TypeError(
             f"@task / @multi_turn_task `title=` must be `str | None`; "
@@ -1348,7 +1352,13 @@ def _validate_title(title: object) -> None:
 
 
 def _validate_handler_signature(func: Callable[..., Any], decorator_name: str) -> None:
-    """— handler must be `async def fn(ctx: TaskContext[Input]) -> Output`."""
+    """— handler must be `async def fn(ctx: TaskContext[Input]) -> Output`.
+
+    :param func: The handler function to validate.
+    :type func: Callable[..., Any]
+    :param decorator_name: The decorator name used in error messages.
+    :type decorator_name: str
+    """
     if not asyncio.iscoroutinefunction(func):
         raise TypeError(
             f"@{decorator_name} requires an `async def` (async function) handler, "
@@ -1430,7 +1440,7 @@ def _validate_multi_turn_task_kwargs(**kwargs: Any) -> None:
         )
 
 
-class MultiTurnTask(Generic[Input, Output]):
+class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
     """A decorated multi-turn resilient task chain.
 
     Distinct public class:class:`Task` — NOT a subclass.
@@ -1458,29 +1468,33 @@ class MultiTurnTask(Generic[Input, Output]):
         self._inner = Task(
             fn=fn,
             opts=opts,
-            input_type=input_type,
-            output_type=output_type,
+            input_type=input_type,  # type: ignore[arg-type]  # None defaults handled by Task
+            output_type=output_type,  # type: ignore[arg-type]
         )
 
     @property
     def _fn(self) -> Callable[..., Any]:
-        return self._inner._fn  # noqa: SLF001
+        return self._inner._fn  # noqa: SLF001  # pylint: disable=protected-access
 
     @property
     def _opts(self) -> TaskOptions:
-        return self._inner._opts  # noqa: SLF001
+        return self._inner._opts  # noqa: SLF001  # pylint: disable=protected-access
 
     @property
     def _input_type(self) -> Any:
-        return self._inner._input_type  # noqa: SLF001
+        return self._inner._input_type  # noqa: SLF001  # pylint: disable=protected-access
 
     @property
     def _output_type(self) -> Any:
-        return self._inner._output_type  # noqa: SLF001
+        return self._inner._output_type  # noqa: SLF001  # pylint: disable=protected-access
 
     @property
     def name(self) -> str:
-        """The registered task name (proxy of the wrapped Task)."""
+        """The registered task name (proxy of the wrapped Task).
+
+        :return: The registered task name.
+        :rtype: str
+        """
         return self._inner.name
 
     async def run(
@@ -1500,6 +1514,7 @@ class MultiTurnTask(Generic[Input, Output]):
         :keyword if_last_input_id: Optional ``If-Match``-style
             precondition on the chain's last-accepted ``input_id``.
         :return: The handler's return value for this turn.
+        :rtype: Any
         """
         return await self._inner.run(
             task_id=task_id,
@@ -1524,6 +1539,7 @@ class MultiTurnTask(Generic[Input, Output]):
         :keyword input_id: Optional per-turn identifier.
         :keyword if_last_input_id: Optional ``If-Match``-style precondition.
         :return: A :class:`TaskRun` handle bound to the turn.
+        :rtype: TaskRun[Output]
         """
         return await self._inner.start(
             task_id=task_id,
@@ -1648,6 +1664,9 @@ def multi_turn_task(
         signal — there is no ``ctx.suspend``. The chain stays
         alive across handler raises.
 
+        :param fn: The handler to decorate when used without parentheses;
+            ``None`` in the parameterized form.
+        :type fn: Callable[..., Any] | None
         :keyword name: Stable chain-identity anchor.
         :keyword title: Static human-readable string. Callable-factory form is
             not supported.
@@ -1657,6 +1676,7 @@ def multi_turn_task(
             queues the new input instead of raising ``TaskConflictError``.
         :return: A :class:`MultiTurnTask` instance (distinct public class from
     :class:`Task`).
+        :rtype: Any
     """
     #  — reject unknown kwargs at decoration time
     _validate_multi_turn_task_kwargs(**_extra_kwargs)

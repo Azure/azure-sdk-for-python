@@ -14,7 +14,6 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import traceback
 from collections.abc import Awaitable, Callable
-from pathlib import Path
 from typing import Any, Optional, TypeVar
 
 from .._config import AgentConfig
@@ -23,14 +22,10 @@ from ._context import EntryMode, TaskContext
 from ._attachments import (
     _FUNCTION_INPUT_KEY,
     _INPUT_THRESHOLD_BYTES,
-    _MAX_ATTACHMENT_SIZE_BYTES,
     _is_ref,
-    _make_ref,
     _read_input_value,
     _ref_key,
-    _remap_attachment_error,
     _resolve_input_storage,
-    _serialized_size_bytes,
 )
 from ._decorator import TaskOptions, _deserialize_input, _serialize_input
 from ._exceptions import (
@@ -39,7 +34,6 @@ from ._exceptions import (
     TaskConflictError,
     TaskFailed,
     TaskNotFound,
-    _AttachmentTooLarge,
 )
 from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
 from ._lease import derive_lease_owner, generate_instance_id, lease_renewal_loop
@@ -357,7 +351,7 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         self._pending_input_count: int = 0
 
 
-class TaskManager:  # pylint: disable=too-many-instance-attributes
+class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-access,broad-exception-caught
     """Lifecycle orchestrator for resilient tasks.
 
     Manages provider selection, task creation, lease management,
@@ -503,7 +497,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         )
 
         if backend_override == "local" and config.is_hosted:
-            logger.info("AGENTSERVER_TASKS_BACKEND=local overrides hosted detection; " "using LocalFileTaskProvider")
+            logger.info("AGENTSERVER_TASKS_BACKEND=local overrides hosted detection; using LocalFileTaskProvider")
 
         # Resolve the tasks subdirectory via the
         # unified storage-paths helper. ``AGENTSERVER_STATE_ROOT`` is
@@ -598,7 +592,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         self._pending_steering_futures[task_id].append(future)
         return future
 
-    async def _cancel_queued_steering_input(
+    async def _cancel_queued_steering_input(  # pylint: disable=unused-argument
         self,
         *,
         task_id: str,
@@ -836,7 +830,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                         exc_info=True,
                     )
         except asyncio.CancelledError:
-            logger.info("TaskManager shutdown lease-expire interrupted; " "continuing to in-process task cancellation")
+            logger.info("TaskManager shutdown lease-expire interrupted; continuing to in-process task cancellation")
 
         # Cancel all renewal and execution tasks. Always do this so handlers
         # listening on the cancellation signal wake up and exit cleanly.
@@ -908,7 +902,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         )
         return await handle.result()
 
-    async def create_and_start(  # pylint: disable=too-many-locals
+    async def create_and_start(  # pylint: disable=too-many-locals,too-many-statements
         self,
         *,
         fn: Callable[..., Awaitable[Any]],
@@ -1107,7 +1101,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 cancel_event=renewal_cancel,
                 on_cancel_callback=cancel_event,
                 steering_poll_callback=steering_poll_cb_cs,
-                last_refresh_provider=lambda tid=task_id: (
+                last_refresh_provider=lambda tid=task_id: (  # type: ignore[misc]
                     self._active_tasks[tid].lease_last_refresh_monotonic if tid in self._active_tasks else 0.0
                 ),
                 #   — heartbeat PATCH MUST be routed
@@ -1533,7 +1527,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 cancel_event=renewal_cancel,
                 on_cancel_callback=cancel_event,
                 steering_poll_callback=steering_poll_cb,
-                last_refresh_provider=lambda tid=task_id: (
+                last_refresh_provider=lambda tid=task_id: (  # type: ignore[misc]
                     self._active_tasks[tid].lease_last_refresh_monotonic if tid in self._active_tasks else 0.0
                 ),
                 #   — route through the per-task write queue.
@@ -1713,6 +1707,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         Cancels and replaces any existing watchdog for this task so the
         steering-drain re-entry path can re-arm with a fresh budget.
         No-op when ``opts.timeout`` is ``None``.
+
+        :keyword task_id: The task identifier.
+        :paramtype task_id: str
+        :keyword opts: The task options carrying the timeout budget.
+        :paramtype opts: TaskOptions
+        :keyword ctx: The active task context.
+        :paramtype ctx: TaskContext[Any]
         """
         await self._cancel_watchdog_for_turn(task_id)
         if opts.timeout is None:
@@ -1729,7 +1730,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         )
 
     async def _cancel_watchdog_for_turn(self, task_id: str) -> None:
-        """Cancel and drop the registered per-turn watchdog (if any)."""
+        """Cancel and drop the registered per-turn watchdog (if any).
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        """
         watchdog_task = self._timeout_watchdogs.pop(task_id, None)
         if watchdog_task is not None and not watchdog_task.done():
             watchdog_task.cancel()
@@ -1793,7 +1798,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             ctx.cancel.set()
         return remaining
 
-    async def _execute_task_loop(  # pylint: disable=too-many-statements,too-many-branches,too-many-nested-blocks,unused-argument
+    async def _execute_task_loop(  # pylint: disable=too-many-statements,too-many-branches,too-many-nested-blocks,unused-argument,too-many-locals
         self,
         *,
         fn: Callable[..., Awaitable[Any]],
@@ -1910,7 +1915,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                                     self._track_etag(task_id, getattr(refreshed, "etag", None))
                             except Exception:  # pylint: disable=broad-exception-caught
                                 logger.warning(
-                                    "exit_for_recovery: failed to refresh etag " "for retry on task %s",
+                                    "exit_for_recovery: failed to refresh etag for retry on task %s",
                                     task_id,
                                     exc_info=True,
                                 )
@@ -2076,7 +2081,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     # turn's ``.start`` / ``.run``. Errors from this write
                     # surface only via the logger because the caller's
                     # future is already resolved with TaskCancelled above.
-                    error_dict = {
+                    error_dict: dict[str, Any] = {
                         "type": "cancelled",
                         "message": "Task cancelled",
                     }
@@ -2127,7 +2132,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                                 continue
                         except Exception:  # pylint: disable=broad-exception-caught
                             logger.warning(
-                                "Failed to drain steering queue after " "multi-turn cancel for task %s",
+                                "Failed to drain steering queue after multi-turn cancel for task %s",
                                 task_id,
                                 exc_info=True,
                             )
@@ -2170,7 +2175,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
                 if retry and attempt > 0:
                     # Retries were attempted but exhausted
-                    error_dict: dict[str, Any] = {
+                    error_dict = {
                         "type": "exhausted_retries",
                         "attempts": attempt + 1,
                         "last_error": str(exc),
@@ -2194,6 +2199,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 # CancelledError → bare TaskCancelled() else TaskFailed.
                 is_multi_turn_failure = getattr(opts, "_is_multi_turn", False)
                 if not current_result_future.done():
+                    from ._exceptions import TaskCancelled  # pylint: disable=import-outside-toplevel
+
                     if isinstance(exc, asyncio.CancelledError):
                         #   — bare TaskCancelled (no fields).
                         current_result_future.set_exception(TaskCancelled())
@@ -2326,7 +2333,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
             # ``_read_input_value``; if it was a ref, the same drain PATCH
             # MUST also delete the attachment (C-9 /).
             next_entry = pending.pop(0)
-            attachments_patch = {}
+            attachments_patch: dict[str, Any] = {}
             if _is_ref(next_entry):
                 attachments_patch[_ref_key(next_entry)] = None
             next_input_raw = _read_input_value(next_entry, task_info.attachments)
@@ -2398,7 +2405,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     f"Steering drain for {task_id!r} did not converge " "after 5 etag-conflict retries"
                 ) from drain_conflict
             logger.warning(
-                "Etag conflict during steering drain for %s, retrying " "(attempt %d)",
+                "Etag conflict during steering drain for %s, retrying (attempt %d)",
                 task_id,
                 _conflict_attempt + 1,
             )
@@ -2497,7 +2504,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         )
         return new_ctx
 
-    async def _handle_multi_turn_success(
+    async def _handle_multi_turn_success(  # pylint: disable=unused-argument
         self,
         *,
         task_id: str,
@@ -2519,6 +2526,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 Returns True (terminal write succeeded). False is reserved for
                 the legacy etag-conflict-retry-drain pattern; the multi-turn
                 path raises TaskConflictError on 412 instead.
+
+        :keyword task_id: The task identifier.
+        :paramtype task_id: str
+        :keyword metadata: The task metadata (auto-flushed before the PATCH).
+        :paramtype metadata: TaskMetadata
+        :keyword opts: The task options.
+        :paramtype opts: TaskOptions
+        :return: True when the terminal write succeeded.
+        :rtype: bool
         """
         # Auto-flush metadata BEFORE the chain PATCH.
         try:
@@ -2569,7 +2585,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                     attachments=attachments_patch or None,
                 ),
             )
-        except TaskConflictError:
+        except TaskConflictError:  # pylint: disable=try-except-raise  # explicit: never let later handlers catch it
             raise
         except _HostedConflict as hosted_exc:
             translated = _translate_hosted_conflict(hosted_exc, task_id=task_id)
@@ -2581,14 +2597,14 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         except TransportClassifiedError as transport_exc:
             if _is_evicted(transport_exc):
                 logger.warning(
-                    "Eviction on multi-turn return PATCH for task %s — " "signalling awaiters with TaskConflictError",
+                    "Eviction on multi-turn return PATCH for task %s — signalling awaiters with TaskConflictError",
                     task_id,
                 )
                 raise TaskConflictError(task_id, "in_progress") from transport_exc
             raise
         return True
 
-    async def _handle_success(
+    async def _handle_success(  # pylint: disable=unused-argument
         self,
         *,
         task_id: str,
@@ -2641,7 +2657,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         logger.info("Task %s completed successfully", task_id)
         return True
 
-    async def _handle_multi_turn_failure(
+    async def _handle_multi_turn_failure(  # pylint: disable=unused-argument
         self,
         *,
         task_id: str,
@@ -2669,6 +2685,17 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         Steps 5/6/7 are handled by the caller (`_execute_task`) after this
         method returns; this method owns steps 2/3/4.
+
+        :keyword task_id: The task identifier.
+        :paramtype task_id: str
+        :keyword exc: The exception raised by the handler.
+        :paramtype exc: Exception
+        :keyword metadata: The task metadata (auto-flushed before the PATCH).
+        :paramtype metadata: TaskMetadata
+        :keyword opts: The task options.
+        :paramtype opts: TaskOptions
+        :keyword error_dict: The structured error payload for the caller's future.
+        :paramtype error_dict: dict[str, Any]
         """
         # Step 2: auto-flush metadata BEFORE the chain-PATCH.
         try:
@@ -2730,7 +2757,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         except TransportClassifiedError as transport_exc:
             if _is_evicted(transport_exc):
                 logger.warning(
-                    "Eviction on multi-turn raise PATCH for task %s — " "signalling awaiters with TaskConflictError",
+                    "Eviction on multi-turn raise PATCH for task %s — signalling awaiters with TaskConflictError",
                     task_id,
                 )
                 raise TaskConflictError(task_id, "in_progress") from transport_exc
@@ -2969,7 +2996,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
                 translated = _translate_hosted_conflict(exc, task_id=task_info.id)
                 if translated is None or getattr(translated, "current_status", None) == "in_progress":
                     logger.info(
-                        "Reclaim conflict for task %s — another process beat us; " "letting next scan re-evaluate.",
+                        "Reclaim conflict for task %s — another process beat us; letting next scan re-evaluate.",
                         task_info.id,
                     )
                     continue
@@ -3054,6 +3081,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
 
         The lock entry is dropped by :meth:`_active_tasks_pop` when
         the local active-entry is torn down.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: The per-task write lock.
+        :rtype: asyncio.Lock
         """
         lock = self._task_write_locks.get(task_id)
         if lock is None:
@@ -3069,6 +3101,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         etag cache (so reclaim/scan paths without an _ActiveTask can
         still benefit) AND, if present, on the _ActiveTask entry
         itself.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :param etag: The latest known etag, or None to skip.
+        :type etag: str | None
         """
         if etag is None:
             return
@@ -3083,6 +3120,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         Returns ``None`` if no PATCH/GET response has been observed
         yet (this can happen on the very first write — typically a
         ``create`` where ``if_match`` is intentionally absent).
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: The latest tracked etag, or None if none observed yet.
+        :rtype: str | None
         """
         active = self._active_tasks.get(task_id)
         if active is not None and active.current_etag is not None:
@@ -3093,6 +3135,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         """— pop the active task entry AND drop its
         per-task write lock + etag cache so the registries do not
         leak across many task lifetimes.
+
+        :param task_id: The task identifier.
+        :type task_id: str
         """
         self._active_tasks.pop(task_id, None)
         self._task_write_locks.pop(task_id, None)
@@ -3105,6 +3150,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         ``_track_etag`` on the response's etag. Use at every read site
         where a subsequent PATCH may rely on the latest etag (the
         normal read-then-PATCH pattern across the framework).
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: The task info, or None if not found.
+        :rtype: Any
         """
         try:
             info = await self._provider.get(task_id)
@@ -3138,6 +3188,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         lease-last-refresh when the PATCH piggybacked the lease.
 
         The caller is responsible for holding ``_get_task_write_lock(task_id)``.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :param patch: The PATCH request to apply.
+        :type patch: TaskPatchRequest
+        :keyword force_if_match: When True, populate ``if_match`` from the
+            tracked etag if the caller did not set one.
+        :paramtype force_if_match: bool
+        :return: The provider update response.
+        :rtype: Any
         """
         if force_if_match and patch.if_match is None:
             patch.if_match = self._get_tracked_etag(task_id)
@@ -3172,11 +3232,21 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         suspend/complete/fail sites. Delegates the actual write to
         :meth:`_provider_update_lock_held` (Spec 031 / FR-005a) so the
         lock-held and lock-acquiring paths share one implementation.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :param patch: The PATCH request to apply.
+        :type patch: TaskPatchRequest
+        :keyword force_if_match: When True, populate ``if_match`` from the
+            tracked etag if the caller did not set one.
+        :paramtype force_if_match: bool
+        :return: The provider update response.
+        :rtype: Any
         """
         async with self._get_task_write_lock(task_id):
             return await self._provider_update_lock_held(task_id, patch, force_if_match=force_if_match)
 
-    async def _terminal_write_locked(
+    async def _terminal_write_locked(  # pylint: disable=too-many-statements
         self,
         task_id: str,
         patch: TaskPatchRequest,
@@ -3207,6 +3277,15 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
           C-STR-6 cross-process steering-after-terminate contract.
 
         Default budget is 5 attempts.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :param patch: The terminal PATCH request to apply.
+        :type patch: TaskPatchRequest
+        :keyword max_attempts: Maximum re-read-and-decide attempts.
+        :paramtype max_attempts: int
+        :return: The provider update response.
+        :rtype: Any
         """
         prior_lease_owner = patch.lease_owner
         prior_lease_instance = patch.lease_instance_id
@@ -3290,6 +3369,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         branch (a) detection. Not authoritative; absence means "no
         cached value" and the decision falls back on lease owner /
         instance_id comparison.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :return: The cached expiry count, or 0 when not cached.
+        :rtype: int
         """
         return getattr(self, "_expiry_count_cache", {}).get(task_id, 0)
 
@@ -3322,6 +3406,18 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes
         abandon on legitimate retry-able 412s). We rely on instance-id
         comparison and intentionally do NOT consult ``expiry_count``
         in this decision.
+
+        :param task_id: The task identifier.
+        :type task_id: str
+        :keyword prior_lease_owner: The lease owner held before the 412.
+        :paramtype prior_lease_owner: str | None
+        :keyword prior_lease_instance: The lease instance id held before the 412.
+        :paramtype prior_lease_instance: str | None
+        :keyword cached_expiry_count: The cached prior lease expiry count.
+        :paramtype cached_expiry_count: int
+        :return: One of ``"abandon_lease_lost"``, ``"abandon_already_terminal"``,
+            or ``"retry"``.
+        :rtype: str
         """
         _ = cached_expiry_count  # retained for binary-compat / future use
         try:
