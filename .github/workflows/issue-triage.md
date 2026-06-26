@@ -374,47 +374,28 @@ The CODEOWNERS file contains `# ServiceLabel:` entries that associate one or mor
 **Matching uses bottom-to-top scanning with first-match-wins semantics:**
 
 1. Start from the END of the CODEOWNERS file and scan each line upward
-2. For each `# ServiceLabel:` entry, check if ALL labels listed in it (after each `%`) are present in the issue's predicted labels
-3. STOP at the first entry where all its labels match — this is the matching entry
-4. Use the AzureSdkOwners and/or ServiceOwners from that entry and any adjacent owner lines
+2. For each  `# ServiceLabel:` entry, ignore any `%Service Attention` token and check whether its service label equals the issue's predicted service label
+3. STOP at the first entry whose service label matches — this is the matching entry
+4. Use the `# AzureSdkOwners:` and/or `# ServiceOwners:` lines from that entry's block
 
-**Why this matters:** The file is structured so that more specific multi-label entries appear AFTER less specific entries. In bottom-to-top scanning, entries closer to the end of the file are encountered first. Multi-label entries placed after a catch-all are encountered before it, correctly overriding the catch-all
+Then apply the Owner Routing Flow below.
 
-The following simplified excerpt illustrates the structure:
+#### Examples
 
+**Example 1 — predicted service label "Container Registry":**
 ```
-# --- Client libraries section (earlier in file) ---
+# AzureSdkOwners: @kashifkhan
+# ServiceLabel: %Container Registry
+# ServiceOwners: @northtyphoon @toddysm
+```
+The entry lists an AzureSdkOwner → assign @kashifkhan (single → plain `add_comment`, no @mention; the assignment notifies them). ServiceOwners are NOT pinged because an AzureSdkOwner owns the entry. The "Client" category played no part.
 
-# AzureSdkOwners:                   @mrm9084
-# ServiceLabel: %App Configuration
-# ServiceOwners:                    @avanigupta @mrm9084
-
-# ServiceLabel: %AI
-# ServiceOwners:                    @luigiw @needuv @paulshealy1 @singankit
-
-# --- Service Attention overrides (later in file) ---
-
+**Example 2 — predicted service label "SignalR":**
+```
 # ServiceLabel: %Service Attention %SignalR
-# ServiceOwners:                    @chenkennt @sffamily
+# ServiceOwners: @chenkennt @sffamily
 ```
-
-**Example 1 — Predicted labels: "App Configuration" + "Client"**
-
-Scan starts from end of file upward:
-1. Service Attention and management-specific entries — each requires labels the issue does not have → no match, continue
-2. `%App Configuration` — requires only "App Configuration"; issue has "App Configuration" → ALL labels match ✅ STOP
-
-**Outcome:** Matches `%App Configuration`. AzureSdkOwners: @mrm9084, ServiceOwners: @avanigupta @mrm9084. Assign @mrm9084, @mention @mrm9084 in Step 5 comment. If the issue is also tagged with the "customer-reported" label, add the "needs-team-attention" label
-
-Note: The service label drives the match; a category label like "Client" does not contribute to CODEOWNERS matching unless a `# ServiceLabel:` entry explicitly lists it
-
-**Example 2 — Predicted labels: "AI" + "Client"**
-
-Scan starts from end of file upward:
-1. More specific entries — each requires labels the issue does not have → no match, continue
-2. `%AI` — requires only "AI"; issue has "AI" → ALL labels match ✅ STOP
-
-**Outcome:** Matches `%AI`. ServiceOwners: @luigiw @needuv @paulshealy1 @singankit, no AzureSdkOwners. Add "Service Attention" label, no assignment, @mention the ServiceOwners in Step 5. If the issue is also tagged with the "customer-reported" label, add the "needs-team-attention" label
+Ignoring the `%Service Attention` marker, the service label "SignalR" matches. The entry lists only ServiceOwners (no AzureSdkOwners) → add "Service Attention", leave unassigned, @mention the ServiceOwners via `mention_owners`.
 
 ### Owner Routing Flow
 
@@ -427,6 +408,7 @@ IF a matching ServiceLabel entry is found in CODEOWNERS:
         ELSE (multiple AzureSdkOwners):
             - Pick one AzureSdkOwner at random and assign them using the `assign_to_user` tool
 
+        # AzureSdkOwners take priority: do NOT add "Service Attention" or ping ServiceOwners
         - IF the issue has the "customer-reported" label: Add the "needs-team-attention" label
         - Record all AzureSdkOwners for Step 5
 
@@ -439,7 +421,7 @@ IF a matching ServiceLabel entry is found in CODEOWNERS:
     ELSE (matched entry has neither AzureSdkOwners nor ServiceOwners):
         - Add the "needs-team-triage" label
 
-ELSE (no ServiceLabel entry matches any of the issue's predicted labels):
+ELSE (no ServiceLabel entry matches the issue's predicted service label):
     - Add the "needs-team-triage" label
 ```
 
@@ -507,7 +489,7 @@ Used when triage fell back to "needs-triage" (could not predict labels) or "need
 <details>
 <summary>👥 Owner Routing</summary>
 
-- **CODEOWNERS scan:** <entries examined during bottom-to-top scan and why each did or didn't match>
+- **CODEOWNERS scan:** <entries examined during the bottom-to-top scan and why each did or didn't match the predicted service label>
 - **Matched entry:** <the entry that matched, or "no match found" with explanation>
 - **Owners found:** <AzureSdkOwners and ServiceOwners from the matched entry, or "none listed">
 - **Outcome:** <routing action taken — e.g., "Applied needs-team-triage — matched entry has no owners listed" or "Applied needs-team-triage — no ServiceLabel entry matched the predicted labels">
@@ -562,11 +544,11 @@ Used when labels were confidently predicted and owners were successfully identif
 <details>
 <summary>👥 Owner Routing</summary>
 
-- **Matched CODEOWNERS entry:** `# ServiceLabel: %<Label1> %<Label2>` (line <N>) — <why this entry matched>
+- **Matched CODEOWNERS entry:** `# ServiceLabel: %<Service>` (line <N>) — <why this entry matched>
 - **AzureSdkOwners:** <owners or "none listed">
 - **ServiceOwners:** <owners or "none listed">
 - **Routing action:** <what was done — e.g., assigned `@owner`, added Service Attention, added needs-team-triage>
-- **Scan notes:** <entries considered during bottom-to-top scan that did not match and why>
+- **Scan notes:** <entries considered during the bottom-to-top scan that did not match and why>
 </details>
 ```
 
