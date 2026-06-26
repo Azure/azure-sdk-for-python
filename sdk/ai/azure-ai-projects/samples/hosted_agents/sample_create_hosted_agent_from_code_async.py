@@ -58,6 +58,7 @@ from azure.ai.projects.models import (
 from hosted_agents_util import select_echo_agent_code_zip, wait_for_agent_version_active_async
 from rbac_util import ensure_agent_identity_rbac_async
 
+
 async def main() -> None:
     load_dotenv()
 

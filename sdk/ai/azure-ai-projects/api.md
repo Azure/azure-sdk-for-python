@@ -252,7 +252,7 @@ namespace azure.ai.projects.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        async def download_code(
+        async def download_code_as_bytes(
                 self, 
                 agent_name: str, 
                 *, 
@@ -272,7 +272,7 @@ namespace azure.ai.projects.aio.operations
             ) -> str: ...
 
         @distributed_trace_async
-        async def download_session_file(
+        async def download_session_file_as_bytes(
                 self, 
                 agent_name: str, 
                 agent_session_id: str, 
@@ -9610,7 +9610,7 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
         @distributed_trace
-        def download_code(
+        def download_code_as_bytes(
                 self, 
                 agent_name: str, 
                 *, 
@@ -9630,7 +9630,7 @@ namespace azure.ai.projects.operations
             ) -> str: ...
 
         @distributed_trace
-        def download_session_file(
+        def download_session_file_as_bytes(
                 self, 
                 agent_name: str, 
                 agent_session_id: str, 

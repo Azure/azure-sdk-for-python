@@ -297,7 +297,9 @@ class TestAgentSessionFilesCrudAsync(TestBase):
         agent_name = "fake-agent-name"
         session_id = "fake-session-id"
 
-        project_client = self.create_async_client(agent_name=agent_name, foundry_project_endpoint=foundry_project_endpoint)
+        project_client = self.create_async_client(
+            agent_name=agent_name, foundry_project_endpoint=foundry_project_endpoint
+        )
 
         async with project_client:
 
@@ -415,7 +417,9 @@ class TestAgentSessionFilesCrudAsync(TestBase):
 
                 try:
                     # Test that download_session_file_to_path raises FileExistsError when file exists (default overwrite=False)
-                    print(f"Testing download_session_file_to_path with existing file (default overwrite): {existing_file_path}")
+                    print(
+                        f"Testing download_session_file_to_path with existing file (default overwrite): {existing_file_path}"
+                    )
                     try:
                         await project_client.agents.download_session_file_to_path(
                             agent_name=agent_name,
@@ -430,7 +434,9 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                         assert "overwrite=True" in str(e), f"Error message should mention 'overwrite=True': {e}"
 
                     # Test that download_session_file_to_path raises FileExistsError when file exists with explicit overwrite=False
-                    print(f"Testing download_session_file_to_path with existing file (explicit overwrite=False): {existing_file_path}")
+                    print(
+                        f"Testing download_session_file_to_path with existing file (explicit overwrite=False): {existing_file_path}"
+                    )
                     try:
                         await project_client.agents.download_session_file_to_path(
                             agent_name=agent_name,

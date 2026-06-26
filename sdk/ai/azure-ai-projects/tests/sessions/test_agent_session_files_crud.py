@@ -411,7 +411,9 @@ class TestAgentSessionFilesCrud(TestBase):
 
             try:
                 # Test that download_session_file_to_path raises FileExistsError when file exists (default overwrite=False)
-                print(f"Testing download_session_file_to_path with existing file (default overwrite): {existing_file_path}")
+                print(
+                    f"Testing download_session_file_to_path with existing file (default overwrite): {existing_file_path}"
+                )
                 try:
                     project_client.agents.download_session_file_to_path(
                         agent_name=agent_name,
@@ -426,7 +428,9 @@ class TestAgentSessionFilesCrud(TestBase):
                     assert "overwrite=True" in str(e), f"Error message should mention 'overwrite=True': {e}"
 
                 # Test that download_session_file_to_path raises FileExistsError when file exists with explicit overwrite=False
-                print(f"Testing download_session_file_to_path with existing file (explicit overwrite=False): {existing_file_path}")
+                print(
+                    f"Testing download_session_file_to_path with existing file (explicit overwrite=False): {existing_file_path}"
+                )
                 try:
                     project_client.agents.download_session_file_to_path(
                         agent_name=agent_name,
