@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python delete_workbench.py
+    python put_deployment_with_speculative_decoding.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +31,31 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.workbenches.begin_delete(
-        resource_group_name="rgcognitiveservices",
-        account_name="myAccount",
-        project_name="myProject",
-        workbench_name="myWorkbench",
+    response = client.deployments.begin_create_or_update(
+        resource_group_name="resourceGroupName",
+        account_name="accountName",
+        deployment_name="deploymentName",
+        deployment={
+            "properties": {
+                "deploymentState": "Running",
+                "model": {"format": "Fireworks", "name": "FW-Qwen3-14B", "version": "1"},
+                "serviceTier": "Default",
+                "speculativeDecoding": {
+                    "draftModel": {
+                        "format": "FireworksCustom",
+                        "name": "testDraftModel",
+                        "source": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/resourceGroupName/providers/Microsoft.CognitiveServices/accounts/accountName/projects/projectName",
+                        "version": "1",
+                    },
+                    "draftTokenCount": 4,
+                },
+            },
+            "sku": {"capacity": 80, "name": "GlobalProvisionedManaged"},
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-05-15-preview/DeleteWorkbench.json
+# x-ms-original-file: 2026-05-15-preview/PutDeploymentWithSpeculativeDecoding.json
 if __name__ == "__main__":
     main()
