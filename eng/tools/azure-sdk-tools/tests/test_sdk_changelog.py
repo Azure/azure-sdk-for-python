@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch
 from pathlib import Path
+import json
 import tempfile
 import shutil
 
@@ -180,3 +181,47 @@ def test_timeout_default_is_900(mock_get_changelog_content, temp_package):
     mock_get_changelog_content.assert_called_once()
     _, kwargs = mock_get_changelog_content.call_args
     assert kwargs["timeout"] == 900
+
+
+@patch("packaging_tools.sdk_changelog.get_changelog_content")
+def test_output_json_detector_mode_breaking(mock_get_changelog_content, temp_arm_package):
+    package_path, changelog_path = temp_arm_package
+    md_output = "### Features Added\n\n  - foo\n\n### Breaking Changes\n\n  - dropped bar\n"
+    mock_get_changelog_content.return_value = (md_output, "1.2.3")
+    output_json = package_path / "changes.json"
+
+    changelog_main(package_path, output_json=output_json)
+
+    # JSON output is written with the expected shape
+    assert output_json.exists()
+    with open(output_json, "r", encoding="utf-8") as f:
+        result = json.load(f)
+    assert result["changes"] == md_output
+    assert result["hasBreakingChange"] is True
+    assert "breakingChangeItems" not in result
+
+    # CHANGELOG.md must NOT be modified in detector mode
+    with open(changelog_path, "r") as f:
+        assert f.read() == "# Release History\n\n"
+
+
+@patch("packaging_tools.sdk_changelog.get_changelog_content")
+def test_output_json_detector_mode_no_breaking(mock_get_changelog_content, temp_arm_package):
+    package_path, changelog_path = temp_arm_package
+    md_output = "### Features Added\n\n  - only feature\n"
+    mock_get_changelog_content.return_value = (md_output, "1.0.0")
+    output_json = package_path / "nested" / "changes.json"
+
+    changelog_main(package_path, output_json=output_json)
+
+    # Nested output directory is created and JSON written
+    assert output_json.exists()
+    with open(output_json, "r", encoding="utf-8") as f:
+        result = json.load(f)
+    assert result["changes"] == md_output
+    assert result["hasBreakingChange"] is False
+    assert "breakingChangeItems" not in result
+
+    # CHANGELOG.md must NOT be modified in detector mode
+    with open(changelog_path, "r") as f:
+        assert f.read() == "# Release History\n\n"

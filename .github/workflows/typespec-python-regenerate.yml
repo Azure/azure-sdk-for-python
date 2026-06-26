@@ -203,7 +203,7 @@ jobs:
 
           # Quick check: skip if regeneration produced no changes vs HEAD.
           if [ -z "$(git status --porcelain -- "$GENERATED_DIR")" ]; then
-            echo "No changes to commit"
+            echo "::notice::No changes to commit — regenerated output matches ${GENERATED_DIR}/"
             exit 0
           fi
 
@@ -220,13 +220,15 @@ jobs:
           git add -f "$GENERATED_DIR"/
 
           if git diff --cached --quiet; then
-            echo "No changes vs $TARGET_BRANCH"
+            echo "::notice::No changes vs ${TARGET_BRANCH} — nothing to push"
             exit 0
           fi
 
           COMMIT_MSG="[typespec-python] Regenerate tests from ${SOURCE_LABEL}"
           git commit -m "$COMMIT_MSG"
           git push origin "$SOURCE_BRANCH" --force-with-lease
+          echo "::notice::Pushed regenerated tests to branch ${SOURCE_BRANCH} (target: ${TARGET_BRANCH})"
+          echo "::notice::Generated code location: ${GENERATED_DIR}/"
 
           # GitHub Actions' default GITHUB_TOKEN is not permitted to create pull
           # requests in this repository, so instead of opening a PR directly we

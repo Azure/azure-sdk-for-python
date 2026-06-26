@@ -17,16 +17,37 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
     """
     Validate task navigation efficiency inputs (response and ground_truth).
 
+    Accepts either the SDK input names (``response``/``ground_truth``) or the
+    azureml-assets names (``actions``/``expected_actions``).
+
     Validates:
-    - response: List of assistant messages containing tool calls
-    - ground_truth: Either a list of expected tool names, or a tuple of (tool names, parameters dict)
+    - response (alias ``actions``): List of assistant messages containing tool calls
+    - ground_truth (alias ``expected_actions``): Either a list of expected tool names, or a
+      tuple of (tool names, parameters dict)
     """
 
     error_target: ErrorTarget
 
+    # Canonical input key -> accepted alternate (azureml-assets) key name.
+    _INPUT_ALIASES: Dict[str, str] = {
+        "response": "actions",
+        "ground_truth": "expected_actions",
+    }
+
     def __init__(self, error_target: ErrorTarget):
         """Initialize with error target."""
         self.error_target = error_target
+
+    def _normalize_input_aliases(self, eval_input: Dict[str, Any]) -> None:
+        """Map azureml-assets-style input keys onto the canonical keys in place.
+
+        If a canonical key (``response``/``ground_truth``) is absent but its alias
+        (``actions``/``expected_actions``) is provided, copy the alias value to the canonical
+        key so the rest of the pipeline can rely on a single set of names.
+        """
+        for canonical, alias in self._INPUT_ALIASES.items():
+            if eval_input.get(canonical) is None and eval_input.get(alias) is not None:
+                eval_input[canonical] = eval_input[alias]
 
     def _validate_response(self, response: Any) -> Optional[EvaluationException]:
         """Validate the response parameter."""
@@ -221,8 +242,12 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
         """
         Validate task navigation evaluation input.
 
+        Accepts either the SDK input names (``response``/``ground_truth``) or the
+        azureml-assets names (``actions``/``expected_actions``).
+
         Args:
-            eval_input: Dictionary containing 'response' and 'ground_truth'.
+            eval_input: Dictionary containing 'response'/'ground_truth' (or their
+                'actions'/'expected_actions' aliases).
 
         Returns:
             True if validation passes.
@@ -230,6 +255,9 @@ class TaskNavigationEfficiencyValidator(ValidatorInterface):
         Raises:
             EvaluationException: If validation fails.
         """
+        # Normalize azureml-assets-style aliases ('actions'/'expected_actions') onto canonical keys.
+        self._normalize_input_aliases(eval_input)
+
         # If response or ground_truth is a string, try to parse it as JSON
         for key in ("response", "ground_truth"):
             value = eval_input.get(key)
