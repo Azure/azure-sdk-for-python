@@ -803,9 +803,17 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `ItemPaged.by_page()`.
+        :keyword response_format:
+            The format in which to return and parse the list response. Use "arrow" to
+            return the response in Apache Arrow format, "xml" for the standard XML format,
+            or "auto" to let the SDK choose. Defaults to "xml".
+        :paramtype response_format: Literal["auto", "arrow", "xml"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
             Only one entity level is supported.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used when response_format is set to "arrow".
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -922,8 +930,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
+        :keyword response_format:
+            The format in which to return and parse the list response. Use "arrow" to
+            return the response in Apache Arrow format, "xml" for the standard XML format,
+            or "auto" to let the SDK choose. Defaults to "xml".
+        :paramtype response_format: Literal["auto", "arrow", "xml"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used when response_format is set to "arrow".
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

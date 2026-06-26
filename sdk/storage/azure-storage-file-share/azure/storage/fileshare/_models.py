@@ -989,6 +989,8 @@ class DirectoryProperties(DictMixin):
     """NFS only. The owner of the directory."""
     group: Optional[str] = None
     """NFS only. The owning group of the directory."""
+    link_count: Optional[int] = None
+    """NFS only. The number of hard links of the directory."""
     file_mode: Optional[str] = None
     """NFS only. The file mode of the directory."""
     nfs_file_type: Optional[Literal["Directory"]] = None
@@ -1337,8 +1339,14 @@ class FileProperties(DictMixin):
     """NFS only. The file mode of the file."""
     link_count: Optional[int] = None
     """NFS only. The number of hard links of the file."""
-    nfs_file_type: Optional[Literal["Regular"]] = None
+    nfs_file_type: Optional[Literal["Regular", "SymLink", "BlockDevice", "CharacterDevice", "Socket", "Fifo"]] = None
     """NFS only. The type of the file."""
+    ink_text: Optional[str] = None
+    """NFS only. The link text of the symbolic link. Only applicable to symbolic links."""
+    device_major: Optional[int] = None
+    """NFS only. The major device number. Only applicable to block and character devices."""
+    device_minor: Optional[int] = None
+    """NFS only. The minor device number. Only applicable to block and character devices."""
 
     def __init__(self, **kwargs: Any) -> None:
         self.name = kwargs.get("name")  # type: ignore [assignment]
