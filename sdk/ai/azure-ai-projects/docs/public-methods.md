@@ -65,9 +65,9 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .agents.delete_session_file
 .agents.delete_version
 .agents.disable
-.agents.download_code
+.agents.download_code_as_bytes
 .agents.download_code_to_path*
-.agents.download_session_file
+.agents.download_session_file_as_bytes
 .agents.download_session_file_to_path*
 .agents.enable
 .agents.get

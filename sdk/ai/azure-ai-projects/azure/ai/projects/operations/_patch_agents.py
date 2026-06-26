@@ -370,7 +370,7 @@ class AgentsOperations(GeneratedAgentsOperations):
                 raise FileExistsError(f"The file `{file_path}` already exists. Set overwrite=True to replace it.")
 
         # Download the file content using the existing method
-        content_iterator = self.download_session_file(
+        content_iterator = self.download_session_file_as_bytes(
             agent_name=agent_name,
             agent_session_id=session_id,
             remote_path=remote_path,
@@ -424,7 +424,7 @@ class AgentsOperations(GeneratedAgentsOperations):
                 raise FileExistsError(f"The file `{file_path}` already exists. Set overwrite=True to replace it.")
 
         # Download the code content using the existing method
-        content_iterator = self.download_code(
+        content_iterator = self.download_code_as_bytes(
             agent_name=agent_name,
             agent_version=agent_version,
             **kwargs,

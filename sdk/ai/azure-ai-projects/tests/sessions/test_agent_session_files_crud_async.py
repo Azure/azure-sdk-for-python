@@ -57,7 +57,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
         POST    /agents/{agent_name}/sessions                                               project_client.agents.create_session()
         POST    /agents/{agent_name}/sessions/{session_id}/files:upload                     project_client.agents.upload_session_file()
         GET     /agents/{agent_name}/sessions/{session_id}/files                            project_client.agents.list_session_files()
-        GET     /agents/{agent_name}/sessions/{session_id}/files:download                   project_client.agents.download_session_file()
+        GET     /agents/{agent_name}/sessions/{session_id}/files:download                   project_client.agents.download_session_file_as_bytes()
         DELETE  /agents/{agent_name}/sessions/{session_id}/files                            project_client.agents.delete_session_file()
         DELETE  /agents/{agent_name}/sessions/{session_id}                                  project_client.agents.delete_session()
         """
@@ -160,7 +160,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 # Download and verify content of first file
                 print(f"Downloading and verifying content from '{remote_file_path1}'")
                 content_chunks = []
-                download_iterator = await project_client.agents.download_session_file(
+                download_iterator = await project_client.agents.download_session_file_as_bytes(
                     agent_name=agent_name,
                     agent_session_id=session.agent_session_id,
                     remote_path=remote_file_path1,
