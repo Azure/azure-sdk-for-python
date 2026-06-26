@@ -14,6 +14,7 @@ Invalid environment variable values raise ``ValueError`` immediately so
 misconfiguration is surfaced at startup rather than silently masked.
 """
 import os
+from pathlib import Path
 from typing import Optional
 
 from typing_extensions import Self
@@ -239,6 +240,46 @@ def resolve_graceful_shutdown_timeout(timeout: Optional[int]) -> int:
     if env_val is not None:
         return max(0, env_val)
     return _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
+
+
+# ======================================================================
+# On-disk state storage paths
+# ======================================================================
+
+_ENV_STATE_ROOT = "AGENTSERVER_STATE_ROOT"
+_DEFAULT_STATE_ROOT_DIRNAME = ".agentserver"
+
+
+def _resolve_state_root() -> Path:
+    """Resolve the root directory for agentserver on-disk state.
+
+    ``AGENTSERVER_STATE_ROOT`` if set, else ``~/.agentserver``. Private —
+    callers resolve a named subdirectory via :func:`resolve_state_subdir`.
+
+    :return: The resolved state-root path.
+    :rtype: Path
+    """
+    env_value = os.environ.get(_ENV_STATE_ROOT)
+    if env_value:
+        return Path(env_value)
+    return Path.home() / _DEFAULT_STATE_ROOT_DIRNAME
+
+
+def resolve_state_subdir(name: str) -> Path:
+    """Resolve an on-disk state subdirectory under the agentserver state root.
+
+    The root is ``AGENTSERVER_STATE_ROOT`` (the single operator knob), or
+    ``~/.agentserver`` when unset. Each subsystem owns and passes its own
+    subdirectory name (e.g. ``"tasks"``); the core layer does not enumerate
+    or reserve names. The path is not created on disk — callers mkdir lazily
+    on first write.
+
+    :param name: The subdirectory name owned by the calling subsystem.
+    :type name: str
+    :return: The resolved subdirectory path under the state root.
+    :rtype: Path
+    """
+    return _resolve_state_root() / name
 
 
 _VALID_LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")

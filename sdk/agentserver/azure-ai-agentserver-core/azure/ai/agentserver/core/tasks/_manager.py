@@ -492,18 +492,16 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         from ._local_provider import (  # pylint: disable=import-outside-toplevel
             LocalFileTaskProvider,
         )
-        from ..storage_paths import (  # pylint: disable=import-outside-toplevel
+        from .._config import (  # pylint: disable=import-outside-toplevel
             resolve_state_subdir,
         )
 
         if backend_override == "local" and config.is_hosted:
             logger.info("AGENTSERVER_TASKS_BACKEND=local overrides hosted detection; using LocalFileTaskProvider")
 
-        # Resolve the tasks subdirectory via the
-        # unified storage-paths helper. ``AGENTSERVER_STATE_ROOT`` is
-        # the single env-var operator knob covering tasks / streams /
-        # responses. The legacy ``AGENTSERVER_STATE_TASKS_PATH`` env
-        # var is deleted (was: per-subsystem override).
+        # Resolve the tasks subdirectory under the agentserver state root.
+        # ``AGENTSERVER_STATE_ROOT`` is the single env-var operator knob;
+        # the tasks subsystem owns the ``tasks`` subdirectory name.
         return LocalFileTaskProvider(base_dir=resolve_state_subdir("tasks"))
 
     @property

@@ -95,13 +95,13 @@ class LocalFileTaskProvider:
 
     :param base_dir: Root directory for task storage.
         Defaults to ``${AGENTSERVER_STATE_ROOT:-~/.agentserver}/tasks``
-        via :func:`azure.ai.agentserver.core.storage_paths.resolve_state_subdir`.
+        via :func:`azure.ai.agentserver.core._config.resolve_state_subdir`.
     :type base_dir: Path | None
     """
 
     def __init__(self, base_dir: Path | None = None) -> None:
         if base_dir is None:
-            from ..storage_paths import (  # pylint: disable=import-outside-toplevel
+            from .._config import (  # pylint: disable=import-outside-toplevel
                 resolve_state_subdir,
             )
 

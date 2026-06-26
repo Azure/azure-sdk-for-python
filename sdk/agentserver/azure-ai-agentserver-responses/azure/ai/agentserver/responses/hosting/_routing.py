@@ -130,7 +130,7 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
     streams created after it. In tests with multiple hosts per process,
     the per-test fixtures snapshot/restore the registry's private state.
     """
-    from azure.ai.agentserver.core.storage_paths import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
+    from azure.ai.agentserver.core._config import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
         resolve_state_subdir,
     )
     from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
@@ -322,7 +322,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         # two are inseparable (the default path depends on the unified
         # root resolution).
         if store is None:
-            from azure.ai.agentserver.core.storage_paths import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
+            from azure.ai.agentserver.core._config import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
                 resolve_state_subdir,
             )
 

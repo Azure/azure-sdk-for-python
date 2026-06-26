@@ -54,7 +54,7 @@ def _config_stub(session_id: str = "s018-test-session"):
 async def manager_local(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     """Real TaskManager backed by LocalFileTaskProvider at tmp_path."""
     # (Spec 024 Phase 3a) Use AGENTSERVER_STATE_ROOT so any code that
-    # uses the new storage_paths.resolve_state_subdir resolver gets
+    # uses the _config.resolve_state_subdir resolver gets
     # isolated to tmp_path. The explicit base_dir below still wins for
     # the LocalFileTaskProvider directly.
     monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))

@@ -27,7 +27,7 @@ Env vars consumed:
 - ``PORT`` — bound by ``_crash_harness``.
 - ``AGENTSERVER_STATE_ROOT`` — wired by ``_crash_harness``, auto-detected
   by both core (resilient tasks) and responses (response store + stream
-  store) packages via :func:`azure.ai.agentserver.core.storage_paths.resolve_state_subdir`.
+  store) packages via :func:`azure.ai.agentserver.core._config.resolve_state_subdir`.
   (Spec 024 Phase 3a unified storage layout.)
 - ``CONFORMANCE_RESILIENT_BACKGROUND`` — ``"true"`` or ``"false"`` to select
   the server's ``resilient_background`` option. Default ``"true"``.
