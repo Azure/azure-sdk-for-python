@@ -13,6 +13,8 @@ extends:
               image: 'ubuntu-24.04'
               os: 'linux'
             steps:
+              - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
+
               - task: UsePythonVersion@0
                 displayName: 'Set up Python'
                 inputs:

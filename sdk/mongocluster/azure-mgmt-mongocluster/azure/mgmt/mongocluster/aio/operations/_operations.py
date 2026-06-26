@@ -135,7 +135,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -277,7 +280,7 @@ class MongoClustersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01-preview"],
+        api_versions_list=["2026-02-01-preview", "2026-06-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -453,7 +456,7 @@ class MongoClustersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01-preview"],
+        api_versions_list=["2026-02-01-preview", "2026-06-01"],
     )
     async def begin_create_or_update(
         self,
@@ -940,7 +943,10 @@ class MongoClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1030,7 +1036,10 @@ class MongoClustersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1310,6 +1319,7 @@ class MongoClustersOperations:
             "2025-08-01-preview",
             "2025-09-01",
             "2026-02-01-preview",
+            "2026-06-01",
         ],
     )
     async def _promote_initial(
@@ -1488,6 +1498,7 @@ class MongoClustersOperations:
             "2025-08-01-preview",
             "2025-09-01",
             "2026-02-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_promote(
@@ -2081,7 +2092,10 @@ class FirewallRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2199,7 +2213,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2781,7 +2798,10 @@ class PrivateLinksOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2862,6 +2882,7 @@ class ReplicasOperations:
             "2025-08-01-preview",
             "2025-09-01",
             "2026-02-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_parent(
@@ -2920,7 +2941,10 @@ class ReplicasOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2999,6 +3023,7 @@ class UsersOperations:
             "2025-08-01-preview",
             "2025-09-01",
             "2026-02-01-preview",
+            "2026-06-01",
         ],
     )
     async def get(
@@ -3094,6 +3119,7 @@ class UsersOperations:
             "2025-08-01-preview",
             "2025-09-01",
             "2026-02-01-preview",
+            "2026-06-01",
         ],
     )
     async def _create_or_update_initial(
@@ -3285,6 +3311,7 @@ class UsersOperations:
             "2025-08-01-preview",
             "2025-09-01",
             "2026-02-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_create_or_update(
@@ -3382,6 +3409,7 @@ class UsersOperations:
             "2025-08-01-preview",
             "2025-09-01",
             "2026-02-01-preview",
+            "2026-06-01",
         ],
     )
     async def _delete_initial(
@@ -3464,6 +3492,7 @@ class UsersOperations:
             "2025-08-01-preview",
             "2025-09-01",
             "2026-02-01-preview",
+            "2026-06-01",
         ],
     )
     async def begin_delete(
@@ -3545,6 +3574,7 @@ class UsersOperations:
             "2025-08-01-preview",
             "2025-09-01",
             "2026-02-01-preview",
+            "2026-06-01",
         ],
     )
     def list_by_mongo_cluster(
@@ -3603,7 +3633,10 @@ class UsersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
