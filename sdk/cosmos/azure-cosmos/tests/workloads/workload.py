@@ -20,6 +20,8 @@ from azure.cosmos import CosmosClient as SyncClient, documents
 from azure.core.pipeline.transport import AioHttpTransport
 
 from workload_utils import *
+# `import *` skips underscore-prefixed names, so import the loop-lag monitor explicitly.
+from workload_utils import _loop_lag_monitor
 from workload_configs import *
 
 
