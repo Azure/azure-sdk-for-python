@@ -25,6 +25,18 @@ DESCRIPTION:
 USAGE:
     python sample_create_hosted_agent_from_code.py
 
+    Before running the sample:
+
+    pip install "azure-ai-projects>=2.2.0" python-dotenv
+
+    Set these environment variables with your own values:
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the
+       Overview page of your Microsoft Foundry portal.
+    2) FOUNDRY_HOSTED_AGENT_NAME - The Hosted Agent name. Must already exist.
+    3) AZURE_SUBSCRIPTION_ID - Azure subscription ID where the Azure AI account
+       and project are deployed.
+    4) FOUNDRY_HOSTED_AGENT_REMOTE_BUILD - Optional. Set to `true` to use
+       REMOTE_BUILD; defaults to `false` (BUNDLED).
 """
 
 import hashlib
@@ -129,3 +141,11 @@ with (
         f"Downloaded version code zip to {version_zip_path}: {version_zip_path.stat().st_size} bytes, "
         f"sha256={downloaded_version_sha256} (matches uploaded: {downloaded_version_sha256 == code_zip_sha256})"
     )
+
+    user_input = "Good morning!"
+    with project_client.get_openai_client(agent_name=agent_name) as openai_client:
+        response = openai_client.responses.create(
+            input=user_input,
+        )
+    print(f"Sent: {user_input}")
+    print(f"Response output: {response.output_text}")

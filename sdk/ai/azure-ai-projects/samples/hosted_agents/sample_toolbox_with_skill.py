@@ -28,6 +28,17 @@ USAGE:
     python sample_toolbox_with_skill.py
 
     Before running the sample:
+
+    pip install "azure-ai-projects>=2.3.0" python-dotenv
+
+    Set these environment variables with your own values:
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the
+       Overview page of your Microsoft Foundry portal.
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under
+       the "Name" column in the "Models + endpoints" tab in your Foundry project.
+    3) FOUNDRY_HOSTED_AGENT_NAME - The Hosted Agent name. Must already exist.
+    4) AZURE_SUBSCRIPTION_ID - Azure subscription ID where the Azure AI account
+       and project are deployed.
 """
 
 import os

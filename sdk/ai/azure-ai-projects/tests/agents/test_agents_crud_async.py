@@ -231,6 +231,7 @@ class TestAgentCrudAsync(TestBase):
         ------+---------------------------------------------+-----------------------------------
         POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
         PATCH  /agents/{agent_name}                          project_client.agents.update_details()
+        POST   /agents/{agent_name}/endpoint/protocols/openai/conversations  openai_client.conversations.create()
         POST   /agents/{agent_name}/endpoint/protocols/openai/responses  openai_client.responses.create()
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
@@ -270,13 +271,23 @@ class TestAgentCrudAsync(TestBase):
                 print(f"Agent endpoint configured for agent: {patched_agent.name}")
 
                 openai_client = project_client.get_openai_client(agent_name=agent_name)
+                conversation = await openai_client.conversations.create(
+                    items=[
+                        {
+                            "type": "message",
+                            "role": "user",
+                            "content": "What is 2 + 2? Answer with just the number.",
+                        }
+                    ]
+                )
                 response = await openai_client.responses.create(
-                    input="What is 2 + 2? Answer with just the number.",
+                    conversation=conversation.id,
+                    input="and then add 2 again",
                 )
 
                 print(f"Response id: {response.id}, output text: {response.output_text}")
                 assert response.output_text
-                assert "4" in response.output_text.strip()
+                assert "6" in response.output_text.strip()
             finally:
                 result = await project_client.agents.delete_version(agent_name=agent_name, agent_version=agent.version)
                 assert result.deleted
