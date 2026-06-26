@@ -46,8 +46,8 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    project_client.get_openai_client(agent_name="MyAgent105") as openai_client,
 ):
     tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
     # Create Agent with web search tool
@@ -72,7 +72,6 @@ with (
         stream=True,
         input=user_input,
         tool_choice="required",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:

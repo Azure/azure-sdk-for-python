@@ -52,8 +52,8 @@ async def main():
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        project_client.get_openai_client(agent_name="MyAgent") as openai_client,
     ):
 
         """Main async function to demonstrate Computer Use Agent functionality."""
@@ -104,7 +104,6 @@ async def main():
                     ],
                 }
             ],
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             truncation="auto",
         )
 
@@ -156,7 +155,6 @@ async def main():
                         },
                     }
                 ],
-                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 truncation="auto",
             )
 

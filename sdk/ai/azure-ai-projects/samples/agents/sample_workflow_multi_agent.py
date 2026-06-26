@@ -40,7 +40,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
-    project_client.get_openai_client() as openai_client,
+    project_client.get_openai_client(agent_name="student-teacher-workflow") as openai_client,
 ):
     # Create Teacher Agent
     teacher_agent = project_client.agents.create_version(
@@ -150,7 +150,6 @@ trigger:
 
     stream = openai_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
         input="1 + 1 = ?",
         stream=True,
     )

@@ -41,7 +41,7 @@ async def main() -> None:
 
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
         project_client.get_openai_client() as openai_client,
     ):
         try:
@@ -67,15 +67,17 @@ async def main() -> None:
             )
             print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
+            # Use an agent-scoped client for Responses and Conversations calls
+            agent_client = project_client.get_openai_client(agent_name=agent.name)
+
             # Create a conversation for the agent interaction
-            conversation = await openai_client.conversations.create()
+            conversation = await agent_client.conversations.create()
             print(f"Created conversation (id: {conversation.id})")
 
             # Send request to create a chart and generate a file
-            response = await openai_client.responses.create(
+            response = await agent_client.responses.create(
                 conversation=conversation.id,
                 input="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
-                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             print(f"Response completed (id: {response.id})")
 

@@ -64,7 +64,7 @@ AGENT_NAME = "SkillToolboxAgent"
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
-    project_client.get_openai_client() as openai_client,
+    project_client.get_openai_client(agent_name=AGENT_NAME) as openai_client,
 ):
 
     try:
@@ -132,7 +132,6 @@ with (
     print(f"User: {user_input}")
     response = openai_client.responses.create(
         input=user_input,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for item in response.output:

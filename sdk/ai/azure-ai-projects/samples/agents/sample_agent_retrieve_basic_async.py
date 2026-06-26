@@ -44,14 +44,14 @@ model = os.environ["FOUNDRY_MODEL_NAME"]
 async def main():
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
         # Creates prerequisite resources and yields (agent_name, conversation_id).
         # Then automatically deletes the created agent version when this context manager exits.
         create_and_retrieve_agent_and_conversation_async(project_client=project_client, model=model) as (
             agent_name,
             conversation_id,
         ),
-        project_client.get_openai_client() as openai_client,
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
     ):
 
         # Retrieve latest version for the prerequisite agent.
@@ -71,7 +71,6 @@ async def main():
 
         response = await openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {response.output_text}")
 

@@ -46,7 +46,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
-    project_client.get_openai_client() as openai_client,
+    project_client.get_openai_client(agent_name="student-teacher-workflow") as openai_client,
 ):
     # Define MCP tool for accessing external resources (optional - can be removed for simpler demo)
     # Note: MCP tools in workflows may require special handling depending on the use case
@@ -168,7 +168,6 @@ trigger:
 
     stream = openai_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
         input="Please summarize the Azure REST API specifications Readme",
         stream=True,
     )
@@ -233,7 +232,6 @@ trigger:
             response = openai_client.responses.create(
                 input=input_list,
                 previous_response_id=response.id,
-                extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
             )
             print(f"Agent response after approval: {response.output_text}")
 
