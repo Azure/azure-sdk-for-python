@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/TrunkedNetworks_Get.json
+# x-ms-original-file: 2026-05-01-preview/TrunkedNetworks_Get.json
 if __name__ == "__main__":
     main()

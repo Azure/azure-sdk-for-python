@@ -1,5 +1,12 @@
 # Release History
 
+## 1.6.0 (Unreleased)
+
+### Features Added
+
+- Added support for moving a participant from one call to another, enabling seamless participant transfer between active calls.
+- Added support for retrieving Teams phone call details, including the ability to specify a custom calling context for enhanced integration scenarios.
+
 ## 1.5.0 (2025-09-10)
 
 ### Features Added

@@ -96,6 +96,7 @@ stages:
                   ReleaseSha: $(Build.SourceVersion)
                   RepoId: Azure/azure-sdk-for-python
                   WorkingDirectory: $(System.DefaultWorkingDirectory)
+                  AuthToken: ''
 
           - ${{if ne(artifact.skipPublishPackage, 'true')}}:
             - deployment: PublishPackage
@@ -352,6 +353,7 @@ stages:
                   CommitMsg: "Increment package version after release of ${{ artifact.name }}"
                   PRTitle: "Increment version for ${{ parameters.ServiceDirectory }} releases"
                   CloseAfterOpenForTesting: '${{ parameters.TestPipeline }}'
+                  AuthToken: ''
 
           - ${{if and(eq(variables['Build.Reason'], 'Manual'), eq(variables['System.TeamProject'], 'internal'))}}:
             - template: /eng/pipelines/templates/jobs/smoke.tests.yml
