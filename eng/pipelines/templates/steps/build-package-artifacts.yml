@@ -25,6 +25,9 @@ parameters:
     default: []
 
 steps:
+  - ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
+    - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+
   - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
     parameters:
       ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
