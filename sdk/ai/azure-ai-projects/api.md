@@ -373,6 +373,7 @@ namespace azure.ai.projects.aio.operations
                 agent_name: str, 
                 *, 
                 before: Optional[str] = ..., 
+                include_drafts: Optional[bool] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
@@ -2773,6 +2774,7 @@ namespace azure.ai.projects.models
         created_at: datetime
         definition: AgentDefinition
         description: Optional[str]
+        draft: Optional[bool]
         id: str
         instance_identity: Optional[AgentIdentity]
         metadata: dict[str, str]
@@ -2788,6 +2790,7 @@ namespace azure.ai.projects.models
                 created_at: datetime, 
                 definition: AgentDefinition, 
                 description: Optional[str] = ..., 
+                draft: Optional[bool] = ..., 
                 id: str, 
                 metadata: dict[str, str], 
                 name: str, 
@@ -9731,6 +9734,7 @@ namespace azure.ai.projects.operations
                 agent_name: str, 
                 *, 
                 before: Optional[str] = ..., 
+                include_drafts: Optional[bool] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any

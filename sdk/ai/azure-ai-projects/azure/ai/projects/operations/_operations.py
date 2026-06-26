@@ -253,6 +253,7 @@ def build_agents_list_versions_request(
     order: Optional[Union[str, _models.PageOrder]] = None,
     after: Optional[str] = None,
     before: Optional[str] = None,
+    include_drafts: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -278,6 +279,8 @@ def build_agents_list_versions_request(
         _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
         _params["before"] = _SERIALIZER.query("before", before, "str")
+    if include_drafts is not None:
+        _params["include_drafts"] = _SERIALIZER.query("include_drafts", include_drafts, "bool")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -3898,6 +3901,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
+        draft: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create an agent version.
@@ -3928,6 +3932,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
         :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
+        :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
+         release. The service defaults to ``false`` if a value is not specified by the caller. Draft
+         versions are recorded but excluded from default 'latest' resolution and are not auto-promoted.
+         Default value is None.
+        :paramtype draft: bool
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3993,6 +4002,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
+        draft: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create an agent version.
@@ -4022,6 +4032,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
         :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
+        :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
+         release. The service defaults to ``false`` if a value is not specified by the caller. Draft
+         versions are recorded but excluded from default 'latest' resolution and are not auto-promoted.
+         Default value is None.
+        :paramtype draft: bool
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4047,6 +4062,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 "blueprint_reference": blueprint_reference,
                 "definition": definition,
                 "description": description,
+                "draft": draft,
                 "metadata": metadata,
             }
             body = {k: v for k, v in body.items() if v is not None}
@@ -4475,6 +4491,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
+        include_drafts: Optional[bool] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.AgentVersionDetails"]:
         """List agent versions.
@@ -4497,6 +4514,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
+        :keyword include_drafts: (Preview) Whether to include draft versions in the listing. The
+         service defaults to ``false`` if a value is not specified by the caller (only non-draft
+         versions are returned). Default value is None.
+        :paramtype include_drafts: bool
         :return: An iterator like instance of AgentVersionDetails
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.AgentVersionDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4522,6 +4543,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
                 order=order,
                 after=_continuation_token,
                 before=before,
+                include_drafts=include_drafts,
                 api_version=self._config.api_version,
                 headers=_headers,
                 params=_params,
@@ -5006,7 +5028,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ApiErrorResponse,
@@ -5063,7 +5085,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ApiErrorResponse,
