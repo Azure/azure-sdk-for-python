@@ -16,8 +16,10 @@ from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
+from ._patch_rle_async import AsyncRLEEnvironment
 from ._patch_sessions_async import BetaAgentsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
+from ...operations._patch_rle import RLEEnvState, RLEError, RLEStepResult
 from ._operations import (
     BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
@@ -88,6 +90,7 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "AsyncRLEEnvironment",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",
     "BetaEvaluationTaxonomiesOperations",
@@ -104,6 +107,9 @@ __all__: List[str] = [
     "ConnectionsOperations",
     "DatasetsOperations",
     "EvaluationRulesOperations",
+    "RLEEnvState",
+    "RLEError",
+    "RLEStepResult",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
