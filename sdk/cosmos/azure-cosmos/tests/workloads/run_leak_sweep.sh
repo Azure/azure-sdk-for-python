@@ -79,8 +79,9 @@ for bk in "${BACKENDS[@]}"; do
   for pid in "${pids[@]}"; do
     if ! wait "${pid}"; then
       rc=$?
-      # 124 = timeout fired the stop signal as intended; treat as success.
-      if [[ "${rc}" != "124" ]]; then
+      # The timeout stop is expected: 130 = Python's clean SIGINT exit under
+      # --preserve-status, 124 = timeout escalated to SIGKILL. Both are success.
+      if [[ "${rc}" != "124" && "${rc}" != "130" ]]; then
         echo "    !! pid=${pid} exited rc=${rc}" >&2
         fail=1
       fi

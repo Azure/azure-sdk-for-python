@@ -71,10 +71,12 @@ for (( r=1; r<=REPEATS; r++ )); do
         timeout --signal=INT --preserve-status "${DURATION_SECONDS}s" \
           python3 workload.py >"${log}" 2>&1 || rc=$?
       rc="${rc:-0}"
-      # timeout returns 124 when it had to fire the signal -- that is the EXPECTED
-      # path here (we asked it to stop the run after DURATION_SECONDS), so treat
-      # 124 and a clean 0 as success; anything else is a real failure.
-      if [[ "${rc}" != "0" && "${rc}" != "124" ]]; then
+      # With --preserve-status + --signal=INT, timeout exits with the command's
+      # OWN status after the SIGINT: Python reports 130 (128+SIGINT) on the clean
+      # stop, or 0 if it swallows the signal. (Plain 124 only appears if timeout
+      # escalates to SIGKILL.) All of 0/124/130 are the EXPECTED stop here; treat
+      # anything else as a real failure.
+      if [[ "${rc}" != "0" && "${rc}" != "124" && "${rc}" != "130" ]]; then
         echo "    !! run exited rc=${rc}; see ${log}" >&2
       fi
       unset rc

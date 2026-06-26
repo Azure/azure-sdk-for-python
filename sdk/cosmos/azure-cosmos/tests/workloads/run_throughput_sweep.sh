@@ -78,7 +78,8 @@ for op in "${OPERATIONS[@]}"; do
         timeout --signal=INT --preserve-status "${DURATION_SECONDS}s" \
           python3 workload.py >"${log}" 2>&1 || rc=$?
       rc="${rc:-0}"
-      if [[ "${rc}" != "0" && "${rc}" != "124" ]]; then
+      # 0/124/130 are all the expected timeout-stop (see run_latency_matrix.sh).
+      if [[ "${rc}" != "0" && "${rc}" != "124" && "${rc}" != "130" ]]; then
         echo "    !! point exited rc=${rc}; see ${log}" >&2
       fi
       unset rc
