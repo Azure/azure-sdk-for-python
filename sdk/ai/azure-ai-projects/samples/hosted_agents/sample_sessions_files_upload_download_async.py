@@ -94,7 +94,7 @@ async def main():
 
             print(f"Downloading and printing content from '{remote_file_path1}'")
             content_bytes = b""
-            async for chunk in await project_client.agents.download_session_file(
+            async for chunk in await project_client.agents.download_session_file_as_bytes(
                 agent_name=agent_name,
                 agent_session_id=session.agent_session_id,
                 remote_path=remote_file_path1,

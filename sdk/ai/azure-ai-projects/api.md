@@ -252,7 +252,7 @@ namespace azure.ai.projects.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        async def download_code(
+        async def download_code_as_bytes(
                 self, 
                 agent_name: str, 
                 *, 
@@ -261,7 +261,18 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
-        async def download_session_file(
+        async def download_code_to_path(
+                self, 
+                agent_name: str, 
+                *, 
+                agent_version: Optional[str] = ..., 
+                file_path: Union[str, PathLike[str]], 
+                overwrite: bool = False, 
+                **kwargs: Any
+            ) -> str: ...
+
+        @distributed_trace_async
+        async def download_session_file_as_bytes(
                 self, 
                 agent_name: str, 
                 agent_session_id: str, 
@@ -271,12 +282,13 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
-        async def download_session_file_to_disk(
+        async def download_session_file_to_path(
                 self, 
                 agent_name: str, 
                 session_id: str, 
                 *, 
                 file_path: Union[str, PathLike[str]], 
+                overwrite: bool = False, 
                 remote_path: str, 
                 **kwargs: Any
             ) -> None: ...
@@ -9598,7 +9610,7 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
         @distributed_trace
-        def download_code(
+        def download_code_as_bytes(
                 self, 
                 agent_name: str, 
                 *, 
@@ -9607,7 +9619,18 @@ namespace azure.ai.projects.operations
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
-        def download_session_file(
+        def download_code_to_path(
+                self, 
+                agent_name: str, 
+                *, 
+                agent_version: Optional[str] = ..., 
+                file_path: Union[str, PathLike[str]], 
+                overwrite: bool = False, 
+                **kwargs: Any
+            ) -> str: ...
+
+        @distributed_trace
+        def download_session_file_as_bytes(
                 self, 
                 agent_name: str, 
                 agent_session_id: str, 
@@ -9617,12 +9640,13 @@ namespace azure.ai.projects.operations
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
-        def download_session_file_to_disk(
+        def download_session_file_to_path(
                 self, 
                 agent_name: str, 
                 session_id: str, 
                 *, 
                 file_path: Union[str, PathLike[str]], 
+                overwrite: bool = False, 
                 remote_path: str, 
                 **kwargs: Any
             ) -> None: ...

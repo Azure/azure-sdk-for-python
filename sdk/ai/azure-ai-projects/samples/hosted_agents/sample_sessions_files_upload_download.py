@@ -92,7 +92,7 @@ with (
 
         print(f"Downloading and printing content from '{remote_file_path1}'")
         content_bytes = b"".join(
-            project_client.agents.download_session_file(
+            project_client.agents.download_session_file_as_bytes(
                 agent_name=agent_name,
                 agent_session_id=session.agent_session_id,
                 remote_path=remote_file_path1,
