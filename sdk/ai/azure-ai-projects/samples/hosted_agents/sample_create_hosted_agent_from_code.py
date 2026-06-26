@@ -42,11 +42,8 @@ USAGE:
 import os
 import tempfile
 from pathlib import Path
-
 from dotenv import load_dotenv
-
 from azure.identity import DefaultAzureCredential
-
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeConfiguration,
@@ -70,7 +67,7 @@ dependency_resolution, zip_filename, code_zip_bytes, code_zip_sha256 = select_ec
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # The ``code`` field accepts any variant of the SDK's ``FileType`` union.
     # The 3-tuple form used here pins both the filename and the content type.
@@ -127,18 +124,15 @@ with (
 
     # Download the zip for the version we just created, streaming to a temp file.
     version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
-    with open(version_zip_path, "wb") as f:
-        for chunk in project_client.agents.download_code(
-            agent_name=agent_name,
-            agent_version=created.version,
-        ):
-            f.write(chunk)
-    print(f"Downloaded version code zip to {version_zip_path}")
 
-    user_input = "Good morning!"
-    with project_client.get_openai_client(agent_name=agent_name) as openai_client:
-        response = openai_client.responses.create(
-            input=user_input,
-        )
-    print(f"Sent: {user_input}")
-    print(f"Response output: {response.output_text}")
+    downloaded_version_sha256 = project_client.agents.download_code_to_path(
+        agent_name=agent_name,
+        agent_version=created.version,
+        file_path=version_zip_path,
+        overwrite=True,
+    )
+
+    print(
+        f"Downloaded version code zip to {version_zip_path}: {version_zip_path.stat().st_size} bytes, "
+        f"sha256={downloaded_version_sha256} (matches uploaded: {downloaded_version_sha256 == code_zip_sha256})"
+    )

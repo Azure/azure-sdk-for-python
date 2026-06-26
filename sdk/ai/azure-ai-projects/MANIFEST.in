@@ -5,4 +5,3 @@ recursive-include tests *
 recursive-include samples *
 include azure/__init__.py
 include azure/ai/__init__.py
-

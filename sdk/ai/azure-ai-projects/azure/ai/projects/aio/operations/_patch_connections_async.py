@@ -30,7 +30,7 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
     async def get(self, name: str, *, include_credentials: Optional[bool] = False, **kwargs: Any) -> Connection:
         """Get a connection by name.
 
-        :param name: The name of the resource. Required.
+        :param name: The name of the connection. Required.
         :type name: str
         :keyword include_credentials: Whether to include credentials in the response. Default is False.
         :paramtype include_credentials: bool
@@ -38,18 +38,8 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         :rtype: ~azure.ai.projects.models.Connection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
         if include_credentials:
-            connection = await super()._get_with_credentials(name, **kwargs)
-            if connection.type == ConnectionType.CUSTOM:
-                # Why do we do this? See comment in the sync version of this code (file _patch_connections.py).
-                setattr(
-                    connection.credentials,
-                    "credential_keys",
-                    {k: v for k, v in connection.credentials.as_dict().items() if k != "type"},
-                )
-
-            return connection
+            return await super()._get_with_credentials(name, **kwargs)
 
         return await super()._get(name, **kwargs)
 
