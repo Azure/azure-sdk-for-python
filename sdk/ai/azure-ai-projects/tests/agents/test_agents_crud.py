@@ -130,14 +130,13 @@ class TestAgentCrud(TestBase):
         Action REST API Route                                Client Method
         ------+---------------------------------------------+-----------------------------------
         POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
-        POST   /openai/conversations                         openai_client.conversations.create()
         POST   /openai/responses                             openai_client.responses.create()
         POST   /agents/{agent_name}:disable                  project_client.agents.disable()
         POST   /agents/{agent_name}:enable                   project_client.agents.enable()
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
         print("\n")
-        model = kwargs.get("foundry_model_name")
+        model: str = kwargs["foundry_model_name"]
         agent_name = "DisableEnableTestAgent"
 
         # Setup
@@ -163,15 +162,9 @@ class TestAgentCrud(TestBase):
         print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
         self._validate_agent_version(agent)
 
-        # Create a conversation
-        conversation = openai_client.conversations.create(
-            items=[{"type": "message", "role": "user", "content": "How many feet in a mile?"}]
-        )
-        print(f"Created conversation with initial user message (id: {conversation.id})")
-
         # Verify the agent can respond to requests
         response = openai_client.responses.create(
-            conversation=conversation.id,
+            input="How many feet in a mile?",
             extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
@@ -185,7 +178,7 @@ class TestAgentCrud(TestBase):
         error_raised = False
         try:
             _ = openai_client.responses.create(
-                conversation=conversation.id,
+                input="How many feet in a mile?",
                 extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
         except openai.PermissionDeniedError as e:
@@ -197,15 +190,9 @@ class TestAgentCrud(TestBase):
         project_client.agents.enable(agent_name=agent_name)
         print(f"Agent enabled")
 
-        # Add a new message to the conversation for the next request
-        _ = openai_client.conversations.items.create(
-            conversation.id,
-            items=[{"type": "message", "role": "user", "content": "And how many meters?"}],
-        )
-
         # Verify the agent can respond to requests again
         response = openai_client.responses.create(
-            conversation=conversation.id,
+            input="How many meters in a mile?",
             extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
