@@ -253,7 +253,7 @@ class TestSamples(AzureRecordedTestCase):
                 test_id="sample_create_hosted_agent_from_code",
                 sample_filename="sample_create_hosted_agent_from_code.py",
                 env_vars={
-                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
+                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "false",
                     "SKIP_RBAC": "true",
                 },
             ),
