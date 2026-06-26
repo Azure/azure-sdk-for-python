@@ -57,7 +57,10 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
 
     try:
         client = PyPIClient()
-        ordered_versions = client.get_ordered_versions(package_name)
+        # Ignore 0.0.0 when it appears on PyPI as a placeholder or name-reservation version.
+        ordered_versions = [v for v in client.get_ordered_versions(package_name) if v.base_version != "0.0.0"]
+        if not ordered_versions:
+            return "", ""
         last_release = ordered_versions[-1]
         stable_releases = [x for x in ordered_versions if not x.is_prerelease]
         last_stable_version = str(stable_releases[-1] if stable_releases else "")
@@ -84,10 +87,6 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         _LOGGER.warning(f"Failed to get version info from PyPI for {package_name}: {e}")
         last_version = ""
         last_stable_version = ""
-
-    # Ignore 0.0.0 when it appears on PyPI as a placeholder or name-reservation version.
-    if last_version and Version(last_version).base_version == "0.0.0":
-        return "", ""
 
     return last_version, last_stable_version
 

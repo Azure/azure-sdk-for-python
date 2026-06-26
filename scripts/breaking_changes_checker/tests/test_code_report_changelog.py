@@ -36,8 +36,10 @@ def _generate_and_compare_changelog(
             [
                 venv.env_exe,
                 os.path.join(CHECKER_DIR, "detect_breaking_changes.py"),
-                "-t", package_name,
-                "-m", target_module,
+                "-t",
+                package_name,
+                "-m",
+                target_module,
                 "--code-report",
             ],
             capture_output=True,
@@ -51,8 +53,9 @@ def _generate_and_compare_changelog(
 
         with open(source_report_path) as f:
             source_report = json.load(f)
-        assert isinstance(source_report, dict) and len(source_report) > 0, \
-            f"Code report for {source_version} should not be empty"
+        assert (
+            isinstance(source_report, dict) and len(source_report) > 0
+        ), f"Code report for {source_version} should not be empty"
 
         # Upgrade to target version in the same venv
         subprocess.check_call(
@@ -64,8 +67,10 @@ def _generate_and_compare_changelog(
             [
                 venv.env_exe,
                 os.path.join(CHECKER_DIR, "detect_breaking_changes.py"),
-                "-t", package_name,
-                "-m", target_module,
+                "-t",
+                package_name,
+                "-m",
+                target_module,
                 "--code-report",
             ],
             capture_output=True,
@@ -79,18 +84,22 @@ def _generate_and_compare_changelog(
 
         with open(target_report_path) as f:
             target_report = json.load(f)
-        assert isinstance(target_report, dict) and len(target_report) > 0, \
-            f"Code report for {target_version} should not be empty"
+        assert (
+            isinstance(target_report, dict) and len(target_report) > 0
+        ), f"Code report for {target_version} should not be empty"
 
         # Compare the two reports to generate changelog
         result = subprocess.run(
             [
                 venv.env_exe,
                 os.path.join(CHECKER_DIR, "detect_breaking_changes.py"),
-                "-t", package_name,
+                "-t",
+                package_name,
                 "--changelog",
-                "--source-report", source_report_path,
-                "--target-report", target_report_path,
+                "--source-report",
+                source_report_path,
+                "--target-report",
+                target_report_path,
             ],
             capture_output=True,
             text=True,
@@ -99,10 +108,12 @@ def _generate_and_compare_changelog(
         assert result.returncode == 0, f"Changelog comparison failed:\n{result.stderr}"
 
         changelog_output = result.stdout
-        assert "===== changelog start =====" in changelog_output, \
-            f"Changelog output missing start marker:\n{changelog_output}"
-        assert "===== changelog end =====" in changelog_output, \
-            f"Changelog output missing end marker:\n{changelog_output}"
+        assert (
+            "===== changelog start =====" in changelog_output
+        ), f"Changelog output missing start marker:\n{changelog_output}"
+        assert (
+            "===== changelog end =====" in changelog_output
+        ), f"Changelog output missing end marker:\n{changelog_output}"
 
         # Extract changelog content between markers and compare with expected
         start = changelog_output.index("===== changelog start =====") + len("===== changelog start =====\n")
@@ -127,9 +138,16 @@ def _generate_and_compare_changelog(
         with open(expected_path, encoding="utf-8") as f:
             expected_changelog = f.read().strip()
 
-        assert actual_changelog == expected_changelog, (
-            f"Changelog mismatch.\n--- Expected ---\n{expected_changelog}\n--- Actual ---\n{actual_changelog}"
-        )
+        if actual_changelog != expected_changelog:
+            # Dump the actual changelog to a temp folder so the expected data can be
+            # updated by copying this file, without rerunning these expensive tests.
+            dump_path = os.path.join(tempfile.gettempdir(), expected_changelog_file)
+            with open(dump_path, "w", encoding="utf-8", newline="\n") as f:
+                f.write(actual_changelog + "\n")
+            raise AssertionError(
+                f"Changelog mismatch. Actual changelog written to: {dump_path}\n"
+                f"To update expected data, copy it to: {expected_path}\n"
+            )
 
 
 def test_code_report_for_azure_mgmt_peering():

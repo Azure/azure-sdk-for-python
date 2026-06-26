@@ -36,7 +36,7 @@ class TestComputeManagementLogAnalyticsOperationsAsync(AzureMgmtRecordedTestCase
                     "groupByThrottlePolicy": bool,
                     "groupByUserAgent": bool,
                 },
-                api_version="2025-11-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -59,7 +59,7 @@ class TestComputeManagementLogAnalyticsOperationsAsync(AzureMgmtRecordedTestCase
                     "groupByThrottlePolicy": bool,
                     "groupByUserAgent": bool,
                 },
-                api_version="2025-11-01",
+                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -921,6 +921,131 @@ class TestRoutingMapProvider(unittest.TestCase):
         self.assertEqual(none_seen['count'], 0,
                          "Cache entry should never be None during a refresh — it should be atomically replaced")
 
+    # The tests below run through SmartRoutingMapProvider to confirm that a
+    # bad cache snapshot surfaces as a CosmosHttpResponseError the caller can
+    # handle, not as a raw ValueError or AssertionError.
+
+    class _SequencedSnapshotClient(object):
+        """Mock client that returns the next payload from response_sequence on
+        each fresh read, and an empty page when the If-None-Match matches the
+        last etag (acts like a 304 reply)."""
+
+        def __init__(self, response_sequence):
+            self.response_sequence = response_sequence
+            self.url_connection = "https://mock-sequenced-test.documents.azure.com:443/"
+            self.call_count = 0
+            self._last_etag = None
+
+        def _ReadPartitionKeyRanges(self, _collection_link, _feed_options=None, **kwargs):
+            headers_in = kwargs.get('headers') or {}
+            inm = headers_in.get('If-None-Match')
+            if inm is not None and inm == self._last_etag:
+                status_capture = kwargs.get('_internal_response_status_capture')
+                if status_capture is not None:
+                    status_capture[0] = 304
+                captured_headers = kwargs.get('_internal_response_headers_capture')
+                if captured_headers is not None:
+                    captured_headers.clear()
+                    captured_headers.update({'ETag': self._last_etag})
+                return []
+            idx = min(self.call_count, len(self.response_sequence) - 1)
+            payload = self.response_sequence[idx]
+            self.call_count += 1
+            etag = f'"etag-{self.call_count}"'
+            self._last_etag = etag
+            captured_headers = kwargs.get('_internal_response_headers_capture')
+            if captured_headers is not None:
+                captured_headers.clear()
+                captured_headers.update({'ETag': etag})
+            status_capture = kwargs.get('_internal_response_status_capture')
+            if status_capture is not None:
+                status_capture[0] = 200
+            return payload
+
+    _OVERLAP_PAYLOAD = [
+        {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+        {'id': '10',   'minInclusive': '80', 'maxExclusive': 'A0'},
+        {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90'},
+        {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0'},
+        {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+    ]
+    _GAP_PAYLOAD = [
+        {'id': 'L', 'minInclusive': '',   'maxExclusive': '80'},
+        {'id': 'R', 'minInclusive': 'A0', 'maxExclusive': 'FF'},
+    ]
+    _GOOD_PAYLOAD = [
+        {'id': 'L',    'minInclusive': '',   'maxExclusive': '80'},
+        {'id': '10/0', 'minInclusive': '80', 'maxExclusive': '90', 'parents': ['10']},
+        {'id': '10/1', 'minInclusive': '90', 'maxExclusive': 'A0', 'parents': ['10']},
+        {'id': 'R',    'minInclusive': 'A0', 'maxExclusive': 'FF'},
+    ]
+
+    def _reset_shared_cache_state(self, provider):
+        """Release the given provider and clear shared cache dicts so the next
+        sub-test or run starts with a clean slate."""
+        provider.release()
+        with _shared_cache_lock:
+            _shared_routing_map_cache.clear()
+            _shared_collection_locks.clear()
+            _shared_locks_locks.clear()
+            _shared_cache_refcounts.clear()
+
+    def test_smart_provider_does_not_leak_overlap_value_error_on_persistent_inconsistency(self):
+        """A persistent overlap or gap snapshot must raise 503 with sub_status
+        21015 from SmartRoutingMapProvider.get_overlapping_ranges, not a bare
+        ValueError or AssertionError."""
+        full_range = routing_range.Range("", "FF", True, False)
+
+        for label, payload in (("overlap", self._OVERLAP_PAYLOAD), ("gap", self._GAP_PAYLOAD)):
+            with self.subTest(snapshot=label):
+                client = TestRoutingMapProvider._SequencedSnapshotClient([payload])
+                provider = SmartRoutingMapProvider(client)
+                try:
+                    with patch(
+                        'azure.cosmos._routing.routing_map_provider.time.sleep',
+                        return_value=None,
+                    ):
+                        with self.assertRaises(CosmosHttpResponseError) as ctx:
+                            provider.get_overlapping_ranges(
+                                "dbs/db/colls/container", [full_range]
+                            )
+                    exc = ctx.exception
+                    self.assertEqual(
+                        exc.status_code,
+                        http_constants.StatusCodes.SERVICE_UNAVAILABLE,
+                        f"Persistent {label} snapshot must surface as 503.",
+                    )
+                    self.assertEqual(
+                        exc.sub_status,
+                        http_constants.SubStatusCodes.ROUTING_MAP_SNAPSHOT_INCONSISTENT,
+                        f"503 from a persistent {label} must set sub_status to 21015.",
+                    )
+                    self.assertNotIsInstance(exc, AssertionError)
+                    self.assertFalse(isinstance(exc, ValueError))
+                finally:
+                    self._reset_shared_cache_state(provider)
+
+    def test_smart_provider_recovers_through_full_stack_after_transient_overlap(self):
+        """A bad overlap response followed by a good one must return the
+        expected ranges from get_overlapping_ranges."""
+        full_range = routing_range.Range("", "FF", True, False)
+        client = TestRoutingMapProvider._SequencedSnapshotClient(
+            [self._OVERLAP_PAYLOAD, self._GOOD_PAYLOAD]
+        )
+        provider = SmartRoutingMapProvider(client)
+        try:
+            with patch(
+                'azure.cosmos._routing.routing_map_provider.time.sleep',
+                return_value=None,
+            ):
+                overlapping = provider.get_overlapping_ranges(
+                    "dbs/db/colls/container", [full_range]
+                )
+            ids = [r['id'] for r in overlapping]
+            self.assertEqual(ids, ['L', '10/0', '10/1', 'R'])
+        finally:
+            self._reset_shared_cache_state(provider)
+
 if __name__ == "__main__":
     # import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

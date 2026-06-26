@@ -29,6 +29,7 @@ jobs:
       vmImage: 'ubuntu-22.04'
 
     steps:
+      - template: /eng/common/pipelines/templates/steps/create-authenticated-npmrc.yml
       - task: NodeTool@0
         displayName: 'Install Node.js $(NodeVersion)'
         inputs:

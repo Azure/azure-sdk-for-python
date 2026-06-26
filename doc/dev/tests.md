@@ -57,8 +57,8 @@ In the root directory of our SDK, a number of mandatory files have been added. W
 
 - README.md. This is the description and guidance for customers or your SDK. Please see the guide on writing a README to make sure you have the complete [content requirements and formatting](https://review.learn.microsoft.com/help/platform/reference-document-sdk-client-libraries#readme).
 - CHANGELOG.md. This is where you will add the summary of changes for each new release. Please see [the guidance](https://azure.github.io/azure-sdk/policies_releases.html#changelog-guidance) for correct formatting.
-- setup.py. This is the 'installer' for your Python SDK. Please see [the guide on Python packaging][packaging] for details on customizing this for a specific package.
-- setup.cfg. This is an artifact used in building the Python package. Please see [the guide on Python packaging][packaging] for details.
+- pyproject.toml. This is the package configuration file for your Python SDK. Please see [the guide on Python packaging][packaging] for details on customizing this for a specific package.
+- setup.py / setup.cfg. **Legacy:** older packages use these instead of `pyproject.toml` to build the Python package. New packages should use `pyproject.toml`. Please see [the guide on Python packaging][packaging] for details.
 - MANIFEST.in. This is an artifact used in building the Python package. Please see [the guide on Python packaging][packaging] for details.
 - dev_requirements.txt. This is for developers, and lists the packages required for running the tests and samples. See the dependency installation section below.
 - sdk_packaging.toml. This configuration is used by the packaging pipeline and no further modifications should be required.
@@ -147,7 +147,7 @@ A quick description of the commands above:
 - verifywhl: verifies the wheel contents and manifest
 - verifysdist: verifies the sdist contents and manifest
 - samples: runs all of the samples in the `samples` directory and verifies they are working correctly
-- apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/apiview-stub-generator) tool on your code
+- apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/apiview-stub-generator) tool on your code. By default, generates `api.md` and `api.metadata.yml` in the package directory, which are the files needed to pass the API consistency check. Use `--token-file` to generate only the raw APIView token file.
 
 ## The `devtools_testutils` package
 
