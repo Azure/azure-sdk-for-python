@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+import hashlib
 import os
 from pathlib import Path
 from typing import Union, Optional, Any, IO, overload
@@ -311,12 +312,13 @@ class AgentsOperations(GeneratedAgentsOperations):
         return await super()._upload_session_file(agent_name, session_id, content, remote_path=remote_path, **kwargs)
 
     @distributed_trace_async
-    async def download_session_file_to_disk(
+    async def download_session_file_to_path(
         self,
         agent_name: str,
         session_id: str,
         *,
         file_path: Union[str, "os.PathLike[str]"],
+        overwrite: bool = False,
         remote_path: str,
         **kwargs: Any,
     ) -> None:
@@ -331,21 +333,28 @@ class AgentsOperations(GeneratedAgentsOperations):
         :type session_id: str
         :keyword file_path: The full path to the local file where the content should be written. Required.
         :paramtype file_path: str or os.PathLike[str]
+        :keyword overwrite: If True, overwrite the local file if it already exists. If False (default),
+         raise FileExistsError when the file already exists.
+        :paramtype overwrite: bool
         :keyword remote_path: The file path to download from the sandbox, relative to the session home
          directory. Required.
         :paramtype remote_path: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
+        :raises FileExistsError: If *file_path* already exists and *overwrite* is False.
         :raises ValueError: If *file_path* points to a directory.
         :raises OSError: If the file cannot be written.
         """
         p = Path(file_path)
-        if p.exists() and p.is_dir():
-            raise ValueError(f"Provide a valid file path, not a folder path `{file_path}`.")
+        if p.exists():
+            if p.is_dir():
+                raise ValueError(f"Provide a valid file path, not a folder path `{file_path}`.")
+            if not overwrite:
+                raise FileExistsError(f"The file `{file_path}` already exists. Set overwrite=True to replace it.")
 
         # Download the file content using the existing method
-        content_iterator = await self.download_session_file(
+        content_iterator = await self.download_session_file_as_bytes(
             agent_name=agent_name,
             agent_session_id=session_id,
             remote_path=remote_path,
@@ -356,3 +365,60 @@ class AgentsOperations(GeneratedAgentsOperations):
         with open(file_path, "wb") as f:
             async for chunk in content_iterator:
                 f.write(chunk)
+
+    @distributed_trace_async
+    async def download_code_to_path(
+        self,
+        agent_name: str,
+        *,
+        file_path: Union[str, "os.PathLike[str]"],
+        overwrite: bool = False,
+        agent_version: Optional[str] = None,
+        **kwargs: Any,
+    ) -> str:
+        """Download agent code directly to disk.
+
+        Downloads the code zip for a code-based hosted agent and writes it to a local file.
+
+        If ``agent_version`` is supplied, downloads that version's code zip; otherwise
+        downloads the latest version's code zip.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :keyword file_path: The full path to the local file where the code zip should be written. Required.
+        :paramtype file_path: str or os.PathLike[str]
+        :keyword overwrite: If True, overwrite the local file if it already exists. If False (default),
+         raise FileExistsError when the file already exists.
+        :paramtype overwrite: bool
+        :keyword agent_version: The version of the agent whose code zip should be downloaded.
+         If omitted, the latest version's code zip is downloaded. Default value is None.
+        :paramtype agent_version: str
+        :return: The SHA-256 hex digest of the downloaded file.
+        :rtype: str
+        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises FileExistsError: If *file_path* already exists and *overwrite* is False.
+        :raises ValueError: If *file_path* points to a directory.
+        :raises OSError: If the file cannot be written.
+        """
+        p = Path(file_path)
+        if p.exists():
+            if p.is_dir():
+                raise ValueError(f"Provide a valid file path, not a folder path `{file_path}`.")
+            if not overwrite:
+                raise FileExistsError(f"The file `{file_path}` already exists. Set overwrite=True to replace it.")
+
+        # Download the code content using the existing method
+        content_iterator = await self.download_code_as_bytes(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            **kwargs,
+        )
+
+        # Write the content to disk and calculate SHA-256
+        sha = hashlib.sha256()
+        with open(file_path, "wb") as f:
+            async for chunk in content_iterator:
+                f.write(chunk)
+                sha.update(chunk)
+
+        return sha.hexdigest()

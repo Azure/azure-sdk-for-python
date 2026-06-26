@@ -57,7 +57,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
         POST    /agents/{agent_name}/sessions                                               project_client.agents.create_session()
         POST    /agents/{agent_name}/sessions/{session_id}/files:upload                     project_client.agents.upload_session_file()
         GET     /agents/{agent_name}/sessions/{session_id}/files                            project_client.agents.list_session_files()
-        GET     /agents/{agent_name}/sessions/{session_id}/files:download                   project_client.agents.download_session_file()
+        GET     /agents/{agent_name}/sessions/{session_id}/files:download                   project_client.agents.download_session_file_as_bytes()
         DELETE  /agents/{agent_name}/sessions/{session_id}/files                            project_client.agents.delete_session_file()
         DELETE  /agents/{agent_name}/sessions/{session_id}                                  project_client.agents.delete_session()
         """
@@ -160,7 +160,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 # Download and verify content of first file
                 print(f"Downloading and verifying content from '{remote_file_path1}'")
                 content_chunks = []
-                download_iterator = await project_client.agents.download_session_file(
+                download_iterator = await project_client.agents.download_session_file_as_bytes(
                     agent_name=agent_name,
                     agent_session_id=session.agent_session_id,
                     remote_path=remote_file_path1,
@@ -182,12 +182,12 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 ), f"Expected content '{expected_content}' not found in downloaded file"
                 print("Content verification passed!")
 
-                # Download second file to disk using download_session_file_to_disk with str file_path
+                # Download second file to disk using download_session_file_to_path with str file_path
                 temp_dir = tempfile.gettempdir()
                 download_path = os.path.join(temp_dir, "downloaded_data_file2.txt")
                 print(f"Downloading session file to disk: {remote_file_path2} -> {download_path}")
 
-                await project_client.agents.download_session_file_to_disk(
+                await project_client.agents.download_session_file_to_path(
                     agent_name=agent_name,
                     session_id=session.agent_session_id,
                     file_path=download_path,  # str type
@@ -205,7 +205,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 assert (
                     expected_content2 in downloaded_content
                 ), f"Expected content '{expected_content2}' not found in downloaded file"
-                print("download_session_file_to_disk content verification passed!")
+                print("download_session_file_to_path content verification passed!")
 
                 # Clean up local temp file
                 if os.path.exists(download_path):
@@ -214,11 +214,11 @@ class TestAgentSessionFilesCrudAsync(TestBase):
 
                 # --------------------------------------------------------------------------------------------------
 
-                # Download third file to disk using download_session_file_to_disk with PathLike file_path
+                # Download third file to disk using download_session_file_to_path with PathLike file_path
                 download_path3 = Path(tempfile.gettempdir()) / "downloaded_data_file3.txt"
                 print(f"Downloading session file to disk using PathLike: {remote_file_path3} -> {download_path3}")
 
-                await project_client.agents.download_session_file_to_disk(
+                await project_client.agents.download_session_file_to_path(
                     agent_name=agent_name,
                     session_id=session.agent_session_id,
                     file_path=download_path3,  # PathLike[str] type
@@ -236,7 +236,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 assert (
                     expected_content3 in downloaded_content3
                 ), f"Expected content '{expected_content3}' not found in downloaded file"
-                print("download_session_file_to_disk with PathLike content verification passed!")
+                print("download_session_file_to_path with PathLike content verification passed!")
 
                 # Clean up local temp file
                 if download_path3.exists():
@@ -282,33 +282,26 @@ class TestAgentSessionFilesCrudAsync(TestBase):
 
     # To run this test:
     # pytest tests\sessions\test_agent_session_files_crud_async.py::TestAgentSessionFilesCrudAsync::test_agent_session_files_invalid_input_async -s
+    # These are unit-tests that do not make network calls.
     @servicePreparer()
-    @recorded_by_proxy_async()
     async def test_agent_session_files_invalid_input_async(self, **kwargs):
         """
-        Test that upload_session_file and download_session_file_to_disk raise appropriate
+        Test that upload_session_file and download_session_file_to_path raise appropriate
         errors when given invalid input (non-existing files, folder paths).
 
         These are client-side validations that occur before any API call is made.
         """
         print("\n")
 
-        agent_name = kwargs["foundry_hosted_agent_name"]
-        project_client = self.create_async_client(**kwargs)
+        foundry_project_endpoint = "https://fake-endpoint"
+        agent_name = "fake-agent-name"
+        session_id = "fake-session-id"
+
+        project_client = self.create_async_client(
+            agent_name=agent_name, foundry_project_endpoint=foundry_project_endpoint
+        )
 
         async with project_client:
-            # Get the latest active agent version
-            agent = await self._get_latest_active_agent_version_async(project_client, agent_name)
-            assert agent is not None, "Failed to get agent version"
-            print(f"Using agent: {agent_name}, version: {agent.version}")
-
-            # Create a session
-            session = await project_client.agents.create_session(
-                agent_name=agent_name,
-                version_indicator=VersionRefIndicator(agent_version=agent.version),
-            )
-            assert session is not None, "Session creation returned None"
-            print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
 
             try:
                 # --------------------------------------------------------------------------------------------------
@@ -321,7 +314,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 try:
                     await project_client.agents.upload_session_file(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=non_existing_file_str,  # str type pointing to non-existing file
                         remote_path="/remote/non_existing.txt",
                     )
@@ -336,7 +329,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 try:
                     await project_client.agents.upload_session_file(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=non_existing_file_pathlike,  # PathLike[str] type pointing to non-existing file
                         remote_path="/remote/non_existing.txt",
                     )
@@ -351,7 +344,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 try:
                     await project_client.agents.upload_session_file(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=upload_folder_path_str,  # str type pointing to a folder
                         remote_path="/remote/folder_upload.txt",
                     )
@@ -366,7 +359,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 try:
                     await project_client.agents.upload_session_file(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=upload_folder_path_pathlike,  # PathLike[str] type pointing to a folder
                         remote_path="/remote/folder_upload.txt",
                     )
@@ -378,16 +371,16 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 print("upload_session_file error handling tests passed!")
 
                 # --------------------------------------------------------------------------------------------------
-                # Test download_session_file_to_disk with invalid inputs
+                # Test download_session_file_to_path with invalid inputs
                 # --------------------------------------------------------------------------------------------------
 
-                # Test that download_session_file_to_disk raises ValueError when file_path is a folder (str type)
+                # Test that download_session_file_to_path raises ValueError when file_path is a folder (str type)
                 folder_path_str = tempfile.gettempdir()  # This is a folder, not a file
-                print(f"Testing download_session_file_to_disk with folder path (str): {folder_path_str}")
+                print(f"Testing download_session_file_to_path with folder path (str): {folder_path_str}")
                 try:
-                    await project_client.agents.download_session_file_to_disk(
+                    await project_client.agents.download_session_file_to_path(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=folder_path_str,  # str type pointing to a folder
                         remote_path="/remote/some_file.txt",
                     )
@@ -396,13 +389,13 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                     print(f"Got expected ValueError for folder path (str): {e}")
                     assert "folder" in str(e).lower(), f"Error message should mention 'folder': {e}"
 
-                # Test that download_session_file_to_disk raises ValueError when file_path is a folder (PathLike type)
+                # Test that download_session_file_to_path raises ValueError when file_path is a folder (PathLike type)
                 folder_path_pathlike = Path(tempfile.gettempdir())  # This is a folder, not a file
-                print(f"Testing download_session_file_to_disk with folder path (PathLike): {folder_path_pathlike}")
+                print(f"Testing download_session_file_to_path with folder path (PathLike): {folder_path_pathlike}")
                 try:
-                    await project_client.agents.download_session_file_to_disk(
+                    await project_client.agents.download_session_file_to_path(
                         agent_name=agent_name,
-                        session_id=session.agent_session_id,
+                        session_id=session_id,
                         file_path=folder_path_pathlike,  # PathLike[str] type pointing to a folder
                         remote_path="/remote/some_file.txt",
                     )
@@ -411,13 +404,63 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                     print(f"Got expected ValueError for folder path (PathLike): {e}")
                     assert "folder" in str(e).lower(), f"Error message should mention 'folder': {e}"
 
-                print("download_session_file_to_disk folder path validation tests passed!")
+                print("download_session_file_to_path folder path validation tests passed!")
+
+                # --------------------------------------------------------------------------------------------------
+                # Test download_session_file_to_path with existing file (overwrite behavior)
+                # --------------------------------------------------------------------------------------------------
+
+                # Create a temporary file that already exists
+                existing_file_path = os.path.join(tempfile.gettempdir(), "existing_file_for_overwrite_test.txt")
+                with open(existing_file_path, "w", encoding="utf-8") as f:
+                    f.write("This file already exists")
+
+                try:
+                    # Test that download_session_file_to_path raises FileExistsError when file exists (default overwrite=False)
+                    print(
+                        f"Testing download_session_file_to_path with existing file (default overwrite): {existing_file_path}"
+                    )
+                    try:
+                        await project_client.agents.download_session_file_to_path(
+                            agent_name=agent_name,
+                            session_id=session_id,
+                            file_path=existing_file_path,
+                            remote_path="/remote/some_file.txt",
+                        )
+                        assert False, "Expected FileExistsError when file already exists (default overwrite=False)"
+                    except FileExistsError as e:
+                        print(f"Got expected FileExistsError (default overwrite): {e}")
+                        assert "already exists" in str(e).lower(), f"Error message should mention 'already exists': {e}"
+                        assert "overwrite=True" in str(e), f"Error message should mention 'overwrite=True': {e}"
+
+                    # Test that download_session_file_to_path raises FileExistsError when file exists with explicit overwrite=False
+                    print(
+                        f"Testing download_session_file_to_path with existing file (explicit overwrite=False): {existing_file_path}"
+                    )
+                    try:
+                        await project_client.agents.download_session_file_to_path(
+                            agent_name=agent_name,
+                            session_id=session_id,
+                            file_path=existing_file_path,
+                            overwrite=False,
+                            remote_path="/remote/some_file.txt",
+                        )
+                        assert False, "Expected FileExistsError when file already exists (explicit overwrite=False)"
+                    except FileExistsError as e:
+                        print(f"Got expected FileExistsError (explicit overwrite=False): {e}")
+                        assert "already exists" in str(e).lower(), f"Error message should mention 'already exists': {e}"
+                        assert "overwrite=True" in str(e), f"Error message should mention 'overwrite=True': {e}"
+
+                    print("download_session_file_to_path overwrite validation tests passed!")
+
+                finally:
+                    # Clean up the temporary file
+                    if os.path.exists(existing_file_path):
+                        os.remove(existing_file_path)
+                        print(f"Cleaned up temp file: {existing_file_path}")
+
                 print("All invalid input tests passed!")
 
             finally:
-                # Clean up: delete the session
-                await project_client.agents.delete_session(
-                    agent_name=agent_name,
-                    session_id=session.agent_session_id,
-                )
-                print(f"Session deleted (id: {session.agent_session_id})")
+                # Add any cleanup here
+                ...

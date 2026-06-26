@@ -81,12 +81,12 @@ Note:
 
 ---
 
-## Step 5: Revert changes to file pyproject.toml
+## Step 5: Revert changes to files pyproject.toml and MANIFEST.in
 
-After the emit, there will be changes to `pyproject.toml` that are not needed. Revert any changes to `pyproject.toml` by running:
+After the emit, there will be changes to `pyproject.toml` and `MANIFEST.in` that are not needed. Revert any changes to these files by running:
 
 ```
-git restore pyproject.toml
+git restore pyproject.toml MANIFEST.in
 ```
 
 ---

@@ -463,8 +463,8 @@
         "azure.ai.projects.aio.operations.AgentsOperations.update_details": "Azure.AI.Projects.Agents.patchAgentObject",
         "azure.ai.projects.operations.AgentsOperations.create_version_from_code": "Azure.AI.Projects.Agents.createAgentVersionFromCode",
         "azure.ai.projects.aio.operations.AgentsOperations.create_version_from_code": "Azure.AI.Projects.Agents.createAgentVersionFromCode",
-        "azure.ai.projects.operations.AgentsOperations.download_code": "Azure.AI.Projects.Agents.downloadAgentCode",
-        "azure.ai.projects.aio.operations.AgentsOperations.download_code": "Azure.AI.Projects.Agents.downloadAgentCode",
+        "azure.ai.projects.operations.AgentsOperations.download_code_as_bytes": "Azure.AI.Projects.Agents.downloadAgentCode",
+        "azure.ai.projects.aio.operations.AgentsOperations.download_code_as_bytes": "Azure.AI.Projects.Agents.downloadAgentCode",
         "azure.ai.projects.operations.AgentsOperations.enable": "Azure.AI.Projects.Agents.enableAgent",
         "azure.ai.projects.aio.operations.AgentsOperations.enable": "Azure.AI.Projects.Agents.enableAgent",
         "azure.ai.projects.operations.AgentsOperations.disable": "Azure.AI.Projects.Agents.disableAgent",
@@ -481,8 +481,8 @@
         "azure.ai.projects.aio.operations.AgentsOperations.list_sessions": "Azure.AI.Projects.Agents.listSessions",
         "azure.ai.projects.operations.AgentsOperations.get_session_log_stream": "Azure.AI.Projects.Agents.getSessionLogStream",
         "azure.ai.projects.aio.operations.AgentsOperations.get_session_log_stream": "Azure.AI.Projects.Agents.getSessionLogStream",
-        "azure.ai.projects.operations.AgentsOperations.download_session_file": "Azure.AI.Projects.AgentSessionFiles.downloadSessionFile",
-        "azure.ai.projects.aio.operations.AgentsOperations.download_session_file": "Azure.AI.Projects.AgentSessionFiles.downloadSessionFile",
+        "azure.ai.projects.operations.AgentsOperations.download_session_file_as_bytes": "Azure.AI.Projects.AgentSessionFiles.downloadSessionFile",
+        "azure.ai.projects.aio.operations.AgentsOperations.download_session_file_as_bytes": "Azure.AI.Projects.AgentSessionFiles.downloadSessionFile",
         "azure.ai.projects.operations.AgentsOperations.list_session_files": "Azure.AI.Projects.AgentSessionFiles.listSessionFiles",
         "azure.ai.projects.aio.operations.AgentsOperations.list_session_files": "Azure.AI.Projects.AgentSessionFiles.listSessionFiles",
         "azure.ai.projects.operations.AgentsOperations.delete_session_file": "Azure.AI.Projects.AgentSessionFiles.deleteSessionFile",
@@ -542,5 +542,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "630203b87422"
+    "CrossLanguageVersion": "3688b3de2e8e"
 }
