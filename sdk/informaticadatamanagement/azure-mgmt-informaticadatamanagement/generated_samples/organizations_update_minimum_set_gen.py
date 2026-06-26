@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.informaticadatamanagement import InformaticaDataMgmtClient
     pip install azure-identity
     pip install azure-mgmt-informaticadatamanagement
 # USAGE
-    python organizations_update_maximum_set_gen.py
+    python organizations_update_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -35,43 +34,49 @@ def main():
         resource_group_name="rg-example",
         organization_name="myOrganization",
         properties={
+            "identity": {
+                "type": "str",
+                "principalId": "str",
+                "tenantId": "str",
+                "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+            },
             "properties": {
                 "companyDetails": {
-                    "business": "Technology",
-                    "companyName": "Contoso Ltd",
-                    "country": "USA",
-                    "domain": "contoso.com",
-                    "numberOfEmployees": 500,
-                    "officeAddress": "123 Main Street, Seattle, WA 98101",
+                    "business": "str",
+                    "companyName": "str",
+                    "country": "str",
+                    "domain": "str",
+                    "numberOfEmployees": 0,
+                    "officeAddress": "str",
                 },
-                "existingResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg-example/providers/Informatica.DataManagement/organizations/existingOrg",
-                "informaticaOrganizationProperties": {"tags": {"env": "production"}},
+                "existingResourceId": "str",
+                "informaticaOrganizationProperties": ...,
                 "marketplaceDetails": {
-                    "marketplaceSubscriptionId": "mktplace-sub-123",
-                    "marketplaceSubscriptionStatus": "Subscribed",
+                    "marketplaceSubscriptionId": "str",
+                    "marketplaceSubscriptionStatus": "str",
                     "offerDetails": {
-                        "offerId": "informatica-cloud",
-                        "planId": "enterprise-plan",
-                        "planName": "Enterprise Plan",
-                        "publisherId": "informatica",
-                        "termId": "term-001",
-                        "termUnit": "P1M",
+                        "offerId": "str",
+                        "planId": "str",
+                        "planName": "str",
+                        "publisherId": "str",
+                        "termId": "str",
+                        "termUnit": "str",
                     },
                 },
                 "userDetails": {
-                    "emailAddress": "john.doe@example.com",
-                    "firstName": "John",
-                    "lastName": "Doe",
-                    "phoneNumber": "+1-555-0100",
-                    "upn": "john.doe@example.com",
+                    "emailAddress": "str",
+                    "firstName": "str",
+                    "lastName": "str",
+                    "phoneNumber": "str",
+                    "upn": "str",
                 },
             },
-            "tags": {"environment": "production", "team": "platform"},
+            "tags": {"str": "str"},
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-11-27/Organizations_Update_MaximumSet_Gen.json
+# x-ms-original-file: 2025-11-27/Organizations_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
