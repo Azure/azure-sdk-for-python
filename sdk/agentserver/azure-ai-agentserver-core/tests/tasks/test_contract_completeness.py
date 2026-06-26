@@ -83,6 +83,7 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "LastInputIdPreconditionFailed",
         "SteeringQueueFull",
         "InputTooLarge",
+        "TaskManagerNotInitialized",
         # Typed-payload + value-type aliases
         "JSONValue",
         "TaskErrorDict",

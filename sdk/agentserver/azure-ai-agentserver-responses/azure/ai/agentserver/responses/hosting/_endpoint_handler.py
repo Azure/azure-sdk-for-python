@@ -85,6 +85,7 @@ from ._validation import (
     ERROR_SOURCE_USER,
     _apply_error_source_headers,
     format_error_detail,
+    is_platform_error,
     parse_and_validate_create_response,
 )
 from ._validation import (
@@ -884,6 +885,29 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 headers=_apply_error_source_headers(self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM),
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
+            if is_platform_error(exc):
+                # A resilient task-start (or other platform-infrastructure)
+                # failure. Surface it immediately as HTTP 500 with the platform
+                # error source — the same way Foundry storage failures are
+                # surfaced — instead of silently degrading to a non-durable run.
+                logger.error("Platform error creating response %s; returning 500", ctx.response_id, exc_info=exc)
+                err_body = {
+                    "error": {
+                        "message": "internal server error",
+                        "type": "server_error",
+                        "code": "server_error",
+                        "param": None,
+                    }
+                }
+                return JSONResponse(
+                    err_body,
+                    status_code=500,
+                    headers=_apply_error_source_headers(
+                        self._session_headers(agent_session_id),
+                        ERROR_SOURCE_PLATFORM,
+                        format_error_detail(exc),
+                    ),
+                )
             logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
             raise
         finally:

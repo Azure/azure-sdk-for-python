@@ -24,6 +24,7 @@ from azure.ai.agentserver.core.platform_headers import (
 from azure.ai.agentserver.core.tasks import (
     LastInputIdPreconditionFailed,
     TaskConflictError,
+    TaskManagerNotInitialized,
 )
 
 from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-error,no-name-in-module
@@ -72,6 +73,23 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+
+def _is_hosted_environment() -> bool:
+    """Return whether the agent is running in a Foundry-hosted container.
+
+    Uses the canonical :class:`~azure.ai.agentserver.core.AgentConfig` derivation
+    (the same public API ``_routing`` already uses for Foundry auto-activation).
+    In a hosted deployment the resilient-task subsystem is auto-initialized with
+    no opt-out, so a missing TaskManager is a platform-infrastructure failure
+    rather than a reason to silently run a response non-durably.
+
+    :return: ``True`` if running in a Foundry-hosted environment.
+    :rtype: bool
+    """
+    from azure.ai.agentserver.core import AgentConfig  # pylint: disable=import-outside-toplevel
+
+    return AgentConfig.from_env().is_hosted
 
 
 _STORAGE_ERROR_MESSAGE = (
@@ -2924,12 +2942,28 @@ class _ResponseOrchestrator:
             )
             start_record.subject = wire_stream
 
-            await self._start_resilient_background(
-                ctx,
-                start_record,
-                _resilient_stream_fallback,
-                disposition=_unified_disposition,
-            )
+            try:
+                await self._start_resilient_background(
+                    ctx,
+                    start_record,
+                    _resilient_stream_fallback,
+                    disposition=_unified_disposition,
+                )
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                if not getattr(exc, PLATFORM_ERROR_TAG, False):
+                    # 409 conflicts (TaskConflictError / LastInputIdPreconditionFailed)
+                    # and any non-platform error propagate unchanged.
+                    raise
+                # Resilient task start failed. HTTP headers are already sent
+                # (200) for a streaming response, so an HTTP error-source header
+                # is impossible; surface the failure the streaming-native way —
+                # a standalone ``error`` SSE event (the same B8 pre-creation
+                # contract used for every other streaming creation failure) —
+                # then close the wire stream. The platform error is already
+                # logged + tagged by ``_start_resilient_background``.
+                yield encode_sse_any_event(await self._emit_standalone_error(ctx, code="server_error"))
+                await self._safe_close(wire_stream)
+                return
 
             # Relay the resilient wire stream to this client, interleaving
             # keep-alive comments when enabled. The resilient body runs in its own
@@ -3804,17 +3838,31 @@ class _ResponseOrchestrator:
     ) -> None:
         """Start the resilient task-backed background execution.
 
-        For Phase 1, this creates a ResilientResponseOrchestrator and starts
-        the task. The task body runs _run_background_non_stream inside the
-        task primitive, providing crash recovery guarantees.
+        Creates a ResilientResponseOrchestrator and starts the task. The task
+        body runs the handler inside the task primitive, providing crash
+        recovery guarantees.
 
-        Falls back to plain asyncio.create_task if the resilient orchestrator
-        is not available or the task conflicts (already running).
+        Two outcomes when the resilient start cannot proceed:
+
+        - **No task subsystem installed** (the start raises
+          :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized` —
+          e.g. an in-process test client whose lifespan never ran). When NOT
+          hosted, run the handler in-process via ``fallback_runner`` — there is
+          nothing to recover, so this is the legitimate non-durable path, NOT a
+          failure. When hosted, the subsystem is auto-initialized with no
+          opt-out, so its absence is a platform failure and is re-raised tagged.
+        - **Subsystem present but the start fails**: fail immediately. The
+          exception is tagged as a platform infrastructure error and re-raised
+          (no silent degradation to a non-durable task — that would hide a real
+          durability failure behind a healthy-looking response).
 
         :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
         :param record: The mutable execution record.
-        :param fallback_runner: The shielded runner coroutine function to use
-            as fallback if resilient start fails.
+        :type record: ResponseExecution
+        :param fallback_runner: The shielded runner coroutine function to run
+            in-process when no task subsystem is installed.
+        :type fallback_runner: Any
         :keyword disposition: One of ``"re-invoke"`` (Row 1: resilient_bg+bg+store
             — task body re-runs handler on recovery) or ``"mark-failed"``
             (Rows 2/3: bg+store with resilient_bg=False, or fg+store — task body
@@ -3822,6 +3870,11 @@ class _ResponseOrchestrator:
             recovery). Stamped into task framework metadata so recovery dispatch
             can route without re-deriving the gate from request params.
         :paramtype disposition: str
+        :raises Exception: If durability is required but unavailable — either the
+            task subsystem is present and the resilient start fails, or the
+            deployment is hosted and the subsystem is missing. The exception is
+            tagged with ``PLATFORM_ERROR_TAG`` so the endpoint surfaces
+            ``x-platform-error-source: platform``.
         """
         from ._resilient_orchestrator import (
             ResilientResponseOrchestrator,
@@ -3870,11 +3923,44 @@ class _ResponseOrchestrator:
             # `previous_response_id`. Propagate so the endpoint layer
             # surfaces HTTP 409 `conversation_fork_not_supported`.
             raise
-        except Exception:  # pylint: disable=broad-exception-caught
-            # Resilient start failed — fall back to non-resilient execution
-            logger.warning(
-                "Resilient task start failed for response %s; falling back to asyncio.create_task",
+        except TaskManagerNotInitialized as exc:
+            # No resilient-task subsystem is installed in this process.
+            if _is_hosted_environment():
+                # Hosted deployments auto-initialize the subsystem with no
+                # opt-out, so its absence means initialization failed at boot
+                # (e.g. a misconfigured backend or a missing dependency).
+                # Durability is mandatory in production — fail loudly as a
+                # platform error rather than silently degrading a store=true
+                # response to a non-durable, connection-scoped task.
+                logger.error(
+                    "Resilient task subsystem missing in hosted environment for response %s; failing the request",
+                    ctx.response_id,
+                )
+                setattr(exc, PLATFORM_ERROR_TAG, True)
+                await self._runtime_state.delete(ctx.response_id)
+                raise
+            # Non-hosted (local dev, or unit/contract tests whose ASGI lifespan
+            # never ran). Nothing to recover — run the handler in-process. This
+            # is the legitimate non-durable path, NOT a failure. (When a manager
+            # IS present — hosted, or a local file-provider deployment — the
+            # start above succeeds and we use the resilient task.)
+            record.execution_task = asyncio.create_task(fallback_runner())
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            # The resilient-task subsystem IS present but starting the task
+            # failed (e.g. the task-store write was rejected). Do NOT silently
+            # degrade to a non-durable, connection-scoped asyncio task — that
+            # hides a real durability failure behind a healthy-looking response.
+            # Fail loudly, tagged as a platform infrastructure error so the
+            # endpoint surfaces ``x-platform-error-source: platform`` (the same
+            # way Foundry storage failures are surfaced).
+            logger.error(
+                "Resilient task start failed for response %s; failing the request",
                 ctx.response_id,
                 exc_info=True,
             )
-            record.execution_task = asyncio.create_task(fallback_runner())
+            setattr(exc, PLATFORM_ERROR_TAG, True)
+            # Best-effort cleanup of the in-flight record so a later GET does not
+            # observe a phantom ``in_progress`` response (no-op for callers that
+            # never registered the record, e.g. the streaming path).
+            await self._runtime_state.delete(ctx.response_id)
+            raise

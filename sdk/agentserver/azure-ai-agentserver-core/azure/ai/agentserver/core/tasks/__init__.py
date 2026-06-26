@@ -59,6 +59,7 @@ from ._exceptions import (
     TaskErrorDict,
     TaskExhaustedRetriesErrorDict,
     TaskFailed,
+    TaskManagerNotInitialized,
 )
 from ._metadata import JSONValue, TaskMetadata
 from ._retry import RetryPolicy
@@ -101,4 +102,5 @@ __all__ = [
     "LastInputIdPreconditionFailed",
     "SteeringQueueFull",
     "InputTooLarge",
+    "TaskManagerNotInitialized",
 ]
