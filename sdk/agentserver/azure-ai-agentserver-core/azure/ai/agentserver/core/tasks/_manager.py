@@ -252,12 +252,17 @@ def _lease_is_dead(
 def get_task_manager() -> TaskManager:
     """Return the active TaskManager singleton.
 
-    :raises RuntimeError: If no manager has been initialized.
+    :raises ~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized: If no
+        manager has been initialized.
     :return: The active manager.
     :rtype: TaskManager
     """
     if _manager is None:
-        raise RuntimeError(
+        from ._exceptions import (  # pylint: disable=import-outside-toplevel
+            TaskManagerNotInitialized,
+        )
+
+        raise TaskManagerNotInitialized(
             "TaskManager not initialized. Ensure resilient tasks "
             "are enabled on the AgentServerHost."  # pylint: disable=implicit-str-concat
         )

@@ -58,6 +58,8 @@ EXPECTED_PUBLIC_ALL: frozenset[str] = frozenset(
         "EntryMode",
         #  /   — developer-facing size errors.
         "InputTooLarge",
+        # Typed "no resilient-task subsystem installed" failure.
+        "TaskManagerNotInitialized",
     }
 )
 
