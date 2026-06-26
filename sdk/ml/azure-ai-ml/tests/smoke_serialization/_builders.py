@@ -38,6 +38,9 @@ from azure.ai.ml.entities._job.sweep.early_termination_policy import (
 )
 from azure.ai.ml.entities._job.sweep.search_space import Choice, LogUniform, QUniform, Randint, Uniform
 from azure.ai.ml.entities._schedule.trigger import CronTrigger, RecurrencePattern, RecurrenceTrigger
+from azure.ai.ml.entities._data_import.data_import import DataImport
+from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
+from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.sweep import SweepJob
 
 
@@ -543,6 +546,67 @@ def build_schedule_recurrence_spark():
 SCHEDULE_BUILDERS.update(
     {
         "schedule_recurrence_spark": build_schedule_recurrence_spark,
+    }
+)
+
+
+def build_import_data_schedule_database():
+    """An ImportDataSchedule wrapping a database DataImport with a CronTrigger.
+
+    ImportDataAction/DataImport are absent from arm_ml_service, so the schedule envelope is arm but the
+    action is emitted as a JSON-direct wire dict. This case guards that mixed envelope (arm Schedule +
+    plain-dict action + arm trigger) which a wire-broken migration crashes on at serialize time.
+
+    :return: A deterministic ImportDataSchedule entity.
+    :rtype: ~azure.ai.ml.entities._data_import.schedule.ImportDataSchedule
+    """
+    import_data = DataImport(
+        name="smoke-azuresqldb-asset",
+        path="azureml://datastores/workspaceblobstore/paths/{name}",
+        source=Database(connection="azureml:smoke_connection", query="select * from region"),
+    )
+    return ImportDataSchedule(
+        name="smoke-import-schedule-db",
+        display_name="smoke-import-schedule-db-display",
+        import_data=import_data,
+        trigger=CronTrigger(
+            expression="15 10 * * 1",
+            start_time="2026-01-01T00:00:00",
+            end_time="2026-12-31T00:00:00",
+            time_zone="UTC",
+        ),
+    )
+
+
+def build_import_data_schedule_file_system():
+    """An ImportDataSchedule wrapping a file-system DataImport with a RecurrenceTrigger.
+
+    :return: A deterministic ImportDataSchedule entity.
+    :rtype: ~azure.ai.ml.entities._data_import.schedule.ImportDataSchedule
+    """
+    import_data = DataImport(
+        name="smoke-s3-asset",
+        path="azureml://datastores/workspaceblobstore/paths/{name}",
+        source=FileSystem(connection="azureml:smoke_s3_connection", path="test1/*"),
+    )
+    return ImportDataSchedule(
+        name="smoke-import-schedule-fs",
+        display_name="smoke-import-schedule-fs-display",
+        import_data=import_data,
+        trigger=RecurrenceTrigger(
+            frequency="week",
+            interval=1,
+            schedule=RecurrencePattern(hours=[10], minutes=[15], week_days=["monday", "wednesday"]),
+            start_time="2026-01-01T00:00:00",
+            time_zone="UTC",
+        ),
+    )
+
+
+SCHEDULE_BUILDERS.update(
+    {
+        "import_data_schedule_database": build_import_data_schedule_database,
+        "import_data_schedule_file_system": build_import_data_schedule_file_system,
     }
 )
 

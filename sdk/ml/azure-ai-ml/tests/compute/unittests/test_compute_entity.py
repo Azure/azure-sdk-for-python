@@ -222,6 +222,57 @@ class TestComputeEntity:
         assert compute_instance3.properties.properties.get("enableOSPatching") is False
         assert compute_instance3.properties.properties.get("releaseQuotaOnStop") is False
 
+    def test_compute_instance_from_msrest_response(self):
+        # The compute operations layer deserializes the real GET/list response with the v2023_08 msrest
+        # client, so ``_from_rest_object`` must read the 2023-08 typed attributes (enableRootAccess /
+        # releaseQuotaOnStop / enableOSPatching) -- not only the arm-hybrid wire keys produced by the
+        # entity's own ``_to_rest_object`` round-trip. Guards the read path that only e2e exercised.
+        from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+            ComputeInstance as MsrestComputeInstance,
+            ComputeInstanceProperties as MsrestComputeInstanceProperties,
+            ComputeResource as MsrestComputeResource,
+        )
+
+        rest = MsrestComputeResource(
+            name="ci-from-service",
+            location="eastus",
+            properties=MsrestComputeInstance(
+                properties=MsrestComputeInstanceProperties(
+                    vm_size="STANDARD_DS3_V2",
+                    enable_root_access=False,
+                    release_quota_on_stop=True,
+                    enable_os_patching=True,
+                ),
+            ),
+        )
+
+        instance = ComputeInstance._from_rest_object(rest)
+        assert instance.enable_root_access is False
+        assert instance.release_quota_on_stop is True
+        assert instance.enable_os_patching is True
+
+    def test_aml_compute_from_msrest_response(self):
+        # ``AmlCompute._load_from_rest`` reads ``createdOn`` from the msrest ``additional_properties`` bag
+        # (the v2023_08 response carries it as an undeclared field). Guards against assuming the arm-hybrid
+        # mapping shape on the real ops response.
+        from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+            AmlCompute as MsrestAmlCompute,
+            AmlComputeProperties as MsrestAmlComputeProperties,
+            ComputeResource as MsrestComputeResource,
+        )
+
+        rest = MsrestComputeResource(
+            name="aml-from-service",
+            location="eastus",
+            properties=MsrestAmlCompute(
+                properties=MsrestAmlComputeProperties(vm_size="STANDARD_DS3_V2"),
+            ),
+        )
+        rest.properties.additional_properties = {"createdOn": "2026-01-01T00:00:00.000Z"}
+
+        compute = AmlCompute._load_from_rest(rest)
+        assert compute.created_on == "2026-01-01T00:00:00.000Z"
+
     def test_compute_instance_with_image_metadata(self):
         os_image_metadata = ImageMetadata(
             current_image_version="22.08.19",

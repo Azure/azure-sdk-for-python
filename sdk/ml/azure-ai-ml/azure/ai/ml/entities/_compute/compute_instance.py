@@ -35,6 +35,31 @@ from ._setup_scripts import SetupScripts
 module_logger = logging.getLogger(__name__)
 
 
+def _read_optional_compute_prop(properties: Any, attr_name: str, wire_key: str) -> Any:
+    """Read a compute property that is a typed attribute on the msrest 2023-08 response model but an
+    untyped wire key on the arm_ml_service hybrid model.
+
+    ``enableRootAccess`` / ``releaseQuotaOnStop`` / ``enableOSPatching`` are declared on the
+    2023-08-01-preview swagger (so the real GET/list response, deserialized by the v2023_08 msrest
+    client, exposes them as snake_case attributes) but were not declared on the shared arm_ml_service
+    model (so the entity's own ``_to_rest_object()`` round-trip stores them only as camelCase wire
+    keys). Read the typed attribute first, then fall back to the wire key.
+
+    :param properties: The compute ``properties`` object (msrest or arm hybrid).
+    :type properties: Any
+    :param attr_name: The snake_case attribute name on the msrest model.
+    :type attr_name: str
+    :param wire_key: The camelCase wire key on the arm hybrid model.
+    :type wire_key: str
+    :return: The property value, or None if absent on both.
+    :rtype: Any
+    """
+    value = getattr(properties, attr_name, None)
+    if value is None and hasattr(properties, "get"):
+        value = properties.get(wire_key)
+    return value
+
+
 class ComputeInstanceSshSettings:
     """Credentials for an administrator user account to SSH into the compute node.
 
@@ -430,6 +455,21 @@ class ComputeInstance(Compute):
             custom_applications = []
             for app in prop.properties.custom_services:
                 custom_applications.append(CustomApplications._from_rest_object(app))
+        root_access = (
+            _read_optional_compute_prop(prop.properties, "enable_root_access", "enableRootAccess")
+            if prop.properties
+            else None
+        )
+        release_quota = (
+            _read_optional_compute_prop(prop.properties, "release_quota_on_stop", "releaseQuotaOnStop")
+            if prop.properties
+            else None
+        )
+        os_patching = (
+            _read_optional_compute_prop(prop.properties, "enable_os_patching", "enableOSPatching")
+            if prop.properties
+            else None
+        )
         response = ComputeInstance(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -489,21 +529,9 @@ class ComputeInstance(Compute):
             enable_sso=(
                 prop.properties.enable_sso if (prop.properties and prop.properties.enable_sso is not None) else True
             ),
-            enable_root_access=(
-                prop.properties.get("enableRootAccess")
-                if (prop.properties and prop.properties.get("enableRootAccess") is not None)
-                else True
-            ),
-            release_quota_on_stop=(
-                prop.properties.get("releaseQuotaOnStop")
-                if (prop.properties and prop.properties.get("releaseQuotaOnStop") is not None)
-                else False
-            ),
-            enable_os_patching=(
-                prop.properties.get("enableOSPatching")
-                if (prop.properties and prop.properties.get("enableOSPatching") is not None)
-                else False
-            ),
+            enable_root_access=(root_access if root_access is not None else True),
+            release_quota_on_stop=(release_quota if release_quota is not None else False),
+            enable_os_patching=(os_patching if os_patching is not None else False),
         )
         return response
 

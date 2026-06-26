@@ -7,6 +7,8 @@
 from abc import ABC
 from typing import Any, Dict, List, Optional, Type, Union
 
+from typing_extensions import TypeAlias
+
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._restclient.arm_ml_service.models import ManagedServiceIdentity as RestIdentityConfiguration
 from azure.ai.ml._restclient.arm_ml_service.models import (
@@ -79,9 +81,11 @@ from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin, YamlTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
 
-# arm_ml_service unifies these into single models; keep legacy alias names for usage sites
-RestManagedServiceIdentityConfiguration = RestIdentityConfiguration
-RestUserAssignedIdentityConfiguration = RestUserAssignedIdentity
+# arm_ml_service unifies these into single models; keep legacy alias names for usage sites. Annotate as
+# ``TypeAlias`` so mypy treats them as valid types in annotations (a bare ``X = Y`` re-alias of an
+# imported name is otherwise seen as a variable, not a type).
+RestManagedServiceIdentityConfiguration: TypeAlias = RestIdentityConfiguration
+RestUserAssignedIdentityConfiguration: TypeAlias = RestUserAssignedIdentity
 
 
 class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):

@@ -203,7 +203,11 @@ class AmlCompute(Compute):
             identity=(
                 IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None
             ),
-            created_on=prop.get("createdOn", None),
+            created_on=(
+                prop.additional_properties.get("createdOn", None)
+                if hasattr(prop, "additional_properties")
+                else prop.get("createdOn") if hasattr(prop, "get") else None
+            ),
             enable_node_public_ip=(
                 prop.properties.enable_node_public_ip if prop.properties.enable_node_public_ip is not None else True
             ),
