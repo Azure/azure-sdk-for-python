@@ -593,6 +593,7 @@ caller doesn't already have (the caller already has `task_id` /
 | `LastInputIdPreconditionFailed` | `actual_last_input_id: str \| None` | `if_last_input_id=` precondition didn't match. |
 | `SteeringQueueFull` | bare | Steering queue at capacity (multi-turn `steerable=True` only). |
 | `InputTooLarge` | bare | Input value exceeds the per-input cap. |
+| `TaskManagerNotInitialized` | bare (subclasses `RuntimeError`) | A resilient-task operation (e.g. `.start` / `.run`) was attempted with no installed `TaskManager` — for example an in-process test harness that never ran the server lifespan, or a deployment where the manager failed to initialize at boot. |
 
 `TaskFailed.error` is one of two `TypedDict`s:
 

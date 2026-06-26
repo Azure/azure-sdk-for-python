@@ -101,6 +101,17 @@ TaskConflictError.__signature__ = inspect.Signature(  # type: ignore[attr-define
 )
 
 
+class TaskManagerNotInitialized(RuntimeError):
+    """Raised when a resilient-task operation is attempted with no installed manager.
+
+    Signals that the resilient-task subsystem is not available in the current
+    process — for example an in-process test harness that never ran the server
+    lifespan, or a deployment where the manager failed to initialize at boot.
+    Subclasses :class:`RuntimeError` for backward compatibility with callers
+    that catch the broader type.
+    """
+
+
 class EtagConflict(RuntimeError):
     """Raised when an optimistic concurrency (etag) check fails."""
 
