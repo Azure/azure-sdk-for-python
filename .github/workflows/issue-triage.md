@@ -137,6 +137,15 @@ safe-outputs:
                 return;
               }
 
+              // Neutralize '@' in the agent-produced message so only the validated
+              // owners drive the //cc mentions. This is the one write path that
+              // bypasses safe-outputs sanitization, so the free-text message must
+              // not be able to smuggle its own (unvalidated) mentions.
+              function sanitizeMessage(message) {
+                if (typeof message !== 'string') return '';
+                return message.replace(/@/g, '@\u200B').trim();
+              }
+
               for (const item of items) {
                 if (!item.owners || typeof item.owners !== 'string' || !item.owners.trim()) {
                   await failSafe('mention_owners item missing owners field');
@@ -160,8 +169,9 @@ safe-outputs:
                   return;
                 }
 
-                const body = item.message
-                  ? `${item.message}\n\n//cc: ${mentions.join(' ')}`
+                const safeMessage = sanitizeMessage(item.message);
+                const body = safeMessage
+                  ? `${safeMessage}\n\n//cc: ${mentions.join(' ')}`
                   : mentions.join(' ');
 
                 try {
