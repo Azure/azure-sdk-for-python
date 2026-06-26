@@ -11,7 +11,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline import policies
 
 from .._utils.serialization import Deserializer, Serializer
 from .operations import DirectoryOperations, FileOperations, ServiceOperations, ShareOperations
@@ -80,30 +79,13 @@ class FileClient(GeneratedFileClient):
     def __init__(
         self, url: str, credential: Optional["AsyncTokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
     ) -> None:
+        if pipeline is None:
+            super().__init__(url=url, credential=credential, **kwargs)  # type: ignore[arg-type]
+            return
+
         _endpoint = "{url}"
         self._config = FileClientConfiguration(url=url, credential=credential, **kwargs)
-
-        if pipeline is not None:
-            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=pipeline)
-        else:
-            _policies = kwargs.pop("policies", None)
-            if _policies is None:
-                _policies = [
-                    policies.RequestIdPolicy(**kwargs),
-                    self._config.headers_policy,
-                    self._config.user_agent_policy,
-                    self._config.proxy_policy,
-                    policies.ContentDecodePolicy(**kwargs),
-                    self._config.redirect_policy,
-                    self._config.retry_policy,
-                    self._config.authentication_policy,
-                    self._config.custom_hook_policy,
-                    self._config.logging_policy,
-                    policies.DistributedTracingPolicy(**kwargs),
-                    policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                    self._config.http_logging_policy,
-                ]
-            self._client = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=pipeline)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
