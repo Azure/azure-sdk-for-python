@@ -328,7 +328,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         return super()._upload_session_file(agent_name, session_id, content, remote_path=remote_path, **kwargs)
 
     @distributed_trace
-    def download_session_file_to_disk(
+    def download_session_file_to_path(
         self,
         agent_name: str,
         session_id: str,
@@ -383,7 +383,7 @@ class AgentsOperations(GeneratedAgentsOperations):
                 f.write(chunk)
 
     @distributed_trace
-    def download_code_to_disk(
+    def download_code_to_path(
         self,
         agent_name: str,
         *,

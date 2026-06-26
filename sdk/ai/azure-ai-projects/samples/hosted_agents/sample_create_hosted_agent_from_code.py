@@ -109,7 +109,7 @@ with (
     # Download the zip for the version we just created, streaming to a temp file.
     version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
 
-    downloaded_version_sha256 = project_client.agents.download_code_to_disk(
+    downloaded_version_sha256 = project_client.agents.download_code_to_path(
         agent_name=agent_name,
         agent_version=created.version,
         file_path=version_zip_path,

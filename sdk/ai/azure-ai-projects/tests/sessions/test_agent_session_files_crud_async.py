@@ -182,12 +182,12 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 ), f"Expected content '{expected_content}' not found in downloaded file"
                 print("Content verification passed!")
 
-                # Download second file to disk using download_session_file_to_disk with str file_path
+                # Download second file to disk using download_session_file_to_path with str file_path
                 temp_dir = tempfile.gettempdir()
                 download_path = os.path.join(temp_dir, "downloaded_data_file2.txt")
                 print(f"Downloading session file to disk: {remote_file_path2} -> {download_path}")
 
-                await project_client.agents.download_session_file_to_disk(
+                await project_client.agents.download_session_file_to_path(
                     agent_name=agent_name,
                     session_id=session.agent_session_id,
                     file_path=download_path,  # str type
@@ -205,7 +205,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 assert (
                     expected_content2 in downloaded_content
                 ), f"Expected content '{expected_content2}' not found in downloaded file"
-                print("download_session_file_to_disk content verification passed!")
+                print("download_session_file_to_path content verification passed!")
 
                 # Clean up local temp file
                 if os.path.exists(download_path):
@@ -214,11 +214,11 @@ class TestAgentSessionFilesCrudAsync(TestBase):
 
                 # --------------------------------------------------------------------------------------------------
 
-                # Download third file to disk using download_session_file_to_disk with PathLike file_path
+                # Download third file to disk using download_session_file_to_path with PathLike file_path
                 download_path3 = Path(tempfile.gettempdir()) / "downloaded_data_file3.txt"
                 print(f"Downloading session file to disk using PathLike: {remote_file_path3} -> {download_path3}")
 
-                await project_client.agents.download_session_file_to_disk(
+                await project_client.agents.download_session_file_to_path(
                     agent_name=agent_name,
                     session_id=session.agent_session_id,
                     file_path=download_path3,  # PathLike[str] type
@@ -236,7 +236,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 assert (
                     expected_content3 in downloaded_content3
                 ), f"Expected content '{expected_content3}' not found in downloaded file"
-                print("download_session_file_to_disk with PathLike content verification passed!")
+                print("download_session_file_to_path with PathLike content verification passed!")
 
                 # Clean up local temp file
                 if download_path3.exists():
@@ -286,7 +286,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
     @servicePreparer()
     async def test_agent_session_files_invalid_input_async(self, **kwargs):
         """
-        Test that upload_session_file and download_session_file_to_disk raise appropriate
+        Test that upload_session_file and download_session_file_to_path raise appropriate
         errors when given invalid input (non-existing files, folder paths).
 
         These are client-side validations that occur before any API call is made.
@@ -369,14 +369,14 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 print("upload_session_file error handling tests passed!")
 
                 # --------------------------------------------------------------------------------------------------
-                # Test download_session_file_to_disk with invalid inputs
+                # Test download_session_file_to_path with invalid inputs
                 # --------------------------------------------------------------------------------------------------
 
-                # Test that download_session_file_to_disk raises ValueError when file_path is a folder (str type)
+                # Test that download_session_file_to_path raises ValueError when file_path is a folder (str type)
                 folder_path_str = tempfile.gettempdir()  # This is a folder, not a file
-                print(f"Testing download_session_file_to_disk with folder path (str): {folder_path_str}")
+                print(f"Testing download_session_file_to_path with folder path (str): {folder_path_str}")
                 try:
-                    await project_client.agents.download_session_file_to_disk(
+                    await project_client.agents.download_session_file_to_path(
                         agent_name=agent_name,
                         session_id=session_id,
                         file_path=folder_path_str,  # str type pointing to a folder
@@ -387,11 +387,11 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                     print(f"Got expected ValueError for folder path (str): {e}")
                     assert "folder" in str(e).lower(), f"Error message should mention 'folder': {e}"
 
-                # Test that download_session_file_to_disk raises ValueError when file_path is a folder (PathLike type)
+                # Test that download_session_file_to_path raises ValueError when file_path is a folder (PathLike type)
                 folder_path_pathlike = Path(tempfile.gettempdir())  # This is a folder, not a file
-                print(f"Testing download_session_file_to_disk with folder path (PathLike): {folder_path_pathlike}")
+                print(f"Testing download_session_file_to_path with folder path (PathLike): {folder_path_pathlike}")
                 try:
-                    await project_client.agents.download_session_file_to_disk(
+                    await project_client.agents.download_session_file_to_path(
                         agent_name=agent_name,
                         session_id=session_id,
                         file_path=folder_path_pathlike,  # PathLike[str] type pointing to a folder
@@ -402,10 +402,10 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                     print(f"Got expected ValueError for folder path (PathLike): {e}")
                     assert "folder" in str(e).lower(), f"Error message should mention 'folder': {e}"
 
-                print("download_session_file_to_disk folder path validation tests passed!")
+                print("download_session_file_to_path folder path validation tests passed!")
 
                 # --------------------------------------------------------------------------------------------------
-                # Test download_session_file_to_disk with existing file (overwrite behavior)
+                # Test download_session_file_to_path with existing file (overwrite behavior)
                 # --------------------------------------------------------------------------------------------------
 
                 # Create a temporary file that already exists
@@ -414,10 +414,10 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                     f.write("This file already exists")
 
                 try:
-                    # Test that download_session_file_to_disk raises FileExistsError when file exists (default overwrite=False)
-                    print(f"Testing download_session_file_to_disk with existing file (default overwrite): {existing_file_path}")
+                    # Test that download_session_file_to_path raises FileExistsError when file exists (default overwrite=False)
+                    print(f"Testing download_session_file_to_path with existing file (default overwrite): {existing_file_path}")
                     try:
-                        await project_client.agents.download_session_file_to_disk(
+                        await project_client.agents.download_session_file_to_path(
                             agent_name=agent_name,
                             session_id=session_id,
                             file_path=existing_file_path,
@@ -429,10 +429,10 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                         assert "already exists" in str(e).lower(), f"Error message should mention 'already exists': {e}"
                         assert "overwrite=True" in str(e), f"Error message should mention 'overwrite=True': {e}"
 
-                    # Test that download_session_file_to_disk raises FileExistsError when file exists with explicit overwrite=False
-                    print(f"Testing download_session_file_to_disk with existing file (explicit overwrite=False): {existing_file_path}")
+                    # Test that download_session_file_to_path raises FileExistsError when file exists with explicit overwrite=False
+                    print(f"Testing download_session_file_to_path with existing file (explicit overwrite=False): {existing_file_path}")
                     try:
-                        await project_client.agents.download_session_file_to_disk(
+                        await project_client.agents.download_session_file_to_path(
                             agent_name=agent_name,
                             session_id=session_id,
                             file_path=existing_file_path,
@@ -445,7 +445,7 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                         assert "already exists" in str(e).lower(), f"Error message should mention 'already exists': {e}"
                         assert "overwrite=True" in str(e), f"Error message should mention 'overwrite=True': {e}"
 
-                    print("download_session_file_to_disk overwrite validation tests passed!")
+                    print("download_session_file_to_path overwrite validation tests passed!")
 
                 finally:
                     # Clean up the temporary file

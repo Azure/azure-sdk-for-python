@@ -261,7 +261,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
-        async def download_code_to_disk(
+        async def download_code_to_path(
                 self, 
                 agent_name: str, 
                 *, 
@@ -282,7 +282,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
-        async def download_session_file_to_disk(
+        async def download_session_file_to_path(
                 self, 
                 agent_name: str, 
                 session_id: str, 
@@ -9619,7 +9619,7 @@ namespace azure.ai.projects.operations
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
-        def download_code_to_disk(
+        def download_code_to_path(
                 self, 
                 agent_name: str, 
                 *, 
@@ -9640,7 +9640,7 @@ namespace azure.ai.projects.operations
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
-        def download_session_file_to_disk(
+        def download_session_file_to_path(
                 self, 
                 agent_name: str, 
                 session_id: str, 
