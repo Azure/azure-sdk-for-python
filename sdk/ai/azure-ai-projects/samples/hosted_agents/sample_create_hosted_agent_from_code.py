@@ -25,18 +25,6 @@ DESCRIPTION:
 USAGE:
     python sample_create_hosted_agent_from_code.py
 
-    Before running the sample:
-
-    pip install "azure-ai-projects>=2.2.0" python-dotenv
-
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the
-       Overview page of your Microsoft Foundry portal.
-    2) FOUNDRY_HOSTED_AGENT_NAME - The Hosted Agent name. Must already exist.
-    3) AZURE_SUBSCRIPTION_ID - Azure subscription ID where the Azure AI account
-       and project are deployed.
-    4) FOUNDRY_HOSTED_AGENT_REMOTE_BUILD - Optional. Set to `true` to use
-       REMOTE_BUILD; defaults to `false` (BUNDLED).
 """
 
 import hashlib
@@ -73,6 +61,22 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
 ):
+    # The ``code`` field accepts any variant of the SDK's ``FileType`` union.
+    # The 3-tuple form used here pins both the filename and the content type.
+    #
+    #   # 1) bare IO[bytes] - filename derived from the file handle's `.name`
+    #   code=code_zip_path.open("rb")
+    #
+    #   # 2) (filename, bytes)
+    #   code=(zip_filename, code_zip_bytes)
+    #
+    #   # 3) (filename, IO[bytes])
+    #   code=(zip_filename, code_zip_path.open("rb"))
+    #
+    #   # 4) (filename, bytes, content_type)
+    #   code=(zip_filename, code_zip_bytes, "application/zip")
+    code = (zip_filename, code_zip_bytes, "application/zip")
+
     content = CreateAgentVersionFromCodeContent(
         metadata=CreateAgentVersionFromCodeMetadata(
             description=f"Code-based hosted agent uploaded with dependency_resolution={dependency_resolution.value}.",
@@ -87,7 +91,7 @@ with (
                 protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
             ),
         ),
-        code=(zip_filename, code_zip_bytes, "application/zip"),
+        code=code,
     )
 
     created = project_client.agents.create_version_from_code(
