@@ -1242,6 +1242,10 @@ class AgentVersionDetails(_Model):
     :vartype created_at: ~datetime.datetime
     :ivar definition: Required.
     :vartype definition: ~azure.ai.projects.models.AgentDefinition
+    :ivar draft: Whether this agent version is a draft (candidate) rather than a release. Draft
+     versions are recorded but excluded from default 'latest' resolution and are not auto-promoted.
+     Defaults to false.
+    :vartype draft: bool
     :ivar status: The provisioning status of the agent version. Defaults to 'active' for non-hosted
      agents. For hosted agents, reflects infrastructure readiness. Known values are: "creating",
      "active", "failed", "deleting", and "deleted".
@@ -1282,6 +1286,10 @@ class AgentVersionDetails(_Model):
     """The Unix timestamp (seconds) when the agent was created. Required."""
     definition: "_models.AgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
+    draft: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this agent version is a draft (candidate) rather than a release. Draft versions are
+     recorded but excluded from default 'latest' resolution and are not auto-promoted. Defaults to
+     false."""
     status: Optional[Union[str, "_models.AgentVersionStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1309,6 +1317,7 @@ class AgentVersionDetails(_Model):
         created_at: datetime.datetime,
         definition: "_models.AgentDefinition",
         description: Optional[str] = None,
+        draft: Optional[bool] = None,
         status: Optional[Union[str, "_models.AgentVersionStatus"]] = None,
     ) -> None: ...
 
@@ -1953,11 +1962,12 @@ class AzureAISearchToolboxTool(ToolboxTool, discriminator="azure_ai_search"):
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
     :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar type: Required. AZURE_AI_SEARCH.
     :vartype type: str or ~azure.ai.projects.models.AZURE_AI_SEARCH
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar azure_ai_search: The azure ai search index resource. Required.
     :vartype azure_ai_search: ~azure.ai.projects.models.AzureAISearchToolResource
     """
@@ -3400,6 +3410,10 @@ class CodeInterpreterToolboxTool(ToolboxTool, discriminator="code_interpreter"):
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
     :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar type: Required. CODE_INTERPRETER.
     :vartype type: str or ~azure.ai.projects.models.CODE_INTERPRETER
     :ivar container: The code interpreter container. Can be a container ID or an object that
@@ -3407,9 +3421,6 @@ class CodeInterpreterToolboxTool(ToolboxTool, discriminator="code_interpreter"):
      ``memory_limit`` setting. If not provided, the service assumes auto. Is either a str type or a
      AutoCodeInterpreterToolParam type.
     :vartype container: str or ~azure.ai.projects.models.AutoCodeInterpreterToolParam
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolboxToolType.CODE_INTERPRETER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3428,8 +3439,8 @@ class CodeInterpreterToolboxTool(ToolboxTool, discriminator="code_interpreter"):
         *,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = None,
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = None,
     ) -> None: ...
 
     @overload
@@ -7307,6 +7318,10 @@ class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
     :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar type: Required. FILE_SEARCH.
     :vartype type: str or ~azure.ai.projects.models.FILE_SEARCH
     :ivar max_num_results: The maximum number of results to return. This number should be between 1
@@ -7317,9 +7332,6 @@ class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
     :ivar filters: Is either a ComparisonFilter type or a CompoundFilter type.
     :vartype filters: ~azure.ai.projects.models.ComparisonFilter or
      ~azure.ai.projects.models.CompoundFilter
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar vector_store_ids: The IDs of the vector stores to search.
     :vartype vector_store_ids: list[str]
     """
@@ -7343,10 +7355,10 @@ class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
         *,
         name: Optional[str] = None,
         description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
         max_num_results: Optional[int] = None,
         ranking_options: Optional["_models.RankingOptions"] = None,
         filters: Optional["_types.Filters"] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
         vector_store_ids: Optional[list[str]] = None,
     ) -> None: ...
 
@@ -9251,6 +9263,10 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
     :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar type: Required. MCP.
     :vartype type: str or ~azure.ai.projects.models.MCP
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
@@ -9294,9 +9310,6 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
      connection stores authentication and other connection details needed to connect to the MCP
      server.
     :vartype project_connection_id: str
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     """
 
     type: Literal[ToolboxToolType.MCP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -9361,6 +9374,7 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
         server_label: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
         server_url: Optional[str] = None,
         connector_id: Optional[
             Literal[
@@ -9381,7 +9395,6 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
         require_approval: Optional[Union["_models.MCPToolRequireApproval", Literal["always"], Literal["never"]]] = None,
         defer_loading: Optional[bool] = None,
         project_connection_id: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
     ) -> None: ...
 
     @overload
@@ -10968,11 +10981,12 @@ class OpenApiToolboxTool(ToolboxTool, discriminator="openapi"):
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
     :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar type: Required. OPENAPI.
     :vartype type: str or ~azure.ai.projects.models.OPENAPI
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar openapi: The openapi function definition. Required.
     :vartype openapi: ~azure.ai.projects.models.OpenApiFunctionDefinition
     """
@@ -13288,10 +13302,12 @@ class SessionLogEvent(_Model):
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -15613,6 +15629,10 @@ class WebSearchToolboxTool(ToolboxTool, discriminator="web_search"):
     :vartype name: str
     :ivar description: Optional user-defined description for this tool or configuration.
     :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar type: Required. WEB_SEARCH.
     :vartype type: str or ~azure.ai.projects.models.WEB_SEARCH
     :ivar filters:
@@ -15623,9 +15643,6 @@ class WebSearchToolboxTool(ToolboxTool, discriminator="web_search"):
      for the search. One of ``low``, ``medium``, or ``high``. ``medium`` is the default. Is one of
      the following types: Literal["low"], Literal["medium"], Literal["high"]
     :vartype search_context_size: str or str or str
-    :ivar tool_configs: Deprecated. This property is deprecated and will be removed in a future
-     version.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
     :ivar custom_search_configuration: The project connections attached to this tool. There can be
      a maximum of 1 connection resource attached to the tool.
     :vartype custom_search_configuration: ~azure.ai.projects.models.WebSearchConfiguration
@@ -15657,10 +15674,10 @@ class WebSearchToolboxTool(ToolboxTool, discriminator="web_search"):
         *,
         name: Optional[str] = None,
         description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
         filters: Optional["_models.WebSearchToolFilters"] = None,
         user_location: Optional["_models.WebSearchApproximateLocation"] = None,
         search_context_size: Optional[Literal["low", "medium", "high"]] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
         custom_search_configuration: Optional["_models.WebSearchConfiguration"] = None,
     ) -> None: ...
 
