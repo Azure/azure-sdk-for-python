@@ -107,12 +107,10 @@ jobs:
       container: $[ variables['Container'] ]
 
     steps:
-      - template: /eng/common/pipelines/templates/steps/login-to-github.yml
-
       - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
         parameters:
           ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
-            TokenToUseForAuth: $(GH_TOKEN)
+            TokenToUseForAuth: $(azuresdk-github-pat)
           Paths:
             - '**'
 
