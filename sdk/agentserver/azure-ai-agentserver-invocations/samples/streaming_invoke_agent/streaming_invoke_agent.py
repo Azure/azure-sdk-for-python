@@ -18,7 +18,6 @@ Usage::
     # -> event: done
     # -> data: {"invocation_id": "..."}
 """
-
 import asyncio
 import json
 from collections.abc import AsyncGenerator  # pylint: disable=import-error
@@ -28,32 +27,14 @@ from starlette.responses import Response, StreamingResponse
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
+
 app = InvocationAgentServerHost()
 
 # Simulated tokens — in production these would come from a model.
 _SIMULATED_TOKENS = [
-    "class",
-    " Calculator",
-    ":",
-    "\n",
-    "    ",
-    "def",
-    " add",
-    "(",
-    "self",
-    ",",
-    " a",
-    ",",
-    " b",
-    ")",
-    ":",
-    "\n",
-    "        ",
-    "return",
-    " a",
-    " +",
-    " b",
-    "\n",
+    "class", " Calculator", ":", "\n",
+    "    ", "def", " add", "(", "self", ",", " a", ",", " b", ")", ":", "\n",
+    "        ", "return", " a", " +", " b", "\n",
 ]
 
 

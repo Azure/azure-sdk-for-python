@@ -34,7 +34,7 @@ class ModelCache:
         """Load cache from disk."""
         try:
             if self.cache_file.exists():
-                with open(self.cache_file, "r", encoding="utf-8") as f:
+                with open(self.cache_file, 'r', encoding='utf-8') as f:
                     self._cache = json.load(f)
                 logger.debug("Loaded model cache from disk")
         except Exception as e:
@@ -48,7 +48,7 @@ class ModelCache:
             self.cache_dir.mkdir(parents=True, exist_ok=True)
 
             # Save cache
-            with open(self.cache_file, "w", encoding="utf-8") as f:
+            with open(self.cache_file, 'w', encoding='utf-8') as f:
                 json.dump(self._cache, f, indent=2)
 
             # Set restrictive permissions
@@ -67,7 +67,7 @@ class ModelCache:
         Returns:
             Cache key (normalized URL)
         """
-        return resource_url.lower().rstrip("/")
+        return resource_url.lower().rstrip('/')
 
     def get_selected_model(self, resource_url: str, max_age_seconds: int = 86400) -> Optional[str]:
         """Get cached selected model for a resource.
@@ -101,7 +101,12 @@ class ModelCache:
 
         return selected_model
 
-    def set_selected_model(self, resource_url: str, model_name: str, deployments: Optional[List[Dict]] = None):
+    def set_selected_model(
+        self,
+        resource_url: str,
+        model_name: str,
+        deployments: Optional[List[Dict]] = None
+    ):
         """Cache the selected model for a resource.
 
         Args:

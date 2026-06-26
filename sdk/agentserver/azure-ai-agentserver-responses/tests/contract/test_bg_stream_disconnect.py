@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Protocol conformance tests for background streaming handler surviving disconnect.
+"""Protocol conformance tests for background streaming handler surviving disconnect (US3).
 
-Verifies  (handler continues after SSE disconnect for bg+stream),
- (SSE write failure does NOT cancel handler CT).
+Verifies FR-012 (handler continues after SSE disconnect for bg+stream),
+FR-013 (SSE write failure does NOT cancel handler CT).
 
 Python port of BgStreamDisconnectTests.
 
@@ -291,7 +291,7 @@ def _make_slow_completing_handler():
 
 @pytest.mark.asyncio
 async def test_bg_stream_client_disconnects_handler_completes_all_events() -> None:
-    """T036/ — bg+stream: handler continues after client disconnect.
+    """T036/FR-012 — bg+stream: handler continues after client disconnect.
 
     Handler produces 10 output items, client disconnects after 3.
     GET after handler completes should return completed with all items.
@@ -336,9 +336,9 @@ async def test_bg_stream_client_disconnects_handler_completes_all_events() -> No
         get_resp = await client.get(f"/responses/{response_id}")
         assert get_resp.status_code == 200
         doc = get_resp.json()
-        assert (
-            doc["status"] == "completed"
-        ), f": bg+stream handler should complete after disconnect, got status '{doc['status']}'"
+        assert doc["status"] == "completed", (
+            f"FR-012: bg+stream handler should complete after disconnect, got status '{doc['status']}'"
+        )
     finally:
         await _ensure_task_done(post_task, handler)
 
@@ -350,7 +350,7 @@ async def test_bg_stream_client_disconnects_handler_completes_all_events() -> No
 
 @pytest.mark.asyncio
 async def test_bg_stream_sse_write_failure_does_not_cancel_handler_ct() -> None:
-    """T037/ — bg+stream: SSE write failure does not trigger handler cancellation.
+    """T037/FR-013 — bg+stream: SSE write failure does not trigger handler cancellation.
 
     After client disconnect, the handler should complete normally,
     not be cancelled by the SSE write failure.
@@ -392,10 +392,12 @@ async def test_bg_stream_sse_write_failure_does_not_cancel_handler_ct() -> None:
         )
 
         # Handler should have COMPLETED, not been CANCELLED
-        assert (
-            handler.handler_completed.is_set()
-        ), ": Handler should complete normally, not be cancelled by SSE disconnect"
-        assert not handler.handler_cancelled.is_set(), ": Handler CT should NOT have been cancelled by SSE disconnect"
+        assert handler.handler_completed.is_set(), (
+            "FR-013: Handler should complete normally, not be cancelled by SSE disconnect"
+        )
+        assert not handler.handler_cancelled.is_set(), (
+            "FR-013: Handler CT should NOT have been cancelled by SSE disconnect"
+        )
     finally:
         await _ensure_task_done(post_task, handler)
 

@@ -215,9 +215,7 @@ class _WSHandlerMixin(_MixinBase):
             )
             logger.error(
                 "WebSocket accept failed for session %s: %s",
-                session_id,
-                exc,
-                exc_info=True,
+                session_id, exc, exc_info=True,
             )
             return
 
@@ -254,9 +252,7 @@ class _WSHandlerMixin(_MixinBase):
             )
 
     async def _invoke_user_handler(
-        self,
-        websocket: WebSocket,
-        session_id: str,
+        self, websocket: WebSocket, session_id: str,
     ) -> tuple[int, Optional[BaseException]]:
         """Run the registered user handler and classify the outcome.
 
@@ -289,9 +285,7 @@ class _WSHandlerMixin(_MixinBase):
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error(
                 "WebSocket handler raised for session %s: %s",
-                session_id,
-                exc,
-                exc_info=True,
+                session_id, exc, exc_info=True,
             )
             return InvocationsWSConstants.CLOSE_INTERNAL_ERROR, exc
 
@@ -326,16 +320,21 @@ class _WSHandlerMixin(_MixinBase):
         # application hasn't already done so (e.g. the user handler
         # may have called ``websocket.close`` itself, or the client
         # may have disconnected).
-        if websocket is not None and websocket.application_state != WebSocketState.DISCONNECTED:
-            reason = "Internal server error" if close_code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR else ""
+        if (
+            websocket is not None
+            and websocket.application_state != WebSocketState.DISCONNECTED
+        ):
+            reason = (
+                "Internal server error"
+                if close_code == InvocationsWSConstants.CLOSE_INTERNAL_ERROR
+                else ""
+            )
             try:
                 await websocket.close(code=close_code, reason=reason)
             except Exception:  # pylint: disable=broad-exception-caught
                 # Connection already gone — nothing to recover here.
                 logger.debug(
-                    "Error closing WebSocket session %s",
-                    session_id,
-                    exc_info=True,
+                    "Error closing WebSocket session %s", session_id, exc_info=True,
                 )
 
         self._emit_close_event(

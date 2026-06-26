@@ -91,6 +91,12 @@ class _StreamsRegistry:
         per-event TTL eviction once the stream is closed). Late
         subscribers see the full retained history. Pass ``cursor_fn``
         to enable cursored re-subscription via ``subscribe(after=...)``.
+
+        :keyword cursor_fn: Optional cursor extractor enabling
+            ``subscribe(after=...)`` re-subscription.
+        :paramtype cursor_fn: Optional[Callable[[Any], int]]
+        :keyword ttl_seconds: Optional per-event TTL eviction window.
+        :paramtype ttl_seconds: Optional[float]
         """
         self._factory = lambda _id: ReplayEventStream(cursor_fn=cursor_fn, ttl_seconds=ttl_seconds)
 
@@ -109,6 +115,18 @@ class _StreamsRegistry:
         ``storage_dir / f"{id}.jsonl"`` and rehydrates on construction
         if the file already exists (crash-recovery friendly). Same
         replay + TTL + cursor semantics as :meth:`use_in_memory_replay`.
+
+        :keyword storage_dir: Directory the per-stream event logs are written to.
+        :paramtype storage_dir: Path
+        :keyword cursor_fn: Optional cursor extractor enabling
+            ``subscribe(after=...)`` re-subscription.
+        :paramtype cursor_fn: Optional[Callable[[Any], int]]
+        :keyword ttl_seconds: Optional per-event TTL eviction window.
+        :paramtype ttl_seconds: Optional[float]
+        :keyword serializer: Optional payload-to-bytes serializer.
+        :paramtype serializer: Optional[Callable[[Any], bytes]]
+        :keyword deserializer: Optional bytes-to-payload deserializer.
+        :paramtype deserializer: Optional[Callable[[bytes], Any]]
         """
         storage_dir = Path(storage_dir)
         storage_dir.mkdir(parents=True, exist_ok=True)
@@ -140,6 +158,11 @@ class _StreamsRegistry:
         - Explicitly :meth:`delete`d id (tombstoned).
         - Closed stream whose close-clock TTL deadline has elapsed
           (auto-tombstoned).
+
+        :param id: The stream id to look up.
+        :type id: str
+        :return: The live stream instance for ``id``.
+        :rtype: EventStream
         """
         slot = self._slots.get(id, None)
         if slot is None:
@@ -163,6 +186,13 @@ class _StreamsRegistry:
 
           /  — file-backed cleanup happens
         BEFORE the registry tombstone install per C-STR-FBR-4.
+
+        :param id: The stream id to check.
+        :type id: str
+        :param slot: The registry slot (stream instance) for ``id``.
+        :type slot: Any
+        :return: True iff the tombstone was installed.
+        :rtype: bool
         """
         maybe_check = getattr(slot, "_maybe_auto_transition_to_gone", None)
         if maybe_check is None:
@@ -193,6 +223,11 @@ class _StreamsRegistry:
         split-brain construction when two coroutines race to create
         the same id. A previously-destroyed id is cleared on
         re-creation.
+
+        :param id: The stream id to return or create.
+        :type id: str
+        :return: The cached or newly-created stream instance.
+        :rtype: EventStream
         """
         # Fast path — already present, not tombstoned
         slot = self._slots.get(id, None)
@@ -218,6 +253,9 @@ class _StreamsRegistry:
         Cleans up backing resources (e.g. file handles for the
         file-backed replay backing) before installing the tombstone
         / C-STR-FBR-4.
+
+        :param id: The stream id to destroy.
+        :type id: str
         """
         slot = self._slots.get(id, None)
         if slot is None:

@@ -28,7 +28,6 @@ from conftest import (
 # Required fields on every close-event
 # ---------------------------------------------------------------------------
 
-
 def test_ws_close_event_log_contains_required_fields(caplog):
     """The close-event log line carries ws.session_id, ws.close_code, ws.duration_ms."""
     app = _make_echo_ws_app()
@@ -74,7 +73,6 @@ def test_ws_close_event_duration_is_non_negative(caplog):
 # Close codes on the close-event
 # ---------------------------------------------------------------------------
 
-
 def test_ws_close_event_on_handler_exception_records_1011(caplog):
     """Handler raising → close-event log records ws.close_code = 1011."""
     app = _make_failing_ws_app()
@@ -95,7 +93,6 @@ def test_ws_close_event_on_handler_exception_records_1011(caplog):
 # Exception details are NOT leaked into the structured payload
 # (parity with test_error_hides_details_by_default)
 # ---------------------------------------------------------------------------
-
 
 def test_ws_close_event_log_does_not_leak_exception_message(caplog):
     """The close-event log line does NOT carry the handler exception text."""
@@ -137,7 +134,10 @@ def test_ws_disconnect_with_code_zero_falls_back_to_normal_close(caplog):
 
     matches = _records_with_ws_extras(caplog.records)
     assert matches
-    assert getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code") == InvocationsWSConstants.CLOSE_NORMAL
+    assert (
+        getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code")
+        == InvocationsWSConstants.CLOSE_NORMAL
+    )
 
 
 def test_ws_disconnect_with_code_none_falls_back_to_normal_close(caplog):
@@ -156,4 +156,7 @@ def test_ws_disconnect_with_code_none_falls_back_to_normal_close(caplog):
 
     matches = _records_with_ws_extras(caplog.records)
     assert matches
-    assert getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code") == InvocationsWSConstants.CLOSE_NORMAL
+    assert (
+        getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code")
+        == InvocationsWSConstants.CLOSE_NORMAL
+    )

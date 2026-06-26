@@ -75,11 +75,13 @@ class EventStream(Protocol):
 
         :param payload: Opaque value. The framework never inspects,
             validates, or rewrites it.
-        :param close: If ``True``, the emit and the close-of-stream
+        :type payload: Any
+        :keyword close: If ``True``, the emit and the close-of-stream
             are observably atomic: every subscriber attached before
             this call returns sees BOTH the payload AND the
             end-of-stream signal; subscribers attached after see
             neither.
+        :paramtype close: bool
 
         :raises EventStreamClosedError: If the stream has already
             been closed.
@@ -104,10 +106,11 @@ class EventStream(Protocol):
         NOT a coroutine: call without ``await`` and immediately use
         with ``async for`` / ``aiter()`` / ``anext()``.
 
-        :param after: If supplied and the active backing supports
+        :keyword after: If supplied and the active backing supports
             cursored replay, yield only payloads whose cursor value
             is strictly greater than ``after``. Backings without
             cursor support silently ignore non-``None`` values.
+        :paramtype after: Optional[int]
 
         :raises EventStreamNotFoundError: Raised synchronously at the
             call site (before the iterator is returned) if the

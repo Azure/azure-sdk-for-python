@@ -76,19 +76,17 @@ class TestClearDefaultModel:
             # Should reset to fallback default (gpt-5)
             assert adapter.get_model() == "gpt-5"
 
-    @patch("azure.ai.agentserver.githubcopilot._model_cache.ModelCache")
+    @patch('azure.ai.agentserver.githubcopilot._model_cache.ModelCache')
     def test_clear_model_with_foundry_resource(self, mock_cache_class):
         """clear_default_model() invalidates cache when Foundry resource is configured."""
         mock_cache_instance = MagicMock()
         mock_cache_class.return_value = mock_cache_instance
 
         resource_url = "https://test.cognitiveservices.azure.com"
-        adapter = GitHubCopilotAdapter(
-            session_config={
-                "model": "gpt-4o",
-                "_foundry_resource_url": resource_url,
-            }
-        )
+        adapter = GitHubCopilotAdapter(session_config={
+            "model": "gpt-4o",
+            "_foundry_resource_url": resource_url,
+        })
 
         adapter.clear_default_model()
 
@@ -98,17 +96,15 @@ class TestClearDefaultModel:
         # Verify cache was invalidated
         mock_cache_instance.invalidate.assert_called_once_with(resource_url)
 
-    @patch("azure.ai.agentserver.githubcopilot._model_cache.ModelCache")
+    @patch('azure.ai.agentserver.githubcopilot._model_cache.ModelCache')
     def test_clear_model_handles_cache_errors(self, mock_cache_class):
         """clear_default_model() handles cache errors gracefully."""
         mock_cache_class.side_effect = Exception("Cache error")
 
-        adapter = GitHubCopilotAdapter(
-            session_config={
-                "model": "gpt-4o",
-                "_foundry_resource_url": "https://test.cognitiveservices.azure.com",
-            }
-        )
+        adapter = GitHubCopilotAdapter(session_config={
+            "model": "gpt-4o",
+            "_foundry_resource_url": "https://test.cognitiveservices.azure.com",
+        })
 
         # Should not raise an exception
         adapter.clear_default_model()
@@ -127,18 +123,16 @@ class TestClearDefaultModel:
             # Should remain at environment default
             assert adapter.get_model() == "gpt-4"
 
-    @patch("azure.ai.agentserver.githubcopilot._model_cache.ModelCache")
+    @patch('azure.ai.agentserver.githubcopilot._model_cache.ModelCache')
     def test_clear_model_idempotent_foundry(self, mock_cache_class):
         """clear_default_model() can be called multiple times safely (Foundry mode)."""
         mock_cache_instance = MagicMock()
         mock_cache_class.return_value = mock_cache_instance
 
-        adapter = GitHubCopilotAdapter(
-            session_config={
-                "model": "gpt-4o",
-                "_foundry_resource_url": "https://test.cognitiveservices.azure.com",
-            }
-        )
+        adapter = GitHubCopilotAdapter(session_config={
+            "model": "gpt-4o",
+            "_foundry_resource_url": "https://test.cognitiveservices.azure.com",
+        })
 
         adapter.clear_default_model()
         adapter.clear_default_model()  # Should not raise
@@ -157,9 +151,9 @@ class TestClearAndReinitialize:
     """Test the workflow of clearing model and re-initializing."""
 
     @pytest.mark.asyncio
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model")
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments")
-    @patch("azure.ai.agentserver.githubcopilot._model_cache.ModelCache")
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model')
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments')
+    @patch('azure.ai.agentserver.githubcopilot._model_cache.ModelCache')
     async def test_clear_forces_rediscovery(self, mock_cache_class, mock_discover, mock_get_default):
         """Clearing model should force re-discovery on next initialize()."""
         mock_cache_instance = MagicMock()
@@ -172,11 +166,9 @@ class TestClearAndReinitialize:
         }
 
         resource_url = "https://test.cognitiveservices.azure.com"
-        adapter = GitHubCopilotAdapter(
-            session_config={
-                "_foundry_resource_url": resource_url,
-            }
-        )
+        adapter = GitHubCopilotAdapter(session_config={
+            "_foundry_resource_url": resource_url,
+        })
 
         # Remove default model so initialize() will check cache
         adapter._session_config.pop("model", None)
@@ -230,9 +222,9 @@ class TestWireApiSelection:
     """Tests for dynamic wire_api selection based on model capabilities."""
 
     @pytest.mark.asyncio
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model")
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments")
-    @patch("azure.ai.agentserver.githubcopilot._model_cache.ModelCache")
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model')
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments')
+    @patch('azure.ai.agentserver.githubcopilot._model_cache.ModelCache')
     async def test_responses_capable_model_sets_responses_wire_api(
         self, mock_cache_class, mock_discover, mock_get_default
     ):
@@ -255,18 +247,15 @@ class TestWireApiSelection:
         mock_get_default.return_value = "gpt-5.3-codex"
 
         from azure.ai.agentserver.githubcopilot._copilot_adapter import ProviderConfig
-
-        adapter = GitHubCopilotAdapter(
-            session_config={
-                "_foundry_resource_url": "https://test.openai.azure.com",
-                "provider": ProviderConfig(
-                    type="openai",
-                    base_url="https://test.openai.azure.com/openai/v1/",
-                    bearer_token="placeholder",
-                    wire_api="completions",
-                ),
-            }
-        )
+        adapter = GitHubCopilotAdapter(session_config={
+            "_foundry_resource_url": "https://test.openai.azure.com",
+            "provider": ProviderConfig(
+                type="openai",
+                base_url="https://test.openai.azure.com/openai/v1/",
+                bearer_token="placeholder",
+                wire_api="completions",
+            ),
+        })
         adapter._session_config.pop("model", None)
 
         mock_credential = MagicMock()
@@ -281,10 +270,12 @@ class TestWireApiSelection:
         assert adapter._session_config["provider"]["wire_api"] == "responses"
 
     @pytest.mark.asyncio
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model")
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments")
-    @patch("azure.ai.agentserver.githubcopilot._model_cache.ModelCache")
-    async def test_chat_only_model_sets_completions_wire_api(self, mock_cache_class, mock_discover, mock_get_default):
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model')
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments')
+    @patch('azure.ai.agentserver.githubcopilot._model_cache.ModelCache')
+    async def test_chat_only_model_sets_completions_wire_api(
+        self, mock_cache_class, mock_discover, mock_get_default
+    ):
         """Model with only chatCompletion=true should set wire_api to 'completions'."""
         from azure.ai.agentserver.githubcopilot._foundry_model_discovery import FoundryDeployment
 
@@ -304,18 +295,15 @@ class TestWireApiSelection:
         mock_get_default.return_value = "gpt-4.1"
 
         from azure.ai.agentserver.githubcopilot._copilot_adapter import ProviderConfig
-
-        adapter = GitHubCopilotAdapter(
-            session_config={
-                "_foundry_resource_url": "https://test.openai.azure.com",
-                "provider": ProviderConfig(
-                    type="openai",
-                    base_url="https://test.openai.azure.com/openai/v1/",
-                    bearer_token="placeholder",
-                    wire_api="completions",
-                ),
-            }
-        )
+        adapter = GitHubCopilotAdapter(session_config={
+            "_foundry_resource_url": "https://test.openai.azure.com",
+            "provider": ProviderConfig(
+                type="openai",
+                base_url="https://test.openai.azure.com/openai/v1/",
+                bearer_token="placeholder",
+                wire_api="completions",
+            ),
+        })
         adapter._session_config.pop("model", None)
 
         mock_credential = MagicMock()
@@ -330,10 +318,12 @@ class TestWireApiSelection:
         assert adapter._session_config["provider"]["wire_api"] == "completions"
 
     @pytest.mark.asyncio
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model")
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments")
-    @patch("azure.ai.agentserver.githubcopilot._model_cache.ModelCache")
-    async def test_both_capabilities_prefers_responses(self, mock_cache_class, mock_discover, mock_get_default):
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model')
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments')
+    @patch('azure.ai.agentserver.githubcopilot._model_cache.ModelCache')
+    async def test_both_capabilities_prefers_responses(
+        self, mock_cache_class, mock_discover, mock_get_default
+    ):
         """Model with both chatCompletion=true and responses=true should prefer responses."""
         from azure.ai.agentserver.githubcopilot._foundry_model_discovery import FoundryDeployment
 
@@ -353,18 +343,15 @@ class TestWireApiSelection:
         mock_get_default.return_value = "gpt-4o"
 
         from azure.ai.agentserver.githubcopilot._copilot_adapter import ProviderConfig
-
-        adapter = GitHubCopilotAdapter(
-            session_config={
-                "_foundry_resource_url": "https://test.openai.azure.com",
-                "provider": ProviderConfig(
-                    type="openai",
-                    base_url="https://test.openai.azure.com/openai/v1/",
-                    bearer_token="placeholder",
-                    wire_api="completions",
-                ),
-            }
-        )
+        adapter = GitHubCopilotAdapter(session_config={
+            "_foundry_resource_url": "https://test.openai.azure.com",
+            "provider": ProviderConfig(
+                type="openai",
+                base_url="https://test.openai.azure.com/openai/v1/",
+                bearer_token="placeholder",
+                wire_api="completions",
+            ),
+        })
         adapter._session_config.pop("model", None)
 
         mock_credential = MagicMock()
@@ -389,10 +376,12 @@ class TestConfiguredModelMatching:
     """Tests for validating configured model against discovered deployments."""
 
     @pytest.mark.asyncio
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model")
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments")
-    @patch("azure.ai.agentserver.githubcopilot._model_cache.ModelCache")
-    async def test_configured_model_matched(self, mock_cache_class, mock_discover, mock_get_default):
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model')
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments')
+    @patch('azure.ai.agentserver.githubcopilot._model_cache.ModelCache')
+    async def test_configured_model_matched(
+        self, mock_cache_class, mock_discover, mock_get_default
+    ):
         """Configured model found in deployments keeps that model."""
         from azure.ai.agentserver.githubcopilot._foundry_model_discovery import FoundryDeployment
 
@@ -402,36 +391,29 @@ class TestConfiguredModelMatching:
 
         deployments = [
             FoundryDeployment(
-                name="gpt-5.3-codex",
-                model_name="gpt-5.3-codex",
-                model_version="2026-02-24",
-                token_rate_limit=5000000,
+                name="gpt-5.3-codex", model_name="gpt-5.3-codex",
+                model_version="2026-02-24", token_rate_limit=5000000,
                 capabilities={"responses": "true"},
             ),
             FoundryDeployment(
-                name="gpt-4o",
-                model_name="gpt-4o",
-                model_version="2024-11-20",
-                token_rate_limit=40000,
+                name="gpt-4o", model_name="gpt-4o",
+                model_version="2024-11-20", token_rate_limit=40000,
                 capabilities={"chatCompletion": "true", "responses": "true"},
             ),
         ]
         mock_discover.return_value = deployments
 
         from azure.ai.agentserver.githubcopilot._copilot_adapter import ProviderConfig
-
-        adapter = GitHubCopilotAdapter(
-            session_config={
-                "model": "gpt-4o",
-                "_foundry_resource_url": "https://test.openai.azure.com",
-                "provider": ProviderConfig(
-                    type="openai",
-                    base_url="https://test.openai.azure.com/openai/v1/",
-                    bearer_token="placeholder",
-                    wire_api="completions",
-                ),
-            }
-        )
+        adapter = GitHubCopilotAdapter(session_config={
+            "model": "gpt-4o",
+            "_foundry_resource_url": "https://test.openai.azure.com",
+            "provider": ProviderConfig(
+                type="openai",
+                base_url="https://test.openai.azure.com/openai/v1/",
+                bearer_token="placeholder",
+                wire_api="completions",
+            ),
+        })
 
         mock_credential = MagicMock()
         mock_token = MagicMock()
@@ -446,10 +428,12 @@ class TestConfiguredModelMatching:
         mock_get_default.assert_not_called()  # Should not auto-select
 
     @pytest.mark.asyncio
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model")
-    @patch("azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments")
-    @patch("azure.ai.agentserver.githubcopilot._model_cache.ModelCache")
-    async def test_configured_model_not_found_auto_selects(self, mock_cache_class, mock_discover, mock_get_default):
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.get_default_model')
+    @patch('azure.ai.agentserver.githubcopilot._foundry_model_discovery.discover_foundry_deployments')
+    @patch('azure.ai.agentserver.githubcopilot._model_cache.ModelCache')
+    async def test_configured_model_not_found_auto_selects(
+        self, mock_cache_class, mock_discover, mock_get_default
+    ):
         """Configured model not in deployments triggers auto-selection."""
         from azure.ai.agentserver.githubcopilot._foundry_model_discovery import FoundryDeployment
 
@@ -458,29 +442,24 @@ class TestConfiguredModelMatching:
         mock_cache_instance.get_cache_info.return_value = None
 
         deployment = FoundryDeployment(
-            name="gpt-5.3-codex",
-            model_name="gpt-5.3-codex",
-            model_version="2026-02-24",
-            token_rate_limit=5000000,
+            name="gpt-5.3-codex", model_name="gpt-5.3-codex",
+            model_version="2026-02-24", token_rate_limit=5000000,
             capabilities={"responses": "true"},
         )
         mock_discover.return_value = [deployment]
         mock_get_default.return_value = "gpt-5.3-codex"
 
         from azure.ai.agentserver.githubcopilot._copilot_adapter import ProviderConfig
-
-        adapter = GitHubCopilotAdapter(
-            session_config={
-                "model": "nonexistent-model",
-                "_foundry_resource_url": "https://test.openai.azure.com",
-                "provider": ProviderConfig(
-                    type="openai",
-                    base_url="https://test.openai.azure.com/openai/v1/",
-                    bearer_token="placeholder",
-                    wire_api="completions",
-                ),
-            }
-        )
+        adapter = GitHubCopilotAdapter(session_config={
+            "model": "nonexistent-model",
+            "_foundry_resource_url": "https://test.openai.azure.com",
+            "provider": ProviderConfig(
+                type="openai",
+                base_url="https://test.openai.azure.com/openai/v1/",
+                bearer_token="placeholder",
+                wire_api="completions",
+            ),
+        })
 
         mock_credential = MagicMock()
         mock_token = MagicMock()

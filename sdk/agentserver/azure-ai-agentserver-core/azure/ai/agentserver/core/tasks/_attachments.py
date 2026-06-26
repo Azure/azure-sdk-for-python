@@ -165,6 +165,7 @@ def _is_ref(slot: Any) -> bool:
 
     :param slot: The candidate slot.
     :type slot: Any
+    :return: True iff *slot* is the strict ref shape.
     :rtype: bool
     """
     if not isinstance(slot, dict):
@@ -183,6 +184,7 @@ def _ref_key(slot: dict[str, dict[str, str]]) -> str:
     Caller MUST have validated the slot with :func:`_is_ref` first.
 
     :param slot: A ref slot (output of :func:`_make_ref`).
+    :type slot: dict[str, dict[str, str]]
     :return: The attachment key string.
     :rtype: str
     """
@@ -195,6 +197,7 @@ def _ref_hash(slot: dict[str, dict[str, str]]) -> str:
     Caller MUST have validated the slot with :func:`_is_ref` first.
 
     :param slot: A ref slot (output of :func:`_make_ref`).
+    :type slot: dict[str, dict[str, str]]
     :return: The ``"sha256:<hex>"`` hash string.
     :rtype: str
     """
@@ -216,6 +219,7 @@ def _serialized_size_bytes(serialized: Any) -> int:
 
     :param serialized: The JSON-compatible value.
     :type serialized: Any
+    :return: The JSON wire-byte size of the serialized value.
     :rtype: int
     """
     return len(json.dumps(serialized, separators=(",", ":")).encode("utf-8"))
@@ -388,7 +392,7 @@ def _validate_attachment_count(
         )
 
 
-def _remap_attachment_error(exc: "_AttachmentTooLarge") -> ValueError:
+def _remap_attachment_error(exc: "_AttachmentTooLarge") -> Exception:
     """— translate the internal ``_AttachmentTooLarge``
     raised against a framework-reserved attachment key into the
     developer-facing exception.
@@ -404,6 +408,11 @@ def _remap_attachment_error(exc: "_AttachmentTooLarge") -> ValueError:
     Callers do ``raise _remap_attachment_error(internal)`` so the
     traceback reflects the framework's re-raise site, not the
     provider's raise site.
+
+    :param exc: The internal attachment-too-large error to translate.
+    :type exc: _AttachmentTooLarge
+    :return: The developer-facing exception to raise.
+    :rtype: Exception
     """
     key = getattr(exc, "attachment_key", "")
     task_id = getattr(exc, "task_id", "")

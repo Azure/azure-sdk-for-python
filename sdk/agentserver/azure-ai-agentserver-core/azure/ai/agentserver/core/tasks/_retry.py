@@ -32,7 +32,7 @@ class RetryPolicy:
         logical request).
     :type max_attempts: int
     :param retry_on: Exception types that trigger retry. ``None`` means all.
-    :type retry_on: tuple[type[Exception], ...] | None
+    :type retry_on: type[Exception] | tuple[type[Exception], ...] | None
     :param jitter: Whether to add ±25% randomization to delays.
     :type jitter: bool
 
@@ -56,7 +56,7 @@ class RetryPolicy:
         backoff_coefficient: float = 2.0,
         max_delay: timedelta | float = timedelta(seconds=60),
         max_attempts: int = 3,
-        retry_on: tuple[type[Exception], ...] | None = None,
+        retry_on: type[Exception] | tuple[type[Exception], ...] | None = None,
         jitter: bool | float = True,
         _linear: bool = False,
     ) -> None:
@@ -75,14 +75,17 @@ class RetryPolicy:
             raise ValueError(f"max_delay ({max_delay}) must be >= initial_delay ({initial_delay})")
         if max_attempts < 1:
             raise ValueError(f"max_attempts must be >= 1, got {max_attempts}")
+        normalized_retry_on: tuple[type[Exception], ...] | None = None
         if retry_on is not None:
             # Accept a bare class as a single-element tuple — Pythonic.
-            if isinstance(retry_on, type) and issubclass(retry_on, BaseException):
-                retry_on = (retry_on,)
-            elif isinstance(retry_on, type):
-                # Non-Exception class (e.g., str) passed directly — reject.
-                raise TypeError(f"retry_on entries must be Exception subclasses, got {retry_on!r}")
-            for exc_type in retry_on:
+            if isinstance(retry_on, type):
+                if not issubclass(retry_on, Exception):
+                    # Non-Exception class (e.g., str) passed directly — reject.
+                    raise TypeError(f"retry_on entries must be Exception subclasses, got {retry_on!r}")
+                normalized_retry_on = (retry_on,)
+            else:
+                normalized_retry_on = tuple(retry_on)
+            for exc_type in normalized_retry_on:
                 if not isinstance(exc_type, type) or not issubclass(exc_type, Exception):
                     raise TypeError(f"retry_on entries must be Exception subclasses, got {exc_type!r}")
 
@@ -90,7 +93,7 @@ class RetryPolicy:
         self.backoff_coefficient = backoff_coefficient
         self.max_delay = max_delay
         self.max_attempts = max_attempts
-        self.retry_on = retry_on
+        self.retry_on = normalized_retry_on
         self.jitter = jitter
         self._linear = _linear
 

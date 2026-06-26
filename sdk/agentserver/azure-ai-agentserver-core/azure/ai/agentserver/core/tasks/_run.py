@@ -33,6 +33,11 @@ def _unwrap_result(res: Any) -> Any:
 
     Identity helper retained so older monkey-patches in tests that
     pre-wrap futures still pass unchanged.
+
+    :param res: The already-resolved result value.
+    :type res: Any
+    :return: The same value, unchanged.
+    :rtype: Any
     """
     return res
 
@@ -68,7 +73,7 @@ class TaskRun(Generic[Output]):  # pylint: disable=too-many-instance-attributes
         "_queued_cancel_callback",
     )
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         task_id: str,
         *,

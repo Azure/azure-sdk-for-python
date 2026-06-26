@@ -33,12 +33,8 @@ def run_az(args: list[str], *, capture: bool = True) -> subprocess.CompletedProc
     if is_win:
         child_env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
         return subprocess.run(
-            cmd,
-            capture_output=True,
-            encoding="utf-8",
-            errors="replace",
-            shell=True,
-            env=child_env,
+            cmd, capture_output=True, encoding="utf-8", errors="replace",
+            shell=True, env=child_env,
         )
     return subprocess.run(cmd, capture_output=capture, text=True)
 
@@ -75,20 +71,12 @@ def build_image(staging_dir: Path, acr: str, name: str, tag: str) -> str:
 
     is_win = sys.platform == "win32"
 
-    cmd = [
-        "az",
-        "acr",
-        "build",
-        "--registry",
-        acr,
-        "--image",
-        f"{name}:{tag}",
-        "--platform",
-        "linux/amd64",
-        "--file",
-        str(staging_dir / "Dockerfile"),
-        str(staging_dir),
-    ]
+    cmd = ["az", "acr", "build",
+           "--registry", acr,
+           "--image", f"{name}:{tag}",
+           "--platform", "linux/amd64",
+           "--file", str(staging_dir / "Dockerfile"),
+           str(staging_dir)]
 
     if is_win:
         # Skip log streaming on Windows to avoid colorama + cp1252 encoding crash.
@@ -96,12 +84,8 @@ def build_image(staging_dir: Path, acr: str, name: str, tag: str) -> str:
         print("  (Windows: using --no-logs to avoid encoding issues)")
         env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
         result = subprocess.run(
-            cmd,
-            capture_output=True,
-            encoding="utf-8",
-            errors="replace",
-            shell=True,
-            env=env,
+            cmd, capture_output=True, encoding="utf-8", errors="replace",
+            shell=True, env=env,
         )
         if result.stdout:
             sys.stdout.write(result.stdout)
@@ -110,11 +94,8 @@ def build_image(staging_dir: Path, acr: str, name: str, tag: str) -> str:
         returncode = result.returncode
     else:
         proc = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            encoding="utf-8",
-            errors="replace",
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            encoding="utf-8", errors="replace",
         )
         for line in proc.stdout:
             sys.stdout.write(line)
@@ -144,7 +125,9 @@ def create_agent(endpoint: str, name: str, image: str, env_vars: dict) -> dict:
             "image": image,
             "cpu": "1",
             "memory": "2Gi",
-            "container_protocol_versions": [{"protocol": "responses", "version": "v1"}],
+            "container_protocol_versions": [
+                {"protocol": "responses", "version": "v1"}
+            ],
             "environment_variables": env_vars,
         },
         "metadata": {"enableVnextExperience": "true"},
@@ -156,21 +139,12 @@ def create_agent(endpoint: str, name: str, image: str, env_vars: dict) -> dict:
         body_file = f.name
 
     try:
-        result = run_az(
-            [
-                "rest",
-                "--method",
-                "POST",
-                "--url",
-                url,
-                "--body",
-                f"@{body_file}",
-                "--headers",
-                "Content-Type=application/json",
-                "--resource",
-                "https://ai.azure.com",
-            ]
-        )
+        result = run_az([
+            "rest", "--method", "POST", "--url", url,
+            "--body", f"@{body_file}",
+            "--headers", "Content-Type=application/json",
+            "--resource", "https://ai.azure.com",
+        ])
     finally:
         os.unlink(body_file)
 
@@ -212,7 +186,6 @@ def main():
     for env_path in [TEST_AGENT_DIR / ".env", INTEGRATION_DIR / ".env", PACKAGE_ROOT / ".env"]:
         if env_path.exists():
             from dotenv import load_dotenv
-
             load_dotenv(env_path)
             break
 
@@ -243,7 +216,7 @@ def main():
     wait_for_ready(endpoint, args.name)
 
     print(f"\nDone. Test with:")
-    print(f'  python tests/integration/invoke.py --name {args.name} --message "hello"')
+    print(f"  python tests/integration/invoke.py --name {args.name} --message \"hello\"")
 
 
 if __name__ == "__main__":

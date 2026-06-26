@@ -23,7 +23,6 @@ from pathlib import Path
 from typing import Any, Optional
 
 from ._protocol import (
-    EventStream,
     EventStreamClosedError,
     EventStreamNotFoundError,
 )
@@ -35,6 +34,7 @@ try:
 
     _HAS_FCNTL = True
 except ImportError:  # pragma: no cover - windows
+    fcntl = None  # type: ignore[assignment]
     _HAS_FCNTL = False
 
 
@@ -112,7 +112,11 @@ class _BaseEventStream:
             pass
 
     async def _fanout_emit(self, payload: Any) -> None:
-        """Push to every currently-attached subscriber queue."""
+        """Push to every currently-attached subscriber queue.
+
+        :param payload: The payload to push to each subscriber queue.
+        :type payload: Any
+        """
         for q in list(self._subscriber_queues):
             await q.put(payload)
 
@@ -268,6 +272,10 @@ class ReplayEventStream(_BaseEventStream):
         ``emit_time + ttl_seconds`` independently of close/open
         state (rules 22-24). In-flight per-subscriber queue items
         are NOT recalled (rule 24).
+
+        :keyword now: Override the current time (seconds); defaults to
+            ``time.time()`` when not supplied.
+        :paramtype now: Optional[float]
         """
         if self._ttl_seconds is None:
             return
@@ -354,7 +362,7 @@ class ReplayEventStream(_BaseEventStream):
             await self._fanout_terminate()
 
 
-class _ReplayIterator:
+class _ReplayIterator:  # pylint: disable=protected-access
     """Per-subscriber iterator for :class:`ReplayEventStream`.
 
     Replays history (subject to ``after`` cursor + per-event TTL) on
@@ -362,7 +370,9 @@ class _ReplayIterator:
     subscriber queue.
     """
 
-    def __init__(self, owner: ReplayEventStream, *, after: Optional[int] = None) -> None:
+    def __init__(
+        self, owner: "ReplayEventStream | FileBackedReplayEventStream", *, after: Optional[int] = None
+    ) -> None:
         self._owner = owner
         self._after = after
         self._queue: Optional[asyncio.Queue[Any]] = None
@@ -456,7 +466,7 @@ _COMPACTION_INTERVAL = 1000
 default; documented in Phase 1 PR per T028."""
 
 
-class FileBackedReplayEventStream(_BaseEventStream):
+class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many-instance-attributes
     """File-backed multicast + replay + cursor + per-event TTL.
 
     See ``streaming.md`` §5.3 +  + rules 26-32. Persists every
@@ -488,7 +498,7 @@ class FileBackedReplayEventStream(_BaseEventStream):
         self._path.parent.mkdir(parents=True, exist_ok=True)
         # Open in append+read mode; fcntl.flock on POSIX, lock-file fallback elsewhere.
         self._file = open(self._path, "a+b")  # pylint: disable=consider-using-with
-        if _HAS_FCNTL:
+        if fcntl is not None:
             try:
                 fcntl.flock(self._file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             except BlockingIOError as exc:
@@ -548,7 +558,6 @@ class FileBackedReplayEventStream(_BaseEventStream):
         else:
             lines = [l for l in lines if l]
         had_terminal = False
-        terminal_seen_at: Optional[int] = None
         records: list[dict] = []
         for idx, line in enumerate(lines):
             try:
@@ -572,7 +581,6 @@ class FileBackedReplayEventStream(_BaseEventStream):
                         f"FileBackedReplayEventStream: terminal marker not " f"at end-of-file in {self._path}"
                     )
                 had_terminal = True
-                terminal_seen_at = idx
                 continue
             if had_terminal:
                 # Records after terminal marker — malformed.
@@ -608,7 +616,7 @@ class FileBackedReplayEventStream(_BaseEventStream):
 
     def _cleanup_locks(self) -> None:
         try:
-            if _HAS_FCNTL:
+            if fcntl is not None:
                 fcntl.flock(self._file.fileno(), fcntl.LOCK_UN)
             else:
                 os.close(self._lock_fd)
@@ -660,7 +668,7 @@ class FileBackedReplayEventStream(_BaseEventStream):
             # guarantee is never released across the swap.
             old_file = self._file
             new_file = open(self._path, "a+b")  # pylint: disable=consider-using-with
-            if _HAS_FCNTL:
+            if fcntl is not None:
                 fcntl.flock(new_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             new_file.seek(0, os.SEEK_END)
             self._file = new_file

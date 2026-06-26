@@ -68,13 +68,14 @@ class TestExtractInputWithAttachments:
     def test_text_only_request(self):
         """Returns text from context.get_input_text when no attachments."""
         ctx = self._make_context(text="hello", items=[])
-        result = asyncio.get_event_loop().run_until_complete(_extract_input_with_attachments(ctx))
+        result = asyncio.get_event_loop().run_until_complete(
+            _extract_input_with_attachments(ctx)
+        )
         assert result == "hello"
 
     def test_with_file_attachment(self):
         """Appends decoded file content to prompt text."""
         import base64
-
         file_content = base64.b64encode(b"file contents here").decode()
         msg = ItemMessage(
             role=MessageRole.USER,
@@ -84,7 +85,9 @@ class TestExtractInputWithAttachments:
             ],
         )
         ctx = self._make_context(text="check this", items=[msg])
-        result = asyncio.get_event_loop().run_until_complete(_extract_input_with_attachments(ctx))
+        result = asyncio.get_event_loop().run_until_complete(
+            _extract_input_with_attachments(ctx)
+        )
         assert "check this" in result
         assert "[Attached file: test.txt]" in result
         assert "file contents here" in result
@@ -99,14 +102,18 @@ class TestExtractInputWithAttachments:
             ],
         )
         ctx = self._make_context(text="what is this", items=[msg])
-        result = asyncio.get_event_loop().run_until_complete(_extract_input_with_attachments(ctx))
+        result = asyncio.get_event_loop().run_until_complete(
+            _extract_input_with_attachments(ctx)
+        )
         assert "what is this" in result
         assert "[Attached image: https://example.com/img.png]" in result
 
     def test_no_items(self):
         """Returns plain text when no input items."""
         ctx = self._make_context(text="hello", items=[])
-        result = asyncio.get_event_loop().run_until_complete(_extract_input_with_attachments(ctx))
+        result = asyncio.get_event_loop().run_until_complete(
+            _extract_input_with_attachments(ctx)
+        )
         assert result == "hello"
 
     def test_empty_file_data(self):
@@ -118,7 +125,9 @@ class TestExtractInputWithAttachments:
             ],
         )
         ctx = self._make_context(text="test", items=[msg])
-        result = asyncio.get_event_loop().run_until_complete(_extract_input_with_attachments(ctx))
+        result = asyncio.get_event_loop().run_until_complete(
+            _extract_input_with_attachments(ctx)
+        )
         assert result == "test"
 
 
@@ -141,7 +150,6 @@ class TestConversationIdFallback:
     def test_fallback_to_get_conversation_id_string(self):
         """Falls back to get_conversation_id when context has no conversation_id."""
         from azure.ai.agentserver.responses.models import CreateResponse
-
         request = CreateResponse(model="test", conversation="conv-from-request")
         conversation_id = get_conversation_id(request)
         assert conversation_id == "conv-from-request"
@@ -149,7 +157,6 @@ class TestConversationIdFallback:
     def test_fallback_to_get_conversation_id_object(self):
         """Falls back to get_conversation_id with conversation object."""
         from azure.ai.agentserver.responses.models import CreateResponse, ConversationParam_2
-
         request = CreateResponse(model="test", conversation=ConversationParam_2(id="conv_playground_456"))
         conversation_id = get_conversation_id(request)
         assert conversation_id == "conv_playground_456"
@@ -157,7 +164,6 @@ class TestConversationIdFallback:
     def test_none_when_no_conversation(self):
         """Returns None when request has no conversation set."""
         from azure.ai.agentserver.responses.models import CreateResponse
-
         request = CreateResponse(model="test")
         conversation_id = get_conversation_id(request)
         assert conversation_id is None
@@ -165,7 +171,6 @@ class TestConversationIdFallback:
     def test_none_when_empty_conversation(self):
         """Returns None when conversation is empty string."""
         from azure.ai.agentserver.responses.models import CreateResponse
-
         request = CreateResponse(model="test", conversation="")
         conversation_id = get_conversation_id(request)
         assert conversation_id is None
@@ -195,14 +200,10 @@ class TestBuildSessionConfig:
 
     def test_byok_api_key_mode(self):
         """Creates BYOK config with API key."""
-        with patch.dict(
-            os.environ,
-            {
-                "AZURE_AI_FOUNDRY_RESOURCE_URL": "https://test.cognitiveservices.azure.com",
-                "AZURE_AI_FOUNDRY_API_KEY": "test-key",
-            },
-            clear=True,
-        ):
+        with patch.dict(os.environ, {
+            "AZURE_AI_FOUNDRY_RESOURCE_URL": "https://test.cognitiveservices.azure.com",
+            "AZURE_AI_FOUNDRY_API_KEY": "test-key",
+        }, clear=True):
             config = _build_session_config()
         assert config["provider"]["type"] == "openai"
         assert config["provider"]["bearer_token"] == "test-key"
@@ -211,13 +212,9 @@ class TestBuildSessionConfig:
 
     def test_byok_managed_identity_mode(self):
         """Creates BYOK config with placeholder token for Managed Identity."""
-        with patch.dict(
-            os.environ,
-            {
-                "AZURE_AI_FOUNDRY_RESOURCE_URL": "https://test.cognitiveservices.azure.com",
-            },
-            clear=True,
-        ):
+        with patch.dict(os.environ, {
+            "AZURE_AI_FOUNDRY_RESOURCE_URL": "https://test.cognitiveservices.azure.com",
+        }, clear=True):
             config = _build_session_config()
         assert config["provider"]["type"] == "openai"
         assert config["provider"]["bearer_token"] == "placeholder"
@@ -225,27 +222,19 @@ class TestBuildSessionConfig:
 
     def test_auto_derive_from_project_endpoint(self):
         """Auto-derives RESOURCE_URL from PROJECT_ENDPOINT when no GITHUB_TOKEN."""
-        with patch.dict(
-            os.environ,
-            {
-                "AZURE_AI_PROJECT_ENDPOINT": "https://myresource.services.ai.azure.com/api/projects/myproject",
-            },
-            clear=True,
-        ):
+        with patch.dict(os.environ, {
+            "AZURE_AI_PROJECT_ENDPOINT": "https://myresource.services.ai.azure.com/api/projects/myproject",
+        }, clear=True):
             config = _build_session_config()
         assert "provider" in config
         assert "cognitiveservices.azure.com" in config["provider"]["base_url"]
 
     def test_github_token_prevents_auto_derive(self):
         """GITHUB_TOKEN presence prevents auto-derivation of BYOK."""
-        with patch.dict(
-            os.environ,
-            {
-                "AZURE_AI_PROJECT_ENDPOINT": "https://myresource.services.ai.azure.com/api/projects/myproject",
-                "GITHUB_TOKEN": "ghp_test",
-            },
-            clear=True,
-        ):
+        with patch.dict(os.environ, {
+            "AZURE_AI_PROJECT_ENDPOINT": "https://myresource.services.ai.azure.com/api/projects/myproject",
+            "GITHUB_TOKEN": "ghp_test",
+        }, clear=True):
             config = _build_session_config()
         # Should NOT have a provider — GITHUB_TOKEN means use GitHub auth
         assert "provider" not in config
@@ -281,26 +270,18 @@ class TestUrlDerivation:
 
     def test_get_project_endpoint_new_var(self):
         """Prefers FOUNDRY_PROJECT_ENDPOINT over legacy name."""
-        with patch.dict(
-            os.environ,
-            {
-                "FOUNDRY_PROJECT_ENDPOINT": "https://new.endpoint",
-                "AZURE_AI_PROJECT_ENDPOINT": "https://old.endpoint",
-            },
-            clear=True,
-        ):
+        with patch.dict(os.environ, {
+            "FOUNDRY_PROJECT_ENDPOINT": "https://new.endpoint",
+            "AZURE_AI_PROJECT_ENDPOINT": "https://old.endpoint",
+        }, clear=True):
             result = _get_project_endpoint()
         assert result == "https://new.endpoint"
 
     def test_get_project_endpoint_legacy_var(self):
         """Falls back to AZURE_AI_PROJECT_ENDPOINT."""
-        with patch.dict(
-            os.environ,
-            {
-                "AZURE_AI_PROJECT_ENDPOINT": "https://old.endpoint",
-            },
-            clear=True,
-        ):
+        with patch.dict(os.environ, {
+            "AZURE_AI_PROJECT_ENDPOINT": "https://old.endpoint",
+        }, clear=True):
             result = _get_project_endpoint()
         assert result == "https://old.endpoint"
 

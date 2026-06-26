@@ -106,6 +106,20 @@ class TaskProvider(Protocol):
         :paramtype tag: dict[str, str] | None
         :keyword source_type: Filter by source type.
         :paramtype source_type: str | None
+        :keyword has_error: Filter by whether the task has a recorded error.
+        :paramtype has_error: bool | None
+        :keyword lease_expired: Filter by whether the task's lease has expired.
+        :paramtype lease_expired: bool | None
+        :keyword limit: Maximum number of records to return.
+        :paramtype limit: int | None
+        :keyword after: Return records after this pagination cursor.
+        :paramtype after: str | None
+        :keyword before: Return records before this pagination cursor.
+        :paramtype before: str | None
+        :keyword order: Sort order for the returned records.
+        :paramtype order: str | None
+        :keyword omit_attachment_values: When True, omit attachment values from results.
+        :paramtype omit_attachment_values: bool
         :return: Matching task records.
         :rtype: list[TaskInfo]
         """
