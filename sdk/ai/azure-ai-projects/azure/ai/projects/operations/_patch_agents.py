@@ -349,12 +349,12 @@ class AgentsOperations(GeneratedAgentsOperations):
         :type session_id: str
         :keyword file_path: The full path to the local file where the content should be written. Required.
         :paramtype file_path: str or os.PathLike[str]
-        :keyword remote_path: The file path to download from the sandbox, relative to the session home
-         directory. Required.
-        :paramtype remote_path: str
         :keyword overwrite: If True, overwrite the local file if it already exists. If False (default),
          raise FileExistsError when the file already exists.
         :paramtype overwrite: bool
+        :keyword remote_path: The file path to download from the sandbox, relative to the session home
+         directory. Required.
+        :paramtype remote_path: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
