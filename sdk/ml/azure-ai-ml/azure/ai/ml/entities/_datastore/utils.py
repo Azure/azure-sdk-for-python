@@ -7,7 +7,7 @@
 from typing import Any, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_04_01_preview import models
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp import models as models2024
+from azure.ai.ml._restclient.arm_ml_service import models as models2024
 from azure.ai.ml.entities._credentials import (
     AccountKeyConfiguration,
     CertificateConfiguration,

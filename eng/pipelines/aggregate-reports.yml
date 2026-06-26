@@ -87,9 +87,6 @@ stages:
             displayName: 'Prep Environment'
 
           - template: /eng/common/pipelines/templates/steps/login-to-github.yml
-            parameters:
-              TokenOwners:
-                - azure
 
           - task: PythonScript@0
             condition: succeededOrFailed()
