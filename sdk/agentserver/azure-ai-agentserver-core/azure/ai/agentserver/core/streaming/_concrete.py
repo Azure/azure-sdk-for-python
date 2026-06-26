@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
+import logging
 import os
 import time
 from collections.abc import AsyncIterator, Callable
@@ -26,6 +27,8 @@ from ._protocol import (
     EventStreamClosedError,
     EventStreamNotFoundError,
 )
+
+logger = logging.getLogger("azure.ai.agentserver.streaming")
 
 # Try POSIX fcntl; fall back to a lock-file scheme on platforms
 # without it (Windows). Per streaming.md rule 32.
@@ -503,6 +506,9 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 fcntl.flock(self._file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
             except BlockingIOError as exc:
                 self._file.close()
+                logger.warning(
+                    "FileBackedReplayEventStream: lock contention on %s (another process holds it)", self._path
+                )
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: another process holds the " f"lock on {self._path}"
                 ) from exc
@@ -514,6 +520,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 self._lock_path = lock_path
             except FileExistsError as exc:
                 self._file.close()
+                logger.warning("FileBackedReplayEventStream: lock-file contention on %s", self._path)
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: another process holds the " f"lock-file on {self._path}"
                 ) from exc
@@ -542,7 +549,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             )
         return record
 
-    def _rehydrate(self) -> None:
+    def _rehydrate(self) -> None:  # pylint: disable=too-many-statements
         self._file.seek(0)
         data = self._file.read()
         if not data:
@@ -552,6 +559,11 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         if lines and lines[-1] != b"":
             # Last line lacks \n — partial. Drop it.
             lines = lines[:-1]
+            logger.warning(
+                "FileBackedReplayEventStream: dropping partial trailing record in %s "
+                "(likely a crash mid-write); replay resumes from the last complete record",
+                self._path,
+            )
             # Truncate the file to remove the partial trailing.
             self._file.seek(0, os.SEEK_END)
             self._file.truncate(self._file.tell() - len(data) + sum(len(l) + 1 for l in lines))
@@ -565,11 +577,15 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             except (json.JSONDecodeError, UnicodeDecodeError) as exc:
                 # Mid-file malformed — RuntimeError at construction (rule 29).
                 self._cleanup_locks()
+                logger.error("FileBackedReplayEventStream: malformed record at line %d of %s", idx, self._path)
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: malformed record at " f"line {idx} of {self._path}"
                 ) from exc
             if "emit_time" not in rec:
                 self._cleanup_locks()
+                logger.error(
+                    "FileBackedReplayEventStream: record at line %d of %s missing 'emit_time' field", idx, self._path
+                )
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: record at line {idx} of " f"{self._path} missing 'emit_time' field"
                 )
@@ -577,6 +593,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 if had_terminal:
                     # Multiple terminals or terminal-not-at-EOF — malformed.
                     self._cleanup_locks()
+                    logger.error("FileBackedReplayEventStream: terminal marker not at end-of-file in %s", self._path)
                     raise RuntimeError(
                         f"FileBackedReplayEventStream: terminal marker not " f"at end-of-file in {self._path}"
                     )
@@ -585,6 +602,9 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             if had_terminal:
                 # Records after terminal marker — malformed.
                 self._cleanup_locks()
+                logger.error(
+                    "FileBackedReplayEventStream: record at line %d of %s follows terminal marker", idx, self._path
+                )
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: record at line {idx} of " f"{self._path} follows terminal marker"
                 )
@@ -613,6 +633,13 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             self._maybe_auto_transition_to_gone()
         # Position file at end for subsequent appends.
         self._file.seek(0, os.SEEK_END)
+        logger.debug(
+            "FileBackedReplayEventStream: rehydrated %d event(s) from %s (terminal=%s, buffered=%d)",
+            len(records),
+            self._path,
+            had_terminal,
+            len(self._buffer),
+        )
 
     def _cleanup_locks(self) -> None:
         try:
