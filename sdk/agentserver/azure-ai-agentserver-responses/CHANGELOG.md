@@ -77,6 +77,19 @@
 
 ### Bugs Fixed
 
+- **A resilient task that fails to start now fails the request instead of
+  silently running without durability.** Previously, when `resilient_background`
+  was in effect but the resilient task could not be started (e.g. the task store
+  rejected the write), the server fell back to running the handler on a
+  non-durable, connection-scoped task while still returning a healthy-looking
+  response — so the response had no crash recovery and the failure was hidden.
+  Such a failure is now surfaced immediately: non-streaming requests return
+  `HTTP 500` with `x-platform-error-source: platform` (the same classification
+  used for storage failures), and streaming requests emit a standalone `error`
+  event. In a hosted environment a missing task subsystem is likewise treated as
+  a platform failure. Local and test deployments without the task subsystem
+  installed are unaffected and continue to run the handler in-process.
+
 - **Resilient background streaming responses now engage resilience even when SSE
   keep-alive is enabled.** Previously the resilient task was created only on the
   no-keep-alive streaming path, so when SSE keep-alive was enabled (e.g. the
