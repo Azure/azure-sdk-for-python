@@ -11,6 +11,7 @@
 
 - Added `azure-core` as a dependency, and a `hosted` optional-dependencies extra (pulling in `azure-identity`) for hosted-agent deployments.
 - `resolve_graceful_shutdown_timeout()` now honors the `AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS` environment variable, letting operators shorten shutdown so task checkpoints can flush before long-running requests finish.
+- Added diagnostic logging (logger `azure.ai.agentserver.streaming`) to the event-streaming subsystem covering stream creation/deletion, crash-recovery rehydration of file-backed streams, and corruption/lock-contention failures, to aid debugging in production.
 
 ## 2.0.0b6 (2026-06-12)
 

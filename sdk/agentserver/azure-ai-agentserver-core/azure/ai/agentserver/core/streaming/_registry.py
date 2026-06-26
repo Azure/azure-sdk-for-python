@@ -30,6 +30,7 @@ All paths wire-map to HTTP 404.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import logging
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Optional, Union
@@ -43,6 +44,8 @@ from ._protocol import (
     EventStream,
     EventStreamNotFoundError,
 )
+
+logger = logging.getLogger("azure.ai.agentserver.streaming")
 
 
 # Sentinel for tombstoned slots (rule 36a)
@@ -212,8 +215,11 @@ class _StreamsRegistry:
             try:
                 await on_delete()
             except Exception:  # pylint: disable=broad-except
-                pass
+                logger.warning(
+                    "EventStream %s: _on_delete cleanup hook failed during auto-tombstone", id, exc_info=True
+                )
         self._slots[id] = _TOMBSTONE
+        logger.debug("EventStream %s auto-tombstoned (close-clock TTL elapsed)", id)
         return True
 
     async def get_or_create(self, id: str) -> EventStream:
@@ -241,6 +247,7 @@ class _StreamsRegistry:
                 return slot  # type: ignore[return-value]
             instance = self._factory(id)
             self._slots[id] = instance
+            logger.debug("EventStream %s created (%s)", id, type(instance).__name__)
             return instance
 
     async def delete(self, id: str) -> None:
@@ -272,6 +279,7 @@ class _StreamsRegistry:
         if on_delete is not None:
             await on_delete()
         self._slots[id] = _TOMBSTONE
+        logger.debug("EventStream %s deleted", id)
 
 
 # Module-level singleton — THE public registry.

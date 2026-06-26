@@ -1,117 +1,71 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Tests for the unified storage paths module.
+"""Tests for agentserver on-disk state path resolution.
 
-Covers the public ``azure.ai.agentserver.core.storage_paths`` module:
-default resolution to ``~/.agentserver/{tasks,streams,responses}/``, the
-``AGENTSERVER_STATE_ROOT`` env-var override, rejection of unknown
-subdir kinds, and the operator override
+Covers ``resolve_state_root`` / ``resolve_state_subdir`` in
+``azure.ai.agentserver.core._config`` (the central settings/env-var
+module): default resolution to ``~/.agentserver/<name>/``, the
+``AGENTSERVER_STATE_ROOT`` env-var override, the generic
+(no-reserved-names) subdir resolver, and the operator override
 ``AGENTSERVER_TASKS_BACKEND=local|hosted`` consumed by
 ``TaskManager._create_provider``.
 """
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 
-def test_storage_paths_module_is_public(monkeypatch) -> None:
-    """``azure.ai.agentserver.core.storage_paths`` must be a PUBLIC module.
+def test_state_path_resolver_lives_in_config() -> None:
+    """The state-path resolver is exposed from the central ``_config``
+    settings module (alongside the other ``resolve_*`` helpers), not a
+    separate storage module. Only the subdir resolver is public — every
+    caller wants a named subdir, not the bare root."""
+    from azure.ai.agentserver.core import _config
 
-    Per Principle I (Modular Package Architecture) + constitution.md:7-15,
-    responses must not import from a private ``_storage_paths`` module.
-    """
+    assert hasattr(_config, "resolve_state_subdir")
+
+
+def test_resolve_state_subdir_defaults_to_home(monkeypatch) -> None:
+    """With no env var set, ``resolve_state_subdir(<name>)`` returns
+    ``~/.agentserver/<name>/`` for any caller-owned subdir name."""
     monkeypatch.delenv("AGENTSERVER_STATE_ROOT", raising=False)
-    from azure.ai.agentserver.core import storage_paths  # noqa: F401
+    from azure.ai.agentserver.core import _config
 
-    # Module must be importable without leading underscore.
-    assert hasattr(storage_paths, "resolve_state_subdir"), "storage_paths.resolve_state_subdir must be exported"
-
-
-def test_resolve_state_subdir_defaults_to_home_resilient(monkeypatch, tmp_path) -> None:
-    """With no env var set, ``resolve_state_subdir('tasks')`` returns
-    ``~/.agentserver/tasks/`` (NOT the legacy ``~/.agentserver-tasks/``)."""
-    monkeypatch.delenv("AGENTSERVER_STATE_ROOT", raising=False)
-    monkeypatch.delenv("AGENTSERVER_STATE_TASKS_PATH", raising=False)
-    monkeypatch.delenv("AGENTSERVER_STREAM_STORE_PATH", raising=False)
-    from azure.ai.agentserver.core import storage_paths
-
-    tasks_path = storage_paths.resolve_state_subdir("tasks")
-    streams_path = storage_paths.resolve_state_subdir("streams")
-    responses_path = storage_paths.resolve_state_subdir("responses")
-
-    home_resilient = Path.home() / ".agentserver"
-    assert tasks_path == home_resilient / "tasks"
-    assert streams_path == home_resilient / "streams"
-    assert responses_path == home_resilient / "responses"
+    home_root = Path.home() / ".agentserver"
+    assert _config.resolve_state_subdir("tasks") == home_root / "tasks"
+    # The resolver is generic — each subsystem owns its own subdir name;
+    # the core layer does not enumerate or reserve names.
+    assert _config.resolve_state_subdir("streams") == home_root / "streams"
+    assert _config.resolve_state_subdir("anything-a-caller-owns") == home_root / "anything-a-caller-owns"
 
 
 def test_resolve_state_subdir_env_override(monkeypatch, tmp_path) -> None:
-    """``AGENTSERVER_STATE_ROOT=/foo`` makes all three subdirs root at /foo."""
+    """``AGENTSERVER_STATE_ROOT=/foo`` roots every subdir at /foo."""
     monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
-    monkeypatch.delenv("AGENTSERVER_STATE_TASKS_PATH", raising=False)
-    monkeypatch.delenv("AGENTSERVER_STREAM_STORE_PATH", raising=False)
-    from azure.ai.agentserver.core import storage_paths
+    from azure.ai.agentserver.core import _config
 
-    tasks_path = storage_paths.resolve_state_subdir("tasks")
-    streams_path = storage_paths.resolve_state_subdir("streams")
-    responses_path = storage_paths.resolve_state_subdir("responses")
-
-    assert tasks_path == tmp_path / "tasks"
-    assert streams_path == tmp_path / "streams"
-    assert responses_path == tmp_path / "responses"
-
-
-def test_resolve_state_subdir_rejects_unknown_kind() -> None:
-    """``resolve_state_subdir('garbage')`` must reject — only the known kinds are valid."""
-    from azure.ai.agentserver.core import storage_paths
-
-    try:
-        storage_paths.resolve_state_subdir("garbage")  # type: ignore[arg-type]
-    except (ValueError, TypeError):
-        return
-    raise AssertionError("resolve_state_subdir must reject unknown subdir kinds")
+    assert _config.resolve_state_subdir("tasks") == tmp_path / "tasks"
+    assert _config.resolve_state_subdir("streams") == tmp_path / "streams"
 
 
 def test_legacy_env_vars_no_longer_consulted(monkeypatch, tmp_path) -> None:
-    """Setting the legacy ``AGENTSERVER_STATE_TASKS_PATH`` / ``AGENTSERVER_STREAM_STORE_PATH``
-    must NOT affect path resolution — the legacy vars are deleted.
-    """
+    """The legacy per-subsystem env vars must NOT affect resolution —
+    ``AGENTSERVER_STATE_ROOT`` is the single operator knob."""
     monkeypatch.delenv("AGENTSERVER_STATE_ROOT", raising=False)
     monkeypatch.setenv("AGENTSERVER_STATE_TASKS_PATH", str(tmp_path / "legacy_tasks"))
     monkeypatch.setenv("AGENTSERVER_STREAM_STORE_PATH", str(tmp_path / "legacy_streams"))
-    from azure.ai.agentserver.core import storage_paths
+    from azure.ai.agentserver.core import _config
 
-    # The new resolver must IGNORE the legacy vars.
-    tasks_path = storage_paths.resolve_state_subdir("tasks")
-    streams_path = storage_paths.resolve_state_subdir("streams")
-    home_resilient = Path.home() / ".agentserver"
-    assert (
-        tasks_path == home_resilient / "tasks"
-    ), f"legacy AGENTSERVER_STATE_TASKS_PATH leaked into new resolver — got {tasks_path}"
-    assert (
-        streams_path == home_resilient / "streams"
-    ), f"legacy AGENTSERVER_STREAM_STORE_PATH leaked into new resolver — got {streams_path}"
+    home_root = Path.home() / ".agentserver"
+    assert _config.resolve_state_subdir("tasks") == home_root / "tasks"
+    assert _config.resolve_state_subdir("streams") == home_root / "streams"
 
 
-def test_tasks_default_path_used_by_local_provider(monkeypatch, tmp_path) -> None:
-    """The TaskManager's local-provider default path must use the new resolver.
-
-    Pre-Phase-3a: ``Path.home() / ".agentserver-tasks"``.
-    Post-Phase-3a: ``storage_paths.resolve_state_subdir("tasks")`` →
-    ``Path.home() / ".agentserver" / "tasks"``.
-
-    Comment references to the legacy path (historical migration notes)
-    are permitted; only actual ``Path('.agentserver-tasks')`` use or
-    ``os.environ.get('AGENTSERVER_STATE_TASKS_PATH')`` reads are
-    forbidden.
+def test_tasks_default_path_used_by_local_provider() -> None:
+    """``TaskManager`` must resolve its tasks dir via the state resolver,
+    not the legacy ``AGENTSERVER_STATE_TASKS_PATH`` / ``.agentserver-tasks``.
     """
-    monkeypatch.delenv("AGENTSERVER_STATE_ROOT", raising=False)
-    monkeypatch.delenv("AGENTSERVER_STATE_TASKS_PATH", raising=False)
-    # Read the _manager.py source to confirm it no longer USES the
-    # legacy path. This is a structural assertion (Principle XII §3 RED
-    # signal that survives even if behavior coincidentally aligns).
     import inspect
 
     from azure.ai.agentserver.core.tasks import _manager
@@ -124,17 +78,9 @@ def test_tasks_default_path_used_by_local_provider(monkeypatch, tmp_path) -> Non
         "getenv('AGENTSERVER_STATE_TASKS_PATH')",
     ]
     for pat in forbidden_env_reads:
-        assert pat not in src, (
-            f"_manager.py must not read the legacy "
-            f"AGENTSERVER_STATE_TASKS_PATH env var. Found '{pat}' in source. "
-            f"Use storage_paths.resolve_state_subdir('tasks') instead."
-        )
-    assert '"/.agentserver-tasks"' not in src and "'/.agentserver-tasks'" not in src, (
-        "_manager.py must not USE the legacy "
-        "'.agentserver-tasks' path string. Use storage_paths.resolve_state_subdir('tasks')."
-    )
+        assert pat not in src, f"_manager.py must not read the legacy env var. Found '{pat}' in source."
     assert '".agentserver-tasks"' not in src and "'.agentserver-tasks'" not in src, (
-        "_manager.py must not USE the legacy " "'.agentserver-tasks' path string."
+        "_manager.py must not USE the legacy '.agentserver-tasks' path string."
     )
 
 

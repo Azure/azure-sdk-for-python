@@ -97,10 +97,10 @@ logger = logging.getLogger(__name__)
 # ``ttl_seconds=600`` bounds disk usage: once a stream is closed and
 # all its events have aged out, the registry destroys it and removes
 # the file.
-# (Spec 024 Phase 3a) Default streams dir lives under the unified
-# AGENTSERVER_STATE_ROOT layout at ``<root>/streams/`` — same place
-# the responses package puts its SSE event store.
-from azure.ai.agentserver.core.storage_paths import resolve_state_subdir
+# Default streams dir lives under the unified AGENTSERVER_STATE_ROOT
+# layout at ``<root>/streams/``. This sample owns the ``streams`` subdir
+# name and resolves it via the core state-path helper.
+from azure.ai.agentserver.core._config import resolve_state_subdir
 
 _STREAM_DIR = Path(os.environ.get("AGENTSERVER_STREAMS_DIR", str(resolve_state_subdir("streams"))))
 _STREAM_DIR.mkdir(parents=True, exist_ok=True)
