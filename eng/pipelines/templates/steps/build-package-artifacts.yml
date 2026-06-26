@@ -25,6 +25,11 @@ parameters:
     default: []
 
 steps:
+  - checkout: self
+    displayName: 'Minimally Checkout'
+    fetchDepth: 1
+    sparseCheckoutDirectories: eng/common/scripts
+
   - template: /eng/common/pipelines/templates/steps/login-to-github.yml
 
   - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
