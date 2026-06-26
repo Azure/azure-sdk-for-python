@@ -11,7 +11,7 @@ DESCRIPTION:
     and downloads it back to verify the round-trip.
 
     The dependency resolution mode is selected via the
-    `FOUNDRY_HOSTED_AGENT_REMOTE_BUILD` environment variable (default: `false`):
+    `FOUNDRY_HOSTED_AGENT_REMOTE_BUILD` environment variable (default: `true`):
 
     * `false` (BUNDLED) — uploads `assets/echo-agent-prebuilt.zip`, which
       bundles the agent source plus a `packages/` folder with Linux-built
@@ -36,12 +36,11 @@ USAGE:
     2) FOUNDRY_HOSTED_AGENT_NAME - The Hosted Agent name. Must already exist.
     3) AZURE_SUBSCRIPTION_ID - Azure subscription ID where the Azure AI account
        and project are deployed.
-    4) FOUNDRY_HOSTED_AGENT_REMOTE_BUILD - Optional. Set to `true` to use
-       REMOTE_BUILD; defaults to `false` (BUNDLED).
+     4) FOUNDRY_HOSTED_AGENT_REMOTE_BUILD - Optional. Set to `false` to use
+         BUNDLED; defaults to `true` (REMOTE_BUILD).
 """
 
 import asyncio
-import hashlib
 import os
 import tempfile
 from pathlib import Path
@@ -69,7 +68,7 @@ async def main() -> None:
     endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
     agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
     subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
-    use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "false").strip().lower() == "true"
+    use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "true").strip().lower() == "true"
 
     dependency_resolution, zip_filename, code_zip_bytes, code_zip_sha256 = select_echo_agent_code_zip(use_remote_build)
 
@@ -134,20 +133,14 @@ async def main() -> None:
 
         # Download the zip for the version we just created, streaming to a temp file.
         version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
-        sha = hashlib.sha256()
         version_stream = await project_client.agents.download_code(
             agent_name=agent_name,
             agent_version=created.version,
-        )
+    )
         with open(version_zip_path, "wb") as f:
             async for chunk in version_stream:
                 f.write(chunk)
-                sha.update(chunk)
-        downloaded_version_sha256 = sha.hexdigest()
-        print(
-            f"Downloaded version code zip to {version_zip_path}: {version_zip_path.stat().st_size} bytes, "
-            f"sha256={downloaded_version_sha256} (matches uploaded: {downloaded_version_sha256 == code_zip_sha256})"
-        )
+        print(f"Downloaded version code zip to {version_zip_path}")
 
         user_input = "Good morning!"
         async with project_client.get_openai_client(agent_name=agent_name) as openai_client:
