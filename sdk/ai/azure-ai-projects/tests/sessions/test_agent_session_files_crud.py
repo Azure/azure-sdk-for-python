@@ -190,6 +190,7 @@ class TestAgentSessionFilesCrud(TestBase):
                 session_id=session.agent_session_id,
                 file_path=download_path,  # str type
                 remote_path=remote_file_path2,
+                overwrite=True,
             )
             print(f"Successfully downloaded file to {download_path}")
 
@@ -221,6 +222,7 @@ class TestAgentSessionFilesCrud(TestBase):
                 session_id=session.agent_session_id,
                 file_path=download_path3,  # PathLike[str] type
                 remote_path=remote_file_path3,
+                overwrite=True,
             )
             print(f"Successfully downloaded file to {download_path3}")
 
