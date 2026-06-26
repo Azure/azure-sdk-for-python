@@ -1,13 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Deterministic builders for component entities (Command, Spark, Parallel)."""
+"""Deterministic builders for component entities (Command, Spark)."""
 from azure.ai.ml import Input, Output
 from azure.ai.ml.entities import CommandComponent, SparkComponent
 
 
 def build_command_component():
-    """CommandComponent with typed inputs/outputs, command, environment and distribution."""
+    """CommandComponent with typed inputs/outputs, command and environment."""
     return CommandComponent(
         name="smoke_command_component",
         version="1",
