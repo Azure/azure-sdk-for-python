@@ -134,6 +134,7 @@
         "azure.ai.projects.models.DispatchRoutineResult": "Azure.AI.Projects.DispatchRoutineResponse",
         "azure.ai.projects.models.EmbeddingConfiguration": "Azure.AI.Projects.EmbeddingConfiguration",
         "azure.ai.projects.models.EmptyModelParam": "OpenAI.EmptyModelParam",
+        "azure.ai.projects.models.EndpointBasedEvaluatorDefinition": "Azure.AI.Projects.EndpointBasedEvaluatorDefinition",
         "azure.ai.projects.models.EntraAuthorizationScheme": "Azure.AI.Projects.EntraAuthorizationScheme",
         "azure.ai.projects.models.EntraIDCredentials": "Azure.AI.Projects.EntraIDCredentials",
         "azure.ai.projects.models.EvalResult": "Azure.AI.Projects.EvalResult",
@@ -542,5 +543,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "3688b3de2e8e"
+    "CrossLanguageVersion": "8a30c0e05596"
 }

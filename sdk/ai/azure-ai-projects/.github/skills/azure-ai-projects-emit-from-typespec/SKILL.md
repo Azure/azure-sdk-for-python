@@ -170,6 +170,12 @@ azpysdk apistub .
 
 This will update the `api.md` and `api.metadata.yml` files under in local folder.
 
+If it fails, stop and do not continue. If succeeded, do the following cleanup and continue to the next step:
+
+```
+rmdir /s /q build
+```
+
 ---
 
 ## Step 13: Commit and push

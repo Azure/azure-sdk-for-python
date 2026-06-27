@@ -18,6 +18,8 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WORKFLOW_AGENTS_V1_PREVIEW."""
     EXTERNAL_AGENTS_V1_PREVIEW = "ExternalAgents=V1Preview"
     """EXTERNAL_AGENTS_V1_PREVIEW."""
+    DRAFT_AGENTS_V1_PREVIEW = "DraftAgents=V1Preview"
+    """DRAFT_AGENTS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -490,6 +492,9 @@ class EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RUBRIC = "rubric"
     """Rubric-based evaluator definition. Stores dimensions (the scoring blueprint) for both quality
     and safety evaluators. Can be created via the generate API or manually via createVersion."""
+    ENDPOINT = "endpoint"
+    """Endpoint-based evaluator definition. References a customer-owned HTTP endpoint via a Project
+    Connection."""
 
 
 class EvaluatorGenerationJobSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
