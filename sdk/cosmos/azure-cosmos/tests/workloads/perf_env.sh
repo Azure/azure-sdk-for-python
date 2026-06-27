@@ -42,10 +42,12 @@ export COSMOS_PREFERRED_LOCATIONS="${COSMOS_PREFERRED_LOCATIONS:-West US 2}"
 export WORKLOAD_NUM_CLIENTS="${WORKLOAD_NUM_CLIENTS:-1}"          # one client per process -> clean per-op attribution
 export COSMOS_CONCURRENT_REQUESTS="${COSMOS_CONCURRENT_REQUESTS:-100}"  # point ops in flight per client
 export WORKLOAD_USE_SYNC="${WORKLOAD_USE_SYNC:-false}"            # async path (sync is serial -> not for load)
-# Per-op end-to-end timeout, in seconds. 0 = each backend keeps its own default,
-# which makes the EXTREME tail incomparable (legacy ~65s/attempt vs Rust ~6s).
-# Set the SAME non-zero value on BOTH runs to compare the tail fairly.
-export COSMOS_REQUEST_TIMEOUT="${COSMOS_REQUEST_TIMEOUT:-0}"
+# Per-op end-to-end timeout, in seconds, PINNED THE SAME on both backends so the
+# slowest calls compare fairly. Without a pin each backend keeps its own default
+# (legacy ~65s/attempt vs Rust ~6s end-to-end), which are not comparable. 30s is a
+# deliberate middle ground; override by exporting COSMOS_REQUEST_TIMEOUT before
+# sourcing. (Rust clamps sub-second values up to a 1s floor.)
+export COSMOS_REQUEST_TIMEOUT="${COSMOS_REQUEST_TIMEOUT:-30}"
 
 # ---- Measurement quality switches -----------------------------------------
 # Open-loop arrival rate (ops/sec PER CLIENT). 0 = closed-loop (default), which
