@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/Clusters_Patch_CommandOutput.json
+# x-ms-original-file: 2026-05-01-preview/Clusters_Patch_CommandOutput.json
 if __name__ == "__main__":
     main()

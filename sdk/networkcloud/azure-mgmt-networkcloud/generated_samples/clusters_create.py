@@ -45,6 +45,7 @@ def main():
                     "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userIdentity1": {}
                 },
             },
+            "kind": "AzureLocal",
             "location": "location",
             "properties": {
                 "aggregatorOrSingleRackDefinition": {
@@ -91,7 +92,7 @@ def main():
                     ],
                 },
                 "analyticsOutputSettings": {
-                    "analyticsWorkspaceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/microsoft.operationalInsights/workspaces/logAnalyticsWorkspaceName",
+                    "analyticsWorkspaceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.OperationalInsights/workspaces/logAnalyticsWorkspaceName",
                     "associatedIdentity": {
                         "identityType": "UserAssignedIdentity",
                         "userAssignedIdentityResourceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userIdentity1",
@@ -165,7 +166,7 @@ def main():
                 ],
                 "managedResourceGroupConfiguration": {"location": "East US", "name": "my-managed-rg"},
                 "networkFabricId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkFabrics/fabricName",
-                "runtimeProtectionConfiguration": {"enforcementLevel": "OnDemand"},
+                "runtimeProtectionConfiguration": {"definitionUpdateMode": "None", "enforcementLevel": "OnDemand"},
                 "secretArchiveSettings": {
                     "associatedIdentity": {
                         "identityType": "UserAssignedIdentity",
@@ -188,6 +189,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/Clusters_Create.json
+# x-ms-original-file: 2026-05-01-preview/Clusters_Create.json
 if __name__ == "__main__":
     main()
