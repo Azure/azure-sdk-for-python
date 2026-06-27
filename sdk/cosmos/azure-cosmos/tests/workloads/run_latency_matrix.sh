@@ -76,14 +76,25 @@ for (( r=1; r<=REPEATS; r++ )); do
         timeout --signal=INT --kill-after=120s --preserve-status "${DURATION_SECONDS}s" \
           python3 workload.py >"${log}" 2>&1 || rc=$?
       rc="${rc:-0}"
-      # With --preserve-status + --signal=INT, timeout exits with the command's
-      # OWN status after the SIGINT: Python reports 130 (128+SIGINT) on the clean
-      # stop, or 0 if it swallows the signal. (Plain 124 only appears if timeout
-      # escalates to SIGKILL.) All of 0/124/130 are the EXPECTED stop here; treat
-      # anything else as a real failure.
-      if [[ "${rc}" != "0" && "${rc}" != "124" && "${rc}" != "130" ]]; then
-        echo "    !! run exited rc=${rc}; see ${log}" >&2
-      fi
+      # Tightened exit classification (methodology flag #3 -- no ambiguous pass).
+      # workload.py installs NO SIGINT handler and does NOT catch KeyboardInterrupt
+      # at the top level, and the load loop never finishes on its own, so with
+      # --preserve-status + --signal=INT there is exactly ONE clean outcome:
+      #   130  KeyboardInterrupt propagated out of asyncio.run -> clean stop (expected).
+      # Everything else is called out distinctly instead of being waved through:
+      #   137  SIGKILL after the 120s grace -> the cell HUNG on stop (real failure).
+      #   124  cannot occur with --preserve-status; if seen, timeout behaved
+      #        unexpectedly (e.g. flags changed) -> treat as failure, don't hide it.
+      #   0    the infinite load loop should never exit on its own; a 0 means it
+      #        stopped early or swallowed the stop -> suspicious, flag it.
+      # The loop always CONTINUES; flagging just makes a bad cell visible.
+      case "${rc}" in
+        130) ;;  # clean stop, the only expected outcome
+        137) echo "    !! run KILLED after 120s grace (cell hung on stop); see ${log}" >&2 ;;
+        124) echo "    !! run exited 124 (unexpected with --preserve-status); see ${log}" >&2 ;;
+        0)   echo "    !! run exited 0 (load loop ended early / stop swallowed); see ${log}" >&2 ;;
+        *)   echo "    !! run exited rc=${rc}; see ${log}" >&2 ;;
+      esac
       unset rc
       echo "    done op=${op} backend=${bk}"
     done
@@ -93,3 +104,16 @@ done
 echo
 echo "=== Phase A complete. Read results from ${RESULTS_COSMOS_DATABASE}/${RESULTS_COSMOS_CONTAINER},"
 echo "    filtering workload_id LIKE 'lat-%-${STAMP}' and dropping warmup rows (elapsed_seconds > 600)."
+echo
+# Integrity gate (methodology flags #2 and #4): refuse a silent "looks good".
+# Before anyone reads a percentile, prove every cell did real, low-error work on
+# both backends (check 0), that no reporting window was dropped (check 1), and
+# that the reporter logged no failed writes (check 2). Non-zero exit => a hole
+# the analyst must see. It never aborts the matrix (we are already done here);
+# it just prints PASS/FAIL so an unattended run cannot pass unnoticed.
+echo "=== Running post-run integrity gate ==="
+if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}"; then
+  echo "=== integrity gate PASSED ==="
+else
+  echo "!! integrity gate FAILED -- inspect the rows/logs above before trusting results." >&2
+fi
