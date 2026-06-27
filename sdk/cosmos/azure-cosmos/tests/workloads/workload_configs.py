@@ -78,7 +78,7 @@ THROUGHPUT = _safe_int(os.environ.get("COSMOS_THROUGHPUT", "100000"), 100000)  #
 # ~65 s per-attempt on core-python; ~6 s end-to-end on Rust). To compare the
 # extreme tail fairly, set the SAME COSMOS_REQUEST_TIMEOUT on both the baseline
 # and the Rust run; otherwise a tail difference is the timeout *policy*, not the
-# SDK (see docs/RUST_PYTHON_SLA.md). Sub-second values clamp to a 1 s floor on
+# SDK (see docs/RUST_PYTHON_PERFORMANCE.md). Sub-second values clamp to a 1 s floor on
 # the Rust path.
 REQUEST_TIMEOUT = _safe_float(os.environ.get("COSMOS_REQUEST_TIMEOUT", "0"), 0.0)
 

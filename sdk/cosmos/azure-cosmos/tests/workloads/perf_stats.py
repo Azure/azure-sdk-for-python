@@ -48,7 +48,7 @@ class Stats:
         # outside the per-op histograms. A large value means the single asyncio
         # event-loop thread could not service timers on time -- the loop itself
         # (GIL-bound Python) is the bottleneck, not the SDK or the service. See
-        # docs/RUST_PYTHON_SLA.md, "Is the event loop the bottleneck?".
+        # docs/RUST_PYTHON_PERFORMANCE.md, "Is the event loop the bottleneck?".
         self._loop_lag_max_ms: float = 0.0
 
     def record(self, operation: str, duration_ms: float):
@@ -185,7 +185,7 @@ class Stats:
                     # pass/fail gate must guard latency with the precondition
                     # count > 0 (and count ≈ baseline, errors ≈ 0), or a fully
                     # failed op would read as p99 = 0 and falsely pass. See
-                    # docs/RUST_PYTHON_SLA.md, "What counts as a pass" (check 0).
+                    # docs/RUST_PYTHON_PERFORMANCE.md, "What counts as a pass" (check 0).
                     summaries.append(
                         {
                             "operation": op,

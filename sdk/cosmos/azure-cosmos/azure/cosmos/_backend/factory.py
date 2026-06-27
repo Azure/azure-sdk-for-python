@@ -44,6 +44,8 @@ from .constants import (
     BACKEND_ENV_VAR,
     BACKEND_NAME_RUST,
     DEFAULT_BACKEND_NAME,
+    RUST_STRICT_ISOLATION_ENV_VAR,
+    STRICT_ISOLATION_TRUE_VALUES,
     VALID_BACKEND_NAMES,
 )
 from .rust import RustBackend
@@ -89,6 +91,28 @@ def resolve_backend_name(explicit: Optional[str]) -> str:
             )
         )
     return choice
+
+
+def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
+    """Decide whether the Rust backend uses strict per-account engine isolation.
+
+    Precedence (highest wins): an explicit factory toggle, then the
+    ``COSMOS_RUST_STRICT_ISOLATION`` environment variable, then off. The env var is
+    truthy only for the values in ``STRICT_ISOLATION_TRUE_VALUES`` (case-insensitive);
+    anything else -- including unset and the empty string -- is off. Shared by the
+    sync and async factories so the rule lives in one place.
+
+    When on, a second ``CosmosClient`` to an account whose config differs from the
+    first live client's raises
+    :class:`~azure.cosmos._backend._driver_registry.StrictEngineIsolationError` at
+    construction instead of silently building a second isolated engine.
+    """
+    if explicit is not None:
+        return explicit
+    value = os.environ.get(RUST_STRICT_ISOLATION_ENV_VAR)
+    if value is None:
+        return False
+    return value.strip().lower() in STRICT_ISOLATION_TRUE_VALUES
 
 
 def _is_async_credential(credential: Any) -> bool:
@@ -171,8 +195,8 @@ def _resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
     # Check async *before* the sync get_token acceptance, since an async
     # credential also exposes a (coroutine) get_token. Wrap it rather than reject
     # it: the bridge drives the coroutine on its own event-loop thread and exposes
-    # the synchronous get_token the driver calls, closing the credential-admission
-    # half of the #19/#20 gap with no driver change.
+    # the synchronous get_token the driver calls, so async credentials work with no
+    # driver change.
     if _is_async_credential(credential):
         return None, AsyncTokenCredentialBridge(credential)
     get_token = getattr(credential, "get_token", None)
@@ -392,6 +416,7 @@ def make_backend(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
+    strict_isolation: Optional[bool] = None,
     proxy_config: Any = None,
     proxies: Any = None,
     connection_verify: Any = None,
@@ -404,7 +429,10 @@ def make_backend(
     Returns a :class:`RustBackend` when Rust is selected, or ``None``
     when core-python is selected. The keyword settings are only consulted
     for the Rust branch, where they are folded into the client config the
-    backend carries to the driver. The transport/TLS settings
+    backend carries to the driver. ``strict_isolation`` (kwarg > the
+    ``COSMOS_RUST_STRICT_ISOLATION`` env var > off) controls whether a second
+    client to an account with a different config raises instead of silently
+    getting its own isolated engine. The transport/TLS settings
     (``proxy_config`` / ``proxies`` / ``connection_verify`` / ``connection_cert``
     / ``ssl_config`` / ``transport``) are not folded into the config -- the Rust
     path can't honor them yet, so they are rejected here; they are ignored
@@ -438,6 +466,7 @@ def make_backend(
                 user_agent_suffix=user_agent_suffix,
                 consistency_level=consistency_level,
             ),
+            strict_isolation=resolve_strict_isolation(strict_isolation),
         )
     return None
 

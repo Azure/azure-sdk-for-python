@@ -110,7 +110,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                     # PER CLIENT). Unlike the closed-loop driver below it does not
                     # wait between waves and times each op from its intended arrival,
                     # so the tail reflects coordinated omission. See
-                    # docs/RUST_PYTHON_SLA.md, "Measurement caveats".
+                    # docs/RUST_PYTHON_PERFORMANCE.md, "Measurement caveats".
                     await run_open_loop(
                         cont, REQUEST_EXCLUDED_LOCATIONS, stats, ops,
                         WORKLOAD_ARRIVAL_RATE, WORKLOAD_MAX_INFLIGHT,
@@ -127,7 +127,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                     # req/s is therefore well below the open-loop (concurrency /
                     # per_op) formula — read achieved req/s from the rows as
                     # count / window_seconds, not from the formula. See
-                    # docs/RUST_PYTHON_SLA.md, "Concurrency is not throughput".
+                    # docs/RUST_PYTHON_PERFORMANCE.md, "Concurrency is not throughput".
                     while True:
                         try:
                             if "create" in ops:
@@ -228,7 +228,7 @@ def run_workload_sync(client_id, client_logger):
             # calls in a plain for-loop, one at a time, so real concurrency is 1
             # regardless of CONCURRENT_REQUESTS and throughput is ~ 1 / mean_op
             # latency. Use async mode to drive real concurrency. See
-            # docs/RUST_PYTHON_SLA.md, "Concurrency is not throughput".
+            # docs/RUST_PYTHON_PERFORMANCE.md, "Concurrency is not throughput".
             while True:
                 try:
                     if "create" in ops:

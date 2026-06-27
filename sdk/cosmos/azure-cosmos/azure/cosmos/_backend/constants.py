@@ -28,4 +28,16 @@ DEFAULT_BACKEND_NAME = BACKEND_NAME_CORE_PYTHON
 #: constructor kwarg > env var > ``DEFAULT_BACKEND_NAME``.
 BACKEND_ENV_VAR = "COSMOS_BACKEND"
 
+#: Env var that opts into strict per-account engine isolation on the Rust backend.
+#: When truthy, building a second ``CosmosClient`` to an account whose
+#: client-construction config differs from the first live client's raises
+#: ``StrictEngineIsolationError`` instead of silently building a second isolated
+#: engine. Off by default (silent isolation). Precedence: factory toggle > env var >
+#: off. Accepted truthy values are listed in ``STRICT_ISOLATION_TRUE_VALUES``.
+RUST_STRICT_ISOLATION_ENV_VAR = "COSMOS_RUST_STRICT_ISOLATION"
+
+#: Case-insensitive env-var values that enable strict isolation. Anything else
+#: (including unset and the empty string) leaves it off.
+STRICT_ISOLATION_TRUE_VALUES = ("1", "true", "yes", "on")
+
 

@@ -90,7 +90,7 @@ def _get_thread_count(process) -> int:
     On the **sync** path this is the shared Tokio runtime's threads; on the
     **async** path it is the driver's own runtime and connection threads. (The
     interim async thread-pool stopgap — a dedicated pool capped at 256 — was
-    retired when the async path went true-async; see docs/RUST_PYTHON_SLA.md.
+    retired when the async path went true-async; see docs/RUST_PYTHON_PERFORMANCE.md.
     A large, thread-shaped RSS step that tracks this count would therefore now
     be a *new* regression, not the old pool filling.) Recorded so RSS steps and
     any concurrency-sweep tail bend can be tied to threads actually in use, not
@@ -388,7 +388,7 @@ class PerfReporter:
                 # retired, so thread_count no longer tracks a worker pool on the
                 # async path; a large thread-shaped RSS step that tracks this
                 # count would now be a *new* regression, not the old pool filling.
-                # See _get_thread_count and docs/RUST_PYTHON_SLA.md.) Correlate
+                # See _get_thread_count and docs/RUST_PYTHON_PERFORMANCE.md.) Correlate
                 # with memory_bytes to tell a one-time warmup RSS step from a leak.
                 "thread_count": threads,
                 "system_cpu_percent": round(sys_cpu, 1),

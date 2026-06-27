@@ -119,13 +119,14 @@ class PreparedClientConfig:
     the hedging fields to an ``AvailabilityStrategy``, and ``consistency_level``
     to the ``ReadConsistencyStrategy``.
 
-    The Rust driver builds one engine per account endpoint and reuses it, so
-    these settings take effect only for the *first* client constructed against a
-    given account in a process; a later client to the same account inherits the
-    first one's engine and its config. That sharing is intentional but otherwise
-    silent, so a later client whose config differs gets a
-    :class:`~azure.cosmos._backend._driver_registry.SharedDriverConfigWarning`
-    making the dropped settings visible.
+    The Rust binding keys its driver cache by ``(endpoint, credential, config)``,
+    so this config is part of what selects an engine: a client whose settings match
+    an existing live client's shares that engine, and a client whose settings differ
+    gets its own engine that honors them (nothing is silently dropped). Building a
+    separate engine per differing config is the default; opting into strict
+    isolation (see
+    :class:`~azure.cosmos._backend._driver_registry.StrictEngineIsolationError`)
+    instead raises when a later client's config differs from the first live client's.
     """
 
     #: Ordered preferred region names exactly as the customer passed them
@@ -439,7 +440,7 @@ def init_client_args(
     master_key: Optional[str],
     client_config: Optional[PreparedClientConfig],
     token_credential: Optional[Any],
-) -> tuple:
+) -> tuple[Any, ...]:
     """Build the positional args for the Rust ``init_client`` call.
 
     A token credential rides as the 4th argument; master-key auth uses the
@@ -478,8 +479,8 @@ def build_backend_response(
 # through the backend's ``execute`` dispatch the way point operations are. On a
 # Rust-backed client they would otherwise fall straight through to the legacy
 # core-python connection. The migration goal is for the Rust path to stand on its
-# own, so rather than quietly borrowing core-python we fail loudly and point at
-# the tracked gap. ``get_database_account`` is the one such method today.
+# own, so rather than quietly borrowing core-python we raise.
+# ``get_database_account`` is the one such method today.
 
 
 def raise_account_read_unsupported(backend: Any) -> None:
@@ -488,16 +489,14 @@ def raise_account_read_unsupported(backend: Any) -> None:
 
     :param backend: The client's chosen backend, or ``None`` for core-python.
         A non-``None`` backend means the Rust path is active, and this call has no
-        Rust-path implementation yet, so we surface the gap instead of falling
-        back to the legacy connection. ``None`` is a no-op, so core-python keeps
-        working unchanged.
+        Rust-path implementation yet, so it raises instead of falling back to the
+        legacy connection. ``None`` is a no-op, so core-python keeps working unchanged.
     """
     if backend is None:
         return
     raise NotImplementedError(
         "get_database_account() is not yet available on the Rust backend "
         "(_backend='rust'). The Rust driver reads account metadata internally for "
-        "routing but does not yet expose it across the binding; this is a tracked "
-        "client-initialization gap."
+        "routing but does not yet expose it across the binding."
     )
 

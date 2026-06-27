@@ -35,6 +35,13 @@ azure_data_cosmos_driver = { path = "../../../../../azure-sdk-for-rust/sdk/cosmo
 # what bridges Python's sync call into Rust's async world.
 tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
 
+# Non-poisoning RwLock for the per-(endpoint, credential) driver cache. Unlike
+# std::sync::RwLock, a panic while a guard is held (e.g. a CosmosDriver::Drop that
+# panics) does NOT poison the lock, so one failed teardown can't turn every later
+# cache access into a process-killing panic. It also has no LockResult to unwrap,
+# which removes the `.unwrap()` panic sites at every lock acquisition.
+parking_lot = "0.12"
+
 # Bridges a Rust future to a Python asyncio awaitable, so the async path can hand
 # the event loop something to `await` instead of parking one worker thread per
 # in-flight call. Version tracks pyo3 (0.22). Used by the async entry points in

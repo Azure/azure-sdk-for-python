@@ -11,10 +11,9 @@ from one of its background worker threads -- a thread that has no asyncio event
 loop running on it. A synchronous credential just returns the token there and
 then. An **async** credential's ``get_token`` instead returns a coroutine, and
 that worker thread has no event loop to drive it to completion. That mismatch is
-the whole reason async credentials were refused at construction (the
-"token-bridge" half of the #19 / #20 client-initialization gap).
+why async credentials were refused at construction.
 
-:class:`AsyncTokenCredentialBridge` closes that half entirely on the
+:class:`AsyncTokenCredentialBridge` removes that limitation on the
 binding/Python side, with no Rust-driver change:
 
 * It owns a dedicated asyncio event loop running on its own daemon thread.

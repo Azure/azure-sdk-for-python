@@ -3,61 +3,78 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Make the Rust backend's per-account engine sharing visible.
+"""Per-process guard for the Rust backend's per-account engine isolation.
 
-The Rust driver builds one engine per account endpoint and reuses it: the first
-``CosmosClient`` to an endpoint wins, and a later client to the same endpoint
-inherits that engine and its configuration, so the later client's own settings
-(preferred/excluded locations, consistency, throttling, hedging, user-agent
-suffix) are silently dropped.
+The Rust binding keys its driver cache by ``(endpoint, credential, config)``: two
+clients to one account share a driver only when their credential and config both
+match. A client whose credential or config differs gets its own driver that honors
+its settings, so a later client's settings are never silently dropped.
 
-That sharing is intentional, but the silent drop can mislead -- for example a
-failover test that builds a second client pinned to another region is really
-reusing the first client's region. This module keeps a small per-process count
-of live clients per endpoint, and when a second live client targets an endpoint
-with a different configuration, it warns. The sharing still happens; it is just
-no longer invisible. The registry is plain Python and never calls the binding,
-so it can be tested without a network.
+That isolation is safe but builds more drivers. Some callers would rather be told,
+at construction, when their clients are about to build a second driver against one
+account (for example a test that creates many slightly different clients). Strict
+isolation mode is the opt-in for that: when on, a second live client to an account
+whose config differs from the first client's raises
+:class:`StrictEngineIsolationError`. Default mode allows it silently.
+
+This module keeps a per-process count of live clients per endpoint plus the first
+client's config, so the strict check can compare. It is plain Python and never calls
+the binding, so it can be tested without a network.
 """
 from __future__ import annotations
 
 import threading
-import warnings
 from typing import Dict, Optional, Tuple
 
 from .base import PreparedClientConfig
 
 
-class SharedDriverConfigWarning(UserWarning):
-    """A later ``CosmosClient`` targets an account another client already targets,
-    with a different configuration, so the shared per-account engine ignores the
-    later client's settings.
+class StrictEngineIsolationError(ValueError):
+    """Raised under strict isolation mode when a later ``CosmosClient`` targets an
+    account another live client already targets, with a *different* configuration,
+    so honoring both would build a second per-account engine.
 
-    This is a warning, not an error: building two clients to one account is fine,
-    and same-configuration clients share the engine harmlessly. It fires only when
-    the configurations differ.
+    This is opt-in: it fires only when strict isolation is enabled (the
+    ``COSMOS_RUST_STRICT_ISOLATION`` environment variable or the factory toggle).
+    In the default mode the second client is allowed and simply gets its own
+    isolated engine, no error.
     """
 
 
 # endpoint -> (configuration the first live client registered, number of live
 # clients for this endpoint). Guarded by _LOCK. The count reaches zero only when
 # every client to the endpoint has been released, after which a fresh client
-# builds a new engine with its own config and must not warn.
+# records its own config as the new "first".
 _LOCK = threading.Lock()
 _REGISTRY: Dict[str, Tuple[Optional[PreparedClientConfig], int]] = {}
 
 
 def register_client_config(
-    endpoint: str, config: Optional[PreparedClientConfig]
+    endpoint: str,
+    config: Optional[PreparedClientConfig],
+    strict: bool = False,
 ) -> None:
-    """Record one live client against ``endpoint``; warn if its config differs
-    from the one already in effect.
+    """Record one live client against ``endpoint``.
 
-    The first client records its config and a count of 1. A later client adds to
-    the count and, if its ``config`` differs from the recorded one, warns -- the
-    recorded config is what the shared engine uses, so the later client's settings
-    are the ones dropped. ``PreparedClientConfig`` compares by value, and ``None``
-    (an untuned client) compares cleanly against a tuned config.
+    The first client to an account records its config and a count of 1 and fixes the
+    config the strict check compares against. A later client adds to the count. If
+    that later client's ``config`` differs from the first one's:
+
+    * **strict** -- raise :class:`StrictEngineIsolationError` *without* recording, so
+      the failed client never enters the count (it is not built, so it must not be
+      released later) and the existing clients' count stays correct.
+    * **default** -- record it and return; the binding gives it its own isolated
+      engine, so nothing is dropped and there is nothing to warn about.
+
+    ``PreparedClientConfig`` compares by value, and ``None`` (an untuned client)
+    compares cleanly against a tuned config, so two untuned clients -- or two with
+    equal settings -- never trip the strict check.
+
+    :param endpoint: The account endpoint the client targets.
+    :param config: The client's prepared config, or ``None`` when untuned.
+    :param strict: When ``True``, a differing config raises instead of isolating.
+    :raises StrictEngineIsolationError: In strict mode, when ``config`` differs from
+        the first live client's config for this endpoint.
     """
     with _LOCK:
         existing = _REGISTRY.get(endpoint)
@@ -65,22 +82,21 @@ def register_client_config(
             _REGISTRY[endpoint] = (config, 1)
             return
         first_config, count = existing
+        if strict and config != first_config:
+            # Do NOT record: the client construction is about to fail, so it must not
+            # count against the endpoint (it will never call release_client_config).
+            raise StrictEngineIsolationError(
+                "Strict engine isolation is enabled and another CosmosClient is "
+                "already active against {endpoint!r} with a different configuration. "
+                "The Rust backend (_backend='rust') would build a second, separate "
+                "per-account engine to honor this client's settings (preferred/"
+                "excluded locations, consistency level, throttling, hedging, "
+                "user-agent suffix). To proceed, give this client the same "
+                "configuration as the first, disable strict isolation "
+                "(COSMOS_RUST_STRICT_ISOLATION), or build it in a separate "
+                "process.".format(endpoint=endpoint)
+            )
         _REGISTRY[endpoint] = (first_config, count + 1)
-        differs = config != first_config
-    if differs:
-        warnings.warn(
-            "Another CosmosClient is already active against {endpoint!r}. The "
-            "Rust backend (_backend='rust') builds one shared engine per account, "
-            "so whichever client issues its first request first wins and the "
-            "other's client-construction settings (preferred/excluded locations, "
-            "consistency level, throttling, hedging, user-agent suffix) are "
-            "ignored. To use distinct per-client settings against the same "
-            "account, use separate processes, or the core-python backend.".format(
-                endpoint=endpoint
-            ),
-            SharedDriverConfigWarning,
-            stacklevel=2,
-        )
 
 
 def release_client_config(endpoint: str) -> None:

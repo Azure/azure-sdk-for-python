@@ -20,10 +20,10 @@ three things:
 from __future__ import annotations
 
 import asyncio
+import logging
 import re
 import threading
 import time
-import warnings
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
@@ -33,7 +33,7 @@ from azure.cosmos._backend.base import BackendResponse, PreparedClientConfig, Pr
 from azure.cosmos._backend.base import raise_account_read_unsupported
 from azure.cosmos._backend import _driver_registry
 from azure.cosmos._backend._driver_registry import (
-    SharedDriverConfigWarning,
+    StrictEngineIsolationError,
     _reset_for_tests as _reset_driver_registry,
     register_client_config,
     release_client_config,
@@ -42,12 +42,14 @@ from azure.cosmos._backend.constants import (
     BACKEND_ENV_VAR,
     BACKEND_NAME_CORE_PYTHON,
     BACKEND_NAME_RUST,
+    RUST_STRICT_ISOLATION_ENV_VAR,
 )
 from azure.cosmos._backend.factory import (
     _resolve_credential,
     build_client_config,
     make_backend,
     reject_unsupported_transport_settings,
+    resolve_strict_isolation,
 )
 from azure.cosmos._backend._async_credential_bridge import AsyncTokenCredentialBridge
 from azure.cosmos._backend.rust import RustBackend
@@ -299,6 +301,65 @@ def test_rust_backend_returns_structured_http_failure_tuple(monkeypatch):
     assert resp.headers["x-ms-activity-id"] == "act-409"
     assert resp.headers["x-ms-retry-after-ms"] == "250"
     assert resp.body == b'{"code":"Conflict","message":"already exists"}'
+
+
+def test_rust_backend_logs_per_op_backend_telemetry(monkeypatch, caplog):
+    """Each executed op emits a debug line naming the backend and op, so a
+    migration can confirm from logs alone that traffic stays on the Rust path
+    instead of silently falling back to core-python. The handle (which carries a
+    credential fingerprint) must not appear in the line."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-secret-fp"
+    fake_module.create_item.return_value = (201, 0, {"etag": "v1"}, b'{"id":"x"}')
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key_header='["a"]',
+        headers={},
+    )
+    with caplog.at_level(logging.DEBUG, logger="azure.cosmos._backend.rust"):
+        backend.execute(prepared)
+    # Close so the built handle is released here, under this test's fake module,
+    # rather than leaking to a finalizer that would run during a later test.
+    backend.close()
+
+    messages = [r.getMessage() for r in caplog.records]
+    assert any("backend=rust" in m and "op=create_item" in m for m in messages)
+    # The handle is intentionally omitted -- it carries a credential fingerprint.
+    assert all("handle-secret-fp" not in m for m in messages)
+
+
+def test_async_rust_backend_logs_per_op_backend_telemetry(monkeypatch, caplog):
+    """Async version: the async backend emits the same per-op backend telemetry."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-secret-fp"
+    fake_module.create_item_async = AsyncMock(return_value=(201, 0, {"etag": "v1"}, b'{"id":"x"}'))
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key_header='["a"]',
+            headers={},
+        )
+        await backend.execute(prepared)
+        # Close so the built handle is released here, not leaked to a finalizer that
+        # would run during a later test (and call that test's fake close_client).
+        await backend.close()
+
+    with caplog.at_level(logging.DEBUG, logger="azure.cosmos.aio._backend.rust"):
+        asyncio.run(_run())
+
+    messages = [r.getMessage() for r in caplog.records]
+    assert any("backend=rust" in m and "op=create_item" in m for m in messages)
+    assert all("handle-secret-fp" not in m for m in messages)
 
 
 def test_rust_backend_propagates_transport_runtime_error(monkeypatch):
@@ -625,10 +686,17 @@ def test_async_backend_finalizer_does_not_block_event_loop(monkeypatch):
     close_may_finish = threading.Event()
     close_thread_names = []
     fake_module = MagicMock()
-    fake_module.init_client.return_value = "handle-1"
+    fake_module.init_client.return_value = "handle-finalizer"
     fake_module.read_item_async = AsyncMock(return_value=(200, 0, {}, b"{}"))
 
-    def _blocking_close(_handle):
+    def _blocking_close(handle):
+        # Only this backend's close is measured. Other tests' async backends can be
+        # garbage-collected during this test (their finalizers call this same
+        # monkeypatched close_client); ignoring foreign handles keeps their thread
+        # from polluting the measurement -- and keeps them from blocking on
+        # close_may_finish, which could stall an inline GC finalizer.
+        if handle != "handle-finalizer":
+            return
         close_thread_names.append(threading.current_thread().name)
         close_started.set()
         close_may_finish.wait(5)  # hold the close open to expose any inline block
@@ -1050,7 +1118,7 @@ def test_account_read_guard_is_noop_for_core_python():
 
 
 def test_account_read_guard_raises_for_rust_backend():
-    """Any non-None backend (the Rust path) -> a clear, tracked gap error."""
+    """Any non-None backend (the Rust path) -> a clear not-yet-available error."""
     backend = object()  # stands in for a RustBackend / AsyncRustBackend
     with pytest.raises(NotImplementedError, match="not yet available on the Rust backend"):
         raise_account_read_unsupported(backend)
@@ -1680,72 +1748,101 @@ def test_make_async_backend_rejects_connection_cert_on_rust(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
-# Two clients to one account share an engine; the drop is made visible
+# Per-account engine isolation: default silent-isolate vs. opt-in strict raise
 # ---------------------------------------------------------------------------
 #
-# The Rust backend builds one engine per account endpoint and reuses it, so a
-# second client to the same account inherits the first's config and silently
-# drops its own. That sharing stays, but a second client with a different config
-# now gets a SharedDriverConfigWarning so the drop isn't invisible. Each test uses
-# a unique endpoint so a client finalized late in another test can't disturb its
-# count (the _isolate_driver_registry autouse fixture also resets state).
+# The Rust binding keys its driver cache by (endpoint, credential, config), so a
+# second client to one account with a *different* config gets its own engine that
+# honors its settings -- nothing is silently dropped. By default that isolation is
+# silent (no warning). Strict isolation mode (opt-in) instead *raises*
+# StrictEngineIsolationError when a later client's config differs from the first
+# live client's, making the fragmentation loud and early. Each test uses a unique
+# endpoint so a client finalized late in another test can't disturb its count (the
+# _isolate_driver_registry autouse fixture also resets state).
 
 
-def _rust_backend(url, config=None):
-    return RustBackend(endpoint=url, master_key="k", client_config=config)
+def _rust_backend(url, config=None, strict=False):
+    return RustBackend(
+        endpoint=url, master_key="k", client_config=config, strict_isolation=strict
+    )
 
 
-def test_second_client_same_endpoint_different_config_warns():
+def test_second_client_different_config_default_isolates_silently(recwarn):
+    """Default mode: a second client with a different config is built fine (its own
+    isolated engine) and emits no warning -- the silent-isolation behavior."""
     url = "https://m16-different.documents.azure.com"
     first = _rust_backend(url, PreparedClientConfig(preferred_locations=("West US",)))
-    with pytest.warns(SharedDriverConfigWarning):
-        second = _rust_backend(url, PreparedClientConfig(preferred_locations=("East US",)))
+    second = _rust_backend(url, PreparedClientConfig(preferred_locations=("East US",)))
     assert first is not None and second is not None
+    # No warning of any kind is emitted -- isolation is silent now.
+    assert len(recwarn) == 0
 
 
-def test_second_client_same_endpoint_same_config_no_warning():
-    url = "https://m16-same.documents.azure.com"
-    cfg = PreparedClientConfig(preferred_locations=("West US",))
-    first = _rust_backend(url, cfg)
-    with warnings.catch_warnings():
-        warnings.simplefilter("error", SharedDriverConfigWarning)
-        # A separate-but-equal config compares equal (by value) and does not warn.
-        second = _rust_backend(url, PreparedClientConfig(preferred_locations=("West US",)))
-    assert first is not None and second is not None
-
-
-def test_two_untuned_clients_same_endpoint_no_warning():
-    url = "https://m16-untuned.documents.azure.com"
-    first = _rust_backend(url, None)
-    with warnings.catch_warnings():
-        warnings.simplefilter("error", SharedDriverConfigWarning)
-        second = _rust_backend(url, None)
-    assert first is not None and second is not None
-
-
-def test_different_endpoints_no_warning():
-    with warnings.catch_warnings():
-        warnings.simplefilter("error", SharedDriverConfigWarning)
-        a = _rust_backend(
-            "https://m16-a.documents.azure.com",
-            PreparedClientConfig(preferred_locations=("West US",)),
+def test_second_client_different_config_strict_raises():
+    """Strict mode: a second client whose config differs from the first live
+    client's raises StrictEngineIsolationError at construction."""
+    url = "https://m16-strict-different.documents.azure.com"
+    first = _rust_backend(
+        url, PreparedClientConfig(preferred_locations=("West US",)), strict=True
+    )
+    with pytest.raises(StrictEngineIsolationError):
+        _rust_backend(
+            url, PreparedClientConfig(preferred_locations=("East US",)), strict=True
         )
-        b = _rust_backend(
-            "https://m16-b.documents.azure.com",
-            PreparedClientConfig(preferred_locations=("East US",)),
-        )
+    assert first is not None
+    # The failed client must not have counted itself against the endpoint.
+    assert _driver_registry._REGISTRY[url][1] == 1
+
+
+def test_strict_same_config_does_not_raise():
+    """Strict mode: a second client with the *same* config shares the engine and
+    does not raise (separate-but-equal configs compare equal by value)."""
+    url = "https://m16-strict-same.documents.azure.com"
+    first = _rust_backend(
+        url, PreparedClientConfig(preferred_locations=("West US",)), strict=True
+    )
+    second = _rust_backend(
+        url, PreparedClientConfig(preferred_locations=("West US",)), strict=True
+    )
+    assert first is not None and second is not None
+    assert _driver_registry._REGISTRY[url][1] == 2
+
+
+def test_strict_two_untuned_clients_do_not_raise():
+    """Strict mode: two untuned (None) clients to one account match and don't raise."""
+    url = "https://m16-strict-untuned.documents.azure.com"
+    first = _rust_backend(url, None, strict=True)
+    second = _rust_backend(url, None, strict=True)
+    assert first is not None and second is not None
+
+
+def test_strict_different_endpoints_do_not_raise():
+    """Strict mode: different endpoints never conflict, whatever their configs."""
+    a = _rust_backend(
+        "https://m16-strict-a.documents.azure.com",
+        PreparedClientConfig(preferred_locations=("West US",)),
+        strict=True,
+    )
+    b = _rust_backend(
+        "https://m16-strict-b.documents.azure.com",
+        PreparedClientConfig(preferred_locations=("East US",)),
+        strict=True,
+    )
     assert a is not None and b is not None
 
 
-def test_registry_releases_on_close_then_new_config_no_warning():
+def test_strict_releases_on_close_then_new_config_ok():
     """After the first client closes, the endpoint is forgotten, so a new client
-    with a different config starts fresh and does not warn."""
-    url = "https://m16-release.documents.azure.com"
-    first = _rust_backend(url, PreparedClientConfig(preferred_locations=("West US",)))
+    with a different config starts fresh and does not raise even in strict mode."""
+    url = "https://m16-strict-release.documents.azure.com"
+    first = _rust_backend(
+        url, PreparedClientConfig(preferred_locations=("West US",)), strict=True
+    )
     first.close()
-    with warnings.catch_warnings():
-        warnings.simplefilter("error", SharedDriverConfigWarning)
-        second = _rust_backend(url, PreparedClientConfig(preferred_locations=("East US",)))
+    # Fresh "first" for the endpoint now -- no conflict.
+    second = _rust_backend(
+        url, PreparedClientConfig(preferred_locations=("East US",)), strict=True
+    )
     assert second is not None
 
 
@@ -1769,7 +1866,7 @@ def test_registry_register_release_refcount():
     url = "https://m16-registry.documents.azure.com"
     cfg = PreparedClientConfig(preferred_locations=("West US",))
     register_client_config(url, cfg)
-    register_client_config(url, cfg)  # same config -> no warn, count 2
+    register_client_config(url, cfg)  # same config -> no conflict, count 2
     assert _driver_registry._REGISTRY[url][1] == 2
     release_client_config(url)
     assert _driver_registry._REGISTRY[url][1] == 1
@@ -1779,19 +1876,122 @@ def test_registry_register_release_refcount():
     assert url not in _driver_registry._REGISTRY
 
 
-def test_async_second_client_same_endpoint_different_config_warns():
-    url = "https://m16-async-different.documents.azure.com"
+def test_registry_strict_raise_does_not_increment_count():
+    """A strict-mode conflict raises *without* recording, so the failed client never
+    counts against the endpoint and the existing client's count stays correct."""
+    url = "https://m16-strict-count.documents.azure.com"
+    cfg_a = PreparedClientConfig(preferred_locations=("West US",))
+    cfg_b = PreparedClientConfig(preferred_locations=("East US",))
+    register_client_config(url, cfg_a)
+    assert _driver_registry._REGISTRY[url][1] == 1
+    with pytest.raises(StrictEngineIsolationError):
+        register_client_config(url, cfg_b, strict=True)
+    # Count unchanged -- the failed registration did not enter the count.
+    assert _driver_registry._REGISTRY[url][1] == 1
+
+
+def test_async_second_client_different_config_strict_raises():
+    url = "https://m16-async-strict-different.documents.azure.com"
+    first = AsyncRustBackend(
+        endpoint=url,
+        master_key="k",
+        client_config=PreparedClientConfig(preferred_locations=("West US",)),
+        strict_isolation=True,
+    )
+    with pytest.raises(StrictEngineIsolationError):
+        AsyncRustBackend(
+            endpoint=url,
+            master_key="k",
+            client_config=PreparedClientConfig(preferred_locations=("East US",)),
+            strict_isolation=True,
+        )
+    assert first is not None
+    assert _driver_registry._REGISTRY[url][1] == 1
+
+
+def test_async_second_client_different_config_default_isolates(recwarn):
+    url = "https://m16-async-default-different.documents.azure.com"
     first = AsyncRustBackend(
         endpoint=url,
         master_key="k",
         client_config=PreparedClientConfig(preferred_locations=("West US",)),
     )
-    with pytest.warns(SharedDriverConfigWarning):
-        second = AsyncRustBackend(
-            endpoint=url,
-            master_key="k",
-            client_config=PreparedClientConfig(preferred_locations=("East US",)),
-        )
+    second = AsyncRustBackend(
+        endpoint=url,
+        master_key="k",
+        client_config=PreparedClientConfig(preferred_locations=("East US",)),
+    )
     assert first is not None and second is not None
+    assert len(recwarn) == 0
+
+
+# ---------------------------------------------------------------------------
+# Strict-isolation toggle: factory resolution and end-to-end wiring
+# ---------------------------------------------------------------------------
+
+
+def test_resolve_strict_isolation_precedence(monkeypatch):
+    """Explicit kwarg wins; otherwise the env var decides (truthy values only);
+    otherwise off."""
+    # Explicit True/False beats the env var.
+    monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, "false")
+    assert resolve_strict_isolation(True) is True
+    monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, "true")
+    assert resolve_strict_isolation(False) is False
+    # No explicit value -> the env var decides, case-insensitively.
+    for truthy in ("1", "true", "TRUE", "Yes", "on"):
+        monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, truthy)
+        assert resolve_strict_isolation(None) is True
+    for falsy in ("0", "false", "no", "", "anything-else"):
+        monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, falsy)
+        assert resolve_strict_isolation(None) is False
+    # Unset -> off.
+    monkeypatch.delenv(RUST_STRICT_ISOLATION_ENV_VAR, raising=False)
+    assert resolve_strict_isolation(None) is False
+
+
+def test_make_backend_threads_strict_isolation_kwarg():
+    """make_backend(strict_isolation=True) builds a strict backend: a second client
+    with a different config to the same account raises at construction."""
+    url = "https://m16-factory-strict.documents.azure.com"
+    first = make_backend(
+        BACKEND_NAME_RUST,
+        url=url,
+        credential="k",
+        preferred_locations=["West US"],
+        strict_isolation=True,
+    )
+    assert first is not None and first._strict_isolation is True
+    with pytest.raises(StrictEngineIsolationError):
+        make_backend(
+            BACKEND_NAME_RUST,
+            url=url,
+            credential="k",
+            preferred_locations=["East US"],
+            strict_isolation=True,
+        )
+
+
+def test_make_backend_strict_isolation_defaults_off():
+    """Without the toggle (and no env var), the backend is non-strict: a second
+    differently-configured client is built fine (its own isolated engine)."""
+    url = "https://m16-factory-default.documents.azure.com"
+    first = make_backend(
+        BACKEND_NAME_RUST, url=url, credential="k", preferred_locations=["West US"]
+    )
+    second = make_backend(
+        BACKEND_NAME_RUST, url=url, credential="k", preferred_locations=["East US"]
+    )
+    assert first is not None and first._strict_isolation is False
+    assert second is not None
+
+
+def test_make_backend_strict_isolation_from_env(monkeypatch):
+    """The COSMOS_RUST_STRICT_ISOLATION env var enables strict mode when no explicit
+    kwarg is given."""
+    monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, "true")
+    url = "https://m16-factory-env-strict.documents.azure.com"
+    first = make_backend(BACKEND_NAME_RUST, url=url, credential="k")
+    assert first is not None and first._strict_isolation is True
 
 

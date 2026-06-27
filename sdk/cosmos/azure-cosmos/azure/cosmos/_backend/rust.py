@@ -13,7 +13,6 @@ has been built, so the import is guarded; until then, operations raise
 from __future__ import annotations
 
 import logging
-import threading
 from typing import Any, Optional
 
 
@@ -24,9 +23,8 @@ from .base import (
     PreparedClientConfig,
     PreparedRequest,
     build_backend_response,
-    init_client_args,
 )
-from ._driver_registry import register_client_config, release_client_config
+from ._shared import RustBackendShared
 from .constants import BACKEND_NAME_RUST
 
 _LOGGER = logging.getLogger(__name__)
@@ -55,16 +53,20 @@ def _resolve_dispatch(op: str) -> Optional[Any]:
     return getattr(_rust_module, method, None)
 
 
-class RustBackend(CosmosBackend):
+class RustBackend(RustBackendShared, CosmosBackend):
     """Sends operations to the Rust driver.
 
     The handle that init_client returns -- an opaque token naming the driver-side
-    client built from the endpoint and key -- is built on the first operation and
-    reused; every operation passes it back. The handle is not the ``CosmosClient``:
-    it is a reference to the driver-side client (which owns the connection pool,
-    auth, and routing), several layers below the public object. Operations route by
-    kind; when the compiled module is missing, every operation raises
-    ``NotImplementedError``.
+    client built from the endpoint, credential, and config -- is built on the first
+    operation and reused; every operation passes it back. The handle is not the
+    ``CosmosClient``: it is a reference to the driver-side client (which owns the
+    connection pool, auth, and routing), several layers below the public object.
+    Operations route by kind; when the compiled module is missing, every operation
+    raises ``NotImplementedError``.
+
+    Per-client state, endpoint registration, and teardown live in
+    :class:`~azure.cosmos._backend._shared.RustBackendShared`; this class adds only
+    the synchronous (blocking) handle build and dispatch.
     """
 
     name = BACKEND_NAME_RUST
@@ -75,49 +77,14 @@ class RustBackend(CosmosBackend):
         master_key: Optional[str] = None,
         client_config: Optional[PreparedClientConfig] = None,
         token_credential: Optional[Any] = None,
+        strict_isolation: bool = False,
     ) -> None:
-        self._endpoint = endpoint
-        self._master_key = master_key
-        # A token credential (e.g. from azure-identity), or ``None`` for master-key
-        # auth; the factory sets exactly one. It is passed to init_client so the
-        # driver can call get_token when signing requests. An async credential
-        # arrives wrapped as AsyncTokenCredentialBridge, which exposes a sync
-        # get_token and is closed in _close_token_credential_bridge.
-        self._token_credential = token_credential
-        # Client settings (e.g. preferred_locations) passed to the first init_client
-        # call. ``None`` means there are none to pass.
-        self._client_config = client_config
-        # The handle init_client returns, naming the driver-side client (which owns
-        # the connection pool, auth, and routing). Built on the first operation and
-        # reused; ``None`` until then. The lock lets only the first caller build it,
-        # so two callers don't each build a separate client.
-        self._handle: Optional[str] = None
-        self._handle_lock = threading.Lock()
-        # Register this client against its endpoint so a second client to the same
-        # account with a different config gets a SharedDriverConfigWarning instead of
-        # silently inheriting this one's config. Released once on close.
-        self._config_released = False
-        register_client_config(self._endpoint, self._client_config)
-
-    def _release_config_once(self) -> None:
-        # Drop this client's endpoint registration exactly once, regardless of
-        # whether the handle was ever built or close() is called more than once.
-        with self._handle_lock:
-            if self._config_released:
-                return
-            self._config_released = True
-        release_client_config(self._endpoint)
-
-    def _close_token_credential_bridge(self) -> None:
-        # If the token credential is our async->sync bridge, stop its dedicated
-        # event-loop thread. The named-method duck-type check means we only ever
-        # close *our* wrapper, never a customer's own credential (sync or async).
-        closer = getattr(self._token_credential, "_close_cosmos_async_bridge", None)
-        if callable(closer):
-            try:
-                closer()
-            except Exception:  # pylint: disable=broad-except
-                _LOGGER.debug("Failed closing async-credential bridge", exc_info=True)
+        # The sync backend has no fields beyond the shared ones, so initialize shared
+        # state directly. This also registers against the endpoint and, in strict
+        # isolation mode, may raise StrictEngineIsolationError for a config conflict.
+        self._init_shared(
+            endpoint, master_key, client_config, token_credential, strict_isolation
+        )
 
     def _ensure_handle(self) -> str:
         # If the handle is already built, return it without locking.
@@ -134,14 +101,7 @@ class RustBackend(CosmosBackend):
         # concurrent first callers from each building one.
         with self._handle_lock:
             if self._handle is None:
-                self._handle = _rust_module.init_client(
-                    *init_client_args(
-                        self._endpoint,
-                        self._master_key,
-                        self._client_config,
-                        self._token_credential,
-                    )
-                )
+                self._handle = _rust_module.init_client(*self._init_client_args())
             return self._handle
 
     def close(self) -> None:
@@ -187,4 +147,13 @@ class RustBackend(CosmosBackend):
             raise NotImplementedError(
                 "RustBackend.execute does not yet support op={!r}.".format(prepared.op)
             )
+        # Log which backend and op ran, so a migration can confirm from logs that
+        # traffic stays on the Rust path. The handle is omitted (it carries a
+        # credential fingerprint).
+        _LOGGER.debug(
+            "cosmos backend=%s op=%s dispatch=%s",
+            BACKEND_NAME_RUST,
+            prepared.op,
+            OP_TO_BINDING_METHOD.get(prepared.op),
+        )
         return build_backend_response(*dispatch(handle, prepared))

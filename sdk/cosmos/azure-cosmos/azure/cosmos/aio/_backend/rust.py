@@ -21,11 +21,10 @@ from azure.cosmos._backend.base import (
     OP_TO_BINDING_METHOD,
     PreparedClientConfig,
     build_backend_response,
-    init_client_args,
 )
-from azure.cosmos._backend._driver_registry import (
-    register_client_config,
-    release_client_config,
+from azure.cosmos._backend._shared import (
+    RustBackendShared,
+    close_credential_bridge_quietly,
 )
 from azure.cosmos._backend.constants import BACKEND_NAME_RUST
 
@@ -74,22 +73,8 @@ def _close_handle_quietly(handle: str) -> None:
         _LOGGER.debug("Failed closing handle %s", handle, exc_info=True)
 
 
-def _close_credential_bridge_quietly(credential: Optional[Any]) -> None:
-    """Stop our async-credential bridge if ``credential`` is one; never raise.
 
-    The method-name check means we only ever close our own wrapper
-    (``AsyncTokenCredentialBridge``), never a customer's credential. Shared by
-    ``close()`` and the finalizer so the duck-typed check lives in one place.
-    """
-    closer = getattr(credential, "_close_cosmos_async_bridge", None)
-    if callable(closer):
-        try:
-            closer()
-        except Exception:  # pylint: disable=broad-except
-            _LOGGER.debug("Failed closing async-credential bridge", exc_info=True)
-
-
-class AsyncRustBackend(AsyncCosmosBackend):
+class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
     """Sends async operations to the Rust driver.
 
     Each operation calls the binding's ``*_item_async`` function, which returns an
@@ -98,6 +83,10 @@ class AsyncRustBackend(AsyncCosmosBackend):
     driver's connection pool, not by a thread count. The only blocking step is
     building the client once in ``_ensure_handle``, run on a background thread. When
     the compiled module is missing, every operation raises ``NotImplementedError``.
+
+    Per-client state, endpoint registration, and teardown live in
+    :class:`~azure.cosmos._backend._shared.RustBackendShared`; this class adds the
+    cross-event-loop handle-build coalescing and the awaitable dispatch.
     """
 
     name = BACKEND_NAME_RUST
@@ -108,27 +97,14 @@ class AsyncRustBackend(AsyncCosmosBackend):
         master_key: Optional[str] = None,
         client_config: Optional[PreparedClientConfig] = None,
         token_credential: Optional[Any] = None,
+        strict_isolation: bool = False,
     ) -> None:
-        self._endpoint = endpoint
-        self._master_key = master_key
-        # A token credential (e.g. from azure-identity), or ``None`` for master-key
-        # auth; the factory sets exactly one. It is passed to init_client so the
-        # driver can call get_token when signing requests. An async credential
-        # arrives wrapped as AsyncTokenCredentialBridge, which exposes a sync
-        # get_token and is closed in _close_token_credential_bridge.
-        self._token_credential = token_credential
-        # Client settings (e.g. preferred_locations) passed to the first init_client
-        # call. ``None`` means there are none to pass.
-        self._client_config = client_config
-        # The handle init_client returns, naming the driver-side client (which owns
-        # the connection pool, auth, and routing). Built on the first operation and
-        # reused; ``None`` until then.
-        self._handle: Optional[str] = None
-        # _build_lock lets only one build run at a time, so init_client is called
-        # once even when two event loops share this client. _handle_lock is held only
-        # to set or read the handle and the closing flag, never during init_client,
-        # so close() never waits for a build to finish.
-        self._handle_lock = threading.Lock()
+        # Backend-specific fields first, so they exist even if the shared init's
+        # strict-mode registration raises and the finalizer then runs.
+        # _build_lock lets only one build run at a time, so init_client is called once
+        # even when two event loops share this client. _handle_lock (set by the shared
+        # init) is held only to set or read the handle and the closing flag, never
+        # during init_client, so close() never waits for a build to finish.
         self._build_lock = threading.Lock()
         # Set by close(). A build checks it before storing its handle, so a handle
         # built while the client is closing is closed instead of left open.
@@ -139,26 +115,10 @@ class AsyncRustBackend(AsyncCosmosBackend):
         # thread only.
         self._init_future: Optional["asyncio.Future[str]"] = None
         self._init_future_loop: Optional[asyncio.AbstractEventLoop] = None
-        # Register this client against its endpoint so a second client to the same
-        # account with a different config gets a SharedDriverConfigWarning instead of
-        # silently inheriting this one's config. Released once on close.
-        self._config_released = False
-        register_client_config(self._endpoint, self._client_config)
-
-    def _release_config_once(self) -> None:
-        # Drop this client's endpoint registration exactly once, regardless of
-        # whether the handle was ever built or close() is called more than once.
-        with self._handle_lock:
-            if self._config_released:
-                return
-            self._config_released = True
-        release_client_config(self._endpoint)
-
-    def _close_token_credential_bridge(self) -> None:
-        # If the credential is our async-to-sync bridge, stop its event-loop thread.
-        # The method-name check (in the shared helper) means we only close our own
-        # wrapper, never a customer's credential. Stopping an idle loop is near-instant.
-        _close_credential_bridge_quietly(self._token_credential)
+        # Shared per-client state + endpoint registration (may raise in strict mode).
+        self._init_shared(
+            endpoint, master_key, client_config, token_credential, strict_isolation
+        )
 
     def _build_handle(self) -> str:
         # Runs on a background thread; init_client makes a network call that can take
@@ -181,14 +141,7 @@ class AsyncRustBackend(AsyncCosmosBackend):
                 return self._handle
             if self._closing:
                 raise RuntimeError("AsyncRustBackend: the client is closed.")
-            new_handle = _rust_module.init_client(
-                *init_client_args(
-                    self._endpoint,
-                    self._master_key,
-                    self._client_config,
-                    self._token_credential,
-                )
-            )
+            new_handle = _rust_module.init_client(*self._init_client_args())
             with self._handle_lock:
                 if self._closing:
                     surplus, new_handle = new_handle, None
@@ -272,7 +225,7 @@ class AsyncRustBackend(AsyncCosmosBackend):
                 return
 
             def _blocking_teardown() -> None:
-                _close_credential_bridge_quietly(credential)
+                close_credential_bridge_quietly(credential)
                 if handle is not None:
                     _close_handle_quietly(handle)
 
@@ -315,6 +268,15 @@ class AsyncRustBackend(AsyncCosmosBackend):
             raise NotImplementedError(
                 "AsyncRustBackend.execute does not yet support op={!r}.".format(prepared.op)
             )
+        # Log which backend and op ran, so a migration can confirm from logs that
+        # traffic stays on the Rust path. The handle is omitted (it carries a
+        # credential fingerprint).
+        _LOGGER.debug(
+            "cosmos backend=%s op=%s dispatch=%s_async",
+            BACKEND_NAME_RUST,
+            prepared.op,
+            OP_TO_BINDING_METHOD.get(prepared.op),
+        )
         # The *_item_async function returns an awaitable that finishes on the driver's
         # own runtime, so awaiting it uses no Python thread. Only the one-time
         # init_client in _ensure_handle still runs on a background thread.

@@ -172,7 +172,6 @@ pub(crate) fn run_item_operation_async<'py>(
 fn lookup_driver(handle: &str) -> PyResult<Arc<CosmosDriver>> {
     drivers()
         .read()
-        .unwrap()
         .get(handle)
         .map(|entry| Arc::clone(&entry.driver))
         .ok_or_else(|| {

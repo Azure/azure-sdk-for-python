@@ -64,7 +64,7 @@ export COSMOS_LOG_LEVEL="${COSMOS_LOG_LEVEL:-WARNING}"
 export COSMOS_ENABLE_DIAGNOSTICS_LOGGING="${COSMOS_ENABLE_DIAGNOSTICS_LOGGING:-false}"
 
 # ---- Results sink (separate database/container so it never competes) -------
-# Per docs/RUST_PYTHON_SLA.md section 3: a separate account is safest, but a
+# Per docs/RUST_PYTHON_PERFORMANCE.md section 3: a separate account is safest, but a
 # separate container WITH ITS OWN THROUGHPUT in the same account is acceptable
 # (the reporter writes only a handful of docs per interval). We default to the
 # same account, a separate perfdb/perfresults.

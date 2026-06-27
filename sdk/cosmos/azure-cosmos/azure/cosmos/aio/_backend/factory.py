@@ -25,6 +25,7 @@ from azure.cosmos._backend.factory import (
     build_client_config,
     reject_unsupported_transport_settings,
     resolve_backend_name,
+    resolve_strict_isolation,
 )
 
 from .base import AsyncCosmosBackend
@@ -43,6 +44,7 @@ def make_async_backend(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
+    strict_isolation: Optional[bool] = None,
     proxy_config: Any = None,
     proxies: Any = None,
     connection_verify: Any = None,
@@ -56,8 +58,11 @@ def make_async_backend(
     ``None`` when core-python is selected. The keyword settings are only
     consulted for the Rust branch, where they are folded into the client
     config (via the shared :func:`build_client_config`) the backend carries
-    to the driver. The transport/TLS settings the Rust path can't honor yet are
-    rejected here, exactly as in the sync factory.
+    to the driver. ``strict_isolation`` (kwarg > the
+    ``COSMOS_RUST_STRICT_ISOLATION`` env var > off) controls whether a second
+    client to an account with a different config raises instead of silently
+    getting its own isolated engine. The transport/TLS settings the Rust path
+    can't honor yet are rejected here, exactly as in the sync factory.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:
@@ -87,6 +92,7 @@ def make_async_backend(
                 user_agent_suffix=user_agent_suffix,
                 consistency_level=consistency_level,
             ),
+            strict_isolation=resolve_strict_isolation(strict_isolation),
         )
     return None
 
