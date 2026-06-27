@@ -373,6 +373,7 @@ namespace azure.ai.projects.aio.operations
                 agent_name: str, 
                 *, 
                 before: Optional[str] = ..., 
+                include_drafts: Optional[bool] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
@@ -2773,6 +2774,7 @@ namespace azure.ai.projects.models
         created_at: datetime
         definition: AgentDefinition
         description: Optional[str]
+        draft: Optional[bool]
         id: str
         instance_identity: Optional[AgentIdentity]
         metadata: dict[str, str]
@@ -2788,6 +2790,7 @@ namespace azure.ai.projects.models
                 created_at: datetime, 
                 definition: AgentDefinition, 
                 description: Optional[str] = ..., 
+                draft: Optional[bool] = ..., 
                 id: str, 
                 metadata: dict[str, str], 
                 name: str, 
@@ -4614,6 +4617,27 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.EmptyModelParam(_Model):
 
 
+    class azure.ai.projects.models.EndpointBasedEvaluatorDefinition(EvaluatorDefinition, discriminator='endpoint'):
+        connection_name: str
+        data_schema: dict[str, any]
+        init_parameters: dict[str, any]
+        metrics: dict[str, EvaluatorMetric]
+        type: Literal[EvaluatorDefinitionType.ENDPOINT]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_name: str, 
+                data_schema: Optional[dict[str, Any]] = ..., 
+                init_parameters: Optional[dict[str, Any]] = ..., 
+                metrics: Optional[dict[str, EvaluatorMetric]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.EntraAuthorizationScheme(AgentEndpointAuthorizationScheme, discriminator='Entra'):
         type: Literal[AgentEndpointAuthorizationSchemeType.ENTRA]
 
@@ -5007,6 +5031,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CODE = "code"
+        ENDPOINT = "endpoint"
         OPENAI_GRADERS = "openai_graders"
         PROMPT = "prompt"
         PROMPT_AND_CODE = "prompt_and_code"
@@ -9731,6 +9756,7 @@ namespace azure.ai.projects.operations
                 agent_name: str, 
                 *, 
                 before: Optional[str] = ..., 
+                include_drafts: Optional[bool] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
                 **kwargs: Any
