@@ -9,7 +9,16 @@ import io
 import openai
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
+from azure.ai.projects.models import (
+    AgentDetails,
+    AgentEndpointConfig,
+    AgentVersionDetails,
+    FixedRatioVersionSelectionRule,
+    PromptAgentDefinition,
+    ProtocolConfiguration,
+    ResponsesProtocolConfiguration,
+    VersionSelector,
+)
 
 
 class TestAgentCrud(TestBase):
@@ -40,6 +49,7 @@ class TestAgentCrud(TestBase):
         """
         print("\n")
         model = kwargs.get("foundry_model_name")
+        assert model is not None
         project_client = self.create_client(operation_group="agents", **kwargs)
         first_agent_name = "MyAgent1"
         second_agent_name = "MyAgent2"
@@ -202,3 +212,84 @@ class TestAgentCrud(TestBase):
         result = project_client.agents.delete_version(agent_name=agent_name, agent_version=agent.version)
         assert result.deleted
         print(f"Agent deleted")
+
+    # To run this test:
+    # pytest tests\agents\test_agents_crud.py::TestAgentCrud::test_prompt_agent_endpoint_responses -s
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_prompt_agent_endpoint_responses(self, **kwargs):
+        """
+        Test prompt-agent endpoint routing for the Responses protocol.
+
+        This test:
+        1. Creates a prompt agent version
+        2. Configures the agent endpoint to route 100% of traffic to that version
+        3. Invokes the agent endpoint through the OpenAI-compatible responses client
+        4. Verifies the response
+        5. Cleans up by deleting the agent version
+
+        Routes used in this test:
+
+        Action REST API Route                                Client Method
+        ------+---------------------------------------------+-----------------------------------
+        POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
+        PATCH  /agents/{agent_name}                          project_client.agents.update_details()
+        POST   /agents/{agent_name}/endpoint/protocols/openai/conversations  openai_client.conversations.create()
+        POST   /agents/{agent_name}/endpoint/protocols/openai/responses  openai_client.responses.create()
+        DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
+        """
+        print("\n")
+        model = kwargs.get("foundry_model_name")
+        assert model is not None
+        agent_name = "PromptAgentEndpointTestAgent"
+
+        project_client = self.create_client(operation_group="agents", allow_preview=True, **kwargs)
+        agent = project_client.agents.create_version(
+            agent_name=agent_name,
+            definition=PromptAgentDefinition(
+                model=model,
+                instructions="You are a helpful assistant that answers general knowledge questions.",
+            ),
+        )
+        self._validate_agent_version(agent)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+
+        try:
+            endpoint_config = AgentEndpointConfig(
+                version_selector=VersionSelector(
+                    version_selection_rules=[
+                        FixedRatioVersionSelectionRule(agent_version=agent.version, traffic_percentage=100),
+                    ]
+                ),
+                protocol_configuration=ProtocolConfiguration(responses=ResponsesProtocolConfiguration()),
+            )
+
+            patched_agent = project_client.agents.update_details(
+                agent_name=agent_name,
+                agent_endpoint=endpoint_config,
+            )
+            assert patched_agent.agent_endpoint is not None
+            print(f"Agent endpoint configured for agent: {patched_agent.name}")
+
+            with project_client.get_openai_client(agent_name=agent_name) as openai_client:
+                conversation = openai_client.conversations.create(
+                    items=[
+                        {
+                            "type": "message",
+                            "role": "user",
+                            "content": "What is 2 + 2? Answer with just the number.",
+                        }
+                    ]
+                )
+                response = openai_client.responses.create(
+                    conversation=conversation.id,
+                    input="and then add 2 again",
+                )
+
+            print(f"Response id: {response.id}, output text: {response.output_text}")
+            assert response.output_text
+            assert "6" in response.output_text.strip()
+        finally:
+            result = project_client.agents.delete_version(agent_name=agent_name, agent_version=agent.version)
+            assert result.deleted
+            print("Agent deleted")

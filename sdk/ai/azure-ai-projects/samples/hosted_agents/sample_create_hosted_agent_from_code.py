@@ -10,7 +10,7 @@ DESCRIPTION:
     poll for provisioning, and download it back to verify the round-trip.
 
     The dependency resolution mode is selected via the
-    `FOUNDRY_HOSTED_AGENT_REMOTE_BUILD` environment variable (default: `false`):
+    `FOUNDRY_HOSTED_AGENT_REMOTE_BUILD` environment variable (default: `true`):
 
     * `false` (BUNDLED) — uploads `assets/echo-agent-prebuilt.zip`, which
       bundles the agent source plus a `packages/` folder with Linux-built
@@ -35,8 +35,8 @@ USAGE:
     2) FOUNDRY_HOSTED_AGENT_NAME - The Hosted Agent name. Must already exist.
     3) AZURE_SUBSCRIPTION_ID - Azure subscription ID where the Azure AI account
        and project are deployed.
-    4) FOUNDRY_HOSTED_AGENT_REMOTE_BUILD - Optional. Set to `true` to use
-       REMOTE_BUILD; defaults to `false` (BUNDLED).
+     4) FOUNDRY_HOSTED_AGENT_REMOTE_BUILD - Optional. Set to `false` to use
+         BUNDLED; defaults to `true` (REMOTE_BUILD).
 """
 
 import os
@@ -61,7 +61,7 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
-use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "false").strip().lower() == "true"
+use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "true").strip().lower() == "true"
 
 dependency_resolution, zip_filename, code_zip_bytes, code_zip_sha256 = select_echo_agent_code_zip(use_remote_build)
 
@@ -69,6 +69,22 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
+    # The ``code`` field accepts any variant of the SDK's ``FileType`` union.
+    # The 3-tuple form used here pins both the filename and the content type.
+    #
+    #   # 1) bare IO[bytes] - filename derived from the file handle's `.name`
+    #   code=code_zip_path.open("rb")
+    #
+    #   # 2) (filename, bytes)
+    #   code=(zip_filename, code_zip_bytes)
+    #
+    #   # 3) (filename, IO[bytes])
+    #   code=(zip_filename, code_zip_path.open("rb"))
+    #
+    #   # 4) (filename, bytes, content_type)
+    #   code=(zip_filename, code_zip_bytes, "application/zip")
+    code = (zip_filename, code_zip_bytes, "application/zip")
+
     content = CreateAgentVersionFromCodeContent(
         metadata=CreateAgentVersionFromCodeMetadata(
             description=f"Code-based hosted agent uploaded with dependency_resolution={dependency_resolution.value}.",
@@ -83,7 +99,7 @@ with (
                 protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
             ),
         ),
-        code=(zip_filename, code_zip_bytes, "application/zip"),
+        code=code,
     )
 
     created = project_client.agents.create_version_from_code(

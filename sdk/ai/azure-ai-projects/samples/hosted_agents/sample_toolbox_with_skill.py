@@ -131,6 +131,22 @@ def main() -> None:
         zip_filename = "hosted-toolbox-agent.zip"
         zip_bytes, zip_sha256, _ = zip(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
 
+        # The ``code`` field accepts any variant of the SDK's ``FileType`` union.
+        # The 3-tuple form used here pins both the filename and the content type.
+        #
+        #   # 1) bare IO[bytes] - filename derived from the file handle's `.name`
+        #   code=zip_path.open("rb")
+        #
+        #   # 2) (filename, bytes)
+        #   code=(zip_filename, zip_bytes)
+        #
+        #   # 3) (filename, IO[bytes])
+        #   code=(zip_filename, zip_path.open("rb"))
+        #
+        #   # 4) (filename, bytes, content_type)
+        #   code=(zip_filename, zip_bytes, "application/zip")
+        code = (zip_filename, zip_bytes, "application/zip")
+
         content = CreateAgentVersionFromCodeContent(
             metadata=CreateAgentVersionFromCodeMetadata(
                 description="Hosted agent code for toolbox MCP skills with shipping-cost skill.",
@@ -150,7 +166,7 @@ def main() -> None:
                     protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
                 ),
             ),
-            code=(zip_filename, zip_bytes, "application/zip"),
+            code=code,
         )
 
         created = project_client.agents.create_version_from_code(
