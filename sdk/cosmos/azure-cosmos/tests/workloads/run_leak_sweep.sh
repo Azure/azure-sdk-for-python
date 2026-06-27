@@ -67,7 +67,7 @@ for bk in "${BACKENDS[@]}"; do
       export WORKLOAD_OPERATIONS="${op}"
       export WORKLOAD_ARRIVAL_RATE="0"
       export PERF_WORKLOAD_ID="${wid}"
-      timeout --signal=INT --preserve-status "${DURATION_SECONDS}s" \
+      timeout --signal=INT --kill-after=120s --preserve-status "${DURATION_SECONDS}s" \
         python3 workload.py >"${log}" 2>&1
     ) &
     pids+=("$!")

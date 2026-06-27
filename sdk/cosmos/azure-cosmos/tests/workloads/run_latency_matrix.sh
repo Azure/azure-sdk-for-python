@@ -64,11 +64,16 @@ for (( r=1; r<=REPEATS; r++ )); do
 
       # timeout sends SIGINT (--signal=INT) so the workload stops the same way a
       # Ctrl-C would, letting the reporter flush one final row on the way out.
+      # --kill-after=120s is the safety net: if a cell ever SWALLOWS the SIGINT
+      # (e.g. a teardown that blocks while joining an executor thread), timeout
+      # escalates to SIGKILL after a 120s grace window so one wedged cell can
+      # never stall the whole unattended matrix again. A SIGKILLed cell exits
+      # 137 -> flagged below as a failure (visible) but the loop still continues.
       COSMOS_BACKEND="${bk}" \
       WORKLOAD_OPERATIONS="${op}" \
       WORKLOAD_ARRIVAL_RATE="${run_arrival}" \
       PERF_WORKLOAD_ID="${wid}" \
-        timeout --signal=INT --preserve-status "${DURATION_SECONDS}s" \
+        timeout --signal=INT --kill-after=120s --preserve-status "${DURATION_SECONDS}s" \
           python3 workload.py >"${log}" 2>&1 || rc=$?
       rc="${rc:-0}"
       # With --preserve-status + --signal=INT, timeout exits with the command's

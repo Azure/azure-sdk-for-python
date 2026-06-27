@@ -75,7 +75,7 @@ for op in "${OPERATIONS[@]}"; do
       COSMOS_CONCURRENT_REQUESTS="${c}" \
       WORKLOAD_ARRIVAL_RATE="0" \
       PERF_WORKLOAD_ID="${wid}" \
-        timeout --signal=INT --preserve-status "${DURATION_SECONDS}s" \
+        timeout --signal=INT --kill-after=120s --preserve-status "${DURATION_SECONDS}s" \
           python3 workload.py >"${log}" 2>&1 || rc=$?
       rc="${rc:-0}"
       # 0/124/130 are all the expected timeout-stop (see run_latency_matrix.sh).
