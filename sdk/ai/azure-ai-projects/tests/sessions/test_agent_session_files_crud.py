@@ -182,7 +182,7 @@ class TestAgentSessionFilesCrud(TestBase):
 
             # Download second file to disk using download_session_file_to_path with str file_path
             temp_dir = tempfile.gettempdir()
-            download_path = os.path.join(temp_dir, "downloaded_data_file2.txt")
+            download_path = os.path.join(temp_dir, "downloaded_data_file2_sync_test.txt")
             print(f"Downloading session file to disk: {remote_file_path2} -> {download_path}")
 
             project_client.agents.download_session_file_to_path(
@@ -190,6 +190,7 @@ class TestAgentSessionFilesCrud(TestBase):
                 session_id=session.agent_session_id,
                 file_path=download_path,  # str type
                 remote_path=remote_file_path2,
+                overwrite=True,
             )
             print(f"Successfully downloaded file to {download_path}")
 
@@ -213,7 +214,7 @@ class TestAgentSessionFilesCrud(TestBase):
             # --------------------------------------------------------------------------------------------------
 
             # Download third file to disk using download_session_file_to_path with PathLike file_path
-            download_path3 = Path(tempfile.gettempdir()) / "downloaded_data_file3.txt"
+            download_path3 = Path(tempfile.gettempdir()) / "downloaded_data_file3_sync_test.txt"
             print(f"Downloading session file to disk using PathLike: {remote_file_path3} -> {download_path3}")
 
             project_client.agents.download_session_file_to_path(
@@ -221,6 +222,7 @@ class TestAgentSessionFilesCrud(TestBase):
                 session_id=session.agent_session_id,
                 file_path=download_path3,  # PathLike[str] type
                 remote_path=remote_file_path3,
+                overwrite=True,
             )
             print(f"Successfully downloaded file to {download_path3}")
 
@@ -405,7 +407,7 @@ class TestAgentSessionFilesCrud(TestBase):
             # --------------------------------------------------------------------------------------------------
 
             # Create a temporary file that already exists
-            existing_file_path = os.path.join(tempfile.gettempdir(), "existing_file_for_overwrite_test.txt")
+            existing_file_path = os.path.join(tempfile.gettempdir(), "existing_file_for_overwrite_sync_test.txt")
             with open(existing_file_path, "w", encoding="utf-8") as f:
                 f.write("This file already exists")
 

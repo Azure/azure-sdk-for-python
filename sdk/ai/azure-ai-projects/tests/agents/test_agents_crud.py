@@ -6,6 +6,7 @@
 # cSpell:disable
 import json
 import io
+import openai
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
@@ -139,20 +140,26 @@ class TestAgentCrud(TestBase):
         Action REST API Route                                Client Method
         ------+---------------------------------------------+-----------------------------------
         POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
-        POST   /openai/conversations                         openai_client.conversations.create()
         POST   /openai/responses                             openai_client.responses.create()
         POST   /agents/{agent_name}:disable                  project_client.agents.disable()
         POST   /agents/{agent_name}:enable                   project_client.agents.enable()
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
         print("\n")
-        model = kwargs.get("foundry_model_name")
-        assert model is not None
+        model: str = kwargs["foundry_model_name"]
         agent_name = "DisableEnableTestAgent"
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
-        openai_client = project_client.get_openai_client()
+        # Intentionally use Agent Endpoint here for Responses calls (by giving `agent_name`). Async tests will use Project
+        # endpoint instead, so we cover both endpoint.
+        openai_client = project_client.get_openai_client(agent_name=agent_name)
+
+        # Delete any existing agent from previous test runs (ignore failures)
+        try:
+            project_client.agents.delete(agent_name=agent_name)
+        except Exception:
+            pass
 
         # Create an Agent
         agent = project_client.agents.create_version(
@@ -165,15 +172,9 @@ class TestAgentCrud(TestBase):
         print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
         self._validate_agent_version(agent)
 
-        # Create a conversation
-        conversation = openai_client.conversations.create(
-            items=[{"type": "message", "role": "user", "content": "How many feet in a mile?"}]
-        )
-        print(f"Created conversation with initial user message (id: {conversation.id})")
-
         # Verify the agent can respond to requests
         response = openai_client.responses.create(
-            conversation=conversation.id,
+            input="How many feet in a mile?",
             extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
@@ -184,31 +185,24 @@ class TestAgentCrud(TestBase):
         print(f"Agent disabled")
 
         # Verify requests fail when agent is disabled
-        # TODO: Why does this call succeed, even though the Agent is disabled?
-        # error_raised = False
-        # try:
-        #     _ = openai_client.responses.create(
-        #         conversation=conversation.id,
-        #         extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        #     )
-        # except Exception as e:
-        #     error_raised = True
-        #     print(f"Expected error when calling disabled agent: {e}")
-        # assert error_raised, "Expected an error when calling a disabled agent"
+        error_raised = False
+        try:
+            _ = openai_client.responses.create(
+                input="How many feet in a mile?",
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+            )
+        except openai.PermissionDeniedError as e:
+            error_raised = True
+            print(f"Expected error when calling disabled agent: {e}")
+        assert error_raised, "Expected an error when calling a disabled agent"
 
         # Enable the agent
         project_client.agents.enable(agent_name=agent_name)
         print(f"Agent enabled")
 
-        # Add a new message to the conversation for the next request
-        _ = openai_client.conversations.items.create(
-            conversation.id,
-            items=[{"type": "message", "role": "user", "content": "And how many meters?"}],
-        )
-
         # Verify the agent can respond to requests again
         response = openai_client.responses.create(
-            conversation=conversation.id,
+            input="How many meters in a mile?",
             extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
