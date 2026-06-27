@@ -37,6 +37,8 @@ class KeyOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     verify = "verify"
     wrap_key = "wrapKey"
     unwrap_key = "unwrapKey"
+    secure_wrap_key = "secureWrapKey"
+    secure_unwrap_key = "secureUnwrapKey"
     export = "export"
 
 

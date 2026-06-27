@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-09-01/Consoles_ListByVirtualMachine.json
+# x-ms-original-file: 2026-05-01-preview/Consoles_ListByVirtualMachine.json
 if __name__ == "__main__":
     main()
