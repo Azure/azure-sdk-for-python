@@ -47,8 +47,8 @@ async def get_horoscope(sign: str) -> str:
 async def main():
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        project_client.get_openai_client(agent_name="MyAgent") as openai_client,
     ):
         # Define a function tool for the model to use
         func_tool = FunctionTool(
@@ -80,7 +80,6 @@ async def main():
         # Prompt the model with tools defined
         response = await openai_client.responses.create(
             input="What is my horoscope? I am an Aquarius.",
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {response.output_text}")
 
@@ -107,7 +106,6 @@ async def main():
         response = await openai_client.responses.create(
             input=input_list,
             previous_response_id=response.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Agent response: {response.output_text}")

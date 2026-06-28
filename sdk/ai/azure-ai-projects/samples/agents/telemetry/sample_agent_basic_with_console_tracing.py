@@ -85,8 +85,10 @@ scenario = os.path.basename(__file__)
 with tracer.start_as_current_span(scenario):
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
+        AIProjectClient(
+            endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential, allow_preview=True
+        ) as project_client,
+        project_client.get_openai_client(agent_name="MyAgent") as openai_client,
     ):
         agent_definition = PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
@@ -101,7 +103,6 @@ with tracer.start_as_current_span(scenario):
         request = "Hello, tell me a joke."
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             input=request,
         )
         print(f"Answer: {response.output}")
@@ -109,7 +110,6 @@ with tracer.start_as_current_span(scenario):
         response = openai_client.responses.create(
             conversation=conversation.id,
             input="Tell another one about computers.",
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Answer: {response.output}")
 

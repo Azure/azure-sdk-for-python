@@ -44,7 +44,7 @@ async def main():
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
-        project_client.get_openai_client() as openai_client,
+        project_client.get_openai_client(agent_name="student-teacher-workflow-async") as openai_client,
     ):
 
         teacher_agent = await project_client.agents.create_version(
@@ -152,7 +152,6 @@ trigger:
 
         stream = await openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
             input="1 + 1 = ?",
             stream=True,
         )

@@ -51,8 +51,8 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    project_client.get_openai_client(agent_name="MyAgent") as openai_client,
 ):
 
     # Delete memory store, if it already exists
@@ -105,7 +105,6 @@ with (
     response = openai_client.responses.create(
         input="I prefer dark roast coffee",
         conversation=conversation.id,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text}")
 
@@ -121,7 +120,6 @@ with (
     new_response = openai_client.responses.create(
         input="Please order my usual coffee",
         conversation=new_conversation.id,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {new_response.output_text}")
 

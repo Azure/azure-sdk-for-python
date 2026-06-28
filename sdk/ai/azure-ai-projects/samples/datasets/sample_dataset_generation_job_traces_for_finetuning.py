@@ -100,8 +100,9 @@ TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     project_client.get_openai_client() as openai_client,
+    project_client.get_openai_client(agent_name=agent_name) as agent_client,
 ):
 
     created_agent = None
@@ -121,13 +122,12 @@ with (
         seed_start = datetime.now(tz=timezone.utc)
         print(f"Seed {len(SEED_PROMPTS)} conversation(s) against the agent.")
         for prompt in SEED_PROMPTS:
-            conversation = openai_client.conversations.create()
+            conversation = agent_client.conversations.create()
             created_conversation_ids.append(conversation.id)
             print(f"  - conversation id: {conversation.id}  (prompt: {prompt!r})")
-            openai_client.responses.create(
+            agent_client.responses.create(
                 conversation=conversation.id,
                 input=prompt,
-                extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
             )
 
         print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
@@ -225,7 +225,7 @@ with (
         if created_conversation_ids:
             for cid in created_conversation_ids:
                 try:
-                    openai_client.conversations.delete(conversation_id=cid)
+                    agent_client.conversations.delete(conversation_id=cid)
                     print(f"Deleted seeded conversation `{cid}`.")
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     print(f"  (warning) could not delete conversation `{cid}`: {exc}")

@@ -42,7 +42,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
     # Create vector store for file search
@@ -90,16 +90,18 @@ with (
 
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
+    # Use an agent-scoped client for Responses and Conversations calls
+    agent_client = project_client.get_openai_client(agent_name=agent.name)
+
     # Create a conversation for the agent interaction
-    conversation = openai_client.conversations.create()
+    conversation = agent_client.conversations.create()
     print(f"Created conversation (id: {conversation.id})")
 
     # Send a query to search through the uploaded file
-    response = openai_client.responses.create(
+    response = agent_client.responses.create(
         conversation=conversation.id,
         input="Tell me about Contoso products",
         extra_body={
-            "agent_reference": {"name": agent.name, "type": "agent_reference"},
             "structured_inputs": {"vector_store_id": vector_store.id, "vector_store_file_id": file.id},
         },
     )

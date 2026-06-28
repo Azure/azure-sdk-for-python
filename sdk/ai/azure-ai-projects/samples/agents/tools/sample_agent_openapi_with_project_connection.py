@@ -46,8 +46,8 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    project_client.get_openai_client(agent_name="MyAgent") as openai_client,
 ):
 
     tripadvisor_asset_file_path = os.path.abspath(
@@ -82,7 +82,6 @@ with (
 
     response = openai_client.responses.create(
         input="Recommend me 5 top hotels in the United States",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     # The response to the question may contain non ASCII letters. To avoid error, encode and re decode them.
     print(f"Response created: {response.output_text.encode().decode('ascii', errors='ignore')}")

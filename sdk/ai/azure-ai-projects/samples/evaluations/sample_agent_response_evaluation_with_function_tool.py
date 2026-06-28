@@ -81,7 +81,7 @@ def get_horoscope(sign: str) -> str:
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
     agent = project_client.agents.create_version(
@@ -94,10 +94,12 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
+    # Use an agent-scoped client for Responses and Conversations calls
+    agent_client = project_client.get_openai_client(agent_name=agent.name)
+
     # Prompt the model with tools defined
-    response = openai_client.responses.create(
+    response = agent_client.responses.create(
         input="What is my horoscope? I am an Aquarius.",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text}")
 
@@ -121,10 +123,9 @@ with (
     print("Final input:")
     print(input_list)
 
-    response = openai_client.responses.create(
+    response = agent_client.responses.create(
         input=input_list,
         previous_response_id=response.id,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text} (id: {response.id})")
 

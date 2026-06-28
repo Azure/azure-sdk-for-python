@@ -38,8 +38,8 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    project_client.get_openai_client(agent_name="MyAgent7") as openai_client,
 ):
 
     tool = MCPTool(
@@ -68,7 +68,6 @@ with (
     response = openai_client.responses.create(
         conversation=conversation.id,
         input="What is my username in Github profile?",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     # Process any MCP approval requests that were generated
@@ -94,7 +93,6 @@ with (
     response = openai_client.responses.create(
         input=input_list,
         previous_response_id=response.id,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     print(f"Response: {response.output_text}")

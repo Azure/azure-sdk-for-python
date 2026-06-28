@@ -98,8 +98,8 @@ TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
 ):
 
     created_agent = None
@@ -125,7 +125,6 @@ with (
             openai_client.responses.create(
                 conversation=conversation.id,
                 input=prompt,
-                extra_body={"agent_reference": {"name": created_agent.name, "type": "agent_reference"}},
             )
 
         print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)

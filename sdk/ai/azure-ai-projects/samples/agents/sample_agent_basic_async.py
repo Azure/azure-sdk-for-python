@@ -42,8 +42,8 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 async def main() -> None:
     async with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
+        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        project_client.get_openai_client(agent_name="MyAgent") as openai_client,
     ):
 
         agent = await project_client.agents.create_version(
@@ -62,7 +62,6 @@ async def main() -> None:
 
         response = await openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {response.output_text}")
 
@@ -74,7 +73,6 @@ async def main() -> None:
 
         response = await openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {response.output_text}")
 

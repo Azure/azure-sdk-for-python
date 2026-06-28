@@ -50,7 +50,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
 
@@ -63,14 +63,16 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    conversation = openai_client.conversations.create(
+    # Use an agent-scoped client for Responses and Conversations calls
+    agent_client = project_client.get_openai_client(agent_name=agent.name)
+
+    conversation = agent_client.conversations.create(
         items=[{"type": "message", "role": "user", "content": "What is the size of France in square miles?"}],
     )
     print(f"Created conversation with initial user message (id: {conversation.id})")
 
-    response = openai_client.responses.create(
+    response = agent_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text} (id: {response.id})")
 

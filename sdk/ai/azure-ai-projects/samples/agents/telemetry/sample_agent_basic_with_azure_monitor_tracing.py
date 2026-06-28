@@ -44,7 +44,9 @@ agent = None
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
+    AIProjectClient(
+        endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential, allow_preview=True
+    ) as project_client,
 ):
     # Enable Azure Monitor tracing
     application_insights_connection_string = project_client.telemetry.get_application_insights_connection_string()
@@ -54,7 +56,7 @@ with (
     scenario = os.path.basename(__file__)
 
     with tracer.start_as_current_span(scenario):
-        with project_client.get_openai_client() as openai_client:
+        with project_client.get_openai_client(agent_name="MyAgent") as openai_client:
             agent_definition = PromptAgentDefinition(
                 model=os.environ["FOUNDRY_MODEL_NAME"],
                 instructions="You are a helpful assistant that answers general questions",
@@ -68,7 +70,6 @@ with (
 
             response = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the size of France in square miles?",
             )
             print(f"Response output: {response.output_text}")

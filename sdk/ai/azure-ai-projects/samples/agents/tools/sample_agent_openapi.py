@@ -42,8 +42,8 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    project_client.get_openai_client(agent_name="MyAgent") as openai_client,
 ):
 
     weather_asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/weather_openapi.json"))
@@ -72,7 +72,6 @@ with (
 
     response = openai_client.responses.create(
         input="Use the OpenAPI tool to print out, what is the weather in Seattle today.",
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Agent response: {response.output_text}")
 
