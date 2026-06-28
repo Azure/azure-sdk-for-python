@@ -44,7 +44,7 @@ exclude = [
     "doc*",
     "azure",
     "azure.ai",
-    "scripts*",
+    "_scripts*",
 ]
 
 [tool.setuptools.package-data]
