@@ -13,6 +13,8 @@ import logging
 import os
 import asyncio
 import gc
+import signal
+import threading
 import time
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
@@ -45,7 +47,40 @@ def _maybe_freeze_gc(client_logger):
         client_logger.info("GC frozen after warmup (WORKLOAD_GC_FREEZE=true)")
 
 
-async def run_workload_async(client_id, client_logger, stats=None, reporter=None):
+def _install_async_stop(stop_event):
+    """Register SIGINT/SIGTERM on the running event loop to request a graceful
+    stop instead of letting the signal raise KeyboardInterrupt at a random await.
+
+    Why this matters: the load loops below never finish on their own — the run is
+    bounded externally by ``timeout --signal=INT``. With no handler, that SIGINT
+    becomes a KeyboardInterrupt (a BaseException, so NOT caught by the per-wave
+    ``except Exception``) that fires wherever the code happens to be awaiting. If
+    it lands inside the client's async close, the close is abandoned half-done;
+    for the Rust backend that leaves its non-daemon Tokio runtime threads alive,
+    so the process never exits and ``timeout`` has to SIGKILL it (exit 137).
+
+    The handler just sets an asyncio.Event. The loops poll it between waves and
+    exit NORMALLY, so the ``finally`` blocks that close the client run with the
+    loop still alive and no exception pending -> deterministic, clean teardown.
+
+    add_signal_handler is POSIX/main-thread only. On Windows or a non-main thread
+    it is unavailable; we return False and the caller keeps the KeyboardInterrupt
+    fallback (which still drains the finally blocks, just less deterministically).
+    """
+    loop = asyncio.get_running_loop()
+    installed = False
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        try:
+            loop.add_signal_handler(sig, stop_event.set)
+            installed = True
+        except (NotImplementedError, RuntimeError, ValueError):
+            # Not the main thread of a POSIX process (e.g. Windows Proactor loop).
+            pass
+    return installed
+
+
+async def run_workload_async(client_id, client_logger, stats=None, reporter=None,
+                             stop_event=None):
     """Async workload loop — default mode."""
     ops = WORKLOAD_OPERATIONS
     use_proxy = WORKLOAD_USE_PROXY
@@ -66,6 +101,15 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                 owns_reporter = True
         except ImportError as e:
             logging.getLogger(__name__).info("Perf reporting disabled: %s", e)
+
+    # A None stop_event means this is the single-client direct path, so we own the
+    # event and install the signal handler here. In multi-client mode the parent
+    # (run_multi_client_async) creates ONE shared event, installs the handler once,
+    # and passes it in, so a single SIGINT stops every client (installing per
+    # client would last-win the handler and leave the others spinning forever).
+    if stop_event is None:
+        stop_event = asyncio.Event()
+        _install_async_stop(stop_event)
 
     session = None
     transport = None
@@ -113,7 +157,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                     # docs/RUST_PYTHON_PERFORMANCE.md, "Measurement caveats".
                     await run_open_loop(
                         cont, REQUEST_EXCLUDED_LOCATIONS, stats, ops,
-                        WORKLOAD_ARRIVAL_RATE, WORKLOAD_MAX_INFLIGHT,
+                        WORKLOAD_ARRIVAL_RATE, WORKLOAD_MAX_INFLIGHT, stop_event,
                     )
                 else:
                     # Closed-loop, batched-wave load: each op below launches
@@ -128,39 +172,49 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                     # per_op) formula — read achieved req/s from the rows as
                     # count / window_seconds, not from the formula. See
                     # docs/RUST_PYTHON_PERFORMANCE.md, "Concurrency is not throughput".
-                    while True:
-                        try:
-                            if "create" in ops:
-                                await create_item_concurrently(
-                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                )
-                            if "upsert" in ops:
-                                await upsert_item_concurrently(
-                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                )
-                            if "replace" in ops:
-                                await replace_item_concurrently(
-                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                )
-                            if "read" in ops:
-                                await read_item_concurrently(
-                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                )
-                            if "patch" in ops:
-                                await patch_item_concurrently(
-                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                )
-                            if "delete" in ops:
-                                await delete_item_concurrently(
-                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                )
-                            if "query" in ops:
-                                await query_items_concurrently(
-                                    cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
-                                )
-                        except Exception as e:
-                            client_logger.info("Exception in application layer")
-                            client_logger.error(e)
+                    #
+                    # The loop runs until a SIGINT/SIGTERM sets stop_event (checked
+                    # between waves) so the run ends by falling out of the loop, not
+                    # by a KeyboardInterrupt fired mid-await. KeyboardInterrupt is
+                    # only the fallback when the signal handler could not be installed
+                    # (non-POSIX / non-main thread); we catch it here and break so the
+                    # finally blocks below still close the client cleanly.
+                    try:
+                        while not stop_event.is_set():
+                            try:
+                                if "create" in ops:
+                                    await create_item_concurrently(
+                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                    )
+                                if "upsert" in ops:
+                                    await upsert_item_concurrently(
+                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                    )
+                                if "replace" in ops:
+                                    await replace_item_concurrently(
+                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                    )
+                                if "read" in ops:
+                                    await read_item_concurrently(
+                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                    )
+                                if "patch" in ops:
+                                    await patch_item_concurrently(
+                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                    )
+                                if "delete" in ops:
+                                    await delete_item_concurrently(
+                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                    )
+                                if "query" in ops:
+                                    await query_items_concurrently(
+                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
+                                    )
+                            except Exception as e:
+                                client_logger.info("Exception in application layer")
+                                client_logger.error(e)
+                    except KeyboardInterrupt:
+                        client_logger.info("Stop signal received; shutting down cleanly.")
             finally:
                 if monitor_task is not None:
                     monitor_task.cancel()
@@ -187,6 +241,23 @@ def run_workload_sync(client_id, client_logger):
         raise RuntimeError("Proxy mode is not supported with sync client. "
                            "Set WORKLOAD_USE_SYNC=false or WORKLOAD_USE_PROXY=false.")
     ops = WORKLOAD_OPERATIONS
+
+    # Same cooperative-stop contract as the async path, but the sync loop has no
+    # event loop, so we use a plain signal.signal handler that sets a threading
+    # flag the load loop polls between waves. The handler only flips the flag (it
+    # does not raise), so a SIGINT cannot interrupt the `with SyncClient(...)` exit
+    # mid-close; the loop falls through and the context manager closes cleanly.
+    stop_flag = threading.Event()
+
+    def _on_signal(signum, frame):
+        stop_flag.set()
+
+    try:
+        signal.signal(signal.SIGINT, _on_signal)
+        signal.signal(signal.SIGTERM, _on_signal)
+    except (ValueError, OSError):
+        # Not the main thread: fall back to default KeyboardInterrupt handling.
+        pass
 
     stats = None
     perf_config = None
@@ -229,7 +300,7 @@ def run_workload_sync(client_id, client_logger):
             # regardless of CONCURRENT_REQUESTS and throughput is ~ 1 / mean_op
             # latency. Use async mode to drive real concurrency. See
             # docs/RUST_PYTHON_PERFORMANCE.md, "Concurrency is not throughput".
-            while True:
+            while not stop_flag.is_set():
                 try:
                     if "create" in ops:
                         create_item(
@@ -287,10 +358,20 @@ async def run_multi_client_async(prefix, client_logger):
         logging.getLogger(__name__).info("Perf reporting disabled: %s", e)
 
     try:
+        # One shared stop_event for every client in this process: install the
+        # SIGINT/SIGTERM handler ONCE here and pass the event to each client.
+        # (If each client installed its own handler the last registration would
+        # win and only one client would ever see the stop -> the rest would spin.)
+        stop_event = asyncio.Event()
+        _install_async_stop(stop_event)
+
         tasks = []
         for i in range(WORKLOAD_NUM_CLIENTS):
             client_id = f"{prefix}-c{i}"
-            tasks.append(run_workload_async(client_id, client_logger, stats=stats, reporter=reporter))
+            tasks.append(run_workload_async(
+                client_id, client_logger, stats=stats, reporter=reporter,
+                stop_event=stop_event,
+            ))
         # One process-wide event-loop lag monitor for all clients sharing this loop
         # (the per-client path skips it because owns_reporter is False here).
         monitor_task = None

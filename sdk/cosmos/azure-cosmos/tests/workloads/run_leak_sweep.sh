@@ -79,9 +79,13 @@ for bk in "${BACKENDS[@]}"; do
   for pid in "${pids[@]}"; do
     if ! wait "${pid}"; then
       rc=$?
-      # The timeout stop is expected: 130 = Python's clean SIGINT exit under
-      # --preserve-status, 124 = timeout escalated to SIGKILL. Both are success.
-      if [[ "${rc}" != "124" && "${rc}" != "130" ]]; then
+      # Graceful stop => exit 0 (handled by `wait` returning success). A non-zero
+      # here is one of: 130 = SIGINT fell back to KeyboardInterrupt (handler did
+      # not engage; data OK), or a real failure (137 hung-and-killed, 124, other).
+      # Treat 130 as a soft warning; everything else fails the batch.
+      if [[ "${rc}" == "130" ]]; then
+        echo "    !! pid=${pid} exited 130 (graceful handler did not engage; data OK)" >&2
+      else
         echo "    !! pid=${pid} exited rc=${rc}" >&2
         fail=1
       fi

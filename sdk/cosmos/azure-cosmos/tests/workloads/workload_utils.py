@@ -478,10 +478,12 @@ async def _open_loop_call_async(op_name, stats, scheduled_ns, fn, *args, **kwarg
         return None
 
 
-async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inflight):
+async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inflight, stop_event=None):
     """Constant-arrival async driver. Fires ``ops`` round-robin at ``rate`` ops/sec
     without a wave barrier, timing each from its intended arrival. Runs until
-    cancelled; a semaphore bounds in-flight work so a stall cannot OOM the rig.
+    ``stop_event`` is set (or the task is cancelled); a semaphore bounds in-flight
+    work so a stall cannot OOM the rig. On stop it drains the in-flight tasks so
+    their latencies are recorded and the client can close cleanly.
     """
     op_list = [o for o in sorted(ops) if o != "query"]  # query has no SLA
     if not op_list:
@@ -507,7 +509,7 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
             sem.release()
 
     try:
-        while True:
+        while stop_event is None or not stop_event.is_set():
             scheduled_ns = start_ns + seq * interval_ns
             now_ns = time.perf_counter_ns()
             if scheduled_ns > now_ns:
@@ -526,9 +528,13 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
             task.add_done_callback(inflight.discard)
             seq += 1
     except asyncio.CancelledError:
+        raise
+    finally:
+        # Drain whatever is still in flight so their latencies land in stats and
+        # nothing is left pending when the client closes (clean teardown on both
+        # the cooperative-stop path and a cancellation).
         if inflight:
             await asyncio.gather(*inflight, return_exceptions=True)
-        raise
 
 
 # ---------------------------------------------------------------------------

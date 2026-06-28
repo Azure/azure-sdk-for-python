@@ -78,10 +78,17 @@ for op in "${OPERATIONS[@]}"; do
         timeout --signal=INT --kill-after=120s --preserve-status "${DURATION_SECONDS}s" \
           python3 workload.py >"${log}" 2>&1 || rc=$?
       rc="${rc:-0}"
-      # 0/124/130 are all the expected timeout-stop (see run_latency_matrix.sh).
-      if [[ "${rc}" != "0" && "${rc}" != "124" && "${rc}" != "130" ]]; then
-        echo "    !! point exited rc=${rc}; see ${log}" >&2
-      fi
+      # Graceful stop => exit 0 is the expected clean outcome (see
+      # run_latency_matrix.sh). 130 = SIGINT fell back to KeyboardInterrupt
+      # (handler did not engage; data OK but worth noticing); 137 = hung on stop;
+      # 124 = unexpected with --preserve-status. Flag everything but 0.
+      case "${rc}" in
+        0)   ;;
+        130) echo "    !! point exited 130 (graceful handler did not engage; data OK); see ${log}" >&2 ;;
+        137) echo "    !! point KILLED after 120s grace (hung on stop); see ${log}" >&2 ;;
+        124) echo "    !! point exited 124 (unexpected with --preserve-status); see ${log}" >&2 ;;
+        *)   echo "    !! point exited rc=${rc}; see ${log}" >&2 ;;
+      esac
       unset rc
     done
   done

@@ -76,23 +76,25 @@ for (( r=1; r<=REPEATS; r++ )); do
         timeout --signal=INT --kill-after=120s --preserve-status "${DURATION_SECONDS}s" \
           python3 workload.py >"${log}" 2>&1 || rc=$?
       rc="${rc:-0}"
-      # Tightened exit classification (methodology flag #3 -- no ambiguous pass).
-      # workload.py installs NO SIGINT handler and does NOT catch KeyboardInterrupt
-      # at the top level, and the load loop never finishes on its own, so with
-      # --preserve-status + --signal=INT there is exactly ONE clean outcome:
-      #   130  KeyboardInterrupt propagated out of asyncio.run -> clean stop (expected).
-      # Everything else is called out distinctly instead of being waved through:
+      # Exit classification (methodology flag #3 -- no ambiguous pass).
+      # workload.py installs an asyncio SIGINT/SIGTERM handler that sets a stop
+      # event; the load loop polls it between waves and exits NORMALLY, so the
+      # client closes cleanly and the process returns 0. With --preserve-status
+      # that makes 0 the single clean outcome. The load loop never finishes on
+      # its own, so a 0 can ONLY come from a handled stop -- it is unambiguous.
+      #   0    graceful stop: handler fired, client closed cleanly (expected).
+      #   130  SIGINT fell back to KeyboardInterrupt (handler NOT installed, e.g.
+      #        an old workload.py or a non-main thread). The cell still stopped and
+      #        its data is intact, but flag it so a handler regression is visible.
       #   137  SIGKILL after the 120s grace -> the cell HUNG on stop (real failure).
       #   124  cannot occur with --preserve-status; if seen, timeout behaved
       #        unexpectedly (e.g. flags changed) -> treat as failure, don't hide it.
-      #   0    the infinite load loop should never exit on its own; a 0 means it
-      #        stopped early or swallowed the stop -> suspicious, flag it.
       # The loop always CONTINUES; flagging just makes a bad cell visible.
       case "${rc}" in
-        130) ;;  # clean stop, the only expected outcome
+        0)   ;;  # graceful clean stop, the expected outcome
+        130) echo "    !! run exited 130 (SIGINT fell back to KeyboardInterrupt; graceful handler did not engage -- data OK, check workload.py is current); see ${log}" >&2 ;;
         137) echo "    !! run KILLED after 120s grace (cell hung on stop); see ${log}" >&2 ;;
         124) echo "    !! run exited 124 (unexpected with --preserve-status); see ${log}" >&2 ;;
-        0)   echo "    !! run exited 0 (load loop ended early / stop swallowed); see ${log}" >&2 ;;
         *)   echo "    !! run exited rc=${rc}; see ${log}" >&2 ;;
       esac
       unset rc
