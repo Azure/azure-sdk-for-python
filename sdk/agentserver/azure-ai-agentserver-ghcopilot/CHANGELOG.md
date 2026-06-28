@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: the toolbox MCP bridge now echoes the per-request call ID (`x-agent-foundry-call-id`) on outbound Foundry toolbox calls. `initialize` / `tools/list` (run in the request task) read it from the request context; `tools/call` (dispatched on the Copilot engine task, where the request context var is empty) resolves it out-of-band keyed by the Copilot `session_id` and echoes it as both the HTTP header and `params._meta`. Copilot sessions are bound to a single user (`x-agent-user-id`) and never reused across users. No-op under protocol version `1.0.0` or local development.
+
 ## 1.0.0b2 (2026-04-24)
 
 ### Breaking Changes

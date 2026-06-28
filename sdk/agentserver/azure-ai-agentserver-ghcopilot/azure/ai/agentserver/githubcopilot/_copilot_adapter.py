@@ -30,6 +30,7 @@ from copilot.generated.session_events import SessionEventType
 from copilot.session import PermissionRequestResult, ProviderConfig
 
 from azure.ai.agentserver.core import AgentServerHost  # noqa: F401 (re-exported for subclasses)
+from azure.ai.agentserver.core import get_request_context  # pylint: disable=no-name-in-module
 from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponseEventStream,
@@ -44,7 +45,12 @@ from azure.ai.agentserver.responses.models import (
 )
 
 from ._tool_acl import ToolAcl
-from ._toolbox import connect_toolbox, discover_mcp_servers
+from ._toolbox import (
+    clear_session_call_id,
+    connect_toolbox,
+    discover_mcp_servers,
+    set_session_call_id,
+)
 
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
@@ -251,6 +257,11 @@ class CopilotAdapter:
         # Multi-turn: conversation_id -> live CopilotSession
         self._sessions: Dict[str, Any] = {}
 
+        # §8.4 identity boundary: conversation_id -> owning x-agent-user-id.
+        # A Copilot session (and the per-turn call id bound to it) must belong
+        # to exactly one user; a session is never reused across users.
+        self._session_owner: Dict[str, str] = {}
+
         # Credential for BYOK token refresh and MCP server auth.
         _has_byok_provider = (
             "provider" in self._session_config
@@ -310,9 +321,25 @@ class CopilotAdapter:
 
     async def _get_or_create_session(self, conversation_id=None):
         """Get existing session or create new one."""
+        # §8.4: a session is bound to exactly one user. Never reuse it across
+        # users, or one user's tool call could echo another's call id.
+        request_user = get_request_context().user_id
+
         if conversation_id and conversation_id in self._sessions:
-            logger.info(f"Reusing session for conversation {conversation_id!r}")
-            return self._sessions[conversation_id]
+            owner = self._session_owner.get(conversation_id)
+            if request_user is not None and owner is not None and owner != request_user:
+                logger.warning(
+                    "Session for conversation %r is owned by a different user; "
+                    "creating a fresh session to avoid cross-user identity bleed",
+                    conversation_id,
+                )
+                stale = self._sessions.pop(conversation_id, None)
+                self._session_owner.pop(conversation_id, None)
+                if stale is not None:
+                    clear_session_call_id(getattr(stale, "session_id", None))
+            else:
+                logger.info(f"Reusing session for conversation {conversation_id!r}")
+                return self._sessions[conversation_id]
 
         client = await self._ensure_client()
         config = self._refresh_token_if_needed()
@@ -335,6 +362,8 @@ class CopilotAdapter:
 
         if conversation_id:
             self._sessions[conversation_id] = session
+            if request_user is not None:
+                self._session_owner[conversation_id] = request_user
         logger.info(
             "Created new Copilot session"
             + (f" for conversation {conversation_id!r}" if conversation_id else "")
@@ -391,6 +420,12 @@ class CopilotAdapter:
         logger.info(f"Request: input={input_text[:100]!r} conversation_id={conversation_id}")
 
         session = await self._get_or_create_session(conversation_id)
+
+        # Bind this turn's call id to the Copilot session so that tool calls
+        # dispatched on the engine task — where the request-scoped context var
+        # is empty — can echo ``x-agent-foundry-call-id`` on outbound toolbox
+        # calls (container protocol ``2.0.0``; see bring-your-own §8).
+        set_session_call_id(getattr(session, "session_id", None), get_request_context().call_id)
 
         # Set up event queue
         queue: asyncio.Queue = asyncio.Queue()
@@ -1088,6 +1123,10 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 )
                 await session.send_and_wait(preamble, timeout=120.0)
                 self._sessions[conversation_id] = session
+                # §8.4: bind the bootstrapped session to the requesting user.
+                _bootstrap_user = get_request_context().user_id
+                if _bootstrap_user is not None:
+                    self._session_owner[conversation_id] = _bootstrap_user
                 logger.info("Bootstrapped session %s with %d chars of history", conversation_id, len(history))
 
         return await super()._get_or_create_session(conversation_id)
