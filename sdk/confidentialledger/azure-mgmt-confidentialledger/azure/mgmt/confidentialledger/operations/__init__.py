@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,9 +14,8 @@ if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
 from ._operations import Operations  # type: ignore
-from ._confidential_ledger_operations import ConfidentialLedgerOperationsMixin  # type: ignore
+from ._confidential_ledger_operations import _ConfidentialLedgerOperationsMixin  # type: ignore # pylint: disable=unused-import
 from ._ledger_operations import LedgerOperations  # type: ignore
-from ._managed_ccf_operations import ManagedCCFOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -23,9 +23,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "Operations",
-    "ConfidentialLedgerOperationsMixin",
     "LedgerOperations",
-    "ManagedCCFOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -13,24 +13,23 @@ authors = [
 description = "Microsoft Azure Storagecache Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = [
     "azure",
     "azure sdk",
 ]
 dependencies = [
-    "msrest>=0.7.1",
-    "azure-mgmt-core>=1.5.0",
+    "isodate>=0.6.1",
+    "azure-mgmt-core>=1.6.0",
     "typing-extensions>=4.6.0",
 ]
 dynamic = [
@@ -54,8 +53,8 @@ content-type = "text/markdown"
 [tool.setuptools.packages.find]
 exclude = [
     "tests*",
-    "samples*",
     "generated_tests*",
+    "samples*",
     "generated_samples*",
     "doc*",
     "azure",
@@ -79,7 +78,7 @@ package_name = "azure-mgmt-storagecache"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Storage Cache Management"
 package_doc_id = ""
-is_stable = true
+is_stable = false
 is_arm = true
 title = "StorageCacheManagementClient"
 need_msrestazure = false

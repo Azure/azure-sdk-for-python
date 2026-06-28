@@ -1,10 +1,6 @@
 # Release History
 
-## 1.0.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.2 (2026-04-28)
 
 ### Bugs Fixed
 
@@ -12,6 +8,8 @@
 - Fixed `get_entra_conninfo_async` and `get_entra_token_async` closing the credential by using it as a context manager
 
 ### Other Changes
+
+- Bumped minimum dependency on `azure-core` to `>=1.31.0`
 
 ## 1.0.1 (2025-11-26)
 

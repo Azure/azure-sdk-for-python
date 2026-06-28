@@ -31,7 +31,6 @@ async def get_old_response(old_request):
 
 
 @pytest.fixture
-@pytest.mark.trio
 async def get_old_response_trio(old_request):
     async def _callback(**kwargs):
         async with TrioRequestsTransport() as sender:
@@ -55,7 +54,6 @@ async def get_new_response(new_request):
 
 
 @pytest.fixture
-@pytest.mark.trio
 async def get_new_response_trio(new_request):
     async def _callback(**kwargs):
         async with TrioRequestsTransport() as sender:

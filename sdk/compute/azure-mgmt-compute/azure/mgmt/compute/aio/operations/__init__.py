@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 from ._operations import Operations  # type: ignore
 from ._operations import VirtualMachineScaleSetsOperations  # type: ignore
 from ._operations import VirtualMachineScaleSetExtensionsOperations  # type: ignore
+from ._operations import VirtualMachineScaleSetLifeCycleHookEventsOperations  # type: ignore
 from ._operations import VirtualMachineScaleSetVMExtensionsOperations  # type: ignore
 from ._operations import VirtualMachinesOperations  # type: ignore
 from ._operations import VirtualMachineExtensionsOperations  # type: ignore
@@ -28,6 +29,7 @@ from ._operations import RestorePointCollectionsOperations  # type: ignore
 from ._operations import RestorePointsOperations  # type: ignore
 from ._operations import CapacityReservationGroupsOperations  # type: ignore
 from ._operations import CapacityReservationsOperations  # type: ignore
+from ._operations import InterconnectBlocksOperations  # type: ignore
 from ._operations import VirtualMachineRunCommandsOperations  # type: ignore
 from ._operations import VirtualMachineScaleSetVMRunCommandsOperations  # type: ignore
 from ._operations import DisksOperations  # type: ignore
@@ -70,6 +72,7 @@ __all__ = [
     "Operations",
     "VirtualMachineScaleSetsOperations",
     "VirtualMachineScaleSetExtensionsOperations",
+    "VirtualMachineScaleSetLifeCycleHookEventsOperations",
     "VirtualMachineScaleSetVMExtensionsOperations",
     "VirtualMachinesOperations",
     "VirtualMachineExtensionsOperations",
@@ -83,6 +86,7 @@ __all__ = [
     "RestorePointsOperations",
     "CapacityReservationGroupsOperations",
     "CapacityReservationsOperations",
+    "InterconnectBlocksOperations",
     "VirtualMachineRunCommandsOperations",
     "VirtualMachineScaleSetVMRunCommandsOperations",
     "DisksOperations",

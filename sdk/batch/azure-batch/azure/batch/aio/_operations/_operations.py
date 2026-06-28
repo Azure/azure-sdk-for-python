@@ -51,6 +51,8 @@ from ..._operations._operations import (
     build_batch_disable_job_schedule_request,
     build_batch_disable_node_scheduling_request,
     build_batch_disable_pool_auto_scale_request,
+    build_batch_download_node_file_request,
+    build_batch_download_task_file_request,
     build_batch_enable_job_internal_request,
     build_batch_enable_job_schedule_request,
     build_batch_enable_node_scheduling_request,
@@ -62,12 +64,10 @@ from ..._operations._operations import (
     build_batch_get_job_task_counts_request,
     build_batch_get_node_extension_request,
     build_batch_get_node_file_properties_internal_request,
-    build_batch_get_node_file_request,
     build_batch_get_node_remote_login_settings_request,
     build_batch_get_node_request,
     build_batch_get_pool_request,
     build_batch_get_task_file_properties_internal_request,
-    build_batch_get_task_file_request,
     build_batch_get_task_request,
     build_batch_job_schedule_exists_request,
     build_batch_list_applications_request,
@@ -81,7 +81,7 @@ from ..._operations._operations import (
     build_batch_list_pool_node_counts_request,
     build_batch_list_pool_usage_metrics_request,
     build_batch_list_pools_request,
-    build_batch_list_sub_tasks_request,
+    build_batch_list_subtasks_request,
     build_batch_list_supported_images_request,
     build_batch_list_task_files_request,
     build_batch_list_tasks_request,
@@ -5364,7 +5364,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def list_sub_tasks(
+    def list_subtasks(
         self,
         job_id: str,
         task_id: str,
@@ -5412,7 +5412,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_sub_tasks_request(
+                _request = build_batch_list_subtasks_request(
                     job_id=job_id,
                     task_id=task_id,
                     service_timeout=service_timeout,
@@ -5803,7 +5803,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def get_task_file(
+    async def download_task_file(
         self,
         job_id: str,
         task_id: str,
@@ -5863,7 +5863,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_task_file_request(
+        _request = build_batch_download_task_file_request(
             job_id=job_id,
             task_id=task_id,
             file_path=file_path,
@@ -7750,7 +7750,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def get_node_file(
+    async def download_node_file(
         self,
         pool_id: str,
         node_id: str,
@@ -7810,7 +7810,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_batch_get_node_file_request(
+        _request = build_batch_download_node_file_request(
             pool_id=pool_id,
             node_id=node_id,
             file_path=file_path,

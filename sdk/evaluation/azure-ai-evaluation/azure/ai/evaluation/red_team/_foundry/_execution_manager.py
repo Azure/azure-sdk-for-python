@@ -20,6 +20,21 @@ from ._scenario_orchestrator import ScenarioOrchestrator
 from ._strategy_mapping import StrategyMapper
 
 
+def _has_usable_content(item: Any) -> bool:
+    """Return True when ``item`` is a context dict whose ``content`` survives
+    the downstream ``DatasetConfigurationBuilder.add_objective_with_context``
+    falsy-content filter (it skips items where ``not content`` evaluates True).
+    """
+    if not isinstance(item, dict):
+        return False
+    content = item.get("content")
+    if content is None:
+        return False
+    if isinstance(content, str):
+        return bool(content.strip())
+    return bool(content)
+
+
 class FoundryExecutionManager:
     """Manages Foundry-based red team execution.
 
@@ -329,16 +344,60 @@ class FoundryExecutionManager:
         if "messages" in obj and obj["messages"]:
             first_msg = obj["messages"][0]
             if isinstance(first_msg, dict):
-                # Check for context in message
+                # Check for context in message. Pre-curated attack objectives
+                # (e.g. sensitive_data_leakage) store the context document as a
+                # string alongside sibling ``context_type``/``tool_name`` fields
+                # on the same message, so a string value must be normalized into
+                # a context item that carries the document text (not the user
+                # prompt). Missing the str branch here caused the document to be
+                # silently dropped; the fallback below then synthesized an item
+                # whose ``content`` was the user prompt, so downstream tool
+                # injections returned the prompt instead of real context.
+                # ``produced_message_context`` gates the ``context_type``
+                # fallback below. We only set it when at least one extracted
+                # item carries non-empty ``content`` — otherwise the downstream
+                # ``DatasetConfigurationBuilder.add_objective_with_context``
+                # would silently drop the empty item AND the suppressed
+                # fallback would leave the agent with no context at all.
+                # Drop unusable entries at extraction time (rather than
+                # appending and letting ``_dataset_builder`` filter them
+                # downstream) so the output of this method is the actual set
+                # of context items the agent will receive — no junk dict/empty
+                # string entries that confuse later consumers.
+                produced_message_context = False
                 if "context" in first_msg:
                     ctx = first_msg["context"]
                     if isinstance(ctx, list):
-                        context_items.extend(ctx)
-                    elif isinstance(ctx, dict):
+                        normalized = [
+                            item
+                            for item in self._normalize_context_list(
+                                ctx,
+                                first_msg.get("context_type"),
+                                first_msg.get("tool_name"),
+                            )
+                            if _has_usable_content(item)
+                        ]
+                        context_items.extend(normalized)
+                        produced_message_context = bool(normalized)
+                    elif isinstance(ctx, dict) and _has_usable_content(ctx):
                         context_items.append(ctx)
-
-                # Also check for separate context fields
-                if "context_type" in first_msg:
+                        produced_message_context = True
+                    elif isinstance(ctx, str) and ctx.strip():
+                        context_items.append(
+                            {
+                                "content": ctx,
+                                "context_type": first_msg.get("context_type"),
+                                "tool_name": first_msg.get("tool_name"),
+                            }
+                        )
+                        produced_message_context = True
+                # Fall back to synthesizing a context item from sibling fields
+                # only when no usable ``context`` value was found above. This
+                # preserves backward compatibility for objectives that carry
+                # only ``context_type`` (or have ``context: null``) while
+                # avoiding the duplicate-with-wrong-content append that caused
+                # the SDL false-pass bug.
+                if not produced_message_context and "context_type" in first_msg:
                     context_items.append(
                         {
                             "content": first_msg.get("content", ""),
@@ -347,15 +406,66 @@ class FoundryExecutionManager:
                         }
                     )
 
-        # Top-level context
+        # Top-level context. Mirrors the per-message handling above: drop
+        # unusable entries (empty strings, dicts/list items without usable
+        # ``content``) so this method's output reflects only items the agent
+        # will actually receive.
         if "context" in obj:
             ctx = obj["context"]
             if isinstance(ctx, list):
-                context_items.extend(ctx)
-            elif isinstance(ctx, dict):
+                context_items.extend(
+                    item
+                    for item in self._normalize_context_list(ctx, obj.get("context_type"), obj.get("tool_name"))
+                    if _has_usable_content(item)
+                )
+            elif isinstance(ctx, dict) and _has_usable_content(ctx):
                 context_items.append(ctx)
+            elif isinstance(ctx, str) and ctx.strip():
+                context_items.append(
+                    {
+                        "content": ctx,
+                        "context_type": obj.get("context_type"),
+                        "tool_name": obj.get("tool_name"),
+                    }
+                )
 
         return context_items
+
+    def _normalize_context_list(
+        self,
+        items: List[Any],
+        default_context_type: Optional[str],
+        default_tool_name: Optional[str],
+    ) -> List[Dict[str, Any]]:
+        """Normalize a list of context entries to dict shape.
+
+        Some objective shapes provide ``context`` as a list whose entries may
+        be either dicts (already in the expected shape) or raw strings. Raw
+        strings would otherwise propagate through and be dropped by downstream
+        consumers (e.g. ``_dataset_builder``) that only iterate dict items.
+
+        :param items: Raw context entries.
+        :type items: List[Any]
+        :param default_context_type: ``context_type`` to apply to string entries.
+        :type default_context_type: Optional[str]
+        :param default_tool_name: ``tool_name`` to apply to string entries.
+        :type default_tool_name: Optional[str]
+        :return: Normalized list of dict context items.
+        :rtype: List[Dict[str, Any]]
+        """
+        normalized: List[Dict[str, Any]] = []
+        for item in items:
+            if isinstance(item, dict):
+                normalized.append(item)
+            elif isinstance(item, str) and item.strip():
+                normalized.append(
+                    {
+                        "content": item,
+                        "context_type": default_context_type,
+                        "tool_name": default_tool_name,
+                    }
+                )
+        return normalized
 
     def _group_results_by_strategy(
         self,

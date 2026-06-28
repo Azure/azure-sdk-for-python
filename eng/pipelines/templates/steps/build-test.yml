@@ -11,7 +11,6 @@ parameters:
   CoverageArg: ''
   CheckEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
-  ToxEnvParallel: ''
   InjectedPackages: ''
   DevFeedName: 'public/azure-sdk-for-python'
   TestProxy: false
@@ -56,7 +55,7 @@ steps:
     inputs:
       scriptPath: 'eng/scripts/set_checks.py'
       arguments: >-
-        --unsupported="$(UnsupportedToxEnvironments)"
+        --unsupported="$(UnsupportedChecks)"
         --override="$(ChecksOverride)"
         --team-project="$(System.TeamProject)"
 
@@ -74,7 +73,7 @@ steps:
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
-          $env:TOX_PIP_IMPL="uv";
+          $env:AZPYSDK_PIP_IMPL="uv";
           $account = (Get-AzContext).Account;
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
@@ -101,7 +100,7 @@ steps:
 
   - ${{ else }}:
     - pwsh: |
-        $env:TOX_PIP_IMPL="uv"
+        $env:AZPYSDK_PIP_IMPL="uv"
         Write-Host (Get-Command python).Source
 
         if ($env:TESTMARKARGUMENT) {

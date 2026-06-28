@@ -1,0 +1,42 @@
+{
+  "properties": {
+    "displayName": "smoke-custom-finetuning-display",
+    "experimentName": "smoke-experiment",
+    "fineTuningDetails": {
+      "hyperParameters": {
+        "learning_rate": "0.001"
+      },
+      "model": {
+        "jobInputType": "mlflow_model",
+        "uri": "azureml://registries/azureml-meta/models/Llama-2-7b/versions/9"
+      },
+      "modelProvider": "Custom",
+      "taskType": "textCompletion",
+      "trainingData": {
+        "jobInputType": "uri_file",
+        "uri": "https://foo/bar/train.csv"
+      },
+      "validationData": {
+        "jobInputType": "uri_file",
+        "uri": "https://foo/bar/test.csv"
+      }
+    },
+    "isArchived": false,
+    "jobType": "FineTuning",
+    "outputs": {
+      "registered_model": {
+        "assetName": "smoke-finetune-registered",
+        "jobOutputType": "mlflow_model"
+      }
+    },
+    "properties": {
+      "prop1": "value1"
+    },
+    "queueSettings": {
+      "jobTier": "Standard"
+    },
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

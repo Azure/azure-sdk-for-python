@@ -1,0 +1,6 @@
+-e ../../../eng/tools/azure-sdk-tools
+pytest
+pytest-mock
+pyyaml>=6.0
+azure-core>=1.31.0
+azure-identity>=1.15.0

@@ -8,6 +8,12 @@ from typing import Any, Mapping
 
 from starlette.responses import JSONResponse
 
+from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
+    ERROR_DETAIL,
+    ERROR_SOURCE,
+    MAX_ERROR_DETAIL_LENGTH,
+    PLATFORM_ERROR_TAG,
+)
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, CreateResponse, Error
@@ -265,6 +271,76 @@ def to_api_error_response(error: Exception) -> ApiErrorResponse:
 
 
 # ---------------------------------------------------------------------------
+# Internal error-source classification constants & helpers
+# ---------------------------------------------------------------------------
+
+ERROR_SOURCE_USER: str = "user"
+ERROR_SOURCE_PLATFORM: str = "platform"
+ERROR_SOURCE_UPSTREAM: str = "upstream"
+
+
+def is_platform_error(exc: BaseException) -> bool:
+    """Check whether *exc* has been tagged as a platform infrastructure error.
+
+    :param exc: The exception to check.
+    :type exc: BaseException
+    :return: True if the exception is tagged as a platform error.
+    :rtype: bool
+    """
+    return getattr(exc, PLATFORM_ERROR_TAG, False) is True
+
+
+def tag_platform_error(exc: BaseException) -> None:
+    """Tag *exc* as a platform infrastructure error.
+
+    :param exc: The exception to tag.
+    :type exc: BaseException
+    """
+    setattr(exc, PLATFORM_ERROR_TAG, True)
+
+
+def format_error_detail(exc: BaseException) -> str:
+    """Format an exception for the ``x-platform-error-detail`` header.
+
+    Uses ``type(exc).__name__: str(exc)`` to avoid leaking sensitive
+    material (URLs with query parameters, internal hostnames, etc.)
+    that ``repr()`` may include.  Truncates to :data:`MAX_ERROR_DETAIL_LENGTH`.
+
+    :param exc: The exception to format.
+    :type exc: BaseException
+    :return: The formatted error detail string.
+    :rtype: str
+    """
+    detail = f"{type(exc).__name__}: {exc}"
+    if len(detail) > MAX_ERROR_DETAIL_LENGTH:
+        suffix = "...[truncated]"
+        detail = detail[: MAX_ERROR_DETAIL_LENGTH - len(suffix)] + suffix
+    return detail
+
+
+def _apply_error_source_headers(
+    headers: dict[str, str],
+    error_source: str,
+    error_detail: str | None = None,
+) -> dict[str, str]:
+    """Return a new dict with error source classification headers merged in.
+
+    :param headers: Base headers to merge into.
+    :type headers: dict[str, str]
+    :param error_source: The error source value (user/platform/upstream).
+    :type error_source: str
+    :param error_detail: Optional detail string for platform errors.
+    :type error_detail: str or None
+    :return: A new dict containing the original headers plus error source headers.
+    :rtype: dict[str, str]
+    """
+    merged = {**headers, ERROR_SOURCE: error_source}
+    if error_detail:
+        merged[ERROR_DETAIL] = error_detail
+    return merged
+
+
+# ---------------------------------------------------------------------------
 # HTTP error response factories (moved from _http_errors.py)
 # ---------------------------------------------------------------------------
 
@@ -290,6 +366,7 @@ def _api_error(
     error_type: str = "invalid_request_error",
     status_code: int,
     headers: dict[str, str],
+    request_id: str | None = None,
 ) -> JSONResponse:
     """Build a standard API error ``JSONResponse``.
 
@@ -299,20 +376,41 @@ def _api_error(
     :keyword param: Optional parameter name associated with the error.
     :keyword status_code: HTTP status code for the response.
     :keyword error_type: The error type category.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :return: A JSONResponse containing the error payload.
     :rtype: JSONResponse
     """
     payload = _json_payload(build_api_error_response(message=message, code=code, param=param, error_type=error_type))
+    if request_id and isinstance(payload, dict):
+        _enrich_error_payload(payload, request_id)
     return JSONResponse(payload, status_code=status_code, headers=headers)
 
 
-def error_response(error: Exception, headers: dict[str, str]) -> JSONResponse:
+def error_response(
+    error: Exception,
+    headers: dict[str, str],
+    request_id: str | None = None,
+    *,
+    error_source: str | None = None,
+) -> JSONResponse:
     """Map an exception to an appropriate HTTP error ``JSONResponse``.
+
+    Automatically classifies the error source when *error_source* is not
+    provided:
+
+    - :class:`RequestValidationError` / :class:`ValueError` → ``user``
+    - Exceptions tagged with :data:`PLATFORM_ERROR_TAG` → ``platform``
+      (includes ``x-platform-error-detail`` header)
+    - All other exceptions → ``upstream`` (developer handler code)
 
     :param error: The exception to convert to an error response.
     :type error: Exception
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :type request_id: str | None
+    :keyword error_source: Override error source classification.
+    :paramtype error_source: str | None
     :return: A JSONResponse with the appropriate status code and error payload.
     :rtype: JSONResponse
     """
@@ -324,16 +422,35 @@ def error_response(error: Exception, headers: dict[str, str]) -> JSONResponse:
         status_code = 400
     elif error_type == "not_found_error":
         status_code = 404
-    return JSONResponse(payload, status_code=status_code, headers=headers)
+    if request_id and isinstance(payload, dict):
+        _enrich_error_payload(payload, request_id)
+
+    # Classify error source — check platform tag first so that a ValueError
+    # propagated from storage with PLATFORM_ERROR_TAG is not misclassified.
+    if error_source is None:
+        if is_platform_error(error):
+            error_source = ERROR_SOURCE_PLATFORM
+        elif isinstance(error, (RequestValidationError, ValueError)):
+            error_source = ERROR_SOURCE_USER
+        else:
+            error_source = ERROR_SOURCE_UPSTREAM
+
+    detail = format_error_detail(error) if error_source == ERROR_SOURCE_PLATFORM else None
+    merged_headers = _apply_error_source_headers(headers, error_source, detail)
+    return JSONResponse(payload, status_code=status_code, headers=merged_headers)
 
 
-def not_found_response(response_id: str, headers: dict[str, str]) -> JSONResponse:
+def not_found_response(
+    response_id: str, headers: dict[str, str], request_id: str | None = None
+) -> JSONResponse:
     """Build a 404 Not Found error response.
 
     :param response_id: The ID of the response that was not found.
     :type response_id: str
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :type request_id: str | None
     :return: A 404 JSONResponse.
     :rtype: JSONResponse
     """
@@ -343,11 +460,14 @@ def not_found_response(response_id: str, headers: dict[str, str]) -> JSONRespons
         param="response_id",
         error_type="invalid_request_error",
         status_code=404,
-        headers=headers,
+        headers=_apply_error_source_headers(headers, ERROR_SOURCE_USER),
+        request_id=request_id,
     )
 
 
-def invalid_request_response(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
+def invalid_request_response(
+    message: str, headers: dict[str, str], *, param: str | None = None, request_id: str | None = None
+) -> JSONResponse:
     """Build a 400 Bad Request error response.
 
     :param message: Human-readable error message.
@@ -355,6 +475,7 @@ def invalid_request_response(message: str, headers: dict[str, str], *, param: st
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
     :keyword param: Optional parameter name associated with the error.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :return: A 400 JSONResponse.
     :rtype: JSONResponse
     """
@@ -364,11 +485,14 @@ def invalid_request_response(message: str, headers: dict[str, str], *, param: st
         param=param,
         error_type="invalid_request_error",
         status_code=400,
-        headers=headers,
+        headers=_apply_error_source_headers(headers, ERROR_SOURCE_USER),
+        request_id=request_id,
     )
 
 
-def invalid_parameters_response(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
+def invalid_parameters_response(
+    message: str, headers: dict[str, str], *, param: str | None = None, request_id: str | None = None
+) -> JSONResponse:
     """Build a 400 Bad Request error response with ``code: "invalid_parameters"``.
 
     Used for malformed identifier validation (spec rule B40).
@@ -378,6 +502,7 @@ def invalid_parameters_response(message: str, headers: dict[str, str], *, param:
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
     :keyword param: Optional parameter name associated with the error.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :return: A 400 JSONResponse.
     :rtype: JSONResponse
     """
@@ -387,11 +512,14 @@ def invalid_parameters_response(message: str, headers: dict[str, str], *, param:
         param=param,
         error_type="invalid_request_error",
         status_code=400,
-        headers=headers,
+        headers=_apply_error_source_headers(headers, ERROR_SOURCE_USER),
+        request_id=request_id,
     )
 
 
-def invalid_mode_response(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
+def invalid_mode_response(
+    message: str, headers: dict[str, str], *, param: str | None = None, request_id: str | None = None
+) -> JSONResponse:
     """Build a 400 Bad Request error response for an invalid mode combination.
 
     :param message: Human-readable error message.
@@ -399,20 +527,27 @@ def invalid_mode_response(message: str, headers: dict[str, str], *, param: str |
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
     :keyword param: Optional parameter name associated with the error.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :return: A 400 JSONResponse.
     :rtype: JSONResponse
     """
     payload = _json_payload(build_invalid_mode_error_response(message, param=param))
-    return JSONResponse(payload, status_code=400, headers=headers)
+    if request_id and isinstance(payload, dict):
+        _enrich_error_payload(payload, request_id)
+    return JSONResponse(payload, status_code=400, headers=_apply_error_source_headers(headers, ERROR_SOURCE_USER))
 
 
-def service_unavailable_response(message: str, headers: dict[str, str]) -> JSONResponse:
+def service_unavailable_response(
+    message: str, headers: dict[str, str], request_id: str | None = None
+) -> JSONResponse:
     """Build a 503 Service Unavailable error response.
 
     :param message: Human-readable error message.
     :type message: str
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :type request_id: str | None
     :return: A 503 JSONResponse.
     :rtype: JSONResponse
     """
@@ -422,11 +557,12 @@ def service_unavailable_response(message: str, headers: dict[str, str]) -> JSONR
         param=None,
         error_type="server_error",
         status_code=503,
-        headers=headers,
+        headers=_apply_error_source_headers(headers, ERROR_SOURCE_PLATFORM),
+        request_id=request_id,
     )
 
 
-def deleted_response(response_id: str, headers: dict[str, str]) -> JSONResponse:
+def deleted_response(response_id: str, headers: dict[str, str], request_id: str | None = None) -> JSONResponse:
     """Build a 404 error response indicating the response has been deleted.
 
     Per spec, all endpoints treat deleted responses as not-found (HTTP 404).
@@ -435,7 +571,31 @@ def deleted_response(response_id: str, headers: dict[str, str]) -> JSONResponse:
     :type response_id: str
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
+    :type request_id: str | None
     :return: A 404 JSONResponse.
     :rtype: JSONResponse
     """
-    return not_found_response(response_id, headers)
+    return not_found_response(response_id, headers, request_id=request_id)
+
+
+def _enrich_error_payload(payload: dict[str, Any], request_id: str) -> None:
+    """Inject ``request_id`` into the ``error.additionalInfo`` of an error payload.
+
+    Mutates the payload dict in-place.  If ``error.additionalInfo`` already
+    contains a ``request_id`` key, it is left unchanged.
+
+    :param payload: The error response payload dict.
+    :type payload: dict[str, Any]
+    :param request_id: The resolved request ID value.
+    :type request_id: str
+    """
+    error = payload.get("error")
+    if not isinstance(error, dict):
+        return
+    additional_info = error.get("additionalInfo")
+    if not isinstance(additional_info, dict):
+        additional_info = {}
+        error["additionalInfo"] = additional_info
+    if "request_id" not in additional_info:
+        additional_info["request_id"] = request_id

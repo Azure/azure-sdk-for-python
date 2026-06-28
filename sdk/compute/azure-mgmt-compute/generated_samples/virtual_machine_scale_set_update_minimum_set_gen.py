@@ -40,6 +40,7 @@ def main():
                 "type": "str",
                 "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
             },
+            "placement": {"excludeZones": ["str"], "includeZones": ["str"], "zonePlacementPolicy": "str"},
             "plan": {"name": "str", "product": "str", "promotionCode": "str", "publisher": "str"},
             "properties": {
                 "additionalCapabilities": {
@@ -49,6 +50,9 @@ def main():
                 },
                 "automaticRepairsPolicy": {"enabled": bool, "gracePeriod": "str", "repairAction": "str"},
                 "doNotRunExtensionsOnOverprovisionedVMs": bool,
+                "lifecycleHooksProfile": {
+                    "lifecycleHooks": [{"defaultAction": "str", "type": "str", "waitDuration": "1 day, 0:00:00"}]
+                },
                 "overprovision": bool,
                 "priorityMixPolicy": {"baseRegularPriorityCount": 0, "regularPriorityPercentageAboveBase": 0},
                 "proximityPlacementGroup": {"id": "str"},
@@ -57,6 +61,11 @@ def main():
                         "enabled": bool,
                         "rebalanceBehavior": "str",
                         "rebalanceStrategy": "str",
+                    },
+                    "operationRecoverySettings": {
+                        "reimageRecoveryPolicy": {"enabled": bool},
+                        "restartRecoveryPolicy": {"enabled": bool},
+                        "startRecoveryPolicy": {"enabled": bool},
                     },
                     "resilientVMCreationPolicy": {"enabled": bool},
                     "resilientVMDeletionPolicy": {"enabled": bool},
@@ -67,7 +76,11 @@ def main():
                 },
                 "scaleInPolicy": {"forceDeletion": bool, "prioritizeUnhealthyVMs": bool, "rules": ["str"]},
                 "singlePlacementGroup": bool,
-                "skuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
+                "skuProfile": {
+                    "allocationStrategy": "str",
+                    "automaticSkuMigrationPolicy": {"enabled": bool},
+                    "vmSizes": [{"name": "str", "rank": 0}],
+                },
                 "spotRestorePolicy": {"enabled": bool, "restoreTimeout": "str"},
                 "upgradePolicy": {
                     "automaticOSUpgradePolicy": {
@@ -116,9 +129,11 @@ def main():
                         "extensionsTimeBudget": "str",
                     },
                     "hardwareProfile": {"vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0}},
+                    "interconnectBlockProfile": {"interconnectBlock": {"id": "str"}},
                     "licenseType": "str",
                     "networkProfile": {
                         "healthProbe": {"id": "str"},
+                        "interconnectGroupProfile": {"interconnectGroup": {"id": "str"}, "subgroups": [{"id": "str"}]},
                         "networkApiVersion": "str",
                         "networkInterfaceConfigurations": [
                             {
@@ -246,6 +261,7 @@ def main():
                                     "storageAccountType": "str",
                                 },
                                 "name": "str",
+                                "storageFaultDomainAlignment": "str",
                                 "writeAcceleratorEnabled": bool,
                             }
                         ],
@@ -263,7 +279,7 @@ def main():
                         "osDisk": {
                             "caching": "str",
                             "deleteOption": "str",
-                            "diffDiskSettings": {"option": "str", "placement": "str"},
+                            "diffDiskSettings": {"enableFullCaching": bool, "option": "str", "placement": "str"},
                             "diskSizeGB": 0,
                             "image": {"uri": "str"},
                             "managedDisk": {
@@ -274,6 +290,7 @@ def main():
                                 },
                                 "storageAccountType": "str",
                             },
+                            "storageFaultDomainAlignment": "str",
                             "vhdContainers": ["str"],
                             "writeAcceleratorEnabled": bool,
                         },
@@ -290,6 +307,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MinimumSet_Gen.json
+# x-ms-original-file: 2026-03-01/virtualMachineScaleSetExamples/VirtualMachineScaleSet_Update_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -38,9 +38,14 @@ from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
 from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_key_vault_check_ekm_connection_request,
+    build_key_vault_create_ekm_connection_request,
+    build_key_vault_delete_ekm_connection_request,
     build_key_vault_full_backup_request,
     build_key_vault_full_backup_status_request,
     build_key_vault_full_restore_operation_request,
+    build_key_vault_get_ekm_certificate_request,
+    build_key_vault_get_ekm_connection_request,
     build_key_vault_get_setting_request,
     build_key_vault_get_settings_request,
     build_key_vault_pre_full_backup_request,
@@ -48,6 +53,7 @@ from ...operations._operations import (
     build_key_vault_restore_status_request,
     build_key_vault_selective_key_restore_operation_request,
     build_key_vault_selective_key_restore_status_request,
+    build_key_vault_update_ekm_connection_request,
     build_key_vault_update_setting_request,
     build_role_assignments_create_request,
     build_role_assignments_delete_request,
@@ -62,7 +68,8 @@ from .._configuration import KeyVaultClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class RoleDefinitionsOperations:
@@ -122,6 +129,7 @@ class RoleDefinitionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -136,11 +144,14 @@ class RoleDefinitionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RoleDefinition, response.json())
 
@@ -296,6 +307,7 @@ class RoleDefinitionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -310,11 +322,14 @@ class RoleDefinitionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RoleDefinition, response.json())
 
@@ -362,6 +377,7 @@ class RoleDefinitionsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -376,11 +392,14 @@ class RoleDefinitionsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RoleDefinition, response.json())
 
@@ -392,7 +411,7 @@ class RoleDefinitionsOperations:
     @distributed_trace
     def list(
         self, scope: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.RoleDefinition"]:
+    ) -> AsyncItemPaged["_models.RoleDefinition"]:
         """Get all role definitions that are applicable at scope and above.
 
         :param scope: The scope of the role definition. Required.
@@ -446,7 +465,10 @@ class RoleDefinitionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -459,7 +481,10 @@ class RoleDefinitionsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RoleDefinition], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.RoleDefinition],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -475,7 +500,10 @@ class RoleDefinitionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(
+                    _models.KeyVaultError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -539,6 +567,7 @@ class RoleAssignmentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -553,11 +582,14 @@ class RoleAssignmentsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RoleAssignment, response.json())
 
@@ -709,6 +741,7 @@ class RoleAssignmentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -723,11 +756,14 @@ class RoleAssignmentsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RoleAssignment, response.json())
 
@@ -775,6 +811,7 @@ class RoleAssignmentsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -789,11 +826,14 @@ class RoleAssignmentsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RoleAssignment, response.json())
 
@@ -805,7 +845,7 @@ class RoleAssignmentsOperations:
     @distributed_trace
     def list_for_scope(
         self, scope: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.RoleAssignment"]:
+    ) -> AsyncItemPaged["_models.RoleAssignment"]:
         """Gets role assignments for a scope.
 
         :param scope: The scope of the role assignments. Required.
@@ -860,7 +900,10 @@ class RoleAssignmentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "vaultBaseUrl": self._serialize.url(
@@ -873,7 +916,10 @@ class RoleAssignmentsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RoleAssignment], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.RoleAssignment],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -889,7 +935,10 @@ class RoleAssignmentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+                error = _failsafe_deserialize(
+                    _models.KeyVaultError,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
@@ -897,7 +946,7 @@ class RoleAssignmentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class KeyVaultClientOperationsMixin(
+class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], KeyVaultClientConfiguration]
 ):
 
@@ -937,6 +986,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -951,11 +1001,14 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.FullBackupOperation, response.json())
 
@@ -1002,6 +1055,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1015,7 +1069,10 @@ class KeyVaultClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1024,7 +1081,7 @@ class KeyVaultClientOperationsMixin(
         )
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1174,8 +1231,9 @@ class KeyVaultClientOperationsMixin(
         )
 
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "content_type", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
+        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01", "2026-01-01-preview"],
     )
     async def _pre_full_backup_initial(
         self,
@@ -1217,6 +1275,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1230,7 +1289,10 @@ class KeyVaultClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1239,7 +1301,7 @@ class KeyVaultClientOperationsMixin(
         )
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1310,8 +1372,9 @@ class KeyVaultClientOperationsMixin(
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "content_type", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
+        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01", "2026-01-01-preview"],
     )
     async def begin_pre_full_backup(
         self,
@@ -1427,6 +1490,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1441,11 +1505,14 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.RestoreOperation, response.json())
 
@@ -1492,6 +1559,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1505,7 +1573,10 @@ class KeyVaultClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1514,7 +1585,7 @@ class KeyVaultClientOperationsMixin(
         )
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1665,8 +1736,9 @@ class KeyVaultClientOperationsMixin(
         )
 
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "content_type", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
+        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01", "2026-01-01-preview"],
     )
     async def _pre_full_restore_operation_initial(
         self,
@@ -1708,6 +1780,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1721,7 +1794,10 @@ class KeyVaultClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1730,7 +1806,7 @@ class KeyVaultClientOperationsMixin(
         )
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1801,8 +1877,9 @@ class KeyVaultClientOperationsMixin(
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="7.6",
-        params_added_on={"7.6": ["api_version", "content_type", "accept"]},
+        method_added_on="7.6-preview.2",
+        params_added_on={"7.6-preview.2": ["api_version", "content_type", "accept"]},
+        api_versions_list=["7.6-preview.2", "7.6", "2025-06-01-preview", "2025-07-01", "2026-01-01-preview"],
     )
     async def begin_pre_full_restore_operation(
         self,
@@ -1919,6 +1996,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1933,11 +2011,14 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SelectiveKeyRestoreOperation, response.json())
 
@@ -1988,6 +2069,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2001,7 +2083,10 @@ class KeyVaultClientOperationsMixin(
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2010,7 +2095,7 @@ class KeyVaultClientOperationsMixin(
         )
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2300,6 +2385,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2314,11 +2400,14 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Setting, response.json())
 
@@ -2366,6 +2455,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2380,11 +2470,14 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Setting, response.json())
 
@@ -2428,6 +2521,7 @@ class KeyVaultClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2442,13 +2536,595 @@ class KeyVaultClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.KeyVaultError, response.json())
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SettingsListResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
+        api_versions_list=["2026-01-01-preview"],
+    )
+    async def get_ekm_connection(self, **kwargs: Any) -> _models.EkmConnection:
+        """Gets the EKM connection.
+
+        The External Key Manager (EKM) Get operation returns EKM connection. This operation requires
+        ekm/read permission.
+
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmConnection] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_get_ekm_connection_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EkmConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
+        api_versions_list=["2026-01-01-preview"],
+    )
+    async def get_ekm_certificate(self, **kwargs: Any) -> _models.EkmProxyClientCertificateInfo:
+        """Gets the EKM proxy client certificate.
+
+        The External Key Manager (EKM) Certificate Get operation returns Proxy client certificate. This
+        operation requires ekm/read permission.
+
+        :return: EkmProxyClientCertificateInfo. The EkmProxyClientCertificateInfo is compatible with
+         MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmProxyClientCertificateInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmProxyClientCertificateInfo] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_get_ekm_certificate_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EkmProxyClientCertificateInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
+        api_versions_list=["2026-01-01-preview"],
+    )
+    async def check_ekm_connection(self, **kwargs: Any) -> _models.EkmProxyInfo:
+        """Checks the connectivity and authentication with the EKM proxy.
+
+        The External Key Manager (EKM) Check operation checks the connectivity and authentication with
+        the EKM proxy. This operation requires ekm/read permission.
+
+        :return: EkmProxyInfo. The EkmProxyInfo is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmProxyInfo
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmProxyInfo] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_check_ekm_connection_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EkmProxyInfo, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_ekm_connection(
+        self, ekm_connection: _models.EkmConnection, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Creates the EKM connection.
+
+        The External Key Manager (EKM) sets up the EKM connection. If the EKM connection already
+        exists, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to create. Required.
+        :type ekm_connection: ~azure.keyvault.administration._generated.models.EkmConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_ekm_connection(
+        self, ekm_connection: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Creates the EKM connection.
+
+        The External Key Manager (EKM) sets up the EKM connection. If the EKM connection already
+        exists, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to create. Required.
+        :type ekm_connection: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_ekm_connection(
+        self, ekm_connection: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Creates the EKM connection.
+
+        The External Key Manager (EKM) sets up the EKM connection. If the EKM connection already
+        exists, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to create. Required.
+        :type ekm_connection: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={"2026-01-01-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2026-01-01-preview"],
+    )
+    async def create_ekm_connection(
+        self, ekm_connection: Union[_models.EkmConnection, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Creates the EKM connection.
+
+        The External Key Manager (EKM) sets up the EKM connection. If the EKM connection already
+        exists, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to create. Is one of the following types:
+         EkmConnection, JSON, IO[bytes] Required.
+        :type ekm_connection: ~azure.keyvault.administration._generated.models.EkmConnection or JSON or
+         IO[bytes]
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EkmConnection] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(ekm_connection, (IOBase, bytes)):
+            _content = ekm_connection
+        else:
+            _content = json.dumps(ekm_connection, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_key_vault_create_ekm_connection_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EkmConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update_ekm_connection(
+        self, ekm_connection: _models.EkmConnection, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Updates the EKM connection.
+
+        The External Key Manager (EKM) updates the existing EKM connection. If the EKM connection does
+        not exist, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to update. Required.
+        :type ekm_connection: ~azure.keyvault.administration._generated.models.EkmConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_ekm_connection(
+        self, ekm_connection: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Updates the EKM connection.
+
+        The External Key Manager (EKM) updates the existing EKM connection. If the EKM connection does
+        not exist, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to update. Required.
+        :type ekm_connection: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_ekm_connection(
+        self, ekm_connection: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Updates the EKM connection.
+
+        The External Key Manager (EKM) updates the existing EKM connection. If the EKM connection does
+        not exist, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to update. Required.
+        :type ekm_connection: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={"2026-01-01-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2026-01-01-preview"],
+    )
+    async def update_ekm_connection(
+        self, ekm_connection: Union[_models.EkmConnection, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EkmConnection:
+        """Updates the EKM connection.
+
+        The External Key Manager (EKM) updates the existing EKM connection. If the EKM connection does
+        not exist, this operation fails. This operation requires ekm/write permission.
+
+        :param ekm_connection: The ekmConnection to update. Is one of the following types:
+         EkmConnection, JSON, IO[bytes] Required.
+        :type ekm_connection: ~azure.keyvault.administration._generated.models.EkmConnection or JSON or
+         IO[bytes]
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EkmConnection] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(ekm_connection, (IOBase, bytes)):
+            _content = ekm_connection
+        else:
+            _content = json.dumps(ekm_connection, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_key_vault_update_ekm_connection_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EkmConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={"2026-01-01-preview": ["api_version", "accept"]},
+        api_versions_list=["2026-01-01-preview"],
+    )
+    async def delete_ekm_connection(self, **kwargs: Any) -> _models.EkmConnection:
+        """Deletes the EKM connection.
+
+        The External Key Manager (EKM) deletes the existing EKM connection. If the EKM connection does
+        not already exists, this operation fails. This operation requires ekm/delete permission.
+
+        :return: EkmConnection. The EkmConnection is compatible with MutableMapping
+        :rtype: ~azure.keyvault.administration._generated.models.EkmConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EkmConnection] = kwargs.pop("cls", None)
+
+        _request = build_key_vault_delete_ekm_connection_request(
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url(
+                "self._config.vault_base_url", self._config.vault_base_url, "str", skip_quote=True
+            ),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.KeyVaultError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EkmConnection, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

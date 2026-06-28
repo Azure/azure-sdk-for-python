@@ -158,6 +158,26 @@ class ArtifactCache:
         artifact_path = Path(path)
         return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
 
+    @staticmethod
+    def _safe_extractall(zip_file: zipfile.ZipFile, destination: Union[str, os.PathLike]) -> None:
+        """Safely extract all members of a zip archive, guarding against ZipSlip/path traversal.
+
+        Each member's resolved destination path is validated to remain within ``destination``.
+        Members with absolute paths or ``..`` segments that would escape the destination are rejected.
+
+        :param zip_file: The zip archive to extract.
+        :type zip_file: zipfile.ZipFile
+        :param destination: The directory to extract the archive members into.
+        :type destination: Union[str, os.PathLike]
+        :raises RuntimeError: If a member would be extracted outside of ``destination``.
+        """
+        destination_path = Path(destination).resolve()
+        for member in zip_file.namelist():
+            target_path = (destination_path / member).resolve()
+            if destination_path != target_path and destination_path not in target_path.parents:
+                raise RuntimeError(f"Illegal path traversal detected in zip archive member: {member}")
+        zip_file.extractall(destination_path)  # nosec B202
+
     def _redirect_artifacts_tool_path(self, organization: Optional[str]):
         """Downloads the artifacts tool and redirects `az artifact` command to it.
 
@@ -171,12 +191,12 @@ class ArtifactCache:
         if not organization:
             organization, _ = self.get_organization_project_by_git()
 
-        organization_pattern = r"https:\/\/(.*)\.visualstudio\.com"
+        organization_pattern = r"https:\/\/([^/]+)\.visualstudio\.com"
         result = re.findall(pattern=organization_pattern, string=organization)
         if result:
             organization_name = result[0]
         else:
-            organization_pattern = r"https:\/\/dev\.azure\.com\/(.*)"
+            organization_pattern = r"https:\/\/dev\.azure\.com\/([^/]+)"
             result = re.findall(pattern=organization_pattern, string=organization)
             if not result:
                 raise RuntimeError("Cannot find artifact organization.")
@@ -204,7 +224,7 @@ class ArtifactCache:
                 artifacts_tool_uri = response.json()["uri"]
                 response = requests_pipeline.get(artifacts_tool_uri)  # pylint: disable=too-many-function-args
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
-                    zip_file.extractall(artifacts_tool_path)
+                    self._safe_extractall(zip_file, artifacts_tool_path)
                 os.environ["AZURE_DEVOPS_EXT_ARTIFACTTOOL_OVERRIDE_PATH"] = str(artifacts_tool_path.resolve())
                 self._artifacts_tool_path = artifacts_tool_path
             else:

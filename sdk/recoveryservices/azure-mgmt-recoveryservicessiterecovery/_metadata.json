@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-08-01",
+  "apiVersions": {
+    "Microsoft.RecoveryServices": "2025-08-01"
+  },
+  "commit": "1346e6b895a9091a6adbeec3505ee47f55d3ecee",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery",
+  "emitterVersion": "0.61.3"
+}

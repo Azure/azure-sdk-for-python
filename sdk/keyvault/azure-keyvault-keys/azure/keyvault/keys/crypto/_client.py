@@ -14,7 +14,10 @@ from . import (
     DecryptResult,
     EncryptionAlgorithm,
     EncryptResult,
+    KeySecureWrapAlgorithm,
     KeyWrapAlgorithm,
+    SecureUnwrapResult,
+    SecureWrapResult,
     SignatureAlgorithm,
     SignResult,
     VerifyResult,
@@ -32,13 +35,13 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def _validate_arguments(
-        operation: KeyOperation,
-        algorithm: EncryptionAlgorithm,
-        *,
-        iv: Optional[bytes] = None,
-        tag: Optional[bytes] = None,
-        aad: Optional[bytes] = None,
-    ) -> None:
+    operation: KeyOperation,
+    algorithm: EncryptionAlgorithm,
+    *,
+    iv: Optional[bytes] = None,
+    tag: Optional[bytes] = None,
+    aad: Optional[bytes] = None,
+) -> None:
     """Validates the arguments passed to perform an operation with a provided algorithm.
 
     :param KeyOperation operation: the type of operation being requested
@@ -55,9 +58,7 @@ def _validate_arguments(
     """
     if operation == KeyOperation.encrypt:
         if iv and "CBC" not in algorithm:
-            raise ValueError(
-                f"iv should only be provided with AES-CBC algorithms; {algorithm} does not accept an iv"
-            )
+            raise ValueError(f"iv should only be provided with AES-CBC algorithms; {algorithm} does not accept an iv")
         if iv is None and "CBC" in algorithm:
             raise ValueError("iv is a required parameter for encryption with AES-CBC algorithms.")
         if aad and not ("CBC" in algorithm or "GCM" in algorithm):
@@ -68,9 +69,7 @@ def _validate_arguments(
 
     if operation == KeyOperation.decrypt:
         if iv and not ("CBC" in algorithm or "GCM" in algorithm):
-            raise ValueError(
-                f"iv should only be provided with AES algorithms; {algorithm} does not accept an iv"
-            )
+            raise ValueError(f"iv should only be provided with AES algorithms; {algorithm} does not accept an iv")
         if iv is None and ("CBC" in algorithm or "GCM" in algorithm):
             raise ValueError("iv is a required parameter for decryption with AES algorithms.")
         if tag and "GCM" not in algorithm:
@@ -203,7 +202,7 @@ class CryptographyClient(KeyVaultClientBase):
                 key_bundle = self._client.get_key(
                     self._key_id.name if self._key_id else None,
                     self._key_id.version if self._key_id else None,
-                    **kwargs
+                    **kwargs,
                 )
                 key = KeyVaultKey._from_key_bundle(key_bundle)
                 self._key = key.key
@@ -310,7 +309,7 @@ class CryptographyClient(KeyVaultClientBase):
             parameters=self._models.KeyOperationsParameters(
                 algorithm=algorithm, value=plaintext, iv=iv, aad=additional_authenticated_data
             ),
-            **kwargs
+            **kwargs,
         )
 
         result_iv = operation_result.iv if hasattr(operation_result, "iv") else None
@@ -400,7 +399,7 @@ class CryptographyClient(KeyVaultClientBase):
             parameters=self._models.KeyOperationsParameters(
                 algorithm=algorithm, value=ciphertext, iv=iv, tag=authentication_tag, aad=additional_authenticated_data
             ),
-            **kwargs
+            **kwargs,
         )
 
         return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=operation_result.result)
@@ -443,7 +442,7 @@ class CryptographyClient(KeyVaultClientBase):
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=key),
-            **kwargs
+            **kwargs,
         )
 
         return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=operation_result.result)
@@ -485,9 +484,72 @@ class CryptographyClient(KeyVaultClientBase):
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyOperationsParameters(algorithm=algorithm, value=encrypted_key),
-            **kwargs
+            **kwargs,
         )
         return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
+
+    @distributed_trace
+    def secure_wrap_key(self, algorithm: KeySecureWrapAlgorithm, **kwargs: Any) -> SecureWrapResult:
+        """Generate and securely wrap a new 256-bit AES key inside the trusted execution environment (TEE).
+
+        The SECURE WRAP operation creates a fresh 256-bit AES key inside a TEE and wraps it with this
+        client's key as the wrapping key. Requires the keys/wrapKey permission. Only available with
+        API version ``2026-01-01-preview`` and newer.
+
+        :param algorithm: The secure wrap algorithm to use.
+        :type algorithm: ~azure.keyvault.keys.crypto.KeySecureWrapAlgorithm
+
+        :returns: The result of the secure wrap operation.
+        :rtype: ~azure.keyvault.keys.crypto.SecureWrapResult
+        """
+        if self._jwk:
+            raise NotImplementedError("Secure wrap is not supported on a CryptographyClient created from a JsonWebKey")
+        operation_result = self._client.secure_wrap_key(
+            key_name=self._key_id.name if self._key_id else None,
+            key_version=self._key_id.version if self._key_id else None,
+            parameters=self._models.SecureKeyWrapOperationParameters(algorithm=algorithm),
+            **kwargs,
+        )
+        return SecureWrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=operation_result.value)
+
+    @distributed_trace
+    def secure_unwrap_key(
+        self,
+        algorithm: KeySecureWrapAlgorithm,
+        encrypted_key: bytes,
+        target_attestation_token: str,
+        **kwargs: Any,
+    ) -> SecureUnwrapResult:
+        """Securely unwrap a key into a trusted execution environment (TEE).
+
+        The SECURE UNWRAP operation unwraps a key previously wrapped by SECURE WRAP and releases it
+        only into a target TEE attested by the supplied Microsoft Azure Attestation (MAA) token.
+        Requires the keys/unwrapKey permission. Only available with API version
+        ``2026-01-01-preview`` and newer.
+
+        :param algorithm: The secure wrap algorithm originally used to wrap the key.
+        :type algorithm: ~azure.keyvault.keys.crypto.KeySecureWrapAlgorithm
+        :param bytes encrypted_key: The wrapped key bytes to unwrap.
+        :param str target_attestation_token: The MAA attestation token of the target TEE.
+
+        :returns: The result of the secure unwrap operation.
+        :rtype: ~azure.keyvault.keys.crypto.SecureUnwrapResult
+        """
+        if self._jwk:
+            raise NotImplementedError(
+                "Secure unwrap is not supported on a CryptographyClient created from a JsonWebKey"
+            )
+        operation_result = self._client.secure_unwrap_key(
+            key_name=self._key_id.name if self._key_id else None,
+            key_version=self._key_id.version if self._key_id else None,
+            parameters=self._models.SecureKeyUnWrapOperationParameters(
+                algorithm=algorithm,
+                value=encrypted_key,
+                target_attestation_token=target_attestation_token,
+            ),
+            **kwargs,
+        )
+        return SecureUnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.value)
 
     @distributed_trace
     def sign(self, algorithm: SignatureAlgorithm, digest: bytes, **kwargs: Any) -> SignResult:
@@ -527,7 +589,7 @@ class CryptographyClient(KeyVaultClientBase):
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeySignParameters(algorithm=algorithm, value=digest),
-            **kwargs
+            **kwargs,
         )
 
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=operation_result.result)
@@ -571,7 +633,7 @@ class CryptographyClient(KeyVaultClientBase):
             key_name=self._key_id.name if self._key_id else None,
             key_version=self._key_id.version if self._key_id else None,
             parameters=self._models.KeyVerifyParameters(algorithm=algorithm, digest=digest, signature=signature),
-            **kwargs
+            **kwargs,
         )
 
         return VerifyResult(key_id=self.key_id, algorithm=algorithm, is_valid=operation_result.value)

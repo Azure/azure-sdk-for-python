@@ -20,7 +20,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_virtual_machines_list(self, resource_group):
         response = self.client.virtual_machines.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -32,7 +32,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_virtual_machines_get(self, resource_group):
         response = self.client.virtual_machines.get(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -45,7 +45,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_virtual_machines_begin_create_or_update(self, resource_group):
         response = self.client.virtual_machines.begin_create_or_update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -216,7 +216,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_virtual_machines_begin_delete(self, resource_group):
         response = self.client.virtual_machines.begin_delete(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -229,7 +229,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_virtual_machines_update(self, resource_group):
         response = self.client.virtual_machines.update(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -242,7 +242,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_add_data_disk(self, resource_group):
+    def test_virtual_machines_begin_add_data_disk(self, resource_group):
         response = self.client.virtual_machines.begin_add_data_disk(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -260,7 +260,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_apply_artifacts(self, resource_group):
+    def test_virtual_machines_begin_apply_artifacts(self, resource_group):
         response = self.client.virtual_machines.begin_apply_artifacts(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -273,7 +273,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_claim(self, resource_group):
+    def test_virtual_machines_begin_claim(self, resource_group):
         response = self.client.virtual_machines.begin_claim(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -286,7 +286,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_detach_data_disk(self, resource_group):
+    def test_virtual_machines_begin_detach_data_disk(self, resource_group):
         response = self.client.virtual_machines.begin_detach_data_disk(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -299,7 +299,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_rdp_file_contents(self, resource_group):
+    def test_virtual_machines_get_rdp_file_contents(self, resource_group):
         response = self.client.virtual_machines.get_rdp_file_contents(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -312,7 +312,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_applicable_schedules(self, resource_group):
+    def test_virtual_machines_list_applicable_schedules(self, resource_group):
         response = self.client.virtual_machines.list_applicable_schedules(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -325,7 +325,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_redeploy(self, resource_group):
+    def test_virtual_machines_begin_redeploy(self, resource_group):
         response = self.client.virtual_machines.begin_redeploy(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -338,7 +338,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_resize(self, resource_group):
+    def test_virtual_machines_begin_resize(self, resource_group):
         response = self.client.virtual_machines.begin_resize(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -351,7 +351,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_restart(self, resource_group):
+    def test_virtual_machines_begin_restart(self, resource_group):
         response = self.client.virtual_machines.begin_restart(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -364,7 +364,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_start(self, resource_group):
+    def test_virtual_machines_begin_start(self, resource_group):
         response = self.client.virtual_machines.begin_start(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -377,7 +377,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_stop(self, resource_group):
+    def test_virtual_machines_begin_stop(self, resource_group):
         response = self.client.virtual_machines.begin_stop(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -390,7 +390,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_transfer_disks(self, resource_group):
+    def test_virtual_machines_begin_transfer_disks(self, resource_group):
         response = self.client.virtual_machines.begin_transfer_disks(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -403,7 +403,7 @@ class TestDevTestLabsVirtualMachinesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_un_claim(self, resource_group):
+    def test_virtual_machines_begin_un_claim(self, resource_group):
         response = self.client.virtual_machines.begin_un_claim(
             resource_group_name=resource_group.name,
             lab_name="str",
