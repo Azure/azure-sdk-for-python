@@ -114,18 +114,6 @@ adapter = GitHubCopilotAdapter.from_project(".")
 adapter.run()
 ```
 
-### Multi-user sessions (per-request call ID)
-
-On container protocol `2.0.0` a single agent can serve **multiple users** — and the adapter handles it for you. It echoes the per-request `x-agent-foundry-call-id` on outbound **Foundry toolbox** calls so each `tools/call` resolves the correct caller and acts on their behalf. Because the Copilot engine dispatches tools on a separate task, the call ID is carried per turn keyed by the Copilot `session_id` and stamped on both the request header and the MCP `params._meta`. Copilot sessions are bound to a single user (`x-agent-user-id`) and never reused across users — so no agent code change is needed.
-
-```python
-from azure.ai.agentserver.githubcopilot import GitHubCopilotAdapter
-
-# Toolbox call IDs are forwarded automatically per request; sessions never cross users.
-adapter = GitHubCopilotAdapter.from_project(".")
-adapter.run()
-```
-
 ### With custom credential
 
 ```python

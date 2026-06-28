@@ -26,9 +26,6 @@ from typing import Any, Dict, List, Optional
 import httpx
 from copilot.tools import Tool, ToolResult
 
-from azure.ai.agentserver.core import get_request_context  # pylint: disable=no-name-in-module
-from azure.ai.agentserver.core._platform_headers import FOUNDRY_CALL_ID  # pylint: disable=no-name-in-module
-
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
 # Canary — proves which version of _toolbox.py is deployed.
@@ -39,43 +36,6 @@ _FOUNDRY_TOOLBOX_FEATURE_HEADER = "Toolboxes=V1Preview"
 _FOUNDRY_TOOLBOX_SERVER_KEY = "foundry-toolbox"
 _FOUNDRY_SCOPE = "https://ai.azure.com/.default"
 
-
-# ---------------------------------------------------------------------------
-# Per-turn call-id carried out-of-band, keyed by Copilot session id
-# ---------------------------------------------------------------------------
-#
-# On container protocol version ``2.0.0`` the container must echo the inbound
-# ``x-agent-foundry-call-id`` on outbound Foundry toolbox calls. The request-
-# scoped context var (``get_request_context()``) is valid in the request task,
-# but the Copilot engine dispatches ``tools/call`` on a separate, long-lived
-# reader task where that context var is **empty**. So the per-turn call id is
-# captured in the request task and stashed here keyed by the Copilot
-# ``session_id`` — the only correlator that reaches the tool handler.
-_call_id_by_session: Dict[str, str] = {}
-
-
-def set_session_call_id(session_id: Optional[str], call_id: Optional[str]) -> None:
-    """Bind (or clear) the current turn's call id for a Copilot session.
-
-    Called from the request task (where ``get_request_context()`` is valid).
-    Tool calls dispatched later on the Copilot engine task read this by
-    ``session_id``.
-
-    :param session_id: The Copilot session id, or ``None`` (no-op).
-    :param call_id: The per-turn ``x-agent-foundry-call-id``, or ``None`` to clear.
-    """
-    if not session_id:
-        return
-    if call_id:
-        _call_id_by_session[session_id] = call_id
-    else:
-        _call_id_by_session.pop(session_id, None)
-
-
-def clear_session_call_id(session_id: Optional[str]) -> None:
-    """Remove any call id bound to a Copilot session (e.g. on eviction)."""
-    if session_id:
-        _call_id_by_session.pop(session_id, None)
 
 
 # ---------------------------------------------------------------------------
@@ -220,11 +180,6 @@ class McpBridge:
                 logger.warning("Failed to refresh token for MCP bridge", exc_info=True)
         if self._session_id:
             headers["mcp-session-id"] = self._session_id
-        # Forward the per-request call ID (x-agent-foundry-call-id) to the Foundry
-        # toolbox service on container protocol version 2.0.0. No-op when absent
-        # (protocol 1.0.0 or local development). x-agent-user-id is never forwarded
-        # to 1P services; it is used only for container-side per-user partitioning.
-        headers.update(get_request_context().platform_headers())
         return headers
 
     async def initialize(self) -> str:
@@ -241,7 +196,7 @@ class McpBridge:
 
         resp = await self._client.post(
             self._endpoint,
-            headers={**self._headers, **get_request_context().platform_headers()},
+            headers=self._headers,
             json={
                 "jsonrpc": "2.0",
                 "id": self._next_id(),
@@ -320,40 +275,22 @@ class McpBridge:
             )
         return tools
 
-    async def call_tool(self, name: str, arguments: Dict[str, Any], *, session_id: Optional[str] = None) -> str:
+    async def call_tool(self, name: str, arguments: Dict[str, Any]) -> str:
         """Call ``tools/call`` and return the text result.
 
         :param name: The original MCP tool name (not sanitised).
         :param arguments: Tool arguments dict.
-        :keyword session_id: The Copilot session id for this tool call. Used to
-            resolve the per-turn ``x-agent-foundry-call-id`` out-of-band, because
-            this method runs on the Copilot engine task where the request-scoped
-            context var is empty (container protocol ``2.0.0``).
         :returns: Formatted text result.
         """
         logger.info("MCP tools/call: %s args=%s", name, list(arguments.keys()))
-        headers = self._request_headers()
-        params: Dict[str, Any] = {"name": name, "arguments": arguments}
-
-        # Echo the per-turn call id resolved by session id. Stamp it both as the
-        # HTTP header (preferred) and in ``params._meta`` (fallback) — the
-        # platform accepts either. The session-keyed value overrides the (empty)
-        # request-context value for the engine-task dispatch.
-        call_id = _call_id_by_session.get(session_id) if session_id else None
-        if call_id:
-            headers[FOUNDRY_CALL_ID] = call_id
-            meta = dict(params.get("_meta") or {})
-            meta[FOUNDRY_CALL_ID] = call_id
-            params["_meta"] = meta
-
         resp = await self._client.post(
             self._endpoint,
-            headers=headers,
+            headers=self._request_headers(),
             json={
                 "jsonrpc": "2.0",
                 "id": self._next_id(),
                 "method": "tools/call",
-                "params": params,
+                "params": {"name": name, "arguments": arguments},
             },
         )
         resp.raise_for_status()
@@ -461,11 +398,8 @@ def _make_copilot_tools(bridge: McpBridge, mcp_tools: List[Dict[str, Any]]) -> L
                 args = getattr(invocation, "arguments", None) or {}
                 if not isinstance(args, dict):
                     args = {}
-                # session_id is the only correlator that reaches the engine-task
-                # tool dispatch; use it to resolve the per-turn call id (§2.0.0).
-                session_id = getattr(invocation, "session_id", None)
                 try:
-                    result_text = await bridge.call_tool(original_name, args, session_id=session_id)
+                    result_text = await bridge.call_tool(original_name, args)
                     return ToolResult(text_result_for_llm=result_text)
                 except Exception as e:
                     logger.warning("Tool %s failed: %s", original_name, e)
