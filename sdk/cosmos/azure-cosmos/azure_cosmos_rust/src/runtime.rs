@@ -307,12 +307,22 @@ pub(crate) fn init_client(
         builder.build()
     };
 
+    // Build the driver on the shared runtime as a spawned task, then wait on its
+    // handle with the GIL released. Spawning -- rather than running the build
+    // directly on this thread -- lets several clients build at the same time on the
+    // runtime's worker threads instead of competing on the calling threads, which
+    // was making the first call on each of many newly built clients slow. A panic
+    // during the build comes back as a JoinError we turn into a Python error rather
+    // than crashing the process.
+    let driver_runtime = Arc::clone(&runtime_ctx.driver_runtime);
+    let build_task = runtime_ctx
+        .tokio_rt
+        .spawn(async move { driver_runtime.create_driver(driver_options).await });
     let driver = py
-        .allow_threads(|| {
-            runtime_ctx
-                .tokio_rt
-                .block_on(runtime_ctx.driver_runtime.create_driver(driver_options))
-        })
+        .allow_threads(|| runtime_ctx.tokio_rt.block_on(build_task))
+        .map_err(|join_error| {
+            PyRuntimeError::new_err(format!("driver init task failed: {join_error}"))
+        })?
         .map_err(|e| PyRuntimeError::new_err(format!("driver init failed: {e}")))?;
 
     // Insert under the write lock as the first reference. If two threads raced to
