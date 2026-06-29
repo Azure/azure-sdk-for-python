@@ -7,7 +7,12 @@ Validator for conversation-style query and response inputs.
 
 from typing import Any, Dict, List, Optional
 from typing_extensions import override
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from ._validation_constants import MessageRole, ContentType
 from ._validator_interface import ValidatorInterface
 
@@ -21,28 +26,27 @@ class ConversationValidator(ValidatorInterface):
     check_for_unsupported_tools: bool = False
     error_target: ErrorTarget
 
-    # Tools whose calls are not yet supported by evaluators that opt in to
-    # the unsupported-tool check (e.g. Groundedness). Tool-call/tool-output
-    # evaluators (TCS, TOU) override this list via
-    # ``ToolDefinitionsValidator.UNSUPPORTED_TOOLS`` to additionally accept
-    # ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding``
-    # now that their structured tool_result payloads are JSON-encoded by
-    # ``_stringify_tool_result``.
+    # Tools that evaluators with ``check_for_unsupported_tools=True`` reject.
+    # ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding`` are
+    # accepted by default because the shared formatter JSON-encodes their
+    # structured tool_result payloads (see ``_stringify_tool_result``).
+    # ``GroundednessConversationValidator`` overrides this list to keep
+    # rejecting them until a context-extractor helper lands.
     UNSUPPORTED_TOOLS: List[str] = [
-        "azure_ai_search",
-        "azure_fabric",
         "bing_custom_search",
         "bing_grounding",
         "browser_automation",
         "code_interpreter_call",
         "computer_call",
         "openapi_call",
-        "sharepoint_grounding",
         "web_search",
     ]
 
     def __init__(
-        self, error_target: ErrorTarget, requires_query: bool = True, check_for_unsupported_tools: bool = False
+        self,
+        error_target: ErrorTarget,
+        requires_query: bool = True,
+        check_for_unsupported_tools: bool = False,
     ):
         """Initialize with error target and query requirement."""
         self.requires_query = requires_query
@@ -125,7 +129,9 @@ class ConversationValidator(ValidatorInterface):
             )
         return None
 
-    def _validate_text_content_item(self, content_item: Dict[str, Any], role: str) -> Optional[EvaluationException]:
+    def _validate_text_content_item(
+        self, content_item: Dict[str, Any], role: str
+    ) -> Optional[EvaluationException]:
         """Validate a text content item."""
         if "text" not in content_item:
             return EvaluationException(
@@ -144,7 +150,9 @@ class ConversationValidator(ValidatorInterface):
             )
         return None
 
-    def _validate_tool_call_content_item(self, content_item: Dict[str, Any]) -> Optional[EvaluationException]:
+    def _validate_tool_call_content_item(
+        self, content_item: Dict[str, Any]
+    ) -> Optional[EvaluationException]:
         """Validate a tool_call content item."""
         valid_tool_call_content_types = [
             ContentType.TOOL_CALL,
@@ -152,8 +160,13 @@ class ConversationValidator(ValidatorInterface):
             ContentType.OPENAPI_CALL,
             ContentType.MCP_APPROVAL_REQUEST,
         ]
-        valid_tool_call_content_types_as_strings = [t.value for t in valid_tool_call_content_types]
-        if "type" not in content_item or content_item["type"] not in valid_tool_call_content_types:
+        valid_tool_call_content_types_as_strings = [
+            t.value for t in valid_tool_call_content_types
+        ]
+        if (
+            "type" not in content_item
+            or content_item["type"] not in valid_tool_call_content_types
+        ):
             return EvaluationException(
                 message=f"The content item must be of type {valid_tool_call_content_types_as_strings} in tool_call content item.",
                 blame=ErrorBlame.USER_ERROR,
@@ -164,21 +177,29 @@ class ConversationValidator(ValidatorInterface):
         if content_item["type"] == ContentType.MCP_APPROVAL_REQUEST:
             return None
 
-        error = self._validate_string_field(content_item, "name", "tool_call content items")
+        error = self._validate_string_field(
+            content_item, "name", "tool_call content items"
+        )
         if error:
             return error
 
-        error = self._validate_dict_field(content_item, "arguments", "tool_call content items")
+        error = self._validate_dict_field(
+            content_item, "arguments", "tool_call content items"
+        )
         if error:
             return error
 
-        error = self._validate_string_field(content_item, "tool_call_id", "tool_call content items")
+        error = self._validate_string_field(
+            content_item, "tool_call_id", "tool_call content items"
+        )
         if error:
             return error
 
         return None
 
-    def _validate_user_or_system_message(self, message: Dict[str, Any], role: str) -> Optional[EvaluationException]:
+    def _validate_user_or_system_message(
+        self, message: Dict[str, Any], role: str
+    ) -> Optional[EvaluationException]:
         """Validate user or system message content."""
         content = message["content"]
 
@@ -199,7 +220,9 @@ class ConversationValidator(ValidatorInterface):
                     return error
         return None
 
-    def _validate_assistant_message(self, message: Dict[str, Any]) -> Optional[EvaluationException]:
+    def _validate_assistant_message(
+        self, message: Dict[str, Any]
+    ) -> Optional[EvaluationException]:
         """Validate assistant message content."""
         content = message["content"]
 
@@ -212,7 +235,9 @@ class ConversationValidator(ValidatorInterface):
                 ContentType.MCP_APPROVAL_REQUEST,
                 ContentType.OPENAPI_CALL,
             ]
-            valid_assistant_content_types_as_strings = [t.value for t in valid_assistant_content_types]
+            valid_assistant_content_types_as_strings = [
+                t.value for t in valid_assistant_content_types
+            ]
             for content_item in content:
                 content_type = content_item["type"]
                 if content_type not in valid_assistant_content_types:
@@ -224,19 +249,30 @@ class ConversationValidator(ValidatorInterface):
                     )
 
                 if content_type in [ContentType.TEXT, ContentType.OUTPUT_TEXT]:
-                    error = self._validate_text_content_item(content_item, MessageRole.ASSISTANT)
+                    error = self._validate_text_content_item(
+                        content_item, MessageRole.ASSISTANT
+                    )
                     if error:
                         return error
-                elif content_type in [ContentType.TOOL_CALL, ContentType.FUNCTION_CALL, ContentType.OPENAPI_CALL]:
+                elif content_type in [
+                    ContentType.TOOL_CALL,
+                    ContentType.FUNCTION_CALL,
+                    ContentType.OPENAPI_CALL,
+                ]:
                     error = self._validate_tool_call_content_item(content_item)
                     if error:
                         return error
 
                 # Raise error in case of unsupported tools for evaluators that enabled check_for_unsupported_tools
                 if self.check_for_unsupported_tools:
-                    if content_type == ContentType.TOOL_CALL or content_type == ContentType.OPENAPI_CALL:
+                    if (
+                        content_type == ContentType.TOOL_CALL
+                        or content_type == ContentType.OPENAPI_CALL
+                    ):
                         name = (
-                            "openapi_call" if content_type == ContentType.OPENAPI_CALL else content_item["name"].lower()
+                            "openapi_call"
+                            if content_type == ContentType.OPENAPI_CALL
+                            else content_item["name"].lower()
                         )
                         if name in self.UNSUPPORTED_TOOLS:
                             return EvaluationException(
@@ -247,7 +283,9 @@ class ConversationValidator(ValidatorInterface):
                             )
         return None
 
-    def _validate_tool_message(self, message: Dict[str, Any]) -> Optional[EvaluationException]:
+    def _validate_tool_message(
+        self, message: Dict[str, Any]
+    ) -> Optional[EvaluationException]:
         """Validate tool message content."""
         content = message["content"]
 
@@ -260,7 +298,9 @@ class ConversationValidator(ValidatorInterface):
             )
 
         error = self._validate_string_field(
-            message, "tool_call_id", f"content items for role '{MessageRole.TOOL.value}'"
+            message,
+            "tool_call_id",
+            f"content items for role '{MessageRole.TOOL.value}'",
         )
         if error:
             return error
@@ -271,7 +311,9 @@ class ConversationValidator(ValidatorInterface):
             ContentType.MCP_APPROVAL_RESPONSE,
             ContentType.OPENAPI_CALL_OUTPUT,
         ]
-        valid_tool_content_types_as_strings = [t.value for t in valid_tool_content_types]
+        valid_tool_content_types_as_strings = [
+            t.value for t in valid_tool_content_types
+        ]
         for content_item in content:
             content_type = content_item["type"]
             if content_type not in valid_tool_content_types:
@@ -288,14 +330,18 @@ class ConversationValidator(ValidatorInterface):
                 ContentType.FUNCTION_CALL_OUTPUT,
             ]:
                 error = self._validate_field_exists(
-                    content_item, content_type, f"content items for role '{MessageRole.TOOL.value}'"
+                    content_item,
+                    content_type,
+                    f"content items for role '{MessageRole.TOOL.value}'",
                 )
                 if error:
                     return error
 
         return None
 
-    def _validate_message_dict(self, message: Dict[str, Any]) -> Optional[EvaluationException]:
+    def _validate_message_dict(
+        self, message: Dict[str, Any]
+    ) -> Optional[EvaluationException]:
         """Validate a single message dictionary."""
         if "role" not in message:
             return EvaluationException(
@@ -317,7 +363,8 @@ class ConversationValidator(ValidatorInterface):
         content = message["content"]
 
         content_is_string_or_list_of_dicts = isinstance(content, str) or (
-            isinstance(content, list) and all(item and isinstance(item, dict) for item in content)
+            isinstance(content, list)
+            and all(item and isinstance(item, dict) for item in content)
         )
         if not content_is_string_or_list_of_dicts:
             return EvaluationException(
@@ -360,7 +407,9 @@ class ConversationValidator(ValidatorInterface):
 
         return None
 
-    def _validate_input_messages_list(self, input_messages: Any, input_name: str) -> Optional[EvaluationException]:
+    def _validate_input_messages_list(
+        self, input_messages: Any, input_name: str
+    ) -> Optional[EvaluationException]:
         if input_messages is None:
             return EvaluationException(
                 message=f"{input_name} is a required input and cannot be None.",
@@ -411,7 +460,9 @@ class ConversationValidator(ValidatorInterface):
 
         return None
 
-    def _validate_conversation(self, conversation: Any) -> Optional[EvaluationException]:
+    def _validate_conversation(
+        self, conversation: Any
+    ) -> Optional[EvaluationException]:
         """Validate the conversation input."""
         if not isinstance(conversation, dict):
             return EvaluationException(
@@ -444,7 +495,9 @@ class ConversationValidator(ValidatorInterface):
         """Validate the evaluation input dictionary."""
         conversation = eval_input.get("conversation")
         if conversation:
-            conversation_validation_exception = self._validate_conversation(conversation)
+            conversation_validation_exception = self._validate_conversation(
+                conversation
+            )
             if conversation_validation_exception:
                 raise conversation_validation_exception
             return True
@@ -460,3 +513,28 @@ class ConversationValidator(ValidatorInterface):
             raise response_validation_exception
 
         return True
+
+
+class GroundednessConversationValidator(ConversationValidator):
+    """
+    ConversationValidator override used by ``GroundednessEvaluator``.
+
+    Groundedness still rejects ``azure_ai_search``, ``azure_fabric``, and
+    ``sharepoint_grounding`` tool calls pending a helper that can extract
+    document bodies out of structured ``tool_result`` envelopes and feed
+    them in as the ``context`` input the groundedness judge prompt scores
+    against. Without that helper the judge would receive empty or wrong
+    context and return a silently low groundedness score, so the
+    enablement performed for ``ToolCallSuccessEvaluator`` and
+    ``ToolOutputUtilizationEvaluator`` is intentionally not extended here.
+
+    Once the context-extractor helper lands, this subclass can be deleted
+    and ``GroundednessEvaluator`` can use ``ConversationValidator``
+    directly.
+    """
+
+    UNSUPPORTED_TOOLS: List[str] = ConversationValidator.UNSUPPORTED_TOOLS + [
+        "azure_ai_search",
+        "azure_fabric",
+        "sharepoint_grounding",
+    ]

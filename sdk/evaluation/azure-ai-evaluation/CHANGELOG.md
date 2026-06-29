@@ -12,12 +12,15 @@
   Python `repr` output (single quotes, `'role': 'user'`) that the LLM judges
   could not reliably ground on. The shared formatter now JSON-encodes
   non-string payloads via a new `_stringify_tool_result` helper
-  (`ensure_ascii=False` to preserve customer locale data), and a new
-  `ToolDefinitionsValidator.UNSUPPORTED_TOOLS` override narrows the
-  unsupported-tool list for these evaluators. `GroundednessEvaluator`
-  continues to use the wider list on the base `ConversationValidator`,
-  matching the corresponding behavior in azureml-assets. The remaining
-  restricted tools (`bing_grounding`, `bing_custom_search`, `web_search`,
+  (`ensure_ascii=False` to preserve customer locale data), and the shared
+  `ConversationValidator.UNSUPPORTED_TOOLS` list (inherited by
+  `ToolDefinitionsValidator`) is narrowed to allow these three tools.
+  `GroundednessEvaluator` now uses a new `GroundednessConversationValidator`
+  subclass that keeps the wider rejection list, matching the corresponding
+  behavior in azureml-assets where Groundedness was intentionally not part
+  of the enablement (a follow-up will land a context-extractor helper so
+  Groundedness can also accept these tools). The remaining restricted tools
+  (`bing_grounding`, `bing_custom_search`, `web_search`,
   `browser_automation`, `code_interpreter_call`, `computer_call`,
   `openapi_call`) continue to be rejected. `ToolCallAccuracyEvaluator` and
   `ToolInputAccuracyEvaluator` are unaffected — they do not render tool

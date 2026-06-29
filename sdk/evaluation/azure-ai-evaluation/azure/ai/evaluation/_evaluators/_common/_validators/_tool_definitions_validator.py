@@ -5,9 +5,14 @@
 Validator for evaluators that require tool definitions.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 from typing_extensions import override
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import (
+    EvaluationException,
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+)
 from ._conversation_validator import ConversationValidator
 
 
@@ -17,21 +22,6 @@ class ToolDefinitionsValidator(ConversationValidator):
     """
 
     optional_tool_definitions: bool = True
-
-    # Tool-call/tool-output evaluators (TCS, TOU) accept ``azure_ai_search``,
-    # ``azure_fabric``, and ``sharepoint_grounding`` because their structured
-    # tool_result payloads are JSON-encoded by ``_stringify_tool_result``
-    # before being rendered into the judge prompt. Groundedness keeps the
-    # wider list via the base ``ConversationValidator``.
-    UNSUPPORTED_TOOLS: List[str] = [
-        "bing_custom_search",
-        "bing_grounding",
-        "browser_automation",
-        "code_interpreter_call",
-        "computer_call",
-        "openapi_call",
-        "web_search",
-    ]
 
     def __init__(
         self,
@@ -43,7 +33,9 @@ class ToolDefinitionsValidator(ConversationValidator):
         super().__init__(error_target, requires_query, check_for_unsupported_tools)
         self.optional_tool_definitions = optional_tool_definitions
 
-    def _validate_tool_definition(self, tool_definition) -> Optional[EvaluationException]:
+    def _validate_tool_definition(
+        self, tool_definition
+    ) -> Optional[EvaluationException]:
         """Validate a single tool definition item."""
         if not isinstance(tool_definition, dict):
             return EvaluationException(
@@ -57,12 +49,16 @@ class ToolDefinitionsValidator(ConversationValidator):
         if error:
             return error
 
-        error = self._validate_dict_field(tool_definition, "parameters", "tool definitions")
+        error = self._validate_dict_field(
+            tool_definition, "parameters", "tool definitions"
+        )
         if error:
             return error
         return None
 
-    def _validate_tool_definitions(self, tool_definitions) -> Optional[EvaluationException]:
+    def _validate_tool_definitions(
+        self, tool_definitions
+    ) -> Optional[EvaluationException]:
         """Validate tool definitions input."""
         if not tool_definitions:
             if not self.optional_tool_definitions:
@@ -96,7 +92,9 @@ class ToolDefinitionsValidator(ConversationValidator):
                 )
 
             if tool_definition and tool_definition.get("type") == "openapi":
-                error = self._validate_list_field(tool_definition, "functions", "openapi tool definition")
+                error = self._validate_list_field(
+                    tool_definition, "functions", "openapi tool definition"
+                )
                 if error:
                     return error
                 functions_tool_definitions = tool_definition.get("functions", [])
@@ -116,7 +114,9 @@ class ToolDefinitionsValidator(ConversationValidator):
         """Validate the evaluation input dictionary."""
         if super().validate_eval_input(eval_input):
             tool_definitions = eval_input.get("tool_definitions")
-            tool_definitions_validation_exception = self._validate_tool_definitions(tool_definitions)
+            tool_definitions_validation_exception = self._validate_tool_definitions(
+                tool_definitions
+            )
             if tool_definitions_validation_exception:
                 raise tool_definitions_validation_exception
         return True

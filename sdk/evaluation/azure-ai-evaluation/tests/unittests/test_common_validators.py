@@ -14,6 +14,7 @@ from azure.ai.evaluation._evaluators._common._validators import (
     MessageRole,
     ContentType,
     ConversationValidator,
+    GroundednessConversationValidator,
     ToolDefinitionsValidator,
     ToolCallsValidator,
     TaskNavigationEfficiencyValidator,
@@ -634,18 +635,19 @@ class TestMessagesOrQueryResponseInputValidator:
 
 
 # ---------------------------------------------------------------------------
-# Phase 2 restricted-tool enablement (TCS / TOU only)
+# Phase 2 restricted-tool enablement
 # ---------------------------------------------------------------------------
-# ``ToolDefinitionsValidator`` (used by ToolCallSuccess and
-# ToolOutputUtilization) accepts ``azure_ai_search``, ``azure_fabric``, and
-# ``sharepoint_grounding`` because the formatter JSON-encodes their
-# structured tool_result payloads via ``_stringify_tool_result``.
+# After Phase 2, the shared ``ConversationValidator.UNSUPPORTED_TOOLS`` no
+# longer rejects ``azure_ai_search``, ``azure_fabric``, or
+# ``sharepoint_grounding``. ``ToolDefinitionsValidator`` and
+# ``ToolCallsValidator`` inherit that narrowed default, so TCS and TOU
+# accept those tool calls.
 #
-# The base ``ConversationValidator`` (used by Groundedness) intentionally
-# retains the wider list so behavior there matches the azureml-assets
-# Groundedness evaluator, which was not part of the Phase 2 change.
+# ``GroundednessConversationValidator`` keeps the wider list -- Groundedness
+# still rejects those three tools pending a context-extractor helper that
+# can derive a grounding ``context`` from structured ``tool_result`` payloads.
 
-NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS = [
+NEWLY_ENABLED_TOOLS = [
     "azure_ai_search",
     "azure_fabric",
     "sharepoint_grounding",
@@ -661,26 +663,54 @@ STILL_UNSUPPORTED_TOOLS = [
     "web_search",
 ]
 
-# What ``ConversationValidator`` (Groundedness) must still reject.
-CONVERSATION_VALIDATOR_UNSUPPORTED_TOOLS = (
-    NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS + STILL_UNSUPPORTED_TOOLS
-)
-
 
 @pytest.mark.unittest
 class TestUnsupportedToolsListConversationValidator:
-    """Groundedness uses ``ConversationValidator`` directly and keeps the wide list."""
+    """The shared default list (used by TCS, TOU, and everything except Groundedness)."""
 
-    def test_full_unsupported_list_is_unchanged(self):
-        # Matches the assets Groundedness evaluator: SharePoint / AAS / Fabric
-        # tool calls are still rejected for groundedness scoring.
+    def test_newly_enabled_tools_are_not_in_unsupported_list(self):
+        for tool_name in NEWLY_ENABLED_TOOLS:
+            assert tool_name not in ConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_still_unsupported_tools_remain_in_list(self):
+        for tool_name in STILL_UNSUPPORTED_TOOLS:
+            assert tool_name in ConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_unsupported_list_exact_match(self):
+        # Defensive: keep the list explicit so future additions surface here.
         assert set(ConversationValidator.UNSUPPORTED_TOOLS) == set(
-            CONVERSATION_VALIDATOR_UNSUPPORTED_TOOLS
+            STILL_UNSUPPORTED_TOOLS
         )
 
-    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS)
-    def test_groundedness_still_rejects_newly_enabled_tools(self, tool_name):
-        validator = ConversationValidator(
+    def test_tool_definitions_validator_inherits_same_list(self):
+        # TCS / TOU use ``ToolDefinitionsValidator``; it must not silently
+        # diverge from the shared default.
+        assert (
+            ToolDefinitionsValidator.UNSUPPORTED_TOOLS
+            is ConversationValidator.UNSUPPORTED_TOOLS
+        )
+
+
+@pytest.mark.unittest
+class TestUnsupportedToolsListGroundednessValidator:
+    """Groundedness keeps the wider list via its dedicated subclass."""
+
+    def test_full_unsupported_list_contains_newly_enabled_tools(self):
+        for tool_name in NEWLY_ENABLED_TOOLS:
+            assert tool_name in GroundednessConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_full_unsupported_list_contains_still_unsupported_tools(self):
+        for tool_name in STILL_UNSUPPORTED_TOOLS:
+            assert tool_name in GroundednessConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_full_unsupported_list_exact_match(self):
+        assert set(GroundednessConversationValidator.UNSUPPORTED_TOOLS) == set(
+            NEWLY_ENABLED_TOOLS + STILL_UNSUPPORTED_TOOLS
+        )
+
+    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
+    def test_groundedness_validator_still_rejects_newly_enabled_tools(self, tool_name):
+        validator = GroundednessConversationValidator(
             error_target=TARGET, check_for_unsupported_tools=True
         )
         assistant = {
@@ -695,29 +725,23 @@ class TestUnsupportedToolsListConversationValidator:
 
 
 @pytest.mark.unittest
-class TestUnsupportedToolsListToolDefinitionsValidator:
-    """TCS / TOU use ``ToolDefinitionsValidator``, which overrides the list."""
+class TestConversationValidatorAcceptsNewlyEnabledTools:
+    """The shared validator path (TCS / TOU and anything else inheriting it)."""
 
-    def test_newly_enabled_tools_are_not_in_unsupported_list(self):
-        for tool_name in NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS:
-            assert tool_name not in ToolDefinitionsValidator.UNSUPPORTED_TOOLS
-
-    def test_still_unsupported_tools_remain_in_list(self):
-        for tool_name in STILL_UNSUPPORTED_TOOLS:
-            assert tool_name in ToolDefinitionsValidator.UNSUPPORTED_TOOLS
-
-    def test_unsupported_list_exact_match(self):
-        assert set(ToolDefinitionsValidator.UNSUPPORTED_TOOLS) == set(
-            STILL_UNSUPPORTED_TOOLS
-        )
-
-
-@pytest.mark.unittest
-class TestToolDefinitionsValidatorAcceptsNewlyEnabledTools:
-    """SharePoint / AAS / Fabric tool calls now pass for TCS / TOU."""
-
-    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS)
+    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
     def test_validate_eval_input_accepts_tool(self, tool_name):
+        validator = ConversationValidator(
+            error_target=TARGET, check_for_unsupported_tools=True
+        )
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        eval_input = {"query": [_user_message()], "response": [assistant]}
+        assert validator.validate_eval_input(eval_input) is True
+
+    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
+    def test_tool_definitions_validator_accepts_tool(self, tool_name):
         validator = ToolDefinitionsValidator(
             error_target=TARGET, check_for_unsupported_tools=True
         )
@@ -730,12 +754,12 @@ class TestToolDefinitionsValidatorAcceptsNewlyEnabledTools:
 
 
 @pytest.mark.unittest
-class TestToolDefinitionsValidatorRejectsStillUnsupportedTools:
+class TestConversationValidatorRejectsStillUnsupportedTools:
     """The narrowing must not lift restrictions on the remaining tools."""
 
     @pytest.mark.parametrize("tool_name", STILL_UNSUPPORTED_TOOLS)
     def test_validate_eval_input_rejects_tool(self, tool_name):
-        validator = ToolDefinitionsValidator(
+        validator = ConversationValidator(
             error_target=TARGET, check_for_unsupported_tools=True
         )
         assistant = {
@@ -761,7 +785,7 @@ class TestUnsupportedToolCheckOptOut:
 
     @pytest.mark.parametrize(
         "tool_name",
-        NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS + STILL_UNSUPPORTED_TOOLS,
+        NEWLY_ENABLED_TOOLS + STILL_UNSUPPORTED_TOOLS,
     )
     def test_opt_out_skips_unsupported_tool_check(self, tool_name):
         validator = ToolDefinitionsValidator(
