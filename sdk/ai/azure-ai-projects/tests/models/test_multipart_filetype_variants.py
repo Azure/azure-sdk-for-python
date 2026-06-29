@@ -39,7 +39,7 @@ def _read(value):
 def _canonicalize(prepared):
     """Reduce the helper's output to ``(field, filename, content_bytes, content_type)``.
 
-    ``content_type`` defaults to ``"application/zip"`` so that 2-tuple and
+    ``content_type`` defaults to ``"application/octet-stream"`` so that 2-tuple and
     3-tuple variants compare equal when the caller relied on the default.
     """
     assert len(prepared) == 1, f"expected a single multipart entry, got {prepared!r}"
@@ -47,10 +47,10 @@ def _canonicalize(prepared):
     assert isinstance(entry, tuple), f"helper must wrap entry as a tuple, got {entry!r}"
     if len(entry) == 2:
         filename, content = entry
-        content_type = "application/zip"
+        content_type = "application/octet-stream"
     elif len(entry) == 3:
         filename, content, content_type = entry
-        content_type = content_type or "application/zip"
+        content_type = content_type or "application/octet-stream"
     else:
         raise AssertionError(f"unexpected tuple arity: {entry!r}")
     return (field, filename, _read(content), content_type)
@@ -67,7 +67,7 @@ def _variants(tmp_path):
     yield ("IO[bytes] (from open)", [_variant_io_bytes(tmp_path)])
     yield ("(filename, bytes)", [(FILENAME, CONTENT)])
     yield ("(filename, IO[bytes])", [(FILENAME, io.BytesIO(CONTENT))])
-    yield ("(filename, bytes, content_type)", [(FILENAME, CONTENT, "application/zip")])
+    yield ("(filename, bytes, content_type)", [(FILENAME, CONTENT, "application/octet-stream")])
 
 
 def test_filetype_variants_produce_equivalent_request_body(tmp_path):
@@ -77,7 +77,7 @@ def test_filetype_variants_produce_equivalent_request_body(tmp_path):
         prepared = prepare_multipart_form_data({"files": files_value}, ["files"], [])
         canonical_by_variant[label] = _canonicalize(prepared)
 
-    expected = (FIELD, FILENAME, CONTENT, "application/zip")
+    expected = (FIELD, FILENAME, CONTENT, "application/octet-stream")
     for label, canonical in canonical_by_variant.items():
         assert canonical == expected, f"variant {label!r} produced {canonical!r}, expected {expected!r}"
 
@@ -88,7 +88,7 @@ def test_filetype_variants_produce_equivalent_request_body(tmp_path):
         ("IO[bytes] (from open)", lambda tmp_path: [_variant_io_bytes(tmp_path)]),
         ("(filename, bytes)", lambda _tmp_path: [(FILENAME, CONTENT)]),
         ("(filename, IO[bytes])", lambda _tmp_path: [(FILENAME, io.BytesIO(CONTENT))]),
-        ("(filename, bytes, content_type)", lambda _tmp_path: [(FILENAME, CONTENT, "application/zip")]),
+        ("(filename, bytes, content_type)", lambda _tmp_path: [(FILENAME, CONTENT, "application/octet-stream")]),
     ],
 )
 def test_filetype_variant_normalized_entry(tmp_path, label, files_value_factory):
