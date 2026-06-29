@@ -26,7 +26,7 @@ class TestNetworkManagementInboundSecurityRuleOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
             rule_collection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +60,7 @@ class TestNetworkManagementInboundSecurityRuleOperationsAsync(AzureMgmtRecordedT
                     },
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
