@@ -73,20 +73,6 @@ def _generate_and_compare_code_report(
 
     packages = [f"{package_name}=={package_version}"]
     with create_venv_with_package(packages) as venv, tempfile.TemporaryDirectory() as tmpdir:
-        subprocess.check_call(
-            [venv.env_exe, "-m", "pip", "install", "-r", os.path.join(CHECKER_DIR, "dev_requirements.txt")],
-            cwd=CHECKER_DIR,
-        )
-
-        if use_apistub:
-            subprocess.check_call(
-                [
-                    venv.env_exe, "-m", "pip", "install",
-                    "-r", os.path.join(CHECKER_DIR, "..", "..", "eng", "apiview_reqs.txt"),
-                    "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
-                ],
-            )
-
         start = time.perf_counter()
         result = subprocess.run(
             [
