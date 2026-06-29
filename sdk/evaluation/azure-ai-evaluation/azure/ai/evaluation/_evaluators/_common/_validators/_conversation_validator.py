@@ -21,17 +21,23 @@ class ConversationValidator(ValidatorInterface):
     check_for_unsupported_tools: bool = False
     error_target: ErrorTarget
 
-    # Tools that are not yet supported by the evaluators. ``azure_ai_search``,
-    # ``azure_fabric``, and ``sharepoint_grounding`` were previously listed
-    # here but have been enabled now that the formatter JSON-encodes their
-    # structured tool_result payloads (see ``_stringify_tool_result``).
+    # Tools whose calls are not yet supported by evaluators that opt in to
+    # the unsupported-tool check (e.g. Groundedness). Tool-call/tool-output
+    # evaluators (TCS, TOU) override this list via
+    # ``ToolDefinitionsValidator.UNSUPPORTED_TOOLS`` to additionally accept
+    # ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding``
+    # now that their structured tool_result payloads are JSON-encoded by
+    # ``_stringify_tool_result``.
     UNSUPPORTED_TOOLS: List[str] = [
+        "azure_ai_search",
+        "azure_fabric",
         "bing_custom_search",
         "bing_grounding",
         "browser_automation",
         "code_interpreter_call",
         "computer_call",
         "openapi_call",
+        "sharepoint_grounding",
         "web_search",
     ]
 

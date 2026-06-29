@@ -5,21 +5,24 @@
 ### Bugs Fixed
 
 - Enabled `azure_ai_search`, `azure_fabric`, and `sharepoint_grounding` tool
-  calls for `ToolCallSuccessEvaluator`, `ToolOutputUtilizationEvaluator`, and
-  `GroundednessEvaluator`. These tools were previously rejected because their
-  `tool_result` payloads are structured (dict / list of dicts) and the
-  internal `[TOOL_RESULT] {result}` formatter rendered them with `str()`,
-  producing Python `repr` output (single quotes, `'role': 'user'`) that the
-  LLM judges could not reliably ground on. The shared formatter now
-  JSON-encodes non-string payloads via a new `_stringify_tool_result` helper
-  (`ensure_ascii=False` to preserve customer locale data), and the
-  `ConversationValidator.UNSUPPORTED_TOOLS` list has been narrowed
-  accordingly. The remaining restricted tools (`bing_grounding`,
-  `bing_custom_search`, `web_search`, `browser_automation`,
-  `code_interpreter_call`, `computer_call`, `openapi_call`) continue to be
-  rejected. `ToolCallAccuracyEvaluator` and `ToolInputAccuracyEvaluator` are
-  unaffected — they do not render tool results into the judge prompt and
-  already opt out of the unsupported-tool check.
+  calls for `ToolCallSuccessEvaluator` and `ToolOutputUtilizationEvaluator`.
+  These tools were previously rejected because their `tool_result` payloads
+  are structured (dict / list of dicts) and the internal
+  `[TOOL_RESULT] {result}` formatter rendered them with `str()`, producing
+  Python `repr` output (single quotes, `'role': 'user'`) that the LLM judges
+  could not reliably ground on. The shared formatter now JSON-encodes
+  non-string payloads via a new `_stringify_tool_result` helper
+  (`ensure_ascii=False` to preserve customer locale data), and a new
+  `ToolDefinitionsValidator.UNSUPPORTED_TOOLS` override narrows the
+  unsupported-tool list for these evaluators. `GroundednessEvaluator`
+  continues to use the wider list on the base `ConversationValidator`,
+  matching the corresponding behavior in azureml-assets. The remaining
+  restricted tools (`bing_grounding`, `bing_custom_search`, `web_search`,
+  `browser_automation`, `code_interpreter_call`, `computer_call`,
+  `openapi_call`) continue to be rejected. `ToolCallAccuracyEvaluator` and
+  `ToolInputAccuracyEvaluator` are unaffected — they do not render tool
+  results into the judge prompt and already opt out of the unsupported-tool
+  check.
 - Fixed `RedTeam.scan()` storing decoded plaintext instead of the actual
   encoded payload for converter-based attack strategies (Base64, Flip,
   Morse, ROT13, etc.) in `evaluation_results.json` / `results.json`. The

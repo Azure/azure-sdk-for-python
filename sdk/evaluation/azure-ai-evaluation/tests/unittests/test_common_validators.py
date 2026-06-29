@@ -562,15 +562,18 @@ class TestMessagesOrQueryResponseInputValidator:
 
 
 # ---------------------------------------------------------------------------
-# Phase 2 restricted-tool enablement
+# Phase 2 restricted-tool enablement (TCS / TOU only)
 # ---------------------------------------------------------------------------
-# ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding`` are now
-# accepted by the validator now that the formatter JSON-encodes their
-# structured tool_result payloads. The remaining restricted tools (bing
-# variants, web_search, browser_automation, code_interpreter_call,
-# computer_call, openapi_call) must continue to be rejected.
+# ``ToolDefinitionsValidator`` (used by ToolCallSuccess and
+# ToolOutputUtilization) accepts ``azure_ai_search``, ``azure_fabric``, and
+# ``sharepoint_grounding`` because the formatter JSON-encodes their
+# structured tool_result payloads via ``_stringify_tool_result``.
+#
+# The base ``ConversationValidator`` (used by Groundedness) intentionally
+# retains the wider list so behavior there matches the azureml-assets
+# Groundedness evaluator, which was not part of the Phase 2 change.
 
-NEWLY_ENABLED_TOOLS = [
+NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS = [
     "azure_ai_search",
     "azure_fabric",
     "sharepoint_grounding",
@@ -586,32 +589,58 @@ STILL_UNSUPPORTED_TOOLS = [
     "web_search",
 ]
 
+# What ``ConversationValidator`` (Groundedness) must still reject.
+CONVERSATION_VALIDATOR_UNSUPPORTED_TOOLS = (
+    NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS + STILL_UNSUPPORTED_TOOLS
+)
+
 
 @pytest.mark.unittest
-class TestUnsupportedToolsList:
-    """The hard-coded UNSUPPORTED_TOOLS list controls service-side gating."""
+class TestUnsupportedToolsListConversationValidator:
+    """Groundedness uses ``ConversationValidator`` directly and keeps the wide list."""
+
+    def test_full_unsupported_list_is_unchanged(self):
+        # Matches the assets Groundedness evaluator: SharePoint / AAS / Fabric
+        # tool calls are still rejected for groundedness scoring.
+        assert set(ConversationValidator.UNSUPPORTED_TOOLS) == set(
+            CONVERSATION_VALIDATOR_UNSUPPORTED_TOOLS
+        )
+
+    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS)
+    def test_groundedness_still_rejects_newly_enabled_tools(self, tool_name):
+        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        with pytest.raises(EvaluationException) as exc_info:
+            validator.validate_eval_input({"query": [_user_message()], "response": [assistant]})
+        assert exc_info.value.category == ErrorCategory.NOT_APPLICABLE
+
+
+@pytest.mark.unittest
+class TestUnsupportedToolsListToolDefinitionsValidator:
+    """TCS / TOU use ``ToolDefinitionsValidator``, which overrides the list."""
 
     def test_newly_enabled_tools_are_not_in_unsupported_list(self):
-        for tool_name in NEWLY_ENABLED_TOOLS:
-            assert tool_name not in ConversationValidator.UNSUPPORTED_TOOLS
+        for tool_name in NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS:
+            assert tool_name not in ToolDefinitionsValidator.UNSUPPORTED_TOOLS
 
     def test_still_unsupported_tools_remain_in_list(self):
         for tool_name in STILL_UNSUPPORTED_TOOLS:
-            assert tool_name in ConversationValidator.UNSUPPORTED_TOOLS
+            assert tool_name in ToolDefinitionsValidator.UNSUPPORTED_TOOLS
 
-    def test_unsupported_list_contains_no_unexpected_tools(self):
-        # Defensive: keep the list explicit so future additions are
-        # reviewed against this test.
-        assert set(ConversationValidator.UNSUPPORTED_TOOLS) == set(STILL_UNSUPPORTED_TOOLS)
+    def test_unsupported_list_exact_match(self):
+        assert set(ToolDefinitionsValidator.UNSUPPORTED_TOOLS) == set(STILL_UNSUPPORTED_TOOLS)
 
 
 @pytest.mark.unittest
-class TestValidatorAcceptsNewlyEnabledTools:
-    """Verify SharePoint / Azure AI Search / Fabric tool calls now pass validation."""
+class TestToolDefinitionsValidatorAcceptsNewlyEnabledTools:
+    """SharePoint / AAS / Fabric tool calls now pass for TCS / TOU."""
 
-    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
+    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS)
     def test_validate_eval_input_accepts_tool(self, tool_name):
-        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
+        validator = ToolDefinitionsValidator(error_target=TARGET, check_for_unsupported_tools=True)
         assistant = {
             "role": "assistant",
             "content": [_tool_call_content_item(name=tool_name)],
@@ -621,12 +650,12 @@ class TestValidatorAcceptsNewlyEnabledTools:
 
 
 @pytest.mark.unittest
-class TestValidatorRejectsStillUnsupportedTools:
+class TestToolDefinitionsValidatorRejectsStillUnsupportedTools:
     """The narrowing must not lift restrictions on the remaining tools."""
 
     @pytest.mark.parametrize("tool_name", STILL_UNSUPPORTED_TOOLS)
     def test_validate_eval_input_rejects_tool(self, tool_name):
-        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
+        validator = ToolDefinitionsValidator(error_target=TARGET, check_for_unsupported_tools=True)
         assistant = {
             "role": "assistant",
             "content": [_tool_call_content_item(name=tool_name)],
@@ -648,10 +677,10 @@ class TestUnsupportedToolCheckOptOut:
 
     @pytest.mark.parametrize(
         "tool_name",
-        NEWLY_ENABLED_TOOLS + STILL_UNSUPPORTED_TOOLS,
+        NEWLY_ENABLED_TOOLS_FOR_TOOL_EVALUATORS + STILL_UNSUPPORTED_TOOLS,
     )
     def test_opt_out_skips_unsupported_tool_check(self, tool_name):
-        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=False)
+        validator = ToolDefinitionsValidator(error_target=TARGET, check_for_unsupported_tools=False)
         assistant = {
             "role": "assistant",
             "content": [_tool_call_content_item(name=tool_name)],

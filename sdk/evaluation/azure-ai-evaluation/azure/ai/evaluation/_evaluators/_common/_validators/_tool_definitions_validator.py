@@ -5,7 +5,7 @@
 Validator for evaluators that require tool definitions.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 from typing_extensions import override
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from ._conversation_validator import ConversationValidator
@@ -17,6 +17,21 @@ class ToolDefinitionsValidator(ConversationValidator):
     """
 
     optional_tool_definitions: bool = True
+
+    # Tool-call/tool-output evaluators (TCS, TOU) accept ``azure_ai_search``,
+    # ``azure_fabric``, and ``sharepoint_grounding`` because their structured
+    # tool_result payloads are JSON-encoded by ``_stringify_tool_result``
+    # before being rendered into the judge prompt. Groundedness keeps the
+    # wider list via the base ``ConversationValidator``.
+    UNSUPPORTED_TOOLS: List[str] = [
+        "bing_custom_search",
+        "bing_grounding",
+        "browser_automation",
+        "code_interpreter_call",
+        "computer_call",
+        "openapi_call",
+        "web_search",
+    ]
 
     def __init__(
         self,
