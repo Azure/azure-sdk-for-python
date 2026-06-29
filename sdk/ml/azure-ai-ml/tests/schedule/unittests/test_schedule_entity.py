@@ -57,6 +57,7 @@ class TestScheduleEntity:
                 "actionType": "CreateJob",
                 "jobDefinition": {
                     "experimentName": "",
+                    "isArchived": False,
                     "jobType": "Pipeline",
                     "sourceJobId": "/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544",
                 },
