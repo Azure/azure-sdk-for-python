@@ -252,7 +252,7 @@ namespace azure.ai.projects.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        async def download_code_as_bytes(
+        async def download_code(
                 self, 
                 agent_name: str, 
                 *, 
@@ -261,18 +261,7 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
-        async def download_code_to_path(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_version: Optional[str] = ..., 
-                file_path: Union[str, PathLike[str]], 
-                overwrite: bool = False, 
-                **kwargs: Any
-            ) -> str: ...
-
-        @distributed_trace_async
-        async def download_session_file_as_bytes(
+        async def download_session_file(
                 self, 
                 agent_name: str, 
                 agent_session_id: str, 
@@ -280,18 +269,6 @@ namespace azure.ai.projects.aio.operations
                 remote_path: str, 
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def download_session_file_to_path(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                *, 
-                file_path: Union[str, PathLike[str]], 
-                overwrite: bool = False, 
-                remote_path: str, 
-                **kwargs: Any
-            ) -> None: ...
 
         @distributed_trace_async
         async def enable(
@@ -418,24 +395,13 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> AgentDetails: ...
 
-        @overload
+        @distributed_trace_async
         async def upload_session_file(
                 self, 
                 agent_name: str, 
-                session_id: str, 
+                agent_session_id: str, 
+                content: Union[bytes, IO[bytes]], 
                 *, 
-                content: bytes, 
-                remote_path: str, 
-                **kwargs: Any
-            ) -> SessionFileWriteResult: ...
-
-        @overload
-        async def upload_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                *, 
-                file_path: Union[str, PathLike[str]], 
                 remote_path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
@@ -9635,7 +9601,7 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
         @distributed_trace
-        def download_code_as_bytes(
+        def download_code(
                 self, 
                 agent_name: str, 
                 *, 
@@ -9644,18 +9610,7 @@ namespace azure.ai.projects.operations
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
-        def download_code_to_path(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_version: Optional[str] = ..., 
-                file_path: Union[str, PathLike[str]], 
-                overwrite: bool = False, 
-                **kwargs: Any
-            ) -> str: ...
-
-        @distributed_trace
-        def download_session_file_as_bytes(
+        def download_session_file(
                 self, 
                 agent_name: str, 
                 agent_session_id: str, 
@@ -9663,18 +9618,6 @@ namespace azure.ai.projects.operations
                 remote_path: str, 
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def download_session_file_to_path(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                *, 
-                file_path: Union[str, PathLike[str]], 
-                overwrite: bool = False, 
-                remote_path: str, 
-                **kwargs: Any
-            ) -> None: ...
 
         @distributed_trace
         def enable(
@@ -9801,24 +9744,13 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> AgentDetails: ...
 
-        @overload
+        @distributed_trace
         def upload_session_file(
                 self, 
                 agent_name: str, 
-                session_id: str, 
+                agent_session_id: str, 
+                content: Union[bytes, IO[bytes]], 
                 *, 
-                content: bytes, 
-                remote_path: str, 
-                **kwargs: Any
-            ) -> SessionFileWriteResult: ...
-
-        @overload
-        def upload_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
-                *, 
-                file_path: Union[str, PathLike[str]], 
                 remote_path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
