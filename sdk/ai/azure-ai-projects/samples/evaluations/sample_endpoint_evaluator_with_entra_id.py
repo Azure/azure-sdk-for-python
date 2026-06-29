@@ -24,6 +24,7 @@ DESCRIPTION:
     Your endpoint must:
     - Accept POST requests with a JSON body like:
         {
+          "schema_version": "0.0.1",
           "evaluator_name": "...",
           "evaluator_version": "...",
           "evaluation_level": "turn",
@@ -34,6 +35,7 @@ DESCRIPTION:
         }
     - Return a JSON response like:
         {
+          "schema_version": "0.0.1",
           "score": 0.85,
           "reason": "Response is accurate and concise.",
           "status": "completed",
@@ -101,7 +103,7 @@ endpoint_url = os.environ["ENDPOINT_URL"]
 endpoint_app_id = os.environ["ENDPOINT_APP_ID"]
 
 # Derive account name from the project endpoint URL
-# e.g., https://np-int.services.ai.azure.com/api/projects/default -> "np-int"
+# e.g., https://accountname.services.ai.azure.com/api/projects/default -> "accountname"
 hostname = urlparse(endpoint).hostname
 if not hostname:
     raise ValueError(f"Could not parse hostname from endpoint: {endpoint}")
