@@ -18,7 +18,6 @@ from azure.ai.ml.entities import Registry
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
-from azure.core.polling.base_polling import LROBasePolling
 
 from .._utils._azureml_polling import AzureMLPolling
 from ..constants._common import LROConfigurations, Scope
@@ -177,7 +176,7 @@ class RegistryOperations:
             client,
             initial_response,
             _get_long_running_output,
-            LROBasePolling(LROConfigurations.POLL_INTERVAL),
+            self._get_polling(str(registry.name)),
         )
         return poller
 

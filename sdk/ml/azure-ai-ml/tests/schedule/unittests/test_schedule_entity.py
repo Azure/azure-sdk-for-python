@@ -36,8 +36,8 @@ class TestScheduleEntity:
             "action": {"actionType": "CreateJob", "jobDefinition": {}},
             "displayName": "weekly retrain schedule",
             "trigger": {
-                "endTime": "2022-06-10T10:15:00Z",
-                "startTime": "2022-03-10T10:15:00Z",
+                "endTime": "2022-06-10 10:15:00",
+                "startTime": "2022-03-10 10:15:00",
                 "timeZone": "Pacific Standard Time",
                 "triggerType": "Cron",
                 "expression": "15 10 * * 1",
@@ -91,8 +91,8 @@ class TestScheduleEntity:
         trigger = RecurrenceTrigger(frequency="day", interval=1, start_time=start_time, end_time=end_time)
         assert trigger.schedule is not None
         assert trigger._to_rest_object().as_dict() == {
-            "endTime": "2022-06-10T10:15:00Z",
-            "startTime": "2022-03-10T10:15:00Z",
+            "endTime": "2022-06-10 10:15:00",
+            "startTime": "2022-03-10 10:15:00",
             "timeZone": "UTC",
             "triggerType": "Recurrence",
             "frequency": "day",
@@ -109,11 +109,11 @@ class TestScheduleEntity:
         )
         assert trigger.schedule is not None
         assert trigger._to_rest_object().as_dict() == {
-            "endTime": "2022-06-10T10:15:00Z",
+            "endTime": "2022-06-10 10:15:00",
             "frequency": "day",
             "interval": 1,
             "schedule": {"hours": [1, 3, 4, 5], "minutes": [0], "weekDays": ["tuesday", "thursday"]},
-            "startTime": "2022-03-10T10:15:00Z",
+            "startTime": "2022-03-10 10:15:00",
             "timeZone": "UTC",
             "triggerType": "Recurrence",
         }
