@@ -8,8 +8,6 @@
 
 ### Other Changes
 
-- Migrated the 2022-10/2022-12/2023-02/2023-06 preview REST clients onto the shared `arm_ml_service` client. This is an internal change; the on-the-wire request/response contract for these API versions is unchanged.
-
 ## 1.34.0 (2026-06-11)
 
 ### Features Added
