@@ -6,20 +6,24 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create a Routine that fires automatically
-    from a one-shot timer trigger, then record the resulting runs by polling
-    `list_runs(...)` using the synchronous AIProjectClient.
+    This sample demonstrates how to create a Routine with a manual (custom)
+    trigger and fire it on demand via `dispatch(...)`, then record the
+    resulting run by polling `list_runs(...)` using the synchronous
+    AIProjectClient.
 
-    The routine is bound to an existing hosted agent and scheduled to fire a
-    short time in the future. The sample then polls the run history until a
-    terminal phase is reached (or a deadline elapses), printing each observed
-    transition. The routine is deleted at the end of the sample.
+    The routine is bound to an existing hosted agent. Because the trigger is
+    a `CustomRoutineTrigger`, the routine never fires on its own; the sample
+    explicitly invokes it with `project_client.beta.routines.dispatch(...)`
+    passing an `InvokeAgentResponsesApiDispatchPayload` carrying the input
+    sent to the agent. The sample then polls the run history until a
+    terminal phase is reached (or a deadline elapses), printing each
+    observed transition. The routine is deleted at the end of the sample.
 
     Routines are currently a preview feature. In the Python SDK, you access
     these operations via `project_client.beta.routines`.
 
 USAGE:
-    python sample_routines_with_timer_trigger.py
+    python sample_routines_with_dispatch.py
 
     Before running the sample:
 
@@ -29,10 +33,9 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent to invoke
-       when the routine timer fires.
+       when the routine is dispatched.
 """
 
-import datetime
 import json
 import os
 import time
@@ -40,33 +43,18 @@ import time
 from dotenv import load_dotenv
 
 from azure.core.exceptions import ResourceNotFoundError
-from azure.core.settings import settings
-
-settings.tracing_implementation = "opentelemetry"
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor, ConsoleSpanExporter
-from azure.monitor.opentelemetry import configure_azure_monitor
-from azure.ai.projects.telemetry import AIProjectInstrumentor
-
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    CustomRoutineTrigger,
+    InvokeAgentResponsesApiDispatchPayload,
     InvokeAgentResponsesApiRoutineAction,
     RoutineRun,
     RoutineRunPhase,
-    TimerRoutineTrigger,
 )
 
 load_dotenv()
-
-# Console exporter: spans printed to stdout as they finish.
-tracer_provider = TracerProvider()
-tracer_provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
-trace.set_tracer_provider(tracer_provider)
-tracer = trace.get_tracer(__name__)
-AIProjectInstrumentor().instrument()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
@@ -74,14 +62,10 @@ agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    # Azure Monitor exporter: same spans also sent to the Application Insights
-    # resource attached to the Foundry project, viewable in the "Tracing" tab
-    # on ai.azure.com.
-    configure_azure_monitor(connection_string=project_client.telemetry.get_application_insights_connection_string())
 
-    routine_name = "sample-routine-timer"
+    routine_name = "sample-routine-dispatch"
 
     try:
         project_client.beta.routines.delete(routine_name)
@@ -89,17 +73,29 @@ with (
     except ResourceNotFoundError:
         pass
 
-    fire_at = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=20)
     created = project_client.beta.routines.create_or_update(
         routine_name,
-        description="Routine used by the timer-trigger sample.",
+        description="Routine used by the dispatch sample.",
         enabled=True,
-        triggers={"once": TimerRoutineTrigger(at=fire_at)},
+        triggers={
+            "manual": CustomRoutineTrigger(
+                provider="sample-provider",
+                event_name="sample-event",
+                parameters={},
+            ),
+        },
         action=InvokeAgentResponsesApiRoutineAction(agent_name=agent_name),
     )
-    print(f"Created routine: {created.name} enabled={created.enabled} fire_at={fire_at.isoformat()}")
+    print(f"Created routine: {created.name} enabled={created.enabled}")
 
-    terminal_phases = {RoutineRunPhase.COMPLETED, RoutineRunPhase.FAILED}
+    dispatch_result = project_client.beta.routines.dispatch(
+        routine_name,
+        payload=InvokeAgentResponsesApiDispatchPayload(
+            input="Say hello from a manually dispatched routine.",
+        ),
+    )
+    print(f"Dispatched routine: dispatch_id={dispatch_result.dispatch_id} task_id={dispatch_result.task_id}")
+
     seen_phases: dict[str, RoutineRunPhase] = {}
     final_run: RoutineRun | None = None
 
@@ -128,7 +124,7 @@ with (
         # run via `openai_client.responses.retrieve(final_run.response_id)` is
         # not yet supported by the service for this scenario.
     else:
-        print("Timer did not produce a terminal run within the deadline.")
+        print("Dispatch did not produce a terminal run within the deadline.")
 
     project_client.beta.routines.delete(routine_name)
     print("Routine deleted")

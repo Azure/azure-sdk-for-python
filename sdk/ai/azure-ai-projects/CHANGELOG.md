@@ -1,5 +1,46 @@
 # Release History
 
+## 2.3.0 (Unreleased)
+
+### Features Added
+
+* Two new methods `enable` and `disable` on the `.agents` subclient.
+* New Agent tool type `REMINDER_PREVIEW`.
+* Hosted agents are now stable. There is no need to set `allow_preview=True` on the `AIProjectClient` constructor to create a Hosted agent.
+* Toolboxes operations are now stable. The have moved from `.beta.toolboxes` subclient to the `.toolboxes` subclient.
+* Session and Session files operations are now stable. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
+* Agent code operations are now stable. This includes `create_version_from_code` and `download_code`. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
+
+### Breaking Changes
+
+* Toolbox operation `create_version` now defines `tools` of type `List[ToolboxTool]` instead of `List[Tool]`.
+* Input argument `path` renamed to `remote_path` in methods `.agents.delete_session_file`, `.agents.download_session_file`, `.agents.list_session_files` and `.agents.upload_session_file`. 
+* Agent Optimization methods `.beta.agents.*optimization*` were re-written. Updated from v1 to v2 preview, focusing on cleanup to better align with Foundry job guidelines and platform standards. The v1 surface accumulated unused candidate sub-resources, internal-detail properties, and custom operation patterns inconsistent with the Foundry platform. The v2 API removes redundant models and operations, adopts shared Foundry job patterns (`JobLike<>`, standard job verbs), and introduces typed discriminated unions for dataset inputs and evaluator references.
+* Method `.beta.agents.list_optimization_candidates` now returns `ItemPaged[OptimizationCandidate]` instead of `AgentsPagedResultOptimizationCandidate`. The `after` parameter has been removed (use continuation-token-based paging instead).
+* Property `default_ttl_seconds` on class `MemoryStoreDefaultOptions` has changed from type `int` to type `datetime.timedelta`.
+* Method ".beta.agents.patch_agent_details` moved out of the beta sub-client and renamed to `.agents.update_details`.
+
+
+### Sample updates
+
+* Added `sample_routines_crud.py` to demonstrate CRUD operations.
+* Added `sample_routines_with_timer_trigger.py` to demonstrate triggering a routine with a timer.
+* Added `sample_routines_with_schedule_trigger.py` to demonstrate triggering a routine on a recurring cron schedule via `ScheduleRoutineTrigger`.
+* Added `sample_routines_with_dispatch.py` to demonstrate manually firing a routine on demand via `routines.dispatch(...)` using a `CustomRoutineTrigger`.
+* Added new Hosted Agent sample `sample_toolbox_with_skill.py` under `samples/hosted_agents/`, demonstrating a code-based Hosted Agent that uses Toolbox MCP skills.
+* Updated `sample_dataset_generation_job_traces_for_evaluation.py` and `sample_dataset_generation_job_traces_for_finetuning.py` to create a temporary agent, seed conversations, retry the data generation job over the trace window, and clean up all created resources.
+* Updated `sample_memory_crud.py` and `sample_memory_crud_async.py` to demonstrate memory item CRUD (`create_memory`, `get_memory`, `update_memory`, `list_memories`, `delete_memory`) in addition to memory store CRUD.
+* Updated the rubric evaluator generation samples (`sample_rubric_evaluator_generation_basic.py`, `sample_rubric_evaluator_generation_iterate.py`, `sample_rubric_evaluator_generation_lifecycle.py`, `sample_rubric_evaluator_generation_all_sources.py`) to use the typed `EvaluatorGenerationJob` / `EvaluatorGenerationInputs` / `*EvaluatorGenerationJobSource` models. The job inputs are now nested under `inputs` per the service contract, and the traces source uses `datetime` values for `start_time` / `end_time`.
+* Updated Hosted Agent code-upload samples (`sample_create_hosted_agent_from_code.py`, `sample_create_hosted_agent_from_code_async.py`) to target runtime `python_3_14`, since `python_3_12` is no longer supported.
+* Updated Hosted Agent echo-agent assets (`samples/hosted_agents/assets/echo-agent/main.py`, `echo-agent-prebuilt.zip`) to use `@app.response_handler`, resolving a response-handling issue. The remote-build code-upload sample now builds the echo-agent zip from `samples/hosted_agents/assets/echo-agent/` at runtime instead of relying on a checked-in `echo-agent.zip`, so users can update the agent code and rerun the sample with their changes.
+* Updated Skills upload/download samples (`sample_skills_upload_and_download.py`, `sample_skills_upload_and_download_async.py`) to build the `team-status-update.zip` package from `samples/skills/assets/team-status-update/` at runtime instead of relying on a checked-in zip archive, so users can update the skill content and rerun the sample with their changes.
+* Updated scheduled evaluation samples (`sample_scheduled_evaluations.py`, `sample_scheduled_agent_traces_evaluation_smart_filter.py`) to import `ResourceManagementClient` from `azure.mgmt.resource.resources`.
+* Relocated and renamed `sample_skill_in_toolbox.py` (from `samples/hosted_agents/`) to `samples/agents/tools/sample_agent_toolbox_skill.py`.
+* Relocated Skills samples from `samples/hosted_agents/` to `samples/skills/`:
+  * `sample_skills_crud.py`.
+  * `sample_skills_upload_and_download.py`.
+* Relocated Toolbox sample from `samples/hosted_agents/` to `samples/toolboxes/sample_toolboxes_crud.py`.
+
 ## 2.2.0 (2026-05-29)
 
 ### Features Added

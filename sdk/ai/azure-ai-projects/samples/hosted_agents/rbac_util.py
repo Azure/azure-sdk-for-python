@@ -1,3 +1,4 @@
+import os
 import uuid
 from typing import Any, cast
 from urllib.parse import urlparse
@@ -5,10 +6,6 @@ from urllib.parse import urlparse
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ResourceNotFoundError
-from azure.mgmt.authorization import AuthorizationManagementClient, models as authorization_models
-from azure.mgmt.authorization.aio import AuthorizationManagementClient as AsyncAuthorizationManagementClient
-from azure.mgmt.resource.resources import ResourceManagementClient
-from azure.mgmt.resource.resources.aio import ResourceManagementClient as AsyncResourceManagementClient
 from azure.ai.projects.models import AgentVersionDetails
 
 AZURE_AI_USER_ROLE_DEFINITION_GUID = "53ca6127-db72-4b80-b1b0-d745d6d5456d"
@@ -28,6 +25,8 @@ def _resolve_ai_account_resource_id(
     project_name: str,
     subscription_id: str,
 ) -> str:
+    from azure.mgmt.resource.resources import ResourceManagementClient
+
     resource_client = ResourceManagementClient(credential, subscription_id)
     project_resources = resource_client.resources.list(
         filter="resourceType eq 'Microsoft.CognitiveServices/accounts/projects'"
@@ -59,6 +58,8 @@ def _resolve_ai_account_resource_id(
 def _ensure_agent_identity_rbac_with_role_id(
     credential: TokenCredential, principal_id: str, scope_resource_id: str, subscription_id: str, role_id: str
 ) -> tuple[bool, str]:
+    from azure.mgmt.authorization import AuthorizationManagementClient, models as authorization_models
+
     authorization_client = AuthorizationManagementClient(credential, subscription_id)
     role_definition_id = f"/subscriptions/{subscription_id}/providers/Microsoft.Authorization/roleDefinitions/{role_id}"
     role_assignment_name = str(
@@ -117,6 +118,9 @@ def ensure_agent_identity_rbac(
     :raises ~azure.core.exceptions.HttpResponseError: If role assignment creation fails
         for reasons other than an existing assignment.
     """
+    if os.environ.get("SKIP_RBAC"):
+        print("Skipping RBAC setup.")
+        return
     if not agent.instance_identity or not agent.instance_identity.principal_id:
         raise RuntimeError("Agent instance_identity or principal_id is not available.")
     principal_id = agent.instance_identity.principal_id
@@ -140,6 +144,8 @@ async def _resolve_ai_account_resource_id_async(
     project_name: str,
     subscription_id: str,
 ) -> str:
+    from azure.mgmt.resource.resources.aio import ResourceManagementClient as AsyncResourceManagementClient
+
     async with AsyncResourceManagementClient(credential, subscription_id) as resource_client:
         project_id_segment = f"/accounts/{account_name}/projects/{project_name}".lower()
         matching_projects = []
@@ -178,6 +184,9 @@ async def _ensure_agent_identity_rbac_with_role_id_async(
     subscription_id: str,
     role_id: str,
 ) -> tuple[bool, str]:
+    from azure.mgmt.authorization import models as authorization_models
+    from azure.mgmt.authorization.aio import AuthorizationManagementClient as AsyncAuthorizationManagementClient
+
     async with AsyncAuthorizationManagementClient(credential, subscription_id) as authorization_client:
         role_definition_id = (
             f"/subscriptions/{subscription_id}/providers/Microsoft.Authorization/roleDefinitions/{role_id}"
@@ -233,6 +242,9 @@ async def ensure_agent_identity_rbac_async(
     :raises ~azure.core.exceptions.HttpResponseError: If role assignment creation fails
         for reasons other than an existing assignment.
     """
+    if os.environ.get("SKIP_RBAC"):
+        print("Skipping RBAC setup.")
+        return
     if not agent.instance_identity or not agent.instance_identity.principal_id:
         raise RuntimeError("Agent instance_identity or principal_id is not available.")
     principal_id = agent.instance_identity.principal_id

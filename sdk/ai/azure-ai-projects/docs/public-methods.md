@@ -1,57 +1,89 @@
-# AIProjectClient Subclients
+# Public AIProjectClient methods
 
-This document lists all sub-clients available on `AIProjectClient` and their public method counts. Overload methods are not counted. Only synchronous methods are counted (but each one has an equivalent asynchronous method).
+This document lists all public methods available on `AIProjectClient` and its sub-clients. Overload methods are not counted. Only synchronous methods are counted (but each one has an equivalent asynchronous method).
 
 ## Summary
 
-There are a total of 139 unique public methods across all sub-clients.
+There are a total of 143 unique public methods:
+- 5 stable methods on the client
+- 57 stable methods on top-level sub-clients
+- 81 beta methods on nested beta sub-clients
 
-### Top-level Sub-clients (stable operations)
+### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `agents` | AgentsOperations | 8 |
-| `evaluation_rules` | EvaluationRulesOperations | 4 |
+| `agents` | AgentsOperations | 25 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 9 |
 | `deployments` | DeploymentsOperations | 2 |
+| `evaluation_rules` | EvaluationRulesOperations | 4 |
 | `indexes` | IndexesOperations | 5 |
 | `telemetry` | TelemetryOperations | 1 |
+| `toolboxes` | ToolboxesOperations | 8 |
 
-### Nested Sub-clients (beta operations)
+### Nested sub-clients (beta operations)
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `beta.agents` | BetaAgentsOperations | 24 |
+| `beta.agents` | BetaAgentsOperations | 5 |
 | `beta.datasets` | BetaDatasetsOperations | 5 |
 | `beta.evaluation_taxonomies` | BetaEvaluationTaxonomiesOperations | 5 |
 | `beta.evaluators` | BetaEvaluatorsOperations | 13 |
 | `beta.insights` | BetaInsightsOperations | 3 |
 | `beta.memory_stores` | BetaMemoryStoresOperations | 13 |
-| `beta.models` | BetaModelsOperations | 8 |
+| `beta.models` | BetaModelsOperations | 9 |
 | `beta.red_teams` | BetaRedTeamsOperations | 3 |
 | `beta.routines` | BetaRoutinesOperations | 8 |
 | `beta.schedules` | BetaSchedulesOperations | 6 |
 | `beta.skills` | BetaSkillsOperations | 11 |
-| `beta.toolboxes` | BetaToolboxesOperations | 8 |
 
 
-## Method list table
+## Stable methods on the client
 
-Alphabetically sorted, with ".beta" sub-client at the end.
+Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
 
 ```
+.__enter__
+.__exit__
+.close
+.get_openai_client*
+.send_request
+```
+
+## Stable methods on top-level sub clients
+
+Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
+
+```
+.agents.create_session
 .agents.create_version
+.agents.create_version_from_code
 .agents.create_version_from_manifest
 .agents.delete
+.agents.delete_session
+.agents.delete_session_file
 .agents.delete_version
+.agents.disable
+.agents.download_code_as_bytes
+.agents.download_code_to_path*
+.agents.download_session_file_as_bytes
+.agents.download_session_file_to_path*
+.agents.enable
 .agents.get
+.agents.get_session
+.agents.get_session_log_stream
 .agents.get_version
 .agents.list
+.agents.list_session_files
+.agents.list_sessions
 .agents.list_versions
+.agents.stop_session
+.agents.update_details
+.agents.upload_session_file*
 
-.connections.get
-.connections.get_default
+.connections.get*
+.connections.get_default*
 .connections.list
 
 .datasets.create_or_update
@@ -61,8 +93,8 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .datasets.list
 .datasets.list_versions
 .datasets.pending_upload
-.datasets.upload_file
-.datasets.upload_folder
+.datasets.upload_file*
+.datasets.upload_folder*
 
 .deployments.get
 .deployments.list
@@ -78,32 +110,28 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .indexes.list
 .indexes.list_versions
 
-.telemetry.get_application_insights_connection_string
+.telemetry.get_application_insights_connection_string*
 
+.toolboxes.create_version
+.toolboxes.delete
+.toolboxes.delete_version
+.toolboxes.get
+.toolboxes.get_version
+.toolboxes.list
+.toolboxes.list_versions
+.toolboxes.update
+```
+
+## Beta methods on nested sub-clients
+
+Alphabetically sorted. An asterisk at the end of the method name means is a hand-written method.
+
+```
 .beta.agents.cancel_optimization_job
 .beta.agents.create_optimization_job
-.beta.agents.create_session
-.beta.agents.create_version_from_code
 .beta.agents.delete_optimization_job
-.beta.agents.delete_session
-.beta.agents.delete_session_file
-.beta.agents.download_code
-.beta.agents.download_session_file
-.beta.agents.get_candidate_file
-.beta.agents.get_optimization_candidate
-.beta.agents.get_optimization_candidate_config
-.beta.agents.get_optimization_candidate_results
 .beta.agents.get_optimization_job
-.beta.agents.get_session
-.beta.agents.get_session_log_stream
-.beta.agents.list_optimization_candidates
 .beta.agents.list_optimization_jobs
-.beta.agents.list_session_files
-.beta.agents.list_sessions
-.beta.agents.patch_agent_details
-.beta.agents.promote_candidate
-.beta.agents.stop_session
-.beta.agents.upload_session_file
 
 .beta.datasets.cancel_generation_job
 .beta.datasets.create_generation_job
@@ -135,7 +163,7 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.insights.get
 .beta.insights.list
 
-.beta.memory_stores.begin_update_memories
+.beta.memory_stores.begin_update_memories*
 .beta.memory_stores.create
 .beta.memory_stores.create_memory
 .beta.memory_stores.delete
@@ -145,16 +173,17 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.memory_stores.get_memory
 .beta.memory_stores.list
 .beta.memory_stores.list_memories
-.beta.memory_stores.search_memories
+.beta.memory_stores.search_memories*
 .beta.memory_stores.update
 .beta.memory_stores.update_memory
 
-.beta.models.pending_create_version
+.beta.models.create*
 .beta.models.delete
 .beta.models.get
 .beta.models.get_credentials
 .beta.models.list
 .beta.models.list_versions
+.beta.models.pending_create_version
 .beta.models.pending_upload
 .beta.models.update
 
@@ -189,13 +218,4 @@ Alphabetically sorted, with ".beta" sub-client at the end.
 .beta.skills.list
 .beta.skills.list_versions
 .beta.skills.update
-
-.beta.toolboxes.create_version
-.beta.toolboxes.delete
-.beta.toolboxes.delete_version
-.beta.toolboxes.get
-.beta.toolboxes.get_version
-.beta.toolboxes.list
-.beta.toolboxes.list_versions
-.beta.toolboxes.update
 ```
