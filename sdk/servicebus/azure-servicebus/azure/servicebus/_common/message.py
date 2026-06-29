@@ -66,7 +66,10 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
     :type body: Optional[Union[str, bytes]]
 
     :keyword application_properties: The user defined properties on the message.
-    :paramtype application_properties: Dict[str, Union[int or float or bool or
+     When sending, string keys are accepted. When receiving, application property keys and string values
+     are returned as bytes due to the underlying AMQP protocol. Use bytes keys to access properties
+     on received messages, e.g., ``message.application_properties[b"my_key"]``.
+    :paramtype application_properties: Dict[str or bytes, Union[int or float or bool or
      bytes or str or uuid.UUID or datetime or None]]
     :keyword Optional[str] session_id: The session identifier of the message for a sessionful entity.
     :keyword Optional[str] message_id: The id to identify the message.
@@ -288,6 +291,12 @@ class ServiceBusMessage(object):  # pylint: disable=too-many-instance-attributes
     @property
     def application_properties(self) -> Optional[Dict[Union[str, bytes], PrimitiveTypes]]:
         """The user defined properties on the message.
+
+        .. note::
+            When receiving messages, application property keys and string values are returned
+            as bytes, not strings, due to the underlying AMQP protocol. Use bytes keys to access
+            properties on received messages:
+            ``message.application_properties.get(b"my_key")``
 
         :rtype: dict[str or bytes, PrimitiveTypes] or None
         """
