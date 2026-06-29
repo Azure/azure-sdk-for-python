@@ -439,6 +439,9 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
             # Rest pipeline job will hold a 'Default' as experiment_name,
             # MFE will add default if None, so pass an empty string here.
             job_definition = RestPipelineJob(source_job_id=self.create_job, experiment_name="")
+            # The arm_ml_service PipelineJob emits ``isArchived: false`` which the legacy v2023_04 wire
+            # did not; drop it so the arm-id schedule body stays unchanged.
+            job_definition.pop("isArchived", None)
         else:
             msg = "Unsupported job type '{}' in schedule {}."
             raise ValidationException(
