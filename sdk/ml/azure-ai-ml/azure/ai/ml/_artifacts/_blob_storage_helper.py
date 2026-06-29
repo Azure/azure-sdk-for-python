@@ -246,9 +246,14 @@ class BlobStorageClient:
         try:
             my_list = list(self.container_client.list_blobs(name_starts_with=starts_with, include="metadata"))
             download_size_in_mb = 0
+            resolved_destination = Path(destination).resolve()
             for item in my_list:
                 blob_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
                 target_path = Path(destination, blob_name).resolve()
+                if not target_path.is_relative_to(resolved_destination):
+                    raise ValueError(
+                        f"Blob name contains a path traversal entry and cannot be downloaded safely: {item.name}"
+                    )
 
                 if _blob_is_hdi_folder(item):
                     target_path.mkdir(parents=True, exist_ok=True)

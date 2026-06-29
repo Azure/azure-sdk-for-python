@@ -403,19 +403,28 @@ def recursive_download(
         files = [item for item in items if not item["is_directory"]]
         folders = [item for item in items if item["is_directory"]]
 
+        resolved_destination = Path(destination).resolve()
         for f in files:
             Path(destination).mkdir(parents=True, exist_ok=True)
             file_name = f["name"]
+            local_path = Path(destination, file_name).resolve()
+            if not local_path.is_relative_to(resolved_destination):
+                raise ValueError(
+                    f"File name contains a path traversal entry and cannot be downloaded safely: {file_name}"
+                )
             file_client = client.get_file_client(file_name)
             file_content = file_client.download_file(max_concurrency=max_concurrency)
-            local_path = Path(destination, file_name)
             with open(local_path, "wb") as file_data:
                 file_data.write(file_content.readall())
 
         for f in folders:
+            sub_destination = Path(destination, f["name"]).resolve()
+            if not sub_destination.is_relative_to(resolved_destination):
+                raise ValueError(
+                    f"Directory name contains a path traversal entry and cannot be downloaded safely: {f['name']}"
+                )
             sub_client = client.get_subdirectory_client(f["name"])
-            destination = "/".join((destination, f["name"]))
-            recursive_download(sub_client, destination=destination, max_concurrency=max_concurrency)
+            recursive_download(sub_client, destination=sub_destination, max_concurrency=max_concurrency)
     except Exception as e:
         msg = f"Saving fileshare directory with prefix {starts_with} was unsuccessful."
         raise MlException(

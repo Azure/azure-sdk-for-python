@@ -206,9 +206,14 @@ class Gen2StorageClient:
         try:
             mylist = self.file_system_client.get_paths(path=starts_with)
             download_size_in_mb = 0
+            resolved_destination = Path(destination).resolve()
             for item in mylist:
                 file_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
-                target_path = Path(destination, file_name)
+                target_path = Path(destination, file_name).resolve()
+                if not target_path.is_relative_to(resolved_destination):
+                    raise ValueError(
+                        f"Path name contains a path traversal entry and cannot be downloaded safely: {item.name}"
+                    )
 
                 if item.is_directory:
                     target_path.mkdir(parents=True, exist_ok=True)
