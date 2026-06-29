@@ -1,4 +1,2 @@
 -e ../../eng/tools/azure-sdk-tools
 jsondiff>=1.2.0
---extra-index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
--r ../../eng/apiview_reqs.txt
