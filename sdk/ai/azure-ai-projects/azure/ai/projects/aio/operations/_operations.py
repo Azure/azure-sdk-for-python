@@ -46,8 +46,8 @@ from ...operations._operations import (
     build_agents_delete_session_request,
     build_agents_delete_version_request,
     build_agents_disable_request,
-    build_agents_download_code_as_bytes_request,
-    build_agents_download_session_file_as_bytes_request,
+    build_agents_download_code_request,
+    build_agents_download_session_file_request,
     build_agents_enable_request,
     build_agents_get_request,
     build_agents_get_session_log_stream_request,
@@ -1481,7 +1481,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def download_code_as_bytes(
+    async def download_code(
         self, agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Download agent code.
@@ -1517,7 +1517,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_agents_download_code_as_bytes_request(
+        _request = build_agents_download_code_request(
             agent_name=agent_name,
             agent_version=agent_version,
             api_version=self._config.api_version,
@@ -2318,7 +2318,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def download_session_file_as_bytes(
+    async def download_session_file(
         self, agent_name: str, agent_session_id: str, *, remote_path: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Download a session file.
@@ -2350,7 +2350,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_agents_download_session_file_as_bytes_request(
+        _request = build_agents_download_session_file_request(
             agent_name=agent_name,
             agent_session_id=agent_session_id,
             remote_path=remote_path,

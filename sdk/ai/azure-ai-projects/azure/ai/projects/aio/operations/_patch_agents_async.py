@@ -202,10 +202,15 @@ class AgentsOperations(GeneratedAgentsOperations):
                         raise new_exc from exc
             raise
 
-
     @distributed_trace_async
-    async def _upload_session_file(
-        self, agent_name: str, agent_session_id: str, content: Union[bytes, IO[bytes]], *, remote_path: str, **kwargs: Any
+    async def upload_session_file(
+        self,
+        agent_name: str,
+        agent_session_id: str,
+        content: Union[bytes, IO[bytes]],
+        *,
+        remote_path: str,
+        **kwargs: Any,
     ) -> _models.SessionFileWriteResult:
         """Upload a session file.
 
@@ -226,5 +231,6 @@ class AgentsOperations(GeneratedAgentsOperations):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         content_bytes: bytes = content if isinstance(content, bytes) else content.read()
-        return await super()._upload_session_file(agent_name, agent_session_id, content_bytes, remote_path=remote_path, **kwargs)
-
+        return await super()._upload_session_file(
+            agent_name, agent_session_id, content_bytes, remote_path=remote_path, **kwargs
+        )

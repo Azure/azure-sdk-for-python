@@ -41,6 +41,7 @@ USAGE:
 """
 
 import asyncio
+import hashlib
 import os
 import tempfile
 from pathlib import Path
@@ -131,12 +132,13 @@ async def main() -> None:
         # Download the zip for the version we just created, streaming to a temp file.
         version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
 
-        downloaded_version_sha256 = await project_client.agents.download_code_to_path(
+        downloaded_bytes = b"".join([chunk async for chunk in await project_client.agents.download_code(
             agent_name=agent_name,
             agent_version=created.version,
-            file_path=version_zip_path,
-            overwrite=True,
-        )
+        )])
+
+        version_zip_path.write_bytes(downloaded_bytes)
+        downloaded_version_sha256 = hashlib.sha256(downloaded_bytes).hexdigest()
 
         print(
             f"Downloaded version code zip to {version_zip_path}: {version_zip_path.stat().st_size} bytes, "

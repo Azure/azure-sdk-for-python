@@ -343,7 +343,7 @@ def build_agents_create_version_from_code_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_download_code_as_bytes_request(  # pylint: disable=name-too-long
+def build_agents_download_code_request(
     agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -595,7 +595,7 @@ def build_agents_upload_session_file_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_download_session_file_as_bytes_request(  # pylint: disable=name-too-long
+def build_agents_download_session_file_request(  # pylint: disable=name-too-long
     agent_name: str, agent_session_id: str, *, remote_path: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4903,9 +4903,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def download_code_as_bytes(
-        self, agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def download_code(self, agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any) -> Iterator[bytes]:
         """Download agent code.
 
         Downloads the code zip for a code-based hosted agent.
@@ -4939,7 +4937,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_agents_download_code_as_bytes_request(
+        _request = build_agents_download_code_request(
             agent_name=agent_name,
             agent_version=agent_version,
             api_version=self._config.api_version,
@@ -5744,7 +5742,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def download_session_file_as_bytes(
+    def download_session_file(
         self, agent_name: str, agent_session_id: str, *, remote_path: str, **kwargs: Any
     ) -> Iterator[bytes]:
         """Download a session file.
@@ -5776,7 +5774,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_agents_download_session_file_as_bytes_request(
+        _request = build_agents_download_session_file_request(
             agent_name=agent_name,
             agent_session_id=agent_session_id,
             remote_path=remote_path,
