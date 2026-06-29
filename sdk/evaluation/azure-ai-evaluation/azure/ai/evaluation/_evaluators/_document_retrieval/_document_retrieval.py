@@ -69,14 +69,6 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         self.k = 3
         self.xdcg_discount_factor = 0.6
 
-        if ground_truth_label_min >= ground_truth_label_max:
-            raise EvaluationException(
-                message="The ground truth label maximum must be strictly greater than the ground truth label minimum.",
-                blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
-                target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
-            )
-
         if not isinstance(ground_truth_label_min, int):
             raise EvaluationException(
                 message="The ground truth label minimum must be an integer value.",
@@ -88,6 +80,14 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
         if not isinstance(ground_truth_label_max, int):
             raise EvaluationException(
                 message="The ground truth label maximum must be an integer value.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
+            )
+
+        if ground_truth_label_min >= ground_truth_label_max:
+            raise EvaluationException(
+                message="The ground truth label maximum must be strictly greater than the ground truth label minimum.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.DOCUMENT_RETRIEVAL_EVALUATOR,
