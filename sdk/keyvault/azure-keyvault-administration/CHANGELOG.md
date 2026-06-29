@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed an replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level.
+
 ### Other Changes
 
 ## 4.8.0b1 (2026-05-29)
