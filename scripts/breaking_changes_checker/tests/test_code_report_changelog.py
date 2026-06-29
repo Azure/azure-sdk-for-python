@@ -10,11 +10,13 @@ import os
 import subprocess
 import tempfile
 import sys
+import time
 
 import pytest
 
 CHECKER_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+MAX_APIMANAGEMENT_APISTUB_CODE_REPORT_SECONDS = 120
 
 
 def _code_report_args(use_apistub: bool = False):
@@ -59,6 +61,7 @@ def _generate_and_compare_code_report(
     package_version: str,
     expected_report_file: str,
     use_apistub: bool = False,
+    max_code_report_seconds: int | None = None,
 ):
     """Install one package version, generate a code report, and compare it to expected data.
 
@@ -84,6 +87,7 @@ def _generate_and_compare_code_report(
                 ],
             )
 
+        start = time.perf_counter()
         result = subprocess.run(
             [
                 venv.env_exe,
@@ -98,7 +102,13 @@ def _generate_and_compare_code_report(
             text=True,
             cwd=tmpdir,
         )
+        elapsed = time.perf_counter() - start
         assert result.returncode == 0, f"Code report generation for {package_version} failed:\n{result.stderr}"
+        if max_code_report_seconds is not None:
+            assert elapsed < max_code_report_seconds, (
+                f"Code report generation for {package_version} took {elapsed:.2f}s, "
+                f"expected less than {max_code_report_seconds}s"
+            )
         _assert_code_report_matches_expected(os.path.join(tmpdir, "code_report.json"), expected_report_file)
 
 
@@ -284,6 +294,7 @@ def test_generate_old_code_report_for_azure_mgmt_apimanagement_apistub():
         package_version="5.0.0",
         expected_report_file="expected_apimanagement_5_code_report_from_apistub.json",
         use_apistub=True,
+        max_code_report_seconds=MAX_APIMANAGEMENT_APISTUB_CODE_REPORT_SECONDS,
     )
 
 
@@ -295,6 +306,7 @@ def test_generate_new_code_report_for_azure_mgmt_apimanagement_apistub():
         package_version="6.0.0b1",
         expected_report_file="expected_apimanagement_6b1_code_report_from_apistub.json",
         use_apistub=True,
+        max_code_report_seconds=MAX_APIMANAGEMENT_APISTUB_CODE_REPORT_SECONDS,
     )
 
 
