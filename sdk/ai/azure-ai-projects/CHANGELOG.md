@@ -4,21 +4,22 @@
 
 ### Features Added
 
-* Two new methods `enable` and `disable` on the `.agents` subclient.
-* New Agent tool type `REMINDER_PREVIEW`.
-* Hosted agents are now stable. There is no need to set `allow_preview=True` on the `AIProjectClient` constructor to create a Hosted agent.
-* Toolboxes operations are now stable. The have moved from `.beta.toolboxes` subclient to the `.toolboxes` subclient.
+* Hosted agents operations are now stable. There is no need to set `allow_preview=True` on the `AIProjectClient` constructor to create a Hosted agent.
 * Session and Session files operations are now stable. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
-* Agent code operations are now stable. This includes `create_version_from_code` and `download_code`. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
+* Agent code operations are now stable. This includes `create_version_from_code` and `download_code_*` methods. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
+* Toolboxes operations are now stable. The have moved from `.beta.toolboxes` subclient to the `.toolboxes` subclient.
+* Two new methods `enable` and `disable` on the `.agents` subclient.
+* New Agent tool `ReminderPreviewTool`.
 
 ### Breaking Changes
 
-* Toolbox operation `create_version` now defines `tools` of type `List[ToolboxTool]` instead of `List[Tool]`.
+* Toolbox operation `create_version` now defines `tools` of type `List[ToolboxTool]` instead of `List[Tool]`. A new set of Toolbox tools classes,
+all derived from `ToolboxTool`, have been defined.
 * Input argument `path` renamed to `remote_path` in methods `.agents.delete_session_file`, `.agents.download_session_file`, `.agents.list_session_files` and `.agents.upload_session_file`. 
-* Agent Optimization methods `.beta.agents.*optimization*` were re-written. Updated from v1 to v2 preview, focusing on cleanup to better align with Foundry job guidelines and platform standards. The v1 surface accumulated unused candidate sub-resources, internal-detail properties, and custom operation patterns inconsistent with the Foundry platform. The v2 API removes redundant models and operations, adopts shared Foundry job patterns (`JobLike<>`, standard job verbs), and introduces typed discriminated unions for dataset inputs and evaluator references.
+* Agent Optimization methods `.beta.agents.*optimization*` were re-written to better align with Foundry job guidelines and platform standards. The old version accumulated unused candidate sub-resources, internal-detail properties, and custom operation patterns inconsistent with the Foundry platform. The new version removes redundant models and operations, adopts shared Foundry job patterns (`JobLike<>`, standard job verbs), and introduces typed discriminated unions for dataset inputs and evaluator references.
 * Method `.beta.agents.list_optimization_candidates` now returns `ItemPaged[OptimizationCandidate]` instead of `AgentsPagedResultOptimizationCandidate`. The `after` parameter has been removed (use continuation-token-based paging instead).
 * Property `default_ttl_seconds` on class `MemoryStoreDefaultOptions` has changed from type `int` to type `datetime.timedelta`.
-* Method ".beta.agents.patch_agent_details` moved out of the beta sub-client and renamed to `.agents.update_details`.
+* Method `.agents.patch_agent_details` was renamed to `.agents.update_details`.
 
 
 ### Sample updates
