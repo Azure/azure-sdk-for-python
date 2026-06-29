@@ -6,20 +6,34 @@
 """The backend layer: the object that actually sends an operation on the wire.
 
 A backend is what a ``CosmosClient`` builds once and then hands every prepared
-operation to so it can go on the wire. Today that means the six point operations
-(create, read, upsert, replace, delete, patch item) via ``execute``; the backend
-also reserves seams for the query/read-many and transactional-batch operations
-(``execute_pages``, ``execute_batch``), which are defined but raise
-``NotImplementedError`` until they are wired. Two exist. The rust backend forwards each operation to the
-compiled Rust driver; it is the path going forward and the only one meant for
-production. The core-python choice is represented by having no backend at all:
-the factory returns ``None`` and the SDK runs its legacy in-place code instead,
-kept only for testing and comparison.
+operation to so it can go on the wire.
+
+It has three dispatch methods, split by the shape of the reply rather than by
+which resource the operation touches: ``execute`` (one request, one reply -- a
+single resource, or nothing for a delete), ``execute_pages`` (one request, a
+feed that comes back a page at a time), and ``execute_batch`` (one request, a
+set of operations the service applies all-or-nothing). The operation kind is a
+value carried on the request, not a method of its own, so the three methods
+cover the whole public surface: every create/read/replace/delete of an item,
+database, container, user, permission, or script is a single-reply ``execute``;
+every ``list_*`` / ``query_*`` (and read-many) is an ``execute_pages`` feed; and
+a transactional batch is ``execute_batch``. Adding an operation is a new
+operation-kind value and a branch, not a new method.
+
+Today only ``execute`` is wired, and only for the point item operations;
+``execute_pages`` and ``execute_batch`` are defined but raise
+``NotImplementedError`` until the feed and batch operations are added.
+
+Two backends exist. The rust backend forwards each operation to the compiled
+Rust driver; it is the path going forward and the only one meant for production.
+The core-python choice is represented by having no backend at all: the factory
+returns ``None`` and the SDK runs its legacy in-place code instead, kept only for
+testing and comparison.
 
 The package is split by job. ``base`` holds the ``CosmosBackend`` abstract class
 every backend implements -- its three dispatch methods are ``execute`` (the one
 implemented today) plus the reserved ``execute_pages`` and ``execute_batch``,
-which raise ``NotImplementedError`` until the query and batch operations are
+which raise ``NotImplementedError`` until the feed and batch operations are
 added -- plus the frozen ``PreparedRequest`` / ``BackendResponse`` data classes
 (and the reserved ``PreparedQuery`` / ``QueryPage`` / ``PreparedBatch`` /
 ``BatchResponse``) and the operation-kind constants. ``factory``

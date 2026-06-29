@@ -20,6 +20,7 @@ three things:
 from __future__ import annotations
 
 import asyncio
+import concurrent.futures
 import logging
 import re
 import threading
@@ -35,6 +36,7 @@ from azure.cosmos._backend import _driver_registry
 from azure.cosmos._backend._driver_registry import (
     StrictEngineIsolationError,
     _reset_for_tests as _reset_driver_registry,
+    make_credential_key,
     register_client_config,
     release_client_config,
 )
@@ -1248,6 +1250,191 @@ def test_async_credential_bridge_close_is_idempotent():
     bridge._close_cosmos_async_bridge()  # second close is a no-op
 
 
+class _HangingAsyncCredential:
+    """An async credential whose get_token never returns until it is cancelled."""
+
+    def __init__(self):
+        self.started = threading.Event()
+
+    async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        self.started.set()
+        # Block until the bridge's loop is torn down and cancels this task.
+        await asyncio.Event().wait()
+        return ("never", 0)  # pragma: no cover - unreachable
+
+
+def test_async_credential_bridge_close_unblocks_in_flight_get_token():
+    """Closing the bridge while a get_token is waiting must release the caller,
+    not hang it forever."""
+    cred = _HangingAsyncCredential()
+    bridge = AsyncTokenCredentialBridge(cred)
+    result: list = []
+
+    def _call():
+        try:
+            bridge.get_token("scope")
+            result.append(("returned",))
+        except Exception as exc:  # noqa: BLE001
+            result.append(("error", type(exc).__name__, str(exc)))
+
+    caller = threading.Thread(target=_call, name="fake-driver-worker")
+    caller.start()
+    # Wait until the credential coroutine is running on the loop.
+    assert cred.started.wait(timeout=5), "credential coroutine never started"
+    bridge._close_cosmos_async_bridge()
+    caller.join(timeout=5)
+    assert not caller.is_alive(), "get_token did not return after close (permanent hang)"
+    assert result and result[0][0] == "error", f"expected an error, got {result}"
+    # The error is a clear RuntimeError, not a bare cancellation.
+    assert "closed" in result[0][2].lower()
+
+
+def test_async_credential_bridge_token_timeout_bounds_the_wait():
+    """A finite token_timeout caps the wait and raises TimeoutError instead of
+    blocking forever on a hung credential."""
+
+    cred = _HangingAsyncCredential()
+    bridge = AsyncTokenCredentialBridge(cred, token_timeout=0.5)
+    try:
+        start = time.monotonic()
+        with pytest.raises(concurrent.futures.TimeoutError):
+            bridge.get_token("scope")
+        assert time.monotonic() - start < 4, "token_timeout did not bound the wait"
+    finally:
+        bridge._close_cosmos_async_bridge()
+
+
+def test_async_credential_bridge_rejects_call_from_loop_thread():
+    """Calling get_token from the bridge's own loop thread must raise instead of
+    deadlocking."""
+    cred = _AsyncTokenCredential()
+    bridge = AsyncTokenCredentialBridge(cred)
+    try:
+        # Prime the loop thread.
+        assert bridge.get_token("scope") == ("token-value", 9999999999)
+        outcome: list = []
+
+        def _reenter():
+            try:
+                bridge.get_token("scope")
+                outcome.append(("returned",))
+            except Exception as exc:  # noqa: BLE001
+                outcome.append(("error", str(exc)))
+
+        # Schedule the re-entrant call on the bridge's own loop thread.
+        bridge._loop.call_soon_threadsafe(_reenter)
+        # Give the loop thread a moment to run the callback.
+        for _ in range(50):
+            if outcome:
+                break
+            time.sleep(0.05)
+        assert outcome, "re-entrant call never ran"
+        assert outcome[0][0] == "error"
+        assert "loop thread" in outcome[0][1].lower()
+    finally:
+        bridge._close_cosmos_async_bridge()
+
+
+class _SlowAsyncCredential:
+    """An async credential whose get_token takes a little time, so concurrent
+    calls overlap with a close."""
+
+    async def get_token(self, *scopes, **kwargs):  # noqa: D401
+        await asyncio.sleep(0.01)
+        return ("token-value", 9999999999)
+
+
+def test_async_credential_bridge_dedups_same_credential_with_refcount():
+    """The same async credential reused across clients yields one shared bridge,
+    refcounted so only the last close tears the loop down."""
+    cred = _AsyncTokenCredential()
+    _, b1 = _resolve_credential(cred)
+    _, b2 = _resolve_credential(cred)
+    assert b1 is b2, "same credential should map to the same bridge"
+    assert b1._refcount == 2
+    try:
+        assert b1.get_token("scope") == ("token-value", 9999999999)
+        # First close: one holder remains, so the loop stays up and usable.
+        b1._close_cosmos_async_bridge()
+        assert b1._refcount == 1
+        assert b1._loop is not None
+        assert b1.get_token("scope") == ("token-value", 9999999999)
+        # Last close: now the loop is torn down.
+        b2._close_cosmos_async_bridge()
+        assert b2._loop is None
+        # A fresh acquire after teardown builds a new bridge, not the closed one.
+        _, b3 = _resolve_credential(cred)
+        assert b3 is not b1
+        b3._close_cosmos_async_bridge()
+    finally:
+        # Defensive: ensure nothing is left registered if an assert fired early.
+        b1._close_cosmos_async_bridge()
+
+
+def test_async_credential_bridge_distinct_credentials_get_distinct_bridges():
+    """Different credential objects must not share a bridge (or a driver)."""
+    c1 = _AsyncTokenCredential()
+    c2 = _AsyncTokenCredential()
+    _, b1 = _resolve_credential(c1)
+    _, b2 = _resolve_credential(c2)
+    try:
+        assert b1 is not b2
+    finally:
+        b1._close_cosmos_async_bridge()
+        b2._close_cosmos_async_bridge()
+
+
+def test_async_credential_bridge_concurrent_get_token_and_close_race():
+    """Many threads calling get_token while another closes must all finish; calls
+    after the close fail cleanly instead of hanging."""
+    cred = _SlowAsyncCredential()
+    bridge = AsyncTokenCredentialBridge(cred)
+    stop = threading.Event()
+    successes: list = []
+    outcomes: list = []
+
+    def worker():
+        while not stop.is_set():
+            try:
+                bridge.get_token("scope")
+                successes.append(1)
+            except Exception as exc:  # noqa: BLE001
+                outcomes.append(type(exc).__name__)
+                return
+        outcomes.append("stopped")
+
+    threads = [threading.Thread(target=worker, name=f"driver-worker-{i}") for i in range(8)]
+    for t in threads:
+        t.start()
+    # Let some calls succeed and several overlap before the close.
+    time.sleep(0.2)
+    bridge._close_cosmos_async_bridge()
+    stop.set()
+    for t in threads:
+        t.join(timeout=5)
+        assert not t.is_alive(), "a worker did not return after close (permanent hang)"
+    assert successes, "no get_token completed before close"
+    # Every worker recorded a clean outcome (a stop or a caught error), none hung.
+    assert len(outcomes) == len(threads)
+
+
+def test_async_credential_bridge_join_timeout_is_configurable(monkeypatch):
+    """The loop-thread join timeout honors the env var, and a constructor arg wins."""
+    monkeypatch.setenv("COSMOS_ASYNC_CREDENTIAL_CLOSE_TIMEOUT", "0.25")
+    b = AsyncTokenCredentialBridge(_AsyncTokenCredential())
+    assert b._join_timeout == 0.25
+    b._close_cosmos_async_bridge()
+    # Explicit constructor value overrides the env var.
+    b2 = AsyncTokenCredentialBridge(_AsyncTokenCredential(), join_timeout=1.5)
+    assert b2._join_timeout == 1.5
+    b2._close_cosmos_async_bridge()
+    # A bad env value falls back to the 5s default.
+    monkeypatch.setenv("COSMOS_ASYNC_CREDENTIAL_CLOSE_TIMEOUT", "not-a-number")
+    b3 = AsyncTokenCredentialBridge(_AsyncTokenCredential())
+    assert b3._join_timeout == 5.0
+    b3._close_cosmos_async_bridge()
+
+
 def test_resolve_credential_sync_credential_not_false_positived():
     """A plain synchronous credential must NOT be misread as async by the broader
     detector -- it is accepted as a token credential."""
@@ -1791,7 +1978,7 @@ def test_second_client_different_config_strict_raises():
         )
     assert first is not None
     # The failed client must not have counted itself against the endpoint.
-    assert _driver_registry._REGISTRY[url][1] == 1
+    assert _driver_registry._live_client_count(url) == 1
 
 
 def test_strict_same_config_does_not_raise():
@@ -1805,7 +1992,7 @@ def test_strict_same_config_does_not_raise():
         url, PreparedClientConfig(preferred_locations=("West US",)), strict=True
     )
     assert first is not None and second is not None
-    assert _driver_registry._REGISTRY[url][1] == 2
+    assert _driver_registry._live_client_count(url) == 2
 
 
 def test_strict_two_untuned_clients_do_not_raise():
@@ -1852,10 +2039,10 @@ def test_backend_close_releases_registration_once():
     url = "https://m16-refcount.documents.azure.com"
     first = _rust_backend(url, None)
     second = _rust_backend(url, None)
-    assert _driver_registry._REGISTRY[url][1] == 2
+    assert _driver_registry._live_client_count(url) == 2
     first.close()
     first.close()  # idempotent -- _config_released guards the second release
-    assert _driver_registry._REGISTRY[url][1] == 1
+    assert _driver_registry._live_client_count(url) == 1
     second.close()
     assert url not in _driver_registry._REGISTRY
 
@@ -1866,13 +2053,13 @@ def test_registry_register_release_refcount():
     url = "https://m16-registry.documents.azure.com"
     cfg = PreparedClientConfig(preferred_locations=("West US",))
     register_client_config(url, cfg)
-    register_client_config(url, cfg)  # same config -> no conflict, count 2
-    assert _driver_registry._REGISTRY[url][1] == 2
-    release_client_config(url)
-    assert _driver_registry._REGISTRY[url][1] == 1
-    release_client_config(url)
+    register_client_config(url, cfg)  # same engine -> no conflict, count 2
+    assert _driver_registry._live_client_count(url) == 2
+    release_client_config(url, cfg)
+    assert _driver_registry._live_client_count(url) == 1
+    release_client_config(url, cfg)
     assert url not in _driver_registry._REGISTRY
-    release_client_config(url)  # extra release: no-op, no underflow
+    release_client_config(url, cfg)  # extra release: no-op, no underflow
     assert url not in _driver_registry._REGISTRY
 
 
@@ -1883,11 +2070,125 @@ def test_registry_strict_raise_does_not_increment_count():
     cfg_a = PreparedClientConfig(preferred_locations=("West US",))
     cfg_b = PreparedClientConfig(preferred_locations=("East US",))
     register_client_config(url, cfg_a)
-    assert _driver_registry._REGISTRY[url][1] == 1
+    assert _driver_registry._live_client_count(url) == 1
     with pytest.raises(StrictEngineIsolationError):
         register_client_config(url, cfg_b, strict=True)
     # Count unchanged -- the failed registration did not enter the count.
-    assert _driver_registry._REGISTRY[url][1] == 1
+    assert _driver_registry._live_client_count(url) == 1
+
+
+# ---------------------------------------------------------------------------
+# Engine-identity guard: the registry mirrors the binding's (endpoint, credential,
+# config) cache key, so the strict check tracks the *set of live engines* per account
+# -- not just the first client's config. These cover the three axes that set fixed:
+# stale baseline, the credential axis, and endpoint canonicalization.
+# ---------------------------------------------------------------------------
+
+
+class _Cred:
+    """A stand-in token credential -- keyed by object identity, like azure-identity
+    credentials are. Two instances are two identities."""
+
+
+def test_strict_credential_axis_different_credentials_raise():
+    """Same endpoint and config but a *different* credential would build a second
+    engine (the binding keys on credential too), so strict mode must raise."""
+    url = "https://m16-cred-axis.documents.azure.com"
+    cfg = PreparedClientConfig(preferred_locations=("West US",))
+    cred_a, cred_b = _Cred(), _Cred()
+    register_client_config(
+        url, cfg, credential_key=make_credential_key(None, cred_a), strict=True
+    )
+    with pytest.raises(StrictEngineIsolationError):
+        register_client_config(
+            url, cfg, credential_key=make_credential_key(None, cred_b), strict=True
+        )
+    # Only the first engine is recorded.
+    assert _driver_registry._live_client_count(url) == 1
+
+
+def test_strict_same_credential_and_config_shares():
+    """Same endpoint, credential, and config -> one engine, shared, no raise."""
+    url = "https://m16-cred-same.documents.azure.com"
+    cfg = PreparedClientConfig(preferred_locations=("West US",))
+    cred = _Cred()
+    key = make_credential_key(None, cred)
+    register_client_config(url, cfg, credential_key=key, strict=True)
+    register_client_config(url, cfg, credential_key=key, strict=True)
+    assert _driver_registry._live_client_count(url) == 2
+
+
+def test_strict_baseline_not_stale_after_first_engine_closes():
+    """Finding 1: the baseline must track live engines, not the first registrant.
+    With engines X and Y both live (default mode), closing X must not leave a later
+    strict client compared against the gone X -- a client matching Y is fine, and only
+    one matching neither raises."""
+    url = "https://m16-stale-baseline.documents.azure.com"
+    cfg_x = PreparedClientConfig(preferred_locations=("West US",))
+    cfg_y = PreparedClientConfig(preferred_locations=("East US",))
+    register_client_config(url, cfg_x)  # engine X
+    register_client_config(url, cfg_y)  # engine Y (default mode allows the second)
+    release_client_config(url, cfg_x)   # X gone; only Y is live now
+    # A strict client matching the still-live Y shares it -- no false positive.
+    register_client_config(url, cfg_y, strict=True)
+    assert _driver_registry._live_client_count(url) == 2
+    # A strict client matching neither live engine (X is gone) correctly raises.
+    cfg_z = PreparedClientConfig(preferred_locations=("Central US",))
+    with pytest.raises(StrictEngineIsolationError):
+        register_client_config(url, cfg_z, strict=True)
+
+
+def test_endpoint_canonicalization_coalesces_url_variants():
+    """Finding 3: trailing-slash and host-case variants of one account must share a
+    bucket, so the strict guard is not bypassed by a cosmetic URL difference."""
+    base = "https://M16-Canon.documents.azure.com"
+    variant = "https://m16-canon.documents.azure.com/"
+    cfg_a = PreparedClientConfig(preferred_locations=("West US",))
+    cfg_b = PreparedClientConfig(preferred_locations=("East US",))
+    register_client_config(base, cfg_a, strict=True)
+    with pytest.raises(StrictEngineIsolationError):
+        register_client_config(variant, cfg_b, strict=True)
+    # Both spellings resolve to the same live count.
+    assert _driver_registry._live_client_count(base) == 1
+    assert _driver_registry._live_client_count(variant) == 1
+
+
+def test_canonicalization_keeps_distinct_accounts_separate():
+    """Canonicalization must never collapse genuinely different accounts."""
+    a = "https://m16-acct-a.documents.azure.com"
+    b = "https://m16-acct-b.documents.azure.com"
+    cfg = PreparedClientConfig(preferred_locations=("West US",))
+    register_client_config(a, cfg, strict=True)
+    # Different account, even with a different config, never conflicts.
+    register_client_config(b, PreparedClientConfig(preferred_locations=("East US",)), strict=True)
+    assert _driver_registry._live_client_count(a) == 1
+    assert _driver_registry._live_client_count(b) == 1
+
+
+def test_make_credential_key_does_not_expose_master_key():
+    """Secret hygiene: the master-key identity is a non-reversible fingerprint, not the
+    plaintext, yet equal keys fingerprint equal and different keys do not."""
+    secret = "super-secret-master-key=="
+    key = make_credential_key(secret, None)
+    assert secret not in str(key)
+    assert key == make_credential_key(secret, None)
+    assert key != make_credential_key("a-different-key", None)
+    # A token credential keys by object identity, matching the binding's pointer.
+    cred = _Cred()
+    assert make_credential_key(None, cred) == id(cred)
+
+
+def test_release_with_wrong_engine_is_noop():
+    """Releasing an engine that was never registered must not corrupt the live count
+    of the engine that *is* registered."""
+    url = "https://m16-release-mismatch.documents.azure.com"
+    cfg = PreparedClientConfig(preferred_locations=("West US",))
+    register_client_config(url, cfg)
+    # Release a different config (a different engine) -- harmless no-op.
+    release_client_config(url, PreparedClientConfig(preferred_locations=("East US",)))
+    assert _driver_registry._live_client_count(url) == 1
+    release_client_config(url, cfg)
+    assert url not in _driver_registry._REGISTRY
 
 
 def test_async_second_client_different_config_strict_raises():
@@ -1906,7 +2207,7 @@ def test_async_second_client_different_config_strict_raises():
             strict_isolation=True,
         )
     assert first is not None
-    assert _driver_registry._REGISTRY[url][1] == 1
+    assert _driver_registry._live_client_count(url) == 1
 
 
 def test_async_second_client_different_config_default_isolates(recwarn):

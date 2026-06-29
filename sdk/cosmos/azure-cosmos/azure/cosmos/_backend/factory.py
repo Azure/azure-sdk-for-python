@@ -198,7 +198,7 @@ def _resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
     # the synchronous get_token the driver calls, so async credentials work with no
     # driver change.
     if _is_async_credential(credential):
-        return None, AsyncTokenCredentialBridge(credential)
+        return None, AsyncTokenCredentialBridge.acquire(credential)
     get_token = getattr(credential, "get_token", None)
     if callable(get_token):
         return None, credential
