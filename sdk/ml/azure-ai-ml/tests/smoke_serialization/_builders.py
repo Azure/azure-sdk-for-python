@@ -13,6 +13,7 @@ children, and a regression typically hides in exactly one child.
 """
 from azure.ai.ml import Input, Output, MpiDistribution, PyTorchDistribution, TensorFlowDistribution
 from azure.ai.ml import command
+from datetime import datetime
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._job.finetuning import FineTuningTaskTypes
 from azure.ai.ml.entities import (
@@ -549,6 +550,41 @@ def build_schedule_recurrence_spark():
 SCHEDULE_BUILDERS.update(
     {
         "schedule_recurrence_spark": build_schedule_recurrence_spark,
+    }
+)
+
+
+def build_schedule_cron_datetime():
+    """A JobSchedule whose CronTrigger uses ``datetime`` start/end times (not strings).
+
+    The YAML/schema layer parses trigger times into ``datetime`` objects; arm and msrest format those
+    differently on the wire (ISO ``...T...Z`` vs ``%Y-%m-%d %H:%M:%S``). String-only builders miss this,
+    so this case exercises the datetime path explicitly.
+
+    :return: A deterministic JobSchedule entity.
+    :rtype: ~azure.ai.ml.entities.JobSchedule
+    """
+    job = CommandJob(
+        command="echo scheduled",
+        environment="AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+        compute="smoke-compute",
+    )
+    return JobSchedule(
+        name="smoke-schedule-cron-datetime",
+        display_name="smoke-schedule-cron-datetime-display",
+        trigger=CronTrigger(
+            expression="15 10 * * 1",
+            start_time=datetime(2026, 1, 1, 0, 0, 0),
+            end_time=datetime(2026, 12, 31, 0, 0, 0),
+            time_zone="UTC",
+        ),
+        create_job=job,
+    )
+
+
+SCHEDULE_BUILDERS.update(
+    {
+        "schedule_cron_datetime": build_schedule_cron_datetime,
     }
 )
 
