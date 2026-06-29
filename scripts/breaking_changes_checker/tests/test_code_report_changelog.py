@@ -32,7 +32,7 @@ def _assert_code_report_matches_expected(actual_report_path: str, expected_repor
     if os.environ.get("UPDATE_EXPECTED"):
         os.makedirs(DATA_DIR, exist_ok=True)
         with open(expected_path, "w", encoding="utf-8", newline="\n") as f:
-            json.dump(actual_report, f, indent=2, sort_keys=True)
+            json.dump(actual_report, f, indent=2)
             f.write("\n")
         return
 
@@ -47,7 +47,7 @@ def _assert_code_report_matches_expected(actual_report_path: str, expected_repor
     if actual_report != expected_report:
         dump_path = os.path.join(tempfile.gettempdir(), expected_report_file)
         with open(dump_path, "w", encoding="utf-8", newline="\n") as f:
-            json.dump(actual_report, f, indent=2, sort_keys=True)
+            json.dump(actual_report, f, indent=2)
             f.write("\n")
         raise AssertionError(
             f"Code report mismatch. Actual code report written to: {dump_path}\n"
