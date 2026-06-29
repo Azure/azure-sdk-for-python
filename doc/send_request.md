@@ -148,8 +148,8 @@ request = HttpRequest(
     params={"language": "en"}
 )
 
-with DefaultAzureCredential() as credential:
-    with ExampleClient(endpoint="https://example.org", credential=credential) as client:
+async with DefaultAzureCredential() as credential:
+    async with ExampleClient(endpoint="https://example.org", credential=credential) as client:
         response = await client.send_request(request)
 
         try:
@@ -166,7 +166,7 @@ with DefaultAzureCredential() as credential:
 
 ### Errors
 
-All errors thrown by `.raise_for_error()` are [exceptions defined in `azure-core`][azure_core_exceptions].
+All errors thrown by `.raise_for_status()` are [exceptions defined in `azure-core`][azure_core_exceptions].
 
 ### Logging
 

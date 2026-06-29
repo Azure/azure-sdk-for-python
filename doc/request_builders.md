@@ -17,7 +17,7 @@ Here's how to get started:
 >>> response
 <HttpResponse: 200 OK, Content-Type: text/plain>
 >>> response.raise_for_status()
->>> response.text
+>>> response.text()
 'Happy to see you!'
 ```
 
@@ -137,7 +137,7 @@ For more advanced scenarios, you can also create your own [`HttpRequest`][azure_
 Let's make the same request as we do in our [previous example](#use-our-request-builders)
 
 ```python
-from azure.example.core.rest import HttpRequest
+from azure.core.rest import HttpRequest
 
 # this URL is relative to the endpoint we passed our client
 request = HttpRequest("POST", "/helloWorld",
@@ -235,8 +235,8 @@ request = build_analyze_text_request(
     language="en",
 )
 
-with DefaultAzureCredential() as credential:
-    with ExampleClient(endpoint="https://example.org", credential=credential) as client:
+async with DefaultAzureCredential() as credential:
+    async with ExampleClient(endpoint="https://example.org", credential=credential) as client:
         response = await client.send_request(request)
 
         try:
@@ -252,7 +252,7 @@ with DefaultAzureCredential() as credential:
 
 ### Errors
 
-All errors thrown by `.raise_for_error()` are [exceptions defined in `azure-core`][azure_core_exceptions].
+All errors thrown by `.raise_for_status()` are [exceptions defined in `azure-core`][azure_core_exceptions].
 
 ### Logging
 

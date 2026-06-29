@@ -9,7 +9,7 @@ The package version contains two parts:
 
 If Python SDK contains preview api-version (like "2020-01-01-preview"), its version is preview; Otherwise, it should be stable.
 
-(1) For single-api package(for example: [confidentialledger](https://github.com/azure-sdk/azure-sdk-for-python/blob/a56c4b44911e173a89cb051aefc588e189e42654/sdk/confidentialledger/azure-mgmt-confidentialledger/azure/mgmt/confidentialledger/_configuration.py#L39)),
+(1) For single-api package(for example: [confidentialledger](https://github.com/Azure/azure-sdk-for-python/blob/a56c4b44911e173a89cb051aefc588e189e42654/sdk/confidentialledger/azure-mgmt-confidentialledger/azure/mgmt/confidentialledger/_configuration.py#L39)),
  as long as it contains preview api-version, the package version should be preview
 
 (2) For multi-api package(for example: [network](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/network/azure-mgmt-network)),

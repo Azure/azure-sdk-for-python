@@ -16,8 +16,12 @@ Docstrings are noted by the Python long-string `"""<docstring>"""`. When adding 
 A method docstring is annotated by the Python long-string `"""<docstring>"""` right after the method definition. The convention is a short line ending with a period, two new lines, followed by a longer description. Below is an example of a full docstring from `azure-ai-formrecognizer`:
 ```python
     @distributed_trace
-    def begin_training(self, training_files_url, use_training_labels, **kwargs):
-        # type: (str, bool, Any) -> LROPoller[CustomFormModel]
+    def begin_training(
+        self,
+        training_files_url: str,
+        use_training_labels: bool,
+        **kwargs: Any
+    ) -> LROPoller[CustomFormModel]:
         """Create and train a custom model.
 
         The request must include a `training_files_url` parameter that is an
