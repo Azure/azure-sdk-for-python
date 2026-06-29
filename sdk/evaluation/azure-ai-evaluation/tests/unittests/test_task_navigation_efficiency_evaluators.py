@@ -398,11 +398,11 @@ class TestTaskNavigationEfficiencyEvaluator:
         assert evaluator2.matching_mode == _TaskNavigationEfficiencyMatchingMode.IN_ORDER_MATCH
 
         # Test invalid string mode
-        with pytest.raises(ValueError):
+        with pytest.raises(EvaluationException):
             _TaskNavigationEfficiencyEvaluator(matching_mode="invalid_mode")
 
         # Test invalid type for mode
-        with pytest.raises(Exception):  # EvaluationException
+        with pytest.raises(EvaluationException):
             _TaskNavigationEfficiencyEvaluator(matching_mode=123)  # type: ignore
 
     # ==================== ALIAS INPUT NORMALIZATION TESTS ====================
