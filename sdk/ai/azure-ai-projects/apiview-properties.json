@@ -482,6 +482,8 @@
         "azure.ai.projects.aio.operations.AgentsOperations.list_sessions": "Azure.AI.Projects.Agents.listSessions",
         "azure.ai.projects.operations.AgentsOperations.get_session_log_stream": "Azure.AI.Projects.Agents.getSessionLogStream",
         "azure.ai.projects.aio.operations.AgentsOperations.get_session_log_stream": "Azure.AI.Projects.Agents.getSessionLogStream",
+        "azure.ai.projects.operations.AgentsOperations.upload_session_file": "Azure.AI.Projects.AgentSessionFiles.uploadSessionFile",
+        "azure.ai.projects.aio.operations.AgentsOperations.upload_session_file": "Azure.AI.Projects.AgentSessionFiles.uploadSessionFile",
         "azure.ai.projects.operations.AgentsOperations.download_session_file": "Azure.AI.Projects.AgentSessionFiles.downloadSessionFile",
         "azure.ai.projects.aio.operations.AgentsOperations.download_session_file": "Azure.AI.Projects.AgentSessionFiles.downloadSessionFile",
         "azure.ai.projects.operations.AgentsOperations.list_session_files": "Azure.AI.Projects.AgentSessionFiles.listSessionFiles",
@@ -543,5 +545,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "0125a13b2d62"
+    "CrossLanguageVersion": "c7766c731cd6"
 }

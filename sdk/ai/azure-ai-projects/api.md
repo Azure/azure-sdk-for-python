@@ -400,7 +400,7 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 agent_name: str, 
                 agent_session_id: str, 
-                content: Union[bytes, IO[bytes]], 
+                content: bytes, 
                 *, 
                 remote_path: str, 
                 **kwargs: Any
@@ -9749,7 +9749,7 @@ namespace azure.ai.projects.operations
                 self, 
                 agent_name: str, 
                 agent_session_id: str, 
-                content: Union[bytes, IO[bytes]], 
+                content: bytes, 
                 *, 
                 remote_path: str, 
                 **kwargs: Any

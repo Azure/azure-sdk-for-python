@@ -5658,7 +5658,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _upload_session_file(
+    def upload_session_file(
         self, agent_name: str, agent_session_id: str, content: bytes, *, remote_path: str, **kwargs: Any
     ) -> _models.SessionFileWriteResult:
         """Upload a session file.

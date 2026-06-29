@@ -201,36 +201,3 @@ class AgentsOperations(GeneratedAgentsOperations):
                         new_exc.model = exc.model
                         raise new_exc from exc
             raise
-
-    @distributed_trace_async
-    async def upload_session_file(
-        self,
-        agent_name: str,
-        agent_session_id: str,
-        content: Union[bytes, IO[bytes]],
-        *,
-        remote_path: str,
-        **kwargs: Any,
-    ) -> _models.SessionFileWriteResult:
-        """Upload a session file.
-
-        Uploads binary file content to the specified path in the session sandbox. The service stores
-        the file relative to the session home directory and rejects payloads larger than 50 MB.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_session_id: The session ID. Required.
-        :type agent_session_id: str
-        :param content: Required.
-        :type content: bytes or IO[bytes]
-        :keyword remote_path: The destination file path within the sandbox, relative to the session
-         home directory. Required.
-        :paramtype remote_path: str
-        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        content_bytes: bytes = content if isinstance(content, bytes) else content.read()
-        return await super()._upload_session_file(
-            agent_name, agent_session_id, content_bytes, remote_path=remote_path, **kwargs
-        )
