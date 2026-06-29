@@ -27,7 +27,6 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
 )
 from azure.ai.ml._restclient.arm_ml_service.models import MonitoringInputDataBase as RestMonitoringInputData
 from azure.ai.ml._restclient.arm_ml_service.models import MonitoringSignalBase as RestMonitoringSignalBase
-from azure.ai.ml._restclient.arm_ml_service.models import MonitoringSignalType
 from azure.ai.ml._restclient.arm_ml_service.models import (
     PredictionDriftMonitoringSignal as RestPredictionDriftMonitoringSignal,
 )

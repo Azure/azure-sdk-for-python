@@ -12,6 +12,7 @@ queue_settings/tags/properties/environment_variables) because the migration wrap
 children, and a regression typically hides in exactly one child.
 """
 from azure.ai.ml import Input, Output, MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml import command
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._job.finetuning import FineTuningTaskTypes
 from azure.ai.ml.entities import (
@@ -19,6 +20,8 @@ from azure.ai.ml.entities import (
     CommandJob,
     JobSchedule,
     ManagedIdentityConfiguration,
+    PipelineJob,
+    PipelineJobSettings,
     SparkJob,
     UserIdentityConfiguration,
 )
@@ -546,6 +549,46 @@ def build_schedule_recurrence_spark():
 SCHEDULE_BUILDERS.update(
     {
         "schedule_recurrence_spark": build_schedule_recurrence_spark,
+    }
+)
+
+
+def build_schedule_pipeline():
+    """A JobSchedule wrapping a PipelineJob with a CronTrigger.
+
+    PipelineJob routes to the v2024_01 msrest client, so its job_definition is a msrest model that must
+    be converted to a wire dict before embedding in the arm schedule envelope; this guards that branch
+    (which is distinct from the Command (arm) and Spark (v2023_04 msrest) branches).
+
+    :return: A deterministic JobSchedule entity.
+    :rtype: ~azure.ai.ml.entities.JobSchedule
+    """
+    node = command(
+        name="node1",
+        command="echo ${{inputs.x}}",
+        environment="azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu:33",
+        compute="smoke-compute",
+        inputs={"x": 1},
+    )
+    pipeline_job = PipelineJob(
+        jobs={"node1": node},
+        settings=PipelineJobSettings(default_compute="smoke-compute"),
+    )
+    return JobSchedule(
+        name="smoke-schedule-pipeline",
+        display_name="smoke-schedule-pipeline-display",
+        trigger=CronTrigger(
+            expression="15 10 * * 1",
+            start_time="2026-01-01T00:00:00",
+            time_zone="UTC",
+        ),
+        create_job=pipeline_job,
+    )
+
+
+SCHEDULE_BUILDERS.update(
+    {
+        "schedule_pipeline": build_schedule_pipeline,
     }
 )
 

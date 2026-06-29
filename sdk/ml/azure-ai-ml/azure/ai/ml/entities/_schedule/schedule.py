@@ -163,15 +163,19 @@ class Schedule(YamlTranslatableMixin, PathAwareSchemaValidatableMixin, Resource)
         from azure.ai.ml.entities._data_import.schedule import ImportDataSchedule
         from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 
-        if obj.properties.action.action_type == RestScheduleActionType.CREATE_JOB:
+        # ``ImportData`` is not a member of the shared arm_ml_service ``ScheduleActionType`` enum (and the
+        # import-data action is carried as a plain wire dict), so compare the ``actionType`` wire value via
+        # mapping access -- this works for both the typed arm action models and the plain-dict action.
+        action_type = obj.properties.action["actionType"]
+        if action_type == RestScheduleActionType.CREATE_JOB:
             return JobSchedule._from_rest_object(obj)
-        if obj.properties.action.action_type == RestScheduleActionType.CREATE_MONITOR:
+        if action_type == RestScheduleActionType.CREATE_MONITOR:
             res_monitor_schedule: Schedule = MonitorSchedule._from_rest_object(obj)
             return res_monitor_schedule
-        if obj.properties.action.action_type == RestScheduleActionType.IMPORT_DATA:
+        if action_type == "ImportData":
             res_data_schedule: Schedule = ImportDataSchedule._from_rest_object(obj)
             return res_data_schedule
-        msg = f"Unsupported schedule type {obj.properties.action.action_type}"
+        msg = f"Unsupported schedule type {action_type}"
         raise ScheduleException(
             message=msg,
             no_personal_data_message=msg,
@@ -428,11 +432,6 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
             job_definition.source_job_id = self.create_job.id
         elif private_enabled and isinstance(self.create_job, (CommandJob, SparkJob)):
             job_definition = self.create_job._to_rest_object().properties
-            # SparkJob still builds a v2023_04 msrest envelope; CommandJob already builds the shared
-            # arm_ml_service hybrid. Convert any msrest job_definition to its camelCase wire dict so it
-            # fits inside the arm_ml_service schedule envelope without changing the wire body.
-            if getattr(job_definition, "_is_model", False) is not True:
-                job_definition = job_definition.serialize()
             # TODO: Merge this branch with PipelineJob after source job id move to JobBaseProperties
             # job_definition.source_job_id = self.create_job.id
         elif isinstance(self.create_job, str):  # arm id reference
@@ -448,6 +447,12 @@ class JobSchedule(RestTranslatableMixin, Schedule, TelemetryMixin):
                 target=ErrorTarget.SCHEDULE,
                 error_category=ErrorCategory.USER_ERROR,
             )
+        # PipelineJob (v2024_01) and SparkJob (v2023_04) still build msrest job definitions, and the arm-id
+        # branch builds a msrest RestPipelineJob; CommandJob already builds the shared arm_ml_service hybrid.
+        # Convert any msrest job_definition to its camelCase wire dict so it fits inside the arm_ml_service
+        # schedule envelope without changing the wire body.
+        if getattr(job_definition, "_is_model", False) is not True:
+            job_definition = job_definition.serialize()
         return RestSchedule(
             properties=ScheduleProperties(
                 description=self.description,
