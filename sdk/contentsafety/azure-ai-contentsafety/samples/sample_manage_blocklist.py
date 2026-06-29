@@ -71,7 +71,8 @@ def add_block_items():
         )
         for block_item in result.blocklist_items:
             print(
-                f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, Description: {block_item.description}"
+                f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, "
+                f"Description: {block_item.description}"
             )
     except HttpResponseError as e:
         print("\nAdd block items failed: ")
@@ -104,7 +105,8 @@ def analyze_text_with_blocklists():
     input_text = "I h*te you and I want to k*ll you."
 
     try:
-        # After you edit your blocklist, it usually takes effect in 5 minutes, please wait some time before analyzing with blocklist after editing.
+        # After you edit your blocklist, it usually takes effect in 5 minutes,
+        # please wait some time before analyzing with blocklist after editing.
         analysis_result = client.analyze_text(
             AnalyzeTextOptions(text=input_text, blocklist_names=[blocklist_name], halt_on_blocklist_hit=False)
         )
@@ -261,7 +263,8 @@ def get_block_item():
         block_item = client.get_text_blocklist_item(blocklist_name=blocklist_name, blocklist_item_id=block_item_id)
         print("\nGet blockitem: ")
         print(
-            f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, Description: {block_item.description}"
+            f"BlockItemId: {block_item.blocklist_item_id}, Text: {block_item.text}, "
+            f"Description: {block_item.description}"
         )
     except HttpResponseError as e:
         print("\nGet block item failed: ")

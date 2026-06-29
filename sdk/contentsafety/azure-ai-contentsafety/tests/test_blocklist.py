@@ -4,16 +4,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from azure.core.exceptions import HttpResponseError
 from devtools_testutils import recorded_by_proxy
+from test_case import ContentSafetyTest, ContentSafetyPreparer
 
 from azure.ai.contentsafety.models import (
-    TextBlocklist,
-    TextBlocklistItem,
     AddOrUpdateTextBlocklistItemsOptions,
     RemoveTextBlocklistItemsOptions,
+    TextBlocklist,
+    TextBlocklistItem,
 )
-from test_case import ContentSafetyTest, ContentSafetyPreparer
+from azure.core.exceptions import HttpResponseError
 
 
 class TestBlocklistCase(ContentSafetyTest):

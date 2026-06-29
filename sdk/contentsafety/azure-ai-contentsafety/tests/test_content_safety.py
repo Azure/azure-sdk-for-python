@@ -7,17 +7,17 @@
 import os
 
 from devtools_testutils import recorded_by_proxy
+from test_case import ContentSafetyTest, ContentSafetyPreparer
 
 from azure.ai.contentsafety.models import (
+    AddOrUpdateTextBlocklistItemsOptions,
+    AnalyzeImageOptions,
     AnalyzeTextOptions,
     ImageData,
-    AnalyzeImageOptions,
-    TextCategory,
     TextBlocklist,
     TextBlocklistItem,
-    AddOrUpdateTextBlocklistItemsOptions,
+    TextCategory,
 )
-from test_case import ContentSafetyTest, ContentSafetyPreparer
 
 
 class TestContentSafetyCase(ContentSafetyTest):

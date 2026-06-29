@@ -5,10 +5,10 @@
 # ------------------------------------
 import functools
 
-from azure.core.credentials import AzureKeyCredential
 from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential, EnvironmentVariableLoader
 
-from azure.ai.contentsafety import ContentSafetyClient, BlocklistClient
+from azure.ai.contentsafety import BlocklistClient, ContentSafetyClient
+from azure.core.credentials import AzureKeyCredential
 
 
 class ContentSafetyTest(AzureRecordedTestCase):
