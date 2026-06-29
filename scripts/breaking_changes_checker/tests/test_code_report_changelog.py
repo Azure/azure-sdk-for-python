@@ -9,31 +9,66 @@ import json
 import os
 import subprocess
 import tempfile
+import sys
+
+import pytest
 
 CHECKER_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
 
-def _generate_and_compare_changelog(
+def _code_report_args(use_apistub: bool = False):
+    return ["--code-report"] + (["--use-apistub"] if use_apistub else [])
+
+
+def _assert_code_report_matches_expected(actual_report_path: str, expected_report_file: str):
+    with open(actual_report_path, encoding="utf-8") as f:
+        actual_report = json.load(f)
+    assert isinstance(actual_report, dict) and len(actual_report) > 0, "Code report should not be empty"
+
+    expected_path = os.path.join(DATA_DIR, expected_report_file)
+    if os.environ.get("UPDATE_EXPECTED"):
+        os.makedirs(DATA_DIR, exist_ok=True)
+        with open(expected_path, "w", encoding="utf-8", newline="\n") as f:
+            json.dump(actual_report, f, indent=2, sort_keys=True)
+            f.write("\n")
+        return
+
+    if not os.path.isfile(expected_path):
+        raise AssertionError(
+            f"Expected code report file not found: {expected_path}. "
+            "Set UPDATE_EXPECTED=1 to generate or update expected outputs."
+        )
+    with open(expected_path, encoding="utf-8") as f:
+        expected_report = json.load(f)
+
+    if actual_report != expected_report:
+        dump_path = os.path.join(tempfile.gettempdir(), expected_report_file)
+        with open(dump_path, "w", encoding="utf-8", newline="\n") as f:
+            json.dump(actual_report, f, indent=2, sort_keys=True)
+            f.write("\n")
+        raise AssertionError(
+            f"Code report mismatch. Actual code report written to: {dump_path}\n"
+            f"To update expected data, copy it to: {expected_path}\n"
+        )
+
+
+def _generate_and_compare_code_report(
     package_name: str,
     target_module: str,
-    source_version: str,
-    target_version: str,
-    expected_changelog_file: str,
+    package_version: str,
+    expected_report_file: str,
     use_apistub: bool = False,
 ):
-    """Install two versions of a package in the same venv, generate code reports, and compare the changelog.
+    """Install one package version, generate a code report, and compare it to expected data.
 
     When ``use_apistub`` is set, the code reports are produced from the
     apistub-generated ``api.md`` (via the ``--use-apistub`` flag) instead of by
-    importing the installed package. The resulting changelog must match the same
-    expected data as the import-based flow.
+    importing the installed package.
     """
     from packaging_tools.venvtools import create_venv_with_package
 
-    code_report_cmd = ["--code-report"] + (["--use-apistub"] if use_apistub else [])
-
-    packages = [f"{package_name}=={source_version}"]
+    packages = [f"{package_name}=={package_version}"]
     with create_venv_with_package(packages) as venv, tempfile.TemporaryDirectory() as tmpdir:
         subprocess.check_call(
             [venv.env_exe, "-m", "pip", "install", "-r", os.path.join(CHECKER_DIR, "dev_requirements.txt")],
@@ -49,7 +84,6 @@ def _generate_and_compare_changelog(
                 ],
             )
 
-        # Generate code report for source version
         result = subprocess.run(
             [
                 venv.env_exe,
@@ -58,58 +92,30 @@ def _generate_and_compare_changelog(
                 package_name,
                 "-m",
                 target_module,
-                *code_report_cmd,
+                *_code_report_args(use_apistub),
             ],
             capture_output=True,
             text=True,
             cwd=tmpdir,
         )
-        assert result.returncode == 0, f"Code report generation for {source_version} failed:\n{result.stderr}"
+        assert result.returncode == 0, f"Code report generation for {package_version} failed:\n{result.stderr}"
+        _assert_code_report_matches_expected(os.path.join(tmpdir, "code_report.json"), expected_report_file)
 
-        source_report_path = os.path.join(tmpdir, "source_report.json")
-        os.rename(os.path.join(tmpdir, "code_report.json"), source_report_path)
 
-        with open(source_report_path) as f:
-            source_report = json.load(f)
-        assert (
-            isinstance(source_report, dict) and len(source_report) > 0
-        ), f"Code report for {source_version} should not be empty"
-
-        # Upgrade to target version in the same venv
-        subprocess.check_call(
-            [venv.env_exe, "-m", "pip", "install", f"{package_name}=={target_version}"],
-        )
-
-        # Generate code report for target version
+def _compare_code_reports_to_changelog(
+    package_name: str,
+    source_report_file: str,
+    target_report_file: str,
+    expected_changelog_file: str,
+    order_insensitive: bool = False,
+):
+    """Compare checked-in code reports and validate the generated changelog."""
+    source_report_path = os.path.join(DATA_DIR, source_report_file)
+    target_report_path = os.path.join(DATA_DIR, target_report_file)
+    with tempfile.TemporaryDirectory() as tmpdir:
         result = subprocess.run(
             [
-                venv.env_exe,
-                os.path.join(CHECKER_DIR, "detect_breaking_changes.py"),
-                "-t",
-                package_name,
-                "-m",
-                target_module,
-                *code_report_cmd,
-            ],
-            capture_output=True,
-            text=True,
-            cwd=tmpdir,
-        )
-        assert result.returncode == 0, f"Code report generation for {target_version} failed:\n{result.stderr}"
-
-        target_report_path = os.path.join(tmpdir, "target_report.json")
-        os.rename(os.path.join(tmpdir, "code_report.json"), target_report_path)
-
-        with open(target_report_path) as f:
-            target_report = json.load(f)
-        assert (
-            isinstance(target_report, dict) and len(target_report) > 0
-        ), f"Code report for {target_version} should not be empty"
-
-        # Compare the two reports to generate changelog
-        result = subprocess.run(
-            [
-                venv.env_exe,
+                sys.executable,
                 os.path.join(CHECKER_DIR, "detect_breaking_changes.py"),
                 "-t",
                 package_name,
@@ -156,10 +162,7 @@ def _generate_and_compare_changelog(
         with open(expected_path, encoding="utf-8") as f:
             expected_changelog = f.read().strip()
 
-        # apistub orders properties/methods differently than the import-based
-        # report, so the apistub flow is compared on the set of changes (order
-        # insensitive) against the same expected data.
-        if use_apistub:
+        if order_insensitive:
             matches = sorted(l.strip() for l in actual_changelog.splitlines() if l.strip()) == sorted(
                 l.strip() for l in expected_changelog.splitlines() if l.strip()
             )
@@ -178,47 +181,129 @@ def _generate_and_compare_changelog(
             )
 
 
-def test_code_report_for_azure_mgmt_peering():
+def test_generate_old_code_report_for_azure_mgmt_peering():
+    """Generate azure-mgmt-peering 2.0.0b1 code report."""
+    _generate_and_compare_code_report(
+        package_name="azure-mgmt-peering",
+        target_module="azure.mgmt.peering",
+        package_version="2.0.0b1",
+        expected_report_file="expected_peering_b1_code_report.json",
+    )
+
+
+def test_generate_new_code_report_for_azure_mgmt_peering():
+    """Generate azure-mgmt-peering 2.0.0b2 code report."""
+    _generate_and_compare_code_report(
+        package_name="azure-mgmt-peering",
+        target_module="azure.mgmt.peering",
+        package_version="2.0.0b2",
+        expected_report_file="expected_peering_b2_code_report.json",
+    )
+
+
+def test_compare_code_reports_for_azure_mgmt_peering():
     """Compare azure-mgmt-peering 2.0.0b1 vs 2.0.0b2 changelog."""
-    _generate_and_compare_changelog(
+    _compare_code_reports_to_changelog(
         package_name="azure-mgmt-peering",
-        target_module="azure.mgmt.peering",
-        source_version="2.0.0b1",
-        target_version="2.0.0b2",
+        source_report_file="expected_peering_b1_code_report.json",
+        target_report_file="expected_peering_b2_code_report.json",
         expected_changelog_file="expected_peering_b1_b2_changelog.txt",
     )
 
 
-def test_code_report_for_azure_mgmt_apimanagement():
+@pytest.mark.slow(reason="azure-mgmt-apimanagement code report generation may take up to 10 minutes")
+def test_generate_old_code_report_for_azure_mgmt_apimanagement():
+    """Generate azure-mgmt-apimanagement 5.0.0 code report. May take up to 10 minutes."""
+    _generate_and_compare_code_report(
+        package_name="azure-mgmt-apimanagement",
+        target_module="azure.mgmt.apimanagement",
+        package_version="5.0.0",
+        expected_report_file="expected_apimanagement_5_code_report.json",
+    )
+
+
+@pytest.mark.slow(reason="azure-mgmt-apimanagement code report generation may take up to 10 minutes")
+def test_generate_new_code_report_for_azure_mgmt_apimanagement():
+    """Generate azure-mgmt-apimanagement 6.0.0b1 code report. May take up to 10 minutes."""
+    _generate_and_compare_code_report(
+        package_name="azure-mgmt-apimanagement",
+        target_module="azure.mgmt.apimanagement",
+        package_version="6.0.0b1",
+        expected_report_file="expected_apimanagement_6b1_code_report.json",
+    )
+
+
+def test_compare_code_reports_for_azure_mgmt_apimanagement():
     """Compare azure-mgmt-apimanagement 5.0.0 vs 6.0.0b1 changelog."""
-    _generate_and_compare_changelog(
+    _compare_code_reports_to_changelog(
         package_name="azure-mgmt-apimanagement",
-        target_module="azure.mgmt.apimanagement",
-        source_version="5.0.0",
-        target_version="6.0.0b1",
+        source_report_file="expected_apimanagement_5_code_report.json",
+        target_report_file="expected_apimanagement_6b1_code_report.json",
         expected_changelog_file="expected_apimanagement_5_6b1_changelog.txt",
     )
 
 
-def test_code_report_for_azure_mgmt_peering_apistub():
-    """Compare azure-mgmt-peering 2.0.0b1 vs 2.0.0b2 changelog using --use-apistub."""
-    _generate_and_compare_changelog(
+def test_generate_old_code_report_for_azure_mgmt_peering_apistub():
+    """Generate azure-mgmt-peering 2.0.0b1 code report using --use-apistub."""
+    _generate_and_compare_code_report(
         package_name="azure-mgmt-peering",
         target_module="azure.mgmt.peering",
-        source_version="2.0.0b1",
-        target_version="2.0.0b2",
-        expected_changelog_file="expected_peering_b1_b2_changelog.txt",
+        package_version="2.0.0b1",
+        expected_report_file="expected_peering_b1_code_report_from_apistub.json",
         use_apistub=True,
     )
 
 
-def test_code_report_for_azure_mgmt_apimanagement_apistub():
-    """Compare azure-mgmt-apimanagement 5.0.0 vs 6.0.0b1 changelog using --use-apistub."""
-    _generate_and_compare_changelog(
+def test_generate_new_code_report_for_azure_mgmt_peering_apistub():
+    """Generate azure-mgmt-peering 2.0.0b2 code report using --use-apistub."""
+    _generate_and_compare_code_report(
+        package_name="azure-mgmt-peering",
+        target_module="azure.mgmt.peering",
+        package_version="2.0.0b2",
+        expected_report_file="expected_peering_b2_code_report_from_apistub.json",
+        use_apistub=True,
+    )
+
+
+def test_compare_code_reports_for_azure_mgmt_peering_apistub():
+    """Compare azure-mgmt-peering 2.0.0b1 vs 2.0.0b2 changelog using --use-apistub."""
+    _compare_code_reports_to_changelog(
+        package_name="azure-mgmt-peering",
+        source_report_file="expected_peering_b1_code_report_from_apistub.json",
+        target_report_file="expected_peering_b2_code_report_from_apistub.json",
+        expected_changelog_file="expected_peering_b1_b2_changelog.txt",
+        order_insensitive=True,
+    )
+
+
+def test_generate_old_code_report_for_azure_mgmt_apimanagement_apistub():
+    """Generate azure-mgmt-apimanagement 5.0.0 code report using --use-apistub."""
+    _generate_and_compare_code_report(
         package_name="azure-mgmt-apimanagement",
         target_module="azure.mgmt.apimanagement",
-        source_version="5.0.0",
-        target_version="6.0.0b1",
-        expected_changelog_file="expected_apimanagement_5_6b1_changelog.txt",
+        package_version="5.0.0",
+        expected_report_file="expected_apimanagement_5_code_report_from_apistub.json",
         use_apistub=True,
+    )
+
+
+def test_generate_new_code_report_for_azure_mgmt_apimanagement_apistub():
+    """Generate azure-mgmt-apimanagement 6.0.0b1 code report using --use-apistub."""
+    _generate_and_compare_code_report(
+        package_name="azure-mgmt-apimanagement",
+        target_module="azure.mgmt.apimanagement",
+        package_version="6.0.0b1",
+        expected_report_file="expected_apimanagement_6b1_code_report_from_apistub.json",
+        use_apistub=True,
+    )
+
+
+def test_compare_code_reports_for_azure_mgmt_apimanagement_apistub():
+    """Compare azure-mgmt-apimanagement 5.0.0 vs 6.0.0b1 changelog using --use-apistub."""
+    _compare_code_reports_to_changelog(
+        package_name="azure-mgmt-apimanagement",
+        source_report_file="expected_apimanagement_5_code_report_from_apistub.json",
+        target_report_file="expected_apimanagement_6b1_code_report_from_apistub.json",
+        expected_changelog_file="expected_apimanagement_5_6b1_changelog.txt",
+        order_insensitive=True,
     )
