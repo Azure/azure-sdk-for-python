@@ -118,8 +118,8 @@ def _validate_next_link(next_link: str, endpoint: str) -> None:
     :return: None
     :raises ValueError: If next_link points at a different host than endpoint.
     """
-    host = urlparse(next_link).netloc
-    if host and host.lower() != urlparse(endpoint).netloc.lower():
+    host = urlparse(next_link).hostname
+    if host and host.lower() != (urlparse(endpoint).hostname or "").lower():
         raise ValueError("The continuation link host does not match the registry endpoint.")
 
 
