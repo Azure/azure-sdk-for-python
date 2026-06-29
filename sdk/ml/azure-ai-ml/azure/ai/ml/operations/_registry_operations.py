@@ -170,7 +170,7 @@ class RegistryOperations:
 
         def _get_long_running_output(pipeline_response: Any) -> Registry:
             rest_registry = RestRegistry._deserialize(pipeline_response.http_response.json(), [])
-            return Registry._from_rest_object(rest_registry)
+            return Registry._from_rest_object(rest_registry)  # type: ignore[return-value]
 
         poller: LROPoller = LROPoller(
             client,
