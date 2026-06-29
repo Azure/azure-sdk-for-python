@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: skip-file
 
 def compute(data: bytes, crc: int, /) -> int:
     """Compute Storage CRC64 over given data with given initial CRC64 value.
