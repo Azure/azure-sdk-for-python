@@ -7,115 +7,59 @@ description: Pre-push hook for azure-sdk-for-python. Before code is pushed, it a
 
 ## Purpose
 
-CI for this repo runs a mix of **repo-wide checks** and **per-package checks**. Repo-wide checks apply even when working on non-SDK code (docs, `.github/`, root markdown, samples, READMEs).
+CI runs **repo-wide checks** (which apply even to non-SDK changes like docs, `.github/`, READMEs) and
+**per-package checks**. This skill emulates a pre-push hook: it detects what changed vs the target
+branch, runs only the relevant checks, and reports/fixes failures **before** the push so CI passes
+first try.
 
-This skill emulates a pre-push hook: it figures out exactly what changed relative to the
-target branch, runs only the checks relevant to those changes, and reports failures (with fixes where
-possible) **before** the push so CI passes on the first try.
-
-It prefers the `azure-sdk-mcp` `azsdk_package_run_check` / `azsdk_package_run_tests` tools for
-per-package checks, and uses the repo's PowerShell scripts for the repo-wide checks that the MCP
-tooling does not cover.
-
-> **No hardcoded commands.** This skill intentionally describes *what* to run and *which* scripts/tools
-> to use, not exact command invocations — flags and paths drift over time. Determine the precise
-> command by reading the script's parameter block (`Get-Help` / the `param(...)` header) and the
-> `azpysdk` / MCP tool help at execution time.
-
-## When to use
-
-- The user is about to `git push` or open a PR and wants to avoid CI failures.
-- The user explicitly asks to run checks locally or validate changes.
-- After making non-SDK edits (docs, eng, `.github`, READMEs) where spelling/link checks commonly fail.
+> **No hardcoded commands.** Describe *what* to run and *which* scripts/tools to use — flags and paths
+> drift. Read each script's `param(...)` block / the `azpysdk` / MCP tool help to build the exact
+> command at runtime.
 
 ## Prerequisites
 
-- `pwsh` (PowerShell 7+), `git`, and Node.js (`npx`) on PATH — required for the spelling and link scripts.
-- For SDK package checks via MCP, the environment must be set up. If unsure, run `azsdk_verify_setup` first.
+- `pwsh` (PowerShell 7+), `git`, Node.js (`npx`) on PATH for the spelling/link scripts.
+- For SDK package checks via MCP, run `azsdk_verify_setup` first if the environment may not be set up.
 
 ## Steps
 
-### 0. Confirm with the user before running validation
+**0. Confirm first.** Ask the user whether they want to run local validation to make sure CI will pass
+(it can take minutes and hit the network), summarizing what will run based on detected changes. Stop if
+they decline.
 
-Before running anything, **ask the user whether they want to run local validation to make sure CI will
-pass** (the checks can take several minutes and may hit the network). Briefly summarize what will run
-based on the detected changes (repo-wide spelling/link checks, plus which SDK packages, if any).
+**1. Target branch.** Identify the branch the PR targets (default the repo's main branch; confirm if
+ambiguous). Repo-wide checks diff against it with a three-dot (`target...source`) comparison.
 
-- If the user declines, stop — do not run the checks.
-- If the user confirms, proceed with the steps below.
+**2. Changed files.** Diff current branch vs target (three-dot, excluding deletes) and classify:
+- **SDK package changes** — under `sdk/<service>/<package>/...`; group by package dir (the one with
+  `pyproject.toml` / `setup.py`).
+- **Repo-wide / non-SDK** — everything else (`doc/`, `eng/`, `.github/`, root `*.md`, scripts).
 
-### 1. Determine the target (base) branch
+If nothing changed, report and stop.
 
-Identify the branch the PR will target so the diff matches CI. Default to the repo's main branch, and
-confirm with the user if the upstream/target is ambiguous. The repo-wide checks diff against this
-target using a three-dot (`target...source`) comparison.
+**3. Repo-wide checks (always, when anything changed).** Run from the repo root; mirror CI's
+fail-on-error behavior. These are the checks most often missed on non-SDK work:
+- **CSpell** — `eng/common/scripts/check-spelling-in-changed-files.ps1`, pointed at the current and
+  target branch. Honors `.vscode/cspell.json` plus any service-level `cspell.json`/`cspell.yaml`.
+- **Verify-Links** — `eng/common/scripts/Verify-Links.ps1` on the changed markdown only (full recursion
+  is slow). Enable link-guidance to catch the common failures: disallowed relative links and links
+  hard-coding `main` (https://aka.ms/azsdk/guideline/links). Ignore transient 403/timeouts; focus on
+  `404`/host-not-found and guidance violations.
 
-### 2. Compute the changed files
+**4. Per-package SDK checks (per changed package).** Prefer **azure-sdk-mcp**:
+- `azsdk_package_run_check` with `packagePath` = the package dir (covers spelling, changelog, README,
+  snippets, linting, formatting, or all at once; can auto-fix).
+- `azsdk_package_run_tests` when source code changed.
 
-Diff the current branch against the target (three-dot, excluding deleted files) and classify the
-results into:
+Fallback: `azpysdk` from the package dir (see `doc/eng_sys_checks.md`). Check `pyproject.toml` for
+opted in/out checks; scope to changed packages only.
 
-- **SDK package changes** — paths under `sdk/<service>/<package>/...`. Group by package directory
-  (the directory containing `pyproject.toml` / `setup.py`).
-- **Repo-wide / non-SDK changes** — everything else (`doc/`, `eng/`, `.github/`, root `*.md`,
-  scripts, etc.). These still flow through the repo-wide spelling and link checks.
-
-If there are no changes vs the target, report that and stop.
-
-### 3. Run the repo-wide checks (always, when there are changes)
-
-These run on every PR regardless of which files changed and are the ones most often missed on non-SDK
-work. Run them from the repo root and mirror CI's failure behavior (exit non-zero on errors).
-
-**3a. CSpell — spelling on changed files**
-
-Use `eng/common/scripts/check-spelling-in-changed-files.ps1`, pointing it at the current branch and the
-target branch. It honors `.vscode/cspell.json` plus any service-level `cspell.json`/`cspell.yaml`. Read
-the script's parameter block to set the source/target committishes and to make it fail on errors.
-
-**3b. Verify-Links — broken / non-compliant links on changed markdown**
-
-Use `eng/common/scripts/Verify-Links.ps1` against only the changed markdown files (full-repo recursion
-is slow and unnecessary pre-push). Enable the link-guidance check so it catches the common CI failures:
-disallowed relative links and links that hard-code the `main` branch (see
-https://aka.ms/azsdk/guideline/links). Read the script's parameter block for the current argument names.
-
-- Network link checks can be slow or flaky; transient 403/timeout on external hosts are usually not the
-  failure to fix — focus on `404`/host-not-found and guidance violations.
-
-### 4. Run the per-package SDK checks (for each changed SDK package)
-
-For every distinct changed SDK package directory, prefer the **azure-sdk-mcp** tooling:
-
-- `azsdk_package_run_check` with `packagePath` = the package directory. It covers the relevant check
-  types (e.g. spelling, changelog, README, snippets, linting, formatting, or all of them at once), and
-  can auto-fix where supported. Consult the tool's parameters for the available check types and the fix
-  option.
-- `azsdk_package_run_tests` to exercise the package's tests when source code changed.
-
-If the MCP tools are unavailable, fall back to the `azpysdk` CLI from the package directory (see
-`doc/eng_sys_checks.md` for the full list of checks and how to run them). Check the package's
-`pyproject.toml` to see which checks it opts in/out of, and scope checks to the changed packages only —
-do not run the whole repo.
-
-### 5. Report and gate the push
-
-Summarize results as a concise table per check (PASS / FAIL, and the offending files/lines).
-
-- **All pass** → tell the user it is safe to push.
-- **Any fail** → do **not** advise pushing. Surface the specific failures and remediate:
-  - Spelling: fix the typo, or if intentional add the word to the service-level
-    `cspell.json`/`cspell.yaml`, or to `.vscode/cspell.json` for repo-wide terms, or an inline
-    `# cspell:ignore <word>` for one-offs.
-  - Links: fix the broken target; replace `.../blob/main/...` style links per the link guidance;
-    add genuinely-unreachable-but-valid links to `eng/ignore-links.txt`.
-  - SDK package failures: use the matching fix skills (`fix-pylint`, `fix-mypy`, `fix-sphinx`,
-    `fix-black`) or `azsdk_package_run_check`'s fix option.
-- Re-run only the checks that failed until green, then confirm the user can push.
-
-## Notes
-
-- Mirror CI exactly
-- Keep it fast: only check changed markdown for links and only changed packages for SDK checks.
-- Treat CSpell and Verify-Links as the default "non-SDK safety net" — always run them when any file
-  changed, even if no SDK package was touched.
+**5. Report and gate.** Summarize PASS/FAIL per check with offending files/lines.
+- All pass → safe to push.
+- Any fail → do **not** advise pushing; remediate, then re-run only the failed checks until green:
+  - Spelling: fix the typo, or add intentional words to the service-level `cspell.json`/`cspell.yaml`,
+    `.vscode/cspell.json` (repo-wide), or an inline `# cspell:ignore <word>`.
+  - Links: fix the target; replace `.../blob/main/...` links per the guidance; add valid-but-unreachable
+    links to `eng/ignore-links.txt`.
+  - SDK failures: use `fix-pylint` / `fix-mypy` / `fix-sphinx` / `fix-black` or the
+    `azsdk_package_run_check` fix option.
