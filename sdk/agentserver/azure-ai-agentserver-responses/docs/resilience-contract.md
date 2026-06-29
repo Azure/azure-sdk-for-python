@@ -330,6 +330,24 @@ absent; it MUST NOT silently downgrade to a weaker row.
 | `store=true` requests accepted (any row) | `ResponseStore` | Startup error |
 | `stream=true` requests accepted (any row) | A streaming-capable transport configuration | Startup error |
 
+The same "fail loud, never silently downgrade" rule applies at **request
+time**. When `resilient_background` is in effect and the resilient task cannot
+be started, the framework MUST fail the request rather than silently running
+the handler on a non-durable, connection-scoped task (which would lose crash
+recovery while still returning a healthy-looking response):
+
+- **Resilient start fails** (the task subsystem is present but starting the
+  task fails — e.g. the task store rejects the write): fail immediately,
+  surfaced as a **platform** error source. Non-streaming requests return
+  `HTTP 500` with `x-platform-error-source: platform`; streaming requests (whose
+  `200` headers are already sent) emit a standalone `error` event.
+- **Task subsystem absent**: when hosted (`FOUNDRY_HOSTING_ENVIRONMENT` set),
+  this is a platform-infrastructure failure and fails the request the same way.
+  Only in non-hosted/local execution (e.g. an in-process test harness whose
+  server lifespan never ran) does the framework run the handler in-process —
+  there is nothing to recover, so this is the legitimate non-durable path, not a
+  failure.
+
 ---
 
 ## Handler obligations
