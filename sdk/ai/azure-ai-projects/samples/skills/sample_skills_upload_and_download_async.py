@@ -29,14 +29,19 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
 
-    This sample uploads `samples/hosted_agents/assets/canvas-design.zip`.
+    This sample builds and uploads `samples/skills/assets/team-status-update/`.
 """
 
 import asyncio
 import os
+import sys
 import tempfile
 from datetime import datetime
 from pathlib import Path
+
+_SAMPLES_DIR = Path(__file__).resolve().parents[1]
+if str(_SAMPLES_DIR) not in sys.path:
+    sys.path.insert(0, str(_SAMPLES_DIR))
 
 from dotenv import load_dotenv
 
@@ -46,12 +51,15 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import CreateSkillVersionFromFilesBody
 
+from util import zip
+
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 download_folder = Path(tempfile.gettempdir()).resolve()
-skill_name = "canvas-design"
-skill_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "assets/canvas-design.zip"))
+skill_name = "team-status-update"
+skill_zip_filename = "team-status-update.zip"
+skill_source_dir = Path(__file__).parent / "assets/team-status-update"
 
 
 async def main() -> None:
@@ -66,28 +74,27 @@ async def main() -> None:
         except ResourceNotFoundError:
             pass
 
-        skill_path = Path(skill_file_path)
+        skill_zip_bytes, _, skill_zip_path = zip(skill_source_dir, skill_zip_filename)
+        uploaded_skill_zip_filename = skill_zip_path.name
         # The ``files`` field accepts any variant of the SDK's ``FileType`` union.
-        # All four forms below produce an equivalent multipart request body; pick
-        # whichever fits your call site. The 3-tuple form (used here) is the most
-        # explicit — it pins both the filename and the content type.
+        # The 2-tuple form used here pins the filename while letting the transport
+        # choose the multipart part headers.
         #
-        #   # 1) bare IO[bytes] — filename derived from the file handle's `.name`
-        #   files=[skill_path.open("rb")]
+        #   # 1) bare IO[bytes] - filename derived from the file handle's `.name`
+        #   files=[skill_zip_path.open("rb")]
         #
         #   # 2) (filename, bytes)
-        #   files=[(skill_path.name, skill_path.read_bytes())]
+        #   files=[(skill_zip_filename, skill_zip_bytes)]
         #
         #   # 3) (filename, IO[bytes])
-        #   files=[(skill_path.name, skill_path.open("rb"))]
+        #   files=[(skill_zip_filename, skill_zip_path.open("rb"))]
         #
         #   # 4) (filename, bytes, content_type)
-        #   files=[(skill_path.name, skill_path.read_bytes(), "application/zip")]
+        #   files=[(skill_zip_filename, skill_zip_bytes, "application/zip")]
+        #
         imported = await project_client.beta.skills.create_from_files(
             skill_name,
-            content=CreateSkillVersionFromFilesBody(
-                files=[(skill_path.name, skill_path.read_bytes(), "application/zip")]
-            ),
+            content=CreateSkillVersionFromFilesBody(files=[(uploaded_skill_zip_filename, skill_zip_bytes)]),
         )
         imported_skill_name = imported.name
         print(f"Imported skill from package: {imported.name} ({imported.skill_id}) version={imported.version}")

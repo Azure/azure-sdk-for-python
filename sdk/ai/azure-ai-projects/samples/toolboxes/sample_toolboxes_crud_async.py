@@ -13,15 +13,12 @@ DESCRIPTION:
     `require_approval` values, switches the default version, and prints the
     MCP `require_approval` setting from the fetched default version.
 
-    Toolboxes are currently a preview feature. In the Python SDK, you access
-    these operations via `project_client.beta.toolboxes`.
-
 USAGE:
     python sample_toolboxes_crud_async.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.3.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -37,16 +34,16 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import MCPTool, Tool
+from azure.ai.projects.models import MCPToolboxTool, ToolboxTool
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 
-def print_mcp_require_approval(tools: list[Tool]) -> None:
+def print_mcp_require_approval(tools: list[ToolboxTool]) -> None:
     for tool in tools:
-        if isinstance(tool, MCPTool):
+        if isinstance(tool, MCPToolboxTool):
             print(f"  - MCP `{tool.server_label}` require_approval: {tool.require_approval}")
 
 
@@ -60,35 +57,35 @@ async def main() -> None:
         toolbox_name = "toolbox_with_mcp_tool"
 
         try:
-            await project_client.beta.toolboxes.delete(toolbox_name)
+            await project_client.toolboxes.delete(toolbox_name)
             print(f"Toolbox `{toolbox_name}` deleted")
         except ResourceNotFoundError:
             pass
 
-        tools_with_mcp_approval_never: list[Tool] = [
-            MCPTool(
+        tools_with_mcp_approval_never: list[ToolboxTool] = [
+            MCPToolboxTool(
                 server_label="api_specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
                 require_approval="never",
             )
         ]
 
-        tools_with_mcp_approval_always: list[Tool] = [
-            MCPTool(
+        tools_with_mcp_approval_always: list[ToolboxTool] = [
+            MCPToolboxTool(
                 server_label="api_specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
                 require_approval="always",
             )
         ]
 
-        created = await project_client.beta.toolboxes.create_version(
+        created = await project_client.toolboxes.create_version(
             name=toolbox_name,
             description="Toolbox version with MCP require_approval set to 'never'.",
             tools=tools_with_mcp_approval_never,
         )
         print(f"Created toolbox: {created.name} with MCP tools requiring approval 'never' in version {created.version}")
 
-        created = await project_client.beta.toolboxes.create_version(
+        created = await project_client.toolboxes.create_version(
             name=toolbox_name,
             description="Toolbox version with MCP require_approval set to 'always'.",
             tools=tools_with_mcp_approval_always,
@@ -97,42 +94,42 @@ async def main() -> None:
             f"Created toolbox: {created.name} with MCP tools requiring approval 'always' in version {created.version}"
         )
 
-        updated = await project_client.beta.toolboxes.update(
+        updated = await project_client.toolboxes.update(
             name=toolbox_name,
             default_version="2",
         )
         print(f"Updated toolbox: {updated.name} default version is now {updated.default_version}")
 
-        fetched = await project_client.beta.toolboxes.get(name=toolbox_name)
+        fetched = await project_client.toolboxes.get(name=toolbox_name)
         print(f"Retrieved toolbox with default version: {fetched.default_version}")
-        fetched_version = await project_client.beta.toolboxes.get_version(
+        fetched_version = await project_client.toolboxes.get_version(
             name=toolbox_name,
             version=fetched.default_version,
         )
         print_mcp_require_approval(fetched_version.tools)
 
-        updated = await project_client.beta.toolboxes.update(
+        updated = await project_client.toolboxes.update(
             toolbox_name,
             default_version="1",
         )
         print(f"Updated toolbox: {updated.name} default version is now {updated.default_version}")
 
-        fetched = await project_client.beta.toolboxes.get(name=toolbox_name)
+        fetched = await project_client.toolboxes.get(name=toolbox_name)
         print(f"Retrieved toolbox with default version: {fetched.default_version}")
-        fetched_version = await project_client.beta.toolboxes.get_version(
+        fetched_version = await project_client.toolboxes.get_version(
             name=toolbox_name,
             version=fetched.default_version,
         )
         print_mcp_require_approval(fetched_version.tools)
 
         toolboxes = []
-        async for item in project_client.beta.toolboxes.list():
+        async for item in project_client.toolboxes.list():
             toolboxes.append(item)
         print(f"Found {len(toolboxes)} toolboxes")
         for item in toolboxes:
             print(f"  - {item.name} ({item.id})")
 
-        await project_client.beta.toolboxes.delete(name=toolbox_name)
+        await project_client.toolboxes.delete(name=toolbox_name)
         print("Toolbox deleted")
 
 

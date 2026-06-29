@@ -11,15 +11,12 @@ DESCRIPTION:
 
     Sessions only work with Hosted Agents.
 
-    Sessions are currently a preview feature. In the Python SDK, you access
-    these operations via `project_client.beta.agents`.
-
 USAGE:
     python sample_sessions_files_upload_download.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv
+    pip install "azure-ai-projects>=2.3.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -59,67 +56,66 @@ with (
     AIProjectClient(
         endpoint=endpoint,
         credential=credential,
-        allow_preview=True,
     ) as project_client,
 ):
     agent = get_latest_active_agent_version(project_client, agent_name)
-    session = project_client.beta.agents.create_session(
+    session = project_client.agents.create_session(
         agent_name=agent_name,
         version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
     print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
     try:
-        # Upload and list session files
-        project_client.beta.agents.upload_session_file(
+        print(f"Uploading session file: {data_file1} -> {remote_file_path1}")
+        project_client.agents.upload_session_file(
             agent_name=agent_name,
             session_id=session.agent_session_id,
-            content_or_file_path=data_file1,
-            path=remote_file_path1,
+            file_path=data_file1,
+            remote_path=remote_file_path1,
         )
 
         print(f"Uploading session file: {data_file2} -> {remote_file_path2}")
-        project_client.beta.agents.upload_session_file(
+        project_client.agents.upload_session_file(
             agent_name=agent_name,
             session_id=session.agent_session_id,
-            content_or_file_path=data_file2,
-            path=remote_file_path2,
+            file_path=data_file2,
+            remote_path=remote_file_path2,
         )
 
         print("Listing session files for the session at path '.'...")
-        files = project_client.beta.agents.list_session_files(
+        files = project_client.agents.list_session_files(
             agent_name=agent_name,
             agent_session_id=session.agent_session_id,
-            path="/remote",
+            remote_path="/remote",
         )
         for entry in files:
             print(f"  - name={entry.name}, size={entry.size}, is_directory={entry.is_directory}")
 
         print(f"Downloading and printing content from '{remote_file_path1}'")
         content_bytes = b"".join(
-            project_client.beta.agents.download_session_file(
+            project_client.agents.download_session_file_as_bytes(
                 agent_name=agent_name,
                 agent_session_id=session.agent_session_id,
-                path=remote_file_path1,
+                remote_path=remote_file_path1,
             )
         )
         file_content = content_bytes.decode("utf-8", errors="replace")
         print(f"Session file content ({remote_file_path1}):\n{file_content}")
 
         print(f"Deleting session file at path: {remote_file_path1}...")
-        project_client.beta.agents.delete_session_file(
+        project_client.agents.delete_session_file(
             agent_name=agent_name,
             agent_session_id=session.agent_session_id,
-            path=remote_file_path1,
+            remote_path=remote_file_path1,
         )
 
         print(f"Deleting session file at path: {remote_file_path2}...")
-        project_client.beta.agents.delete_session_file(
+        project_client.agents.delete_session_file(
             agent_name=agent_name,
             agent_session_id=session.agent_session_id,
-            path=remote_file_path2,
+            remote_path=remote_file_path2,
         )
     finally:
-        project_client.beta.agents.delete_session(
+        project_client.agents.delete_session(
             agent_name=agent_name,
             session_id=session.agent_session_id,
         )

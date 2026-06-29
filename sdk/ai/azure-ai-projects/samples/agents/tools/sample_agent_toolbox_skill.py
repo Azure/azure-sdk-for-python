@@ -17,16 +17,15 @@ DESCRIPTION:
     context, so when asked a shipping-cost question the agent answers directly
     using the skill's formula.
 
-    Skills and Toolboxes are currently preview features. In the Python SDK,
-    you access these operations via `project_client.beta.skills` and
-    `project_client.beta.toolboxes`.
+    Skills are currently a preview features. In the Python SDK,
+    you access these operations via `project_client.beta.skills`.
 
 USAGE:
-    python sample_skill_in_toolbox.py
+    python sample_agent_toolbox_skill.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv openai
+    pip install "azure-ai-projects>=2.3.0" python-dotenv openai
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the
@@ -40,6 +39,7 @@ import os
 
 from dotenv import load_dotenv
 
+from azure.ai.projects.models._models import ToolboxSearchPreviewToolboxTool
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 
@@ -48,7 +48,7 @@ from azure.ai.projects.models import (
     MCPTool,
     PromptAgentDefinition,
     SkillInlineContent,
-    ToolboxSearchPreviewTool,
+    ToolboxSearchPreviewToolboxTool,
     ToolboxSkillReference,
 )
 
@@ -68,7 +68,7 @@ with (
 ):
 
     try:
-        project_client.beta.toolboxes.delete(TOOLBOX_NAME)
+        project_client.toolboxes.delete(TOOLBOX_NAME)
     except ResourceNotFoundError:
         pass
 
@@ -92,10 +92,10 @@ with (
     )
     print(f"Created skill: {skill_version.name} version={skill_version.version}")
 
-    toolbox_version = project_client.beta.toolboxes.create_version(
+    toolbox_version = project_client.toolboxes.create_version(
         name=TOOLBOX_NAME,
         description="Toolbox exposing a shipping-cost skill.",
-        tools=[ToolboxSearchPreviewTool()],
+        tools=[ToolboxSearchPreviewToolboxTool()],
         skills=[ToolboxSkillReference(name=skill_version.name, version=skill_version.version)],
     )
     print(f"Created toolbox: {toolbox_version.name} version={toolbox_version.version}")
@@ -107,7 +107,6 @@ with (
         server_label="skill-toolbox",
         server_url=toolbox_mcp_url,
         authorization=token,
-        headers={"Foundry-Features": "Toolboxes=V1Preview"},
         require_approval="never",
     )
 
@@ -149,7 +148,7 @@ with (
 
     print(f"Response: {response.output_text}")
 
-    project_client.beta.toolboxes.delete(TOOLBOX_NAME)
+    project_client.toolboxes.delete(TOOLBOX_NAME)
     print("Toolbox deleted")
     project_client.beta.skills.delete(SKILL_NAME)
     print("Skill deleted")
