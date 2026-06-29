@@ -13,22 +13,14 @@ body request-byte / etc.). Building the prepared request by hand keeps the
 failure mode focused on the binding and the driver — if this fails,
 you know the problem is below the helper layer, not above it.
 
-Defaults target the local Cosmos DB Emulator. Override with
-``COSMOS_ENDPOINT``, ``COSMOS_KEY``, ``COSMOS_DB`` and
-``COSMOS_COLL`` env vars to point at a real account.
+Set ``ACCOUNT_HOST`` + ``ACCOUNT_KEY`` to your Cosmos account (the emulator
+or a live account). The db (``parity_db``) and container (``smoke_create``)
+are created if missing.
 
 Prerequisites
 -------------
 * ``maturin develop`` has been run, so ``azure/cosmos/_rust.pyd`` exists.
-* The Cosmos DB Emulator is running on https://localhost:8081, **or**
-  ``COSMOS_ENDPOINT`` + ``COSMOS_KEY`` are set to a real account.
-* A database (default ``pyo3test``) and a container (default ``items``,
-  partitioned on ``/pk``) already exist. Create with the portal, the
-  emulator's Data Explorer, or the Azure CLI::
-
-      az cosmosdb sql database create -a <acct> -g <rg> -n pyo3test
-      az cosmosdb sql container create -a <acct> -g <rg> -d pyo3test \\
-          -n items --partition-key-path /pk
+* ``ACCOUNT_HOST`` + ``ACCOUNT_KEY`` point at a reachable Cosmos account.
 
 Exit codes
 ----------
@@ -43,14 +35,20 @@ import os
 import sys
 import uuid
 
-# Default to the Cosmos DB Emulator's well-known endpoint + key.
-ENDPOINT = os.environ.get("COSMOS_ENDPOINT", "https://localhost:8081")
-KEY = os.environ.get(
-    "COSMOS_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
-DB = os.environ.get("COSMOS_DB", "pyo3test")
-COLL = os.environ.get("COSMOS_COLL", "items")
+from azure.cosmos import CosmosClient, PartitionKey
+
+ENDPOINT = os.environ.get("ACCOUNT_HOST")
+KEY = os.environ.get("ACCOUNT_KEY")
+DB = os.environ.get("COSMOS_DB", "parity_db")
+COLL = os.environ.get("COSMOS_COLL", "smoke_create")
+
+
+def _ensure_db_and_container() -> None:
+    """Create the db + container via the legacy backend if missing, so the
+    rust path is never asked to resolve a container that does not exist."""
+    client = CosmosClient(ENDPOINT, KEY)
+    db = client.create_database_if_not_exists(DB)
+    db.create_container_if_not_exists(id=COLL, partition_key=PartitionKey(path="/pk"))
 
 
 def main() -> int:
@@ -66,9 +64,14 @@ def main() -> int:
     from azure.cosmos._backend.base import OP_CREATE_ITEM, PreparedRequest
     from azure.cosmos._backend.rust import RustBackend
 
-    # 2. Build a PreparedRequest by hand (one create, single-string PK).
-    #    The Python helper layer would normally do this; building it
-    #    inline keeps the failure mode focused on the binding + driver.
+    # 2. Make sure the target db + container exist (created via the legacy
+    #    backend), then build a PreparedRequest by hand (one create,
+    #    single-string PK). Building it inline keeps the failure mode focused
+    #    on the binding + driver.
+    if not ENDPOINT or not KEY:
+        print("FAIL: set ACCOUNT_HOST + ACCOUNT_KEY first.", file=sys.stderr)
+        return 1
+    _ensure_db_and_container()
     item_id = f"smoke-{uuid.uuid4()}"
     prepared = PreparedRequest(
         op=OP_CREATE_ITEM,

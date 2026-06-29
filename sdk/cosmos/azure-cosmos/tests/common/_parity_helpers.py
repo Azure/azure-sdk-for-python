@@ -19,11 +19,12 @@ Tests that hit a known driver gap are marked with
 ``@pytest.mark.skip(reason="...")`` and use the reason string to name the
 limitation in plain English.
 
-The suite skips cleanly when ``ACCOUNT_URI`` / ``ACCOUNT_KEY`` are not
+The suite skips cleanly when ``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` are not
 set or when the compiled ``azure.cosmos._rust`` binding is not present.
 """
 from __future__ import annotations
 
+import asyncio
 import json as _json
 import os
 import re
@@ -33,6 +34,7 @@ from typing import Any, Callable, ClassVar, Dict, List, Optional, Tuple
 import pytest
 
 from azure.cosmos import CosmosClient
+from azure.cosmos.aio import CosmosClient as AioCosmosClient
 
 
 # ---------------------------------------------------------------------------
@@ -40,13 +42,13 @@ from azure.cosmos import CosmosClient
 # ---------------------------------------------------------------------------
 
 #: Standard env var consulted for the account endpoint.
-ENV_ENDPOINT = "ACCOUNT_URI"
+ENV_ENDPOINT = "ACCOUNT_HOST"
 #: Standard env var consulted for the master key.
 ENV_KEY = "ACCOUNT_KEY"
 
 
 def have_emulator_or_account() -> bool:
-    """True when both ``ACCOUNT_URI`` and ``ACCOUNT_KEY`` are set."""
+    """True when both ``ACCOUNT_HOST`` and ``ACCOUNT_KEY`` are set."""
     return bool(os.environ.get(ENV_ENDPOINT)) and bool(os.environ.get(ENV_KEY))
 
 
@@ -149,6 +151,24 @@ class BackendComparison:
             )
         # Always print the report so the user sees the verdict line.
         self.print_report()
+
+    def assert_exception_parity(self):
+        """Both backends raised the same typed exception with the same
+        status_code and sub_status. The message text is not compared: the rust
+        path appends the raw server error body, which is informational, not part
+        of the typed-exception contract a caller catches on.
+        """
+        core_exc, rust_exc = self.core_python.raised, self.rust.raised
+        if core_exc is None or rust_exc is None:
+            print(self.format_report())
+        assert core_exc is not None and rust_exc is not None, "both backends must raise"
+        assert type(core_exc) is type(rust_exc), (
+            "exception type: core-python {} / rust {}".format(
+                type(core_exc).__name__, type(rust_exc).__name__))
+        for attr in ("status_code", "sub_status"):
+            assert getattr(core_exc, attr, None) == getattr(rust_exc, attr, None), (
+                "exception.{} differs: core-python {!r} / rust {!r}".format(
+                    attr, getattr(core_exc, attr, None), getattr(rust_exc, attr, None)))
 
     def format_report(self) -> str:
         """Return a side-by-side string dump of inputs + outputs."""
@@ -791,7 +811,7 @@ ClientFactory = Callable[[str], Any]
 
 
 def _default_client_factory(backend_name: str):
-    """Build a sync CosmosClient for the named backend against ACCOUNT_URI/KEY."""
+    """Build a sync CosmosClient for the named backend against ACCOUNT_HOST/KEY."""
     return CosmosClient(
         os.environ[ENV_ENDPOINT],
         os.environ[ENV_KEY],
@@ -845,6 +865,50 @@ def run_on_both_backends(
         call_description=description,
         request_body=request_body,
         request_kwargs=request_kwargs,
+    )
+    comparison.diffs = diff_outcomes(comparison.core_python, comparison.rust)
+    return comparison
+
+
+async def run_on_both_backends_async(
+    call_fn: Callable[[Any], Any],
+    *,
+    description: str = "",
+    request_body: Any = None,
+    request_kwargs: Optional[Dict[str, Any]] = None,
+) -> BackendComparison:
+    """Async twin of :func:`run_on_both_backends`.
+
+    Builds an ``azure.cosmos.aio`` client per backend, ``await``s
+    ``call_fn(client)``, captures return value / headers / exception, and
+    diffs the two with the same :func:`diff_outcomes`. ``call_fn`` is an
+    async callable receiving the aio client.
+    """
+    outcomes: Dict[str, CallOutcome] = {}
+    for backend_name in ("core-python", "rust"):
+        outcome = CallOutcome(backend=backend_name)
+        # ``async with`` so the aio client (and its HTTP session) is always
+        # fully closed, even when call_fn raises -- otherwise the session is
+        # left for the garbage collector and shows up as an unclosed-session
+        # warning attributed to the test.
+        async with AioCosmosClient(os.environ[ENV_ENDPOINT], os.environ[ENV_KEY],
+                                   _backend=backend_name) as client:  # type: ignore[arg-type]
+            try:
+                outcome.return_value = await call_fn(client)
+            except BaseException as exc:  # pylint: disable=broad-except
+                outcome.raised = exc
+            try:
+                outcome.response_headers = dict(client.client_connection.last_response_headers or {})
+            except Exception:  # pylint: disable=broad-except
+                pass
+        # Let aiohttp finish closing the connector's TLS transports before the
+        # next client opens, so a late close can't surface as an unclosed-session
+        # warning against an unrelated test.
+        await asyncio.sleep(0.25)
+        outcomes[backend_name] = outcome
+    comparison = BackendComparison(
+        core_python=outcomes["core-python"], rust=outcomes["rust"],
+        call_description=description, request_body=request_body, request_kwargs=request_kwargs,
     )
     comparison.diffs = diff_outcomes(comparison.core_python, comparison.rust)
     return comparison

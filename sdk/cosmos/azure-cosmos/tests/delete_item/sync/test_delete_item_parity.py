@@ -84,7 +84,7 @@ def container_for(request):
     """Build a fresh container per test, against a known db."""
     from azure.cosmos import CosmosClient, PartitionKey
     import os
-    client = CosmosClient(os.environ["ACCOUNT_URI"], os.environ["ACCOUNT_KEY"])
+    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
     db = client.create_database_if_not_exists("parity_db")
     cname = "parity_del_" + request.node.name + "_" + uuid.uuid4().hex[:6]
     container = db.create_container(
@@ -517,7 +517,7 @@ def test_L5_populate_query_metrics_deprecated_and_not_on_wire(container_for):
     _ccc_module.CosmosClientConnection._CosmosClientConnection__Delete = _capturing_delete  # type: ignore[attr-defined]
     try:
         client = CosmosClient(
-            os.environ["ACCOUNT_URI"],
+            os.environ["ACCOUNT_HOST"],
             os.environ["ACCOUNT_KEY"],
             _backend="core-python",  # type: ignore[arg-type]
         )

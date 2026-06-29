@@ -19,8 +19,11 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey, http_constants
 
 
-HOST = os.environ["ACCOUNT_HOST"]
-KEY = os.environ["ACCOUNT_KEY"]
+HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
+KEY = os.environ.get(
+    "ACCOUNT_KEY",
+    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+)
 
 
 # Same value as the source, so the wire bytes match core-python.

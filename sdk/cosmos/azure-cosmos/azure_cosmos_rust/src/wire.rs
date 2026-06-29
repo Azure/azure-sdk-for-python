@@ -791,3 +791,105 @@ pub(crate) fn extract_item_id(body: &[u8]) -> PyResult<String> {
         .ok_or_else(|| PyValueError::new_err("body has no string `id` field"))
 }
 
+#[cfg(test)]
+mod tests {
+    use super::{extract_item_id, json_value_to_pk_component, parse_container_link,
+        parse_partition_key_header};
+
+    // Tests for the per-operation parsers: the container-link split, the
+    // partition-key header parse, the body-id read, and the per-value
+    // conversion. They build no Python objects, so they run under `cargo test`
+    // on their own: the success cases check the parsed value, the bad inputs
+    // check that an error comes back.
+
+    // ---- parse_container_link -------------------------------------------------
+
+    #[test]
+    fn container_link_splits_db_and_collection() {
+        // The one shape the resolver expects: dbs/<db>/colls/<coll>.
+        let (db, coll) = parse_container_link("dbs/OrdersDB/colls/Customers").unwrap();
+        assert_eq!(db, "OrdersDB");
+        assert_eq!(coll, "Customers");
+    }
+
+    #[test]
+    fn container_link_rejects_malformed_paths() {
+        // Wrong prefixes, too few segments, a trailing extra segment, and an
+        // empty string must all fail rather than yield a wrong (db, coll) that
+        // would route the request to the wrong place.
+        assert!(parse_container_link("colls/c/dbs/d").is_err()); // swapped keywords
+        assert!(parse_container_link("dbs/OrdersDB").is_err()); // missing coll
+        assert!(parse_container_link("dbs/d/colls/c/docs/x").is_err()); // extra segment
+        assert!(parse_container_link("").is_err());
+    }
+
+    // ---- extract_item_id (create / upsert read the id from the body) ----------
+
+    #[test]
+    fn item_id_read_from_body_and_ignores_other_fields() {
+        // Only `id` matters; the rest of the document is skipped, including when
+        // it precedes/follows id, so it works regardless of field order.
+        assert_eq!(extract_item_id(br#"{"id":"C-42"}"#).unwrap(), "C-42");
+        assert_eq!(
+            extract_item_id(br#"{"name":"Ada","id":"C-42","tags":["x"]}"#).unwrap(),
+            "C-42"
+        );
+    }
+
+    #[test]
+    fn item_id_rejects_missing_invalid_and_non_string_id() {
+        assert!(extract_item_id(br#"{"name":"Ada"}"#).is_err()); // no id
+        assert!(extract_item_id(br#"{"id":42}"#).is_err()); // non-string id
+        assert!(extract_item_id(b"not json").is_err()); // invalid JSON
+    }
+
+    // ---- parse_partition_key_header -------------------------------------------
+
+    #[test]
+    fn pk_header_accepts_every_supported_shape() {
+        // Each shape the Python helper emits must parse: scalars, typed null,
+        // boolean, the `[{}]` undefined marker, and 2- or 3-level hierarchical.
+        for header in [
+            r#"["customerA"]"#,
+            "[123]",
+            "[true]",
+            "[null]",
+            "[{}]",            // PK path missing -> undefined
+            r#"["t1","r1"]"#,  // hierarchical
+            r#"["t1","r1","s1"]"#,
+            r#"["t1",null]"#,  // hierarchical with missing leaf
+        ] {
+            assert!(parse_partition_key_header(header).is_ok(), "should parse: {header}");
+        }
+    }
+
+    #[test]
+    fn pk_header_rejects_empty_overflow_and_garbage() {
+        // `[]` is overloaded by the driver to mean cross-partition query, so a
+        // partitionless write must fail fast rather than land in the wrong place.
+        assert!(parse_partition_key_header("[]").is_err());
+        // Cosmos allows at most 3 levels.
+        assert!(parse_partition_key_header(r#"["a","b","c","d"]"#).is_err());
+        // Not a JSON array.
+        assert!(parse_partition_key_header("nonsense").is_err());
+    }
+
+    // ---- json_value_to_pk_component -------------------------------------------
+
+    #[test]
+    fn pk_component_maps_scalars_and_undefined() {
+        for v in ["null", "true", "1.5", r#""s""#, "{}"] {
+            let value: serde_json::Value = serde_json::from_str(v).unwrap();
+            assert!(json_value_to_pk_component(value).is_ok(), "should map: {v}");
+        }
+    }
+
+    #[test]
+    fn pk_component_rejects_non_empty_object_and_array() {
+        let obj: serde_json::Value = serde_json::from_str(r#"{"a":1}"#).unwrap();
+        assert!(json_value_to_pk_component(obj).is_err());
+        let arr: serde_json::Value = serde_json::from_str("[1,2]").unwrap();
+        assert!(json_value_to_pk_component(arr).is_err());
+    }
+}
+

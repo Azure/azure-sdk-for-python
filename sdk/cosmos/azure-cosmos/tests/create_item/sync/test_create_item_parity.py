@@ -43,7 +43,7 @@ hire can read without any internal tracker open.
 
 The suite skips cleanly when:
 
-  * ``ACCOUNT_URI`` / ``ACCOUNT_KEY`` are not set (no account wired), or
+  * ``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` are not set (no account wired), or
   * ``azure.cosmos._rust`` did not build (``maturin develop`` not run).
 """
 from __future__ import annotations
@@ -85,7 +85,7 @@ pytestmark = [
 @pytest.fixture
 def container_for(request):
     """Build a fresh container per test, against a known db."""
-    client = CosmosClient(os.environ["ACCOUNT_URI"], os.environ["ACCOUNT_KEY"])
+    client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"])
     db = client.create_database_if_not_exists("parity_db")
     cname = "parity_" + request.node.name + "_" + uuid.uuid4().hex[:6]
     container = db.create_container(
@@ -265,14 +265,14 @@ def test_L2_intended_collection_rid_present_on_wire(container_for):
 
     def _core_factory(_backend_name: str):
         return CosmosClient(
-            os.environ["ACCOUNT_URI"],
+            os.environ["ACCOUNT_HOST"],
             os.environ["ACCOUNT_KEY"],
             _backend="core-python",  # type: ignore[arg-type]
         )
 
     def _rust_factory(_backend_name: str):
         return CosmosClient(
-            os.environ["ACCOUNT_URI"],
+            os.environ["ACCOUNT_HOST"],
             os.environ["ACCOUNT_KEY"],
             _backend="rust",  # type: ignore[arg-type]
         )
@@ -677,11 +677,11 @@ def test_L1_partitionless_container_rejected_by_rust_binding():
     # the binding rejects the partition-key shape while validating the
     # PreparedRequest. We still need a backend instance to drive the
     # rejection through the public dispatch path.
-    endpoint = os.environ.get("ACCOUNT_URI")
+    endpoint = os.environ.get("ACCOUNT_HOST")
     master_key = os.environ.get("ACCOUNT_KEY")
     if not endpoint or not master_key:
         pytest.skip(
-            "ACCOUNT_URI / ACCOUNT_KEY not set; this test needs a real "
+            "ACCOUNT_HOST / ACCOUNT_KEY not set; this test needs a real "
             "endpoint to bootstrap the Rust driver before the binding "
             "ever inspects the partition-key header."
         )

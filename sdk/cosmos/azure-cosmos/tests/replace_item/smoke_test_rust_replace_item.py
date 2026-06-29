@@ -23,14 +23,9 @@ never retarget the write to the wrong document.
 Not a pytest test: needs a real account (or the local emulator) and prints
 visible output so a human can confirm the round trip.
 
-Environment variables (first non-empty wins; Windows env is
-case-insensitive):
-
-* ``host`` + ``key``                         -- the pair set in this environment.
-* ``ACCOUNT_HOST`` + ``ACCOUNT_KEY``         -- the pair the parity suite uses.
-* ``ACCOUNT_URI`` / ``COSMOS_ENDPOINT`` + ``COSMOS_KEY`` -- aliases.
-* ``COSMOS_DB`` (default ``parity_db``) and ``COSMOS_COLL`` (default
-  ``smoke_replace``). Both are created with the legacy backend if missing.
+Set ``ACCOUNT_HOST`` + ``ACCOUNT_KEY`` to your Cosmos account. The db
+(``parity_db``) and container (``smoke_replace``) are created if missing
+(override with ``COSMOS_DB`` / ``COSMOS_COLL``).
 
 Prerequisites: ``maturin develop`` has been run so ``_rust.{pyd,so}``
 exists with the ``replace_item`` entry point.
@@ -54,17 +49,8 @@ from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos._backend.base import OP_CREATE_ITEM, OP_REPLACE_ITEM, PreparedRequest
 from azure.cosmos._backend.rust import RustBackend
 
-ENDPOINT = (
-    os.environ.get("host")
-    or os.environ.get("ACCOUNT_HOST")
-    or os.environ.get("ACCOUNT_URI")
-    or os.environ.get("COSMOS_ENDPOINT")
-)
-KEY = (
-    os.environ.get("key")
-    or os.environ.get("ACCOUNT_KEY")
-    or os.environ.get("COSMOS_KEY")
-)
+ENDPOINT = os.environ.get("ACCOUNT_HOST")
+KEY = os.environ.get("ACCOUNT_KEY")
 DB = os.environ.get("COSMOS_DB", "parity_db")
 COLL = os.environ.get("COSMOS_COLL", "smoke_replace")
 
@@ -112,8 +98,8 @@ def main() -> int:
     """Run the smoke test and return a process exit code (see module docstring)."""
     if not ENDPOINT or not KEY:
         print(
-            "FAIL: set host + key (or ACCOUNT_HOST + ACCOUNT_KEY) to your "
-            "Cosmos DB account before running this script.",
+            "FAIL: set ACCOUNT_HOST + ACCOUNT_KEY to your Cosmos account "
+            "before running this script.",
             file=sys.stderr,
         )
         return 1

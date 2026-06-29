@@ -12,10 +12,7 @@ their own operations' ``legacy/`` folders.
 
 Self-contained: builds its own database + container in ``asyncSetUp``
 and deletes them in ``asyncTearDown``. Reads ``ACCOUNT_HOST`` and
-``ACCOUNT_KEY`` directly from the environment; if either is unset, the
-test fails fast at ``asyncSetUp`` rather than silently pointing at a
-local emulator. The legacy-folder workflow runs against a live Cosmos
-account; the emulator is intentionally not supported here.
+``ACCOUNT_KEY`` from the environment, defaulting to the local emulator when unset.
 
 Run with::
 
@@ -30,8 +27,11 @@ from azure.cosmos import PartitionKey
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
-HOST = os.environ["ACCOUNT_HOST"]
-KEY = os.environ["ACCOUNT_KEY"]
+HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
+KEY = os.environ.get(
+    "ACCOUNT_KEY",
+    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+)
 
 
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):

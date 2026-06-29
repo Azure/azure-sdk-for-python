@@ -5,10 +5,7 @@ Cosmos -> back) by creating a single item and then deleting it. Not a
 pytest test: needs a real account or the local emulator and prints
 visible output so a human can confirm the round trip.
 
-Environment variables (first pair wins):
-
-* ``ACCOUNT_URI`` + ``ACCOUNT_KEY`` -- same pair the parity suite uses.
-* ``COSMOS_ENDPOINT`` + ``COSMOS_KEY`` -- legacy aliases.
+Set ``ACCOUNT_HOST`` + ``ACCOUNT_KEY`` to your Cosmos account.
 * ``COSMOS_DB`` (default ``parity_db``) and ``COSMOS_COLL`` (default
   ``smoke_del``). Both are created with the legacy backend if missing.
 
@@ -36,10 +33,8 @@ from azure.cosmos._backend.base import (
 )
 from azure.cosmos._backend.rust import RustBackend
 
-# Prefer the ACCOUNT_URI / ACCOUNT_KEY pair the parity suite uses; fall
-# back to the COSMOS_ENDPOINT / COSMOS_KEY aliases.
-ENDPOINT = os.environ.get("ACCOUNT_URI") or os.environ.get("COSMOS_ENDPOINT")
-KEY = os.environ.get("ACCOUNT_KEY") or os.environ.get("COSMOS_KEY")
+ENDPOINT = os.environ.get("ACCOUNT_HOST")
+KEY = os.environ.get("ACCOUNT_KEY")
 DB = os.environ.get("COSMOS_DB", "parity_db")
 COLL = os.environ.get("COSMOS_COLL", "smoke_del")
 
@@ -60,7 +55,7 @@ def main() -> int:
     """Run the smoke test and return a process exit code (see module docstring)."""
     if not ENDPOINT or not KEY:
         print(
-            "FAIL: set ACCOUNT_URI + ACCOUNT_KEY (or COSMOS_ENDPOINT + COSMOS_KEY) "
+            "FAIL: set ACCOUNT_HOST + ACCOUNT_KEY "
             "to your Cosmos DB account before running this script.",
             file=sys.stderr,
         )

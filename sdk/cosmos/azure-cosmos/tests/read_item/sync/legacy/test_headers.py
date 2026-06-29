@@ -14,10 +14,7 @@ patch ``CosmosClientConnection._CosmosClientConnection__Get`` directly
 
 Self-contained: builds its own database + container in ``setUpClass``
 and deletes them in ``tearDownClass``. Reads ``ACCOUNT_HOST`` and
-``ACCOUNT_KEY`` directly from the environment; if either is unset, the
-test fails fast at ``setUpClass`` rather than silently pointing at a
-local emulator. The legacy-folder workflow runs against a live Cosmos
-account; the emulator is intentionally not supported here.
+``ACCOUNT_KEY`` from the environment, defaulting to the local emulator when unset.
 
 Run with::
 
@@ -30,8 +27,11 @@ import uuid
 from azure.cosmos import CosmosClient, PartitionKey, http_constants
 
 
-HOST = os.environ["ACCOUNT_HOST"]
-KEY = os.environ["ACCOUNT_KEY"]
+HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
+KEY = os.environ.get(
+    "ACCOUNT_KEY",
+    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
+)
 
 
 # Constants kept identical to the source so the wire value is the same
