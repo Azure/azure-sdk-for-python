@@ -18,7 +18,7 @@ resources:
     memory: 2Gi
 environment_variables:
     - name: AZURE_AI_MODEL_DEPLOYMENT_NAME
-      value: gpt-4o
+      value: gpt-5.4-nano
     # Long-running demo: per-phase ≈ 12s LLM + 3×30s intra + 30s inter ≈ 132s,
     # × 15 phases ≈ 33 min total — runs ~2x past the platform's 15-min
     # sandbox-eviction window so each run exercises the resilient-task lease

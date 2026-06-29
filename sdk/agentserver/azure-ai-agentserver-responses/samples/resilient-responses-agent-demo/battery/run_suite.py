@@ -30,11 +30,11 @@ import httpx
 
 AGENT = "resilient-responses-agent-demo"
 ENDPOINT_BASE = (
-    "https://rapida-0687-resource.services.ai.azure.com/api/projects/rapida-0687"
+    "https://rapida-5196-resource.services.ai.azure.com/api/projects/rapida-5196"
     f"/agents/{AGENT}/endpoint/protocols/openai"
 )
 API_VERSION = "v1"
-MODEL = "gpt-4o"
+MODEL = "gpt-5.4-nano"
 TOKEN_RESOURCE = "https://ai.azure.com"
 
 # nanny restart window after a crash (seconds) before we expect recovery
