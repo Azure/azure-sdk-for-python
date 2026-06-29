@@ -559,3 +559,102 @@ class TestMessagesOrQueryResponseInputValidator:
         validator = MessagesOrQueryResponseInputValidator(error_target=TARGET, enforce_tool_definitions=False)
         eval_input = {"query": [_user_message()], "response": [_assistant_message()]}
         assert validator.validate_eval_input(eval_input) is True
+
+
+# ---------------------------------------------------------------------------
+# Phase 2 restricted-tool enablement
+# ---------------------------------------------------------------------------
+# ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding`` are now
+# accepted by the validator now that the formatter JSON-encodes their
+# structured tool_result payloads. The remaining restricted tools (bing
+# variants, web_search, browser_automation, code_interpreter_call,
+# computer_call, openapi_call) must continue to be rejected.
+
+NEWLY_ENABLED_TOOLS = [
+    "azure_ai_search",
+    "azure_fabric",
+    "sharepoint_grounding",
+]
+
+STILL_UNSUPPORTED_TOOLS = [
+    "bing_grounding",
+    "bing_custom_search",
+    "browser_automation",
+    "code_interpreter_call",
+    "computer_call",
+    "openapi_call",
+    "web_search",
+]
+
+
+@pytest.mark.unittest
+class TestUnsupportedToolsList:
+    """The hard-coded UNSUPPORTED_TOOLS list controls service-side gating."""
+
+    def test_newly_enabled_tools_are_not_in_unsupported_list(self):
+        for tool_name in NEWLY_ENABLED_TOOLS:
+            assert tool_name not in ConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_still_unsupported_tools_remain_in_list(self):
+        for tool_name in STILL_UNSUPPORTED_TOOLS:
+            assert tool_name in ConversationValidator.UNSUPPORTED_TOOLS
+
+    def test_unsupported_list_contains_no_unexpected_tools(self):
+        # Defensive: keep the list explicit so future additions are
+        # reviewed against this test.
+        assert set(ConversationValidator.UNSUPPORTED_TOOLS) == set(STILL_UNSUPPORTED_TOOLS)
+
+
+@pytest.mark.unittest
+class TestValidatorAcceptsNewlyEnabledTools:
+    """Verify SharePoint / Azure AI Search / Fabric tool calls now pass validation."""
+
+    @pytest.mark.parametrize("tool_name", NEWLY_ENABLED_TOOLS)
+    def test_validate_eval_input_accepts_tool(self, tool_name):
+        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        eval_input = {"query": [_user_message()], "response": [assistant]}
+        assert validator.validate_eval_input(eval_input) is True
+
+
+@pytest.mark.unittest
+class TestValidatorRejectsStillUnsupportedTools:
+    """The narrowing must not lift restrictions on the remaining tools."""
+
+    @pytest.mark.parametrize("tool_name", STILL_UNSUPPORTED_TOOLS)
+    def test_validate_eval_input_rejects_tool(self, tool_name):
+        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=True)
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        with pytest.raises(EvaluationException) as exc_info:
+            validator.validate_eval_input({"query": [_user_message()], "response": [assistant]})
+        assert exc_info.value.category == ErrorCategory.NOT_APPLICABLE
+
+
+@pytest.mark.unittest
+class TestUnsupportedToolCheckOptOut:
+    """TCA / TIA construct their validators with check_for_unsupported_tools=False.
+
+    Regression guard: with the flag off, no tool name (newly enabled OR still
+    restricted) may trigger an UNSUPPORTED_TOOLS rejection. A future flip of
+    that constructor argument to ``True`` must surface in code review, not as
+    a silent customer-facing 400.
+    """
+
+    @pytest.mark.parametrize(
+        "tool_name",
+        NEWLY_ENABLED_TOOLS + STILL_UNSUPPORTED_TOOLS,
+    )
+    def test_opt_out_skips_unsupported_tool_check(self, tool_name):
+        validator = ConversationValidator(error_target=TARGET, check_for_unsupported_tools=False)
+        assistant = {
+            "role": "assistant",
+            "content": [_tool_call_content_item(name=tool_name)],
+        }
+        eval_input = {"query": [_user_message()], "response": [assistant]}
+        assert validator.validate_eval_input(eval_input) is True

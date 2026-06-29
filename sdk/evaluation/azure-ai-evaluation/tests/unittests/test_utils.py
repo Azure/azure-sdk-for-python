@@ -984,3 +984,234 @@ class TestConstructPromptyModelConfig(unittest.TestCase):
         }
         with pytest.raises(EvaluationException):
             construct_prompty_model_config(model_config, "2024-02-01", "")
+
+
+# ---------------------------------------------------------------------------
+# Phase 2 restricted-tool enablement: _stringify_tool_result and
+# _get_agent_response handling of structured tool_result payloads
+# (dict/list shapes from azure_ai_search, azure_fabric, sharepoint_grounding).
+# ---------------------------------------------------------------------------
+
+from azure.ai.evaluation._common.utils import _stringify_tool_result
+
+
+@pytest.mark.unittest
+class TestStringifyToolResult(unittest.TestCase):
+    """The new helper makes structured tool outputs LLM-readable."""
+
+    def test_string_passes_through_unchanged(self):
+        assert _stringify_tool_result("hello") == "hello"
+
+    def test_none_renders_as_empty_string(self):
+        # Avoid leaking the literal text "None" into the prompt.
+        assert _stringify_tool_result(None) == ""
+
+    def test_dict_is_json_encoded(self):
+        result = _stringify_tool_result({"answer": 42, "ok": True})
+        assert json.loads(result) == {"answer": 42, "ok": True}
+
+    def test_list_of_dicts_is_json_encoded(self):
+        sharepoint_payload = [
+            {
+                "documents": [
+                    {
+                        "title": "Q4 Earnings",
+                        "content": "Revenue grew 12% YoY.",
+                        "url": "https://contoso.sharepoint.com/q4",
+                    }
+                ]
+            }
+        ]
+        rendered = _stringify_tool_result(sharepoint_payload)
+        assert json.loads(rendered) == sharepoint_payload
+
+    def test_unicode_is_preserved_not_escaped(self):
+        # ``ensure_ascii=False`` keeps non-ASCII readable for the judge.
+        rendered = _stringify_tool_result({"title": "测试"})
+        assert "测试" in rendered
+
+    def test_non_json_value_falls_back_to_str(self):
+        class _Custom:
+            def __str__(self):
+                return "<custom>"
+
+        rendered = _stringify_tool_result(_Custom())
+        # Either the json fallback or the str() path is acceptable; what
+        # matters is that the helper does not raise on weird inputs.
+        assert rendered == "<custom>" or rendered == '"<custom>"'
+
+
+@pytest.mark.unittest
+class TestGetAgentResponseStructuredToolResults(unittest.TestCase):
+    """End-to-end formatting through _get_agent_response with structured payloads."""
+
+    def test_sharepoint_structured_result_is_json(self):
+        sharepoint_payload = [
+            {
+                "documents": [
+                    {
+                        "title": "Q4 Earnings",
+                        "content": "Revenue grew 12% YoY.",
+                        "url": "https://contoso.sharepoint.com/q4",
+                    }
+                ]
+            }
+        ]
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "c1",
+                        "name": "sharepoint_grounding",
+                        "arguments": {"input": "Q4"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_result": sharepoint_payload,
+                    }
+                ],
+            },
+        ]
+        out = _get_agent_response(msgs, include_tool_messages=True)
+        result_lines = [line for line in out if line.startswith("[TOOL_RESULT] ")]
+        assert len(result_lines) == 1
+        rendered_json = result_lines[0][len("[TOOL_RESULT] "):]
+        assert json.loads(rendered_json) == sharepoint_payload
+        # Python repr would emit single quotes — JSON must not.
+        assert "'" not in rendered_json
+
+    def test_azure_ai_search_dict_result_is_json(self):
+        aas_payload = {"results": [{"title": "Doc A", "score": 0.91}]}
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "c1",
+                        "name": "azure_ai_search",
+                        "arguments": {"input": "revenue"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [
+                    {
+                        "type": "tool_result",
+                        "tool_result": aas_payload,
+                    }
+                ],
+            },
+        ]
+        out = _get_agent_response(msgs, include_tool_messages=True)
+        result_lines = [line for line in out if line.startswith("[TOOL_RESULT] ")]
+        assert json.loads(result_lines[0][len("[TOOL_RESULT] "):]) == aas_payload
+
+    def test_none_result_renders_empty(self):
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "c1",
+                        "name": "azure_fabric",
+                        "arguments": {"input": "q"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": None}],
+            },
+        ]
+        out = _get_agent_response(msgs, include_tool_messages=True)
+        assert "[TOOL_RESULT] " in out
+
+    def test_real_world_sharepoint_trace_dict_payload_round_trips(self):
+        """Smoke test mirroring a real Foundry playground OTel trace."""
+        payload = {
+            "documents": [
+                {
+                    "id": "0",
+                    "content": "Onboarding doc: see the setup guide for first-time access.",
+                    "filepath": "https://contoso.sharepoint.com/sites/it/SitePages/Onboarding.aspx",
+                    "title": "IT Onboarding Guide",
+                    "url": "https://contoso.sharepoint.com/sites/it/SitePages/Onboarding.aspx",
+                    "knowledgeSourceIndex": 0,
+                }
+            ]
+        }
+        msgs = [
+            {
+                "role": "user",
+                "content": [{"type": "text", "text": "how do I get started?"}],
+            },
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "call_sp_1",
+                        "name": "sharepoint_grounding",
+                        "arguments": {"query": "onboarding"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "call_sp_1",
+                "content": [
+                    {"type": "tool_result", "tool_result": payload},
+                ],
+            },
+        ]
+        out = _get_agent_response(msgs, include_tool_messages=True)
+        result_lines = [line for line in out if line.startswith("[TOOL_RESULT] ")]
+        assert len(result_lines) == 1
+        body = result_lines[0][len("[TOOL_RESULT] "):]
+        assert json.loads(body) == payload
+        assert "'" not in body
+        # Distinctive structural fields must survive so the judge can
+        # ground on the documents envelope.
+        assert "knowledgeSourceIndex" in body
+        assert "IT Onboarding Guide" in body
+
+    def test_real_world_sharepoint_json_string_payload_passes_through(self):
+        """Raw JSON-string payload from upstream passes through unchanged."""
+        payload = {"documents": [{"id": "0", "title": "X"}]}
+        raw_json = json.dumps(payload)
+        msgs = [
+            {
+                "role": "assistant",
+                "content": [
+                    {
+                        "type": "tool_call",
+                        "tool_call_id": "c1",
+                        "name": "sharepoint_grounding",
+                        "arguments": {"query": "x"},
+                    }
+                ],
+            },
+            {
+                "role": "tool",
+                "tool_call_id": "c1",
+                "content": [{"type": "tool_result", "tool_result": raw_json}],
+            },
+        ]
+        out = _get_agent_response(msgs, include_tool_messages=True)
+        body = [line for line in out if line.startswith("[TOOL_RESULT] ")][0][len("[TOOL_RESULT] "):]
+        # String inputs pass through unchanged - no extra quoting.
+        assert body == raw_json
+        assert json.loads(body) == payload
