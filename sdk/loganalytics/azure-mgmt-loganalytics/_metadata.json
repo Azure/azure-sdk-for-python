@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.OperationalInsights": "2025-07-01"
   },
-  "commit": "efcac4df1ba355ac1f695aeb65378eacf052357c",
+  "commit": "1523f9e8e89437d84d69a6651f09d74a7ae65ed3",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/operationalinsights/resource-manager/Microsoft.OperationalInsights/OperationalInsights",
-  "emitterVersion": "0.62.1"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.33.0"
 }
