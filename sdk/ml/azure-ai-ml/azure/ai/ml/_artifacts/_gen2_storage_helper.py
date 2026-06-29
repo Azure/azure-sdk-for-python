@@ -210,9 +210,7 @@ class Gen2StorageClient:
             for item in mylist:
                 file_name = item.name[len(starts_with) :].lstrip("/") or Path(starts_with).name
                 target_path = Path(destination, file_name).resolve()
-                if target_path != resolved_destination and not str(target_path).startswith(
-                    str(resolved_destination) + os.sep
-                ):
+                if not target_path.is_relative_to(resolved_destination):
                     raise ValueError(
                         f"Path name contains a path traversal entry and cannot be downloaded safely: {item.name}"
                     )
