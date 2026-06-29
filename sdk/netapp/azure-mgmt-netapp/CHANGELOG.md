@@ -1,5 +1,132 @@
 # Release History
 
+## 18.0.0b1 (2026-06-29)
+
+### Features Added
+
+  - Client `NetAppManagementClient` added operation group `elastic_accounts`
+  - Client `NetAppManagementClient` added operation group `elastic_capacity_pools`
+  - Client `NetAppManagementClient` added operation group `elastic_volumes`
+  - Client `NetAppManagementClient` added operation group `elastic_snapshots`
+  - Client `NetAppManagementClient` added operation group `elastic_snapshot_policies`
+  - Client `NetAppManagementClient` added operation group `elastic_backup_vaults`
+  - Client `NetAppManagementClient` added operation group `elastic_backup_policies`
+  - Client `NetAppManagementClient` added operation group `elastic_backups`
+  - Client `NetAppManagementClient` added operation group `active_directory_configs`
+  - Model `AccountProperties` added property `entra_id_config`
+  - Model `AccountProperties` added property `ldap_configuration`
+  - Model `CertificateAkvDetails` added property `user_assigned_identity`
+  - Model `CredentialsAkvDetails` added property `user_assigned_identity`
+  - Model `VolumeProperties` added property `ldap_server_type`
+  - Model `VolumeProperties` added property `large_volume_type`
+  - Model `VolumeProperties` added property `language`
+  - Model `VolumeProperties` added property `breakthrough_mode`
+  - Added model `AccountPropertiesPatch`
+  - Added model `ActiveDirectoryConfig`
+  - Added model `ActiveDirectoryConfigProperties`
+  - Added model `ActiveDirectoryConfigUpdate`
+  - Added model `ActiveDirectoryConfigUpdateProperties`
+  - Added enum `BindAuthenticationLevel`
+  - Added model `BindPasswordAkvConfig`
+  - Added model `BindPasswordAkvConfigPatch`
+  - Added enum `BreakthroughMode`
+  - Added model `ChangeZoneRequest`
+  - Added enum `CheckElasticResourceAvailabilityReason`
+  - Added model `CheckElasticResourceAvailabilityResponse`
+  - Added enum `CheckElasticResourceAvailabilityStatus`
+  - Added model `CheckElasticVolumeFilePathAvailabilityRequest`
+  - Added enum `DayOfWeek`
+  - Added model `ElasticAccount`
+  - Added model `ElasticAccountProperties`
+  - Added model `ElasticAccountUpdate`
+  - Added model `ElasticAccountUpdateProperties`
+  - Added model `ElasticBackup`
+  - Added model `ElasticBackupPolicy`
+  - Added model `ElasticBackupPolicyProperties`
+  - Added enum `ElasticBackupPolicyState`
+  - Added model `ElasticBackupPolicyUpdate`
+  - Added model `ElasticBackupPolicyUpdateProperties`
+  - Added model `ElasticBackupProperties`
+  - Added enum `ElasticBackupType`
+  - Added model `ElasticBackupVault`
+  - Added model `ElasticBackupVaultProperties`
+  - Added model `ElasticBackupVaultUpdate`
+  - Added model `ElasticCapacityPool`
+  - Added model `ElasticCapacityPoolProperties`
+  - Added model `ElasticCapacityPoolUpdate`
+  - Added model `ElasticCapacityPoolUpdateProperties`
+  - Added model `ElasticEncryption`
+  - Added model `ElasticEncryptionConfiguration`
+  - Added model `ElasticEncryptionIdentity`
+  - Added model `ElasticExportPolicy`
+  - Added model `ElasticExportPolicyRule`
+  - Added model `ElasticKeyVaultProperties`
+  - Added enum `ElasticKeyVaultStatus`
+  - Added model `ElasticMountTargetProperties`
+  - Added enum `ElasticNfsv3Access`
+  - Added enum `ElasticNfsv4Access`
+  - Added enum `ElasticPoolEncryptionKeySource`
+  - Added enum `ElasticProtocolType`
+  - Added enum `ElasticResourceAvailabilityStatus`
+  - Added enum `ElasticRootAccess`
+  - Added enum `ElasticServiceLevel`
+  - Added enum `ElasticSmbEncryption`
+  - Added model `ElasticSmbPatchProperties`
+  - Added model `ElasticSmbProperties`
+  - Added model `ElasticSnapshot`
+  - Added model `ElasticSnapshotPolicy`
+  - Added model `ElasticSnapshotPolicyDailySchedule`
+  - Added model `ElasticSnapshotPolicyHourlySchedule`
+  - Added model `ElasticSnapshotPolicyMonthlySchedule`
+  - Added model `ElasticSnapshotPolicyProperties`
+  - Added model `ElasticSnapshotPolicyUpdate`
+  - Added model `ElasticSnapshotPolicyUpdateProperties`
+  - Added model `ElasticSnapshotPolicyWeeklySchedule`
+  - Added model `ElasticSnapshotProperties`
+  - Added enum `ElasticUnixAccessRule`
+  - Added model `ElasticVolume`
+  - Added model `ElasticVolumeBackupProperties`
+  - Added model `ElasticVolumeDataProtectionPatchProperties`
+  - Added model `ElasticVolumeDataProtectionProperties`
+  - Added enum `ElasticVolumePolicyEnforcement`
+  - Added model `ElasticVolumeProperties`
+  - Added enum `ElasticVolumeRestorationState`
+  - Added model `ElasticVolumeRevert`
+  - Added model `ElasticVolumeSnapshotProperties`
+  - Added model `ElasticVolumeUpdate`
+  - Added model `ElasticVolumeUpdateProperties`
+  - Added model `EntraIdAkvConfig`
+  - Added model `EntraIdAkvConfigPatch`
+  - Added model `EntraIdConfig`
+  - Added model `EntraIdConfigPatch`
+  - Added enum `LargeVolumeType`
+  - Added model `LdapConfiguration`
+  - Added model `LdapConfigurationPatch`
+  - Added enum `PolicyStatus`
+  - Added model `SecretPassword`
+  - Added model `SecretPasswordIdentity`
+  - Added model `SecretPasswordKeyVaultProperties`
+  - Added enum `SnapshotDirectoryVisibility`
+  - Added enum `SnapshotUsage`
+  - Added enum `VolumeSize`
+  - Model `AccountsOperations` added method `begin_refresh_ldap_bind_password`
+  - Added model `ActiveDirectoryConfigsOperations`
+  - Added model `ElasticAccountsOperations`
+  - Added model `ElasticBackupPoliciesOperations`
+  - Added model `ElasticBackupVaultsOperations`
+  - Added model `ElasticBackupsOperations`
+  - Added model `ElasticCapacityPoolsOperations`
+  - Added model `ElasticSnapshotPoliciesOperations`
+  - Added model `ElasticSnapshotsOperations`
+  - Added model `ElasticVolumesOperations`
+
+### Breaking Changes
+
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `location`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `id`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `name`
+  - Model `NetAppAccountPatch` deleted or renamed its instance variable `type`
+
 ## 17.0.0 (2026-06-10)
 
 ### Features Added
