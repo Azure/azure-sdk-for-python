@@ -26,6 +26,7 @@
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `ManagedComputeCapacityProperties` deleted or renamed its instance variable `location`
 
 ## 15.0.0b2 (2026-05-22)
