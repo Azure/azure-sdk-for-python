@@ -242,7 +242,7 @@ Boxes are types/objects; arrows show the dominant call direction.
                                                                                     │
                                   ┌────────────────────────────────────────┐        │
                                   │  Local file provider (dev/test only)   │ ◀──────┘
-                                  │  (~/.agentserver-tasks/<agent>/<sess>/…)   │
+                                  │  (~/.agentserver/tasks/<agent>/<sess>/…)   │
                                   └────────────────────────────────────────┘
 
    ┌──────────────────────────────────────────────────────────────────┐
@@ -270,7 +270,8 @@ Boxes are types/objects; arrows show the dominant call direction.
 - The `TaskProvider` is an abstraction over the task store. Two
   concrete providers ship: `HostedTaskProvider` (HTTP-backed, used
   when the platform is detected) and `LocalFileTaskProvider`
-  (JSON-on-disk under `~/.agentserver-tasks/<agent>/<session>/<task>.json`
+  (JSON-on-disk under
+  `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/tasks/<agent>/<session>/<task>.json`
   by default; used otherwise). The framework auto-selects.
 - The `TaskContext` is what the handler receives; it is wired by the
   manager and exposes both inputs (`input`, `metadata`, `entry_mode`)
@@ -1846,8 +1847,10 @@ framework never patches them (they're set at create-time).
 
 Selected when `FOUNDRY_HOSTING_ENVIRONMENT` is NOT set (i.e. local
 dev, tests). State lives under
-`~/.agentserver-tasks/<agent_name>/<session_id>/<task_id>.json` by
-default; override with `AGENTSERVER_STATE_TASKS_PATH`.
+`${AGENTSERVER_STATE_ROOT:-~/.agentserver}/tasks/<agent_name>/<session_id>/<task_id>.json`.
+The state root is `AGENTSERVER_STATE_ROOT` (the single operator knob),
+defaulting to `~/.agentserver`; the task subsystem owns the `tasks`
+subdirectory beneath it (resolved via `resolve_state_subdir("tasks")`).
 
 Implementation MUST:
 
