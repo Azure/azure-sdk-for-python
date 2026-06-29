@@ -20,9 +20,18 @@ def _generate_and_compare_changelog(
     source_version: str,
     target_version: str,
     expected_changelog_file: str,
+    use_apistub: bool = False,
 ):
-    """Install two versions of a package in the same venv, generate code reports, and compare the changelog."""
+    """Install two versions of a package in the same venv, generate code reports, and compare the changelog.
+
+    When ``use_apistub`` is set, the code reports are produced from the
+    apistub-generated ``api.md`` (via the ``--use-apistub`` flag) instead of by
+    importing the installed package. The resulting changelog must match the same
+    expected data as the import-based flow.
+    """
     from packaging_tools.venvtools import create_venv_with_package
+
+    code_report_cmd = ["--code-report"] + (["--use-apistub"] if use_apistub else [])
 
     packages = [f"{package_name}=={source_version}"]
     with create_venv_with_package(packages) as venv, tempfile.TemporaryDirectory() as tmpdir:
@@ -30,6 +39,15 @@ def _generate_and_compare_changelog(
             [venv.env_exe, "-m", "pip", "install", "-r", os.path.join(CHECKER_DIR, "dev_requirements.txt")],
             cwd=CHECKER_DIR,
         )
+
+        if use_apistub:
+            subprocess.check_call(
+                [
+                    venv.env_exe, "-m", "pip", "install",
+                    "-r", os.path.join(CHECKER_DIR, "..", "..", "eng", "apiview_reqs.txt"),
+                    "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
+                ],
+            )
 
         # Generate code report for source version
         result = subprocess.run(
@@ -40,7 +58,7 @@ def _generate_and_compare_changelog(
                 package_name,
                 "-m",
                 target_module,
-                "--code-report",
+                *code_report_cmd,
             ],
             capture_output=True,
             text=True,
@@ -71,7 +89,7 @@ def _generate_and_compare_changelog(
                 package_name,
                 "-m",
                 target_module,
-                "--code-report",
+                *code_report_cmd,
             ],
             capture_output=True,
             text=True,
@@ -138,7 +156,17 @@ def _generate_and_compare_changelog(
         with open(expected_path, encoding="utf-8") as f:
             expected_changelog = f.read().strip()
 
-        if actual_changelog != expected_changelog:
+        # apistub orders properties/methods differently than the import-based
+        # report, so the apistub flow is compared on the set of changes (order
+        # insensitive) against the same expected data.
+        if use_apistub:
+            matches = sorted(l.strip() for l in actual_changelog.splitlines() if l.strip()) == sorted(
+                l.strip() for l in expected_changelog.splitlines() if l.strip()
+            )
+        else:
+            matches = actual_changelog == expected_changelog
+
+        if not matches:
             # Dump the actual changelog to a temp folder so the expected data can be
             # updated by copying this file, without rerunning these expensive tests.
             dump_path = os.path.join(tempfile.gettempdir(), expected_changelog_file)
@@ -169,4 +197,28 @@ def test_code_report_for_azure_mgmt_apimanagement():
         source_version="5.0.0",
         target_version="6.0.0b1",
         expected_changelog_file="expected_apimanagement_5_6b1_changelog.txt",
+    )
+
+
+def test_code_report_for_azure_mgmt_peering_apistub():
+    """Compare azure-mgmt-peering 2.0.0b1 vs 2.0.0b2 changelog using --use-apistub."""
+    _generate_and_compare_changelog(
+        package_name="azure-mgmt-peering",
+        target_module="azure.mgmt.peering",
+        source_version="2.0.0b1",
+        target_version="2.0.0b2",
+        expected_changelog_file="expected_peering_b1_b2_changelog.txt",
+        use_apistub=True,
+    )
+
+
+def test_code_report_for_azure_mgmt_apimanagement_apistub():
+    """Compare azure-mgmt-apimanagement 5.0.0 vs 6.0.0b1 changelog using --use-apistub."""
+    _generate_and_compare_changelog(
+        package_name="azure-mgmt-apimanagement",
+        target_module="azure.mgmt.apimanagement",
+        source_version="5.0.0",
+        target_version="6.0.0b1",
+        expected_changelog_file="expected_apimanagement_5_6b1_changelog.txt",
+        use_apistub=True,
     )

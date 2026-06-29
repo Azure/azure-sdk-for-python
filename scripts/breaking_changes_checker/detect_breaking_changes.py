@@ -18,12 +18,15 @@ import ast
 import logging
 import inspect
 import subprocess
+import sys
+import shutil
 from enum import Enum
 from typing import Dict, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
+from apiview_converter import convert_api_md_to_report
 from pathlib import Path
 from supported_checkers import CHECKERS, POST_PROCESSING_CHECKERS
 
@@ -570,6 +573,25 @@ def build_library_report(target_module: str) -> Dict:
     return public_api
 
 
+def compare_report_dicts(stable: Dict, current: Dict, package_name: str, changelog: bool):
+    """Compare two code report dicts and run the breaking change / changelog checks."""
+    if "azure-mgmt-" in package_name:
+        stable = report_azure_mgmt_versioned_module(stable)
+        current = report_azure_mgmt_versioned_module(current)
+
+    tracker_cls = ChangelogTracker if changelog else BreakingChangesTracker
+    checker = tracker_cls(
+        stable,
+        current,
+        package_name,
+        checkers=CHECKERS,
+        ignore=IGNORE_BREAKING_CHANGES,
+        post_processing_checkers=POST_PROCESSING_CHECKERS,
+    )
+    checker.run_checks()
+    return checker
+
+
 def test_compare_reports(
     pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json"
 ) -> None:
@@ -589,28 +611,7 @@ def test_compare_reports(
     with open(target_report, "r") as fd:
         current = json.load(fd)
 
-    if "azure-mgmt-" in package_name:
-        stable = report_azure_mgmt_versioned_module(stable)
-        current = report_azure_mgmt_versioned_module(current)
-
-    checker = BreakingChangesTracker(
-        stable,
-        current,
-        package_name,
-        checkers=CHECKERS,
-        ignore=IGNORE_BREAKING_CHANGES,
-        post_processing_checkers=POST_PROCESSING_CHECKERS,
-    )
-    if changelog:
-        checker = ChangelogTracker(
-            stable,
-            current,
-            package_name,
-            checkers=CHECKERS,
-            ignore=IGNORE_BREAKING_CHANGES,
-            post_processing_checkers=POST_PROCESSING_CHECKERS,
-        )
-    checker.run_checks()
+    checker = compare_report_dicts(stable, current, package_name, changelog)
 
     # Only clean up reports that were generated into pkg_dir with default, non-absolute names.
     cleanup_default_reports = (
@@ -662,6 +663,54 @@ def report_azure_mgmt_versioned_module(code_report):
     return merged_report
 
 
+def generate_apistub_markdown(package_name: str, out_dir: str, version: Optional[str] = None) -> str:
+    """Generate ``api.md`` for ``package_name`` and return its path.
+
+    The package wheel is downloaded from PyPI (the installed version is used
+    when ``version`` is not provided), the APIView token file is generated with
+    ``apistub`` and exported to markdown. This avoids importing the package and
+    does not require the package source to be present in the repo.
+    """
+    if not version:
+        from importlib.metadata import version as _pkg_version
+
+        version = _pkg_version(package_name)
+
+    # Use a fresh subdir per version so a stale wheel is never picked up.
+    out_dir = os.path.join(out_dir, f"_apistub_{package_name}_{version}")
+    if os.path.isdir(out_dir):
+        shutil.rmtree(out_dir)
+    os.makedirs(out_dir)
+    subprocess.check_call(
+        [sys.executable, "-m", "pip", "download", f"{package_name}=={version}",
+         "--no-deps", "--only-binary=:all:", "-d", out_dir],
+        cwd=out_dir,
+    )
+    whl = next((f for f in os.listdir(out_dir) if f.endswith(".whl")), None)
+    if not whl:
+        raise FileNotFoundError(f"No wheel downloaded for {package_name}=={version}")
+    pkg_path = os.path.join(out_dir, whl)
+
+    # Generate the APIView token file, then export it to api.md.
+    subprocess.check_call(
+        [sys.executable, "-m", "apistub", "--pkg-path", pkg_path, "--out-path", out_dir, "--skip-pylint"],
+        cwd=out_dir,
+    )
+    token_json = os.path.join(out_dir, f"{package_name}_python.json")
+    md_script = os.path.join(root_dir, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
+    subprocess.check_call(["pwsh", md_script, "-TokenJsonPath", token_json, "-OutputPath", out_dir])
+    api_md = os.path.join(out_dir, "api.md")
+    if not os.path.isfile(api_md):
+        raise FileNotFoundError(f"apistub did not produce api.md at {api_md}")
+    return api_md
+
+
+def build_report_from_apistub(package_name: str, out_dir: str, version: Optional[str] = None) -> Dict:
+    """Generate api.md via apistub and convert it to a code report dict."""
+    api_md = generate_apistub_markdown(package_name, out_dir, version)
+    return convert_api_md_to_report(api_md)
+
+
 def main(
     package_name: str,
     target_module: str,
@@ -673,10 +722,14 @@ def main(
     latest_pypi_version: bool,
     source_report: Optional[Path],
     target_report: Optional[Path],
+    use_apistub: bool = False,
 ):
     # If code_report is set, only generate a code report for the package and return
     if code_report:
-        public_api = build_library_report(target_module)
+        if use_apistub:
+            public_api = build_report_from_apistub(package_name, pkg_dir)
+        else:
+            public_api = build_library_report(target_module)
         with open("code_report.json", "w") as fd:
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("code_report.json is written.")
@@ -685,6 +738,17 @@ def main(
     # If source_report and target_report are provided, compare the two reports
     if source_report and target_report:
         test_compare_reports(pkg_dir, changelog, str(source_report), str(target_report))
+        return
+
+    # If using apistub, generate api.md for the stable (PyPI) and current (local)
+    # versions, convert both to code reports, and compare them directly.
+    if use_apistub:
+        current = build_report_from_apistub(package_name, pkg_dir)
+        stable = build_report_from_apistub(package_name, pkg_dir, version=version)
+        checker = compare_report_dicts(stable, current, package_name, changelog)
+        print(checker.report_changes())
+        if not changelog and checker.breaking_changes:
+            exit(1)
         return
 
     # For default behavior, find the latest stable version on PyPi
@@ -808,6 +872,14 @@ if __name__ == "__main__":
         default=False,
     )
 
+    parser.add_argument(
+        "--use-apistub",
+        dest="use_apistub",
+        help="Generate the code report from an apistub-generated api.md instead of importing the package.",
+        action="store_true",
+        default=False,
+    )
+
     args, unknown = parser.parse_known_args()
     if unknown:
         _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
@@ -857,4 +929,5 @@ if __name__ == "__main__":
         args.latest_pypi_version,
         args.source_report,
         args.target_report,
+        args.use_apistub,
     )
