@@ -61,10 +61,7 @@ def _resolve_openai_query_params(kwargs: dict) -> dict:
     :return: Query parameters to forward to the (Async)OpenAI client.
     :rtype: dict
     """
-    default_query = dict[str, str](kwargs.pop("default_query", None) or {})
-    # if agent_name is not None and "api-version" not in default_query:
-    #     default_query["api-version"] = config.api_version
-    return default_query
+    return dict[str, str](kwargs.pop("default_query", None) or {})
 
 
 def _resolve_openai_default_headers(agent_name: Optional[str], kwargs: dict) -> dict:
