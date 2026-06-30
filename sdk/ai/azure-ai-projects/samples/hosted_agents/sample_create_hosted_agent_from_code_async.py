@@ -103,6 +103,14 @@ async def main() -> None:
             foundry_project_endpoint=endpoint,
         )
 
+        user_input = "Good morning!"
+        async with project_client.get_openai_client(agent_name=agent_name) as openai_client:
+            response = await openai_client.responses.create(
+                input=user_input,
+            )
+        print(f"Sent: {user_input}")
+        print(f"Response output: {response.output_text}")
+
         # Download the zip for the version we just created, and write to disk.
         downloaded_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
 
