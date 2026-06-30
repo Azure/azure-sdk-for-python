@@ -8,12 +8,13 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
+import hashlib
+from io import IOBase
 from typing import Union, Optional, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from .. import models as _models
-from .._utils.utils import FileType
 from ..models._patch import (
     _FOUNDRY_FEATURES_HEADER_NAME,
     _has_header_case_insensitive,
@@ -22,6 +23,21 @@ from ..models._patch import (
     _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE,
 )
 
+def _compute_sha256_from_stream(stream: IO[bytes], *, chunk_size: int = 1024 * 1024) -> str:
+    if not isinstance(stream, IOBase) or not stream.seekable():
+        raise TypeError("'code' must be provided as a seekable IO[bytes] stream.")
+
+    stream.seek(0)
+    digest = hashlib.sha256()
+    while True:
+        chunk = stream.read(chunk_size)
+        if not chunk:
+            break
+        if isinstance(chunk, str):
+            raise TypeError("'code' must be provided as IO[bytes], not text IO.")
+        digest.update(chunk)
+    stream.seek(0)
+    return digest.hexdigest()
 
 class AgentsOperations(GeneratedAgentsOperations):
     """
@@ -222,8 +238,8 @@ class AgentsOperations(GeneratedAgentsOperations):
         agent_name: str,
         *,
         definition: _models.HostedAgentDefinition,
-        code: FileType,
-        code_zip_sha256: str,
+        code: Union[bytes, IO[bytes]],
+        code_zip_sha256: Optional[str] = None,
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any,
@@ -246,9 +262,10 @@ class AgentsOperations(GeneratedAgentsOperations):
          entry_point), cpu, memory, and protocol_versions. Required.
         :paramtype definition: ~azure.ai.projects.models.HostedAgentDefinition
         :keyword code: The code zip file (max 250 MB). Required.
-        :paramtype code: ~azure.ai.projects._utils.utils.FileType
+        :paramtype code: Union[bytes, IO[bytes]]
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
+         detection (dedup) and integrity verification. If not provided, it will be calculated
+         automatically from the code content. Default value is None.
         :paramtype code_zip_sha256: str
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
@@ -263,6 +280,13 @@ class AgentsOperations(GeneratedAgentsOperations):
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+
+        # If code_zip_sha256 is not provided, calculate it from the code content
+        if code_zip_sha256 is None:
+            if isinstance(code, bytes):
+                code_zip_sha256 = hashlib.sha256(code).hexdigest()
+            else:
+                code_zip_sha256 = _compute_sha256_from_stream(code)
 
         # Build content from expanded parameters using internal model classes
         metadata_obj = _models._models.CreateAgentVersionFromCodeMetadata(
@@ -305,3 +329,4 @@ class AgentsOperations(GeneratedAgentsOperations):
                         new_exc.model = exc.model
                         raise new_exc from exc
             raise
+
