@@ -70,8 +70,8 @@ class apistub(Check):
             help="Destination directory for generated API stub files.",
         )
         p.add_argument(
-            "--from-pypi",
-            dest="from_pypi",
+            "--generate-from-pypi",
+            dest="generate_from_pypi",
             default=None,
             help="Generate the stub from this released PyPI version instead of local source code.",
         )
@@ -164,10 +164,10 @@ class apistub(Check):
                 logger.error(f"Failed to install APIView dependencies: {e}")
                 return getattr(e, "returncode", 1)
 
-            from_pypi = getattr(args, "from_pypi", None)
+            generate_from_pypi = getattr(args, "generate_from_pypi", None)
 
-            if from_pypi:
-                pkg_path = self.download_pypi_wheel(executable, package_name, from_pypi, staging_directory)
+            if generate_from_pypi:
+                pkg_path = self.download_pypi_wheel(executable, package_name, generate_from_pypi, staging_directory)
             else:
                 if not os.getenv("PREBUILT_WHEEL_DIR"):
                     create_package_and_install(
