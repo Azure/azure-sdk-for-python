@@ -106,9 +106,9 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                         content = f.read()
                     await project_client.agents.upload_session_file(
                         agent_name=agent_name,
-                        agent_session_id=session.agent_session_id,
+                        session_id=session.agent_session_id,
                         content=content,
-                        remote_path=remote_path,
+                        path=remote_path,
                     )
                     print(f"Successfully uploaded file to {remote_path}")
 
@@ -119,8 +119,8 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                 files_list = []
                 async for entry in project_client.agents.list_session_files(
                     agent_name=agent_name,
-                    agent_session_id=session.agent_session_id,
-                    remote_path="/remote",
+                    session_id=session.agent_session_id,
+                    path="/remote",
                 ):
                     files_list.append(entry)
 
@@ -148,8 +148,8 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                     content_chunks = []
                     download_iterator = await project_client.agents.download_session_file(
                         agent_name=agent_name,
-                        agent_session_id=session.agent_session_id,
-                        remote_path=remote_path,
+                        session_id=session.agent_session_id,
+                        path=remote_path,
                     )
                     async for chunk in download_iterator:
                         content_chunks.append(chunk)
@@ -173,8 +173,8 @@ class TestAgentSessionFilesCrudAsync(TestBase):
                     print(f"Deleting session file at path: {remote_path}...")
                     await project_client.agents.delete_session_file(
                         agent_name=agent_name,
-                        agent_session_id=session.agent_session_id,
-                        remote_path=remote_path,
+                        session_id=session.agent_session_id,
+                        path=remote_path,
                     )
                     print(f"Successfully deleted {remote_path}")
 

@@ -103,9 +103,9 @@ class TestAgentSessionFilesCrud(TestBase):
                     content = f.read()
                 project_client.agents.upload_session_file(
                     agent_name=agent_name,
-                    agent_session_id=session.agent_session_id,
+                    session_id=session.agent_session_id,
                     content=content,
-                    remote_path=remote_path,
+                    path=remote_path,
                 )
                 print(f"Successfully uploaded file to {remote_path}")
 
@@ -115,8 +115,8 @@ class TestAgentSessionFilesCrud(TestBase):
             print("Listing session files at path '/remote'...")
             files = project_client.agents.list_session_files(
                 agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                remote_path="/remote",
+                session_id=session.agent_session_id,
+                path="/remote",
             )
 
             # Convert to list for verification
@@ -145,8 +145,8 @@ class TestAgentSessionFilesCrud(TestBase):
                 content_bytes = b"".join(
                     project_client.agents.download_session_file(
                         agent_name=agent_name,
-                        agent_session_id=session.agent_session_id,
-                        remote_path=remote_path,
+                        session_id=session.agent_session_id,
+                        path=remote_path,
                     )
                 )
                 assert content_bytes is not None, "Downloaded content should not be None"
@@ -167,8 +167,8 @@ class TestAgentSessionFilesCrud(TestBase):
                 print(f"Deleting session file at path: {remote_path}...")
                 project_client.agents.delete_session_file(
                     agent_name=agent_name,
-                    agent_session_id=session.agent_session_id,
-                    remote_path=remote_path,
+                    session_id=session.agent_session_id,
+                    path=remote_path,
                 )
                 print(f"Successfully deleted {remote_path}")
 
@@ -181,4 +181,3 @@ class TestAgentSessionFilesCrud(TestBase):
                 session_id=session.agent_session_id,
             )
             print(f"Session deleted (id: {session.agent_session_id})")
-

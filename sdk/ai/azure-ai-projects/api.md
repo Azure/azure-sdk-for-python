@@ -227,10 +227,10 @@ namespace azure.ai.projects.aio.operations
         async def delete_session_file(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 *, 
+                path: str, 
                 recursive: Optional[bool] = ..., 
-                remote_path: str, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -264,9 +264,9 @@ namespace azure.ai.projects.aio.operations
         async def download_session_file(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 *, 
-                remote_path: str, 
+                path: str, 
                 **kwargs: Any
             ) -> AsyncIterator[bytes]: ...
 
@@ -324,12 +324,12 @@ namespace azure.ai.projects.aio.operations
         def list_session_files(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 *, 
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
-                remote_path: Optional[str] = ..., 
+                path: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[SessionDirectoryEntry]: ...
 
@@ -399,10 +399,10 @@ namespace azure.ai.projects.aio.operations
         async def upload_session_file(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 content: bytes, 
                 *, 
-                remote_path: str, 
+                path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
@@ -9576,10 +9576,10 @@ namespace azure.ai.projects.operations
         def delete_session_file(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 *, 
+                path: str, 
                 recursive: Optional[bool] = ..., 
-                remote_path: str, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -9613,9 +9613,9 @@ namespace azure.ai.projects.operations
         def download_session_file(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 *, 
-                remote_path: str, 
+                path: str, 
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
 
@@ -9673,12 +9673,12 @@ namespace azure.ai.projects.operations
         def list_session_files(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 *, 
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
-                remote_path: Optional[str] = ..., 
+                path: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[SessionDirectoryEntry]: ...
 
@@ -9748,10 +9748,10 @@ namespace azure.ai.projects.operations
         def upload_session_file(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 content: bytes, 
                 *, 
-                remote_path: str, 
+                path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 

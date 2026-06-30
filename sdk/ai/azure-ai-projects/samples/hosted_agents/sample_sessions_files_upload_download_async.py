@@ -72,9 +72,9 @@ async def main():
                 content1 = f.read()
             await project_client.agents.upload_session_file(
                 agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
+                session_id=session.agent_session_id,
                 content=content1,
-                remote_path=remote_file_path1,
+                path=remote_file_path1,
             )
 
             print(f"Uploading session file: {data_file2} -> {remote_file_path2}")
@@ -82,16 +82,16 @@ async def main():
                 content2 = f.read()
             await project_client.agents.upload_session_file(
                 agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
+                session_id=session.agent_session_id,
                 content=content2,
-                remote_path=remote_file_path2,
+                path=remote_file_path2,
             )
 
             print("Listing session files for the session at path '.'...")
             files = project_client.agents.list_session_files(
                 agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                remote_path="/remote",
+                session_id=session.agent_session_id,
+                path="/remote",
             )
             async for entry in files:
                 print(f"  - name={entry.name}, size={entry.size}, is_directory={entry.is_directory}")
@@ -100,8 +100,8 @@ async def main():
             content_bytes = b""
             async for chunk in await project_client.agents.download_session_file(
                 agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                remote_path=remote_file_path1,
+                session_id=session.agent_session_id,
+                path=remote_file_path1,
             ):
                 content_bytes += chunk
             file_content = content_bytes.decode("utf-8", errors="replace")
@@ -110,15 +110,15 @@ async def main():
             print(f"Deleting session file at path: {remote_file_path1}...")
             await project_client.agents.delete_session_file(
                 agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                remote_path=remote_file_path1,
+                session_id=session.agent_session_id,
+                path=remote_file_path1,
             )
 
             print(f"Deleting session file at path: {remote_file_path2}...")
             await project_client.agents.delete_session_file(
                 agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                remote_path=remote_file_path2,
+                session_id=session.agent_session_id,
+                path=remote_file_path2,
             )
         finally:
             await project_client.agents.delete_session(
