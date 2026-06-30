@@ -1,5 +1,52 @@
 # Release History
 
+## 2.0.0 (2026-06-30)
+
+### Features Added
+
+  - Client `FrontDoorManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `FrontDoorManagementClient` added method `send_request`
+  - Enum `ActionType` added member `CAPTCHA`
+  - Model `ManagedRuleDefinition` added property `default_sensitivity`
+  - Model `ManagedRuleOverride` added property `sensitivity`
+  - Enum `Operator` added member `SERVICE_TAG_MATCH`
+  - Model `PolicySettings` added property `captcha_expiration_in_minutes`
+  - Added model `BasicResource`
+  - Added model `BasicResourceWithSettableIDName`
+  - Added model `ResourcewithSettableName`
+  - Added enum `SensitivityType`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `BackendPool` moved instance variable `backends`, `load_balancing_settings`, `health_probe_settings` and `resource_state` under property `properties` whose type is `BackendPoolProperties`
+  - Model `CustomHttpsConfiguration` moved instance variable `certificate_type` under property `front_door_certificate_source_parameters` whose type is `FrontDoorCertificateSourceParameters`
+  - Model `CustomHttpsConfiguration` moved instance variable `vault`, `secret_name` and `secret_version` under property `key_vault_certificate_source_parameters` whose type is `KeyVaultCertificateSourceParameters`
+  - Model `Experiment` moved instance variable `description`, `endpoint_a`, `endpoint_b`, `enabled_state`, `resource_state`, `status` and `script_file_uri` under property `properties` whose type is `ExperimentProperties`
+  - Model `ExperimentUpdateModel` moved instance variable `description` and `enabled_state` under property `properties` whose type is `ExperimentUpdateProperties`
+  - Model `FrontDoor` moved instance variable `friendly_name`, `routing_rules`, `load_balancing_settings`, `health_probe_settings`, `backend_pools`, `frontend_endpoints`, `backend_pools_settings`, `enabled_state`, `resource_state`, `provisioning_state`, `cname`, `frontdoor_id`, `rules_engines` and `extended_properties` under property `properties` whose type is `FrontDoorProperties`
+  - Model `FrontendEndpoint` moved instance variable `host_name`, `session_affinity_enabled_state`, `session_affinity_ttl_seconds`, `web_application_firewall_policy_link`, `resource_state`, `custom_https_provisioning_state`, `custom_https_provisioning_substate` and `custom_https_configuration` under property `properties` whose type is `FrontendEndpointProperties`
+  - Model `HealthProbeSettingsModel` moved instance variable `path`, `protocol`, `interval_in_seconds`, `health_probe_method`, `enabled_state` and `resource_state` under property `properties` whose type is `HealthProbeSettingsProperties`
+  - Model `LatencyScorecard` moved instance variable `id_properties_id`, `name_properties_name`, `description`, `endpoint_a`, `endpoint_b`, `start_date_time_utc`, `end_date_time_utc`, `country` and `latency_metrics` under property `properties` whose type is `LatencyScorecardProperties`
+  - Model `LoadBalancingSettingsModel` moved instance variable `sample_size`, `successful_samples_required`, `additional_latency_milliseconds` and `resource_state` under property `properties` whose type is `LoadBalancingSettingsProperties`
+  - Model `ManagedRuleSetDefinition` moved instance variable `provisioning_state`, `rule_set_id`, `rule_set_type`, `rule_set_version` and `rule_groups` under property `properties` whose type is `ManagedRuleSetDefinitionProperties`
+  - Model `PolicySettings` moved instance variable `state` and `scrubbing_rules` under property `log_scrubbing` whose type is `PolicySettingsLogScrubbing`
+  - Model `PreconfiguredEndpoint` moved instance variable `description`, `endpoint`, `endpoint_type` and `backend` under property `properties` whose type is `PreconfiguredEndpointProperties`
+  - Model `Profile` moved instance variable `resource_state` and `enabled_state` under property `properties` whose type is `ProfileProperties`
+  - Model `ProfileUpdateModel` moved instance variable `enabled_state` under property `properties` whose type is `ProfileUpdateProperties`
+  - Model `RoutingRule` moved instance variable `frontend_endpoints`, `accepted_protocols`, `patterns_to_match`, `enabled_state`, `route_configuration`, `rules_engine`, `web_application_firewall_policy_link` and `resource_state` under property `properties` whose type is `RoutingRuleProperties`
+  - Model `RulesEngine` moved instance variable `rules` and `resource_state` under property `properties` whose type is `RulesEngineProperties`
+  - Model `Timeseries` moved instance variable `endpoint`, `start_date_time_utc`, `end_date_time_utc`, `aggregation_interval`, `timeseries_type`, `country` and `timeseries_data` under property `properties` whose type is `TimeseriesProperties`
+  - Model `WebApplicationFirewallPolicy` moved instance variable `policy_settings`, `custom_rules`, `managed_rules`, `frontend_endpoint_links`, `routing_rule_links`, `security_policy_links`, `provisioning_state` and `resource_state` under property `properties` whose type is `WebApplicationFirewallPolicyProperties`
+  - Method `ReportsOperations.get_latency_scorecards` changed its parameter `aggregation_interval`/`end_date_time_utc`/`country` from `positional_or_keyword` to `keyword_only`
+  - Method `ReportsOperations.get_timeseries` changed its parameter `start_date_time_utc`/`end_date_time_utc`/`aggregation_interval`/`timeseries_type`/`endpoint`/`country` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AzureAsyncOperationResult`/`BackendPoolListResult`/`Error`/`ErrorDetails`/`ExperimentList`/`FrontDoorListResult`/`FrontendEndpointsListResult`/`HealthProbeSettingsListResult`/`LoadBalancingSettingsListResult`/`ManagedRuleSetDefinitionList`/`PreconfiguredEndpointList`/`ProfileList`/`RoutingRuleListResult`/`RulesEngineListResult`/`WebApplicationFirewallPolicyList` which actually were not used by SDK users
+  - Deleted enum `NetworkOperationStatus` which actually were not used by SDK users
+
 ## 2.0.0b1 (2026-03-24)
 
 ### Features Added

@@ -914,19 +914,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
-class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource."""
-
-    USER = "User"
-    """User."""
-    APPLICATION = "Application"
-    """Application."""
-    MANAGED_IDENTITY = "ManagedIdentity"
-    """ManagedIdentity."""
-    KEY = "Key"
-    """Key."""
-
-
 class CustomIpPrefixType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of custom IP prefix. Should be Singular, Parent, or Child."""
 
@@ -1044,6 +1031,15 @@ class DisableBgpRoutePropagation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BGP route propagation is enabled."""
     TRUE = "True"
     """BGP route propagation is disabled."""
+
+
+class DisablePeeringRoute(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to disable the routes learned by peering on the route table."""
+
+    NONE = "None"
+    """Peering routes are enabled."""
+    ALL = "All"
+    """All peering routes are disabled."""
 
 
 class EffectiveAdminRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1198,6 +1194,26 @@ class ExpressRouteCircuitSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Local."""
 
 
+class ExpressRouteFailoverBgpStatusAddressFamily(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The address family type for BGP status."""
+
+    I_PV4 = "IPv4"
+    """IPv4 address family."""
+    I_PV6 = "IPv6"
+    """IPv6 address family."""
+
+
+class ExpressRouteFailoverLinkType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The link on which the failover test is being performed."""
+
+    PRIMARY = "Primary"
+    """Primary link."""
+    SECONDARY = "Secondary"
+    """Secondary link."""
+
+
 class ExpressRouteLinkAdminState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Administrative state of the physical port."""
 
@@ -1214,6 +1230,17 @@ class ExpressRouteLinkConnectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """LC."""
     SC = "SC"
     """SC."""
+
+
+class ExpressRouteLinkFailoverBgpStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The BGP status of an ExpressRoute link failover."""
+
+    UNDEFINED = "Undefined"
+    """Undefined status."""
+    CONNECTED = "Connected"
+    """Connected status."""
+    DISCONNECTED = "Disconnected"
+    """Disconnected status."""
 
 
 class ExpressRouteLinkMacSecCipher(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1700,6 +1727,15 @@ class InboundSecurityRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Permanent."""
 
 
+class InterconnectGroupScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scope of an interconnect group resource."""
+
+    NONE = "None"
+    """No interconnect group scope."""
+    INFINI_BAND = "InfiniBand"
+    """InfiniBand interconnect group scope."""
+
+
 class IPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IP address allocation method."""
 
@@ -1849,6 +1885,13 @@ class LoadBalancerBackendAddressAdminState(str, Enum, metaclass=CaseInsensitiveE
     """Down."""
 
 
+class LoadBalancerDetailLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls verbosity of the returned load balancer resource."""
+
+    REDUCED = "Reduced"
+    """When set to 'Reduced', read-only reference collections may be omitted."""
+
+
 class LoadBalancerOutboundRuleProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The protocol for the outbound rule in load balancer."""
 
@@ -1900,6 +1943,15 @@ class LoadDistribution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SourceIPProtocol."""
 
 
+class MaintenanceTestCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of maintenance that can occur during an ExpressRoute failover test."""
+
+    BGP_DISCONNECT = "BgpDisconnect"
+    """BGP disconnect test category."""
+    AS_PATH_PREPEND = "ASPathPrepend"
+    """AS path prepend test category."""
+
+
 class ManagedRuleEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the managed rule. Defaults to Disabled if not specified."""
 
@@ -1907,6 +1959,17 @@ class ManagedRuleEnabledState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disabled."""
     ENABLED = "Enabled"
     """Enabled."""
+
+
+class Nat64State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether Nat64 is enabled for the NAT gateway resource."""
+
+    NONE = "None"
+    """Nat64 Property is not set."""
+    ENABLED = "Enabled"
+    """Nat64 is enabled."""
+    DISABLED = "Disabled"
+    """Nat64 is disabled."""
 
 
 class NatGatewaySkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2007,8 +2070,11 @@ class NextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VnetLocal."""
     HYPER_NET_GATEWAY = "HyperNetGateway"
     """HyperNetGateway."""
+    VIRTUAL_APPLIANCE_ECMP = "VirtualApplianceEcmp"
+    """Routes traffic to virtual appliances using Equal-Cost Multi-Path (ECMP) routing with multiple
+    next hop IP addresses."""
     NONE = "None"
-    """None."""
+    """No next hop type."""
 
 
 class NextStep(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2091,6 +2157,19 @@ class NspProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Accepted."""
     FAILED = "Failed"
     """Failed."""
+
+
+class NspReadinessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The readiness state of the resource type for NSP support."""
+
+    ONBOARDING = "Onboarding"
+    """Resource Provider is actively being onboarded to NSP."""
+    PREVIEW = "Preview"
+    """Resource Provider supports NSP in Preview."""
+    GA = "GA"
+    """Resource Provider is generally available for NSP Integration."""
+    NOT_READY = "NotReady"
+    """NSP Onboarding is not started or not Supported."""
 
 
 class NvaNicType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2283,6 +2362,15 @@ class PreferredRoutingGateway(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VpnGateway."""
     NONE = "None"
     """None."""
+
+
+class PrivateEndpointBillingSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The billing sku of the private endpoint."""
+
+    PAY_AS_YOU_GO = "PayAsYouGo"
+    """PayAsYouGo sku is the default price for private endpoints."""
+    FIXED = "Fixed"
+    """Fixed sku is best for high data processing private endpoints."""
 
 
 class PrivateEndpointIPVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2542,8 +2630,11 @@ class RouteNextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Internet."""
     VIRTUAL_APPLIANCE = "VirtualAppliance"
     """VirtualAppliance."""
+    VIRTUAL_APPLIANCE_ECMP = "VirtualApplianceEcmp"
+    """Routes traffic to virtual appliances using Equal-Cost Multi-Path (ECMP) routing with multiple
+    next hop IP addresses."""
     NONE = "None"
-    """None."""
+    """No next hop type."""
 
 
 class RouteTableUsageMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2843,6 +2934,15 @@ class SlotType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Staging."""
 
 
+class SubgroupProfileScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scope of the subgroup profile."""
+
+    NONE = "None"
+    """No subgroup profile scope."""
+    VERTICAL_CONNECT = "VerticalConnect"
+    """VerticalConnect subgroup profile scope."""
+
+
 class SyncMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Backend address synchronous mode for the backend pool."""
 
@@ -2914,6 +3014,15 @@ class VerbosityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Minimum."""
     FULL = "Full"
     """Full."""
+
+
+class VirtualNetworkApplianceIpVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP address version."""
+
+    I_PV4 = "IPv4"
+    """IPv4 version."""
+    DUAL_STACK = "DualStack"
+    """Dual Stack version."""
 
 
 class VirtualNetworkEncryptionEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
