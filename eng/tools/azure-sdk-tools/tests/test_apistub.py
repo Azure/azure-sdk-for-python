@@ -8,6 +8,31 @@ from unittest.mock import patch, MagicMock
 
 from azpysdk.apistub import apistub, get_package_wheel_path, get_cross_language_mapping_path
 
+
+def _build_parser():
+    parser = argparse.ArgumentParser(prog="azpysdk")
+    subparsers = parser.add_subparsers(title="commands", dest="command")
+    apistub().register(subparsers)
+    return parser
+
+
+class TestApistubRegistration:
+    def test_generate_from_pypi_flag_sets_version(self):
+        parser = _build_parser()
+
+        args = parser.parse_args(["apistub", "--generate-from-pypi", "1.0.0"])
+
+        assert args.command == "apistub"
+        assert args.pypi_version == "1.0.0"
+
+    def test_pypi_version_alias_sets_version(self):
+        parser = _build_parser()
+
+        args = parser.parse_args(["apistub", "--pypi-version", "1.0.0"])
+
+        assert args.command == "apistub"
+        assert args.pypi_version == "1.0.0"
+
 # ── get_package_wheel_path() ─────────────────────────────────────────────
 
 
@@ -431,7 +456,7 @@ class TestRunOutputDirectory:
     def test_pypi_version_downloads_wheel_instead_of_building(
         self, _env, _install, create_package_and_install, _get_mapping, tmp_path, monkeypatch
     ):
-        """When --pypi-version is passed, the wheel is downloaded from PyPI and local build is skipped."""
+        """When a PyPI version is passed, the wheel is downloaded from PyPI and local build is skipped."""
         monkeypatch.chdir(os.getcwd())
         stub = apistub()
         staging = str(tmp_path / "staging")
