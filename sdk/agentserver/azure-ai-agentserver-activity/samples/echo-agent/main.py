@@ -1,12 +1,9 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-"""Tier 1 - Zero-Config Activity Protocol Agent.
+"""Echo activity protocol agent.
 
-The simplest possible activity protocol agent. The package auto-initializes
-the M365 Agents SDK from environment variables, applies MSAL auth patches,
-and bridges activities to the AgentApplication turn pipeline.
-
-You write only handler logic - no SDK wiring needed.
+The simplest activity protocol agent: register handlers directly on the host
+and echo the user's message back.
 """
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost

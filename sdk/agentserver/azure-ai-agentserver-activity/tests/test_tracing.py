@@ -38,7 +38,7 @@ async def test_activity_sets_baggage_values_per_request():
     async def handle(request):  # pylint: disable=unused-argument
         return JSONResponse({
             "session": get_baggage("azure.ai.agentserver.session_id") or "",
-            "protocol": get_baggage("azure.ai.agentserver.protocol") or "",
+            "conversation": get_baggage("azure.ai.agentserver.conversation_id") or "",
         })
 
     app = ActivityAgentServerHost(handler=handle, configure_observability=None)
@@ -46,14 +46,14 @@ async def test_activity_sets_baggage_values_per_request():
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
             "/activity/messages?agent_session_id=session-from-query",
-            json={"type": "message", "text": "hello"},
+            json={"type": "message", "text": "hello", "conversation": {"id": "conv-42"}},
             headers={"Authorization": "Bearer test-token"},
         )
 
     assert resp.status_code == 200
     body = resp.json()
     assert body["session"] == "session-from-query"
-    assert body["protocol"] == "activity"
+    assert body["conversation"] == "conv-42"
 
 
 @pytest.mark.asyncio

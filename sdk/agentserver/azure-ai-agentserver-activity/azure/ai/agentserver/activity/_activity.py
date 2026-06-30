@@ -16,7 +16,6 @@ from typing import Any, Optional
 
 from opentelemetry import baggage as _otel_baggage
 from opentelemetry import context as _otel_context
-from opentelemetry import trace as _otel_trace
 from opentelemetry.context import Token  # pyright: ignore[reportPrivateImportUsage]
 from starlette.requests import Request
 from starlette.responses import Response
@@ -77,54 +76,6 @@ def _install_log_enrichment() -> None:
 
     _factory._activity_enricher = True  # type: ignore[attr-defined]
     logging.setLogRecordFactory(_factory)
-
-
-try:  # SDK SpanProcessor provides the full interface (incl. _on_ending) the SDK calls.
-    from opentelemetry.sdk.trace import SpanProcessor as _OtelSpanProcessor  # pylint: disable=ungrouped-imports
-except Exception:  # pylint: disable=broad-exception-caught
-    _OtelSpanProcessor = object  # type: ignore[assignment, misc]
-
-
-class _BaggageSpanProcessor(_OtelSpanProcessor):  # type: ignore[valid-type, misc]
-    """SpanProcessor that copies OTel baggage entries onto every span at start,
-    so child spans (auth, connector, send-activity, ...) are filterable by the
-    same correlation keys.
-    """
-
-    def on_start(self, span: Any, parent_context: Optional[Any] = None) -> None:
-        try:
-            ctx = parent_context if parent_context is not None else _otel_context.get_current()
-            for key, value in _otel_baggage.get_all(ctx).items():
-                if value is not None:
-                    span.set_attribute(key, value)
-        except Exception:  # pylint: disable=broad-exception-caught
-            pass
-
-    def on_end(self, span: Any) -> None:
-        pass
-
-    def shutdown(self) -> None:
-        pass
-
-    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
-        return True
-
-
-def _install_baggage_span_processor() -> None:
-    """Register the baggage->span-attribute processor on the tracer provider."""
-    try:
-        provider = _otel_trace.get_tracer_provider()
-        if getattr(provider, "_activity_baggage_processor_installed", False):
-            return
-        add_span_processor = getattr(provider, "add_span_processor", None)
-        if callable(add_span_processor):
-            add_span_processor(_BaggageSpanProcessor())  # pylint: disable=not-callable
-            try:
-                provider._activity_baggage_processor_installed = True  # type: ignore[attr-defined]
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass
-    except Exception:  # pylint: disable=broad-exception-caught
-        pass
 
 
 def _apply_error_source_headers(
@@ -270,11 +221,11 @@ class ActivityAgentServerHost(AgentServerHost):
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + activity_routes, **kwargs)
 
-        # Install logging/tracing enrichment for this host.
+        # Install logging enrichment for this host. The core observability stack
+        # promotes session_id / conversation_id baggage onto spans and logs.
         _install_log_enrichment()
-        _install_baggage_span_processor()
 
-        logger.info("ActivityAgentServerHost ready | Activity initialized, instance 30ju515p")
+        logger.info("ActivityAgentServerHost ready | Groot30ju607p deployment")
 
     @property
     def adapter(self) -> Any:
@@ -508,32 +459,14 @@ class ActivityAgentServerHost(AgentServerHost):
             )
 
             baggage_ctx = _otel_context.get_current()
-            # Set correlation baggage keys.
+            # Set the correlation baggage keys the core observability stack
+            # promotes onto spans and log records.
             baggage_ctx = _otel_baggage.set_baggage(
                 "azure.ai.agentserver.session_id", session_id or "", context=baggage_ctx
-            )
-            baggage_ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.protocol", ActivityConstants.PROTOCOL, context=baggage_ctx
             )
             if conversation_id:
                 baggage_ctx = _otel_baggage.set_baggage(
                     "azure.ai.agentserver.conversation_id", conversation_id, context=baggage_ctx
-                )
-            if activity_id:
-                baggage_ctx = _otel_baggage.set_baggage(
-                    "azure.ai.agentserver.activity_id", activity_id, context=baggage_ctx
-                )
-            if inbound_user_id:
-                baggage_ctx = _otel_baggage.set_baggage(
-                    "azure.ai.agentserver.user_id", inbound_user_id, context=baggage_ctx
-                )
-            if inbound_call_id:
-                baggage_ctx = _otel_baggage.set_baggage(
-                    "azure.ai.agentserver.call_id", inbound_call_id, context=baggage_ctx
-                )
-            if request_trace_id:
-                baggage_ctx = _otel_baggage.set_baggage(
-                    "azure.ai.agentserver.x_request_id", request_trace_id, context=baggage_ctx
                 )
             baggage_token = _otel_context.attach(baggage_ctx)
 

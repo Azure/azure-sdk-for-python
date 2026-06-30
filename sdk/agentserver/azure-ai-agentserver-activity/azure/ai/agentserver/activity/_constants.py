@@ -5,11 +5,10 @@ from azure.ai.agentserver.core._platform_headers import SESSION_ID as _SESSION_I
 
 
 class ActivityConstants:
-    """Activity protocol constants.
+    """Activity protocol header constants.
 
-    Protocol-specific headers and telemetry attribute keys for activity
-    endpoint handling. Cross-cutting header names (for example session ID)
-    are imported from :mod:`azure.ai.agentserver.core._platform_headers`.
+    Cross-cutting header names (for example session ID) are imported from
+    :mod:`azure.ai.agentserver.core._platform_headers`.
     """
 
     PROTOCOL = "activity"

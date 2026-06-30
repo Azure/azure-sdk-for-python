@@ -215,21 +215,6 @@ async def _process_turn(agent_app: Any, adapter: Any, digital_worker: bool, requ
 
     activity_dict = request.state.activity
     activity_type = activity_dict.get("type", "unknown")
-    session_id = request.state.session_id
-
-    logger.info(
-        "Bridge: activity received | type=%s | session=%s",
-        activity_type, session_id,
-    )
-    logger.debug(
-        "Bridge: activity details | conversation=%s | serviceUrl=%s | channelId=%s | from=%s",
-        activity_dict.get("conversation", {}).get("id", "?")
-        if isinstance(activity_dict.get("conversation"), dict)
-        else "?",
-        activity_dict.get("serviceUrl", ""),
-        activity_dict.get("channelId", ""),
-        activity_dict.get("from", {}).get("id", "?") if isinstance(activity_dict.get("from"), dict) else "?",
-    )
 
     activity = Activity.model_validate(activity_dict)
 

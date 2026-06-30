@@ -2,9 +2,9 @@
 
 """Self-Hosted Activity Agent - Full M365 SDK Control.
 
-Demonstrates the handler pattern (Tier 3) where the developer owns the
-full M365 Agents SDK pipeline: MsalConnectionManager, HttpAdapterBase,
-AgentApplication, and a custom bridge handler.
+The developer owns the full M365 Agents SDK pipeline (``MsalConnectionManager``,
+``HttpAdapterBase``, ``AgentApplication``) and passes a custom ``handler`` to the
+host.
 
 Use this pattern when you need:
 - Direct access to M365 SDK features (auth_handlers, regex message matching)

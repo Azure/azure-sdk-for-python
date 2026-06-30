@@ -2,8 +2,8 @@
 
 """Multi-Protocol Agent - Activity + Invocations.
 
-Demonstrates composing Activity and Invocations protocols on a single
-server using Python mixin inheritance (Tier 2 - Builder pattern).
+Composes the Activity and Invocations protocols on a single server using
+Python mixin inheritance.
 
 Both protocols share the same server on port 8088:
     POST /activity/messages  - Activity protocol (Teams/M365)
