@@ -54,6 +54,7 @@ class SanitizedValues:
     COMPONENT_NAME = "sanitized-component-name"
     AGENTS_API_VERSION = "sanitized-api-version"
     API_KEY = "sanitized-api-key"
+    MODEL_DEPLOYMENT_NAME = "sanitized-model-deployment-name"
 
 
 @pytest.fixture(scope="session")
@@ -66,6 +67,7 @@ def sanitized_values():
         "component_name": f"{SanitizedValues.COMPONENT_NAME}",
         "agents_api_version": f"{SanitizedValues.AGENTS_API_VERSION}",
         "api_key": f"{SanitizedValues.API_KEY}",
+        "model_deployment_name": f"{SanitizedValues.MODEL_DEPLOYMENT_NAME}",
     }
 
 
@@ -235,6 +237,36 @@ def add_sanitizers(test_proxy, sanitized_values):
             value="sanitized-gpt-image",
         )
         add_body_string_sanitizer(target=image_generation_model, value="sanitized-gpt-image")
+
+    model_deployment_names = {
+        value
+        for value in (
+            os.environ.get("FOUNDRY_MODEL_NAME"),
+            os.environ.get("foundry_model_name"),
+            os.environ.get("MODEL_DEPLOYMENT_NAME"),
+            os.environ.get("model_deployment_name"),
+            os.environ.get("MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"),
+            os.environ.get("memory_store_chat_model_deployment_name"),
+        )
+        if value and value != sanitized_values["model_deployment_name"]
+    }
+    for model_deployment_name in model_deployment_names:
+        add_general_regex_sanitizer(
+            regex=re.escape(model_deployment_name),
+            value=sanitized_values["model_deployment_name"],
+        )
+        add_body_string_sanitizer(
+            target=model_deployment_name,
+            value=sanitized_values["model_deployment_name"],
+        )
+
+    # Deterministic fallback sanitization for model deployment names returned by
+    # OpenAI-compatible endpoints. These can appear in response bodies and headers
+    # even when the live value was not supplied through a known environment variable.
+    add_general_regex_sanitizer(
+        regex=r"(?<![A-Za-z0-9._-])gpt-(?!image\b)[A-Za-z0-9][A-Za-z0-9._-]*",
+        value=sanitized_values["model_deployment_name"],
+    )
 
     add_header_regex_sanitizer(key="api-key", value=SanitizedValues.API_KEY)
 

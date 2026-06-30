@@ -25,7 +25,7 @@ class TestNetworkManagementDdosProtectionPlansOperationsAsync(AzureMgmtRecordedT
         response = await self.client.ddos_protection_plans.get(
             resource_group_name=resource_group.name,
             ddos_protection_plan_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestNetworkManagementDdosProtectionPlansOperationsAsync(AzureMgmtRecordedT
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -66,7 +66,7 @@ class TestNetworkManagementDdosProtectionPlansOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             ddos_protection_plan_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestNetworkManagementDdosProtectionPlansOperationsAsync(AzureMgmtRecordedT
             await self.client.ddos_protection_plans.begin_delete(
                 resource_group_name=resource_group.name,
                 ddos_protection_plan_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -91,7 +91,7 @@ class TestNetworkManagementDdosProtectionPlansOperationsAsync(AzureMgmtRecordedT
     async def test_ddos_protection_plans_list_by_resource_group(self, resource_group):
         response = self.client.ddos_protection_plans.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestNetworkManagementDdosProtectionPlansOperationsAsync(AzureMgmtRecordedT
     @recorded_by_proxy_async
     async def test_ddos_protection_plans_list(self, resource_group):
         response = self.client.ddos_protection_plans.list(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

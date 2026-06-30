@@ -23,13 +23,13 @@ from azure.identity import DefaultAzureCredential
 def mock_compute_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_10_01_preview: Mock,
+    mock_aml_services_2023_08_01_preview: Mock,
     mock_aml_services_2023_04_01_preview: Mock,
 ) -> ComputeOperations:
     yield ComputeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2022_10_01_preview,
+        service_client=mock_aml_services_2023_08_01_preview,
         service_client_2024=mock_aml_services_2023_04_01_preview,
     )
 

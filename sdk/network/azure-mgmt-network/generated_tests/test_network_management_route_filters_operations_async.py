@@ -25,7 +25,7 @@ class TestNetworkManagementRouteFiltersOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.route_filters.get(
             resource_group_name=resource_group.name,
             route_filter_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -275,7 +275,7 @@ class TestNetworkManagementRouteFiltersOperationsAsync(AzureMgmtRecordedTestCase
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -289,7 +289,7 @@ class TestNetworkManagementRouteFiltersOperationsAsync(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             route_filter_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -302,7 +302,7 @@ class TestNetworkManagementRouteFiltersOperationsAsync(AzureMgmtRecordedTestCase
             await self.client.route_filters.begin_delete(
                 resource_group_name=resource_group.name,
                 route_filter_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -314,7 +314,7 @@ class TestNetworkManagementRouteFiltersOperationsAsync(AzureMgmtRecordedTestCase
     async def test_route_filters_list_by_resource_group(self, resource_group):
         response = self.client.route_filters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -324,7 +324,7 @@ class TestNetworkManagementRouteFiltersOperationsAsync(AzureMgmtRecordedTestCase
     @recorded_by_proxy_async
     async def test_route_filters_list(self, resource_group):
         response = self.client.route_filters.list(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -101,7 +101,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         initial_agent_reference: AgentReference | dict[str, Any] | None = None,
         agent_session_id: str | None = None,
         conversation_id: str | None = None,
-        chat_isolation_key: str | None = None,
+        user_id_key: str | None = None,
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
@@ -123,7 +123,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         self.initial_agent_reference = initial_agent_reference or {}
         self.agent_session_id = agent_session_id
         self.conversation_id = conversation_id
-        self.chat_isolation_key = chat_isolation_key
+        self.user_id_key = user_id_key
         self.response_created_signal: asyncio.Event = asyncio.Event()
         self.response_failed_before_events: bool = False
         self.persistence_failed: bool = False

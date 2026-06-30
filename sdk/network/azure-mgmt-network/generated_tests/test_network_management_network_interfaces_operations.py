@@ -27,7 +27,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
             cloud_service_name="str",
             role_instance_name="str",
             network_interface_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             cloud_service_name="str",
             role_instance_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
         response = self.client.network_interfaces.get(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -227,7 +227,11 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                     "location": "str",
                                     "name": "str",
                                     "properties": {
-                                        "ddosSettings": {"ddosProtectionPlan": {"id": "str"}, "protectionMode": "str"},
+                                        "ddosSettings": {
+                                            "ddosCustomPolicy": {"id": "str"},
+                                            "ddosProtectionPlan": {"id": "str"},
+                                            "protectionMode": "str",
+                                        },
                                         "deleteOption": "str",
                                         "dnsSettings": {
                                             "domainNameLabel": "str",
@@ -487,6 +491,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -573,6 +578,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -584,6 +590,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -667,6 +674,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                             "name": "str",
                                             "properties": {
                                                 "idleTimeoutInMinutes": 0,
+                                                "nat64": "str",
                                                 "provisioningState": "str",
                                                 "publicIpAddresses": [{"id": "str"}],
                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -751,6 +759,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -774,6 +783,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -993,6 +1003,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "billingSku": "str",
                                                     "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                     "customNetworkInterfaceName": "str",
                                                     "ipConfigurations": [
@@ -1077,6 +1088,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                             "name": "str",
                                             "properties": {
                                                 "disableBgpRoutePropagation": bool,
+                                                "disablePeeringRoute": "str",
                                                 "provisioningState": "str",
                                                 "resourceGuid": "str",
                                                 "routes": [
@@ -1088,6 +1100,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "nextHopType": "str",
                                                             "addressPrefix": "str",
                                                             "hasBgpOverride": bool,
+                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                             "nextHopIpAddress": "str",
                                                             "provisioningState": "str",
                                                         },
@@ -1171,6 +1184,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                 "id": "str",
                                                 "name": "str",
                                                 "properties": {
+                                                    "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                                     "gatewayLoadBalancer": {"id": "str"},
                                                     "inboundNatPools": [{"id": "str"}],
                                                     "inboundNatRules": [{"id": "str"}],
@@ -1188,6 +1202,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -1480,6 +1495,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -1569,6 +1585,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -1580,6 +1597,11 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -1667,6 +1689,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -1761,6 +1784,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -1786,6 +1810,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -2021,6 +2046,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "billingSku": "str",
                                                                         "customDnsConfigs": [
                                                                             {"fqdn": "str", "ipAddresses": ["str"]}
                                                                         ],
@@ -2107,6 +2133,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -2118,6 +2145,9 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -2416,6 +2446,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -2439,6 +2470,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -2502,6 +2534,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "billingSku": "str",
                                                     "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                     "customNetworkInterfaceName": "str",
                                                     "ipConfigurations": [
@@ -2586,6 +2619,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                             "name": "str",
                                             "properties": {
                                                 "disableBgpRoutePropagation": bool,
+                                                "disablePeeringRoute": "str",
                                                 "provisioningState": "str",
                                                 "resourceGuid": "str",
                                                 "routes": [
@@ -2597,6 +2631,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "nextHopType": "str",
                                                             "addressPrefix": "str",
                                                             "hasBgpOverride": bool,
+                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                             "nextHopIpAddress": "str",
                                                             "provisioningState": "str",
                                                         },
@@ -2693,6 +2728,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                     "type": "str",
                                 }
                             ],
+                            "billingSku": "str",
                             "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                             "customNetworkInterfaceName": "str",
                             "ipConfigurations": [
@@ -2801,6 +2837,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -2824,6 +2861,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -3045,6 +3083,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                         "name": "str",
                                         "properties": {
                                             "disableBgpRoutePropagation": bool,
+                                            "disablePeeringRoute": "str",
                                             "provisioningState": "str",
                                             "resourceGuid": "str",
                                             "routes": [
@@ -3056,6 +3095,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                         "nextHopType": "str",
                                                         "addressPrefix": "str",
                                                         "hasBgpOverride": bool,
+                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                         "nextHopIpAddress": "str",
                                                         "provisioningState": "str",
                                                     },
@@ -3215,6 +3255,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -3238,6 +3279,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -3457,6 +3499,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "billingSku": "str",
                                                             "customDnsConfigs": [
                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                             ],
@@ -3543,6 +3586,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                     "name": "str",
                                                     "properties": {
                                                         "disableBgpRoutePropagation": bool,
+                                                        "disablePeeringRoute": "str",
                                                         "provisioningState": "str",
                                                         "resourceGuid": "str",
                                                         "routes": [
@@ -3554,6 +3598,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                     "nextHopType": "str",
                                                                     "addressPrefix": "str",
                                                                     "hasBgpOverride": bool,
+                                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                     "nextHopIpAddress": "str",
                                                                     "provisioningState": "str",
                                                                 },
@@ -3635,6 +3680,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                     "id": "str",
                                     "name": "str",
                                     "properties": {
+                                        "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                         "gatewayLoadBalancer": {"id": "str"},
                                         "inboundNatPools": [{"id": "str"}],
                                         "inboundNatRules": [{"id": "str"}],
@@ -3652,6 +3698,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                             "name": "str",
                                             "properties": {
                                                 "ddosSettings": {
+                                                    "ddosCustomPolicy": {"id": "str"},
                                                     "ddosProtectionPlan": {"id": "str"},
                                                     "protectionMode": "str",
                                                 },
@@ -3924,6 +3971,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -4010,6 +4058,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "disableBgpRoutePropagation": bool,
+                                                                        "disablePeeringRoute": "str",
                                                                         "provisioningState": "str",
                                                                         "resourceGuid": "str",
                                                                         "routes": [
@@ -4021,6 +4070,9 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                     "nextHopType": "str",
                                                                                     "addressPrefix": "str",
                                                                                     "hasBgpOverride": bool,
+                                                                                    "nextHop": {
+                                                                                        "nextHopIpAddresses": ["str"]
+                                                                                    },
                                                                                     "nextHopIpAddress": "str",
                                                                                     "provisioningState": "str",
                                                                                 },
@@ -4106,6 +4158,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                     "name": "str",
                                                     "properties": {
                                                         "idleTimeoutInMinutes": 0,
+                                                        "nat64": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -4194,6 +4247,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -4217,6 +4271,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -4436,6 +4491,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "billingSku": "str",
                                                             "customDnsConfigs": [
                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                             ],
@@ -4522,6 +4578,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                     "name": "str",
                                                     "properties": {
                                                         "disableBgpRoutePropagation": bool,
+                                                        "disablePeeringRoute": "str",
                                                         "provisioningState": "str",
                                                         "resourceGuid": "str",
                                                         "routes": [
@@ -4533,6 +4590,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                     "nextHopType": "str",
                                                                     "addressPrefix": "str",
                                                                     "hasBgpOverride": bool,
+                                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                     "nextHopIpAddress": "str",
                                                                     "provisioningState": "str",
                                                                 },
@@ -4638,6 +4696,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                         "type": "str",
                                                     }
                                                 ],
+                                                "billingSku": "str",
                                                 "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                 "customNetworkInterfaceName": "str",
                                                 "ipConfigurations": [
@@ -4759,6 +4818,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -4784,6 +4844,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -5019,6 +5080,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -5030,6 +5092,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -5142,6 +5205,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                             "id": "str",
                                             "name": "str",
                                             "properties": {
+                                                "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                                 "gatewayLoadBalancer": {"id": "str"},
                                                 "inboundNatPools": [{"id": "str"}],
                                                 "inboundNatRules": [{"id": "str"}],
@@ -5159,6 +5223,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -5447,6 +5512,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -5536,6 +5602,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -5547,6 +5614,11 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -5634,6 +5706,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -5728,6 +5801,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -5753,6 +5827,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -5986,6 +6061,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -6072,6 +6148,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -6083,6 +6160,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -6284,6 +6362,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -6572,6 +6651,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -6661,6 +6741,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -6672,6 +6753,11 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -6759,6 +6845,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -6852,6 +6939,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -6877,6 +6965,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -7110,6 +7199,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -7196,6 +7286,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -7207,6 +7298,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -7301,7 +7393,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7314,7 +7406,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             network_interface_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -7326,7 +7418,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
         response = self.client.network_interfaces.begin_delete(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7337,7 +7429,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
     def test_network_interfaces_list(self, resource_group):
         response = self.client.network_interfaces.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7347,7 +7439,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_network_interfaces_list_all(self, resource_group):
         response = self.client.network_interfaces.list_all(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7359,7 +7451,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
         response = self.client.network_interfaces.begin_get_effective_route_table(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7371,7 +7463,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
         response = self.client.network_interfaces.begin_list_effective_network_security_groups(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7412,7 +7504,7 @@ class TestNetworkManagementNetworkInterfacesOperations(AzureMgmtRecordedTestCase
         response = self.client.network_interfaces.list_cloud_service_network_interfaces(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

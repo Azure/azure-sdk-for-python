@@ -1,0 +1,19 @@
+{
+  "properties": {
+    "accountName": "smokeaccount",
+    "credentials": {
+      "credentialsType": "AccountKey",
+      "secrets": {
+        "key": "smoke-account-key",
+        "secretsType": "AccountKey"
+      }
+    },
+    "datastoreType": "AzureFile",
+    "endpoint": "core.windows.net",
+    "fileShareName": "smoke-share",
+    "protocol": "https",
+    "tags": {
+      "tag1": "value1"
+    }
+  }
+}

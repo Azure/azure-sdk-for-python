@@ -1,5 +1,54 @@
 # Release History
 
+## 14.0.0 (2026-06-24)
+
+### Features Added
+
+  - Client `LogAnalyticsManagementClient` added method `send_request`
+  - Model `AzureEntityResource` added property `system_data`
+  - Model `Cluster` added property `system_data`
+  - Model `DataExport` added property `system_data`
+  - Model `DataSource` added property `system_data`
+  - Model `LinkedService` added property `system_data`
+  - Model `LinkedStorageAccountsResource` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `SavedSearch` added property `system_data`
+  - Model `StorageInsight` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Model `WorkspacePatch` added property `system_data`
+  - Added model `Destination`
+  - Added model `DestinationMetaData`
+  - Added enum `SummaryLogsProvisioningState`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Cluster` moved instance variable `cluster_id`, `provisioning_state`, `is_double_encryption_enabled`, `is_availability_zones_enabled`, `billing_type`, `key_vault_properties`, `last_modified_date`, `created_date`, `associated_workspaces`, `capacity_reservation_properties` and `replication` under property `properties` whose type is `ClusterProperties`
+  - Model `ClusterPatch` moved instance variable `key_vault_properties` and `billing_type` under property `properties` whose type is `ClusterPatchProperties`
+  - Model `DataExport` moved instance variable `data_export_id`, `table_names`, `enable`, `created_date`, `last_modified_date`, `resource_id`, `type_properties_destination_type` and `event_hub_name` under property `properties` whose type is `DataExportProperties`
+  - Model `LinkedService` moved instance variable `resource_id`, `write_access_resource_id` and `provisioning_state` under property `properties` whose type is `LinkedServiceProperties`
+  - Model `LinkedStorageAccountsResource` moved instance variable `data_source_type` and `storage_account_ids` under property `properties` whose type is `LinkedStorageAccountsProperties`
+  - Model `LogAnalyticsQueryPack` moved instance variable `query_pack_id`, `time_created`, `time_modified` and `provisioning_state` under property `properties` whose type is `LogAnalyticsQueryPackProperties`
+  - Model `LogAnalyticsQueryPackQuery` moved instance variable `id_properties_id`, `display_name`, `time_created`, `time_modified`, `author`, `description`, `body`, `related` and `tags` under property `properties` whose type is `LogAnalyticsQueryPackQueryProperties`
+  - Model `ManagementGroup` moved instance variable `server_count`, `is_gateway`, `name`, `id`, `created`, `data_received`, `version` and `sku` under property `properties` whose type is `ManagementGroupProperties`
+  - Model `SavedSearch` moved instance variable `category`, `display_name`, `query`, `function_alias`, `function_parameters`, `version` and `tags` under property `properties` whose type is `SavedSearchProperties`
+  - Model `StorageInsight` moved instance variable `containers`, `tables`, `storage_account` and `status` under property `properties` whose type is `StorageInsightProperties`
+  - Model `SummaryLogs` moved instance variable `rule_type`, `display_name`, `description`, `is_active`, `status_code`, `provisioning_state` and `rule_definition` under property `properties` whose type is `SummaryLogsProperties`
+  - Model `Table` moved instance variable `retention_in_days`, `total_retention_in_days`, `archive_retention_in_days`, `search_results`, `restored_logs`, `result_statistics`, `plan`, `last_plan_modified_date`, `schema`, `provisioning_state`, `retention_in_days_as_default` and `total_retention_in_days_as_default` under property `properties` whose type is `TableProperties`
+  - Model `Workspace` moved instance variable `provisioning_state`, `customer_id`, `sku`, `retention_in_days`, `workspace_capping`, `created_date`, `modified_date`, `public_network_access_for_ingestion`, `public_network_access_for_query`, `force_cmk_for_query`, `private_link_scoped_resources`, `features`, `default_data_collection_rule_resource_id`, `replication` and `failover` under property `properties` whose type is `WorkspaceProperties`
+  - Model `WorkspacePatch` moved instance variable `provisioning_state`, `customer_id`, `sku`, `retention_in_days`, `workspace_capping`, `created_date`, `modified_date`, `public_network_access_for_ingestion`, `public_network_access_for_query`, `force_cmk_for_query`, `private_link_scoped_resources`, `features`, `default_data_collection_rule_resource_id`, `replication` and `failover` under property `properties` whose type is `WorkspaceProperties`
+  - Method `DataSourcesOperations.list_by_workspace` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `QueriesOperations.list` changed its parameter `include_body`/`skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `QueriesOperations.search` changed its parameter `include_body`/`skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `WorkspacesOperations.begin_delete` changed its parameter `force` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `ClusterListResult`/`DataExportListResult`/`DataSourceListResult`/`LinkedServiceListResult`/`LinkedStorageAccountsListResult`/`LogAnalyticsQueryPackListResult`/`LogAnalyticsQueryPackQueryListResult`/`NetworkSecurityPerimeterConfigurationListResult`/`OperationListResult`/`StorageInsightListResult`/`SummaryLogsListResult`/`TablesListResult`/`WorkspaceListResult` which actually were not used by SDK users
+  - Deleted model `DataSourceFilter`/`ErrorDetailAutoGenerated`/`ErrorDetailAutoGenerated2`/`ErrorResponseAutoGenerated`/`ErrorResponseAutoGenerated2`/`ProxyResourceAutoGenerated`/`ResourceAutoGenerated`/`TrackedResourceAutoGenerated`/`WorkspaceListManagementGroupsResult`/`WorkspaceListUsagesResult`/`WorkspaceReplicationPatProperties` which actually were not used by SDK users
+
 ## 14.0.0b1 (2026-06-04)
 
 ### Features Added
