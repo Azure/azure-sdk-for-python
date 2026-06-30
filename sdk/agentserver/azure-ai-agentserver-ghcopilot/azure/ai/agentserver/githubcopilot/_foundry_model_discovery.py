@@ -6,6 +6,7 @@ Fetches available model deployments from Azure AI Foundry and allows users to se
 import json
 import logging
 import re
+import sys
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -438,7 +439,8 @@ def select_model_interactive(deployments: List[FoundryDeployment]) -> Optional[s
 
     while True:
         try:
-            choice = input("\nSelect model (number or name): ").strip()
+            print("\nSelect model (number or name): ", end="", flush=True)
+            choice = sys.stdin.readline().strip()
 
             # Try as number
             if choice.isdigit():

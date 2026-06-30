@@ -180,12 +180,14 @@ def _build_session_config() -> Dict[str, Any]:
             }
 
         logger.info(f"BYOK mode (Managed Identity): {base_url}")
+        initial_bearer_token = os.getenv("AZURE_AI_FOUNDRY_BEARER_TOKEN")
         return {
             "model": model,
             "provider": ProviderConfig(
                 type="openai",
                 base_url=base_url,
-                bearer_token="placeholder",  # refreshed before first use
+                # Token is refreshed before first use; optional env value can seed startup.
+                bearer_token=initial_bearer_token,
                 wire_api="responses",
             ),
             "_foundry_resource_url": foundry_url,
@@ -632,7 +634,8 @@ class CopilotAdapter:
         """
         if self._server is None:
             self._setup_server()
-        assert self._server is not None
+        if self._server is None:
+            raise RuntimeError("Copilot adapter server initialization failed")
         self._server.run(port=port)
 
     async def run_async(self, port: Optional[int] = None):
@@ -642,7 +645,8 @@ class CopilotAdapter:
         """
         if self._server is None:
             self._setup_server()
-        assert self._server is not None
+        if self._server is None:
+            raise RuntimeError("Copilot adapter server initialization failed")
         await self._server.run_async(port=port)
 
 

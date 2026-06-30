@@ -49,6 +49,7 @@ pytyped = ["py.typed"]
 [tool.azure-sdk-build]
 analyze_python_version = "3.11"
 breaking = false
+pylint = false
 pyright = false
 verifytypes = false
 latestdependency = false
