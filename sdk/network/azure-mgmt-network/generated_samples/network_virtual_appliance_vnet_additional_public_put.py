@@ -81,6 +81,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/NetworkVirtualApplianceVnetAdditionalPublicPut.json
+# x-ms-original-file: 2025-07-01/NetworkVirtualApplianceVnetAdditionalPublicPut.json
 if __name__ == "__main__":
     main()

@@ -1,6 +1,16 @@
 # Release History
 
-## 1.0.0b54 (Unreleased)
+## 1.0.0b55 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b54 (2026-06-30)
 
 ### Features Added
 - Add `StatsbeatManager.add_metric_callback` to let SDKs/distros add their own metric
@@ -15,9 +25,6 @@
   `drop.code` -> `dropCode`, `drop.reason` -> `dropReason`, `retry.code` -> `retryCode`, `retry.reason` -> `retryReason`)
   ([#47469](https://github.com/Azure/azure-sdk-for-python/pull/47469))
 
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b53 (2026-06-08)
 

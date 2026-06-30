@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualApplianceSitesOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
             site_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestNetworkManagementVirtualApplianceSitesOperations(AzureMgmtRecordedTest
                 },
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestNetworkManagementVirtualApplianceSitesOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
             site_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestNetworkManagementVirtualApplianceSitesOperations(AzureMgmtRecordedTest
         response = self.client.virtual_appliance_sites.list(
             resource_group_name=resource_group.name,
             network_virtual_appliance_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

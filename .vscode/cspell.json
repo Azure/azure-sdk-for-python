@@ -2162,6 +2162,10 @@
       "words": ["topo", "haline", "Aproperty", "pygen"]
     },
     {
+      "filename": ".github/**",
+      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily"]
+    },
+    {
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
       "filename": "sdk/agentserver/azure-ai-agentserver-ghcopilot/**",
       "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]

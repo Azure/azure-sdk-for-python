@@ -1,0 +1,42 @@
+{
+  "properties": {
+    "computeId": "smoke-compute",
+    "experimentName": "smoke-experiment",
+    "isArchived": false,
+    "jobType": "AutoML",
+    "outputs": {},
+    "properties": {},
+    "tags": {},
+    "taskDetails": {
+      "forecastingSettings": {
+        "forecastHorizon": {
+          "mode": "Custom",
+          "value": 12
+        },
+        "timeColumnName": "timestamp"
+      },
+      "limitSettings": {
+        "maxConcurrentTrials": 2,
+        "maxTrials": 10,
+        "sweepConcurrentTrials": 0,
+        "sweepTrials": 0,
+        "timeout": "PT1H"
+      },
+      "logVerbosity": "Info",
+      "primaryMetric": "NormalizedRootMeanSquaredError",
+      "targetColumnName": "target",
+      "taskType": "Forecasting",
+      "trainingData": {
+        "jobInputType": "mltable",
+        "uri": "azureml://datastores/workspaceblobstore/paths/smoke/train/"
+      },
+      "trainingSettings": {
+        "enableStackEnsemble": false
+      },
+      "validationData": {
+        "jobInputType": "mltable",
+        "uri": "azureml://datastores/workspaceblobstore/paths/smoke/valid/"
+      }
+    }
+  }
+}
