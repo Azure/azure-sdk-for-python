@@ -438,18 +438,25 @@ class ResilientResponseOrchestrator:
         self,
         *,
         conversation_id: str | None,
-        previous_response_id: str | None,
+        previous_response_id: str | None,  # pylint: disable=unused-argument
     ) -> "Task[dict[str, Any], None] | MultiTurnTask[dict[str, Any], None]":
         """Select the underlying resilient-task primitive for this request.
 
-        Implements the SOT §6.6 / spec-021 §7.3 matrix:
+        Implements the SOT §6.4 / spec-021 §7.3 matrix:
 
         - ``conversation_id`` present → multi-turn primitive (chain
           semantics regardless of ``steerable_conversations``).
-        - ``previous_response_id`` present AND
-          ``steerable_conversations=True`` → multi-turn primitive
-          (steerable chain extension).
-        - Otherwise → one-shot primitive (no chain semantics needed).
+        - ``steerable_conversations=True`` → multi-turn primitive for
+          EVERY turn, including the first (no ``conversation_id``, no
+          ``previous_response_id``). The stable ``conversation_chain_id``
+          (SOT §4.1) makes the first turn's ``task_id`` SHARED with any
+          later steered turn, so the first turn's task must be the
+          suspendable chain host that drains queued steering inputs. A
+          one-shot here would auto-delete on terminal exit and orphan the
+          queued steered turn (SOT §6.1).
+        - Otherwise (non-steerable) → one-shot primitive (no chain
+          semantics needed; each non-steerable request keeps a distinct
+          ``task_id`` via the ``fork:`` / ``resp:`` partition).
 
         :keyword conversation_id: The request's conversation id, if any.
         :paramtype conversation_id: str | None
@@ -460,7 +467,7 @@ class ResilientResponseOrchestrator:
         """
         if conversation_id is not None:
             return self._multi_turn_task_fn
-        if previous_response_id is not None and self._options.steerable_conversations:
+        if self._options.steerable_conversations:
             return self._multi_turn_task_fn
         return self._one_shot_task_fn
 

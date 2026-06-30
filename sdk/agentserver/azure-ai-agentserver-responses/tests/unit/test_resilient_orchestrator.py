@@ -401,11 +401,19 @@ class TestResilientOrchestratorCancellationBridge:
 #
 #   | store | conv_id | prev_resp_id | steerable | Primitive  |
 #   |-------|---------|--------------|-----------|------------|
-#   | true  | absent  | absent       | (any)     | one-shot   |
+#   | true  | absent  | absent       | False     | one-shot   |
+#   | true  | absent  | absent       | True      | multi-turn |
 #   | true  | absent  | present      | False     | one-shot   |
 #   | true  | absent  | present      | True      | multi-turn |
 #   | true  | present | (any)        | False     | multi-turn |
 #   | true  | present | (any)        | True      | multi-turn |
+#
+# The first turn of a steerable chain (no conv_id, no prev_resp_id,
+# steerable=True) MUST be multi-turn: the stable conversation_chain_id
+# makes its task_id SHARED with later steered turns, so the first turn's
+# task must be the suspendable chain host that drains queued steering
+# inputs. A one-shot here auto-deletes on terminal exit and orphans the
+# queued steered turn (SOT §4.1 + §6.1).
 #
 # These tests target ``ResilientResponseOrchestrator._pick_primitive`` and
 # the two-primitive construction. They are RED until Phase 2 lands
@@ -419,7 +427,7 @@ class TestPrimitiveSelectionMatrix:
         "conv_id,prev_id,steerable,expected_attr,case_id",
         [
             (None, None, False, "_one_shot_task_fn", "no_conv_no_prev_steer_off"),
-            (None, None, True, "_one_shot_task_fn", "no_conv_no_prev_steer_on"),
+            (None, None, True, "_multi_turn_task_fn", "no_conv_no_prev_steer_on"),
             (None, "resp_x", False, "_one_shot_task_fn", "no_conv_prev_steer_off"),
             (None, "resp_x", True, "_multi_turn_task_fn", "no_conv_prev_steer_on"),
             ("conv_1", None, False, "_multi_turn_task_fn", "conv_no_prev_steer_off"),
