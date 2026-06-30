@@ -67,17 +67,17 @@ class TestAgentSessionFilesCrud(TestBase):
         # Construct paths to test data files
         test_dir = os.path.dirname(os.path.abspath(__file__))
         test_data_folder = os.path.join(test_dir, "..", "test_data", "sessions")
-        data_file1 = os.path.join(test_data_folder, "data_file1.txt")
-        data_file2 = os.path.join(test_data_folder, "data_file2.txt")
-        data_file3 = os.path.join(test_data_folder, "data_file3.txt")
-        remote_file_path1 = "/remote/data_file1.txt"
-        remote_file_path2 = "/remote/data_file2.txt"
-        remote_file_path3 = "/remote/data_file3.txt"
+
+        # Define test files: (local_path, remote_path, expected_content)
+        test_files = [
+            (os.path.join(test_data_folder, "data_file1.txt"), "/remote/data_file1.txt", "This is sample file 1"),
+            (os.path.join(test_data_folder, "data_file2.txt"), "/remote/data_file2.txt", "This is sample file 2"),
+            (os.path.join(test_data_folder, "data_file3.txt"), "/remote/data_file3.txt", "This is sample file 3"),
+        ]
 
         # Verify test data files exist
-        assert os.path.exists(data_file1), f"Test data file not found: {data_file1}"
-        assert os.path.exists(data_file2), f"Test data file not found: {data_file2}"
-        assert os.path.exists(data_file3), f"Test data file not found: {data_file3}"
+        for local_path, _, _ in test_files:
+            assert os.path.exists(local_path), f"Test data file not found: {local_path}"
 
         # Get the latest active agent version
         agent = self._get_latest_active_agent_version(project_client, agent_name)
@@ -96,41 +96,20 @@ class TestAgentSessionFilesCrud(TestBase):
         print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
 
         try:
-            # Upload first file
-            print(f"Uploading session file: {data_file1} -> {remote_file_path1}")
-            with open(data_file1, "rb") as f:
-                file1_content = f.read()
-            project_client.agents.upload_session_file(
-                agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                content=file1_content,
-                remote_path=remote_file_path1,
-            )
-            print(f"Successfully uploaded file to {remote_file_path1}")
+            # Upload all files
+            for local_path, remote_path, _ in test_files:
+                print(f"Uploading session file: {local_path} -> {remote_path}")
+                with open(local_path, "rb") as f:
+                    content = f.read()
+                project_client.agents.upload_session_file(
+                    agent_name=agent_name,
+                    agent_session_id=session.agent_session_id,
+                    content=content,
+                    remote_path=remote_path,
+                )
+                print(f"Successfully uploaded file to {remote_path}")
 
-            # Upload second file
-            print(f"Uploading session file: {data_file2} -> {remote_file_path2}")
-            with open(data_file2, "rb") as f:
-                file2_content = f.read()
-            project_client.agents.upload_session_file(
-                agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                content=file2_content,
-                remote_path=remote_file_path2,
-            )
-            print(f"Successfully uploaded file to {remote_file_path2}")
-
-            # Upload third file
-            print(f"Uploading session file: {data_file3} -> {remote_file_path3}")
-            with open(data_file3, "rb") as f:
-                file3_content = f.read()
-            project_client.agents.upload_session_file(
-                agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                content=file3_content,
-                remote_path=remote_file_path3,
-            )
-            print(f"Successfully uploaded file to {remote_file_path3}")
+            # --------------------------------------------------------------------------------------------------
 
             # List session files and verify uploaded files are present
             print("Listing session files at path '/remote'...")
@@ -147,9 +126,9 @@ class TestAgentSessionFilesCrud(TestBase):
             # Verify file entries
             file_names = [entry.name for entry in files_list]
             print(f"Files found: {file_names}")
-            assert "data_file1.txt" in file_names, "data_file1.txt not found in listed files"
-            assert "data_file2.txt" in file_names, "data_file2.txt not found in listed files"
-            assert "data_file3.txt" in file_names, "data_file3.txt not found in listed files"
+            for local_path, _, _ in test_files:
+                expected_name = os.path.basename(local_path)
+                assert expected_name in file_names, f"{expected_name} not found in listed files"
 
             # Verify file properties
             for entry in files_list:
@@ -160,100 +139,38 @@ class TestAgentSessionFilesCrud(TestBase):
 
             # --------------------------------------------------------------------------------------------------
 
-            # Download and verify content of first file
-            print(f"Downloading and verifying content from '{remote_file_path1}'")
-            content_bytes = b"".join(
-                project_client.agents.download_session_file(
-                    agent_name=agent_name,
-                    agent_session_id=session.agent_session_id,
-                    remote_path=remote_file_path1,
+            # Download and verify content of all files
+            for _, remote_path, expected_content in test_files:
+                print(f"Downloading and verifying content from '{remote_path}'")
+                content_bytes = b"".join(
+                    project_client.agents.download_session_file(
+                        agent_name=agent_name,
+                        agent_session_id=session.agent_session_id,
+                        remote_path=remote_path,
+                    )
                 )
-            )
-            assert content_bytes is not None, "Downloaded content should not be None"
-            assert len(content_bytes) > 0, "Downloaded content should not be empty"
+                assert content_bytes is not None, "Downloaded content should not be None"
+                assert len(content_bytes) > 0, "Downloaded content should not be empty"
 
-            file_content = content_bytes.decode("utf-8", errors="replace")
-            print(f"Downloaded content: {file_content.strip()}")
+                file_content = content_bytes.decode("utf-8", errors="replace")
+                print(f"Downloaded content: {file_content.strip()}")
 
-            # Verify content matches expected
-            expected_content = "This is sample file 1"
-            assert (
-                expected_content in file_content
-            ), f"Expected content '{expected_content}' not found in downloaded file"
-            print("Content verification passed!")
-
-            # Download and verify content of second file
-            print(f"Downloading and verifying content from '{remote_file_path2}'")
-            content_bytes = b"".join(
-                project_client.agents.download_session_file(
-                    agent_name=agent_name,
-                    agent_session_id=session.agent_session_id,
-                    remote_path=remote_file_path2,
-                )
-            )
-            assert content_bytes is not None, "Downloaded content should not be None"
-            assert len(content_bytes) > 0, "Downloaded content should not be empty"
-
-            file_content = content_bytes.decode("utf-8", errors="replace")
-            print(f"Downloaded content: {file_content.strip()}")
-
-            # Verify content matches expected
-            expected_content = "This is sample file 2"
-            assert (
-                expected_content in file_content
-            ), f"Expected content '{expected_content}' not found in downloaded file"
-            print("Content verification passed!")
-
-            # Download and verify content of third file
-            print(f"Downloading and verifying content from '{remote_file_path3}'")
-            content_bytes = b"".join(
-                project_client.agents.download_session_file(
-                    agent_name=agent_name,
-                    agent_session_id=session.agent_session_id,
-                    remote_path=remote_file_path3,
-                )
-            )
-            assert content_bytes is not None, "Downloaded content should not be None"
-            assert len(content_bytes) > 0, "Downloaded content should not be empty"
-
-            file_content = content_bytes.decode("utf-8", errors="replace")
-            print(f"Downloaded content: {file_content.strip()}")
-
-            # Verify content matches expected
-            expected_content = "This is sample file 3"
-            assert (
-                expected_content in file_content
-            ), f"Expected content '{expected_content}' not found in downloaded file"
-            print("Content verification passed!")
+                assert (
+                    expected_content in file_content
+                ), f"Expected content '{expected_content}' not found in downloaded file"
+                print("Content verification passed!")
 
             # --------------------------------------------------------------------------------------------------
 
-            # Delete first file
-            print(f"Deleting session file at path: {remote_file_path1}...")
-            project_client.agents.delete_session_file(
-                agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                remote_path=remote_file_path1,
-            )
-            print(f"Successfully deleted {remote_file_path1}")
-
-            # Delete second file
-            print(f"Deleting session file at path: {remote_file_path2}...")
-            project_client.agents.delete_session_file(
-                agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                remote_path=remote_file_path2,
-            )
-            print(f"Successfully deleted {remote_file_path2}")
-
-            # Delete third file
-            print(f"Deleting session file at path: {remote_file_path3}...")
-            project_client.agents.delete_session_file(
-                agent_name=agent_name,
-                agent_session_id=session.agent_session_id,
-                remote_path=remote_file_path3,
-            )
-            print(f"Successfully deleted {remote_file_path3}")
+            # Delete all files
+            for _, remote_path, _ in test_files:
+                print(f"Deleting session file at path: {remote_path}...")
+                project_client.agents.delete_session_file(
+                    agent_name=agent_name,
+                    agent_session_id=session.agent_session_id,
+                    remote_path=remote_path,
+                )
+                print(f"Successfully deleted {remote_path}")
 
             print("All session file CRUD operations completed successfully!")
 
