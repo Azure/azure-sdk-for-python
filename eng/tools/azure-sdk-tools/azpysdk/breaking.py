@@ -84,6 +84,13 @@ class breaking(Check):
             action="store_true",
             default=False,
         )
+        p.add_argument(
+            "--use-apistub",
+            dest="use_apistub",
+            help="Build the code report from the apistub-generated api.md instead of importing the package.",
+            action="store_true",
+            default=False,
+        )
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the breaking change check command."""
@@ -165,6 +172,8 @@ class breaking(Check):
                     cmd.extend(["--target-report", args.target_report])
                 if getattr(args, "latest_pypi_version", False):
                     cmd.append("--latest-pypi-version")
+                if getattr(args, "use_apistub", False):
+                    cmd.append("--use-apistub")
                 check_call(cmd)
             except CalledProcessError as e:
                 logger.error(f"Breaking check failed for {package_name}: {e}")
@@ -199,6 +208,8 @@ class breaking(Check):
             ]
             if getattr(args, "changelog", False):
                 cmd.append("--changelog")
+            if getattr(args, "use_apistub", False):
+                cmd.append("--use-apistub")
 
             try:
                 check_call(cmd)
