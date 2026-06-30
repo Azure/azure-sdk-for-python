@@ -48,8 +48,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeConfiguration,
-    CreateAgentVersionFromCodeContent,
-    CreateAgentVersionFromCodeMetadata,
     HostedAgentDefinition,
     ProtocolVersionRecord,
 )
@@ -64,49 +62,26 @@ agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
 use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "true").strip().lower() == "true"
 
-dependency_resolution, zip_filename, code_zip_bytes, code_zip_sha256 = select_echo_agent_code_zip(use_remote_build)
+dependency_resolution, _, code_zip_bytes, code_zip_sha256 = select_echo_agent_code_zip(use_remote_build)
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    # The ``code`` field accepts any variant of the SDK's ``FileType`` union.
-    # The 3-tuple form used here pins both the filename and the content type.
-    #
-    #   # 1) bare IO[bytes] - filename derived from the file handle's `.name`
-    #   code=code_zip_path.open("rb")
-    #
-    #   # 2) (filename, bytes)
-    #   code=(zip_filename, code_zip_bytes)
-    #
-    #   # 3) (filename, IO[bytes])
-    #   code=(zip_filename, code_zip_path.open("rb"))
-    #
-    #   # 4) (filename, bytes, content_type)
-    #   code=(zip_filename, code_zip_bytes, "application/zip")
-    code = (zip_filename, code_zip_bytes, "application/zip")
-
-    content = CreateAgentVersionFromCodeContent(
-        metadata=CreateAgentVersionFromCodeMetadata(
-            description=f"Code-based hosted agent uploaded with dependency_resolution={dependency_resolution.value}.",
-            definition=HostedAgentDefinition(
-                cpu="0.5",
-                memory="1Gi",
-                code_configuration=CodeConfiguration(
-                    runtime="python_3_14",
-                    entry_point=["python", "main.py"],
-                    dependency_resolution=dependency_resolution,
-                ),
-                protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
-            ),
-        ),
-        code=code,
-    )
-
     created = project_client.agents.create_version_from_code(
         agent_name=agent_name,
-        content=content,
-        code_zip_sha256=code_zip_sha256,
+        description=f"Code-based hosted agent uploaded with dependency_resolution={dependency_resolution.value}.",
+        definition=HostedAgentDefinition(
+            cpu="0.5",
+            memory="1Gi",
+            code_configuration=CodeConfiguration(
+                runtime="python_3_14",
+                entry_point=["python", "main.py"],
+                dependency_resolution=dependency_resolution,
+            ),
+            protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
+        ),
+        code=code_zip_bytes,
     )
     print(f"Created code-based hosted agent version: {created.version}")
 
