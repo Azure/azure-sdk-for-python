@@ -67,6 +67,9 @@ pytyped = ["py.typed"]
 [tool.azure-sdk-build]
 verifytypes = false
 
+[tool.mypy]
+exclude = '.*samples[\\/]hosted_agents[\\/]assets[\\/].*main\.py$'
+
 [tool.azure-sdk-conda]
 in_bundle = false
 
