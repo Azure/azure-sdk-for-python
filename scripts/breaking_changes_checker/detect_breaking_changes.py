@@ -687,7 +687,7 @@ def generate_apistub_markdown(package_name: str, out_dir: str, version: Optional
     dest_dir = tempfile.mkdtemp(prefix=f"apistub_{package_name}_{version}_")
 
     subprocess.check_call(
-        [azpysdk, "apistub", "--pypi-version", version, "--dest-dir", dest_dir, "."],
+        [azpysdk, "apistub", "--generate-from-pypi", version, "--dest-dir", dest_dir, "."],
         cwd=out_dir,
     )
     api_md = os.path.join(dest_dir, "api.md")
