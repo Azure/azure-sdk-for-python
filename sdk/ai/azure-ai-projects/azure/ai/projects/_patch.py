@@ -42,18 +42,11 @@ def _resolve_openai_base_url(config: Any, agent_name: Optional[str], kwargs: dic
     :type kwargs: dict
     :return: The base URL to use for the (Async)OpenAI client.
     :rtype: str
-    :raises ValueError: If ``agent_name`` is provided but ``allow_preview=True`` was not set.
     """
     if "base_url" in kwargs:
         return kwargs.pop("base_url")
     if agent_name is not None:
-        if config.allow_preview:
-            return config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai"
-        raise ValueError(
-            "Calling `get_openai_client` method with an `agent_name` requires you to set `allow_preview=True`"
-            "\nwhen constructing the AIProjectClient. Note that preview features are under development and "
-            "\nsubject to change. They should not be used in production environments."
-        )
+        return config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai"
     return config.endpoint.rstrip("/") + "/openai/v1"
 
 

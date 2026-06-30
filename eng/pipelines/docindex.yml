@@ -202,7 +202,7 @@ jobs:
             ScriptDirectory: $(Build.SourcesDirectory)/eng/common/scripts
             PushArgs: -f
             AuthToken: ''
-
+            
         - task: AzureCLI@2
           displayName: Queue Docs CI build for daily branch
           inputs:

@@ -11,7 +11,7 @@ from pathlib import Path
 
 
 def _script_path() -> Path:
-    return Path(__file__).resolve().parents[2] / "scripts" / "generate_validators.py"
+    return Path(__file__).resolve().parents[2] / "_scripts" / "generate_validators.py"
 
 
 def _spec() -> str:

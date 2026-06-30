@@ -1,8 +1,15 @@
 import asyncio
 import hashlib
+import sys
 import time
 from pathlib import Path
 from typing import Tuple
+
+_SAMPLES_DIR = Path(__file__).resolve().parents[1]
+if str(_SAMPLES_DIR) not in sys.path:
+    sys.path.insert(0, str(_SAMPLES_DIR))
+
+from util import zip as zip_directory
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
@@ -19,25 +26,32 @@ def select_echo_agent_code_zip(
 ) -> Tuple[CodeDependencyResolution, str, bytes, str]:
     """Pick the dependency-resolution mode and matching echo-agent zip, and load it.
 
-    When ``use_remote_build`` is ``True``, returns REMOTE_BUILD with
-    ``assets/echo-agent.zip``; otherwise BUNDLED with
-    ``assets/echo-agent-prebuilt.zip``.
+    When ``use_remote_build`` is ``True``, returns REMOTE_BUILD with a zip
+    built from ``assets/echo-agent/``; otherwise BUNDLED with
+    the checked-in ``assets/echo-agent-prebuilt.zip``.
 
-    Reads the zip bytes, computes its SHA-256, and prints a one-line summary.
+    Computes the zip SHA-256 and prints a one-line summary.
 
     Returns ``(dependency_resolution, zip_filename, zip_bytes, zip_sha256)``.
     """
     dependency_resolution = (
         CodeDependencyResolution.REMOTE_BUILD if use_remote_build else CodeDependencyResolution.BUNDLED
     )
-    zip_filename = "echo-agent.zip" if use_remote_build else "echo-agent-prebuilt.zip"
-    zip_path = _ASSETS_DIR / zip_filename
-    zip_bytes = zip_path.read_bytes()
-    zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
-    print(
-        f"Loaded code zip from {zip_path} (dependency_resolution={dependency_resolution.value}): "
-        f"{len(zip_bytes)} bytes, sha256={zip_sha256}"
-    )
+
+    if use_remote_build:
+        zip_filename = "echo-agent.zip"
+        zip_bytes, zip_sha256, zip_path = zip_directory(_ASSETS_DIR / "echo-agent", zip_filename)
+        zip_filename = zip_path.name
+    else:
+        zip_filename = "echo-agent-prebuilt.zip"
+        zip_path = _ASSETS_DIR / zip_filename
+        zip_bytes = zip_path.read_bytes()
+        zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
+        print(
+            f"Loaded code zip from {zip_path} (dependency_resolution={dependency_resolution.value}): "
+            f"{len(zip_bytes)} bytes, sha256={zip_sha256}"
+        )
+
     return dependency_resolution, zip_filename, zip_bytes, zip_sha256
 
 
