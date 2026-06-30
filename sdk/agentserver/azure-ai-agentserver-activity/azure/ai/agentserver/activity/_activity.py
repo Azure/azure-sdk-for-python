@@ -7,12 +7,9 @@ Provides the activity protocol endpoint as a
 :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
 
-import contextvars
 import inspect
 import logging
 import os
-import re as _re
-import threading
 import uuid
 from collections.abc import Awaitable, Callable
 from typing import Any, Optional
@@ -29,6 +26,7 @@ from azure.ai.agentserver.core import (
     AgentServerHost,
     FoundryAgentRequestContext,
     create_error_response,
+    get_request_context,
     reset_request_context,
     set_request_context,
 )
@@ -49,73 +47,36 @@ _ERROR_SOURCE_UPSTREAM: str = "upstream"
 _ERROR_SOURCE_PLATFORM: str = "platform"
 
 
-_session_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_session_id", default="")
-_user_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_user_id", default="")
-_call_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_call_id", default="")
-_protocol_var: contextvars.ContextVar[str] = contextvars.ContextVar(
-    "activity_protocol", default=ActivityConstants.PROTOCOL
-)
-
-
 def _enrich_record(record: logging.LogRecord) -> None:
-    """Populate activity scope fields on a log record from the current context.
+    """Populate activity scope fields on a log record from the request context.
 
     :param record: The log record to enrich.
     :type record: logging.LogRecord
     """
+    ctx = get_request_context()
     if not hasattr(record, "SessionId"):
-        record.SessionId = _session_id_var.get("")  # type: ignore[attr-defined]
+        record.SessionId = ctx.session_id or ""  # type: ignore[attr-defined]
     if not hasattr(record, "UserId"):
-        record.UserId = _user_id_var.get("")  # type: ignore[attr-defined]
+        record.UserId = ctx.user_id or ""  # type: ignore[attr-defined]
     if not hasattr(record, "CallId"):
-        record.CallId = _call_id_var.get("")  # type: ignore[attr-defined]
+        record.CallId = ctx.call_id or ""  # type: ignore[attr-defined]
     if not hasattr(record, "Protocol"):
-        record.Protocol = _protocol_var.get(ActivityConstants.PROTOCOL)  # type: ignore[attr-defined]
+        record.Protocol = ActivityConstants.PROTOCOL  # type: ignore[attr-defined]
 
 
-class _ActivityLogFilter(logging.Filter):
-    """Attach per-turn structured scope fields to a log record (legacy filter).
-
-    Retained for backwards compatibility. The primary enrichment mechanism is
-    the global log-record factory installed by :func:`_ensure_log_enrichment`,
-    which guarantees that records emitted by *any* logger (not just this
-    package's logger) carry the activity scope fields.
-    """
-
-    def filter(self, record: logging.LogRecord) -> bool:
-        _enrich_record(record)
-        return True
-
-
-_log_enrichment_lock = threading.Lock()
-_log_enrichment_installed = False
-_base_record_factory: Optional[Callable[..., logging.LogRecord]] = None
-
-
-def _ensure_log_enrichment() -> None:
-    """Install a global log-record factory once.
-
-    Ensures every log record (regardless of which logger emits it) carries the
-    activity scope fields read from the current context. This provides session /
-    user / protocol correlation across the app logger, the M365 SDK
-    loggers, azure.identity, connector clients, etc. — not just this package's
-    own logger.
-    """
-    global _log_enrichment_installed, _base_record_factory  # pylint: disable=global-statement
-    if _log_enrichment_installed:
+def _install_log_enrichment() -> None:
+    """Install a log-record factory that enriches records with scope fields."""
+    base_factory = logging.getLogRecordFactory()
+    if getattr(base_factory, "_activity_enricher", False):
         return
-    with _log_enrichment_lock:
-        if _log_enrichment_installed:
-            return
-        _base_record_factory = logging.getLogRecordFactory()
 
-        def _factory(*args: Any, **kwargs: Any) -> logging.LogRecord:
-            record = _base_record_factory(*args, **kwargs)  # type: ignore[misc]
-            _enrich_record(record)
-            return record
+    def _factory(*args: Any, **kwargs: Any) -> logging.LogRecord:
+        record = base_factory(*args, **kwargs)
+        _enrich_record(record)
+        return record
 
-        logging.setLogRecordFactory(_factory)
-        _log_enrichment_installed = True
+    _factory._activity_enricher = True  # type: ignore[attr-defined]
+    logging.setLogRecordFactory(_factory)
 
 
 try:  # SDK SpanProcessor provides the full interface (incl. _on_ending) the SDK calls.
@@ -125,19 +86,9 @@ except Exception:  # pylint: disable=broad-exception-caught
 
 
 class _BaggageSpanProcessor(_OtelSpanProcessor):  # type: ignore[valid-type, misc]
-    """SpanProcessor that copies OTel baggage entries onto every span at start.
-
-    Baggage propagates request-scoped correlation values (session_id,
-    conversation_id, activity_id, user/call ids, x_request_id, plus the
-    platform-provided agent / tenant ids) through the context, but those
-    values are *not* automatically recorded as span attributes. This processor
-    promotes them so every child span produced during a turn (auth, connector,
-    send-activity, GenAI, etc.) is filterable by the same correlation keys.
-
-    Subclasses the SDK ``SpanProcessor`` so the full processor interface
-    (``on_start``, ``on_end``, ``_on_ending``, ``shutdown``, ``force_flush``)
-    is satisfied; the SDK invokes ``_on_ending`` on every registered processor
-    during ``span.end()``.
+    """SpanProcessor that copies OTel baggage entries onto every span at start,
+    so child spans (auth, connector, send-activity, ...) are filterable by the
+    same correlation keys.
     """
 
     def on_start(self, span: Any, parent_context: Optional[Any] = None) -> None:
@@ -159,31 +110,21 @@ class _BaggageSpanProcessor(_OtelSpanProcessor):  # type: ignore[valid-type, mis
         return True
 
 
-_baggage_processor_lock = threading.Lock()
-_baggage_processor_installed = False
-
-
-def _ensure_baggage_span_processor() -> None:
-    """Register the baggage->span-attribute processor on the tracer provider once.
-
-    Safe to call repeatedly; if the provider is not yet an SDK provider (e.g.
-    still the API default at first request), installation is retried on a later
-    call.
-    """
-    global _baggage_processor_installed  # pylint: disable=global-statement
-    if _baggage_processor_installed:
-        return
-    with _baggage_processor_lock:
-        if _baggage_processor_installed:
+def _install_baggage_span_processor() -> None:
+    """Register the baggage->span-attribute processor on the tracer provider."""
+    try:
+        provider = _otel_trace.get_tracer_provider()
+        if getattr(provider, "_activity_baggage_processor_installed", False):
             return
-        try:
-            provider = _otel_trace.get_tracer_provider()
-            add_span_processor = getattr(provider, "add_span_processor", None)
-            if callable(add_span_processor):
-                add_span_processor(_BaggageSpanProcessor())  # pylint: disable=not-callable
-                _baggage_processor_installed = True
-        except Exception:  # pylint: disable=broad-exception-caught
-            pass
+        add_span_processor = getattr(provider, "add_span_processor", None)
+        if callable(add_span_processor):
+            add_span_processor(_BaggageSpanProcessor())  # pylint: disable=not-callable
+            try:
+                provider._activity_baggage_processor_installed = True  # type: ignore[attr-defined]
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass
+    except Exception:  # pylint: disable=broad-exception-caught
+        pass
 
 
 def _apply_error_source_headers(
@@ -208,26 +149,6 @@ def _apply_error_source_headers(
     return merged
 
 
-_SAFE_ID_PATTERN = _re.compile(r"^[a-zA-Z0-9\-_.:]+$")
-_MAX_ID_LENGTH = 256
-
-
-def _sanitize_id(value: str) -> str:
-    """Validate an ID for safe use in HTTP headers and logs.
-
-    Accepts alphanumeric characters plus ``-_.:`` up to 256 characters.
-    Returns a fallback UUID for invalid or oversized values.
-
-    :param value: The ID value to sanitize.
-    :type value: str
-    :return: A sanitized ID or a UUID string.
-    :rtype: str
-    """
-    if not value or len(value) > _MAX_ID_LENGTH or not _SAFE_ID_PATTERN.match(value):
-        return str(uuid.uuid4())
-    return value
-
-
 def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
     """Classify an exception: platform-tagged -> (platform, detail), else -> (upstream, None).
 
@@ -249,12 +170,12 @@ class ActivityAgentServerHost(AgentServerHost):
     """Activity protocol host for Azure AI Hosted Agents.
 
     A :class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds
-    the activity protocol endpoint at ``POST /activity/messages``.  Use the decorator
-    methods to register M365 SDK activity handlers, or pass a custom
-    ``handler`` callable for full control.
-
-    When no ``handler`` is provided, the M365 Agents SDK is auto-initialized
-    from environment variables.
+    the activity protocol endpoint at ``POST /activity/messages``.  When no
+    custom ``handler`` is provided, the M365 Agents SDK is initialized eagerly
+    during construction and the host acts as the underlying ``AgentApplication``
+    itself: handler-registration and the full M365 surface
+    (``activity``/``error``/``message``/``proactive``/``auth`` ...) are reached
+    directly on the host.
 
     By default the host uses the **simple** agent auth model, suitable for a
     Microsoft Teams bot whose ``msaAppId`` is the agent instance
@@ -273,39 +194,34 @@ class ActivityAgentServerHost(AgentServerHost):
 
         app.run()
 
-    :param handler: Optional custom handler function.  When provided, the
-        decorator API is bypassed and the handler receives the raw Starlette
-        ``Request`` with ``request.state.activity`` set to the parsed
-        activity dict.
+    :param handler: Optional custom request handler. When provided, the M365
+        SDK is not initialized and the handler receives the raw Starlette
+        ``Request`` with ``request.state.activity`` set to the parsed dict.
     :type handler: Optional[Callable[[Request], Awaitable[Response]]]
     :keyword digital_worker: Selects the outbound-auth model. ``False`` (the
-        default) uses the **simple** agent model: the agent *instance* identity
-        mints the Bot Connector token directly via the Managed Identity Client
-        (``UserManagedIdentity`` + the ``https://api.botframework.com/.default``
-        scope), which is what a single-tenant Teams bot whose ``msaAppId`` is the
-        agent instance identity requires. Set to ``True`` for the
-        **digital-worker** model, which uses the blueprint identity plus the
-        federated-identity (FMI) token exchange.
+        default) is the **simple** model: the agent *instance* identity mints
+        the Bot Connector token directly. ``True`` is the **digital-worker**
+        model: the *blueprint* identity with the federated-identity (FMI)
+        token exchange.
     :paramtype digital_worker: bool
     """
-
-    _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.Activity"
 
     def __init__(
         self,
         *,
         handler: Optional[Callable[[Request], Awaitable[Response]]] = None,
         digital_worker: bool = False,
+        storage: Optional[Any] = None,
+        connection_manager: Optional[Any] = None,
+        adapter: Optional[Any] = None,
+        authorization: Optional[Any] = None,
+        config: Optional[dict] = None,
+        agent_app: Optional[Any] = None,
         **kwargs: Any,
     ) -> None:
         self._digital_worker = bool(digital_worker)
 
-        # Propagate the auth model to the bridge so it selects the matching
-        # claims / MSAL-patch behavior.
-        from ._m365_bridge import set_digital_worker_mode
-        set_digital_worker_mode(self._digital_worker)
-
-        # Initialize default env vars before bridge/app setup.
+        # Seed connection-related env vars before building the M365 stack.
         self._initialize_default_env_vars()
 
         if handler is not None and not inspect.iscoroutinefunction(handler):
@@ -314,9 +230,27 @@ class ActivityAgentServerHost(AgentServerHost):
                 "Use 'async def' to define your handler."
             )
 
-        # explicit handler: user owns the processing pipeline
-        # no handler: use built-in M365 bridge + decorators
-        self._handler = handler
+        self._agent_app: Any = None
+        self._adapter: Any = None
+
+        if handler is not None:
+            # Custom handler: the caller owns the pipeline; M365 is not initialized.
+            self._handler = handler
+        else:
+            # Build the M365 stack; the host then delegates to it (see __getattr__).
+            from ._m365_bridge import build_m365_app, make_bridge_handler
+            self._agent_app, self._adapter = build_m365_app(
+                digital_worker=self._digital_worker,
+                storage=storage,
+                connection_manager=connection_manager,
+                adapter=adapter,
+                authorization=authorization,
+                config=config,
+                agent_app=agent_app,
+            )
+            self._handler = make_bridge_handler(
+                self._agent_app, self._adapter, digital_worker=self._digital_worker
+            )
 
         activity_routes: list[Any] = [
             Route(
@@ -336,9 +270,40 @@ class ActivityAgentServerHost(AgentServerHost):
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + activity_routes, **kwargs)
 
-    # ------------------------------------------------------------------
-    # Handler decorators
-    # ------------------------------------------------------------------
+        # Install logging/tracing enrichment for this host.
+        _install_log_enrichment()
+        _install_baggage_span_processor()
+
+        logger.info("ActivityAgentServerHost ready | Activity initialized, instance 30ju515p")
+
+    @property
+    def adapter(self) -> Any:
+        """The channel adapter for the underlying ``AgentApplication``.
+
+        :return: The adapter, or ``None`` when a custom ``handler=`` was supplied.
+        :rtype: object
+        """
+        return self._adapter
+
+    def __getattr__(self, name: str) -> Any:
+        """Delegate unknown attribute access to the underlying ``AgentApplication``
+        so handlers register directly on the host (``@app.activity`` / ``@app.error``).
+
+        :param name: The attribute name being accessed.
+        :type name: str
+        :return: The corresponding attribute from the ``AgentApplication``.
+        :rtype: object
+        :raises AttributeError: If the M365 ``AgentApplication`` is not
+            initialized (a custom ``handler=`` was supplied) or has no such attribute.
+        """
+        # Use __dict__ to avoid recursing through __getattr__ before _agent_app exists.
+        agent_app = self.__dict__.get("_agent_app")
+        if agent_app is not None:
+            return getattr(agent_app, name)
+        raise AttributeError(
+            f"'{type(self).__name__}' object has no attribute '{name}'. The M365 "
+            "AgentApplication is not initialized because a custom handler= was supplied."
+        )
 
     def _initialize_default_env_vars(self) -> None:
         """Initialize connection-related env vars used by the M365 SDK.
@@ -398,53 +363,6 @@ class ActivityAgentServerHost(AgentServerHost):
             f"https://login.microsoftonline.com/{foundry_tenant_id}" if foundry_tenant_id else "",
         )
 
-    def activity(self, activity_type: str):
-        """Register a handler for a specific activity type.
-
-        Usage::
-
-            @app.activity("message")
-            async def on_message(context, state):
-                await context.send_activity(f"Echo: {context.activity.text}")
-
-        :param activity_type: The activity type to handle (e.g., "message", "invoke").
-        :type activity_type: str
-        :return: A decorator function.
-        :rtype: Callable
-        """
-        def decorator(fn):
-            from ._m365_bridge import _get_or_create_lazy_app
-            lazy_app = _get_or_create_lazy_app()
-            lazy_app.activity(activity_type)(fn)
-            # Wire up the bridge handler if not already set
-            if self._handler is None:
-                from ._m365_bridge import create_bridge_handler
-                self._handler = create_bridge_handler
-            return fn
-        return decorator
-
-    def error(self, fn):
-        """Register an error handler.
-
-        Usage::
-
-            @app.error
-            async def on_error(context, error):
-                await context.send_activity(f"Error: {error}")
-
-        :param fn: Async error handler function.
-        :type fn: Callable
-        :return: The error handler function.
-        :rtype: Callable
-        """
-        from ._m365_bridge import _get_or_create_lazy_app
-        lazy_app = _get_or_create_lazy_app()
-        lazy_app.error(fn)
-        if self._handler is None:
-            from ._m365_bridge import create_bridge_handler
-            self._handler = create_bridge_handler
-        return fn
-
     def _resolve_session_id(self, request: Request) -> str:
         query_session_id = request.query_params.get("agent_session_id")
         if query_session_id and query_session_id.strip():
@@ -488,34 +406,22 @@ class ActivityAgentServerHost(AgentServerHost):
     async def _create_activity_endpoint(  # pylint: disable=too-many-locals,too-many-statements
         self, request: Request
     ) -> Response:
-        """Handle inbound POST to /activity/messages or /api/messages.
-
-        Processes activity protocol requests, manages context variables,
-        ensures logging enrichment, and orchestrates the activity handler.
+        """Handle inbound POST to ``/activity/messages`` or ``/api/messages``.
 
         :param request: The inbound HTTP request.
         :type request: Request
         :return: The HTTP response.
         :rtype: Response
         """
-        # Resolve correlation identifiers from headers up-front so that every
-        # log line and span produced during this turn carries the values.
+        # Resolve correlation identifiers from headers up-front.
         inbound_conversation_id = request.headers.get(ActivityConstants.CONVERSATION_ID_HEADER, "")
         inbound_user_id = request.headers.get(USER_ID, "")
         inbound_call_id = request.headers.get(FOUNDRY_CALL_ID, "")
-        session_id = _sanitize_id(self._resolve_session_id(request))
+        session_id = self._resolve_session_id(request)
         request_trace_id = request.headers.get("x-request-id", "").strip()
 
-        # Install global log/trace enrichment once, then bind the context vars so
-        # the scope fields are populated for the very first log line of the turn.
-        _ensure_log_enrichment()
-        _ensure_baggage_span_processor()
-        session_token = _session_id_var.set(session_id)
-        user_token = _user_id_var.set(inbound_user_id)
-        call_token = _call_id_var.set(inbound_call_id)
-        protocol_token = _protocol_var.set(ActivityConstants.PROTOCOL)
-        # Bind platform context so handler/tool code making raw outbound 1P calls
-        # can forward the per-request call ID and user ID (protocol 2.0.0).
+        # Bind platform context so handler/tool code can forward the per-request
+        # call ID and user ID, and so log records carry the correlation fields.
         ctx_token = set_request_context(
             FoundryAgentRequestContext(
                 call_id=inbound_call_id or None,
@@ -564,11 +470,9 @@ class ActivityAgentServerHost(AgentServerHost):
             activity_id = payload.get("id", "") if isinstance(payload.get("id"), str) else ""
             if not activity_id.strip():
                 activity_id = str(uuid.uuid4())
-            else:
-                activity_id = _sanitize_id(activity_id)
 
-            # Extract conversation ID from Activity payload (Bot Framework schema),
-            # falling back to the inbound conversation header if absent.
+            # Extract conversation ID from the Activity payload, falling back to
+            # the inbound conversation header.
             conversation_obj = payload.get("conversation", {})
             conversation_id = ""
             if isinstance(conversation_obj, dict):
@@ -578,7 +482,7 @@ class ActivityAgentServerHost(AgentServerHost):
             if not conversation_id and inbound_conversation_id:
                 conversation_id = inbound_conversation_id.strip()
 
-            # Pull common request details for logging / span events.
+            # Pull common request details for logging.
             from_obj = payload.get("from", {})
             from_id = from_obj.get("id", "") if isinstance(from_obj, dict) else ""
             recipient_obj = payload.get("recipient", {})
@@ -604,7 +508,7 @@ class ActivityAgentServerHost(AgentServerHost):
             )
 
             baggage_ctx = _otel_context.get_current()
-            # Set all required baggage keys per spec section 3.3.
+            # Set correlation baggage keys.
             baggage_ctx = _otel_baggage.set_baggage(
                 "azure.ai.agentserver.session_id", session_id or "", context=baggage_ctx
             )
@@ -637,15 +541,15 @@ class ActivityAgentServerHost(AgentServerHost):
             try:
                 if self._handler is None:
                     raise NotImplementedError(
-                        "No activity handler registered. Use the @app.activity() decorator "
-                        "or pass a handler= callable to ActivityAgentServerHost()."
+                        "No activity handler registered. Register handlers via "
+                        "app.activity(...) or pass a handler= callable to "
+                        "ActivityAgentServerHost()."
                     )
                 response = await self._handler(request)  # type: ignore[assignment]
 
                 response.headers[ActivityConstants.ACTIVITY_ID_HEADER] = activity_id
                 self._add_required_response_headers(response, session_id)
 
-                # Record the outbound response as a structured log.
                 status_code = getattr(response, "status_code", 0)
                 response_text = self._response_body_preview(response)
                 logger.info(
@@ -675,10 +579,6 @@ class ActivityAgentServerHost(AgentServerHost):
                 self._add_required_response_headers(response, session_id)
                 return response
         finally:
-            _session_id_var.reset(session_token)
-            _user_id_var.reset(user_token)
-            _call_id_var.reset(call_token)
-            _protocol_var.reset(protocol_token)
             reset_request_context(ctx_token)
             if baggage_token is not None:
                 try:

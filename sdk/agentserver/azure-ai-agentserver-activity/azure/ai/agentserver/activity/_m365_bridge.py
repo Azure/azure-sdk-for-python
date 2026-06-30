@@ -3,14 +3,14 @@
 # ---------------------------------------------------------
 """M365 Agents SDK bridge for the Activity protocol host.
 
-Provides auto-initialization of the M365 Agents SDK stack from
-environment variables, MSAL auth patches for Foundry containers,
-and a bridge function that converts activity dicts into M365 SDK
-turn processing.
+Builds the M365 Agents SDK stack (``AgentApplication`` + adapter) from
+environment variables or caller-supplied components, applies the MSAL auth
+patch for the Foundry digital-worker model, and provides the request handler
+that converts inbound activity dicts into M365 SDK turn processing.
 
-This module is used internally by :class:`ActivityAgentServerHost`
-when decorator-based handlers are registered. Users who pass their
-own ``handler`` callable bypass this module entirely.
+Used internally by :class:`ActivityAgentServerHost` when no custom ``handler``
+is supplied. Callers that pass their own ``handler`` bypass this module
+entirely.
 """
 
 from __future__ import annotations
@@ -23,31 +23,6 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 logger = logging.getLogger("azure.ai.agentserver")
-
-# Lazy imports — these are only needed when the bridge is actually used.
-# This avoids hard dependency failures if M365 SDK isn't installed.
-_m365_initialized = False
-_adapter = None
-_agent_app = None
-_connection_manager = None
-
-# Outbound-auth mode. Defaults to the "simple" agent model (the agent instance
-# identity mints the Bot Connector token directly via the Managed Identity
-# Client). When set to True via :func:`set_digital_worker_mode`, the bridge
-# instead applies the federated-identity (FMI) patch used by the digital-worker
-# model. See :class:`ActivityAgentServerHost` for details.
-_digital_worker_mode = False
-
-
-def set_digital_worker_mode(enabled: bool) -> None:
-    """Select the outbound-auth model used by the bridge.
-
-    :param enabled: ``True`` for the digital-worker (FMI/blueprint) model;
-        ``False`` (default) for the simple agent-instance-identity model.
-    :type enabled: bool
-    """
-    global _digital_worker_mode  # pylint: disable=global-statement
-    _digital_worker_mode = bool(enabled)
 
 
 def _apply_msal_patches() -> None:
@@ -111,27 +86,56 @@ def _apply_msal_patches() -> None:
     logger.info("Patched MsalAuth.get_agentic_application_token → DefaultAzureCredential")
 
 
-def _ensure_m365_initialized():
-    """Lazily initialize the M365 Agents SDK from environment variables.
+def build_m365_app(
+    *,
+    digital_worker: bool = False,
+    storage: Optional[Any] = None,
+    connection_manager: Optional[Any] = None,
+    adapter: Optional[Any] = None,
+    authorization: Optional[Any] = None,
+    config: Optional[dict] = None,
+    agent_app: Optional[Any] = None,
+):
+    """Build the M365 Agents SDK ``AgentApplication`` (and adapter) eagerly.
 
-    Called on first request when decorators are used. Idempotent.
+    Constructs the full M365 stack from environment variables, or assembles it
+    from caller-supplied components. Any component left as ``None`` is created
+    with the default derived from the process environment.
 
-    :return: A tuple of the initialized ``(agent_app, adapter)``.
+    :keyword digital_worker: When ``True``, apply the federated-identity (FMI)
+        MSAL patch before creating the connection manager (digital-worker
+        model). When ``False`` (default), the simple agent-instance-identity
+        model is used and no patch is applied.
+    :paramtype digital_worker: bool
+    :keyword storage: Optional storage backend (defaults to ``MemoryStorage``).
+    :keyword connection_manager: Optional connection manager (defaults to
+        ``MsalConnectionManager`` built from ``config``).
+    :keyword adapter: Optional channel adapter (defaults to ``HttpAdapterBase``).
+    :keyword authorization: Optional ``Authorization`` instance.
+    :keyword config: Optional configuration mapping (defaults to
+        ``load_configuration_from_env(os.environ)``).
+    :keyword agent_app: Optional, fully-built ``AgentApplication`` to use as-is.
+        When supplied, the other component arguments are ignored except
+        ``adapter`` (falls back to ``agent_app.adapter``).
+    :return: A tuple of ``(agent_app, adapter)``.
     :rtype: tuple
+    :raises ImportError: If the M365 Agents SDK is not installed.
     """
-    global _m365_initialized, _adapter, _agent_app, _connection_manager  # pylint: disable=global-statement
-
-    if _m365_initialized:
-        return _agent_app, _adapter
-
-    # Apply MSAL patches before any MsalConnectionManager is created.
-    # The FMI/DefaultAzureCredential patch is only required by the
-    # digital-worker model; the simple agent-instance-identity model mints the
-    # Bot Connector token directly via the Managed Identity Client and must NOT
-    # be patched. This gate runs before the M365 SDK imports below so the patch
-    # is applied even when the optional msal package import path differs.
-    if _digital_worker_mode:
+    # Apply the FMI patch (digital-worker only) before any MsalConnectionManager
+    # is created. The simple agent-instance-identity model must NOT be patched.
+    if digital_worker:
         _apply_msal_patches()
+
+    # Fast path: a fully-built agent_app was injected. No SDK import is needed
+    # to assemble the default stack.
+    if agent_app is not None:
+        resolved_adapter = adapter if adapter is not None else getattr(agent_app, "adapter", None)
+        if resolved_adapter is None:
+            raise ValueError(
+                "When injecting agent_app=, also pass adapter= "
+                "(or ensure agent_app.adapter is set)."
+            )
+        return agent_app, resolved_adapter
 
     try:
         from microsoft_agents.activity import load_configuration_from_env
@@ -146,39 +150,61 @@ def _ensure_m365_initialized():
         )
     except ImportError as exc:
         raise ImportError(
-            "Activity decorator handlers require the M365 Agents SDK. "
-            "Install: pip install microsoft-agents-hosting-core "
+            "ActivityAgentServerHost requires the M365 Agents SDK when no custom "
+            "handler= is provided. Install: pip install microsoft-agents-hosting-core "
             "microsoft-agents-authentication-msal microsoft-agents-activity azure-identity"
         ) from exc
 
     logger.info("Initializing M365 Agents SDK...")
-    config = load_configuration_from_env(os.environ)
-    storage = MemoryStorage()
-    _connection_manager = MsalConnectionManager(**config)
-    client_factory = RestChannelServiceClientFactory(_connection_manager)
-    _adapter = HttpAdapterBase(channel_service_client_factory=client_factory)
-    authorization = Authorization(storage, _connection_manager, **config)
-    _agent_app = AgentApplication[TurnState](
-        storage=storage,
-        adapter=_adapter,
-        authorization=authorization,
-        **config,
+    resolved_config = config if config is not None else load_configuration_from_env(os.environ)
+    resolved_storage = storage if storage is not None else MemoryStorage()
+    resolved_cm = (
+        connection_manager
+        if connection_manager is not None
+        else MsalConnectionManager(**resolved_config)
     )
-    _m365_initialized = True
+    if adapter is not None:
+        resolved_adapter = adapter
+    else:
+        client_factory = RestChannelServiceClientFactory(resolved_cm)
+        resolved_adapter = HttpAdapterBase(channel_service_client_factory=client_factory)
+    resolved_authorization = (
+        authorization
+        if authorization is not None
+        else Authorization(resolved_storage, resolved_cm, **resolved_config)
+    )
+    built_app = AgentApplication[TurnState](
+        storage=resolved_storage,
+        adapter=resolved_adapter,
+        authorization=resolved_authorization,
+        **resolved_config,
+    )
     logger.info("M365 Agents SDK initialized successfully.")
-    return _agent_app, _adapter
+    return built_app, resolved_adapter
 
 
-async def create_bridge_handler(request: Request) -> Response:
-    """Built-in bridge handler for decorator-based agents.
+def make_bridge_handler(agent_app: Any, adapter: Any, *, digital_worker: bool = False):
+    """Create a request handler bound to a specific AgentApplication + adapter.
 
-    Converts the activity dict (set by ActivityAgentServerHost on
-    request.state) into an M365 SDK Activity and processes it through
-    the AgentApplication turn pipeline.
+    :param agent_app: The M365 ``AgentApplication`` used to process each turn.
+    :param adapter: The channel adapter used for the outbound turn pipeline.
+    :keyword digital_worker: Selects the claims model for the outbound reply.
+    :return: An async Starlette request handler.
+    :rtype: callable
+    """
 
-    On first call, initializes the M365 SDK and replays any pending
-    handler registrations captured by the lazy proxy.
+    async def _bridge_handler(request: Request) -> Response:
+        return await _process_turn(agent_app, adapter, digital_worker, request)
 
+    return _bridge_handler
+
+
+async def _process_turn(agent_app: Any, adapter: Any, digital_worker: bool, request: Request) -> Response:
+    """Process a single inbound activity through the M365 turn pipeline.
+
+    :param agent_app: The bound ``AgentApplication``.
+    :param adapter: The bound channel adapter.
+    :param digital_worker: Whether to use the digital-worker claims model.
     :param request: The inbound Starlette request carrying the activity on ``state``.
     :type request: ~starlette.requests.Request
     :return: The HTTP response produced by the M365 turn pipeline.
@@ -186,12 +212,6 @@ async def create_bridge_handler(request: Request) -> Response:
     """
     from microsoft_agents.activity import Activity
     from microsoft_agents.hosting.core import ClaimsIdentity
-
-    agent_app, adapter = _ensure_m365_initialized()
-
-    # Replay pending decorator registrations onto the real AgentApplication
-    if _lazy_agent_app is not None and not _lazy_agent_app._replayed:  # pylint: disable=protected-access
-        _lazy_agent_app._replay_on(agent_app)  # pylint: disable=protected-access
 
     activity_dict = request.state.activity
     activity_type = activity_dict.get("type", "unknown")
@@ -224,7 +244,7 @@ async def create_bridge_handler(request: Request) -> Response:
             content={"error": {"code": "invalid_request", "message": "Activity must have type and conversation.id"}},
         )
 
-    if _digital_worker_mode:
+    if digital_worker:
         # Digital-worker model: anonymous claims; the FMI patch supplies the
         # outbound token via the federated-identity exchange.
         claims = ClaimsIdentity({}, is_authenticated=False, authentication_type="Anonymous")
@@ -259,77 +279,3 @@ async def create_bridge_handler(request: Request) -> Response:
         return JSONResponse(content={}, status_code=200)
 
     return Response(status_code=202)
-
-
-class _LazyAgentApp:
-    """Proxy that defers AgentApplication access until first request."""
-
-    def __init__(self):
-        self._pending_registrations: list = []
-        self._replayed = False
-
-    def activity(self, activity_type: str):
-        """Capture an activity handler registration for later replay.
-
-        :param activity_type: The activity type to register a handler for.
-        :type activity_type: str
-        :return: A decorator that records the handler and returns it unchanged.
-        :rtype: callable
-        """
-        def decorator(fn):
-            self._pending_registrations.append(("activity", activity_type, fn))
-            return fn
-        return decorator
-
-    def error(self, fn):
-        """Capture an error handler registration for later replay.
-
-        :param fn: The error handler callable to register.
-        :type fn: callable
-        :return: The same handler, returned unchanged.
-        :rtype: callable
-        """
-        self._pending_registrations.append(("error", None, fn))
-        return fn
-
-    def _replay_on(self, agent_app):
-        """Replay all captured registrations onto the real AgentApplication.
-
-        Idempotent — only replays once even if called concurrently.
-
-        :param agent_app: The real ``AgentApplication`` to replay registrations onto.
-        :type agent_app: object
-        """
-        if self._replayed:
-            return
-        self._replayed = True
-        for kind, arg, fn in self._pending_registrations:
-            if kind == "activity":
-                agent_app.activity(arg)(fn)
-            elif kind == "error":
-                agent_app.error(fn)
-        self._pending_registrations.clear()
-
-
-# Module-level lazy proxy — shared across all decorator calls
-_lazy_agent_app: Optional[_LazyAgentApp] = None
-
-
-def _get_or_create_lazy_app() -> _LazyAgentApp:
-    global _lazy_agent_app  # pylint: disable=global-statement
-    if _lazy_agent_app is None:
-        _lazy_agent_app = _LazyAgentApp()
-    return _lazy_agent_app
-
-
-def _reset_for_testing() -> None:
-    """Reset all module-level state. For test isolation only."""
-    # pylint: disable=global-statement
-    global _m365_initialized, _adapter, _agent_app
-    global _connection_manager, _lazy_agent_app, _digital_worker_mode
-    _m365_initialized = False
-    _adapter = None
-    _agent_app = None
-    _connection_manager = None
-    _lazy_agent_app = None
-    _digital_worker_mode = False

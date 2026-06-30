@@ -8,6 +8,9 @@
 
 ### Breaking Changes
 
+- Removed the lazy M365 initialization and the `@app.activity(...)` / `@app.error` host decorators in their old form. When no `handler=` is supplied, the M365 Agents SDK is now initialized eagerly during `ActivityAgentServerHost(...)` construction and the host acts as the underlying `AgentApplication` itself (via attribute delegation) — register handlers directly on the host with `@app.activity(...)` / `@app.error`, and reach the rest of the M365 surface (`message`/`proactive`/`auth` ...) the same way. The adapter is available via `app.adapter`.
+- `ActivityAgentServerHost(...)` now accepts optional `storage`, `connection_manager`, `adapter`, `authorization`, `config`, and `agent_app` keyword arguments to customize or inject the M365 stack.
+- Removed the public `apply_msal_patches()` export. The MSAL/FMI patch is now applied internally (digital-worker model only) during construction.
 - Replaced `request.state.user_isolation_key` / `request.state.chat_isolation_key` with `request.state.user_id` / `request.state.call_id` per container protocol version `2.0.0`. Requires `azure-ai-agentserver-core>=2.0.0b7`.
 
 ## 1.0.0b1 (2026-06-09)

@@ -16,7 +16,7 @@ from os import environ
 
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.activity import ActivityAgentServerHost, apply_msal_patches
+from azure.ai.agentserver.activity import ActivityAgentServerHost
 
 from microsoft_agents.activity import Activity, load_configuration_from_env
 from microsoft_agents.authentication.msal import MsalConnectionManager
@@ -31,10 +31,7 @@ from microsoft_agents.hosting.core import (
     TurnState,
 )
 
-# ── M365 SDK setup ───────────────────────────────────────────────
-# Apply MSAL patches before creating MsalConnectionManager.
-apply_msal_patches()
-
+# M365 SDK setup
 config = load_configuration_from_env(environ)
 storage = MemoryStorage()
 connection_manager = MsalConnectionManager(**config)

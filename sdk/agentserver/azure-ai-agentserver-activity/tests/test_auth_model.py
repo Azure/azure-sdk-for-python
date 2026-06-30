@@ -27,32 +27,54 @@ _BOTFRAMEWORK_SCOPE = "https://api.botframework.com/.default"
 _AGENTIC_SCOPE = "5a807f24-c9de-44ee-a3a7-329e88a00ffc/.default"
 
 
+class _StubAgentApp:
+    """Minimal stand-in for the M365 AgentApplication (avoids a real build)."""
+
+    def __init__(self):
+        self.adapter = object()
+        self.registered = []
+
+    def activity(self, activity_type):
+        def decorator(fn):
+            self.registered.append(("activity", activity_type, fn))
+            return fn
+        return decorator
+
+    def error(self, fn):
+        self.registered.append(("error", None, fn))
+        return fn
+
+
 @pytest.fixture(autouse=True)
 def _clean_env(monkeypatch):
-    """Remove all CONNECTIONS__* / FOUNDRY_AGENT_* env and reset bridge state."""
+    """Remove all CONNECTIONS__* / FOUNDRY_AGENT_* env before each test."""
     import os
 
     for key in list(os.environ):
         if key.startswith(_CONN_PREFIX) or key.startswith(_FOUNDRY_PREFIX) or key.startswith("CONNECTIONSMAP"):
             monkeypatch.delenv(key, raising=False)
-    bridge._reset_for_testing()
     yield
-    bridge._reset_for_testing()
 
 
 def _make_host(monkeypatch, *, digital_worker):
     monkeypatch.setenv("FOUNDRY_AGENT_INSTANCE_CLIENT_ID", "instance-aaa")
     monkeypatch.setenv("FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID", "blueprint-bbb")
     monkeypatch.setenv("FOUNDRY_AGENT_TENANT_ID", "tenant-ccc")
-    return ActivityAgentServerHost(digital_worker=digital_worker, configure_observability=None)
+    # Inject a stub AgentApplication so construction does not require a live
+    # M365 SDK build; we only assert env-seeding / mode selection here.
+    return ActivityAgentServerHost(
+        digital_worker=digital_worker,
+        configure_observability=None,
+        agent_app=_StubAgentApp(),
+    )
 
 
 def test_simple_is_the_default(monkeypatch):
     import os
 
-    _make_host(monkeypatch, digital_worker=False)
+    host = _make_host(monkeypatch, digital_worker=False)
 
-    assert bridge._digital_worker_mode is False
+    assert host._digital_worker is False
     assert os.environ[_AUTHTYPE] == "UserManagedIdentity"
     assert os.environ[_CLIENTID] == "instance-aaa"  # instance identity, not blueprint
     assert os.environ[_SCOPE0] == _BOTFRAMEWORK_SCOPE
@@ -63,9 +85,9 @@ def test_simple_is_the_default(monkeypatch):
 def test_digital_worker_opt_in(monkeypatch):
     import os
 
-    _make_host(monkeypatch, digital_worker=True)
+    host = _make_host(monkeypatch, digital_worker=True)
 
-    assert bridge._digital_worker_mode is True
+    assert host._digital_worker is True
     assert os.environ[_AUTHTYPE] == "UserManagedIdentity"
     assert os.environ[_CLIENTID] == "blueprint-bbb"  # blueprint identity
     assert os.environ[_SCOPE0] == _AGENTIC_SCOPE
@@ -79,9 +101,9 @@ def test_default_keyword_matches_explicit_false(monkeypatch):
     monkeypatch.setenv("FOUNDRY_AGENT_INSTANCE_CLIENT_ID", "instance-aaa")
     monkeypatch.setenv("FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID", "blueprint-bbb")
     monkeypatch.setenv("FOUNDRY_AGENT_TENANT_ID", "tenant-ccc")
-    ActivityAgentServerHost(configure_observability=None)
+    host = ActivityAgentServerHost(configure_observability=None, agent_app=_StubAgentApp())
 
-    assert bridge._digital_worker_mode is False
+    assert host._digital_worker is False
     assert os.environ[_CLIENTID] == "instance-aaa"
     assert os.environ[_SCOPE0] == _BOTFRAMEWORK_SCOPE
 
@@ -106,28 +128,19 @@ def test_simple_mode_does_not_apply_fmi_patch(monkeypatch):
         applied["called"] = True
 
     monkeypatch.setattr(bridge, "_apply_msal_patches", _fake_patch)
-    _make_host(monkeypatch, digital_worker=False)
-    try:
-        bridge._ensure_m365_initialized()
-    except Exception:
-        # M365 SDK init may fail in a bare test env; we only assert the patch gate.
-        pass
+    bridge.build_m365_app(digital_worker=False, agent_app=_StubAgentApp())
 
     assert applied["called"] is False
 
 
 def test_digital_worker_applies_fmi_patch(monkeypatch):
-    """In digital-worker mode the MSAL FMI patch is applied during init."""
+    """In digital-worker mode the MSAL FMI patch is applied during build."""
     applied = {"called": False}
 
     def _fake_patch():
         applied["called"] = True
 
     monkeypatch.setattr(bridge, "_apply_msal_patches", _fake_patch)
-    _make_host(monkeypatch, digital_worker=True)
-    try:
-        bridge._ensure_m365_initialized()
-    except Exception:
-        pass
+    bridge.build_m365_app(digital_worker=True, agent_app=_StubAgentApp())
 
     assert applied["called"] is True

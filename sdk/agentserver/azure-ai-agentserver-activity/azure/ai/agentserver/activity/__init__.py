@@ -6,7 +6,9 @@
 This package provides an activity protocol host as a subclass of
 :class:`~azure.ai.agentserver.core.AgentServerHost`.
 
-Decorator-based usage (recommended)::
+Default usage — the M365 Agents SDK is initialized during construction and the
+host acts as the underlying ``AgentApplication`` (register handlers and reach
+the full M365 surface directly on the host)::
 
     from azure.ai.agentserver.activity import ActivityAgentServerHost
 
@@ -18,7 +20,7 @@ Decorator-based usage (recommended)::
 
     app.run()
 
-Custom handler usage::
+Custom handler usage — the M365 SDK is not initialized; you own the pipeline::
 
     from azure.ai.agentserver.activity import ActivityAgentServerHost
 
@@ -33,8 +35,7 @@ Custom handler usage::
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._activity import ActivityAgentServerHost
-from ._m365_bridge import _apply_msal_patches as apply_msal_patches  # pylint: disable=naming-mismatch
 from ._version import VERSION
 
-__all__ = ["ActivityAgentServerHost", "apply_msal_patches"]
+__all__ = ["ActivityAgentServerHost"]
 __version__ = VERSION

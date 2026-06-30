@@ -24,7 +24,7 @@ pip install azure-ai-agentserver-activity
 
 ### Usage patterns
 
-**Decorator-based (recommended)** — zero SDK wiring:
+**Decorator-based (recommended)** — the host acts as the M365 ``agent_app``:
 
 ```python
 from azure.ai.agentserver.activity import ActivityAgentServerHost
@@ -67,8 +67,8 @@ app.run()
 
 ### Public API
 
-- `ActivityAgentServerHost` — the host class
-- `apply_msal_patches()` — patches M365 SDK MSAL auth for Foundry containers (UserManagedIdentity with fmi_path)
+- `ActivityAgentServerHost` — the host class. It acts as the underlying M365 `AgentApplication`: register handlers and reach the full M365 surface (`activity`/`error`/`message`/`proactive`/`auth` ...) directly on the host.
+- `ActivityAgentServerHost.adapter` — the channel adapter for the underlying `AgentApplication`.
 
 ## Examples
 

@@ -18,9 +18,3 @@ class ActivityConstants:
     ACTIVITY_ID_HEADER = "x-agent-activity-id"
     SESSION_ID_HEADER = _SESSION_ID
     CONVERSATION_ID_HEADER = "x-agent-conversation-id"
-
-    # Span attribute keys
-    ATTR_SPAN_SESSION_ID = "azure.ai.agentserver.activity.session_id"
-    ATTR_SPAN_PROTOCOL = "azure.ai.agentserver.activity.protocol"
-    ATTR_SPAN_ERROR_CODE = "azure.ai.agentserver.activity.error.code"
-    ATTR_SPAN_ERROR_MESSAGE = "azure.ai.agentserver.activity.error.message"
