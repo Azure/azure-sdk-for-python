@@ -45,3 +45,23 @@ async def test_L0_async_upsert_insert_then_update(container_for):
     cmp.print_report()
     cmp.assert_functional_parity()
 
+
+@pytest.mark.asyncio
+async def test_L4_async_upsert_response_hook_fires_once(container_for):
+    """async upsert fires response_hook exactly once per backend."""
+    fired = {"core-python": 0, "rust": 0}
+    order = ["core-python", "rust"]
+    idx = [0]
+
+    async def _do(client):
+        backend = order[idx[0]]
+        idx[0] += 1
+        c = client.get_database_client("parity_db").get_container_client(container_for.id)
+        return await c.upsert_item(
+            {"id": uuid.uuid4().hex, "pk": "a"},
+            response_hook=lambda h, x: fired.__setitem__(backend, fired[backend] + 1),
+        )
+
+    cmp = await run_on_both_backends_async(_do, description="[L4] async upsert response_hook")
+    cmp.assert_functional_parity()
+    assert fired["core-python"] == 1 and fired["rust"] == 1

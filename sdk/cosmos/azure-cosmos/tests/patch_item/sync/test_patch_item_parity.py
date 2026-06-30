@@ -45,3 +45,17 @@ def test_L0_create_then_patch_set(container_for):
     cmp.print_report()
     cmp.assert_functional_parity()
 
+
+def test_L5_patch_missing_raises(container_for):
+    """patching a missing id raises CosmosResourceNotFoundError on both."""
+    def _do(client):
+        c = client.get_database_client("parity_db").get_container_client(container_for.id)
+        return c.patch_item(
+            item="missing-" + uuid.uuid4().hex,
+            partition_key="a",
+            patch_operations=[{"op": "set", "path": "/n", "value": 1}],
+        )
+
+    cmp = run_on_both_backends(_do, description="[L5] patch missing -> 404")
+    cmp.print_report()
+    cmp.assert_exception_parity()

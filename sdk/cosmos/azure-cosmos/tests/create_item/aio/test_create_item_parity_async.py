@@ -57,3 +57,14 @@ async def test_L5_async_duplicate_id_raises(container_for):
     cmp.print_report()
     cmp.assert_exception_parity()
 
+
+@pytest.mark.asyncio
+async def test_L3_async_create_no_response(container_for):
+    """async create with no_response=True keeps functional parity."""
+    async def _do(client):
+        c = client.get_database_client("parity_db").get_container_client(container_for.id)
+        return await c.create_item({"id": uuid.uuid4().hex, "pk": "a", "n": 1}, no_response=True)
+
+    cmp = await run_on_both_backends_async(_do, description="[L3] async create + no_response")
+    cmp.print_report()
+    cmp.assert_functional_parity()

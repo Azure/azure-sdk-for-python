@@ -963,6 +963,92 @@ def test_async_rust_backend_passes_client_config_to_init_client(monkeypatch):
     )
 
 
+class _ProxyGlobalRuntimeFakeModule:
+    """Test double for the binding that enforces a process-global proxy policy.
+
+    Mirrors the runtime contract in the Rust binding: the first init_client call
+    locks the process proxy policy; later explicit conflicting values fail.
+    """
+
+    def __init__(self):
+        self._initialized_proxy_allowed = None
+        self._next_handle = 0
+
+    def init_client(self, *args):
+        config = args[2] if len(args) >= 3 else None
+        requested = getattr(config, "proxy_allowed", None) if config is not None else None
+        if self._initialized_proxy_allowed is None:
+            self._initialized_proxy_allowed = requested
+        elif requested is not None and requested != self._initialized_proxy_allowed:
+            raise ValueError(
+                "Rust runtime proxy configuration is process-global and was already initialized"
+            )
+        self._next_handle += 1
+        return "handle-{}".format(self._next_handle)
+
+    def close_client(self, _handle):
+        return None
+
+
+def test_rust_backend_conflicting_proxy_allowed_raises_at_construction(monkeypatch):
+    """Sync path: conflicting explicit proxy policy fails deterministically at construction."""
+    fake_module = _ProxyGlobalRuntimeFakeModule()
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    RustBackend(
+        endpoint="https://x.documents.azure.com",
+        master_key="k",
+        client_config=PreparedClientConfig(proxy_allowed=True),
+    )
+    with pytest.raises(ProxyPolicyConflictError, match="process-global"):
+        RustBackend(
+            endpoint="https://x.documents.azure.com",
+            master_key="k",
+            client_config=PreparedClientConfig(proxy_allowed=False),
+        )
+
+
+def test_rust_backend_unset_proxy_allowed_does_not_conflict(monkeypatch):
+    """Sync path: an unset later value carries nothing and does not conflict."""
+    fake_module = _ProxyGlobalRuntimeFakeModule()
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    first = RustBackend(
+        endpoint="https://x.documents.azure.com",
+        master_key="k",
+        client_config=PreparedClientConfig(proxy_allowed=True),
+    )
+    second = RustBackend(
+        endpoint="https://x.documents.azure.com",
+        master_key="k",
+        client_config=None,
+    )
+
+    first._ensure_handle()
+    second._ensure_handle()
+
+
+def test_async_rust_backend_conflicting_proxy_allowed_raises_at_construction(monkeypatch):
+    """Async path: conflicting explicit proxy policy fails deterministically at construction."""
+    fake_module = _ProxyGlobalRuntimeFakeModule()
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        AsyncRustBackend(
+            endpoint="https://x.documents.azure.com",
+            master_key="k",
+            client_config=PreparedClientConfig(proxy_allowed=True),
+        )
+        with pytest.raises(ProxyPolicyConflictError, match="process-global"):
+            AsyncRustBackend(
+                endpoint="https://x.documents.azure.com",
+                master_key="k",
+                client_config=PreparedClientConfig(proxy_allowed=False),
+            )
+
+    asyncio.run(_run())
+
+
 # ---------------------------------------------------------------------------
 # Carrying the other driver-understood startup settings (excluded_locations,
 # throttling retry, hedging threshold) into the client config

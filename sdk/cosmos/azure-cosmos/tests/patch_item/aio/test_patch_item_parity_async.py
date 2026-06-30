@@ -46,3 +46,18 @@ async def test_L0_async_create_then_patch_set(container_for):
     cmp.print_report()
     cmp.assert_functional_parity()
 
+
+@pytest.mark.asyncio
+async def test_L5_async_patch_missing_raises(container_for):
+    """async patch of a missing id raises CosmosResourceNotFoundError on both."""
+    async def _do(client):
+        c = client.get_database_client("parity_db").get_container_client(container_for.id)
+        return await c.patch_item(
+            item="missing-" + uuid.uuid4().hex,
+            partition_key="a",
+            patch_operations=[{"op": "set", "path": "/n", "value": 1}],
+        )
+
+    cmp = await run_on_both_backends_async(_do, description="[L5] async patch missing -> 404")
+    cmp.print_report()
+    cmp.assert_exception_parity()
