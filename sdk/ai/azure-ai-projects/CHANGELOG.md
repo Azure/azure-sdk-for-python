@@ -7,7 +7,7 @@
 * Hosted Agent methods are now stable. There is no need to set `allow_preview=True` on the `AIProjectClient` constructor to create a Hosted Agent.
 * Session and Session Files methods are now stable. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
 * Agent code methods are now stable. This includes `.agents.create_version_from_code` and `.agents.download_code` methods. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
-* Toolboxes methods are now stable. The have moved from `.beta.toolboxes` subclient to the `.toolboxes` subclient.
+* Toolboxes methods are now stable. They have moved from `.beta.toolboxes` subclient to the `.toolboxes` subclient.
 * Two new methods `.agents.enable` and `.agents.disable`.
 * New Agent tool `ReminderPreviewTool` and toolbox tool `ReminderPreviewToolboxTool`.
 * Optional argument `include_drafts` added to method `.agents.list_versions`.
@@ -19,11 +19,13 @@
 
 ### Breaking Changes
 
+All breaking changes are associated with beta features, or beta features that are being promoted to stable.
+
 * Toolbox method `create_version` now defines `tools` of type `List[ToolboxTool]` instead of `List[Tool]`. A new set of Toolbox tools classes,
 all derived from `ToolboxTool`, have been defined. 
 * Input argument structure for method `create_version_from_code` has been simplified. The same information is passed in, but in a modified way. Also, the `code` type has changed from `FileType` to `IO[bytes]`, and the `code_zip_sha256` was made optional (it will be calculated by the method if not provided by the caller).
 * Agent Optimization methods `.beta.agents.*optimization*` were re-written to better align with Foundry job guidelines and platform standards. The old version accumulated unused candidate sub-resources, internal-detail properties, and custom operation patterns inconsistent with the Foundry platform. The new version removes redundant models and operations, adopts shared Foundry job patterns (`JobLike<>`, standard job verbs), and introduces typed discriminated unions for dataset inputs and evaluator references.
-* Argument `agent_session_id` on Session Files methods was renamed to `session_it`.
+* Argument `agent_session_id` on Session Files methods was renamed to `session_id`.
 * Method `.beta.agents.list_optimization_candidates` now returns `ItemPaged[OptimizationCandidate]` instead of `AgentsPagedResultOptimizationCandidate`. The `after` parameter has been removed (use continuation-token-based paging instead).
 * Method `.agents.patch_agent_details` was renamed to `.agents.update_details`.
 * Optional property `default_ttl_seconds` on class `MemoryStoreDefaultOptions` has changed from type `int` to type `datetime.timedelta`.
