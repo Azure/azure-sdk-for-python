@@ -168,12 +168,10 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",
                     "hybridAksExtendedLocation": {"name": "str", "type": "str"},
-                    "lastSuccessfulVersionUpdateTime": "2020-02-20 00:00:00",
-                    "managedCredentials": ["str"],
                     "managedResourceGroupConfiguration": {"location": "str", "name": "str"},
                     "manualActionCount": 0,
                     "provisioningState": "str",
-                    "runtimeProtectionConfiguration": {"definitionUpdateMode": "str", "enforcementLevel": "str"},
+                    "runtimeProtectionConfiguration": {"enforcementLevel": "str"},
                     "secretArchive": {"keyVaultId": "str", "useKeyVault": "str"},
                     "secretArchiveSettings": {
                         "associatedIdentity": {"identityType": "str", "userAssignedIdentityResourceId": "str"},
@@ -198,7 +196,6 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
                     "tenantId": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "kind": "str",
                 "name": "str",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -262,7 +259,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_continue_update_version(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            cluster_continue_update_version_parameters={"machineGroupTargetingMode": "str", "safeguardMode": "str"},
+            cluster_continue_update_version_parameters={"machineGroupTargetingMode": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -274,29 +271,6 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_deploy(
             resource_group_name=resource_group.name,
             cluster_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_clusters_begin_inspect(self, resource_group):
-        response = self.client.clusters.begin_inspect(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_clusters_begin_rotate_credential(self, resource_group):
-        response = self.client.clusters.begin_rotate_credential(
-            resource_group_name=resource_group.name,
-            cluster_name="str",
-            body={"credentials": ["str"]},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -319,7 +293,7 @@ class TestNetworkCloudMgmtClustersOperations(AzureMgmtRecordedTestCase):
         response = self.client.clusters.begin_update_version(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            cluster_update_version_parameters={"targetClusterVersion": "str", "safeguardMode": "str"},
+            cluster_update_version_parameters={"targetClusterVersion": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
