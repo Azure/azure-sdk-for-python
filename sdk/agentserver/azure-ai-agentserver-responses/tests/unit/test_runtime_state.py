@@ -256,6 +256,33 @@ def test_import_does_not_expose_execution_record() -> None:
     import importlib
 
     mod = importlib.import_module("azure.ai.agentserver.responses.hosting._runtime_state")
-    assert not hasattr(mod, "_ExecutionRecord"), (
-        "_ExecutionRecord should have been removed from _runtime_state in Phase 7 / Task 7.1"
+    assert not hasattr(
+        mod, "_ExecutionRecord"
+    ), "_ExecutionRecord should have been removed from _runtime_state in Phase 7 / Task 7.1"
+
+
+def test_to_snapshot_agent_reference_is_json_safe() -> None:
+    """Status-only snapshot must coerce an AgentReference model to a JSON-safe dict.
+
+    Regression: a steered/in-progress turn polled via GET hit the status-only
+    fallback snapshot, which deep-copied the gateway-injected ``AgentReference``
+    model straight into a ``JSONResponse`` — raising ``TypeError: Object of type
+    AgentReference is not JSON serializable``.
+    """
+    import json
+
+    from azure.ai.agentserver.responses.models import AgentReference
+
+    record = ResponseExecution(
+        response_id="caresp_agentref0000000000000000000000",
+        mode_flags=ResponseModeFlags(stream=False, background=True, store=True),
+        status="in_progress",
+        initial_agent_reference=AgentReference(name="my-agent", version="3"),
     )
+    snapshot = _RuntimeState.to_snapshot(record)
+    # Must be JSON-serializable (no leaked model) ...
+    json.dumps(snapshot)
+    # ... and preserve the reference fields as a plain dict.
+    assert isinstance(snapshot["agent_reference"], dict)
+    assert snapshot["agent_reference"].get("name") == "my-agent"
+    assert snapshot["agent_reference"].get("version") == "3"
