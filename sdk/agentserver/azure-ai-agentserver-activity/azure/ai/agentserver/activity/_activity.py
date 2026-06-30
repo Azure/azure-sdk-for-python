@@ -25,14 +25,20 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import AgentServerHost, create_error_response
+from azure.ai.agentserver.core import (
+    AgentServerHost,
+    FoundryAgentRequestContext,
+    create_error_response,
+    reset_request_context,
+    set_request_context,
+)
 from azure.ai.agentserver.core._platform_headers import (
-    CHAT_ISOLATION_KEY,
     ERROR_DETAIL,
     ERROR_SOURCE,
+    FOUNDRY_CALL_ID,
     MAX_ERROR_DETAIL_LENGTH,
     PLATFORM_ERROR_TAG,
-    USER_ISOLATION_KEY,
+    USER_ID,
 )
 
 from ._constants import ActivityConstants
@@ -44,8 +50,8 @@ _ERROR_SOURCE_PLATFORM: str = "platform"
 
 
 _session_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_session_id", default="")
-_user_isolation_key_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_user_isolation_key", default="")
-_chat_isolation_key_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_chat_isolation_key", default="")
+_user_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_user_id", default="")
+_call_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_call_id", default="")
 _protocol_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_protocol", default=ActivityConstants.PROTOCOL)
 
 
@@ -56,10 +62,10 @@ def _enrich_record(record: logging.LogRecord) -> None:
     """
     if not hasattr(record, "SessionId"):
         record.SessionId = _session_id_var.get("")  # type: ignore[attr-defined]
-    if not hasattr(record, "UserIsolationKey"):
-        record.UserIsolationKey = _user_isolation_key_var.get("")  # type: ignore[attr-defined]
-    if not hasattr(record, "ChatIsolationKey"):
-        record.ChatIsolationKey = _chat_isolation_key_var.get("")  # type: ignore[attr-defined]
+    if not hasattr(record, "UserId"):
+        record.UserId = _user_id_var.get("")  # type: ignore[attr-defined]
+    if not hasattr(record, "CallId"):
+        record.CallId = _call_id_var.get("")  # type: ignore[attr-defined]
     if not hasattr(record, "Protocol"):
         record.Protocol = _protocol_var.get(ActivityConstants.PROTOCOL)  # type: ignore[attr-defined]
 
@@ -88,7 +94,7 @@ def _ensure_log_enrichment() -> None:
 
     Ensures every log record (regardless of which logger emits it) carries the
     activity scope fields read from the current context. This provides session /
-    isolation / protocol correlation across the app logger, the M365 SDK
+    user / protocol correlation across the app logger, the M365 SDK
     loggers, azure.identity, connector clients, etc. — not just this package's
     own logger.
     """
@@ -119,8 +125,8 @@ class _BaggageSpanProcessor(_OtelSpanProcessor):  # type: ignore[valid-type, mis
     """SpanProcessor that copies OTel baggage entries onto every span at start.
 
     Baggage propagates request-scoped correlation values (session_id,
-    conversation_id, activity_id, isolation keys, x_request_id, plus the
-    platform-provided user / agent / tenant ids) through the context, but those
+    conversation_id, activity_id, user/call ids, x_request_id, plus the
+    platform-provided agent / tenant ids) through the context, but those
     values are *not* automatically recorded as span attributes. This processor
     promotes them so every child span produced during a turn (auth, connector,
     send-activity, GenAI, etc.) is filterable by the same correlation keys.
@@ -484,8 +490,8 @@ class ActivityAgentServerHost(AgentServerHost):
         # Resolve correlation identifiers from headers up-front so that every
         # log line and span produced during this turn carries the values.
         inbound_conversation_id = request.headers.get(ActivityConstants.CONVERSATION_ID_HEADER, "")
-        inbound_user_isolation_key = request.headers.get(USER_ISOLATION_KEY, "")
-        inbound_chat_isolation_key = request.headers.get(CHAT_ISOLATION_KEY, "")
+        inbound_user_id = request.headers.get(USER_ID, "")
+        inbound_call_id = request.headers.get(FOUNDRY_CALL_ID, "")
         session_id = _sanitize_id(self._resolve_session_id(request))
         request_trace_id = request.headers.get("x-request-id", "").strip()
 
@@ -494,9 +500,18 @@ class ActivityAgentServerHost(AgentServerHost):
         _ensure_log_enrichment()
         _ensure_baggage_span_processor()
         session_token = _session_id_var.set(session_id)
-        user_token = _user_isolation_key_var.set(inbound_user_isolation_key)
-        chat_token = _chat_isolation_key_var.set(inbound_chat_isolation_key)
+        user_token = _user_id_var.set(inbound_user_id)
+        call_token = _call_id_var.set(inbound_call_id)
         protocol_token = _protocol_var.set(ActivityConstants.PROTOCOL)
+        # Bind platform context so handler/tool code making raw outbound 1P calls
+        # can forward the per-request call ID and user ID (protocol 2.0.0).
+        ctx_token = set_request_context(
+            FoundryAgentRequestContext(
+                call_id=inbound_call_id or None,
+                user_id=inbound_user_id or None,
+                session_id=session_id,
+            )
+        )
         baggage_token: Optional[Token[Any]] = None
 
         try:
@@ -566,8 +581,8 @@ class ActivityAgentServerHost(AgentServerHost):
             request.state.activity = payload
             request.state.activity_id = activity_id
             request.state.session_id = session_id
-            request.state.user_isolation_key = inbound_user_isolation_key
-            request.state.chat_isolation_key = inbound_chat_isolation_key
+            request.state.user_id = inbound_user_id
+            request.state.call_id = inbound_call_id
 
             logger.info(
                 "Activity request received | type=%s | activity_id=%s | conversation_id=%s | "
@@ -593,13 +608,13 @@ class ActivityAgentServerHost(AgentServerHost):
                 baggage_ctx = _otel_baggage.set_baggage(
                     "azure.ai.agentserver.activity_id", activity_id, context=baggage_ctx
                 )
-            if inbound_user_isolation_key:
+            if inbound_user_id:
                 baggage_ctx = _otel_baggage.set_baggage(
-                    "azure.ai.agentserver.user_isolation_key", inbound_user_isolation_key, context=baggage_ctx
+                    "azure.ai.agentserver.user_id", inbound_user_id, context=baggage_ctx
                 )
-            if inbound_chat_isolation_key:
+            if inbound_call_id:
                 baggage_ctx = _otel_baggage.set_baggage(
-                    "azure.ai.agentserver.chat_isolation_key", inbound_chat_isolation_key, context=baggage_ctx
+                    "azure.ai.agentserver.call_id", inbound_call_id, context=baggage_ctx
                 )
             if request_trace_id:
                 baggage_ctx = _otel_baggage.set_baggage(
@@ -650,9 +665,10 @@ class ActivityAgentServerHost(AgentServerHost):
                 return response
         finally:
             _session_id_var.reset(session_token)
-            _user_isolation_key_var.reset(user_token)
-            _chat_isolation_key_var.reset(chat_token)
+            _user_id_var.reset(user_token)
+            _call_id_var.reset(call_token)
             _protocol_var.reset(protocol_token)
+            reset_request_context(ctx_token)
             if baggage_token is not None:
                 try:
                     _otel_context.detach(baggage_token)

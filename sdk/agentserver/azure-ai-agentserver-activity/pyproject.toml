@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "activity"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b4",
+    "azure-ai-agentserver-core>=2.0.0b7",
     "opentelemetry-api>=1.40.0",
     "aiohttp>=3.10.0,<4.0.0a0",
 ]

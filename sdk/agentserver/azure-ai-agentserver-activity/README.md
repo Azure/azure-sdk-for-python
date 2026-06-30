@@ -62,7 +62,7 @@ app.run()
 
 - `x-agent-session-id` (preferred session source)
 - `x-agent-conversation-id`
-- `x-agent-user-isolation-key` and `x-agent-chat-isolation-key`
+- `x-agent-user-id` (per-user identity) and `x-agent-foundry-call-id` (per-request call ID, container protocol `2.0.0`)
 - `traceparent`, `tracestate`, and `baggage`
 
 ### Public API
