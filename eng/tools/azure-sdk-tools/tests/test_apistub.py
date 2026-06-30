@@ -23,7 +23,7 @@ class TestApistubRegistration:
         args = parser.parse_args(["apistub", "--from-pypi", "1.0.0"])
 
         assert args.command == "apistub"
-        assert args.pypi_version == "1.0.0"
+        assert args.from_pypi == "1.0.0"
 
 # ── get_package_wheel_path() ─────────────────────────────────────────────
 
@@ -96,7 +96,7 @@ class TestRunOutputDirectory:
         isolate=False,
         install_deps=False,
         dest_dir=None,
-        pypi_version=None,
+        from_pypi=None,
     ):
         return argparse.Namespace(
             target=".",
@@ -106,7 +106,7 @@ class TestRunOutputDirectory:
             token_file=token_file,
             install_deps=install_deps,
             dest_dir=dest_dir,
-            pypi_version=pypi_version,
+            from_pypi=from_pypi,
         )
 
     @patch(
@@ -474,7 +474,7 @@ class TestRunOutputDirectory:
         ) as download_pypi_wheel, patch.object(
             stub, "run_venv_command", side_effect=fake_apistub_run
         ):
-            stub.run(self._make_args(token_file=True, pypi_version="1.0.0"))
+            stub.run(self._make_args(token_file=True, from_pypi="1.0.0"))
 
         download_pypi_wheel.assert_called_once_with(sys.executable, "azure-core", "1.0.0", staging)
         create_package_and_install.assert_not_called()
