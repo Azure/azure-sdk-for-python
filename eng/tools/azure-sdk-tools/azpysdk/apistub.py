@@ -70,6 +70,7 @@ class apistub(Check):
             help="Destination directory for generated API stub files.",
         )
         p.add_argument(
+            "--generate-from-pypi",
             "--pypi-version",
             dest="pypi_version",
             default=None,
