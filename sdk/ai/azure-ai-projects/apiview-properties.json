@@ -95,8 +95,6 @@
         "azure.ai.projects.models.EvaluationRuleAction": "Azure.AI.Projects.EvaluationRuleAction",
         "azure.ai.projects.models.ContinuousEvaluationRuleAction": "Azure.AI.Projects.ContinuousEvaluationRuleAction",
         "azure.ai.projects.models.CosmosDBIndex": "Azure.AI.Projects.CosmosDBIndex",
-        "azure.ai.projects.models.CreateAgentVersionFromCodeContent": "Azure.AI.Projects.CreateAgentVersionFromCodeContent",
-        "azure.ai.projects.models.CreateAgentVersionFromCodeMetadata": "Azure.AI.Projects.CreateAgentVersionFromCodeMetadata",
         "azure.ai.projects.models.CreateAsyncResponse": "Azure.AI.Projects.createAsync.Response.anonymous",
         "azure.ai.projects.models.CreateSkillVersionFromFilesBody": "Azure.AI.Projects.CreateSkillVersionFromFilesBody",
         "azure.ai.projects.models.Trigger": "Azure.AI.Projects.Trigger",
@@ -462,8 +460,6 @@
         "azure.ai.projects.aio.operations.AgentsOperations.list_versions": "Azure.AI.Projects.Agents.listAgentVersions",
         "azure.ai.projects.operations.AgentsOperations.update_details": "Azure.AI.Projects.Agents.patchAgentObject",
         "azure.ai.projects.aio.operations.AgentsOperations.update_details": "Azure.AI.Projects.Agents.patchAgentObject",
-        "azure.ai.projects.operations.AgentsOperations.create_version_from_code": "Azure.AI.Projects.Agents.createAgentVersionFromCode",
-        "azure.ai.projects.aio.operations.AgentsOperations.create_version_from_code": "Azure.AI.Projects.Agents.createAgentVersionFromCode",
         "azure.ai.projects.operations.AgentsOperations.download_code": "Azure.AI.Projects.Agents.downloadAgentCode",
         "azure.ai.projects.aio.operations.AgentsOperations.download_code": "Azure.AI.Projects.Agents.downloadAgentCode",
         "azure.ai.projects.operations.AgentsOperations.enable": "Azure.AI.Projects.Agents.enableAgent",
@@ -545,5 +541,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "f9eaf0864e03"
+    "CrossLanguageVersion": "ad84d70f4a07"
 }

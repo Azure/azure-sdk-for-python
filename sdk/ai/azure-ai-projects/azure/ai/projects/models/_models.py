@@ -4120,12 +4120,12 @@ class CreateAgentVersionFromCodeContent(_Model):
     POST /agents/{name}/versions).
 
     :ivar metadata: JSON metadata including description and hosted definition. Required.
-    :vartype metadata: ~azure.ai.projects.models.CreateAgentVersionFromCodeMetadata
+    :vartype metadata: ~azure.ai.projects.models._models.CreateAgentVersionFromCodeMetadata
     :ivar code: The code zip file (max 250 MB). Required.
     :vartype code: ~azure.ai.projects._utils.utils.FileType
     """
 
-    metadata: "_models.CreateAgentVersionFromCodeMetadata" = rest_field(
+    metadata: "_models._models.CreateAgentVersionFromCodeMetadata" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """JSON metadata including description and hosted definition. Required."""
@@ -4138,7 +4138,7 @@ class CreateAgentVersionFromCodeContent(_Model):
     def __init__(
         self,
         *,
-        metadata: "_models.CreateAgentVersionFromCodeMetadata",
+        metadata: "_models._models.CreateAgentVersionFromCodeMetadata",
         code: FileType,
     ) -> None: ...
 

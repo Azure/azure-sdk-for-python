@@ -1326,71 +1326,24 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def create_version_from_code(
+    async def _create_version_from_code(
         self,
         agent_name: str,
-        content: _models.CreateAgentVersionFromCodeContent,
+        content: _models._models.CreateAgentVersionFromCodeContent,
         *,
         code_zip_sha256: str,
         **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """Create an agent version from code.
-
-        Creates a new agent version from code. Uploads the code zip and creates a new version for an
-        existing agent. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
-        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
-        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param content: Required.
-        :type content: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.AgentVersionDetails: ...
     @overload
-    async def create_version_from_code(
+    async def _create_version_from_code(
         self, agent_name: str, content: JSON, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """Create an agent version from code.
-
-        Creates a new agent version from code. Uploads the code zip and creates a new version for an
-        existing agent. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
-        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
-        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param content: Required.
-        :type content: JSON
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.AgentVersionDetails: ...
 
     @distributed_trace_async
-    async def create_version_from_code(
+    async def _create_version_from_code(
         self,
         agent_name: str,
-        content: Union[_models.CreateAgentVersionFromCodeContent, JSON],
+        content: Union[_models._models.CreateAgentVersionFromCodeContent, JSON],
         *,
         code_zip_sha256: str,
         **kwargs: Any
@@ -1410,7 +1363,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param content: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
-        :type content: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
+        :type content: ~azure.ai.projects.models._models.CreateAgentVersionFromCodeContent or JSON
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
          detection (dedup) and integrity verification. Required.
         :paramtype code_zip_sha256: str
