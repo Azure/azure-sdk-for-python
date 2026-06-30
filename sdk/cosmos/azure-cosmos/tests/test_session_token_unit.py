@@ -321,6 +321,91 @@ class TestResolvePartitionLocalSessionTokenRegression(unittest.TestCase):
         self.assertEqual(result, token.session_token)
 
 
+class TestGetSessionTokenWithoutPartitionKeyVersion(unittest.TestCase):
+
+    COLLECTION_LINK = "dbs/db1/colls/c1"
+    COLLECTION_RID = "abc123=="
+    PK_RANGE_ID = "0"
+    PK_VALUE = "some-pk-value"
+    RAW_TOKEN = "1#100"
+
+    class _StubRoutingMapProvider:
+        """Returns a single partition range covering any EPK."""
+
+        def __init__(self, pk_range_id):
+            self._pk_range_id = pk_range_id
+
+        def get_overlapping_ranges(self, collection_link, ranges, options):
+            del collection_link, ranges, options
+            return [{
+                "id": self._pk_range_id,
+                "minInclusive": "",
+                "maxExclusive": "FF",
+                "parents": [],
+            }]
+
+    class _TokenWrap:
+        """Mimics what ``SessionContainer.rid_to_session_token`` stores per
+        partition: an object exposing ``.session_token`` as the string form."""
+
+        def __init__(self, vector_session_token):
+            self.session_token = vector_session_token.session_token
+
+    def _build_container_with_seeded_token(self):
+        container = _session.SessionContainer()
+        container.collection_name_to_rid[self.COLLECTION_LINK] = self.COLLECTION_RID
+        container.rid_to_session_token[self.COLLECTION_RID] = {
+            self.PK_RANGE_ID: self._TokenWrap(VectorSessionToken.create(self.RAW_TOKEN)),
+        }
+        return container
+
+    def _build_cache(self, partition_key_definition):
+        return {
+            self.COLLECTION_LINK: {
+                "_rid": self.COLLECTION_RID,
+                "partitionKey": partition_key_definition,
+            },
+        }
+
+    def test_partitionkey_definition_without_version_returns_token(self):
+        """Service responses without a 'version' key must not silently nuke the token."""
+        container = self._build_container_with_seeded_token()
+        cache = self._build_cache({"paths": ["/pk"], "kind": "Hash"})  # no 'version'
+
+        token = container.get_session_token(
+            resource_path=self.COLLECTION_LINK,
+            pk_value=self.PK_VALUE,
+            container_properties_cache=cache,
+            routing_map_provider=self._StubRoutingMapProvider(self.PK_RANGE_ID),
+            partition_key_range_id=None,
+            options={},
+        )
+
+        self.assertEqual(
+            token, "{0}:{1}".format(self.PK_RANGE_ID, self.RAW_TOKEN),
+            "Expected a non-empty session token when partitionKey lacks 'version'."
+        )
+
+    def test_partitionkey_definition_with_version_returns_same_token(self):
+        """When 'version' IS present, behavior must be unchanged."""
+        container = self._build_container_with_seeded_token()
+        cache = self._build_cache({"paths": ["/pk"], "kind": "Hash", "version": 2})
+
+        token = container.get_session_token(
+            resource_path=self.COLLECTION_LINK,
+            pk_value=self.PK_VALUE,
+            container_properties_cache=cache,
+            routing_map_provider=self._StubRoutingMapProvider(self.PK_RANGE_ID),
+            partition_key_range_id=None,
+            options={},
+        )
+
+        self.assertEqual(
+            token, "{0}:{1}".format(self.PK_RANGE_ID, self.RAW_TOKEN),
+            "Expected an unchanged session token when partitionKey includes 'version'."
+        )
+
+
 # Unit tests for set_session_token_header. When a request targets a single
 # partition, the helper must send only that partition's token, not a
 # comma-joined token covering every cached partition.
