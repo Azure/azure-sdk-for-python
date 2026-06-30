@@ -33,7 +33,7 @@ Custom handler usage::
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._activity import ActivityAgentServerHost
-from ._m365_bridge import _apply_msal_patches as apply_msal_patches
+from ._m365_bridge import _apply_msal_patches as apply_msal_patches  # pylint: disable=naming-mismatch
 from ._version import VERSION
 
 __all__ = ["ActivityAgentServerHost", "apply_msal_patches"]

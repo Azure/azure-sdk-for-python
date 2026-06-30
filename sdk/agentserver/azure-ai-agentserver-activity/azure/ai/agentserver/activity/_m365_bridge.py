@@ -44,6 +44,7 @@ def set_digital_worker_mode(enabled: bool) -> None:
 
     :param enabled: ``True`` for the digital-worker (FMI/blueprint) model;
         ``False`` (default) for the simple agent-instance-identity model.
+    :type enabled: bool
     """
     global _digital_worker_mode  # pylint: disable=global-statement
     _digital_worker_mode = bool(enabled)
@@ -66,10 +67,13 @@ def _apply_msal_patches() -> None:
     if getattr(MsalAuth, _PATCH_FLAG, False):
         return
 
-    async def _get_token_via_dac(self, tenant_id: str, agent_app_instance_id: str) -> Optional[str]:
+    async def _get_token_via_dac(  # pylint: disable=unused-argument
+        self, tenant_id: str, agent_app_instance_id: str
+    ) -> Optional[str]:
         from azure.identity.aio import DefaultAzureCredential
 
         if not agent_app_instance_id:
+            # pylint: disable=import-error,no-name-in-module
             from microsoft_agents.authentication.msal.errors import authentication_errors
             raise ValueError(str(authentication_errors.AgentApplicationInstanceIdRequired))
 
@@ -79,7 +83,7 @@ def _apply_msal_patches() -> None:
             agent_app_instance_id,
         )
 
-        client_id = getattr(self._msal_configuration, "CLIENT_ID", None)
+        client_id = getattr(self._msal_configuration, "CLIENT_ID", None)  # pylint: disable=protected-access
         credential_kwargs: dict[str, Any] = {
             "identity_config": {"fmi_path": agent_app_instance_id},
         }
@@ -90,7 +94,7 @@ def _apply_msal_patches() -> None:
         try:
             token = await credential.get_token("api://AzureADTokenExchange/.default")
             return token.token
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             logger.exception(
                 "Failed to acquire agentic application token for agent_app_instance_id=%s",
                 agent_app_instance_id,
@@ -99,7 +103,7 @@ def _apply_msal_patches() -> None:
         finally:
             try:
                 await credential.close()
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 pass
 
     MsalAuth.get_agentic_application_token = _get_token_via_dac
@@ -111,8 +115,11 @@ def _ensure_m365_initialized():
     """Lazily initialize the M365 Agents SDK from environment variables.
 
     Called on first request when decorators are used. Idempotent.
+
+    :return: A tuple of the initialized ``(agent_app, adapter)``.
+    :rtype: tuple
     """
-    global _m365_initialized, _adapter, _agent_app, _connection_manager
+    global _m365_initialized, _adapter, _agent_app, _connection_manager  # pylint: disable=global-statement
 
     if _m365_initialized:
         return _agent_app, _adapter
@@ -127,7 +134,7 @@ def _ensure_m365_initialized():
         _apply_msal_patches()
 
     try:
-        from microsoft_agents.activity import Activity, load_configuration_from_env
+        from microsoft_agents.activity import load_configuration_from_env
         from microsoft_agents.authentication.msal import MsalConnectionManager
         from microsoft_agents.hosting.core import (
             AgentApplication,
@@ -171,16 +178,20 @@ async def create_bridge_handler(request: Request) -> Response:
 
     On first call, initializes the M365 SDK and replays any pending
     handler registrations captured by the lazy proxy.
+
+    :param request: The inbound Starlette request carrying the activity on ``state``.
+    :type request: ~starlette.requests.Request
+    :return: The HTTP response produced by the M365 turn pipeline.
+    :rtype: ~starlette.responses.Response
     """
     from microsoft_agents.activity import Activity
     from microsoft_agents.hosting.core import ClaimsIdentity
 
-    global _lazy_agent_app
     agent_app, adapter = _ensure_m365_initialized()
 
     # Replay pending decorator registrations onto the real AgentApplication
-    if _lazy_agent_app is not None and not _lazy_agent_app._replayed:
-        _lazy_agent_app._replay_on(agent_app)
+    if _lazy_agent_app is not None and not _lazy_agent_app._replayed:  # pylint: disable=protected-access
+        _lazy_agent_app._replay_on(agent_app)  # pylint: disable=protected-access
 
     activity_dict = request.state.activity
     activity_type = activity_dict.get("type", "unknown")
@@ -192,7 +203,9 @@ async def create_bridge_handler(request: Request) -> Response:
     )
     logger.debug(
         "Bridge: activity details | conversation=%s | serviceUrl=%s | channelId=%s | from=%s",
-        activity_dict.get("conversation", {}).get("id", "?") if isinstance(activity_dict.get("conversation"), dict) else "?",
+        activity_dict.get("conversation", {}).get("id", "?")
+        if isinstance(activity_dict.get("conversation"), dict)
+        else "?",
         activity_dict.get("serviceUrl", ""),
         activity_dict.get("channelId", ""),
         activity_dict.get("from", {}).get("id", "?") if isinstance(activity_dict.get("from"), dict) else "?",
@@ -230,9 +243,12 @@ async def create_bridge_handler(request: Request) -> Response:
         logger.error("Permission denied processing activity | type=%s", activity_type)
         return Response(status_code=401)
     except TypeError as exc:
-        logger.warning("TypeError processing activity (likely missing serviceUrl) | type=%s | error=%s", activity_type, exc)
+        logger.warning(
+            "TypeError processing activity (likely missing serviceUrl) | type=%s | error=%s",
+            activity_type, exc,
+        )
         return Response(status_code=202)
-    except Exception:
+    except Exception:  # pylint: disable=try-except-raise
         # Re-raise so the outer _create_activity_endpoint can classify
         # the error and return 500 with proper x-platform-error-source.
         raise
@@ -253,14 +269,26 @@ class _LazyAgentApp:
         self._replayed = False
 
     def activity(self, activity_type: str):
-        """Capture an activity handler registration for later replay."""
+        """Capture an activity handler registration for later replay.
+
+        :param activity_type: The activity type to register a handler for.
+        :type activity_type: str
+        :return: A decorator that records the handler and returns it unchanged.
+        :rtype: callable
+        """
         def decorator(fn):
             self._pending_registrations.append(("activity", activity_type, fn))
             return fn
         return decorator
 
     def error(self, fn):
-        """Capture an error handler registration for later replay."""
+        """Capture an error handler registration for later replay.
+
+        :param fn: The error handler callable to register.
+        :type fn: callable
+        :return: The same handler, returned unchanged.
+        :rtype: callable
+        """
         self._pending_registrations.append(("error", None, fn))
         return fn
 
@@ -268,6 +296,9 @@ class _LazyAgentApp:
         """Replay all captured registrations onto the real AgentApplication.
 
         Idempotent — only replays once even if called concurrently.
+
+        :param agent_app: The real ``AgentApplication`` to replay registrations onto.
+        :type agent_app: object
         """
         if self._replayed:
             return
@@ -285,7 +316,7 @@ _lazy_agent_app: Optional[_LazyAgentApp] = None
 
 
 def _get_or_create_lazy_app() -> _LazyAgentApp:
-    global _lazy_agent_app
+    global _lazy_agent_app  # pylint: disable=global-statement
     if _lazy_agent_app is None:
         _lazy_agent_app = _LazyAgentApp()
     return _lazy_agent_app
@@ -293,7 +324,9 @@ def _get_or_create_lazy_app() -> _LazyAgentApp:
 
 def _reset_for_testing() -> None:
     """Reset all module-level state. For test isolation only."""
-    global _m365_initialized, _adapter, _agent_app, _connection_manager, _lazy_agent_app, _digital_worker_mode
+    # pylint: disable=global-statement
+    global _m365_initialized, _adapter, _agent_app
+    global _connection_manager, _lazy_agent_app, _digital_worker_mode
     _m365_initialized = False
     _adapter = None
     _agent_app = None

@@ -20,7 +20,7 @@ from typing import Any, Optional
 from opentelemetry import baggage as _otel_baggage
 from opentelemetry import context as _otel_context
 from opentelemetry import trace as _otel_trace
-from opentelemetry.context import Token
+from opentelemetry.context import Token  # pyright: ignore[reportPrivateImportUsage]
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
@@ -52,13 +52,16 @@ _ERROR_SOURCE_PLATFORM: str = "platform"
 _session_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_session_id", default="")
 _user_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_user_id", default="")
 _call_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_call_id", default="")
-_protocol_var: contextvars.ContextVar[str] = contextvars.ContextVar("activity_protocol", default=ActivityConstants.PROTOCOL)
+_protocol_var: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "activity_protocol", default=ActivityConstants.PROTOCOL
+)
 
 
 def _enrich_record(record: logging.LogRecord) -> None:
     """Populate activity scope fields on a log record from the current context.
 
     :param record: The log record to enrich.
+    :type record: logging.LogRecord
     """
     if not hasattr(record, "SessionId"):
         record.SessionId = _session_id_var.get("")  # type: ignore[attr-defined]
@@ -116,7 +119,7 @@ def _ensure_log_enrichment() -> None:
 
 
 try:  # SDK SpanProcessor provides the full interface (incl. _on_ending) the SDK calls.
-    from opentelemetry.sdk.trace import SpanProcessor as _OtelSpanProcessor
+    from opentelemetry.sdk.trace import SpanProcessor as _OtelSpanProcessor  # pylint: disable=ungrouped-imports
 except Exception:  # pylint: disable=broad-exception-caught
     _OtelSpanProcessor = object  # type: ignore[assignment, misc]
 
@@ -177,7 +180,7 @@ def _ensure_baggage_span_processor() -> None:
             provider = _otel_trace.get_tracer_provider()
             add_span_processor = getattr(provider, "add_span_processor", None)
             if callable(add_span_processor):
-                add_span_processor(_BaggageSpanProcessor())
+                add_span_processor(_BaggageSpanProcessor())  # pylint: disable=not-callable
                 _baggage_processor_installed = True
         except Exception:  # pylint: disable=broad-exception-caught
             pass
@@ -191,9 +194,13 @@ def _apply_error_source_headers(
     """Return a new dict with error source classification headers merged in.
 
     :param headers: Base headers to merge into.
+    :type headers: dict[str, str]
     :param error_source: The error source value (user/platform/upstream).
+    :type error_source: str
     :param error_detail: Optional detail string for platform errors.
+    :type error_detail: str or None
     :return: A new dict containing the original headers plus error source headers.
+    :rtype: dict[str, str]
     """
     merged = {**headers, ERROR_SOURCE: error_source}
     if error_detail:
@@ -212,6 +219,7 @@ def _sanitize_id(value: str) -> str:
     Returns a fallback UUID for invalid or oversized values.
 
     :param value: The ID value to sanitize.
+    :type value: str
     :return: A sanitized ID or a UUID string.
     :rtype: str
     """
@@ -224,6 +232,7 @@ def _classify_error(exc: BaseException) -> tuple[str, Optional[str]]:
     """Classify an exception: platform-tagged -> (platform, detail), else -> (upstream, None).
 
     :param exc: The exception to classify.
+    :type exc: BaseException
     :return: A tuple of (source, detail) where source is 'platform' or 'upstream'.
     :rtype: tuple[str, Optional[str]]
     """
@@ -476,7 +485,9 @@ class ActivityAgentServerHost(AgentServerHost):
             return ""
         return text[:limit]
 
-    async def _create_activity_endpoint(self, request: Request) -> Response:
+    async def _create_activity_endpoint(  # pylint: disable=too-many-locals,too-many-statements
+        self, request: Request
+    ) -> Response:
         """Handle inbound POST to /activity/messages or /api/messages.
 
         Processes activity protocol requests, manages context variables,
