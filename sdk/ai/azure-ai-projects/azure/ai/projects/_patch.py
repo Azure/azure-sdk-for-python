@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 def _resolve_openai_base_url(config: Any, agent_name: Optional[str], kwargs: dict) -> str:
     """Resolve the base URL for the (Async)OpenAI client.
 
-    :param config: Generated client configuration carrying ``endpoint`` and ``allow_preview``.
+    :param config: Generated client configuration carrying ``endpoint``.
     :type config: Any
     :param agent_name: Optional hosted-agent name.
     :type agent_name: str or None
@@ -46,16 +46,15 @@ def _resolve_openai_base_url(config: Any, agent_name: Optional[str], kwargs: dic
     if "base_url" in kwargs:
         return kwargs.pop("base_url")
     if agent_name is not None:
-        return config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai"
+        return config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai/v1"
     return config.endpoint.rstrip("/") + "/openai/v1"
 
 
-def _resolve_openai_query_params(config: Any, agent_name: Optional[str], kwargs: dict) -> dict:
+def _resolve_openai_query_params(kwargs: dict) -> dict:
     """Build the ``default_query`` dict for the (Async)OpenAI client.
 
-    :param config: Generated client configuration carrying ``api_version``.
-    :type config: Any
-    :param agent_name: Optional hosted-agent name.
+    :param kwargs: Caller keyword arguments; ``default_query`` is popped when present.
+    :type kwargs: dict
     :type agent_name: str or None
     :param kwargs: Caller keyword arguments; ``default_query`` is popped when present.
     :type kwargs: dict
@@ -63,8 +62,8 @@ def _resolve_openai_query_params(config: Any, agent_name: Optional[str], kwargs:
     :rtype: dict
     """
     default_query = dict[str, str](kwargs.pop("default_query", None) or {})
-    if agent_name is not None and "api-version" not in default_query:
-        default_query["api-version"] = config.api_version
+    # if agent_name is not None and "api-version" not in default_query:
+    #     default_query["api-version"] = config.api_version
     return default_query
 
 
@@ -236,7 +235,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         kwargs = kwargs.copy() if kwargs else {}
 
         base_url = _resolve_openai_base_url(self._config, agent_name, kwargs)
-        default_query = _resolve_openai_query_params(self._config, agent_name, kwargs)
+        default_query = _resolve_openai_query_params(kwargs)
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
