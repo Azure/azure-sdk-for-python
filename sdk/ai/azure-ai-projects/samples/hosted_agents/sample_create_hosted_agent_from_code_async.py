@@ -129,7 +129,7 @@ async def main() -> None:
             foundry_project_endpoint=endpoint,
         )
 
-        # Download the zip for the version we just created, streaming to a temp file.
+        # Download the zip for the version we just created, and write to disk.
         version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
 
         downloaded_bytes = b"".join(
