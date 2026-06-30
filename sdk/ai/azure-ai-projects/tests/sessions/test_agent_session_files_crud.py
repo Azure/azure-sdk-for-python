@@ -5,8 +5,6 @@
 # ------------------------------------
 # cSpell:disable
 import os
-import tempfile
-from pathlib import Path
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy
 from azure.ai.projects.models import VersionRefIndicator
@@ -98,33 +96,37 @@ class TestAgentSessionFilesCrud(TestBase):
         print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
 
         try:
-            # Upload first file using file_path (str)
+            # Upload first file
             print(f"Uploading session file: {data_file1} -> {remote_file_path1}")
+            with open(data_file1, "rb") as f:
+                file1_content = f.read()
             project_client.agents.upload_session_file(
                 agent_name=agent_name,
-                session_id=session.agent_session_id,
-                file_path=data_file1,
+                agent_session_id=session.agent_session_id,
+                content=file1_content,
                 remote_path=remote_file_path1,
             )
             print(f"Successfully uploaded file to {remote_file_path1}")
 
-            # Upload second file using file_path (PathLike[str])
-            print(f"Uploading session file using PathLike: {data_file2} -> {remote_file_path2}")
+            # Upload second file
+            print(f"Uploading session file: {data_file2} -> {remote_file_path2}")
+            with open(data_file2, "rb") as f:
+                file2_content = f.read()
             project_client.agents.upload_session_file(
                 agent_name=agent_name,
-                session_id=session.agent_session_id,
-                file_path=Path(data_file2),
+                agent_session_id=session.agent_session_id,
+                content=file2_content,
                 remote_path=remote_file_path2,
             )
             print(f"Successfully uploaded file to {remote_file_path2}")
 
-            # Upload third file using content (bytes)
-            print(f"Uploading session file using content: {data_file3} -> {remote_file_path3}")
+            # Upload third file
+            print(f"Uploading session file: {data_file3} -> {remote_file_path3}")
             with open(data_file3, "rb") as f:
                 file3_content = f.read()
             project_client.agents.upload_session_file(
                 agent_name=agent_name,
-                session_id=session.agent_session_id,
+                agent_session_id=session.agent_session_id,
                 content=file3_content,
                 remote_path=remote_file_path3,
             )
@@ -161,7 +163,7 @@ class TestAgentSessionFilesCrud(TestBase):
             # Download and verify content of first file
             print(f"Downloading and verifying content from '{remote_file_path1}'")
             content_bytes = b"".join(
-                project_client.agents.download_session_file_as_bytes(
+                project_client.agents.download_session_file(
                     agent_name=agent_name,
                     agent_session_id=session.agent_session_id,
                     remote_path=remote_file_path1,
@@ -180,68 +182,51 @@ class TestAgentSessionFilesCrud(TestBase):
             ), f"Expected content '{expected_content}' not found in downloaded file"
             print("Content verification passed!")
 
-            # Download second file to disk using download_session_file_to_path with str file_path
-            temp_dir = tempfile.gettempdir()
-            download_path = os.path.join(temp_dir, "downloaded_data_file2_sync_test.txt")
-            print(f"Downloading session file to disk: {remote_file_path2} -> {download_path}")
-
-            project_client.agents.download_session_file_to_path(
-                agent_name=agent_name,
-                session_id=session.agent_session_id,
-                file_path=download_path,  # str type
-                remote_path=remote_file_path2,
-                overwrite=True,
+            # Download and verify content of second file
+            print(f"Downloading and verifying content from '{remote_file_path2}'")
+            content_bytes = b"".join(
+                project_client.agents.download_session_file(
+                    agent_name=agent_name,
+                    agent_session_id=session.agent_session_id,
+                    remote_path=remote_file_path2,
+                )
             )
-            print(f"Successfully downloaded file to {download_path}")
+            assert content_bytes is not None, "Downloaded content should not be None"
+            assert len(content_bytes) > 0, "Downloaded content should not be empty"
 
-            # Verify the downloaded file exists and has expected content
-            assert os.path.exists(download_path), f"Downloaded file not found: {download_path}"
-            with open(download_path, "r", encoding="utf-8") as f:
-                downloaded_content = f.read()
+            file_content = content_bytes.decode("utf-8", errors="replace")
+            print(f"Downloaded content: {file_content.strip()}")
 
-            print(f"Downloaded content from disk: {downloaded_content.strip()}")
-            expected_content2 = "This is sample file 2"
+            # Verify content matches expected
+            expected_content = "This is sample file 2"
             assert (
-                expected_content2 in downloaded_content
-            ), f"Expected content '{expected_content2}' not found in downloaded file"
-            print("download_session_file_to_path content verification passed!")
+                expected_content in file_content
+            ), f"Expected content '{expected_content}' not found in downloaded file"
+            print("Content verification passed!")
 
-            # Clean up local temp file
-            if os.path.exists(download_path):
-                os.remove(download_path)
-                print(f"Cleaned up temp file: {download_path}")
+            # Download and verify content of third file
+            print(f"Downloading and verifying content from '{remote_file_path3}'")
+            content_bytes = b"".join(
+                project_client.agents.download_session_file(
+                    agent_name=agent_name,
+                    agent_session_id=session.agent_session_id,
+                    remote_path=remote_file_path3,
+                )
+            )
+            assert content_bytes is not None, "Downloaded content should not be None"
+            assert len(content_bytes) > 0, "Downloaded content should not be empty"
+
+            file_content = content_bytes.decode("utf-8", errors="replace")
+            print(f"Downloaded content: {file_content.strip()}")
+
+            # Verify content matches expected
+            expected_content = "This is sample file 3"
+            assert (
+                expected_content in file_content
+            ), f"Expected content '{expected_content}' not found in downloaded file"
+            print("Content verification passed!")
 
             # --------------------------------------------------------------------------------------------------
-
-            # Download third file to disk using download_session_file_to_path with PathLike file_path
-            download_path3 = Path(tempfile.gettempdir()) / "downloaded_data_file3_sync_test.txt"
-            print(f"Downloading session file to disk using PathLike: {remote_file_path3} -> {download_path3}")
-
-            project_client.agents.download_session_file_to_path(
-                agent_name=agent_name,
-                session_id=session.agent_session_id,
-                file_path=download_path3,  # PathLike[str] type
-                remote_path=remote_file_path3,
-                overwrite=True,
-            )
-            print(f"Successfully downloaded file to {download_path3}")
-
-            # Verify the downloaded file exists and has expected content
-            assert download_path3.exists(), f"Downloaded file not found: {download_path3}"
-            with open(download_path3, "r", encoding="utf-8") as f:
-                downloaded_content3 = f.read()
-
-            print(f"Downloaded content from disk: {downloaded_content3.strip()}")
-            expected_content3 = "This is sample file 3"
-            assert (
-                expected_content3 in downloaded_content3
-            ), f"Expected content '{expected_content3}' not found in downloaded file"
-            print("download_session_file_to_path with PathLike content verification passed!")
-
-            # Clean up local temp file
-            if download_path3.exists():
-                download_path3.unlink()
-                print(f"Cleaned up temp file: {download_path3}")
 
             # Delete first file
             print(f"Deleting session file at path: {remote_file_path1}...")
@@ -279,3 +264,4 @@ class TestAgentSessionFilesCrud(TestBase):
                 session_id=session.agent_session_id,
             )
             print(f"Session deleted (id: {session.agent_session_id})")
+
