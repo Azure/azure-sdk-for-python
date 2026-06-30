@@ -45,6 +45,7 @@ OPERATIONS=(read create upsert replace delete patch)
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_DIR="logs/leak-${STAMP}"
 mkdir -p "${LOG_DIR}"
+write_run_manifest "${LOG_DIR}" "${STAMP}" "B-leak-sweep"
 
 echo "=== Phase B: memory-leak sweep ==="
 echo "    soak = ${DURATION_SECONDS}s (~$(( DURATION_SECONDS / 3600 )) h) per backend batch"
@@ -98,3 +99,15 @@ done
 echo "=== Phase B complete. Read results from ${RESULTS_COSMOS_DATABASE}/${RESULTS_COSMOS_CONTAINER},"
 echo "    filtering workload_id LIKE 'leak-%-${STAMP}'. For each op, plot memory_bytes vs"
 echo "    elapsed_seconds: a flat line after warmup = no leak; a steady upward slope = a leak."
+
+echo
+echo "=== Running post-run integrity gate (Phase B) ==="
+# Close the gap that only Phase A used to gate: prove no reporting window was
+# dropped (a dropped BAD window could hide a leak step) and that every "rust" row
+# actually ran on Rust (binding_calls provenance, --prefix leak-). Informational;
+# it never aborts the soak.
+if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "leak-"; then
+  echo "=== integrity gate PASSED ==="
+else
+  echo "!! integrity gate FAILED -- inspect the rows/logs above before trusting the leak verdict." >&2
+fi

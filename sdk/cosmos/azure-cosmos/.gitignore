@@ -1,0 +1,10 @@
+# Rust build artifacts (anchored to this package)
+/target/
+/Cargo.lock
+
+# Generated per-op parity audit docs and design scratch notes (the
+# generator is checked in at scripts/v5/build_legacy_parity_audit.py;
+# the rendered Markdown it writes into docs/V5/ is per-developer-run
+# output and must not be committed).
+/docs/V5/
+

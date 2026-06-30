@@ -30,6 +30,66 @@ from workload_configs import *
 _gc_frozen = False
 
 
+def _wrap_backend_for_provenance(client, is_async, client_logger):
+    """Record CONCRETE backend provenance instead of trusting COSMOS_BACKEND.
+
+    This is the drill's single biggest source of error: a row tagged "rust" that
+    actually ran the core-python path would mislabel every number on it. So we
+    derive the truth from the live client rather than the env flag:
+
+      1. Read the backend object the client REALLY built (``client._backend`` is
+         None for core-python, a RustBackend for Rust) and (a) assert it matches
+         the COSMOS_BACKEND label -- failing loudly BEFORE any work if the
+         requested engine is not the one that loaded -- and (b) record its class
+         name as ``runtime_backend`` on every results row.
+      2. Wrap that object's ``execute`` so we count, per operation, how many calls
+         the Rust driver actually FULFILLED (returned a non-None response for).
+         The item helpers fall back to the legacy core-python pipeline whenever
+         ``execute`` returns None, so this counter is the concrete, per-row proof
+         (``rust_execute_calls``) that the Rust path -- not azure-core -- did the
+         work. A core-python client has no backend object, so nothing is wrapped
+         and the counter stays 0 by construction.
+    """
+    import perf_provenance
+
+    backend = getattr(client, "_backend", None)
+    runtime_name = "core-python" if backend is None else type(backend).__name__
+    perf_provenance.set_runtime_backend(runtime_name)
+
+    labeled = os.environ.get("COSMOS_BACKEND", "core-python").strip().lower()
+    if labeled in ("", "core_python", "core-python", "python"):
+        labeled = "core-python"
+    actual = "core-python" if backend is None else "rust"
+    if labeled != actual:
+        raise RuntimeError(
+            "backend provenance mismatch: COSMOS_BACKEND="
+            f"{labeled!r} but the client actually built {actual!r} "
+            f"({runtime_name}). Refusing to run -- the results would be "
+            "mislabeled. Check the _rust extension is built/importable on this "
+            "host and COSMOS_BACKEND is set correctly."
+        )
+    client_logger.info(
+        "backend provenance: label=%s runtime_backend=%s", labeled, runtime_name
+    )
+    if backend is None:
+        return  # core-python: no backend object to wrap; counter stays 0.
+
+    orig_execute = backend.execute
+    if is_async:
+        async def _counting_execute(prepared):
+            response = await orig_execute(prepared)
+            if response is not None:
+                perf_provenance.record_execute()
+            return response
+    else:
+        def _counting_execute(prepared):
+            response = orig_execute(prepared)
+            if response is not None:
+                perf_provenance.record_execute()
+            return response
+    backend.execute = _counting_execute
+
+
 def _maybe_freeze_gc(client_logger):
     """Optionally freeze the GC once per process, after warmup.
 
@@ -138,6 +198,7 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
             db = client.get_database_client(COSMOS_DATABASE)
             cont = db.get_container_client(COSMOS_CONTAINER)
             await asyncio.sleep(1)
+            _wrap_backend_for_provenance(client, is_async=True, client_logger=client_logger)
             _maybe_freeze_gc(client_logger)
 
             # One event-loop lag monitor per process. Only the single-client direct
@@ -294,6 +355,7 @@ def run_workload_sync(client_id, client_logger):
             db = client.get_database_client(COSMOS_DATABASE)
             cont = db.get_container_client(COSMOS_CONTAINER)
             time.sleep(1)
+            _wrap_backend_for_provenance(client, is_async=False, client_logger=client_logger)
 
             # Sync mode is FULLY SERIAL: each op below runs its CONCURRENT_REQUESTS
             # calls in a plain for-loop, one at a time, so real concurrency is 1
@@ -366,8 +428,10 @@ async def run_multi_client_async(prefix, client_logger):
         _install_async_stop(stop_event)
 
         tasks = []
+        client_ids = []
         for i in range(WORKLOAD_NUM_CLIENTS):
             client_id = f"{prefix}-c{i}"
+            client_ids.append(client_id)
             tasks.append(run_workload_async(
                 client_id, client_logger, stats=stats, reporter=reporter,
                 stop_event=stop_event,
@@ -379,8 +443,28 @@ async def run_multi_client_async(prefix, client_logger):
             monitor_task = asyncio.create_task(_loop_lag_monitor(stats))
         try:
             # return_exceptions=True so one client failing (for example, while it
-            # is being built) does not stop the others sharing this process.
-            await asyncio.gather(*tasks, return_exceptions=True)
+            # is being built) does not stop the others sharing this process. But
+            # the results MUST be inspected (methodology gap NEW#4): in a
+            # "many clients x many accounts" stress run, a client that dies early
+            # otherwise hides behind the aggregate numbers -- the run looks like N
+            # healthy clients when only some survived. Surface every per-client
+            # failure and fail the process so a partially dead run can never be
+            # read as a clean one. (Cancellation on graceful stop is expected and
+            # is not a failure.)
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            failures = [
+                (cid, r)
+                for cid, r in zip(client_ids, results)
+                if isinstance(r, BaseException)
+                and not isinstance(r, asyncio.CancelledError)
+            ]
+            for cid, r in failures:
+                client_logger.error("client %s failed: %r", cid, r)
+            if failures:
+                raise RuntimeError(
+                    f"{len(failures)}/{WORKLOAD_NUM_CLIENTS} client(s) failed: "
+                    + ", ".join(cid for cid, _ in failures)
+                )
         finally:
             if monitor_task is not None:
                 monitor_task.cancel()

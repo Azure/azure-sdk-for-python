@@ -40,6 +40,7 @@ OPENLOOP_OK=" read upsert replace patch "
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_DIR="logs/latency-${STAMP}"
 mkdir -p "${LOG_DIR}"
+write_run_manifest "${LOG_DIR}" "${STAMP}" "A-latency-matrix"
 
 echo "=== Phase A: latency matrix ==="
 echo "    per-run = ${DURATION_SECONDS}s, repeats = ${REPEATS}, ops = ${OPERATIONS[*]}"
@@ -114,7 +115,7 @@ echo
 # the analyst must see. It never aborts the matrix (we are already done here);
 # it just prints PASS/FAIL so an unattended run cannot pass unnoticed.
 echo "=== Running post-run integrity gate ==="
-if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}"; then
+if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "lat-"; then
   echo "=== integrity gate PASSED ==="
 else
   echo "!! integrity gate FAILED -- inspect the rows/logs above before trusting results." >&2

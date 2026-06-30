@@ -131,6 +131,10 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(documents::delete_item_async, m)?)?;
     m.add_function(wrap_pyfunction!(documents::read_item_async, m)?)?;
     m.add_function(wrap_pyfunction!(documents::patch_item_async, m)?)?;
+    // Concrete backend provenance: a counter incremented inside the binding on
+    // every operation, so the perf harness can prove the Rust path actually ran
+    // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.
+    m.add_function(wrap_pyfunction!(wire::operation_count, m)?)?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     Ok(())
 }

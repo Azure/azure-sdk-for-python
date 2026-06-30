@@ -88,3 +88,99 @@ export COSMOS_KEY
 export RESULTS_COSMOS_KEY="${RESULTS_COSMOS_KEY:-$COSMOS_KEY}"
 
 echo "perf_env.sh sourced: account=${COSMOS_URI} db=${COSMOS_DATABASE} cont=${COSMOS_CONTAINER} region='${COSMOS_PREFERRED_LOCATIONS}'"
+
+# ---- Run manifest (post-hoc reproducibility / apples-to-apples audit) ------
+# WHY: a row's numbers are only trustworthy if we can later PROVE which code,
+# host, container and load policy produced them. The reporter now stamps the
+# load-shape config on every row, but the BUILD and HOST provenance (commit, the
+# Rust extension actually loaded, rustc/python versions, the VM and its core
+# count, the RU budget) live nowhere in the rows. write_run_manifest captures all
+# of that ONCE per run into the log dir, next to the per-cell logs, so a future
+# auditor can confirm two runs were truly comparable. Secrets are never written.
+# Usage:  write_run_manifest "<log_dir>" "<stamp>" "<phase>"
+write_run_manifest() {
+  local log_dir="$1" stamp="$2" phase="${3:-unknown}"
+  local out="${log_dir}/manifest-${stamp}.json"
+  mkdir -p "${log_dir}" 2>/dev/null || true
+  # All probes are best-effort: a missing tool must never abort a 22h run.
+  local git_sha git_branch git_dirty rustc_ver py_ver cosmos_ver ext_ver ext_path
+  local ext_mtime kernel host nproc_n mem_kb vm_sku vm_zone now_utc
+  git_sha="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse HEAD 2>/dev/null || echo unknown)"
+  git_branch="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+  if git -C "$(dirname "${BASH_SOURCE[0]}")" diff --quiet 2>/dev/null; then git_dirty=false; else git_dirty=true; fi
+  rustc_ver="$(rustc --version 2>/dev/null || echo unknown)"
+  py_ver="$(python3 -c 'import platform;print(platform.python_version())' 2>/dev/null || echo unknown)"
+  cosmos_ver="$(python3 -c 'import azure.cosmos as c;print(getattr(c,"__version__","unknown"))' 2>/dev/null || echo unknown)"
+  # The Rust extension actually importable (proves WHICH binding build is live)
+  # and whether it carries the provenance counter (operation_count).
+  ext_ver="$(python3 -c 'from azure.cosmos import _rust;print(getattr(_rust,"__version__","unknown"))' 2>/dev/null || echo none)"
+  local ext_has_counter
+  ext_has_counter="$(python3 -c 'from azure.cosmos import _rust;print(hasattr(_rust,"operation_count"))' 2>/dev/null || echo unknown)"
+  ext_path="$(python3 -c 'from azure.cosmos import _rust;print(_rust.__file__)' 2>/dev/null || echo none)"
+  ext_mtime="$( [ -f "${ext_path}" ] && date -u -r "${ext_path}" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo none)"
+  kernel="$(uname -srm 2>/dev/null || echo unknown)"
+  host="$(hostname 2>/dev/null || echo unknown)"
+  nproc_n="$(nproc 2>/dev/null || echo unknown)"
+  mem_kb="$(awk '/MemTotal/{print $2}' /proc/meminfo 2>/dev/null || echo unknown)"
+  # Azure IMDS (no secret): VM size + zone, so the host SKU is on the record.
+  vm_sku="$(curl -s -H Metadata:true --max-time 2 'http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2021-02-01&format=text' 2>/dev/null || echo unknown)"
+  vm_zone="$(curl -s -H Metadata:true --max-time 2 'http://169.254.169.254/metadata/instance/compute/zone?api-version=2021-02-01&format=text' 2>/dev/null || echo unknown)"
+  now_utc="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || echo unknown)"
+  cat > "${out}" <<EOF
+{
+  "phase": "${phase}",
+  "stamp": "${stamp}",
+  "created_utc": "${now_utc}",
+  "build": {
+    "git_commit": "${git_sha}",
+    "git_branch": "${git_branch}",
+    "git_dirty": ${git_dirty},
+    "rustc": "${rustc_ver}",
+    "python": "${py_ver}",
+    "azure_cosmos": "${cosmos_ver}",
+    "rust_extension_version": "${ext_ver}",
+    "rust_extension_has_provenance_counter": "${ext_has_counter}",
+    "rust_extension_path": "${ext_path}",
+    "rust_extension_mtime_utc": "${ext_mtime}"
+  },
+  "host": {
+    "hostname": "${host}",
+    "kernel": "${kernel}",
+    "nproc": "${nproc_n}",
+    "mem_total_kb": "${mem_kb}",
+    "vm_size": "${vm_sku}",
+    "vm_zone": "${vm_zone}"
+  },
+  "account": {
+    "uri": "${COSMOS_URI}",
+    "database": "${COSMOS_DATABASE}",
+    "container": "${COSMOS_CONTAINER}",
+    "throughput_ru": "${COSMOS_THROUGHPUT}",
+    "preferred_locations": "${COSMOS_PREFERRED_LOCATIONS}",
+    "client_excluded_locations": "${COSMOS_CLIENT_EXCLUDED_LOCATIONS:-}",
+    "request_excluded_locations": "${COSMOS_REQUEST_EXCLUDED_LOCATIONS:-}"
+  },
+  "load": {
+    "num_clients": "${WORKLOAD_NUM_CLIENTS}",
+    "concurrent_requests": "${COSMOS_CONCURRENT_REQUESTS}",
+    "request_timeout_s": "${COSMOS_REQUEST_TIMEOUT}",
+    "arrival_rate": "${WORKLOAD_ARRIVAL_RATE}",
+    "max_inflight": "${WORKLOAD_MAX_INFLIGHT}",
+    "use_sync": "${WORKLOAD_USE_SYNC}",
+    "gc_freeze": "${WORKLOAD_GC_FREEZE}",
+    "multi_write": "${COSMOS_USE_MULTIPLE_WRITABLE_LOCATIONS:-false}",
+    "report_interval_s": "${PERF_REPORT_INTERVAL}"
+  },
+  "results_sink": {
+    "database": "${RESULTS_COSMOS_DATABASE}",
+    "container": "${RESULTS_COSMOS_CONTAINER}"
+  }
+}
+EOF
+  echo "run manifest written: ${out}"
+  if [[ "${ext_has_counter}" != "True" && "${COSMOS_BACKEND:-}" == "rust" ]]; then
+    echo "    !! WARNING: rust backend selected but the loaded _rust extension has" >&2
+    echo "       no operation_count() -- binding provenance will be UNKNOWN. Rebuild" >&2
+    echo "       the extension before trusting 'rust' rows." >&2
+  fi
+}

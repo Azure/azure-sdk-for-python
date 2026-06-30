@@ -53,7 +53,10 @@ from azure.cosmos._backend.factory import (
     reject_unsupported_transport_settings,
     resolve_strict_isolation,
 )
-from azure.cosmos._backend._async_credential_bridge import AsyncTokenCredentialBridge
+from azure.cosmos._backend._async_credential_bridge import (
+    AsyncCredentialBridgeReentrantError,
+    AsyncTokenCredentialBridge,
+)
 from azure.cosmos._backend.rust import RustBackend
 from azure.cosmos._helpers._item_dispatch import pick_backend
 from azure.cosmos._helpers.item_helper import ItemHelper
@@ -1305,32 +1308,32 @@ def test_async_credential_bridge_token_timeout_bounds_the_wait():
 
 
 def test_async_credential_bridge_rejects_call_from_loop_thread():
-    """Calling get_token from the bridge's own loop thread must raise instead of
+    """Calling get_token from the bridge's own background thread must raise instead of
     deadlocking."""
     cred = _AsyncTokenCredential()
     bridge = AsyncTokenCredentialBridge(cred)
     try:
-        # Prime the loop thread.
+        # Prime the background thread.
         assert bridge.get_token("scope") == ("token-value", 9999999999)
         outcome: list = []
 
         def _reenter():
             try:
                 bridge.get_token("scope")
-                outcome.append(("returned",))
+                outcome.append(("returned", None))
             except Exception as exc:  # noqa: BLE001
-                outcome.append(("error", str(exc)))
+                outcome.append(("error", exc))
 
-        # Schedule the re-entrant call on the bridge's own loop thread.
+        # Schedule the re-entrant call on the bridge's own background thread.
         bridge._loop.call_soon_threadsafe(_reenter)
-        # Give the loop thread a moment to run the callback.
+        # Give the background thread a moment to run the callback.
         for _ in range(50):
             if outcome:
                 break
             time.sleep(0.05)
         assert outcome, "re-entrant call never ran"
         assert outcome[0][0] == "error"
-        assert "loop thread" in outcome[0][1].lower()
+        assert isinstance(outcome[0][1], AsyncCredentialBridgeReentrantError)
     finally:
         bridge._close_cosmos_async_bridge()
 

@@ -7,6 +7,7 @@
 //! parsers. Every family's operations route through here.
 
 use std::collections::HashMap;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -32,6 +33,33 @@ use serde::Deserialize;
 use crate::runtime::{drivers, require_runtime_context};
 
 // ---------------------------------------------------------------------------
+// Binding-invocation counter (concrete backend provenance)
+// ---------------------------------------------------------------------------
+//
+// The drill's single biggest source of error is trusting the COSMOS_BACKEND
+// label: a results row tagged "rust" that actually ran the core-python path
+// would mislabel every number on it. This counter answers the question from
+// INSIDE the binding instead of from a Python flag: every item operation, sync
+// or async, increments it on entry to the driver runner below, so it is a direct
+// count of how many times the Rust binding code was actually called. The perf
+// harness reads it through `_rust.operation_count()` and stamps the per-window
+// delta on each row; a core-python process never calls the binding, so for it
+// this number never moves. If a "rust" row did real work but this counter did
+// not advance, the binding was NOT exercised -- and the integrity gate fails on
+// exactly that. `Relaxed` ordering is sufficient: we only need a correct running
+// total, not ordering against other memory.
+pub(crate) static BINDING_OP_COUNT: AtomicU64 = AtomicU64::new(0);
+
+/// Total item operations that have entered the Rust binding's driver runner in
+/// this process (see `BINDING_OP_COUNT`). Exposed to Python as
+/// `_rust.operation_count()` so the perf harness can prove, from a counter
+/// incremented inside the binding, that the Rust path ran the work a row claims.
+#[pyfunction]
+pub(crate) fn operation_count() -> u64 {
+    BINDING_OP_COUNT.load(Ordering::Relaxed)
+}
+
+// ---------------------------------------------------------------------------
 // Shared singleton-operation runner
 // ---------------------------------------------------------------------------
 //
@@ -55,6 +83,10 @@ pub(crate) fn run_item_operation<'py>(
     honor_content_response: bool,
     build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    // Concrete provenance: record that the Rust binding was actually called for
+    // this operation (see BINDING_OP_COUNT). Counted on entry so it reflects
+    // every op routed into the binding, sync path.
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
     let partition_key = parse_partition_key_header(partition_key_header)?;
@@ -113,6 +145,9 @@ pub(crate) fn run_item_operation_async<'py>(
     honor_content_response: bool,
     build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send + 'static,
 ) -> PyResult<Bound<'py, PyAny>> {
+    // Concrete provenance: record that the Rust binding was actually called for
+    // this operation (see BINDING_OP_COUNT). Counted on entry, async path.
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     // Synchronous extraction (GIL held) -- identical to the sync path. Errors
     // here surface when the coroutine is created, before it is awaited.
     let driver = lookup_driver(handle)?;

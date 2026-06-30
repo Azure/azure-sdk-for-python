@@ -81,10 +81,11 @@ def _connect():
     return CosmosClient(uri, key).get_database_client(db).get_container_client(cont)
 
 
-def _latest_stamp(container) -> str:
+def _latest_stamp(container, prefix: str) -> str:
     ids = list(
         container.query_items(
-            "SELECT VALUE c.workload_id FROM c WHERE STARTSWITH(c.workload_id, 'lat-')",
+            "SELECT VALUE c.workload_id FROM c WHERE STARTSWITH(c.workload_id, @p)",
+            parameters=[{"name": "@p", "value": prefix}],
             enable_cross_partition_query=True,
         )
     )
@@ -256,21 +257,138 @@ def check_warnings(log_dir: str):
     return False, lines
 
 
+def check_provenance(container, stamp: str):
+    """Concrete backend-provenance gate: prove every cell ran on the engine its
+    label claims, derived from counters in the rows -- NOT from COSMOS_BACKEND.
+
+    This is the drill's single biggest source of error. Each row carries, beside
+    the declared ``config_backend``:
+      * ``runtime_backend``    -- the class of the backend object the client
+                                really built (read off the live client).
+      * ``rust_execute_calls`` -- ops the Rust path fulfilled at the Python
+                                boundary this window.
+      * ``binding_calls``      -- ops the Rust BINDING itself counted (-1 when the
+                                extension predates the counter -> unknown).
+
+    Rules, per cell (workload_id):
+      * config_backend == "rust": it must have actually run on Rust. We require
+        BOTH provenance signals to corroborate real work -- binding_calls > 0 and
+        rust_execute_calls > 0 -- and the binding's count must cover essentially
+        all the operations (binding_calls >= count, allowing a small slack for the
+        in-flight wave still open at the final flush). A "rust" cell that did work
+        with zero binding calls ran the core-python path and is mislabeled -> BAD.
+        If binding_calls is unknown (-1, old extension) we cannot prove it from
+        the binding and fall back to rust_execute_calls > 0, but say so.
+      * config_backend == "core-python": it must NOT have touched Rust. Both
+        rust_execute_calls and binding_calls must be 0 (binding_calls == -1 is
+        also fine: no extension at all). Any Rust activity on a core-python cell
+        means the run is cross-contaminated -> BAD.
+    """
+    rows = list(
+        container.query_items(
+            "SELECT c.workload_id, c.config_backend, c.runtime_backend, "
+            "c.rust_execute_calls, c.binding_calls, c.count, c.errors "
+            "FROM c WHERE ENDSWITH(c.workload_id, @stamp)",
+            parameters=[{"name": "@stamp", "value": stamp}],
+            enable_cross_partition_query=True,
+        )
+    )
+    if not rows:
+        return False, [f"  (no result rows found for stamp {stamp})"]
+
+    agg = {}
+    for r in rows:
+        wid = r["workload_id"]
+        a = agg.setdefault(
+            wid,
+            {
+                "backend": r.get("config_backend", "?"),
+                "runtime": r.get("runtime_backend", "?"),
+                "count": 0,
+                "execute": 0,
+                "binding": 0,
+                "binding_known": False,
+            },
+        )
+        a["count"] += int(r.get("count", 0) or 0)
+        a["execute"] += int(r.get("rust_execute_calls", 0) or 0)
+        b = r.get("binding_calls", -1)
+        b = int(b if b is not None else -1)
+        if b >= 0:
+            a["binding"] += b
+            a["binding_known"] = True
+        a["runtime"] = r.get("runtime_backend", a["runtime"])
+
+    lines = []
+    all_ok = True
+    # Slack: the closed-loop wave still in flight at the final flush can leave a
+    # few ops uncounted on one side; tolerate a small fraction so a healthy run
+    # never trips, while a wholesale mismatch (mislabeled engine) still fails.
+    for wid in sorted(agg):
+        a = agg[wid]
+        label = (a["backend"] or "").strip().lower()
+        if label == "rust":
+            if a["binding_known"]:
+                proof = a["binding"]
+                proof_name = "binding_calls"
+            else:
+                proof = a["execute"]
+                proof_name = "rust_execute_calls(binding unknown)"
+            min_expected = int(a["count"] * 0.99)
+            cell_ok = (
+                proof > 0
+                and a["execute"] > 0
+                and proof >= min_expected
+            )
+            flag = "OK " if cell_ok else "BAD"
+            lines.append(
+                f"  [{flag}] {wid}: backend=rust runtime={a['runtime']} "
+                f"count={a['count']} {proof_name}={proof} "
+                f"rust_execute_calls={a['execute']}"
+            )
+            if not cell_ok:
+                lines.append(
+                    "        -> labeled rust but the Rust path did not cover the "
+                    "work; this row may actually be core-python."
+                )
+        else:
+            cell_ok = a["execute"] == 0 and a["binding"] == 0
+            flag = "OK " if cell_ok else "BAD"
+            lines.append(
+                f"  [{flag}] {wid}: backend=core-python runtime={a['runtime']} "
+                f"rust_execute_calls={a['execute']} binding_calls={a['binding']}"
+            )
+            if not cell_ok:
+                lines.append(
+                    "        -> labeled core-python but Rust activity was counted; "
+                    "run is cross-contaminated."
+                )
+        all_ok = all_ok and cell_ok
+    return all_ok, lines
+
+
 def main():
-    ap = argparse.ArgumentParser(description="Post-run integrity gate for the latency matrix.")
+    ap = argparse.ArgumentParser(description="Post-run integrity gate for the perf drill.")
     ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
     ap.add_argument("--log-dir", default=None, help="per-cell log dir to scan for reporter warnings")
+    ap.add_argument(
+        "--prefix",
+        default="lat-",
+        help="workload_id prefix identifying the phase (lat- = Phase A, "
+        "sweep- = Phase C, leak- = Phase B). Used to find the latest stamp and "
+        "to label the report.",
+    )
     args = ap.parse_args()
 
     report_interval_s = float(os.environ.get("PERF_REPORT_INTERVAL", "300") or "300")
     container = _connect()
 
-    stamp = args.stamp or _latest_stamp(container)
+    stamp = args.stamp or _latest_stamp(container, args.prefix)
     if not stamp:
-        print("ERROR: no lat-* runs found in the results container.", file=sys.stderr)
+        print(f"ERROR: no {args.prefix}* runs found in the results container.", file=sys.stderr)
         sys.exit(2)
 
-    print(f"=== Phase A integrity gate (stamp {stamp}) ===")
+    print(f"=== integrity gate (prefix {args.prefix}, stamp {stamp}) ===")
     print("-- 0. work-done: count > 0, near-zero errors, both backends present --")
     qual_ok, qual_lines = check_quality(container, stamp)
     print("\n".join(qual_lines))
@@ -280,8 +398,11 @@ def main():
     print("-- 2. reporter dropped-write warnings --")
     warn_ok, warn_lines = check_warnings(args.log_dir)
     print("\n".join(warn_lines))
+    print("-- 3. backend provenance: each row ran on the engine it claims --")
+    prov_ok, prov_lines = check_provenance(container, stamp)
+    print("\n".join(prov_lines))
 
-    ok = qual_ok and cont_ok and warn_ok
+    ok = qual_ok and cont_ok and warn_ok and prov_ok
     print(f"=== integrity gate: {'PASS' if ok else 'FAIL'} ===")
     sys.exit(0 if ok else 1)
 

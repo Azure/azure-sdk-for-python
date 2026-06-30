@@ -18,6 +18,7 @@ from azure.identity import DefaultAzureCredential
 
 from perf_config import _safe_int_env
 from perf_stats import Stats
+import perf_provenance
 
 logger = logging.getLogger(__name__)
 
@@ -163,6 +164,13 @@ class PerfReporter:
         self._last_gc_collections, self._last_gc_collected, self._last_gc_uncollectable = (
             _get_gc_stats()
         )
+        # Provenance baselines (see perf_provenance): advanced like the CPU/GC
+        # baselines so each row carries the per-window count of operations the
+        # Rust path fulfilled at the Python boundary (rust_execute_calls) and that
+        # the Rust binding itself counted (binding_calls). None for binding means
+        # the extension predates the counter; we then persist -1 as "unknown".
+        self._last_execute_calls = perf_provenance.execute_count()
+        self._last_binding_calls = perf_provenance.binding_operation_count() or 0
 
     def start(self):
         """Start the background reporting thread (daemon)."""
@@ -220,6 +228,10 @@ class PerfReporter:
         self._last_gc_collections, self._last_gc_collected, self._last_gc_uncollectable = (
             _get_gc_stats()
         )
+        # Re-prime the provenance baselines at the same instant, so the first
+        # post-warmup window's execute/binding deltas line up with window_seconds.
+        self._last_execute_calls = perf_provenance.execute_count()
+        self._last_binding_calls = perf_provenance.binding_operation_count() or 0
 
         while not self._stop_event.wait(timeout=self._config["report_interval"]):
             try:
@@ -267,6 +279,19 @@ class PerfReporter:
         concurrency = _safe_int_env("COSMOS_CONCURRENT_REQUESTS", 100)
         preferred = os.environ.get("COSMOS_PREFERRED_LOCATIONS", "")
         excluded = os.environ.get("COSMOS_CLIENT_EXCLUDED_LOCATIONS", "")
+        # Run-manifest fields (methodology gap NEW#3): the per-op end-to-end
+        # timeout and the arrival mode are central to how the tail compares
+        # between backends (a different timeout or open- vs closed-loop changes
+        # what the p99/p99.9 even MEAN), yet neither was persisted, so a post-hoc
+        # audit could not prove two rows were taken under the same policy. Stamp
+        # them on every row. arrival_rate == 0.0 means closed-loop (the default);
+        # > 0 means open-loop at that ops/sec per client, capped by max_inflight.
+        request_timeout = _safe_int_env("COSMOS_REQUEST_TIMEOUT", 0)
+        try:
+            arrival_rate = float(os.environ.get("WORKLOAD_ARRIVAL_RATE", "0") or "0")
+        except (ValueError, TypeError):
+            arrival_rate = 0.0
+        max_inflight = _safe_int_env("WORKLOAD_MAX_INFLIGHT", 0)
         # Which backend produced these numbers: "rust" or "core-python" (the
         # default). Tagged so the two can be told apart in the results store.
         backend = os.environ.get("COSMOS_BACKEND", "core-python")
@@ -325,6 +350,24 @@ class PerfReporter:
         # when the monitor is not running. A large value means the single asyncio
         # loop thread is the bottleneck, not the SDK -- see the SLA doc.
         loop_lag_max_ms = round(self._stats.drain_loop_lag(), 3)
+        # Per-window provenance deltas (see perf_provenance). rust_execute_calls:
+        # ops the Rust path fulfilled at the Python boundary this window;
+        # binding_calls: ops the Rust binding itself counted (-1 == the extension
+        # has no counter, i.e. an older build, so callers do not read 0 as proof
+        # the binding was skipped). Both are 0 for a genuine core-python run: it
+        # has no backend object to wrap and never enters the binding. The
+        # post-run gate cross-checks these against `count` to confirm a row tagged
+        # "rust" really ran on Rust -- not on the COSMOS_BACKEND label alone.
+        cur_execute_calls = perf_provenance.execute_count()
+        rust_execute_calls = max(0, cur_execute_calls - self._last_execute_calls)
+        self._last_execute_calls = cur_execute_calls
+        cur_binding_raw = perf_provenance.binding_operation_count()
+        if cur_binding_raw is None:
+            binding_calls = -1
+        else:
+            binding_calls = max(0, cur_binding_raw - self._last_binding_calls)
+            self._last_binding_calls = cur_binding_raw
+        runtime_backend = perf_provenance.runtime_backend()
         for s in summaries:
             doc = {
                 "id": str(uuid.uuid4()),
@@ -397,9 +440,15 @@ class PerfReporter:
                 "sdk_language": "python",
                 "sdk_version": self._sdk_version,
                 "config_backend": backend,
+                "runtime_backend": runtime_backend,
+                "rust_execute_calls": rust_execute_calls,
+                "binding_calls": binding_calls,
                 "config_concurrency": concurrency,
                 "config_application_region": preferred,
                 "config_excluded_regions": excluded,
+                "config_request_timeout": request_timeout,
+                "config_arrival_rate": arrival_rate,
+                "config_max_inflight": max_inflight,
                 "config_ppcb_enabled": ppcb,
                 "config_multi_write_enabled": multi_write,
                 "config_proxy_enabled": proxy_enabled,

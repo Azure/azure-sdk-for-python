@@ -54,6 +54,7 @@ BACKENDS=(core-python rust)
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_DIR="logs/sweep-${STAMP}"
 mkdir -p "${LOG_DIR}"
+write_run_manifest "${LOG_DIR}" "${STAMP}" "C-throughput-sweep"
 
 n_points=$(( ${#OPERATIONS[@]} * ${#LEVELS[@]} * ${#BACKENDS[@]} ))
 echo "=== Phase C: throughput / scaling sweep ==="
@@ -93,6 +94,19 @@ for op in "${OPERATIONS[@]}"; do
     done
   done
 done
+
+echo
+echo "=== Running post-run integrity gate (Phase C) ==="
+# Same gate Phase A runs: prove every cell did real, low-error work on both
+# backends, dropped no reporting window, and -- critically for the drill's
+# biggest error source -- that each row actually ran on the engine it claims
+# (binding_calls provenance, --prefix sweep-). It never aborts the sweep (we are
+# already done); it prints PASS/FAIL so an unattended run cannot pass unnoticed.
+if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "sweep-"; then
+  echo "=== integrity gate PASSED ==="
+else
+  echo "!! integrity gate FAILED -- inspect the rows/logs above before trusting results." >&2
+fi
 
 echo
 echo "=== Phase C complete. Read results from ${RESULTS_COSMOS_DATABASE}/${RESULTS_COSMOS_CONTAINER},"

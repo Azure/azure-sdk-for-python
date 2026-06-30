@@ -3,24 +3,51 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Per-process guard for the Rust backend's per-account engine isolation.
+"""Per-process guard, in the python wrapper, for the Rust backend's per-account
+engine isolation.
 
-The Rust binding keys its driver cache by ``(endpoint, credential, config)``: two
-clients to one account share a driver only when all three match. A client that
-differs on any of them gets its own driver, so its settings are never silently
-dropped.
 
-That is safe but builds more drivers. Strict isolation mode is an opt-in that
-tells a caller, at construction, when a client would build a second driver
-against an account it already has one for: a later live client whose credential
-or config differs from every engine already live for that account raises
-``StrictEngineIsolationError``. The default mode allows it silently.
+The 50,000-foot view -- this module is a *detector, not a fixer*. It has no effect on
+how engines are actually created or freed; that all lives in the binding. So if this
+module did not exist:
 
-To answer that correctly the guard mirrors the binding's cache key. For each
-account it tracks the live engines -- one entry per distinct ``(credential,
-config)`` pair, with a count of how many clients hold it -- so a later client is
-allowed when its pair matches one still live and flagged when it would build a
-new one. Three details keep the mirror faithful:
+* **Nothing functional would change.** The binding still shares one engine when
+  endpoint+credential+config match and still forks a separate engine when they differ;
+  its per-engine refcount, lazy build on first op, and teardown are untouched.
+  Connection pools, memory, latency, and correctness in default use are identical --
+  default mode never reads this module's data.
+* **The only thing lost is strict isolation mode** -- the opt-in early warning. Without
+  it there is no way to detect, at construction, that a client is about to make the
+  binding build a *second* engine for an account that already has one. Teams that want
+  a "one engine per account" guarantee would get no early signal: accidental engine
+  fan-out (a loop of slightly different clients, or two clients with different
+  credentials/configs to one account) proceeds silently and is discovered only later,
+  indirectly, via the symptoms it was meant to pre-empt -- climbing connections, file
+  descriptors, and memory in production.
+
+In one line: without this module nothing breaks and nothing leaks that was not already
+possible -- you only lose the opt-in early warning that turns silent engine fan-out
+into a loud, fail-fast error at construction time.
+
+The problem it guards against: the binding shares one engine between two clients only
+when their endpoint, credential, *and* config all match; differ on any one and it
+builds a *second* engine for the same account. That is safe (no settings are dropped)
+but a loop or service that opens many slightly different clients can quietly
+accumulate many engines for one account -- more connections and memory than expected,
+usually noticed only later in production.
+
+This guard runs in the real workflow: ``_shared.py`` calls it on every client open and
+close. Strict isolation mode is an opt-in that puts it to work. When on, a later client
+that would build a new engine for an account that already has one raises
+``StrictEngineIsolationError`` at construction. By default the second engine is allowed
+silently and the guard only keeps bookkeeping -- its behavior matters only when strict
+mode is enabled (a service or CI that means to reuse one engine).
+
+To decide correctly the guard mirrors the binding's cache key. For each account it
+tracks the live engines -- one entry per distinct ``(credential, config)`` pair, with
+a count of how many clients hold it -- so a later client is allowed when its pair
+matches one still live and flagged when it would build a new one. Three details keep
+the mirror faithful:
 
 * The credential is part of the key, because the binding forks an engine on a
   credential difference too.
@@ -29,8 +56,18 @@ new one. Three details keep the mirror faithful:
 * No secret is retained: a master key is reduced to a non-reversible fingerprint
   before it is used as a key, and a token credential is keyed by object identity.
 
-It is plain Python and never calls the binding, so it can be tested without a
-network.
+Three independent counts exist; (1) Python's own object refcount
+frees Python objects and knows nothing about engines. (2) This module's count is the
+opt-in guard -- it runs at client open/close, in the python wrapper, before and
+independently of the binding. (3) The binding's per-engine refcount governs the real
+engine's lifetime and is built lazily: ``rust.py`` calls the binding's ``init_client``
+only on the first item operation, not at client construction.
+
+This module is **not** part of the binding's cache. It is a separate ledger in the
+python wrapper that *mirrors* the binding's cache key so it can predict, at client
+construction, whether the binding would build a new engine -- it never reads or calls
+into the binding.
+
 """
 from __future__ import annotations
 
@@ -43,21 +80,23 @@ from .base import PreparedClientConfig
 
 
 class StrictEngineIsolationError(ValueError):
-    """Raised under strict isolation when a later ``CosmosClient`` would build a
-    second per-account engine: it targets an account another live client already
-    targets, but with a credential or config that matches no engine live for that
-    account.
+    """Raised by this guard (in the python wrapper) when, under strict isolation, a
+    later ``CosmosClient`` would make the binding build a *second* engine (rust driver)
+    for an account: it targets an account another live client already targets, but
+    with a credential or config that matches no engine live for that account.
 
     Opt-in: it fires only when strict isolation is enabled (the
-    ``COSMOS_RUST_STRICT_ISOLATION`` env var or the factory toggle). By default the
+    ``COSMOS_RUST_STRICT_ISOLATION`` env var or the factory toggle), and it fires at
+    client construction -- before the binding lazily builds any engine. By default the
     second client is allowed and gets its own isolated engine.
     """
 
 
 # Canonical endpoint -> the live engines for that account. Each key is a
-# ``(credential_key, config)`` pair -- one engine the binding would build --
-# mapped to the number of live clients holding it. An account drops out only when
-# its last engine's last client is released. Guarded by _LOCK.
+# ``(credential_key, config)`` pair -- one engine (a rust driver the binding would
+# build and cache) -- mapped to the number of live clients holding it. An account drops
+# out only when its last engine's last client is released. Guarded by _LOCK. This is the
+# python wrapper's own count, separate from the binding's per-engine refcount.
 _LOCK = threading.Lock()
 _REGISTRY: Dict[str, Dict[Tuple[Any, Optional[PreparedClientConfig]], int]] = {}
 
@@ -96,11 +135,11 @@ def make_credential_key(master_key: Optional[str], token_credential: Optional[An
     """Reduce a client's credential to a hashable identity matching the binding's.
 
     The factory supplies exactly one of the two. A token credential is keyed by its
-    object identity (``id``); the client holds a strong reference for its whole
-    life, so that identity is stable while it is registered. A master key is reduced
-    to a non-reversible fingerprint, so the registry never keeps the plaintext
-    secret -- equal keys fingerprint equal, different keys do not. Both ``None``
-    keys as ``None``.
+    object identity (``id``), which equals the raw pointer the binding fingerprints
+    (``as_ptr``); the client holds a strong reference for its whole life, so that
+    identity is stable while it is registered. A master key is reduced to a
+    non-reversible fingerprint, so this module never keeps the plaintext secret --
+    equal keys fingerprint equal, different keys do not. Both ``None`` keys as ``None``.
     """
     if token_credential is not None:
         return id(token_credential)
@@ -115,13 +154,14 @@ def register_client_config(
     credential_key: Any = None,
     strict: bool = False,
 ) -> None:
-    """Record one live client against ``endpoint``.
+    """Record one live client against ``endpoint``. Called by the python wrapper when a
+    client is opened, before and independently of the binding building any engine.
 
     The client's engine identity is its ``(credential_key, config)`` pair -- the
-    same key (with the endpoint) the binding keys its driver cache by. A client that
-    matches an engine already live for the account shares it: its count goes up and
-    strict mode never fires. A client whose pair matches no live engine would build
-    a new one:
+    same key (with the endpoint) the binding keys its rust-driver cache by. A
+    client that matches an engine already live for the account shares it: its count
+    goes up and strict mode never fires. A client whose pair matches no live engine
+    would make the binding build a new one:
 
     * strict -- raise ``StrictEngineIsolationError`` without recording, so the
       failed client never enters a count (it is not built, so it must not be
@@ -175,7 +215,9 @@ def release_client_config(
     credential_key: Any = None,
 ) -> None:
     """Drop one live client from its engine on ``endpoint``; forget the engine when
-    its last client is released, and the account when its last engine is gone.
+    its last client is released, and the account when its last engine is gone. Called
+    by the python wrapper when a client is closed -- deterministically at ``close()``,
+    not whenever the garbage collector runs.
 
     Releasing with the same ``config`` and ``credential_key`` the client registered
     keeps the counts accurate, so a later strict check sees only the engines still

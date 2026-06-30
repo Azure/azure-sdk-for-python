@@ -3,20 +3,66 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Let an async token credential work with the driver's synchronous ``get_token``.
+"""Let an async token credential work with the rust driver's synchronous ``get_token``.
 
-The Rust driver signs each request by calling ``get_token()`` on one of its
-worker threads, and expects the token back right away. A synchronous credential
-returns it directly. An async credential instead returns a coroutine, and the
-worker thread has no event loop to run it -- so async credentials used to be
-rejected at construction.
+You build a Cosmos client by handing it a credential -- the object that proves
+who you are -- for example::
 
-``AsyncTokenCredentialBridge`` wraps an async credential and closes that gap. It
-runs its own event loop on a private daemon thread. Its ``get_token`` is
-synchronous: it hands the credential's coroutine to that loop, waits for the
-result, and returns the credential's own token object (which already has the
-``.token`` and ``.expires_on`` the driver reads). Waiting on the result lets the
-loop thread run, so the token is fetched without deadlocking.
+    credential = DefaultAzureCredential()           # an async credential
+    client = CosmosClient(url, credential, _backend="rust")
+
+Terminology used throughout this module:
+
+* **background thread** -- the single thread the bridge starts (named
+  ``cosmos-async-credential``, a daemon) to do its async work. It is the bridge's own
+  thread, not the program's main thread or a pool thread, and it lives as long as the
+  bridge does. Its only job is to run the event loop.
+* **event loop** -- the asyncio scheduler that runs *on* the background thread and
+  actually runs the credential's coroutine. The thread and the loop are different
+  things: the thread is *where* work runs, the loop is *what* runs it. Here one
+  background thread hosts exactly one event loop.
+
+The 5,000-foot view -- unlike the engine-isolation guard, this module is not optional;
+real features stop working without it. The rust driver's ``get_token`` is synchronous:
+a sync credential returns the token directly, but an async credential returns a
+coroutine -- a job that still has to be run -- and the driver's worker thread has no
+event loop to run it on. So if this module did not exist:
+
+* **Async credentials would simply not work on the rust backend.** Handing a
+  ``DefaultAzureCredential`` from ``azure.identity.aio`` to a rust-backed client would
+  break at the first item operation: the driver would get back a coroutine instead of a
+  token object with ``.token`` / ``.expires_on``, so signing the request fails (and
+  Python warns about a coroutine that was never run). Login would fail, and so would
+  every request that needs it.
+* **The only alternatives would be worse:** use a synchronous credential, or fall back
+  to the non-rust backend. Async-identity users -- the common case for the async
+  client -- would lose AAD sign-in on the fast path entirely.
+
+In one line: this module makes a feature work, rather than just warning about a
+problem -- take it away and the feature is gone, not merely unguarded.
+
+How it bridges the gap. When the client factory (``factory._resolve_credential``) sees
+the credential you passed is async, it wraps it in this bridge and hands the bridge to
+the driver in the credential's place. The driver calls the bridge's synchronous
+``get_token`` from a worker thread; the bridge sends the credential's coroutine to the
+background thread, blocks the worker thread until the token comes back, and returns the
+credential's own token object unchanged. The two threads don't deadlock because only
+one runs Python at a time: while the worker thread sits blocked, it gives up its turn,
+so the background thread is free to run the coroutine and produce the token.
+
+What this module owns -- and does not. It owns its background thread and tears it down
+cleanly on close: it cancels any in-flight token fetch and shuts the loop's async
+generators down first, so the credential's own HTTP session can close instead of being
+dropped (which would leak the connection and warn about an unclosed session). It does
+**not** own the credential -- that lifetime belongs to the customer, exactly as on the
+synchronous path, so the bridge never calls ``close()`` on it.
+
+One bridge per credential. Several clients built from the same async credential share
+one bridge -- and so one background thread and one driver -- via ``acquire`` (use it, not the
+constructor). ``acquire`` looks the credential up by identity, hands back the same
+bridge, and counts live holders; the last holder to close stops the background thread. That
+count is this module's own tally of live users -- not Python's object reference
+counting, which only frees memory and would never stop the thread.
 """
 from __future__ import annotations
 
@@ -31,17 +77,31 @@ from typing import Any, Dict, Optional
 
 _LOGGER = logging.getLogger(__name__)
 
-#: Env var (float seconds) for how long close waits for the loop thread to stop.
-#: Default 5s. The thread is a daemon, so this cap only keeps a slow credential
-#: teardown from stalling a client close(); it never blocks process exit.
+
+class AsyncCredentialBridgeReentrantError(RuntimeError):
+    """Raised when ``get_token`` is called from the bridge's own background thread.
+
+    That call would wait on a future only that same thread can complete, so it would
+    deadlock; the bridge raises this instead of hanging. It subclasses ``RuntimeError``
+    so existing callers that catch ``RuntimeError`` keep working, while tests (and
+    callers that care) can catch this specific type rather than matching message text.
+    """
+
+#: Env var (float seconds) for how long close waits for the bridge's background thread
+#: to stop. Default 5s. That background thread is a daemon, so this cap only keeps a slow
+#: credential teardown from stalling a client close(); it never blocks process exit.
 JOIN_TIMEOUT_ENV_VAR = "COSMOS_ASYNC_CREDENTIAL_CLOSE_TIMEOUT"
 _DEFAULT_JOIN_TIMEOUT_SECONDS = 5.0
 
-# Maps id(credential) -> the one bridge wrapping it, so the same async credential
-# used by several clients is wrapped once. The driver keys its engines by the
-# identity of the object it receives (the bridge), so one bridge per credential
-# means one shared driver and one loop thread instead of one per client. Guarded
-# by _REGISTRY_LOCK; each entry is refcounted and removed on the last close.
+# When several clients are built from the same async credential, they should share
+# one bridge -- and so one background thread and one driver -- instead of each building
+# its own. This is where we remember the bridge already made for a given
+# credential: we look it up by the credential's identity, hand back the same one,
+# and count how many clients are still using it. (That count is our own tally of
+# live users, kept so the last client to leave can stop the background thread -- it is
+# not Python's object reference counting, which only frees memory and would never
+# stop the thread.) _REGISTRY_LOCK keeps two clients built at the same moment from
+# each starting a bridge; the last client to close removes the entry.
 _REGISTRY: Dict[int, "AsyncTokenCredentialBridge"] = {}
 _REGISTRY_LOCK = threading.Lock()
 
@@ -84,7 +144,7 @@ class AsyncTokenCredentialBridge:
 
     The bridge never closes the wrapped credential -- the customer owns its
     lifetime, just as on the synchronous path. Closing the bridge stops only its
-    own loop thread, and does it cleanly: it cancels any in-flight token fetch and
+    own background thread, and does it cleanly: it cancels any in-flight token fetch and
     shuts the loop's async generators down first, so the credential's own HTTP
     session can close instead of being dropped (which would leak the connection
     and warn about an unclosed session). A session the credential keeps across
@@ -114,7 +174,7 @@ class AsyncTokenCredentialBridge:
 
         Dedups by ``id(async_credential)``: the same credential object reused
         across clients maps to one bridge, so the driver (which keys engines by
-        the bridge's identity) shares one driver and one loop thread. Each call
+        the bridge's identity) shares one driver and one background thread. Each call
         adds one to the bridge's refcount; the matching close subtracts one and
         tears the loop down only at zero. The bridge holds a strong reference to
         the credential, so its ``id`` stays valid and unique while it is
@@ -138,6 +198,12 @@ class AsyncTokenCredentialBridge:
         token_timeout: Optional[float] = None,
         join_timeout: Optional[float] = None,
     ) -> None:
+        """Store the credential and settings; the background thread is not started yet.
+
+        Most callers should use ``acquire``, which shares one bridge per
+        credential. Building one directly gives an unshared bridge (no registry
+        entry, torn down on its first close) and is kept for tests.
+        """
         self._credential = async_credential
         self._token_timeout = token_timeout
         self._join_timeout = _join_timeout_from_env() if join_timeout is None else join_timeout
@@ -200,7 +266,7 @@ class AsyncTokenCredentialBridge:
             _LOGGER.debug("Async-credential bridge loop drain hit an error", exc_info=True)
 
     def _ensure_loop(self) -> asyncio.AbstractEventLoop:
-        # Start the loop thread the first time a token is needed.
+        # Start the background thread the first time a token is needed.
         loop = self._loop
         if loop is not None:
             return loop
@@ -226,7 +292,8 @@ class AsyncTokenCredentialBridge:
         Runs the credential's coroutine on the bridge's event loop and waits for
         it, then returns the credential's own token object (``.token`` /
         ``.expires_on``) unchanged. The driver calls this from a worker thread
-        while signing a request; waiting here lets the loop thread run.
+        when it needs a token to attach to a request it is about to send; waiting
+        here frees the background thread to run.
 
         The wait honors ``token_timeout`` when one is set; otherwise it blocks
         like the synchronous path and relies on the driver's deadlines. Either
@@ -235,12 +302,12 @@ class AsyncTokenCredentialBridge:
         """
         loop = self._ensure_loop()
         if threading.current_thread() is self._thread:
-            # A call from the bridge's own loop thread would wait on a future only
+            # A call from the bridge's own background thread would wait on a future only
             # that thread can complete, which would deadlock. Raise instead of
             # hanging.
-            raise RuntimeError(
+            raise AsyncCredentialBridgeReentrantError(
                 "AsyncTokenCredentialBridge.get_token must not be called from the "
-                "bridge's own event-loop thread."
+                "bridge's own background thread (the one running its event loop)."
             )
         coro = getattr(self._credential, self._token_method_name)(*scopes, **kwargs)
         future = asyncio.run_coroutine_threadsafe(coro, loop)
@@ -271,6 +338,11 @@ class AsyncTokenCredentialBridge:
     _WAIT_SLICE_SECONDS = 0.2
 
     def _wait_for_token(self, future: "concurrent.futures.Future") -> Any:
+        """Wait for the background thread to produce the token, then return it.
+
+        Waits in short slices so it can notice a close between slices and bail out
+        promptly, and enforces ``token_timeout`` as an overall deadline.
+        """
         deadline = None if self._token_timeout is None else time.monotonic() + self._token_timeout
         while True:
             if self._closed:
@@ -289,7 +361,7 @@ class AsyncTokenCredentialBridge:
                 continue
 
     def _close_cosmos_async_bridge(self) -> None:
-        """Release one hold on the bridge; the last release stops the loop thread.
+        """Release one hold on the bridge; the last release stops the background thread.
 
         Idempotent and never raises. The name is deliberately distinctive and
         private so a backend can close this bridge (found with a ``getattr``
@@ -328,7 +400,7 @@ class AsyncTokenCredentialBridge:
         except Exception:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to stop async-credential bridge loop", exc_info=True)
         # Also cancel in-flight fetches from this side, so a get_token waiting on
-        # one is released even if the loop thread is slow to drain. _run_loop also
+        # one is released even if the background thread is slow to drain. _run_loop also
         # cancels pending tasks as it closes the loop.
         for future in pending:
             future.cancel()

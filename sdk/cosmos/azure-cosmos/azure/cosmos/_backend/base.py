@@ -28,8 +28,11 @@ The operation kind (create_item, read_item, …) rides on the
 
 ``PreparedRequest`` / ``BackendResponse`` and the reserved ``PreparedQuery``
 / ``QueryPage`` / ``PreparedBatch`` / ``BatchResponse`` are frozen
-dataclasses, so a backend cannot change the input it received or the output
-it produced.
+dataclasses, so a backend cannot *reassign* the fields of the input it
+received or the output it produced. ``frozen`` guards the attributes, not the
+contents: the scalar fields are immutable (``bytes`` / ``str`` / ``tuple``),
+but ``headers`` is a plain ``dict`` whose entries a backend could still mutate
+in place, so backends treat it as read-only by convention.
 """
 from __future__ import annotations
 
@@ -92,8 +95,12 @@ class PreparedRequest:
     partition_key_header: str
 
     #: Everything else that needs to ride on the request: triggers,
-    #: indexing directive, intended-collection-rid, etc.
-    headers: Mapping[str, str] = field(default_factory=dict)
+    #: indexing directive, intended-collection-rid, etc. Values are typically
+    #: strings, but not always -- producers may carry a non-str (e.g. the
+    #: ``__overall_timeout_seconds`` sentinel is a float), so the value type is
+    #: ``Any``. The binding reads the typed sentinels directly and coerces every
+    #: other value with ``str()``, so non-str values are tolerated by design.
+    headers: Mapping[str, Any] = field(default_factory=dict)
 
     #: Target document id for ops where the id is not carried in
     #: ``body_bytes`` (``delete_item`` has no body). ``None`` for ops
@@ -256,8 +263,9 @@ class PreparedQuery:
     continuation: Optional[str] = None
 
     #: Everything else that needs to ride on the request (consistency,
-    #: session token, triggers, …).
-    headers: Mapping[str, str] = field(default_factory=dict)
+    #: session token, triggers, …). Values are usually strings but may be a
+    #: non-str sentinel, so the value type is ``Any`` (see ``PreparedRequest``).
+    headers: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -307,8 +315,10 @@ class PreparedBatch:
     #: operations).
     body_bytes: bytes = b""
 
-    #: Everything else that needs to ride on the request.
-    headers: Mapping[str, str] = field(default_factory=dict)
+    #: Everything else that needs to ride on the request. Values are usually
+    #: strings but may be a non-str sentinel, so the value type is ``Any``
+    #: (see ``PreparedRequest``).
+    headers: Mapping[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -444,9 +454,21 @@ def init_client_args(
     """Build the positional args for the Rust ``init_client`` call.
 
     A token credential rides as the 4th argument; master-key auth uses the
-    3-argument form. The factory sets exactly one of the two. Shared by both
-    backends so the call shape lives in one place.
+    3-argument form. ``factory._resolve_credential`` is contracted to set
+    exactly one of the two. Shared by both backends so the call shape lives in
+    one place.
+
+    The exactly-one invariant is enforced here rather than assumed: if both are
+    somehow set, the silent default would pick the token and drop the master
+    key with no signal, so instead we raise -- a contract violation upstream is
+    a bug, not something to paper over.
     """
+    if master_key is not None and token_credential is not None:
+        raise ValueError(
+            "init_client_args received both master_key and token_credential; "
+            "exactly one must be set (factory._resolve_credential is responsible "
+            "for this)."
+        )
     if token_credential is not None:
         return (endpoint, None, client_config, token_credential)
     return (endpoint, master_key, client_config)
