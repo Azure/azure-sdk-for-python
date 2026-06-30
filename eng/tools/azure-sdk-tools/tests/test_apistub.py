@@ -25,14 +25,6 @@ class TestApistubRegistration:
         assert args.command == "apistub"
         assert args.pypi_version == "1.0.0"
 
-    def test_pypi_version_alias_sets_version(self):
-        parser = _build_parser()
-
-        args = parser.parse_args(["apistub", "--pypi-version", "1.0.0"])
-
-        assert args.command == "apistub"
-        assert args.pypi_version == "1.0.0"
-
 # ── get_package_wheel_path() ─────────────────────────────────────────────
 
 

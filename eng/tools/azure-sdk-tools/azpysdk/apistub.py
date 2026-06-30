@@ -71,7 +71,6 @@ class apistub(Check):
         )
         p.add_argument(
             "--generate-from-pypi",
-            "--pypi-version",
             dest="pypi_version",
             default=None,
             help="Generate the stub from this released PyPI version instead of local source code.",
