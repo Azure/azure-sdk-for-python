@@ -13,6 +13,34 @@ from ..models.runtime import ResponseExecution
 from ..streaming._helpers import strip_nulls
 
 
+def _json_safe_agent_reference(value: Any) -> dict[str, Any]:
+    """Normalize an agent reference to a plain JSON-safe dict for snapshots.
+
+    The gateway-injected ``AgentReference`` model is a Mapping but is not
+    ``json.dumps``-serializable; the status-only fallback snapshot must therefore
+    coerce it to a dict before it reaches a ``JSONResponse``.
+
+    :param value: An ``AgentReference`` model, a mapping, or ``None``.
+    :type value: Any
+    :returns: A JSON-safe dict (``{}`` when absent).
+    :rtype: dict[str, Any]
+    """
+    if not value:
+        return {}
+    if isinstance(value, dict):
+        return dict(value)
+    if hasattr(value, "as_dict") and callable(value.as_dict):
+        return value.as_dict()
+    try:
+        return dict(value)
+    except (TypeError, ValueError):
+        return {
+            "type": getattr(value, "type", "agent_reference"),
+            "name": getattr(value, "name", None),
+            "version": getattr(value, "version", None),
+        }
+
+
 class _RuntimeState:
     """In-memory store for response execution records."""
 
@@ -210,7 +238,7 @@ class _RuntimeState:
             "created_at": int(execution.created_at.timestamp()),
             "output": [],
             "model": execution.initial_model,
-            "agent_reference": deepcopy(execution.initial_agent_reference) or {},
+            "agent_reference": _json_safe_agent_reference(execution.initial_agent_reference),
         }
         # S-038 / S-040: forcibly stamp session & conversation on fallback path
         if execution.agent_session_id is not None:
