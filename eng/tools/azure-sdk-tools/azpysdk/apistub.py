@@ -71,7 +71,7 @@ class apistub(Check):
         )
         p.add_argument(
             "--from-pypi",
-            dest="pypi_version",
+            dest="from_pypi",
             default=None,
             help="Generate the stub from this released PyPI version instead of local source code.",
         )
@@ -164,10 +164,10 @@ class apistub(Check):
                 logger.error(f"Failed to install APIView dependencies: {e}")
                 return getattr(e, "returncode", 1)
 
-            pypi_version = getattr(args, "pypi_version", None)
+            from_pypi = getattr(args, "from_pypi", None)
 
-            if pypi_version:
-                pkg_path = self.download_pypi_wheel(executable, package_name, pypi_version, staging_directory)
+            if from_pypi:
+                pkg_path = self.download_pypi_wheel(executable, package_name, from_pypi, staging_directory)
             else:
                 if not os.getenv("PREBUILT_WHEEL_DIR"):
                     create_package_and_install(
