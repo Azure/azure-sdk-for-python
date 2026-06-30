@@ -109,6 +109,4 @@ with (
 
     downloaded_zip_path.write_bytes(downloaded_bytes)
 
-    print(
-        f"Downloaded version code zip to {downloaded_zip_path}: {downloaded_zip_path.stat().st_size} bytes, "
-    )
+    print(f"Downloaded version code zip to {downloaded_zip_path}: {downloaded_zip_path.stat().st_size} bytes, ")

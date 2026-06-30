@@ -19,6 +19,7 @@ from azure.ai.projects.models import (
 
 _ASSETS_DIR = Path(__file__).parent / "assets"
 
+
 def select_echo_agent_code_zip(use_remote_build: bool) -> Tuple[CodeDependencyResolution, IO[bytes]]:
     """Pick the dependency-resolution mode and matching echo-agent zip as ``IO[bytes]``."""
     dependency_resolution = (
@@ -32,6 +33,7 @@ def select_echo_agent_code_zip(use_remote_build: bool) -> Tuple[CodeDependencyRe
         zip_path = _ASSETS_DIR / "echo-agent-prebuilt.zip"
 
     return dependency_resolution, zip_path.open("rb")
+
 
 def wait_for_agent_version_active(
     project_client: AIProjectClient,
