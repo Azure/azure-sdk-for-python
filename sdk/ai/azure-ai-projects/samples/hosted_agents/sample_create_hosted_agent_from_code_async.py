@@ -28,7 +28,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" aiohttp python-dotenv
+    pip install "azure-ai-projects>=2.3.0" aiohttp python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the
@@ -41,7 +41,6 @@ USAGE:
 """
 
 import asyncio
-import hashlib
 import os
 import tempfile
 from pathlib import Path
@@ -50,8 +49,6 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     CodeConfiguration,
-    CreateAgentVersionFromCodeContent,
-    CreateAgentVersionFromCodeMetadata,
     HostedAgentDefinition,
     ProtocolVersionRecord,
 )
@@ -68,49 +65,26 @@ async def main() -> None:
     subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
     use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "true").strip().lower() == "true"
 
-    dependency_resolution, zip_filename, code_zip_bytes, code_zip_sha256 = select_echo_agent_code_zip(use_remote_build)
+    dependency_resolution, code_zip_bytes = select_echo_agent_code_zip(use_remote_build)
 
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
-        # The ``code`` field accepts any variant of the SDK's ``FileType`` union.
-        # The 3-tuple form used here pins both the filename and the content type.
-        #
-        #   # 1) bare IO[bytes] - filename derived from the file handle's `.name`
-        #   code=code_zip_path.open("rb")
-        #
-        #   # 2) (filename, bytes)
-        #   code=(zip_filename, code_zip_bytes)
-        #
-        #   # 3) (filename, IO[bytes])
-        #   code=(zip_filename, code_zip_path.open("rb"))
-        #
-        #   # 4) (filename, bytes, content_type)
-        #   code=(zip_filename, code_zip_bytes, "application/zip")
-        code = (zip_filename, code_zip_bytes, "application/zip")
-
-        content = CreateAgentVersionFromCodeContent(
-            metadata=CreateAgentVersionFromCodeMetadata(
-                description=f"Code-based hosted agent uploaded with dependency_resolution={dependency_resolution.value}.",
-                definition=HostedAgentDefinition(
-                    cpu="0.5",
-                    memory="1Gi",
-                    code_configuration=CodeConfiguration(
-                        runtime="python_3_14",
-                        entry_point=["python", "main.py"],
-                        dependency_resolution=dependency_resolution,
-                    ),
-                    protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
-                ),
-            ),
-            code=code,
-        )
-
         created = await project_client.agents.create_version_from_code(
             agent_name=agent_name,
-            content=content,
-            code_zip_sha256=code_zip_sha256,
+            description=f"Code-based hosted agent uploaded with dependency_resolution={dependency_resolution.value}.",
+            definition=HostedAgentDefinition(
+                cpu="0.5",
+                memory="1Gi",
+                code_configuration=CodeConfiguration(
+                    runtime="python_3_14",
+                    entry_point=["python", "main.py"],
+                    dependency_resolution=dependency_resolution,
+                ),
+                protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
+            ),
+            code=code_zip_bytes,
         )
         print(f"Created code-based hosted agent version: {created.version}")
 
@@ -130,7 +104,7 @@ async def main() -> None:
         )
 
         # Download the zip for the version we just created, and write to disk.
-        version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
+        downloaded_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
 
         downloaded_bytes = b"".join(
             [
@@ -142,12 +116,10 @@ async def main() -> None:
             ]
         )
 
-        version_zip_path.write_bytes(downloaded_bytes)
-        downloaded_version_sha256 = hashlib.sha256(downloaded_bytes).hexdigest()
+        downloaded_zip_path.write_bytes(downloaded_bytes)
 
         print(
-            f"Downloaded version code zip to {version_zip_path}: {version_zip_path.stat().st_size} bytes, "
-            f"sha256={downloaded_version_sha256} (matches uploaded: {downloaded_version_sha256 == code_zip_sha256})"
+            f"Downloaded version code zip to {downloaded_zip_path}: {downloaded_zip_path.stat().st_size} bytes, "
         )
 
 

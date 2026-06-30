@@ -61,6 +61,97 @@ if TYPE_CHECKING:
     from .. import _types, models as _models
 
 
+class _CreateAgentVersionFromCodeContent(_Model):
+    """Multipart request body for updating or versioning a code-based agent (POST /agents/{name} and
+    POST /agents/{name}/versions).
+
+    :ivar metadata: JSON metadata including description and hosted definition. Required.
+    :vartype metadata: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeMetadata
+    :ivar code: The code zip file (max 250 MB). Required.
+    :vartype code: ~azure.ai.projects._utils.utils.FileType
+    """
+
+    metadata: "_models._models._CreateAgentVersionFromCodeMetadata" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """JSON metadata including description and hosted definition. Required."""
+    code: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The code zip file (max 250 MB). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: "_models._models._CreateAgentVersionFromCodeMetadata",
+        code: FileType,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class _CreateAgentVersionFromCodeMetadata(_Model):
+    """JSON metadata for code-based agent operations (create, update, create version). The agent name
+    comes from the URL path parameter or the ``x-ms-agent-name`` header, so it is not included in
+    this model. The content hash (SHA-256 of the zip) is carried in the ``x-ms-code-zip-sha256``
+    header.
+
+    :ivar description: A human-readable description of the agent.
+    :vartype description: str
+    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters.
+    :vartype metadata: dict[str, str]
+    :ivar definition: The hosted agent definition including code_configuration (runtime,
+     entry_point), cpu, memory, and protocol_versions. Required.
+    :vartype definition: ~azure.ai.projects.models.HostedAgentDefinition
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable description of the agent."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+     
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters."""
+    definition: "_models.HostedAgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The hosted agent definition including code_configuration (runtime, entry_point), cpu, memory,
+     and protocol_versions. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        definition: "_models.HostedAgentDefinition",
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Tool(_Model):
     """A tool that can be used to generate a response.
 
@@ -4113,97 +4204,6 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = IndexType.COSMOS_DB  # type: ignore
-
-
-class CreateAgentVersionFromCodeContent(_Model):
-    """Multipart request body for updating or versioning a code-based agent (POST /agents/{name} and
-    POST /agents/{name}/versions).
-
-    :ivar metadata: JSON metadata including description and hosted definition. Required.
-    :vartype metadata: ~azure.ai.projects.models.CreateAgentVersionFromCodeMetadata
-    :ivar code: The code zip file (max 250 MB). Required.
-    :vartype code: ~azure.ai.projects._utils.utils.FileType
-    """
-
-    metadata: "_models.CreateAgentVersionFromCodeMetadata" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """JSON metadata including description and hosted definition. Required."""
-    code: FileType = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
-    )
-    """The code zip file (max 250 MB). Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        metadata: "_models.CreateAgentVersionFromCodeMetadata",
-        code: FileType,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CreateAgentVersionFromCodeMetadata(_Model):
-    """JSON metadata for code-based agent operations (create, update, create version). The agent name
-    comes from the URL path parameter or the ``x-ms-agent-name`` header, so it is not included in
-    this model. The content hash (SHA-256 of the zip) is carried in the ``x-ms-code-zip-sha256``
-    header.
-
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar definition: The hosted agent definition including code_configuration (runtime,
-     entry_point), cpu, memory, and protocol_versions. Required.
-    :vartype definition: ~azure.ai.projects.models.HostedAgentDefinition
-    """
-
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A human-readable description of the agent."""
-    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-     
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    definition: "_models.HostedAgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The hosted agent definition including code_configuration (runtime, entry_point), cpu, memory,
-     and protocol_versions. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        definition: "_models.HostedAgentDefinition",
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class CreateAsyncResponse(_Model):
