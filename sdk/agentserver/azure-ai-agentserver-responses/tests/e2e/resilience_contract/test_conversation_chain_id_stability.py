@@ -28,8 +28,9 @@ Method:
    non-empty value (no lifetime-1 vs lifetime-0 mismatch since the
    chain is derived from the persisted request).
 7. For a standalone response (no ``conversation_id`` / no
-   ``previous_response_id``), the chain id MUST be the response id
-   itself per ``derive_chain_id`` priority rule 3.
+   ``previous_response_id``), the chain id is a stable opaque hash
+   derived from the response id's embedded partition key (Spec 036),
+   identical across recovery attempts.
 """
 
 from __future__ import annotations
@@ -175,11 +176,19 @@ async def test_chain_id_stable_across_recovery(
             )
 
         # For a standalone response (no conversation_id, no previous_response_id),
-        # the chain id MUST equal the response id per derive_chain_id rule 3.
+        # the chain id is a stable, opaque hex hash derived from the response id's
+        # embedded partition key (Spec 036) — NOT the response id itself. It must
+        # be a 32-char hex digest and identical across recovery attempts.
         for chain in chain_ids:
-            assert chain == response_id, (
-                f"For a standalone response the chain id MUST equal the "
-                f"response id. Got chain={chain!r}, response_id={response_id!r}."
+            assert chain != response_id, (
+                "Spec 036: the chain id is an opaque hash, not the raw response id. "
+                f"Got chain={chain!r}, response_id={response_id!r}."
             )
+            assert len(chain) == 32 and all(c in "0123456789abcdef" for c in chain), (
+                f"Chain id must be a 32-char hex digest. Got chain={chain!r}."
+            )
+        assert len(set(chain_ids)) == 1, (
+            f"context.conversation_chain_id MUST be stable across all observations. Got {chain_ids!r}."
+        )
     finally:
         await harness.close()

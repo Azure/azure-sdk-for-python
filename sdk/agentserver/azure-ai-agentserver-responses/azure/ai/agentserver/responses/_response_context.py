@@ -209,6 +209,8 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         isolation: IsolationContext | None = None,
         prefetched_history_ids: list[str] | None = None,
         steerable: bool = False,
+        agent_name: str = "",
+        session_id: str = "",
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
@@ -231,14 +233,15 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._input_items_unresolved_cache: Sequence[Item] | None = None
         self._history_cache: Sequence[OutputItem] | None = None
         self._prefetched_history_ids: list[str] | None = prefetched_history_ids
-        # (Spec 024 Phase 5 — Proposal #11 audit fix) Stash the
-        # deployment's ``steerable_conversations`` option so
-        # ``conversation_chain_id`` returns the correct partition key
-        # for non-steerable chains. Pre-audit this always passed
-        # ``steerable=True`` to ``derive_chain_id``, producing the
-        # wrong chain id for ``previous_response_id``-based requests
-        # under ``steerable_conversations=False``.
+        # Stash the deployment's ``steerable_conversations`` option so
+        # ``conversation_chain_id`` resolves the correct chain partition: for
+        # non-steerable chains each fork is its own identity (full response_id),
+        # while steerable chains share the partition key of the sequential chain.
         self._steerable: bool = steerable
+        # Agent + session identity used to scope ``conversation_chain_id`` (and
+        # the resilient task id, which is the same hash with a fixed prefix).
+        self._agent_name: str = agent_name
+        self._session_id: str = session_id
 
         # (Spec 024 Phase 5 — Proposal #6/#10/#13) Flattened recovery +
         # steering classifiers. Defaults represent a fresh non-recovered
@@ -281,36 +284,43 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
     def conversation_chain_id(self) -> str:
         """Stable identifier for the multi-turn conversation chain.
 
-        Returns the framework-computed partition key shared by every response
-        that belongs to the same logical conversation. Priority order:
+        Returns an opaque, agent/session-scoped hex id that is the **same for
+        every turn** of a conversation chain. It is derived from the partition
+        key embedded in the chain's response IDs (chained response IDs all carry
+        the same embedded key), so it stays stable across turns and across crash
+        recovery without any history walk. The resilient task backing the
+        conversation uses this same hash (with a fixed prefix), so the two never
+        drift apart.
+
+        Priority for the underlying chain partition:
 
         1. ``conversation_id`` if supplied on the request.
-        2. ``previous_response_id`` if supplied (sequential chain — every turn
-           inherits the same chain id from its parent).
-        3. ``response_id`` — the chain root for the first turn in a chain.
+        2. ``previous_response_id`` (steerable chains) — the shared partition key
+           of the sequential chain.
+        3. ``response_id`` — for the first turn, or as the per-fork identity when
+           ``steerable_conversations`` is disabled.
 
         Handlers use this id as a key into application-side conversation state
-        (e.g., upstream SDK session ids, per-conversation rate limits,
-        application-side conversation indexes). The value is deterministic
-        across turns and stable across crash recovery, so storing it in a
-        resilient side store and looking it up on recovery is sufficient to
-        re-attach to the prior session.
+        (e.g., an upstream SDK session id, per-conversation rate limits, or a
+        conversation index): store it in a resilient side store and look it up on
+        recovery to re-attach to the prior session.
 
-        The chain id derivation matches the deployment's
-        ``steerable_conversations`` option: for steerable chains,
-        sequential turns share the same chain id; for non-steerable
-        chains every turn forks into its own chain id (equal to its
-        ``response_id``).
+        Known limitation: the identity is derived from framework-generated IDs. A
+        client that supplies its own ``response_id`` (via ``x-agent-response-id``
+        or an explicit request field) carrying a mismatched embedded partition can
+        shift the chain identity for later turns.
 
         :rtype: str
         """
         # Local import to avoid a top-level cycle with hosting.
-        from .hosting._task_id import derive_chain_id  # pylint: disable=import-outside-toplevel
+        from .hosting._chain_id import derive_conversation_chain_id  # pylint: disable=import-outside-toplevel
 
-        return derive_chain_id(
+        return derive_conversation_chain_id(
             conversation_id=self.conversation_id,
             previous_response_id=self._previous_response_id,
             response_id=self.response_id,
+            agent_name=self._agent_name,
+            session_id=self._session_id,
             steerable=self._steerable,
         )
 

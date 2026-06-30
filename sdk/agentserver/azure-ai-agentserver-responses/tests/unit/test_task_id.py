@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses.hosting._chain_id import derive_conversation_chain_id
 from azure.ai.agentserver.responses.hosting._task_id import derive_task_id
 
 
@@ -192,3 +194,63 @@ class TestTaskIdDerivation:
         )
         assert isinstance(result, str)
         assert len(result) > 0
+
+
+class TestTaskIdRealChain:
+    """Spec 036 — real IdGenerator-chained ids collapse / fork correctly."""
+
+    def test_real_steerable_chain_collapses_to_one_task(self) -> None:
+        """A real previous_response_id chain → ONE task id across all turns."""
+        root = IdGenerator.new_response_id("")
+        turn2 = IdGenerator.new_response_id(root)
+        turn3 = IdGenerator.new_response_id(turn2)
+
+        ids = [
+            derive_task_id(
+                conversation_id=None,
+                previous_response_id=prev,
+                response_id=rid,
+                agent_name="agent",
+                session_id="sess",
+                steerable=True,
+            )
+            for prev, rid in [(None, root), (root, turn2), (turn2, turn3)]
+        ]
+        assert ids[0] == ids[1] == ids[2]
+
+    def test_real_non_steerable_forks_distinct(self) -> None:
+        """Real concurrent forks (same parent) → distinct task ids (FR-013)."""
+        parent = IdGenerator.new_response_id("")
+        fork_a = IdGenerator.new_response_id(parent)
+        fork_b = IdGenerator.new_response_id(parent)
+        id_a = derive_task_id(
+            conversation_id=None,
+            previous_response_id=parent,
+            response_id=fork_a,
+            agent_name="agent",
+            session_id="sess",
+            steerable=False,
+        )
+        id_b = derive_task_id(
+            conversation_id=None,
+            previous_response_id=parent,
+            response_id=fork_b,
+            agent_name="agent",
+            session_id="sess",
+            steerable=False,
+        )
+        assert id_a != id_b
+
+    def test_task_id_is_prefixed_chain_id(self) -> None:
+        """task_id == 'resilient-resp-' + conversation_chain_id."""
+        kw = dict(
+            conversation_id=None,
+            previous_response_id=IdGenerator.new_response_id(""),
+            response_id=IdGenerator.new_response_id(""),
+            agent_name="agent",
+            session_id="sess",
+            steerable=True,
+        )
+        chain = derive_conversation_chain_id(**kw)
+        task = derive_task_id(**kw)
+        assert task == f"resilient-resp-{chain}"

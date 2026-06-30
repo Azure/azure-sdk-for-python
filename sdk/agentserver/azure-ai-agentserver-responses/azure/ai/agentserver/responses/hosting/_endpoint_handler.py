@@ -72,6 +72,7 @@ from ._observability import (
 from ._orchestrator import _HandlerError, _refresh_background_status, _ResponseOrchestrator
 from ._request_parsing import (
     _apply_item_cursors,
+    _extract_agent_identity,
     _extract_item_id,
     _prevalidate_identity_payload,
     _resolve_conversation_id,
@@ -521,6 +522,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             ),
             prefetched_history_ids=ctx.prefetched_history_ids,
             steerable=self._runtime_options.steerable_conversations,
+            agent_name=_extract_agent_identity(ctx.agent_reference)[0],
+            session_id=ctx.agent_session_id or "",
         )
         # Alias the execution-context cancellation_signal with the
         # handler-facing private ``context._cancellation_signal`` so the

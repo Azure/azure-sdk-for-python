@@ -173,6 +173,7 @@ def _reconstruct_from_params(
         to_output_item,
     )  # pylint: disable=import-outside-toplevel
     from ._request_parsing import (
+        _extract_agent_identity,
         _resolve_conversation_id,
     )  # pylint: disable=import-outside-toplevel
     from ._resilient_input import (
@@ -239,6 +240,13 @@ def _reconstruct_from_params(
         # History is a prefetch optimization; re-derived on demand via the
         # existing ``get_history_item_ids`` read (Spec 033 §3.1).
         prefetched_history_ids=None,
+        # (Spec 036) Recovery must reconstruct the SAME chain identity as fresh
+        # entry: pass steerable + agent/session so ``conversation_chain_id`` is
+        # stable across crash recovery. Previously ``steerable`` defaulted to
+        # False here, diverging the chain id for previous_response_id chains.
+        steerable=bool(getattr(runtime_options, "steerable_conversations", False)),
+        agent_name=_extract_agent_identity(resilient.agent_reference)[0],
+        session_id=resilient.agent_session_id or "",
     )
     record.response_context = context
     return record, context
@@ -1048,6 +1056,7 @@ class ResilientResponseOrchestrator:
             on an already-active steerable task.
         """
         from ._request_parsing import (
+            _extract_agent_identity,
             _resolve_conversation_id,
         )  # pylint: disable=import-outside-toplevel
 
@@ -1061,7 +1070,7 @@ class ResilientResponseOrchestrator:
         )
 
         task_id = derive_task_id(
-            agent_name=getattr(self._options, "agent_name", "default"),
+            agent_name=_extract_agent_identity(resilient_input.agent_reference)[0],
             session_id=resilient_input.agent_session_id or "",
             conversation_id=conversation_id,
             previous_response_id=previous_response_id,
