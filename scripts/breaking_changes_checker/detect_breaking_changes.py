@@ -254,9 +254,7 @@ def _is_overload_decorator(dec: ast.expr) -> bool:
     return False
 
 
-def _find_function_def_in_body(
-    body, target_name: str
-) -> Optional[Union[ast.FunctionDef, ast.AsyncFunctionDef]]:
+def _find_function_def_in_body(body, target_name: str) -> Optional[Union[ast.FunctionDef, ast.AsyncFunctionDef]]:
     """Return the first non-overload (Async)FunctionDef in ``body`` matching ``target_name``.
 
     Only scans direct children of ``body`` -- does NOT recurse -- so a method
@@ -328,11 +326,7 @@ def create_function_report(f: Callable, is_async: bool = False) -> Dict:
             # "<locals>" segment indicates a method bound to a class named
             # by the first qualname component.
             qualname_parts = qualname.split(".")
-            if (
-                len(qualname_parts) >= 2
-                and qualname_parts[-1] == target_name
-                and "<locals>" not in qualname_parts
-            ):
+            if len(qualname_parts) >= 2 and qualname_parts[-1] == target_name and "<locals>" not in qualname_parts:
                 owner_class = qualname_parts[-2]
                 cls_node = _find_class_node(module_ast, owner_class)
                 if cls_node is not None:
@@ -382,12 +376,14 @@ def get_parameter_type(annotation) -> str:
     # value remains JSON-serializable.
     if isinstance(annotation, ast.BinOp) and isinstance(annotation.op, ast.BitOr):
         parts = []
+
         def _flatten(node):
             if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
                 _flatten(node.left)
                 _flatten(node.right)
             else:
                 parts.append(get_parameter_type(node))
+
         _flatten(annotation)
         return f"Union[{', '.join(str(p) for p in parts)}]"
     # Fall back to a source-level string representation so we never return a
@@ -780,9 +776,7 @@ def main(
                 exit(0)
         # "current" is generated from the local source, "stable" from the
         # resolved PyPI version.
-        current = build_report_from_apistub(
-            package_name, pkg_dir, debug=debug, label="current", from_pypi=False
-        )
+        current = build_report_from_apistub(package_name, pkg_dir, debug=debug, label="current", from_pypi=False)
         stable = build_report_from_apistub(
             package_name, pkg_dir, version=version, debug=debug, label="stable", from_pypi=True
         )

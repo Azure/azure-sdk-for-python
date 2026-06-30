@@ -211,13 +211,12 @@ def parse_api_md(content: str) -> Dict:
                     pending_overload = False
                     continue
                 if pending_overload:
-                    methods.setdefault(name, {"parameters": {}, "is_async": func["is_async"],
-                                              "return_type": None, "overloads": []})
+                    methods.setdefault(
+                        name, {"parameters": {}, "is_async": func["is_async"], "return_type": None, "overloads": []}
+                    )
                     if not methods[name]["parameters"]:
                         methods[name].update({k: func[k] for k in ("parameters", "is_async", "return_type")})
-                    methods[name]["overloads"].append(
-                        {k: func[k] for k in ("parameters", "is_async", "return_type")}
-                    )
+                    methods[name]["overloads"].append({k: func[k] for k in ("parameters", "is_async", "return_type")})
                 else:
                     func.setdefault("overloads", [])
                     existing = methods.get(name)
@@ -240,9 +239,7 @@ def parse_api_md(content: str) -> Dict:
         elif cls:
             prop = _PROP_RE.match(line)
             if prop and len(line) - len(line.lstrip()) >= 8:
-                report[module]["class_nodes"][cls]["properties"][prop.group("name")] = {
-                    "attr_type": prop.group("type")
-                }
+                report[module]["class_nodes"][cls]["properties"][prop.group("name")] = {"attr_type": prop.group("type")}
         i += 1
     return report
 

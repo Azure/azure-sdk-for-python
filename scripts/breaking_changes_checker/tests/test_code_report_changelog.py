@@ -387,4 +387,3 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
     compare.assert_called_once()
     stable_arg, current_arg = compare.call_args.args[0], compare.call_args.args[1]
     assert stable_arg is not None and current_arg is not None
-
