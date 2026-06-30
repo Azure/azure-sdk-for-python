@@ -3,7 +3,7 @@ import hashlib
 import sys
 import time
 from pathlib import Path
-from typing import Tuple
+from typing import IO, Tuple
 
 _SAMPLES_DIR = Path(__file__).resolve().parents[1]
 if str(_SAMPLES_DIR) not in sys.path:
@@ -53,6 +53,21 @@ def select_echo_agent_code_zip(
         )
 
     return dependency_resolution, zip_filename, zip_bytes, zip_sha256
+
+
+def select_echo_agent_code_zip_io(use_remote_build: bool) -> Tuple[CodeDependencyResolution, IO[bytes]]:
+    """Pick the dependency-resolution mode and matching echo-agent zip as ``IO[bytes]``."""
+    dependency_resolution = (
+        CodeDependencyResolution.REMOTE_BUILD if use_remote_build else CodeDependencyResolution.BUNDLED
+    )
+
+    if use_remote_build:
+        zip_filename = "echo-agent.zip"
+        _, _, zip_path = zip_directory(_ASSETS_DIR / "echo-agent", zip_filename)
+    else:
+        zip_path = _ASSETS_DIR / "echo-agent-prebuilt.zip"
+
+    return dependency_resolution, zip_path.open("rb")
 
 
 def wait_for_agent_version_active(
