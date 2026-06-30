@@ -17,11 +17,10 @@ from typing import cast
 
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     APIM_REQUEST_ID,
-    CHAT_ISOLATION_KEY,
     CLIENT_REQUEST_ID,
+    FOUNDRY_CALL_ID,
     REQUEST_ID,
     TRACEPARENT,
-    USER_ISOLATION_KEY,
 )
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
@@ -95,8 +94,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
 
         client_request_id = http_request.headers.get(CLIENT_REQUEST_ID, "")
         traceparent = http_request.headers.get(TRACEPARENT, "")
-        has_user_isolation_key = USER_ISOLATION_KEY in http_request.headers
-        has_chat_isolation_key = CHAT_ISOLATION_KEY in http_request.headers
+        has_call_id = FOUNDRY_CALL_ID in http_request.headers
 
         logger.debug(
             "Foundry storage %s %s starting "
@@ -136,7 +134,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
             "Foundry storage %s %s -> %d (%.1fms, "
             "x-ms-client-request-id=%s, traceparent=%s, "
             "x-request-id=%s, apim-request-id=%s, "
-            "has_user_isolation_key=%s, has_chat_isolation_key=%s)",
+            "has_call_id=%s)",
             method,
             url,
             status_code,
@@ -145,8 +143,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
             traceparent,
             x_request_id,
             apim_request_id,
-            has_user_isolation_key,
-            has_chat_isolation_key,
+            has_call_id,
         )
 
         return response

@@ -38,6 +38,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2025-05-01/NspAccessRuleDelete.json
+# x-ms-original-file: 2025-07-01/NspAccessRuleDelete.json
 if __name__ == "__main__":
     main()
