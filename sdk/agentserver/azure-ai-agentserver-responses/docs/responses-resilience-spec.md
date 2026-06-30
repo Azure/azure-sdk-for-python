@@ -188,52 +188,61 @@ and uses it for two purposes:
 
 ### §4.1 — Derivation
 
-The chain id is derived from the request as follows, in priority
-order:
+A conversation's stable identity is the **partition key embedded in its
+response IDs**. IDs have the shape `{prefix}_{partitionKey}{entropy}`; when a
+response ID is generated it inherits the partition key of its
+`previous_response_id` / `conversation_id` hint, so every response in a chain
+carries the *same* embedded partition key. Extracting it therefore yields a
+value that is stable across every turn of the chain.
 
-1. If the request supplies `conversation_id`, return it.
-2. Else if the request supplies `previous_response_id`:
-   - If `steerable_conversations=true`, return `previous_response_id`
-     (so every turn in a steerable chain returns the same value).
-   - If `steerable_conversations=false`, return `response_id` (each
-     fork gets its own chain id).
-3. Else, return `response_id` (so first-turn handlers always get a
-   non-`None` identity).
+The chain id is the agent/session-scoped hash of that partition. The partition
+source is selected in priority order:
 
-This rule is normative. A port MUST exhibit the same priority order
-and the same steerable / non-steerable disambiguation for `previous_response_id`.
+1. If the request supplies `conversation_id`, use its embedded partition key
+   (or `conversation_id` itself when it is not in ID format).
+2. Else if `steerable_conversations=true`, use the partition key embedded in
+   `previous_response_id` (or in `response_id` on the first turn). Because
+   chained response IDs share one partition key, every turn resolves to the
+   same value.
+3. Else (non-steerable, or no chain), use the **full** `response_id` — so each
+   concurrent fork keeps a distinct identity.
+
+```
+discriminator, partition = chain_partition(...)   # discriminator ∈ {conv, chain, fork, resp}
+composite = "{agent_name}:{session_id}:{discriminator}:{partition}"
+chain_id  = sha256(composite).hex()[:32]
+```
+
+The `agent_name` / `session_id` salt prevents cross-agent and cross-session
+collisions; the `discriminator` namespaces the partition by source type so a
+client-supplied `conversation_id` cannot collide with an extracted partition
+key or a response id. This rule is normative; a port MUST exhibit the same
+priority order and the same steerable / non-steerable disambiguation.
 
 ### §4.2 — The `task_id`
 
-The resilient task is keyed on a deterministic `task_id` derived from the
-chain id plus an agent / session salt:
+The resilient task is keyed on the chain id with a fixed prefix:
 
 ```
-chain_id = derive_chain_id(...)
-partition_key = {
-  "conv:"   if conversation_id was used,
-  "chain:"  if previous_response_id + steerable=true,
-  "fork:"   if previous_response_id + steerable=false,
-  "resp:"   if response_id was used (fallback)
-} + chain_id
-
-composite = "{agent_name}:{session_id}:{partition_key}"
-task_id = "resilient-resp-" + sha256(composite).hex()[:32]
+task_id = "resilient-resp-" + chain_id
 ```
 
-The `agent_name` and `session_id` salt prevents cross-agent and
-cross-session task collisions. The `partition_key` prefix is
-diagnostic only — it preserves the derivation in the hash input so
-two chains with different provenance but identical chain id values
-produce different `task_id`s.
+The task that backs a conversation and the handler-facing chain id therefore
+share one identity and can never drift apart.
 
 ### §4.3 — Public surface
 
-The chain id is exposed to handlers as `context.conversation_chain_id`
-(a `str`, never `None`). Handlers wrapping a stateful upstream SDK
-SHOULD use this as their upstream session id rather than allocating a
-fresh UUID. The value is stable across all attempts (fresh, recovered,
-multiply-recovered) of every turn in the chain.
+The chain id is exposed to handlers as `context.conversation_chain_id` (a
+`str`, never `None`) — an opaque, agent/session-scoped hex hash. Handlers
+wrapping a stateful upstream SDK SHOULD use this as their upstream session id
+rather than allocating a fresh UUID. The value is stable across every turn of a
+chain and across all attempts (fresh, recovered, multiply-recovered) of every
+turn.
+
+Known limitation: the identity is derived from framework-generated IDs. A
+client that supplies its own `response_id` (via `x-agent-response-id` or an
+explicit request field) carrying a mismatched embedded partition can shift the
+chain identity for later turns.
 
 ---
 
@@ -1379,8 +1388,10 @@ between them. Numbers are illustrative.
 
 ```
 T=0   POST /v1/responses { input: "Hi", store: true, background: true }
-      → derive_task_id = "resilient-resp-AB12..."
-      → derive_chain_id = (input was conv_id-less + prev_id-less) → resp_1
+      → derive_task_id  = "resilient-resp-AB12..."
+      → conversation_chain_id = "AB12..."   (the same hash; standalone first
+                                              turn, derived from resp_1's
+                                              embedded partition key)
 
 T=1   primitive: task_store.create({
         id: "resilient-resp-AB12...",

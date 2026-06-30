@@ -77,6 +77,17 @@
 
 ### Bugs Fixed
 
+- **`context.conversation_chain_id` is now stable across every turn of a
+  conversation.** Previously it returned the raw `previous_response_id` (the
+  immediate predecessor), so it shifted on every turn after the second — breaking
+  its use as a stable per-conversation key (e.g. an upstream SDK session id). It
+  is now derived from the partition key embedded in the chain's response IDs
+  (which every turn shares), so all turns of a chain — and the resilient task
+  that backs them — resolve to the same identity. The value is now an opaque,
+  agent/session-scoped hash rather than a raw id. (Known limitation: a client
+  that supplies its own `response_id` with a mismatched embedded partition can
+  shift the chain identity for later turns.)
+
 - **A resilient task that fails to start now fails the request instead of
   silently running without durability.** Previously, when `resilient_background`
   was in effect but the resilient task could not be started (e.g. the task store
