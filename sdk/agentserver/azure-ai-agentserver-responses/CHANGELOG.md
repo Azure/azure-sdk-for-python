@@ -77,6 +77,16 @@
 
 ### Bugs Fixed
 
+- **Steering now works on the first turn of a conversation.** In a
+  `steerable_conversations=true` deployment, the first turn (a request with no
+  `conversation_id` and no `previous_response_id`) is now hosted on the
+  multi-turn chain primitive instead of a one-shot task. Because all turns of a
+  chain share a stable `conversation_chain_id` — and therefore the same backing
+  task — a steered turn posted onto an in-flight first turn previously queued
+  onto a one-shot task that completed and auto-deleted before draining the
+  queued input, leaving the steered turn stuck `in_progress`. The first turn now
+  suspends between turns and drains queued steering inputs correctly.
+
 - **`context.conversation_chain_id` is now stable across every turn of a
   conversation.** Previously it returned the raw `previous_response_id` (the
   immediate predecessor), so it shifted on every turn after the second — breaking

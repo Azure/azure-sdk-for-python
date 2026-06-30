@@ -348,13 +348,14 @@ returns without re-invoking.
 
 Internally, the responses layer picks one of two underlying task
 primitives per request based on the `(store, conversation_id,
-previous_response_id, steerable_conversations)` tuple. Single-turn
-requests use a one-shot primitive; multi-turn requests use a chain
-primitive. The choice is invisible to handlers (the flat recovery +
-steering surface — `is_recovery`, `is_steered_turn`,
-`pending_input_count`, `conversation_chain_metadata` — looks the same regardless)
-and to clients (the HTTP/SSE contract is identical). The full table
-is in §6.4.
+previous_response_id, steerable_conversations)` tuple. Non-steerable
+single requests use a one-shot primitive; chain requests — and every
+turn (including the first) in a `steerable_conversations=true`
+deployment — use a multi-turn chain primitive. The choice is invisible
+to handlers (the flat recovery + steering surface — `is_recovery`,
+`is_steered_turn`, `pending_input_count`, `conversation_chain_metadata`
+— looks the same regardless) and to clients (the HTTP/SSE contract is
+identical). The full table is in §6.4.
 
 ### §6.1 — Lifecycle (Row 1 — `resilient_background=true`, bg+store)
 
@@ -416,17 +417,22 @@ identifies a multi-turn chain.
 
 | `conversation_id` | `previous_response_id` | `steerable_conversations` | Primitive | Rationale |
 |---|---|---|---|---|
-| absent | absent | (any) | one-shot (`@task`) | Single request, no chain — the task_id is unique per request; auto-deleted on terminal exit. |
+| absent | absent | `false` | one-shot (`@task`) | Single request, no chain — the `task_id` is unique per request (the `resp:` partition uses the full response_id); auto-deleted on terminal exit. |
+| absent | absent | `true` | multi-turn (`@multi_turn_task(steerable=true)`) | First turn of a steerable chain. The stable `conversation_chain_id` (§4.1) makes this turn's `task_id` (the `chain:` partition) SHARED with any later steered turn, so the task must be the suspendable chain host that drains queued steering inputs. A one-shot would auto-delete on terminal exit and orphan the queued steered turn. |
 | absent | present | `false` | one-shot (`@task`) | Fork-style: each request gets its own task_id (the `fork:` partition), so no chain semantics needed. |
 | absent | present | `true` | multi-turn (`@multi_turn_task(steerable=true)`) | Steerable chain extension: turns share a task_id (the `chain:` partition); the framework suspends between turns and queues mid-turn inputs. |
 | present | (any) | `false` | multi-turn (`@multi_turn_task(steerable=false)`) | Conversation-scoped chain: turns share a task_id (the `conv:` partition); chain suspends between turns. Concurrent overlap returns 409 `conversation_locked` (no queueing). |
 | present | (any) | `true` | multi-turn (`@multi_turn_task(steerable=true)`) | Same conversation-scoped chain, with mid-turn inputs queued instead of rejected. |
 
 The primitive choice MUST be made at request-dispatch time (not at
-deployment-config time) because the same deployment serves both
-single-turn requests (one-shot primitive) and multi-turn requests
-(multi-turn primitive) — the deployment's `steerable_conversations`
-flag only controls the multi-turn primitive's mid-turn-input behaviour.
+deployment-config time) because the same deployment can serve both
+one-shot requests and multi-turn requests. `steerable_conversations`
+gates the primitive selection in two ways: it routes the first turn of
+a chain (no `conversation_id`, no `previous_response_id`) to the
+multi-turn primitive instead of one-shot, AND it controls the
+multi-turn primitive's mid-turn-input behaviour (queue vs reject). When
+`steerable_conversations=false`, only `conversation_id` requests use the
+multi-turn primitive; bare and fork-style requests stay one-shot.
 
 The choice is invisible to handlers — `recovery + steering context (flat fields on the response context)` looks
 identical regardless of which primitive carries the body. The choice
