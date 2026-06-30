@@ -17,10 +17,10 @@ def _build_parser():
 
 
 class TestApistubRegistration:
-    def test_generate_from_pypi_flag_sets_version(self):
+    def test_from_pypi_flag_sets_version(self):
         parser = _build_parser()
 
-        args = parser.parse_args(["apistub", "--generate-from-pypi", "1.0.0"])
+        args = parser.parse_args(["apistub", "--from-pypi", "1.0.0"])
 
         assert args.command == "apistub"
         assert args.pypi_version == "1.0.0"
