@@ -36,7 +36,7 @@ DESCRIPTION:
           "schema_version": "0.0.1",
           "score": 0.85,
           "reason": "Response is accurate and concise.",
-          "status": "completed",
+          "status": "Completed",  // Valid values: "Completed", "Error", "Skipped"
           "properties": {"model_used": "gpt-4o", "custom_flag": true},
           "threshold": null,
           "passed": true

@@ -38,7 +38,7 @@ DESCRIPTION:
           "schema_version": "0.0.1",
           "score": 0.85,
           "reason": "Response is accurate and concise.",
-          "status": "completed",
+          "status": "Completed",  // Valid values: "Completed", "Error", "Skipped"
           "properties": {"model_used": "gpt-4o", "custom_flag": true},
           "threshold": null,
           "passed": true
@@ -78,6 +78,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EndpointBasedEvaluatorDefinition,
     EvaluatorCategory,
+    EvaluatorMetric,
     EvaluatorType,
     EvaluatorVersion,
 )
@@ -157,6 +158,13 @@ with (
             evaluator_type=EvaluatorType.CUSTOM,
             definition=EndpointBasedEvaluatorDefinition(
                 connection_name=connection_name,
+                metrics={
+                    "score": EvaluatorMetric(
+                        type="ordinal",
+                        min_value=1,
+                        max_value=5,
+                    )
+                },
             ),
             display_name="Endpoint Evaluator (Entra ID)",
             description="Custom scoring endpoint authenticated with Entra ID managed identity",
