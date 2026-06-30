@@ -160,15 +160,10 @@ def _compare_code_reports_to_changelog(
         expected_path = os.path.join(DATA_DIR, expected_changelog_file)
 
         # If UPDATE_EXPECTED is set, (re)generate the expected changelog file.
-        if os.environ.get("UPDATE_EXPECTED"):
-            if order_insensitive:
-                raise AssertionError(
-                    "Updating the expected changelog file is not permitted when order_insensitive is True."
-                )
+        if os.environ.get("UPDATE_EXPECTED") and not order_insensitive:
             os.makedirs(DATA_DIR, exist_ok=True)
             with open(expected_path, "w", encoding="utf-8", newline="\n") as f:
                 f.write(actual_changelog + "\n")
-            return
 
         # Without UPDATE_EXPECTED, the expected file must already exist; otherwise, fail explicitly.
         if not os.path.isfile(expected_path):

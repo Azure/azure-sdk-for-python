@@ -20,6 +20,7 @@ import inspect
 import subprocess
 import sys
 import shutil
+import tempfile
 from enum import Enum
 from typing import Dict, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
@@ -666,40 +667,30 @@ def report_azure_mgmt_versioned_module(code_report):
 def generate_apistub_markdown(package_name: str, out_dir: str, version: Optional[str] = None) -> str:
     """Generate ``api.md`` for ``package_name`` and return its path.
 
-    The package wheel is downloaded from PyPI (the installed version is used
-    when ``version`` is not provided), the APIView token file is generated with
-    ``apistub`` and exported to markdown. This avoids importing the package and
-    does not require the package source to be present in the repo.
+    Delegates to ``azpysdk apistub``, which downloads the released wheel from
+    PyPI (the installed version is used when ``version`` is not provided),
+    generates the APIView token file, and exports it to ``api.md``.
     """
     if not version:
         from importlib.metadata import version as _pkg_version
 
         version = _pkg_version(package_name)
 
-    # Use a fresh subdir per version so a stale wheel is never picked up.
-    out_dir = os.path.join(out_dir, f"_apistub_{package_name}_{version}")
-    if os.path.isdir(out_dir):
-        shutil.rmtree(out_dir)
-    os.makedirs(out_dir)
-    subprocess.check_call(
-        [sys.executable, "-m", "pip", "download", f"{package_name}=={version}",
-         "--no-deps", "--only-binary=:all:", "-d", out_dir],
-        cwd=out_dir,
-    )
-    whl = next((f for f in os.listdir(out_dir) if f.endswith(".whl")), None)
-    if not whl:
-        raise FileNotFoundError(f"No wheel downloaded for {package_name}=={version}")
-    pkg_path = os.path.join(out_dir, whl)
+    azpysdk = shutil.which("azpysdk")
+    if not azpysdk:
+        raise RuntimeError(
+            "azpysdk is not installed. Install it with "
+            "'pip install -e eng/tools/azure-sdk-tools' (or 'pip install azure-sdk-tools')."
+        )
 
-    # Generate the APIView token file, then export it to api.md.
+    # Use a fresh temp dir per call so a stale api.md is never picked up.
+    dest_dir = tempfile.mkdtemp(prefix=f"apistub_{package_name}_{version}_")
+
     subprocess.check_call(
-        [sys.executable, "-m", "apistub", "--pkg-path", pkg_path, "--out-path", out_dir, "--skip-pylint"],
+        [azpysdk, "apistub", "--pypi-version", version, "--dest-dir", dest_dir, "."],
         cwd=out_dir,
     )
-    token_json = os.path.join(out_dir, f"{package_name}_python.json")
-    md_script = os.path.join(root_dir, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
-    subprocess.check_call(["pwsh", md_script, "-TokenJsonPath", token_json, "-OutputPath", out_dir])
-    api_md = os.path.join(out_dir, "api.md")
+    api_md = os.path.join(dest_dir, "api.md")
     if not os.path.isfile(api_md):
         raise FileNotFoundError(f"apistub did not produce api.md at {api_md}")
     return api_md
