@@ -6,162 +6,24 @@
 
   - Model `ResourceOperationDetails` added property `fallback_operation_info`
   - Model `RetryPolicy` added property `on_failure_action`
-  - Added model `CancelOperationsContent`
-  - Added model `ExecuteDeallocateContent`
-  - Added model `ExecuteDeleteContent`
-  - Added model `ExecuteHibernateContent`
-  - Added model `ExecuteStartContent`
   - Added model `FallbackOperationInfo`
-  - Added model `GetOperationStatusContent`
-  - Added model `VirtualMachineBulkOperationsOperations`
+  - Added operation group `VirtualMachineBulkOperationsOperations`
 
 ### Breaking Changes
 
   - Deleted or renamed client `ComputeBulkActionsMgmtClient`
+  - Renamed model `CancelOperationsRequest` to `CancelOperationsContent`
+  - Renamed model `ExecuteDeallocateRequest` to `ExecuteDeallocateContent`
+  - Renamed model `ExecuteDeleteRequest` to `ExecuteDeleteContent`
+  - Renamed model `ExecuteHibernateRequest` to `ExecuteHibernateContent`
+  - Renamed model `ExecuteStartRequest` to `ExecuteStartContent`
+  - Renamed model `GetOperationStatusRequest` to `GetOperationStatusContent`
+  - Deleted or renamed operation group `BulkActionsOperations`
   - Model `ExecutionParameters` deleted or renamed its instance variable `optimization_preference`
-  - Deleted or renamed model `AcceleratorManufacturer`
-  - Deleted or renamed model `AcceleratorType`
-  - Deleted or renamed model `AdditionalCapabilities`
-  - Deleted or renamed model `AdditionalUnattendContent`
-  - Deleted or renamed model `AllInstancesDown`
-  - Deleted or renamed model `AllocationStrategy`
-  - Deleted or renamed model `ApiEntityReference`
-  - Deleted or renamed model `ApiError`
-  - Deleted or renamed model `ApiErrorBase`
-  - Deleted or renamed model `ApplicationProfile`
-  - Deleted or renamed model `ArchitectureType`
-  - Deleted or renamed model `BootDiagnostics`
-  - Deleted or renamed model `CachingTypes`
-  - Deleted or renamed model `CancelOperationsRequest`
-  - Deleted or renamed model `CapacityReservationProfile`
-  - Deleted or renamed model `CapacityType`
-  - Deleted or renamed model `ComputeProfile`
-  - Deleted or renamed model `CpuManufacturer`
-  - Deleted or renamed model `CreateResourceOperationResponse`
-  - Deleted or renamed model `CreatedByType`
-  - Deleted or renamed model `DataDisk`
-  - Deleted or renamed model `DeleteOptions`
-  - Deleted or renamed model `DiagnosticsProfile`
-  - Deleted or renamed model `DiffDiskOptions`
-  - Deleted or renamed model `DiffDiskPlacement`
-  - Deleted or renamed model `DiffDiskSettings`
-  - Deleted or renamed model `DiskControllerTypes`
-  - Deleted or renamed model `DiskCreateOptionTypes`
-  - Deleted or renamed model `DiskDeleteOptionTypes`
-  - Deleted or renamed model `DiskDetachOptionTypes`
-  - Deleted or renamed model `DiskEncryptionSetParameters`
-  - Deleted or renamed model `DiskEncryptionSettings`
-  - Deleted or renamed model `DomainNameLabelScopeTypes`
-  - Deleted or renamed model `EncryptionIdentity`
-  - Deleted or renamed model `EventGridAndResourceGraph`
-  - Deleted or renamed model `EvictionPolicy`
-  - Deleted or renamed model `ExecuteCreateRequest`
-  - Deleted or renamed model `ExecuteDeallocateRequest`
-  - Deleted or renamed model `ExecuteDeleteRequest`
-  - Deleted or renamed model `ExecuteHibernateRequest`
-  - Deleted or renamed model `ExecuteStartRequest`
-  - Deleted or renamed model `GetOperationStatusRequest`
-  - Deleted or renamed model `HostEndpointSettings`
-  - Deleted or renamed model `HyperVGeneration`
-  - Deleted or renamed model `IPVersions`
-  - Deleted or renamed model `ImageReference`
-  - Deleted or renamed model `InnerError`
-  - Deleted or renamed model `KeyVaultKeyReference`
-  - Deleted or renamed model `KeyVaultSecretReference`
-  - Deleted or renamed model `LaunchBulkInstancesOperationProperties`
-  - Deleted or renamed model `LinuxConfiguration`
-  - Deleted or renamed model `LinuxPatchAssessmentMode`
-  - Deleted or renamed model `LinuxPatchSettings`
-  - Deleted or renamed model `LinuxVMGuestPatchAutomaticByPlatformRebootSetting`
-  - Deleted or renamed model `LinuxVMGuestPatchAutomaticByPlatformSettings`
-  - Deleted or renamed model `LinuxVMGuestPatchMode`
-  - Deleted or renamed model `LocalStorageDiskType`
-  - Deleted or renamed model `LocationBasedLaunchBulkInstancesOperation`
-  - Deleted or renamed model `ManagedDiskParameters`
-  - Deleted or renamed model `ManagedServiceIdentity`
-  - Deleted or renamed model `ManagedServiceIdentityType`
-  - Deleted or renamed model `Mode`
-  - Deleted or renamed model `Modes`
-  - Deleted or renamed model `NetworkApiVersion`
-  - Deleted or renamed model `NetworkInterfaceAuxiliaryMode`
-  - Deleted or renamed model `NetworkInterfaceAuxiliarySku`
-  - Deleted or renamed model `NetworkInterfaceReference`
-  - Deleted or renamed model `NetworkInterfaceReferenceProperties`
-  - Deleted or renamed model `NetworkProfile`
-  - Deleted or renamed model `OSDisk`
-  - Deleted or renamed model `OSImageNotificationProfile`
-  - Deleted or renamed model `OSProfile`
-  - Deleted or renamed model `OperatingSystemTypes`
-  - Deleted or renamed model `OperationStatusResult`
-  - Deleted or renamed model `OptimizationPreference`
-  - Deleted or renamed model `PatchSettings`
-  - Deleted or renamed model `Plan`
-  - Deleted or renamed model `PriorityProfile`
-  - Deleted or renamed model `ProtocolTypes`
-  - Deleted or renamed model `ProvisioningState`
-  - Deleted or renamed model `ProxyAgentSettings`
-  - Deleted or renamed model `ProxyResource`
-  - Deleted or renamed model `PublicIPAddressSku`
-  - Deleted or renamed model `PublicIPAddressSkuName`
-  - Deleted or renamed model `PublicIPAddressSkuTier`
-  - Deleted or renamed model `PublicIPAllocationMethod`
-  - Deleted or renamed model `Resource`
-  - Deleted or renamed model `ResourceProvisionPayload`
-  - Deleted or renamed model `ScheduledEventsAdditionalPublishingTargets`
-  - Deleted or renamed model `ScheduledEventsPolicy`
-  - Deleted or renamed model `ScheduledEventsProfile`
-  - Deleted or renamed model `SecurityEncryptionTypes`
-  - Deleted or renamed model `SecurityProfile`
-  - Deleted or renamed model `SecurityTypes`
-  - Deleted or renamed model `SettingNames`
-  - Deleted or renamed model `SshConfiguration`
-  - Deleted or renamed model `SshPublicKey`
-  - Deleted or renamed model `StorageAccountTypes`
-  - Deleted or renamed model `StorageProfile`
-  - Deleted or renamed model `SubResource`
-  - Deleted or renamed model `SystemData`
-  - Deleted or renamed model `TerminateNotificationProfile`
-  - Deleted or renamed model `UefiSettings`
-  - Deleted or renamed model `UserAssignedIdentity`
-  - Deleted or renamed model `UserInitiatedReboot`
-  - Deleted or renamed model `UserInitiatedRedeploy`
-  - Deleted or renamed model `VMAttributeMinMaxDouble`
-  - Deleted or renamed model `VMAttributeMinMaxInteger`
-  - Deleted or renamed model `VMAttributeSupport`
-  - Deleted or renamed model `VMAttributes`
-  - Deleted or renamed model `VMCategory`
-  - Deleted or renamed model `VMDiskSecurityProfile`
-  - Deleted or renamed model `VMGalleryApplication`
-  - Deleted or renamed model `VMOperationStatus`
-  - Deleted or renamed model `VaultCertificate`
-  - Deleted or renamed model `VaultSecretGroup`
-  - Deleted or renamed model `VirtualHardDisk`
-  - Deleted or renamed model `VirtualMachine`
-  - Deleted or renamed model `VirtualMachineExtension`
-  - Deleted or renamed model `VirtualMachineExtensionProperties`
-  - Deleted or renamed model `VirtualMachineIpTag`
-  - Deleted or renamed model `VirtualMachineNetworkInterfaceConfiguration`
-  - Deleted or renamed model `VirtualMachineNetworkInterfaceConfigurationProperties`
-  - Deleted or renamed model `VirtualMachineNetworkInterfaceDnsSettingsConfiguration`
-  - Deleted or renamed model `VirtualMachineNetworkInterfaceIPConfiguration`
-  - Deleted or renamed model `VirtualMachineNetworkInterfaceIPConfigurationProperties`
-  - Deleted or renamed model `VirtualMachineProfile`
-  - Deleted or renamed model `VirtualMachinePublicIPAddressConfiguration`
-  - Deleted or renamed model `VirtualMachinePublicIPAddressConfigurationProperties`
-  - Deleted or renamed model `VirtualMachinePublicIPAddressDnsSettingsConfiguration`
-  - Deleted or renamed model `VirtualMachineType`
-  - Deleted or renamed model `VmSizeProfile`
-  - Deleted or renamed model `WinRMConfiguration`
-  - Deleted or renamed model `WinRMListener`
-  - Deleted or renamed model `WindowsConfiguration`
-  - Deleted or renamed model `WindowsPatchAssessmentMode`
-  - Deleted or renamed model `WindowsVMGuestPatchAutomaticByPlatformRebootSetting`
-  - Deleted or renamed model `WindowsVMGuestPatchAutomaticByPlatformSettings`
-  - Deleted or renamed model `WindowsVMGuestPatchMode`
-  - Deleted or renamed model `ZoneAllocationPolicy`
-  - Deleted or renamed model `ZoneDistributionStrategy`
-  - Deleted or renamed model `ZonePreference`
-  - Deleted or renamed model `BulkActionsOperations`
+
+### Other Changes
+
+  - Deleted model `AcceleratorManufacturer`/`AcceleratorType`/`AdditionalCapabilities`/`AdditionalUnattendContent`/`AllInstancesDown`/`AllocationStrategy`/`ApiEntityReference`/`ApiError`/`ApiErrorBase`/`ApplicationProfile`/`ArchitectureType`/`BootDiagnostics`/`CachingTypes`/`CapacityReservationProfile`/`CapacityType`/`ComputeProfile`/`CpuManufacturer`/`CreateResourceOperationResponse`/`CreatedByType`/`DataDisk`/`DeleteOptions`/`DiagnosticsProfile`/`DiffDiskOptions`/`DiffDiskPlacement`/`DiffDiskSettings`/`DiskControllerTypes`/`DiskCreateOptionTypes`/`DiskDeleteOptionTypes`/`DiskDetachOptionTypes`/`DiskEncryptionSetParameters`/`DiskEncryptionSettings`/`DomainNameLabelScopeTypes`/`EncryptionIdentity`/`EventGridAndResourceGraph`/`EvictionPolicy`/`ExecuteCreateRequest`/`HostEndpointSettings`/`HyperVGeneration`/`IPVersions`/`ImageReference`/`InnerError`/`KeyVaultKeyReference`/`KeyVaultSecretReference`/`LaunchBulkInstancesOperationProperties`/`LinuxConfiguration`/`LinuxPatchAssessmentMode`/`LinuxPatchSettings`/`LinuxVMGuestPatchAutomaticByPlatformRebootSetting`/`LinuxVMGuestPatchAutomaticByPlatformSettings`/`LinuxVMGuestPatchMode`/`LocalStorageDiskType`/`LocationBasedLaunchBulkInstancesOperation`/`ManagedDiskParameters`/`ManagedServiceIdentity`/`ManagedServiceIdentityType`/`Mode`/`Modes`/`NetworkApiVersion`/`NetworkInterfaceAuxiliaryMode`/`NetworkInterfaceAuxiliarySku`/`NetworkInterfaceReference`/`NetworkInterfaceReferenceProperties`/`NetworkProfile`/`OSDisk`/`OSImageNotificationProfile`/`OSProfile`/`OperatingSystemTypes`/`OperationStatusResult`/`OptimizationPreference`/`PatchSettings`/`Plan`/`PriorityProfile`/`ProtocolTypes`/`ProvisioningState`/`ProxyAgentSettings`/`ProxyResource`/`PublicIPAddressSku`/`PublicIPAddressSkuName`/`PublicIPAddressSkuTier`/`PublicIPAllocationMethod`/`Resource`/`ResourceProvisionPayload`/`ScheduledEventsAdditionalPublishingTargets`/`ScheduledEventsPolicy`/`ScheduledEventsProfile`/`SecurityEncryptionTypes`/`SecurityProfile`/`SecurityTypes`/`SettingNames`/`SshConfiguration`/`SshPublicKey`/`StorageAccountTypes`/`StorageProfile`/`SubResource`/`SystemData`/`TerminateNotificationProfile`/`UefiSettings`/`UserAssignedIdentity`/`UserInitiatedReboot`/`UserInitiatedRedeploy`/`VMAttributeMinMaxDouble`/`VMAttributeMinMaxInteger`/`VMAttributeSupport`/`VMAttributes`/`VMCategory`/`VMDiskSecurityProfile`/`VMGalleryApplication`/`VMOperationStatus`/`VaultCertificate`/`VaultSecretGroup`/`VirtualHardDisk`/`VirtualMachine`/`VirtualMachineExtension`/`VirtualMachineExtensionProperties`/`VirtualMachineIpTag`/`VirtualMachineNetworkInterfaceConfiguration`/`VirtualMachineNetworkInterfaceConfigurationProperties`/`VirtualMachineNetworkInterfaceDnsSettingsConfiguration`/`VirtualMachineNetworkInterfaceIPConfiguration`/`VirtualMachineNetworkInterfaceIPConfigurationProperties`/`VirtualMachineProfile`/`VirtualMachinePublicIPAddressConfiguration`/`VirtualMachinePublicIPAddressConfigurationProperties`/`VirtualMachinePublicIPAddressDnsSettingsConfiguration`/`VirtualMachineType`/`VmSizeProfile`/`WinRMConfiguration`/`WinRMListener`/`WindowsConfiguration`/`WindowsPatchAssessmentMode`/`WindowsVMGuestPatchAutomaticByPlatformRebootSetting`/`WindowsVMGuestPatchAutomaticByPlatformSettings`/`WindowsVMGuestPatchMode`/`ZoneAllocationPolicy`/`ZoneDistributionStrategy`/`ZonePreference` which actually were not used by SDK users
 
 ## 1.0.0b1 (1970-01-01)
 
