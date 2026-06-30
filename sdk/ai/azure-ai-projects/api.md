@@ -153,23 +153,16 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
-        @overload
+        @distributed_trace_async
         async def create_version_from_code(
                 self, 
                 agent_name: str, 
-                content: CreateAgentVersionFromCodeContent, 
                 *, 
-                code_zip_sha256: str, 
-                **kwargs: Any
-            ) -> AgentVersionDetails: ...
-
-        @overload
-        async def create_version_from_code(
-                self, 
-                agent_name: str, 
-                content: JSON, 
-                *, 
-                code_zip_sha256: str, 
+                code: Union[bytes, IO[bytes]], 
+                code_zip_sha256: Optional[str] = ..., 
+                definition: HostedAgentDefinition, 
+                description: Optional[str] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
@@ -3904,40 +3897,6 @@ namespace azure.ai.projects.models
                 embedding_configuration: EmbeddingConfiguration, 
                 field_mapping: FieldMapping, 
                 tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.CreateAgentVersionFromCodeContent(_Model):
-        code: Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]
-        metadata: CreateAgentVersionFromCodeMetadata
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                code: FileType, 
-                metadata: CreateAgentVersionFromCodeMetadata
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.CreateAgentVersionFromCodeMetadata(_Model):
-        definition: HostedAgentDefinition
-        description: Optional[str]
-        metadata: Optional[dict[str, str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                definition: HostedAgentDefinition, 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ...
             ) -> None: ...
 
         @overload
@@ -9502,23 +9461,16 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
-        @overload
+        @distributed_trace
         def create_version_from_code(
                 self, 
                 agent_name: str, 
-                content: CreateAgentVersionFromCodeContent, 
                 *, 
-                code_zip_sha256: str, 
-                **kwargs: Any
-            ) -> AgentVersionDetails: ...
-
-        @overload
-        def create_version_from_code(
-                self, 
-                agent_name: str, 
-                content: JSON, 
-                *, 
-                code_zip_sha256: str, 
+                code: Union[bytes, IO[bytes]], 
+                code_zip_sha256: Optional[str] = ..., 
+                definition: HostedAgentDefinition, 
+                description: Optional[str] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
