@@ -25,6 +25,7 @@ class TestApistubRegistration:
         assert args.command == "apistub"
         assert args.generate_from_pypi == "1.0.0"
 
+
 # ── get_package_wheel_path() ─────────────────────────────────────────────
 
 
