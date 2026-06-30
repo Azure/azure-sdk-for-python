@@ -714,15 +714,19 @@ def build_report_from_apistub(
     so they can be inspected after the run instead of being left in a temp dir.
     """
     api_md = generate_apistub_markdown(package_name, out_dir, version, from_pypi=from_pypi)
-    report = convert_api_md_to_report(api_md)
-    if debug:
-        prefix = f"{label}_" if label else ""
-        debug_api_md = os.path.join(out_dir, f"{prefix}api.md")
-        shutil.copyfile(api_md, debug_api_md)
-        debug_report = os.path.join(out_dir, f"{prefix}code_report.json")
-        with open(debug_report, "w") as fd:
-            json.dump(report, fd, indent=2)
-        _LOGGER.info(f"[debug] kept {debug_api_md} and {debug_report}")
+    dest_dir = os.path.dirname(api_md)
+    try:
+        report = convert_api_md_to_report(api_md)
+        if debug:
+            prefix = f"{label}_" if label else ""
+            debug_api_md = os.path.join(out_dir, f"{prefix}api.md")
+            shutil.copyfile(api_md, debug_api_md)
+            debug_report = os.path.join(out_dir, f"{prefix}code_report.json")
+            with open(debug_report, "w") as fd:
+                json.dump(report, fd, indent=2)
+            _LOGGER.info(f"[debug] kept {debug_api_md} and {debug_report}")
+    finally:
+        shutil.rmtree(dest_dir, ignore_errors=True)
     return report
 
 
