@@ -8,14 +8,12 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-import hashlib
-import os
-from pathlib import Path
 from typing import Union, Optional, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from ... import models as _models
+from ...operations._patch_agents import _compute_sha256_from_stream
 from ...models._patch import (
     _FOUNDRY_FEATURES_HEADER_NAME,
     _has_header_case_insensitive,
@@ -202,223 +200,99 @@ class AgentsOperations(GeneratedAgentsOperations):
                         raise new_exc from exc
             raise
 
-    @overload
-    async def upload_session_file(
-        self,
-        agent_name: str,
-        session_id: str,
-        *,
-        content: bytes,
-        remote_path: str,
-        **kwargs: Any,
-    ) -> _models.SessionFileWriteResult:
-        """Upload binary content to the session sandbox.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
-        :keyword content: The binary content to upload. Required.
-        :paramtype content: bytes
-        :keyword remote_path: The destination file path within the sandbox, relative to the session home
-         directory. Required.
-        :paramtype remote_path: str
-        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        ...
-
-    @overload
-    async def upload_session_file(
-        self,
-        agent_name: str,
-        session_id: str,
-        *,
-        file_path: Union[str, "os.PathLike[str]"],
-        remote_path: str,
-        **kwargs: Any,
-    ) -> _models.SessionFileWriteResult:
-        """Upload a file from disk to the session sandbox.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
-        :keyword file_path: The full path to a local file whose contents should be uploaded. Required.
-        :paramtype file_path: str or os.PathLike[str]
-        :keyword remote_path: The destination file path within the sandbox, relative to the session home
-         directory. Required.
-        :paramtype remote_path: str
-        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        :raises FileNotFoundError: If *file_path* does not exist.
-        """
-        ...
-
     @distributed_trace_async
-    async def upload_session_file(  # type: ignore[override]
+    async def create_version_from_code(
         self,
         agent_name: str,
-        session_id: str,
         *,
-        content: Optional[bytes] = None,
-        file_path: Optional[Union[str, "os.PathLike[str]"]] = None,
-        remote_path: str,
+        definition: _models.HostedAgentDefinition,
+        code: IO[bytes],
+        code_zip_sha256: Optional[str] = None,
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         **kwargs: Any,
-    ) -> _models.SessionFileWriteResult:
-        """Upload a file to the session sandbox.
+    ) -> _models.AgentVersionDetails:
+        """Create an agent version from code.
 
-        Accepts either binary content directly or a local file path.
-        When a file path is provided the file is read from disk and its contents
-        are forwarded to the service. Maximum file size is 50 MB. Uploads
-        exceeding this limit return 413 Payload Too Large.
+        Creates a new agent version from code. Uploads the code zip and creates a new version for an
+        existing agent. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
+        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
+        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
 
-        :param agent_name: The name of the agent. Required.
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
-        :keyword content: The binary content to upload. Mutually exclusive with *file_path*.
-        :paramtype content: bytes
-        :keyword file_path: The full path to a local file whose contents should be uploaded.
-         Mutually exclusive with *content*.
-        :paramtype file_path: str or os.PathLike[str]
-        :keyword remote_path: The destination file path within the sandbox, relative to the session home
-         directory. Required.
-        :paramtype remote_path: str
-        :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionFileWriteResult
+        :keyword definition: The hosted agent definition including code_configuration (runtime,
+         entry_point), cpu, memory, and protocol_versions. Required.
+        :paramtype definition: ~azure.ai.projects.models.HostedAgentDefinition
+        :keyword code: The code zip file stream (max 250 MB). Required. The stream must
+         expose a ``name`` attribute (for example, a stream returned by
+         :meth:`pathlib.Path.open`) and that name must end with ``.zip``.
+        :paramtype code: IO[bytes]
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. If not provided, it will be calculated
+         automatically from the code content. Default value is None.
+        :paramtype code_zip_sha256: str
+        :keyword description: A human-readable description of the agent. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+         useful for storing additional information about the object in a structured
+         format, and querying for objects via API or the dashboard.
+
+         Keys are strings with a maximum length of 64 characters. Values are strings
+         with a maximum length of 512 characters. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
-        :raises ValueError: If both *content* and *file_path* are provided, or neither is provided.
-        :raises FileNotFoundError: If *file_path* is provided and does not exist.
         """
-        if content is not None and file_path is not None:
-            raise ValueError("Specify either 'content' or 'file_path', not both.")
-        if content is None and file_path is None:
-            raise ValueError("Specify either 'content' or 'file_path'.")
 
-        if file_path is not None:
-            p = Path(file_path)
-            if not p.exists():
-                raise FileNotFoundError(f"The provided file `{file_path}` does not exist.")
-            if p.is_dir():
-                raise ValueError(f"Provide a valid file path, not a folder path `{file_path}`.")
-            with open(file_path, "rb") as f:
-                content = f.read()
+        # If code_zip_sha256 is not provided, calculate it from the code content
+        if code_zip_sha256 is None:
+            code_zip_sha256 = _compute_sha256_from_stream(code)
 
-        assert content is not None  # Guaranteed by validation above
-
-        return await super()._upload_session_file(agent_name, session_id, content, remote_path=remote_path, **kwargs)
-
-    @distributed_trace_async
-    async def download_session_file_to_path(
-        self,
-        agent_name: str,
-        session_id: str,
-        *,
-        file_path: Union[str, "os.PathLike[str]"],
-        overwrite: bool = False,
-        remote_path: str,
-        **kwargs: Any,
-    ) -> None:
-        """Download a session file directly to disk.
-
-        Downloads the file at the specified sandbox path and writes it to a local file.
-        The remote path is resolved relative to the session home directory.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
-        :keyword file_path: The full path to the local file where the content should be written. Required.
-        :paramtype file_path: str or os.PathLike[str]
-        :keyword overwrite: If True, overwrite the local file if it already exists. If False (default),
-         raise FileExistsError when the file already exists.
-        :paramtype overwrite: bool
-        :keyword remote_path: The file path to download from the sandbox, relative to the session home
-         directory. Required.
-        :paramtype remote_path: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        :raises FileExistsError: If *file_path* already exists and *overwrite* is False.
-        :raises ValueError: If *file_path* points to a directory.
-        :raises OSError: If the file cannot be written.
-        """
-        p = Path(file_path)
-        if p.exists():
-            if p.is_dir():
-                raise ValueError(f"Provide a valid file path, not a folder path `{file_path}`.")
-            if not overwrite:
-                raise FileExistsError(f"The file `{file_path}` already exists. Set overwrite=True to replace it.")
-
-        # Download the file content using the existing method
-        content_iterator = await self.download_session_file_as_bytes(
-            agent_name=agent_name,
-            agent_session_id=session_id,
-            remote_path=remote_path,
-            **kwargs,
+        # Build content from expanded parameters using internal model classes
+        metadata_obj = _models._models._CreateAgentVersionFromCodeMetadata(  # pylint: disable=protected-access
+            definition=definition,
+            description=description,
+            metadata=metadata,
+        )
+        content = _models._models._CreateAgentVersionFromCodeContent(  # pylint: disable=protected-access
+            metadata=metadata_obj,
+            code=code,
         )
 
-        # Write the content to disk
-        with open(file_path, "wb") as f:
-            async for chunk in content_iterator:
-                f.write(chunk)
+        if getattr(self._config, "allow_preview", False):
+            # Add Foundry-Features header if not already present
+            headers = kwargs.get("headers")
+            if headers is None:
+                kwargs["headers"] = {_FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS}
+            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
+                kwargs["headers"] = headers
 
-    @distributed_trace_async
-    async def download_code_to_path(
-        self,
-        agent_name: str,
-        *,
-        file_path: Union[str, "os.PathLike[str]"],
-        overwrite: bool = False,
-        agent_version: Optional[str] = None,
-        **kwargs: Any,
-    ) -> str:
-        """Download agent code directly to disk.
-
-        Downloads the code zip for a code-based hosted agent and writes it to a local file.
-
-        If ``agent_version`` is supplied, downloads that version's code zip; otherwise
-        downloads the latest version's code zip.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :keyword file_path: The full path to the local file where the code zip should be written. Required.
-        :paramtype file_path: str or os.PathLike[str]
-        :keyword overwrite: If True, overwrite the local file if it already exists. If False (default),
-         raise FileExistsError when the file already exists.
-        :paramtype overwrite: bool
-        :keyword agent_version: The version of the agent whose code zip should be downloaded.
-         If omitted, the latest version's code zip is downloaded. Default value is None.
-        :paramtype agent_version: str
-        :return: The SHA-256 hex digest of the downloaded file.
-        :rtype: str
-        :raises ~azure.core.exceptions.HttpResponseError:
-        :raises FileExistsError: If *file_path* already exists and *overwrite* is False.
-        :raises ValueError: If *file_path* points to a directory.
-        :raises OSError: If the file cannot be written.
-        """
-        p = Path(file_path)
-        if p.exists():
-            if p.is_dir():
-                raise ValueError(f"Provide a valid file path, not a folder path `{file_path}`.")
-            if not overwrite:
-                raise FileExistsError(f"The file `{file_path}` already exists. Set overwrite=True to replace it.")
-
-        # Download the code content using the existing method
-        content_iterator = await self.download_code_as_bytes(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            **kwargs,
-        )
-
-        # Write the content to disk and calculate SHA-256
-        sha = hashlib.sha256()
-        with open(file_path, "wb") as f:
-            async for chunk in content_iterator:
-                f.write(chunk)
-                sha.update(chunk)
-
-        return sha.hexdigest()
+        try:
+            return await super()._create_version_from_code(
+                agent_name,
+                content,
+                code_zip_sha256=code_zip_sha256,
+                **kwargs,
+            )
+        except HttpResponseError as exc:
+            if exc.status_code == 403 and not self._config.allow_preview and exc.model is not None:
+                api_error_response = exc.model
+                if hasattr(api_error_response, "error") and api_error_response.error is not None:
+                    if api_error_response.error.code == _PREVIEW_FEATURE_REQUIRED_CODE:
+                        new_exc = HttpResponseError(
+                            message=f"{exc.message} {_PREVIEW_FEATURE_ADDED_ERROR_MESSAGE}",
+                        )
+                        new_exc.status_code = exc.status_code
+                        new_exc.reason = exc.reason
+                        new_exc.response = exc.response
+                        new_exc.model = exc.model
+                        raise new_exc from exc
+            raise

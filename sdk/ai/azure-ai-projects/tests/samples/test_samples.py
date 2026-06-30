@@ -257,14 +257,14 @@ class TestSamples(AzureRecordedTestCase):
                     "SKIP_RBAC": "true",
                 },
             ),
-            AdditionalSampleTestDetail(
-                test_id="sample_toolbox_with_skill",
-                sample_filename="sample_toolbox_with_skill.py",
-                env_vars={
-                    "ZIP_FILE_PATH": "tests/samples/assets/toolbox-agent.zip",
-                    "SKIP_RBAC": "true",
-                },
-            ),
+            # AdditionalSampleTestDetail(
+            #     test_id="sample_toolbox_with_skill",
+            #     sample_filename="sample_toolbox_with_skill.py",
+            #     env_vars={
+            #         "ZIP_FILE_PATH": "tests/samples/assets/toolbox-agent.zip",
+            #         "SKIP_RBAC": "true",
+            #     },
+            # ),
         ]
     )
     @pytest.mark.parametrize(

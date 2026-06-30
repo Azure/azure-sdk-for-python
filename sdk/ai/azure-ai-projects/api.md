@@ -153,23 +153,16 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
-        @overload
+        @distributed_trace_async
         async def create_version_from_code(
                 self, 
                 agent_name: str, 
-                content: CreateAgentVersionFromCodeContent, 
                 *, 
-                code_zip_sha256: str, 
-                **kwargs: Any
-            ) -> AgentVersionDetails: ...
-
-        @overload
-        async def create_version_from_code(
-                self, 
-                agent_name: str, 
-                content: JSON, 
-                *, 
-                code_zip_sha256: str, 
+                code: IO[bytes], 
+                code_zip_sha256: Optional[str] = ..., 
+                definition: HostedAgentDefinition, 
+                description: Optional[str] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
@@ -227,10 +220,10 @@ namespace azure.ai.projects.aio.operations
         async def delete_session_file(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 *, 
+                path: str, 
                 recursive: Optional[bool] = ..., 
-                remote_path: str, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -252,7 +245,7 @@ namespace azure.ai.projects.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        async def download_code_as_bytes(
+        async def download_code(
                 self, 
                 agent_name: str, 
                 *, 
@@ -261,37 +254,14 @@ namespace azure.ai.projects.aio.operations
             ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
-        async def download_code_to_path(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_version: Optional[str] = ..., 
-                file_path: Union[str, PathLike[str]], 
-                overwrite: bool = False, 
-                **kwargs: Any
-            ) -> str: ...
-
-        @distributed_trace_async
-        async def download_session_file_as_bytes(
-                self, 
-                agent_name: str, 
-                agent_session_id: str, 
-                *, 
-                remote_path: str, 
-                **kwargs: Any
-            ) -> AsyncIterator[bytes]: ...
-
-        @distributed_trace_async
-        async def download_session_file_to_path(
+        async def download_session_file(
                 self, 
                 agent_name: str, 
                 session_id: str, 
                 *, 
-                file_path: Union[str, PathLike[str]], 
-                overwrite: bool = False, 
-                remote_path: str, 
+                path: str, 
                 **kwargs: Any
-            ) -> None: ...
+            ) -> AsyncIterator[bytes]: ...
 
         @distributed_trace_async
         async def enable(
@@ -347,12 +317,12 @@ namespace azure.ai.projects.aio.operations
         def list_session_files(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 *, 
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
-                remote_path: Optional[str] = ..., 
+                path: Optional[str] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[SessionDirectoryEntry]: ...
 
@@ -418,25 +388,14 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> AgentDetails: ...
 
-        @overload
+        @distributed_trace_async
         async def upload_session_file(
                 self, 
                 agent_name: str, 
                 session_id: str, 
-                *, 
                 content: bytes, 
-                remote_path: str, 
-                **kwargs: Any
-            ) -> SessionFileWriteResult: ...
-
-        @overload
-        async def upload_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
                 *, 
-                file_path: Union[str, PathLike[str]], 
-                remote_path: str, 
+                path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
@@ -3938,40 +3897,6 @@ namespace azure.ai.projects.models
                 embedding_configuration: EmbeddingConfiguration, 
                 field_mapping: FieldMapping, 
                 tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.CreateAgentVersionFromCodeContent(_Model):
-        code: Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]
-        metadata: CreateAgentVersionFromCodeMetadata
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                code: FileType, 
-                metadata: CreateAgentVersionFromCodeMetadata
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.CreateAgentVersionFromCodeMetadata(_Model):
-        definition: HostedAgentDefinition
-        description: Optional[str]
-        metadata: Optional[dict[str, str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                definition: HostedAgentDefinition, 
-                description: Optional[str] = ..., 
-                metadata: Optional[dict[str, str]] = ...
             ) -> None: ...
 
         @overload
@@ -9536,23 +9461,16 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
-        @overload
+        @distributed_trace
         def create_version_from_code(
                 self, 
                 agent_name: str, 
-                content: CreateAgentVersionFromCodeContent, 
                 *, 
-                code_zip_sha256: str, 
-                **kwargs: Any
-            ) -> AgentVersionDetails: ...
-
-        @overload
-        def create_version_from_code(
-                self, 
-                agent_name: str, 
-                content: JSON, 
-                *, 
-                code_zip_sha256: str, 
+                code: IO[bytes], 
+                code_zip_sha256: Optional[str] = ..., 
+                definition: HostedAgentDefinition, 
+                description: Optional[str] = ..., 
+                metadata: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
 
@@ -9610,10 +9528,10 @@ namespace azure.ai.projects.operations
         def delete_session_file(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 *, 
+                path: str, 
                 recursive: Optional[bool] = ..., 
-                remote_path: str, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -9635,7 +9553,7 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
         @distributed_trace
-        def download_code_as_bytes(
+        def download_code(
                 self, 
                 agent_name: str, 
                 *, 
@@ -9644,37 +9562,14 @@ namespace azure.ai.projects.operations
             ) -> Iterator[bytes]: ...
 
         @distributed_trace
-        def download_code_to_path(
-                self, 
-                agent_name: str, 
-                *, 
-                agent_version: Optional[str] = ..., 
-                file_path: Union[str, PathLike[str]], 
-                overwrite: bool = False, 
-                **kwargs: Any
-            ) -> str: ...
-
-        @distributed_trace
-        def download_session_file_as_bytes(
-                self, 
-                agent_name: str, 
-                agent_session_id: str, 
-                *, 
-                remote_path: str, 
-                **kwargs: Any
-            ) -> Iterator[bytes]: ...
-
-        @distributed_trace
-        def download_session_file_to_path(
+        def download_session_file(
                 self, 
                 agent_name: str, 
                 session_id: str, 
                 *, 
-                file_path: Union[str, PathLike[str]], 
-                overwrite: bool = False, 
-                remote_path: str, 
+                path: str, 
                 **kwargs: Any
-            ) -> None: ...
+            ) -> Iterator[bytes]: ...
 
         @distributed_trace
         def enable(
@@ -9730,12 +9625,12 @@ namespace azure.ai.projects.operations
         def list_session_files(
                 self, 
                 agent_name: str, 
-                agent_session_id: str, 
+                session_id: str, 
                 *, 
                 before: Optional[str] = ..., 
                 limit: Optional[int] = ..., 
                 order: Optional[Union[str, PageOrder]] = ..., 
-                remote_path: Optional[str] = ..., 
+                path: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[SessionDirectoryEntry]: ...
 
@@ -9801,25 +9696,14 @@ namespace azure.ai.projects.operations
                 **kwargs: Any
             ) -> AgentDetails: ...
 
-        @overload
+        @distributed_trace
         def upload_session_file(
                 self, 
                 agent_name: str, 
                 session_id: str, 
-                *, 
                 content: bytes, 
-                remote_path: str, 
-                **kwargs: Any
-            ) -> SessionFileWriteResult: ...
-
-        @overload
-        def upload_session_file(
-                self, 
-                agent_name: str, 
-                session_id: str, 
                 *, 
-                file_path: Union[str, PathLike[str]], 
-                remote_path: str, 
+                path: str, 
                 **kwargs: Any
             ) -> SessionFileWriteResult: ...
 
