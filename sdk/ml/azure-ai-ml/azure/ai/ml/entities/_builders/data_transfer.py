@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
 from azure.ai.ml._schema.job.data_transfer_job import (
     DataTransferCopyJobSchema,
     DataTransferExportJobSchema,
