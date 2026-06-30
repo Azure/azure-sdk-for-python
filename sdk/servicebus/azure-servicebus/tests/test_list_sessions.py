@@ -158,7 +158,7 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
                 receiver.session.set_state("updated-state")
 
             result = list(sb_client.list_queue_sessions(
-                servicebus_queue.name, session_state_updated_after=before_update))
+                servicebus_queue.name, state_updated_after=before_update))
 
             assert isinstance(result, list)
             assert session_id in result
@@ -230,7 +230,7 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
 
             result = list(sb_client.list_subscription_sessions(
                 servicebus_topic.name, servicebus_subscription.name,
-                session_state_updated_after=before_update))
+                state_updated_after=before_update))
 
             assert isinstance(result, list)
             assert session_id in result
