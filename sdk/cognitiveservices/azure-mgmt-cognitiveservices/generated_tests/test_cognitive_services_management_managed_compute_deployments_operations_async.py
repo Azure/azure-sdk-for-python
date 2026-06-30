@@ -47,6 +47,7 @@ class TestCognitiveServicesManagementManagedComputeDeploymentsOperationsAsync(Az
                         "model": "str",
                         "acceleratorType": "str",
                         "acceleratorsPerInstance": 0,
+                        "capabilities": {"str": "str"},
                         "computeId": "str",
                         "deploymentTemplate": "str",
                         "priority": "str",

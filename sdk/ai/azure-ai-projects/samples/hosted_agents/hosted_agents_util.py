@@ -1,9 +1,8 @@
 import asyncio
-import hashlib
 import sys
 import time
 from pathlib import Path
-from typing import Tuple
+from typing import IO, Tuple
 
 _SAMPLES_DIR = Path(__file__).resolve().parents[1]
 if str(_SAMPLES_DIR) not in sys.path:
@@ -21,38 +20,19 @@ from azure.ai.projects.models import (
 _ASSETS_DIR = Path(__file__).parent / "assets"
 
 
-def select_echo_agent_code_zip(
-    use_remote_build: bool,
-) -> Tuple[CodeDependencyResolution, str, bytes, str]:
-    """Pick the dependency-resolution mode and matching echo-agent zip, and load it.
-
-    When ``use_remote_build`` is ``True``, returns REMOTE_BUILD with a zip
-    built from ``assets/echo-agent/``; otherwise BUNDLED with
-    the checked-in ``assets/echo-agent-prebuilt.zip``.
-
-    Computes the zip SHA-256 and prints a one-line summary.
-
-    Returns ``(dependency_resolution, zip_filename, zip_bytes, zip_sha256)``.
-    """
+def select_echo_agent_code_zip(use_remote_build: bool) -> Tuple[CodeDependencyResolution, IO[bytes]]:
+    """Pick the dependency-resolution mode and matching echo-agent zip as ``IO[bytes]``."""
     dependency_resolution = (
         CodeDependencyResolution.REMOTE_BUILD if use_remote_build else CodeDependencyResolution.BUNDLED
     )
 
     if use_remote_build:
         zip_filename = "echo-agent.zip"
-        zip_bytes, zip_sha256, zip_path = zip_directory(_ASSETS_DIR / "echo-agent", zip_filename)
-        zip_filename = zip_path.name
+        _, _, zip_path = zip_directory(_ASSETS_DIR / "echo-agent", zip_filename)
     else:
-        zip_filename = "echo-agent-prebuilt.zip"
-        zip_path = _ASSETS_DIR / zip_filename
-        zip_bytes = zip_path.read_bytes()
-        zip_sha256 = hashlib.sha256(zip_bytes).hexdigest()
-        print(
-            f"Loaded code zip from {zip_path} (dependency_resolution={dependency_resolution.value}): "
-            f"{len(zip_bytes)} bytes, sha256={zip_sha256}"
-        )
+        zip_path = _ASSETS_DIR / "echo-agent-prebuilt.zip"
 
-    return dependency_resolution, zip_filename, zip_bytes, zip_sha256
+    return dependency_resolution, zip_path.open("rb")
 
 
 def wait_for_agent_version_active(

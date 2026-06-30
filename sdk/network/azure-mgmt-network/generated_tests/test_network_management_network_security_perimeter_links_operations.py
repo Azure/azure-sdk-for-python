@@ -25,7 +25,7 @@ class TestNetworkManagementNetworkSecurityPerimeterLinksOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             link_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestNetworkManagementNetworkSecurityPerimeterLinksOperations(AzureMgmtReco
                 },
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -76,7 +76,7 @@ class TestNetworkManagementNetworkSecurityPerimeterLinksOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             link_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestNetworkManagementNetworkSecurityPerimeterLinksOperations(AzureMgmtReco
         response = self.client.network_security_perimeter_links.list(
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

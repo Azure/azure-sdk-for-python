@@ -4,16 +4,16 @@ This document lists all public methods available on `AIProjectClient` and its su
 
 ## Summary
 
-There are a total of 143 unique public methods:
+There are a total of 141 unique public methods:
 - 5 stable methods on the client
-- 57 stable methods on top-level sub-clients
+- 55 stable methods on top-level sub-clients
 - 81 beta methods on nested beta sub-clients
 
 ### Top-level sub-clients (stable operations)
 
 | Subclient | Class Name | Methods Count |
 |-----------|------------|----------------|
-| `agents` | AgentsOperations | 25 |
+| `agents` | AgentsOperations | 23 |
 | `connections` | ConnectionsOperations | 3 |
 | `datasets` | DatasetsOperations | 9 |
 | `deployments` | DeploymentsOperations | 2 |
@@ -57,18 +57,16 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 
 ```
 .agents.create_session
-.agents.create_version
-.agents.create_version_from_code
+.agents.create_version*
+.agents.create_version_from_code*
 .agents.create_version_from_manifest
 .agents.delete
 .agents.delete_session
 .agents.delete_session_file
 .agents.delete_version
 .agents.disable
-.agents.download_code_as_bytes
-.agents.download_code_to_path*
-.agents.download_session_file_as_bytes
-.agents.download_session_file_to_path*
+.agents.download_code
+.agents.download_session_file
 .agents.enable
 .agents.get
 .agents.get_session
@@ -80,7 +78,7 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .agents.list_versions
 .agents.stop_session
 .agents.update_details
-.agents.upload_session_file*
+.agents.upload_session_file
 
 .connections.get*
 .connections.get_default*
@@ -99,7 +97,7 @@ Alphabetically sorted. An asterisk at the end of the method name means is a hand
 .deployments.get
 .deployments.list
 
-.evaluation_rules.create_or_update
+.evaluation_rules.create_or_update*
 .evaluation_rules.delete
 .evaluation_rules.get
 .evaluation_rules.list

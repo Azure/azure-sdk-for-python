@@ -25,7 +25,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
         response = self.client.private_link_services.get(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -118,6 +118,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -141,6 +142,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -441,6 +443,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -477,6 +480,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -527,6 +531,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -557,6 +566,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -598,6 +610,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -719,6 +732,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -802,6 +816,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -832,6 +851,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -873,6 +895,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -1097,6 +1120,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -1138,6 +1164,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -1307,6 +1334,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "billingSku": "str",
                                                     "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                     "customNetworkInterfaceName": "str",
                                                     "ipConfigurations": [
@@ -1517,6 +1545,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -1558,6 +1589,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -1610,6 +1642,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -1640,6 +1677,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -1681,6 +1721,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -1974,6 +2015,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -2004,6 +2050,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -2045,6 +2094,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -2281,6 +2331,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -2322,6 +2375,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -2460,6 +2514,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                             "name": "str",
                                             "properties": {
                                                 "disableBgpRoutePropagation": bool,
+                                                "disablePeeringRoute": "str",
                                                 "provisioningState": "str",
                                                 "resourceGuid": "str",
                                                 "routes": [
@@ -2471,6 +2526,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                             "nextHopType": "str",
                                                             "addressPrefix": "str",
                                                             "hasBgpOverride": bool,
+                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                             "nextHopIpAddress": "str",
                                                             "provisioningState": "str",
                                                         },
@@ -2552,6 +2608,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                             "id": "str",
                             "name": "str",
                             "properties": {
+                                "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                 "gatewayLoadBalancer": {"id": "str"},
                                 "inboundNatPools": [{"id": "str"}],
                                 "inboundNatRules": [{"id": "str"}],
@@ -2568,7 +2625,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                     "location": "str",
                                     "name": "str",
                                     "properties": {
-                                        "ddosSettings": {"ddosProtectionPlan": {"id": "str"}, "protectionMode": "str"},
+                                        "ddosSettings": {
+                                            "ddosCustomPolicy": {"id": "str"},
+                                            "ddosProtectionPlan": {"id": "str"},
+                                            "protectionMode": "str",
+                                        },
                                         "deleteOption": "str",
                                         "dnsSettings": {
                                             "domainNameLabel": "str",
@@ -2983,6 +3044,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -3334,6 +3396,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -4037,6 +4100,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -4048,6 +4112,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -4131,6 +4196,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                             "name": "str",
                                             "properties": {
                                                 "idleTimeoutInMinutes": 0,
+                                                "nat64": "str",
                                                 "provisioningState": "str",
                                                 "publicIpAddresses": [{"id": "str"}],
                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -4216,6 +4282,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -4239,6 +4306,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -4539,6 +4607,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -4575,6 +4644,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -4672,6 +4742,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -4909,6 +4980,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -4950,6 +5024,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -5119,6 +5194,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "billingSku": "str",
                                                     "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                     "customNetworkInterfaceName": "str",
                                                     "ipConfigurations": [
@@ -5329,6 +5405,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -5370,6 +5449,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -5801,6 +5881,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -5842,6 +5925,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -5980,6 +6064,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                             "name": "str",
                                             "properties": {
                                                 "disableBgpRoutePropagation": bool,
+                                                "disablePeeringRoute": "str",
                                                 "provisioningState": "str",
                                                 "resourceGuid": "str",
                                                 "routes": [
@@ -5991,6 +6076,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                             "nextHopType": "str",
                                                             "addressPrefix": "str",
                                                             "hasBgpOverride": bool,
+                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                             "nextHopIpAddress": "str",
                                                             "provisioningState": "str",
                                                         },
@@ -6212,6 +6298,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                 "name": "str",
                                                 "properties": {
                                                     "ddosSettings": {
+                                                        "ddosCustomPolicy": {"id": "str"},
                                                         "ddosProtectionPlan": {"id": "str"},
                                                         "protectionMode": "str",
                                                     },
@@ -6492,6 +6579,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -6581,6 +6669,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -6592,6 +6681,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -6677,6 +6771,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                         "name": "str",
                                                         "properties": {
                                                             "idleTimeoutInMinutes": 0,
+                                                            "nat64": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -6764,6 +6859,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -6787,6 +6883,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -7009,6 +7106,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -7095,6 +7193,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                         "name": "str",
                                                         "properties": {
                                                             "disableBgpRoutePropagation": bool,
+                                                            "disablePeeringRoute": "str",
                                                             "provisioningState": "str",
                                                             "resourceGuid": "str",
                                                             "routes": [
@@ -7106,6 +7205,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "nextHopType": "str",
                                                                         "addressPrefix": "str",
                                                                         "hasBgpOverride": bool,
+                                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                         "nextHopIpAddress": "str",
                                                                         "provisioningState": "str",
                                                                     },
@@ -7189,6 +7289,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                 "inboundNatPools": [{"id": "str"}],
                                                                 "inboundNatRules": [{"id": "str"}],
@@ -7206,6 +7307,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -7510,6 +7612,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -7607,6 +7710,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                "disablePeeringRoute": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "resourceGuid": "str",
                                                                                                 "routes": [
@@ -7618,6 +7722,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "nextHopType": "str",
                                                                                                             "addressPrefix": "str",
                                                                                                             "hasBgpOverride": bool,
+                                                                                                            "nextHop": {
+                                                                                                                "nextHopIpAddresses": [
+                                                                                                                    "str"
+                                                                                                                ]
+                                                                                                            },
                                                                                                             "nextHopIpAddress": "str",
                                                                                                             "provisioningState": "str",
                                                                                                         },
@@ -7709,6 +7818,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -7803,6 +7913,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -7833,6 +7946,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -8103,6 +8217,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -8192,6 +8307,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -8203,6 +8319,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -8522,6 +8643,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -8545,6 +8667,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -8608,6 +8731,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -8694,6 +8818,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                         "name": "str",
                                                         "properties": {
                                                             "disableBgpRoutePropagation": bool,
+                                                            "disablePeeringRoute": "str",
                                                             "provisioningState": "str",
                                                             "resourceGuid": "str",
                                                             "routes": [
@@ -8705,6 +8830,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "nextHopType": "str",
                                                                         "addressPrefix": "str",
                                                                         "hasBgpOverride": bool,
+                                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                         "nextHopIpAddress": "str",
                                                                         "provisioningState": "str",
                                                                     },
@@ -8801,6 +8927,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                 "type": "str",
                                             }
                                         ],
+                                        "billingSku": "str",
                                         "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                         "customNetworkInterfaceName": "str",
                                         "ipConfigurations": [
@@ -8916,6 +9043,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -8939,6 +9067,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -9160,6 +9289,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                     "name": "str",
                                                     "properties": {
                                                         "disableBgpRoutePropagation": bool,
+                                                        "disablePeeringRoute": "str",
                                                         "provisioningState": "str",
                                                         "resourceGuid": "str",
                                                         "routes": [
@@ -9171,6 +9301,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                     "nextHopType": "str",
                                                                     "addressPrefix": "str",
                                                                     "hasBgpOverride": bool,
+                                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                     "nextHopIpAddress": "str",
                                                                     "provisioningState": "str",
                                                                 },
@@ -9267,6 +9398,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                                             "gatewayLoadBalancer": {"id": "str"},
                                                             "inboundNatPools": [{"id": "str"}],
                                                             "inboundNatRules": [{"id": "str"}],
@@ -9284,6 +9416,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -9582,6 +9715,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -9679,6 +9813,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -9690,6 +9825,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -9779,6 +9919,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -9873,6 +10014,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -9903,6 +10047,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -10163,6 +10308,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -10252,6 +10398,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -10263,6 +10410,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -10468,6 +10620,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -10766,6 +10919,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -10863,6 +11017,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -10874,6 +11029,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -10963,6 +11123,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -11056,6 +11217,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -11086,6 +11250,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -11346,6 +11511,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -11435,6 +11601,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -11446,6 +11613,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -11568,6 +11740,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                 "type": "str",
                                             }
                                         ],
+                                        "billingSku": "str",
                                         "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                         "customNetworkInterfaceName": "str",
                                         "ipConfigurations": [
@@ -11754,6 +11927,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -12055,6 +12229,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                "disablePeeringRoute": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "resourceGuid": "str",
                                                                                                 "routes": [
@@ -12066,6 +12241,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "nextHopType": "str",
                                                                                                             "addressPrefix": "str",
                                                                                                             "hasBgpOverride": bool,
+                                                                                                            "nextHop": {
+                                                                                                                "nextHopIpAddresses": [
+                                                                                                                    "str"
+                                                                                                                ]
+                                                                                                            },
                                                                                                             "nextHopIpAddress": "str",
                                                                                                             "provisioningState": "str",
                                                                                                         },
@@ -12157,6 +12337,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -12250,6 +12431,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -12280,6 +12464,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -12549,6 +12734,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -12560,6 +12746,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -12647,6 +12838,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -12671,6 +12867,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -12992,6 +13191,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                                    "disablePeeringRoute": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "resourceGuid": "str",
                                                                                                                     "routes": [
@@ -13003,6 +13203,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                                 "nextHopType": "str",
                                                                                                                                 "addressPrefix": "str",
                                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                                "nextHop": {
+                                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                                        "str"
+                                                                                                                                    ]
+                                                                                                                                },
                                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                             },
@@ -13111,6 +13316,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -13230,6 +13436,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    },
                                                                                                                     "ddosProtectionPlan": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -13260,6 +13469,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                                        "nat64": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                         "publicIpAddresses": [
                                                                                                                             {
@@ -13561,6 +13771,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                    "disablePeeringRoute": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "resourceGuid": "str",
                                                                                                     "routes": [
@@ -13572,6 +13783,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                 "nextHopType": "str",
                                                                                                                 "addressPrefix": "str",
                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                "nextHop": {
+                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                        "str"
+                                                                                                                    ]
+                                                                                                                },
                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                             },
@@ -13912,6 +14128,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -13942,6 +14161,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -14026,6 +14246,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -14037,6 +14258,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -14141,6 +14367,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -14161,6 +14390,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -14482,6 +14714,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                                "disablePeeringRoute": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "routes": [
@@ -14493,6 +14726,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                             "nextHopType": "str",
                                                                                                                             "addressPrefix": "str",
                                                                                                                             "hasBgpOverride": bool,
+                                                                                                                            "nextHop": {
+                                                                                                                                "nextHopIpAddresses": [
+                                                                                                                                    "str"
+                                                                                                                                ]
+                                                                                                                            },
                                                                                                                             "nextHopIpAddress": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                         },
@@ -14601,6 +14839,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -14716,6 +14955,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                },
                                                                                                                 "ddosProtectionPlan": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -14746,6 +14988,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                    "nat64": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "publicIpAddresses": [
                                                                                                                         {
@@ -15045,6 +15288,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                "disablePeeringRoute": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "resourceGuid": "str",
                                                                                                 "routes": [
@@ -15056,6 +15300,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "nextHopType": "str",
                                                                                                             "addressPrefix": "str",
                                                                                                             "hasBgpOverride": bool,
+                                                                                                            "nextHop": {
+                                                                                                                "nextHopIpAddresses": [
+                                                                                                                    "str"
+                                                                                                                ]
+                                                                                                            },
                                                                                                             "nextHopIpAddress": "str",
                                                                                                             "provisioningState": "str",
                                                                                                         },
@@ -15295,6 +15544,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -15616,6 +15868,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                                "disablePeeringRoute": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "resourceGuid": "str",
                                                                                                                 "routes": [
@@ -15627,6 +15880,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                             "nextHopType": "str",
                                                                                                                             "addressPrefix": "str",
                                                                                                                             "hasBgpOverride": bool,
+                                                                                                                            "nextHop": {
+                                                                                                                                "nextHopIpAddresses": [
+                                                                                                                                    "str"
+                                                                                                                                ]
+                                                                                                                            },
                                                                                                                             "nextHopIpAddress": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                         },
@@ -15735,6 +15993,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -15849,6 +16108,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                },
                                                                                                                 "ddosProtectionPlan": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -15879,6 +16141,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                    "nat64": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "publicIpAddresses": [
                                                                                                                         {
@@ -16178,6 +16441,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                "disablePeeringRoute": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "resourceGuid": "str",
                                                                                                 "routes": [
@@ -16189,6 +16453,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "nextHopType": "str",
                                                                                                             "addressPrefix": "str",
                                                                                                             "hasBgpOverride": bool,
+                                                                                                            "nextHop": {
+                                                                                                                "nextHopIpAddresses": [
+                                                                                                                    "str"
+                                                                                                                ]
+                                                                                                            },
                                                                                                             "nextHopIpAddress": "str",
                                                                                                             "provisioningState": "str",
                                                                                                         },
@@ -16372,6 +16641,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -16395,6 +16665,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -16711,6 +16982,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -16752,6 +17026,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -16809,6 +17084,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        }
+                                                                                                    },
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -16839,6 +17119,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                },
                                                                                                                 "ddosProtectionPlan": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -16880,6 +17163,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                    "nat64": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                     "publicIpAddresses": [
                                                                                                                         {
@@ -17006,6 +17290,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -17036,6 +17325,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -17077,6 +17369,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -17315,6 +17608,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -17356,6 +17652,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -17533,6 +17830,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                     "name": "str",
                                                     "properties": {
                                                         "disableBgpRoutePropagation": bool,
+                                                        "disablePeeringRoute": "str",
                                                         "provisioningState": "str",
                                                         "resourceGuid": "str",
                                                         "routes": [
@@ -17544,6 +17842,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                     "nextHopType": "str",
                                                                     "addressPrefix": "str",
                                                                     "hasBgpOverride": bool,
+                                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                     "nextHopIpAddress": "str",
                                                                     "provisioningState": "str",
                                                                 },
@@ -17636,7 +17935,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -17648,7 +17947,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
         response = self.client.private_link_services.begin_delete(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -17659,7 +17958,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
     def test_private_link_services_list(self, resource_group):
         response = self.client.private_link_services.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -17669,7 +17968,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_private_link_services_list_by_subscription(self, resource_group):
         response = self.client.private_link_services.list_by_subscription(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -17682,7 +17981,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             service_name="str",
             pe_connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -17719,6 +18018,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                     "type": "str",
                                 }
                             ],
+                            "billingSku": "str",
                             "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                             "customNetworkInterfaceName": "str",
                             "ipConfigurations": [
@@ -17901,6 +18201,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -18192,6 +18493,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -18203,6 +18505,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -18290,6 +18597,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -18383,6 +18691,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -18408,6 +18717,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -18645,6 +18955,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -18656,6 +18967,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -18739,6 +19053,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"}
+                                                                        },
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -18759,6 +19076,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -19076,6 +19394,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "disableBgpRoutePropagation": bool,
+                                                                                                        "disablePeeringRoute": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "resourceGuid": "str",
                                                                                                         "routes": [
@@ -19087,6 +19406,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                     "nextHopType": "str",
                                                                                                                     "addressPrefix": "str",
                                                                                                                     "hasBgpOverride": bool,
+                                                                                                                    "nextHop": {
+                                                                                                                        "nextHopIpAddresses": [
+                                                                                                                            "str"
+                                                                                                                        ]
+                                                                                                                    },
                                                                                                                     "nextHopIpAddress": "str",
                                                                                                                     "provisioningState": "str",
                                                                                                                 },
@@ -19192,6 +19516,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -19296,6 +19621,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -19326,6 +19654,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -19617,6 +19946,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "disableBgpRoutePropagation": bool,
+                                                                                        "disablePeeringRoute": "str",
                                                                                         "provisioningState": "str",
                                                                                         "resourceGuid": "str",
                                                                                         "routes": [
@@ -19628,6 +19958,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "nextHopType": "str",
                                                                                                     "addressPrefix": "str",
                                                                                                     "hasBgpOverride": bool,
+                                                                                                    "nextHop": {
+                                                                                                        "nextHopIpAddresses": [
+                                                                                                            "str"
+                                                                                                        ]
+                                                                                                    },
                                                                                                     "nextHopIpAddress": "str",
                                                                                                     "provisioningState": "str",
                                                                                                 },
@@ -19955,6 +20290,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -19980,6 +20316,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -20055,6 +20392,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -20066,6 +20404,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -20235,6 +20576,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -20265,6 +20609,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -20524,6 +20869,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -20535,6 +20881,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -20618,6 +20969,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                         "id": "str",
                                                         "name": "str",
                                                         "properties": {
+                                                            "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                                             "gatewayLoadBalancer": {"id": "str"},
                                                             "inboundNatPools": [{"id": "str"}],
                                                             "inboundNatRules": [{"id": "str"}],
@@ -20635,6 +20987,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -20930,6 +21283,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -20941,6 +21295,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -21030,6 +21389,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -21124,6 +21484,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -21154,6 +21517,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -21413,6 +21777,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "disableBgpRoutePropagation": bool,
+                                                                            "disablePeeringRoute": "str",
                                                                             "provisioningState": "str",
                                                                             "resourceGuid": "str",
                                                                             "routes": [
@@ -21424,6 +21789,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "nextHopType": "str",
                                                                                         "addressPrefix": "str",
                                                                                         "hasBgpOverride": bool,
+                                                                                        "nextHop": {
+                                                                                            "nextHopIpAddresses": [
+                                                                                                "str"
+                                                                                            ]
+                                                                                        },
                                                                                         "nextHopIpAddress": "str",
                                                                                         "provisioningState": "str",
                                                                                     },
@@ -21530,6 +21900,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                                                     "gatewayLoadBalancer": {"id": "str"},
                                                                     "inboundNatPools": [{"id": "str"}],
                                                                     "inboundNatRules": [{"id": "str"}],
@@ -21550,6 +21921,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -21855,6 +22227,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                    "disablePeeringRoute": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "resourceGuid": "str",
                                                                                                     "routes": [
@@ -21866,6 +22239,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                 "nextHopType": "str",
                                                                                                                 "addressPrefix": "str",
                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                "nextHop": {
+                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                        "str"
+                                                                                                                    ]
+                                                                                                                },
                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                             },
@@ -21967,6 +22345,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -22069,6 +22448,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -22099,6 +22481,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -22386,6 +22769,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -22397,6 +22781,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -22611,6 +23000,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -22916,6 +23306,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                    "disablePeeringRoute": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "resourceGuid": "str",
                                                                                                     "routes": [
@@ -22927,6 +23318,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                                 "nextHopType": "str",
                                                                                                                 "addressPrefix": "str",
                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                "nextHop": {
+                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                        "str"
+                                                                                                                    ]
+                                                                                                                },
                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                             },
@@ -23028,6 +23424,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -23129,6 +23526,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -23159,6 +23559,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -23446,6 +23847,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -23457,6 +23859,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -23633,6 +24040,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -23656,6 +24064,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -23951,6 +24360,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -23987,6 +24397,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -24035,6 +24446,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -24065,6 +24481,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -24106,6 +24525,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -24238,6 +24658,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -24258,6 +24681,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -24299,6 +24725,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -24373,6 +24800,11 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -24397,6 +24829,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -24438,6 +24873,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -24648,6 +25084,9 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -24689,6 +25128,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -24844,6 +25284,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                         "name": "str",
                                         "properties": {
                                             "disableBgpRoutePropagation": bool,
+                                            "disablePeeringRoute": "str",
                                             "provisioningState": "str",
                                             "resourceGuid": "str",
                                             "routes": [
@@ -24855,6 +25296,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                                                         "nextHopType": "str",
                                                         "addressPrefix": "str",
                                                         "hasBgpOverride": bool,
+                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                         "nextHopIpAddress": "str",
                                                         "provisioningState": "str",
                                                     },
@@ -24940,7 +25382,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
                 },
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -24953,7 +25395,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             service_name="str",
             pe_connection_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -24965,7 +25407,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
         response = self.client.private_link_services.list_private_endpoint_connections(
             resource_group_name=resource_group.name,
             service_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -24977,7 +25419,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
         response = self.client.private_link_services.begin_check_private_link_service_visibility(
             location="str",
             parameters={"privateLinkServiceAlias": "str"},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -24990,7 +25432,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
             location="str",
             resource_group_name=resource_group.name,
             parameters={"privateLinkServiceAlias": "str"},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -25001,7 +25443,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
     def test_private_link_services_list_auto_approved_private_link_services(self, resource_group):
         response = self.client.private_link_services.list_auto_approved_private_link_services(
             location="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -25013,7 +25455,7 @@ class TestNetworkManagementPrivateLinkServicesOperations(AzureMgmtRecordedTestCa
         response = self.client.private_link_services.list_auto_approved_private_link_services_by_resource_group(
             location="str",
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

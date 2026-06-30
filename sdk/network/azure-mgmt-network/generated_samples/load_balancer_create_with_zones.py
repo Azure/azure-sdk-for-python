@@ -108,6 +108,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/LoadBalancerCreateWithZones.json
+# x-ms-original-file: 2025-07-01/LoadBalancerCreateWithZones.json
 if __name__ == "__main__":
     main()
