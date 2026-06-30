@@ -55,3 +55,4 @@ latestdependency = false
 verify_keywords = false
 mindependency = false
 whl_no_aio = false
+type_check_samples = false
