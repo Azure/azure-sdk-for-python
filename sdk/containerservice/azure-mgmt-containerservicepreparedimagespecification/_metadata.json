@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-02-02-preview",
+  "apiVersions": {
+    "Microsoft.ContainerService": "2026-02-02-preview"
+  },
+  "commit": "7210d81b2fa87c054601c7344bef79d5e94221da",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/containerservice/resource-manager/Microsoft.ContainerService/preparedimagespecification",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.0"
+}
