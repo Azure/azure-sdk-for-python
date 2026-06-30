@@ -427,6 +427,4 @@ def test_missing_threshold_error_metadata():
     with pytest.raises(EvaluationException) as exc_info:
         evaluator._get_binary_result(unknown_metric=1.0)
 
-    _assert_exception_metadata(
-        exc_info.value, category=ErrorCategory.FAILED_EXECUTION, blame=ErrorBlame.SYSTEM_ERROR
-    )
+    _assert_exception_metadata(exc_info.value, category=ErrorCategory.FAILED_EXECUTION, blame=ErrorBlame.SYSTEM_ERROR)
