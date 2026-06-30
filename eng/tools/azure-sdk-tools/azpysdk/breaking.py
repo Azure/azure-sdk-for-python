@@ -91,6 +91,13 @@ class breaking(Check):
             action="store_true",
             default=False,
         )
+        p.add_argument(
+            "--debug",
+            dest="debug",
+            help="Keep the generated api.md and code_report.json files for easier debugging.",
+            action="store_true",
+            default=False,
+        )
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the breaking change check command."""
@@ -174,6 +181,8 @@ class breaking(Check):
                     cmd.append("--latest-pypi-version")
                 if getattr(args, "use_apistub", False):
                     cmd.append("--use-apistub")
+                if getattr(args, "debug", False):
+                    cmd.append("--debug")
                 check_call(cmd)
             except CalledProcessError as e:
                 logger.error(f"Breaking check failed for {package_name}: {e}")

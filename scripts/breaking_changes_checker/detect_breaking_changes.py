@@ -696,10 +696,30 @@ def generate_apistub_markdown(package_name: str, out_dir: str, version: Optional
     return api_md
 
 
-def build_report_from_apistub(package_name: str, out_dir: str, version: Optional[str] = None) -> Dict:
-    """Generate api.md via apistub and convert it to a code report dict."""
+def build_report_from_apistub(
+    package_name: str,
+    out_dir: str,
+    version: Optional[str] = None,
+    debug: bool = False,
+    label: str = "",
+) -> Dict:
+    """Generate api.md via apistub and convert it to a code report dict.
+
+    When ``debug`` is set, the generated ``api.md`` and the resulting
+    ``code_report.json`` are copied into ``out_dir`` (prefixed with ``label``)
+    so they can be inspected after the run instead of being left in a temp dir.
+    """
     api_md = generate_apistub_markdown(package_name, out_dir, version)
-    return convert_api_md_to_report(api_md)
+    report = convert_api_md_to_report(api_md)
+    if debug:
+        prefix = f"{label}_" if label else ""
+        debug_api_md = os.path.join(out_dir, f"{prefix}api.md")
+        shutil.copyfile(api_md, debug_api_md)
+        debug_report = os.path.join(out_dir, f"{prefix}code_report.json")
+        with open(debug_report, "w") as fd:
+            json.dump(report, fd, indent=2)
+        _LOGGER.info(f"[debug] kept {debug_api_md} and {debug_report}")
+    return report
 
 
 def main(
@@ -714,6 +734,7 @@ def main(
     source_report: Optional[Path],
     target_report: Optional[Path],
     use_apistub: bool = False,
+    debug: bool = False,
 ):
     # If code_report is set, only generate a code report for the package and return
     if code_report:
@@ -734,8 +755,8 @@ def main(
     # If using apistub, generate api.md for the stable (PyPI) and current (local)
     # versions, convert both to code reports, and compare them directly.
     if use_apistub:
-        current = build_report_from_apistub(package_name, pkg_dir)
-        stable = build_report_from_apistub(package_name, pkg_dir, version=version)
+        current = build_report_from_apistub(package_name, pkg_dir, debug=debug, label="current")
+        stable = build_report_from_apistub(package_name, pkg_dir, version=version, debug=debug, label="stable")
         checker = compare_report_dicts(stable, current, package_name, changelog)
         print(checker.report_changes())
         if not changelog and checker.breaking_changes:
@@ -871,6 +892,14 @@ if __name__ == "__main__":
         default=False,
     )
 
+    parser.add_argument(
+        "--debug",
+        dest="debug",
+        help="Keep the generated api.md and code_report.json files (in the target directory) for easier debugging.",
+        action="store_true",
+        default=False,
+    )
+
     args, unknown = parser.parse_known_args()
     if unknown:
         _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
@@ -921,4 +950,5 @@ if __name__ == "__main__":
         args.source_report,
         args.target_report,
         args.use_apistub,
+        args.debug,
     )
