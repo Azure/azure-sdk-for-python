@@ -153,13 +153,13 @@ with (
             evaluator_type=EvaluatorType.CUSTOM,
             definition=EndpointBasedEvaluatorDefinition(
                 connection_name=connection_name,
-                 metrics={
-                 "score": EvaluatorMetric(
-                     type="ordinal",
-                     min_value=1,
-                     max_value=5,
-                 )
-             },
+                metrics={
+                    "score": EvaluatorMetric(
+                        type="ordinal",
+                        min_value=1,
+                        max_value=5,
+                    )
+                },
             ),
             display_name="Endpoint Evaluator (API Key)",
             description="Custom scoring endpoint authenticated with an API key",
