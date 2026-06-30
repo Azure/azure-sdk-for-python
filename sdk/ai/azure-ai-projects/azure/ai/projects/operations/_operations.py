@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 import datetime
+import hashlib
 from io import IOBase
 import json
 from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union, cast, overload
@@ -47,6 +48,23 @@ List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
+
+
+def _compute_sha256_from_stream(stream: IO[bytes], *, chunk_size: int = 1024 * 1024) -> str:
+    if not isinstance(stream, IOBase) or not stream.seekable():
+        raise TypeError("content['code'] must be provided as a seekable IO[bytes] stream.")
+
+    stream.seek(0)
+    digest = hashlib.sha256()
+    while True:
+        chunk = stream.read(chunk_size)
+        if not chunk:
+            break
+        if isinstance(chunk, str):
+            raise TypeError("content['code'] must be provided as IO[bytes], not text IO.")
+        digest.update(chunk)
+    stream.seek(0)
+    return digest.hexdigest()
 
 
 def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
@@ -4752,8 +4770,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         agent_name: str,
         content: _models.CreateAgentVersionFromCodeContent,
-        *,
-        code_zip_sha256: str,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create an agent version from code.
@@ -4772,9 +4788,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param content: Required.
         :type content: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4782,7 +4795,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def create_version_from_code(
-        self, agent_name: str, content: JSON, *, code_zip_sha256: str, **kwargs: Any
+        self, agent_name: str, content: JSON, **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create an agent version from code.
 
@@ -4800,9 +4813,6 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         :type agent_name: str
         :param content: Required.
         :type content: JSON
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4813,14 +4823,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         self,
         agent_name: str,
         content: Union[_models.CreateAgentVersionFromCodeContent, JSON],
-        *,
-        code_zip_sha256: str,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create an agent version from code.
 
         Creates a new agent version from code. Uploads the code zip and creates a new version for an
-        existing agent. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
+        existing agent. The SHA-256 hex digest of the zip is computed from the provided
+        ``code`` stream and sent in the ``x-ms-code-zip-sha256``
         header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
         part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
 
@@ -4831,11 +4840,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param content: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
+        :param content: Is either a CreateAgentVersionFromCodeContent type or a JSON type. The
+         ``code`` field must be provided as a seekable ``IO[bytes]`` stream. Required.
         :type content: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4854,6 +4861,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
 
         _body = content.as_dict() if isinstance(content, _Model) else content
+        code_stream = _body.get("code")
+        if not isinstance(code_stream, IOBase):
+            raise TypeError("content['code'] must be provided as a seekable IO[bytes] stream.")
+        code_zip_sha256 = _compute_sha256_from_stream(cast(IO[bytes], code_stream))
+        _body["code"] = code_stream
         _file_fields: list[str] = ["code"]
         _data_fields: list[str] = ["metadata"]
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)

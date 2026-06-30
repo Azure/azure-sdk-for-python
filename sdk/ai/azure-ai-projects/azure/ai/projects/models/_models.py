@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import IO, Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from .._utils.utils import FileType
@@ -4121,25 +4121,25 @@ class CreateAgentVersionFromCodeContent(_Model):
 
     :ivar metadata: JSON metadata including description and hosted definition. Required.
     :vartype metadata: ~azure.ai.projects.models.CreateAgentVersionFromCodeMetadata
-    :ivar code: The code zip file (max 250 MB). Required.
-    :vartype code: ~azure.ai.projects._utils.utils.FileType
+    :ivar code: The code zip file as a seekable binary stream (max 250 MB). Required.
+    :vartype code: IO[bytes]
     """
 
     metadata: "_models.CreateAgentVersionFromCodeMetadata" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """JSON metadata including description and hosted definition. Required."""
-    code: FileType = rest_field(
+    code: IO[bytes] = rest_field(
         visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
     )
-    """The code zip file (max 250 MB). Required."""
+    """The code zip file as a seekable binary stream (max 250 MB). Required."""
 
     @overload
     def __init__(
         self,
         *,
         metadata: "_models.CreateAgentVersionFromCodeMetadata",
-        code: FileType,
+        code: IO[bytes],
     ) -> None: ...
 
     @overload
