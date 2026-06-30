@@ -343,7 +343,7 @@ def build_agents_create_version_from_code_request(  # pylint: disable=name-too-l
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_download_code_as_bytes_request(  # pylint: disable=name-too-long
+def build_agents_download_code_request(
     agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -566,7 +566,7 @@ def build_agents_get_session_log_stream_request(  # pylint: disable=name-too-lon
 
 
 def build_agents_upload_session_file_request(
-    agent_name: str, agent_session_id: str, *, remote_path: str, **kwargs: Any
+    agent_name: str, session_id: str, *, path: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -579,13 +579,13 @@ def build_agents_upload_session_file_request(
     _url = "/agents/{agent_name}/endpoint/sessions/{agent_session_id}/files/content"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "agent_session_id": _SERIALIZER.url("agent_session_id", agent_session_id, "str"),
+        "agent_session_id": _SERIALIZER.url("session_id", session_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["path"] = _SERIALIZER.query("remote_path", remote_path, "str")
+    _params["path"] = _SERIALIZER.query("path", path, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -595,8 +595,8 @@ def build_agents_upload_session_file_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_download_session_file_as_bytes_request(  # pylint: disable=name-too-long
-    agent_name: str, agent_session_id: str, *, remote_path: str, **kwargs: Any
+def build_agents_download_session_file_request(  # pylint: disable=name-too-long
+    agent_name: str, session_id: str, *, path: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -608,13 +608,13 @@ def build_agents_download_session_file_as_bytes_request(  # pylint: disable=name
     _url = "/agents/{agent_name}/endpoint/sessions/{agent_session_id}/files/content"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "agent_session_id": _SERIALIZER.url("agent_session_id", agent_session_id, "str"),
+        "agent_session_id": _SERIALIZER.url("session_id", session_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["path"] = _SERIALIZER.query("remote_path", remote_path, "str")
+    _params["path"] = _SERIALIZER.query("path", path, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -625,9 +625,9 @@ def build_agents_download_session_file_as_bytes_request(  # pylint: disable=name
 
 def build_agents_list_session_files_request(
     agent_name: str,
-    agent_session_id: str,
+    session_id: str,
     *,
-    remote_path: Optional[str] = None,
+    path: Optional[str] = None,
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.PageOrder]] = None,
     after: Optional[str] = None,
@@ -644,14 +644,14 @@ def build_agents_list_session_files_request(
     _url = "/agents/{agent_name}/endpoint/sessions/{agent_session_id}/files"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "agent_session_id": _SERIALIZER.url("agent_session_id", agent_session_id, "str"),
+        "agent_session_id": _SERIALIZER.url("session_id", session_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    if remote_path is not None:
-        _params["path"] = _SERIALIZER.query("remote_path", remote_path, "str")
+    if path is not None:
+        _params["path"] = _SERIALIZER.query("path", path, "str")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
@@ -669,7 +669,7 @@ def build_agents_list_session_files_request(
 
 
 def build_agents_delete_session_file_request(
-    agent_name: str, agent_session_id: str, *, remote_path: str, recursive: Optional[bool] = None, **kwargs: Any
+    agent_name: str, session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -678,13 +678,13 @@ def build_agents_delete_session_file_request(
     _url = "/agents/{agent_name}/endpoint/sessions/{agent_session_id}/files"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "agent_session_id": _SERIALIZER.url("agent_session_id", agent_session_id, "str"),
+        "agent_session_id": _SERIALIZER.url("session_id", session_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["path"] = _SERIALIZER.query("remote_path", remote_path, "str")
+    _params["path"] = _SERIALIZER.query("path", path, "str")
     if recursive is not None:
         _params["recursive"] = _SERIALIZER.query("recursive", recursive, "bool")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -4748,71 +4748,24 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    def create_version_from_code(
+    def _create_version_from_code(
         self,
         agent_name: str,
-        content: _models.CreateAgentVersionFromCodeContent,
+        content: _models._models._CreateAgentVersionFromCodeContent,
         *,
         code_zip_sha256: str,
         **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """Create an agent version from code.
-
-        Creates a new agent version from code. Uploads the code zip and creates a new version for an
-        existing agent. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
-        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
-        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param content: Required.
-        :type content: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.AgentVersionDetails: ...
     @overload
-    def create_version_from_code(
+    def _create_version_from_code(
         self, agent_name: str, content: JSON, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """Create an agent version from code.
-
-        Creates a new agent version from code. Uploads the code zip and creates a new version for an
-        existing agent. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
-        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
-        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param content: Required.
-        :type content: JSON
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.AgentVersionDetails: ...
 
     @distributed_trace
-    def create_version_from_code(
+    def _create_version_from_code(
         self,
         agent_name: str,
-        content: Union[_models.CreateAgentVersionFromCodeContent, JSON],
+        content: Union[_models._models._CreateAgentVersionFromCodeContent, JSON],
         *,
         code_zip_sha256: str,
         **kwargs: Any
@@ -4831,8 +4784,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param content: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
-        :type content: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
+        :param content: Is either a _CreateAgentVersionFromCodeContent type or a JSON type. Required.
+        :type content: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeContent or JSON
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
          detection (dedup) and integrity verification. Required.
         :paramtype code_zip_sha256: str
@@ -4903,9 +4856,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def download_code_as_bytes(
-        self, agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def download_code(self, agent_name: str, *, agent_version: Optional[str] = None, **kwargs: Any) -> Iterator[bytes]:
         """Download agent code.
 
         Downloads the code zip for a code-based hosted agent.
@@ -4939,7 +4890,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_agents_download_code_as_bytes_request(
+        _request = build_agents_download_code_request(
             agent_name=agent_name,
             agent_version=agent_version,
             api_version=self._config.api_version,
@@ -5660,8 +5611,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def _upload_session_file(
-        self, agent_name: str, agent_session_id: str, content: bytes, *, remote_path: str, **kwargs: Any
+    def upload_session_file(
+        self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
     ) -> _models.SessionFileWriteResult:
         """Upload a session file.
 
@@ -5670,13 +5621,13 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param agent_session_id: The session ID. Required.
-        :type agent_session_id: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
         :param content: Required.
         :type content: bytes
-        :keyword remote_path: The destination file path within the sandbox, relative to the session
-         home directory. Required.
-        :paramtype remote_path: str
+        :keyword path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
         :return: SessionFileWriteResult. The SessionFileWriteResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SessionFileWriteResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5699,8 +5650,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_agents_upload_session_file_request(
             agent_name=agent_name,
-            agent_session_id=agent_session_id,
-            remote_path=remote_path,
+            session_id=session_id,
+            path=path,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5744,9 +5695,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def download_session_file_as_bytes(
-        self, agent_name: str, agent_session_id: str, *, remote_path: str, **kwargs: Any
-    ) -> Iterator[bytes]:
+    def download_session_file(self, agent_name: str, session_id: str, *, path: str, **kwargs: Any) -> Iterator[bytes]:
         """Download a session file.
 
         Downloads the file at the specified sandbox path as a binary stream. The path is resolved
@@ -5754,11 +5703,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param agent_session_id: The session ID. Required.
-        :type agent_session_id: str
-        :keyword remote_path: The file path to download from the sandbox, relative to the session home
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword path: The file path to download from the sandbox, relative to the session home
          directory. Required.
-        :paramtype remote_path: str
+        :paramtype path: str
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5776,10 +5725,10 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_agents_download_session_file_as_bytes_request(
+        _request = build_agents_download_session_file_request(
             agent_name=agent_name,
-            agent_session_id=agent_session_id,
-            remote_path=remote_path,
+            session_id=session_id,
+            path=path,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5821,9 +5770,9 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def list_session_files(
         self,
         agent_name: str,
-        agent_session_id: str,
+        session_id: str,
         *,
-        remote_path: Optional[str] = None,
+        path: Optional[str] = None,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
@@ -5837,11 +5786,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param agent_session_id: The session ID. Required.
-        :type agent_session_id: str
-        :keyword remote_path: The directory path to list, relative to the session home directory.
-         Defaults to the home directory if not provided. Default value is None.
-        :paramtype remote_path: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword path: The directory path to list, relative to the session home directory. Defaults to
+         the home directory if not provided. Default value is None.
+        :paramtype path: str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
          default is 20. Default value is None.
@@ -5877,8 +5826,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
             _request = build_agents_list_session_files_request(
                 agent_name=agent_name,
-                agent_session_id=agent_session_id,
-                remote_path=remote_path,
+                session_id=session_id,
+                path=path,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -5926,13 +5875,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def delete_session_file(  # pylint: disable=inconsistent-return-statements
-        self,
-        agent_name: str,
-        agent_session_id: str,
-        *,
-        remote_path: str,
-        recursive: Optional[bool] = None,
-        **kwargs: Any
+        self, agent_name: str, session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
     ) -> None:
         """Delete a session file.
 
@@ -5941,11 +5884,11 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param agent_session_id: The session ID. Required.
-        :type agent_session_id: str
-        :keyword remote_path: The file or directory path to delete, relative to the session home
-         directory. Required.
-        :paramtype remote_path: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword path: The file or directory path to delete, relative to the session home directory.
+         Required.
+        :paramtype path: str
         :keyword recursive: Whether to recursively delete directory contents. The service defaults to
          ``false`` if a value is not specified by the caller. Default value is None.
         :paramtype recursive: bool
@@ -5968,8 +5911,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_agents_delete_session_file_request(
             agent_name=agent_name,
-            agent_session_id=agent_session_id,
-            remote_path=remote_path,
+            session_id=session_id,
+            path=path,
             recursive=recursive,
             api_version=self._config.api_version,
             headers=_headers,
