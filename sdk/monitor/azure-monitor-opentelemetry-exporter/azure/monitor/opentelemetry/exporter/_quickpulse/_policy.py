@@ -8,6 +8,9 @@ from weakref import ReferenceType
 
 from azure.core.pipeline import PipelineResponse, policies
 
+from azure.monitor.opentelemetry.exporter._constants import (
+    _ALLOWED_REDIRECT_DOMAIN_SUFFIXES,
+)
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _QUICKPULSE_REDIRECT_HEADER_NAME,
 )
@@ -16,19 +19,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics imp
 )
 
 _logger = logging.getLogger(__name__)
-
-# Allowed domain suffixes for QuickPulse redirect targets.
-# Only redirects to these trusted Azure Monitor domains are accepted.
-_ALLOWED_REDIRECT_DOMAIN_SUFFIXES = (
-    ".livediagnostics.monitor.azure.com",
-    ".monitor.azure.com",
-    ".services.visualstudio.com",
-    ".applicationinsights.azure.com",
-    ".monitor.azure.us",
-    ".applicationinsights.azure.us",
-    ".monitor.azure.cn",
-    ".applicationinsights.azure.cn",
-)
 
 
 def _is_redirect_target_allowed(netloc: str) -> bool:

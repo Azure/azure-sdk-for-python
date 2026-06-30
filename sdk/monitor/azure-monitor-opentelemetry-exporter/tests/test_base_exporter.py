@@ -5,7 +5,7 @@ import os
 import shutil
 import unittest
 from unittest import mock
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.transport import HttpResponse
@@ -17,6 +17,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
     ExportResult,
     _get_storage_directory,
 )
+from azure.monitor.opentelemetry.exporter._utils import _get_retry_delay_from_headers
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _REQUESTS_MAP,
@@ -655,6 +656,24 @@ class TestBaseExporter(unittest.TestCase):
         # Verify storage.put was called with the serialized envelopes
         exporter.storage.put.assert_called_once_with(serialized_envelopes)
 
+    def test_handle_transmit_from_storage_429_retry_after_passed_as_lease_period(self):
+        """When _retry_after_delay_seconds is set (from a prior 429 full-request
+        failure), _handle_transmit_from_storage must forward it as lease_period
+        to storage.put so the blob stays locked for the server-requested delay."""
+        exporter = BaseExporter(disable_offline_storage=False)
+        exporter.storage = mock.Mock()
+        exporter.storage.put.return_value = StorageExportResult.LOCAL_FILE_BLOB_SUCCESS
+
+        exporter._retry_after_delay_seconds = 120
+
+        test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+        serialized_envelopes = [envelope.as_dict() for envelope in test_envelopes]
+        exporter._handle_transmit_from_storage(test_envelopes, ExportResult.FAILED_RETRYABLE)
+
+        exporter.storage.put.assert_called_once_with(serialized_envelopes, lease_period=120)
+        # _retry_after_delay_seconds must be cleared after consumption
+        self.assertIsNone(exporter._retry_after_delay_seconds)
+
     def test_handle_transmit_from_storage_success_triggers_transmit(self):
         exporter = BaseExporter(disable_offline_storage=False)
 
@@ -708,7 +727,6 @@ class TestBaseExporter(unittest.TestCase):
             result = blob.put(envelopes_to_store)
 
             # ASSERT: put should return SUCCESS, not an error string
-            from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
 
             self.assertEqual(
                 result,
@@ -747,7 +765,11 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmit_http_error_redirect(self):
         response = HttpResponse(None, None)
         response.status_code = 307
-        response.headers = {"location": "https://example.com"}
+        # Redirect target whose host differs from the default ingestion host
+        # (`dc.services.visualstudio.com`) only in the leftmost DNS label, with
+        # the same number of labels and a 3-label shared suffix, so the
+        # cross-origin redirect guard permits it.
+        response.headers = {"location": "https://westus.services.visualstudio.com"}
         prev_redirects = self._base.client._config.redirect_policy.max_redirects
         self._base.client._config.redirect_policy.max_redirects = 2
         prev_host = self._base.client._config.host
@@ -757,9 +779,56 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
             self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
             self.assertEqual(post.call_count, 2)
-            self.assertEqual(self._base.client._config.host, "https://example.com")
+            self.assertEqual(
+                self._base.client._config.host,
+                "https://westus.services.visualstudio.com",
+            )
         self._base.client._config.redirect_policy.max_redirects = prev_redirects
         self._base.client._config.host = prev_host
+
+    def test_transmit_http_error_redirect_refuses_cross_origin(self):
+        """A redirect to a different registered domain must be refused so the
+        auth policy does not attach a bearer token for a foreign host on the
+        recursive _transmit call."""
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location": "https://attacker.example.com"}
+        prev_host = self._base.client._config.host
+        error = HttpResponseError(response=response)
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.side_effect = error
+            result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(post.call_count, 1)
+            self.assertEqual(self._base.client._config.host, prev_host)
+
+    def test_is_same_registered_domain(self):
+        same = self._base._is_same_registered_domain
+        # Same host (exact match) is always safe, even when not under a
+        # trusted ingestion suffix (e.g. customer-configured custom host).
+        self.assertTrue(same("westus-0.in.applicationinsights.azure.com", "westus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("custom-ingestion.example.invalid", "custom-ingestion.example.invalid"))
+        # Both hosts under the same trusted Azure Monitor ingestion suffix
+        # are permitted -- this is the cross-region case.
+        self.assertTrue(same("westus-0.in.applicationinsights.azure.com", "eastus-0.in.applicationinsights.azure.com"))
+        self.assertTrue(same("dc.services.visualstudio.com", "westus.services.visualstudio.com"))
+        self.assertTrue(same("foo.applicationinsights.azure.us", "bar.applicationinsights.azure.us"))
+        # Different registered domain entirely is rejected.
+        self.assertFalse(same("westus-0.in.applicationinsights.azure.com", "attacker.com"))
+        self.assertFalse(same("foo.example.com", "foo.example.org"))
+        # Sibling subdomains under an untrusted parent are rejected -- this
+        # is the cross-origin-leak PoC scenario.
+        self.assertFalse(same("legit-ingestion.example.invalid", "attacker.example.invalid"))
+        self.assertFalse(same("foo.azure.com", "bar.azure.com"))
+        # A trusted host cannot be redirected to a host under an untrusted
+        # suffix (and vice versa).
+        self.assertFalse(same("dc.services.visualstudio.com", "attacker.example.invalid"))
+        self.assertFalse(same("legit-ingestion.example.invalid", "dc.services.visualstudio.com"))
+        # Mixing two different trusted suffixes is rejected.
+        self.assertFalse(same("dc.services.visualstudio.com", "westus-0.in.applicationinsights.azure.com"))
+        # Empty inputs are treated as not-same.
+        self.assertFalse(same("", "applicationinsights.azure.com"))
+        self.assertFalse(same("applicationinsights.azure.com", ""))
 
     def test_transmit_http_error_redirect_missing_headers(self):
         response = HttpResponse(None, None)
@@ -926,6 +995,81 @@ class TestBaseExporter(unittest.TestCase):
         # Storage should NOT be called since all errors are sampling rejections
         exporter.storage.put.assert_not_called()
 
+    def test_transmission_206_retry_after_delay_seconds_applied_to_storage_lease(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = (
+                TrackResponse(
+                    items_received=1,
+                    items_accepted=0,
+                    errors=[
+                        TelemetryErrorDetails(index=0, status_code=429, message="throttled"),
+                    ],
+                ),
+                {"Retry-After": "120"},
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_called_once()
+        self.assertEqual(exporter.storage.put.call_args[0][1], 120)
+
+    def test_transmission_206_invalid_retry_after_falls_back_to_default_storage_lease(self):
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = (
+                TrackResponse(
+                    items_received=1,
+                    items_accepted=0,
+                    errors=[
+                        TelemetryErrorDetails(index=0, status_code=429, message="throttled"),
+                    ],
+                ),
+                {"Retry-After": "0"},
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        exporter.storage.put.assert_called_once()
+        self.assertEqual(exporter.storage.put.call_args[0][1], exporter._storage_min_retry_interval)
+
+    def test_get_retry_delay_from_headers_delay_seconds(self):
+        headers = {"Retry-After": "120"}
+        self.assertEqual(_get_retry_delay_from_headers(headers), 120)
+
+    def test_get_retry_delay_from_headers_http_date(self):
+        now = datetime.now(timezone.utc)
+        future = now + timedelta(seconds=121)
+        headers = {"Retry-After": future.strftime("%a, %d %b %Y %H:%M:%S GMT")}
+
+        self.assertEqual(_get_retry_delay_from_headers(headers), 120)
+
+    def test_get_retry_delay_from_headers_invalid_or_non_positive(self):
+        invalid_headers = (
+            None,
+            {},
+            {"Retry-After": ""},
+            {"Retry-After": "0"},
+            {"Retry-After": "-1"},
+            {"Retry-After": "not-a-date"},
+        )
+
+        for headers in invalid_headers:
+            with self.subTest(headers=headers):
+                self.assertIsNone(_get_retry_delay_from_headers(headers))
+
+    def test_get_retry_delay_from_headers_prefers_retry_after(self):
+        headers = {"Retry-After": "60", "x-ms-retry-after-ms": "90000"}
+        self.assertEqual(_get_retry_delay_from_headers(headers), 60)
+
     def test_is_sampling_rejection_true(self):
         """Test that _is_sampling_rejection correctly identifies sampling rejection messages."""
         self.assertTrue(_is_sampling_rejection("Telemetry sampled out."))
@@ -963,6 +1107,23 @@ class TestBaseExporter(unittest.TestCase):
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(429)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    def test_transmission_429_with_retry_after_header_sets_delay(self):
+        """A full-request 429 whose response carries a Retry-After header must
+        cause _transmit to set _retry_after_delay_seconds on the exporter so
+        that _handle_transmit_from_storage can forward it as the storage lease
+        period."""
+        response = HttpResponse(None, None)
+        response.status_code = 429
+        response.headers = {"Retry-After": "120"}
+        error = HttpResponseError(response=response)
+
+        exporter = BaseExporter(disable_offline_storage=True)
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=error):
+            result = exporter._transmit(self._envelopes_to_export)
+
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+        self.assertEqual(exporter._retry_after_delay_seconds, 120)
 
     def test_transmission_439(self):
         with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(439)):

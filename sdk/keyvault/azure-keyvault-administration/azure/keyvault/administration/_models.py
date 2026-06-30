@@ -2,12 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from azure.core.rest import HttpResponse
 
 from ._enums import KeyVaultSettingType
 from ._generated.models import (
+    EkmConnection,
+    EkmProxyClientCertificateInfo,
+    EkmProxyInfo,
     FullBackupOperation,
     Permission,
     RoleAssignment,
@@ -234,3 +237,129 @@ class KeyVaultSetting(object):
     def _from_generated(cls, setting: Setting) -> "KeyVaultSetting":
         setting_type = KeyVaultSettingType.BOOLEAN if setting.type == "boolean" else setting.type
         return cls(name=setting.name, value=setting.value, setting_type=setting_type)
+
+
+class KeyVaultEkmConnection(object):
+    """An External Key Manager (EKM) connection.
+
+    :param str host: EKM proxy FQDN (Fully Qualified Domain Name). Only allowed characters are
+        ``a-z``, ``A-Z``, ``0-9``, hyphen (``-``), dot (``.``), and colon (``:``).
+    :param server_ca_certificates: The root CA certificate chain that issued the proxy server's
+        certificate. An array of certificates in the certificate chain, each in DER format and
+        base64 encoded.
+    :type server_ca_certificates: list[bytes]
+
+    :keyword str path_prefix: Optional path prefix for the EKM proxy (if any).
+    :keyword str server_subject_common_name: The subject common name of the server certificate of
+        the EKM proxy.
+
+    :ivar str host: EKM proxy FQDN.
+    :ivar list[bytes] server_ca_certificates: The root CA certificate chain that issued the proxy
+        server's certificate.
+    :ivar path_prefix: Optional path prefix for the EKM proxy (if any).
+    :vartype path_prefix: str or None
+    :ivar server_subject_common_name: The subject common name of the server certificate of the EKM
+        proxy.
+    :vartype server_subject_common_name: str or None
+    """
+
+    def __init__(
+        self,
+        host: str,
+        server_ca_certificates: List[bytes],
+        *,
+        path_prefix: Optional[str] = None,
+        server_subject_common_name: Optional[str] = None,
+    ) -> None:
+        self.host = host
+        self.server_ca_certificates = server_ca_certificates
+        self.path_prefix = path_prefix
+        self.server_subject_common_name = server_subject_common_name
+
+    def __repr__(self) -> str:
+        return f"KeyVaultEkmConnection<{self.host}>"
+
+    @classmethod
+    def _from_generated(cls, connection: EkmConnection) -> "KeyVaultEkmConnection":
+        return cls(
+            host=connection.host,
+            server_ca_certificates=connection.server_ca_certificates,
+            path_prefix=connection.path_prefix,
+            server_subject_common_name=connection.server_subject_common_name,
+        )
+
+    def _to_generated(self) -> EkmConnection:
+        return EkmConnection(
+            host=self.host,
+            server_ca_certificates=self.server_ca_certificates,
+            path_prefix=self.path_prefix,
+            server_subject_common_name=self.server_subject_common_name,
+        )
+
+
+class KeyVaultEkmProxyClientCertificateInfo(object):
+    """EKM proxy client certificate information.
+
+    :ivar ca_certificates: The client root CA certificate chain to authenticate to the EKM proxy.
+        An array of certificates in the certificate chain, each in DER format and base64 encoded.
+    :vartype ca_certificates: list[bytes] or None
+    :ivar subject_common_name: The subject common name of the client certificate used to
+        authenticate to the EKM proxy.
+    :vartype subject_common_name: str or None
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.ca_certificates: Optional[List[bytes]] = kwargs.get("ca_certificates")
+        self.subject_common_name: Optional[str] = kwargs.get("subject_common_name")
+
+    def __repr__(self) -> str:
+        return f"KeyVaultEkmProxyClientCertificateInfo<{self.subject_common_name}>"
+
+    @classmethod
+    def _from_generated(
+        cls, certificate_info: EkmProxyClientCertificateInfo
+    ) -> "KeyVaultEkmProxyClientCertificateInfo":
+        return cls(
+            ca_certificates=certificate_info.ca_certificates,
+            subject_common_name=certificate_info.subject_common_name,
+        )
+
+
+class KeyVaultEkmProxyInfo(object):
+    """EKM proxy information returned when checking an EKM connection.
+
+    :ivar api_version: The highest version of proxy interface API supported by the EKM proxy.
+    :vartype api_version: str or None
+    :ivar proxy_vendor: The name of the proxy vendor.
+    :vartype proxy_vendor: str or None
+    :ivar proxy_name: The name of the proxy product and its version.
+    :vartype proxy_name: str or None
+    :ivar ekm_vendor: The name of the EKM vendor.
+    :vartype ekm_vendor: str or None
+    :ivar ekm_product: The name of the EKM product and its version.
+    :vartype ekm_product: str or None
+    """
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.api_version: Optional[str] = kwargs.get("api_version")
+        self.proxy_vendor: Optional[str] = kwargs.get("proxy_vendor")
+        self.proxy_name: Optional[str] = kwargs.get("proxy_name")
+        self.ekm_vendor: Optional[str] = kwargs.get("ekm_vendor")
+        self.ekm_product: Optional[str] = kwargs.get("ekm_product")
+
+    def __repr__(self) -> str:
+        return (
+            f"KeyVaultEkmProxyInfo(api_version={self.api_version}, "
+            f"proxy_vendor={self.proxy_vendor}, proxy_name={self.proxy_name}, "
+            f"ekm_vendor={self.ekm_vendor}, ekm_product={self.ekm_product})"
+        )
+
+    @classmethod
+    def _from_generated(cls, proxy_info: EkmProxyInfo) -> "KeyVaultEkmProxyInfo":
+        return cls(
+            api_version=proxy_info.api_version,
+            proxy_vendor=proxy_info.proxy_vendor,
+            proxy_name=proxy_info.proxy_name,
+            ekm_vendor=proxy_info.ekm_vendor,
+            ekm_product=proxy_info.ekm_product,
+        )

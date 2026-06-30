@@ -89,9 +89,7 @@ class TestSearchClientSearchAsync(AzureRecordedTestCase):
         index_name = self.get_resource_name("index-search-facets")
 
         async with hotel_index(self, endpoint, index_name) as (search_client, _):
-            results = await search_client.search(
-                search_text="WiFi", facets=["Category"], select=SEARCH_SELECT_FIELDS
-            )
+            results = await search_client.search(search_text="WiFi", facets=["Category"], select=SEARCH_SELECT_FIELDS)
             assert await results.get_facets() == {
                 "Category": [
                     {"value": "Budget", "count": 4},
@@ -111,10 +109,7 @@ class TestSearchClientSearchAsync(AzureRecordedTestCase):
             index_name,
             document_count=LARGE_HOTEL_DOCUMENT_COUNT,
         ) as (search_client, _):
-            assert (
-                len(await _collect(await search_client.search(search_text="")))
-                == LARGE_HOTEL_DOCUMENT_COUNT
-            )
+            assert len(await _collect(await search_client.search(search_text=""))) == LARGE_HOTEL_DOCUMENT_COUNT
 
     @live_test()
     async def test_autocomplete_returns_completed_terms(self, endpoint):
