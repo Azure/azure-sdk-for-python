@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2025-11-27",
+  "apiVersions": {
+    "Informatica.DataManagement": "2025-11-27"
+  },
+  "commit": "8443d587eb48cc2edc78b8cf2bb77dcc4cd6eca5",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/informatica/Informatica.DataManagement.Management",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.0"
+}

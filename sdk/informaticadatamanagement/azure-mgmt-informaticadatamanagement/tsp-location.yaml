@@ -1,0 +1,4 @@
+directory: specification/informatica/Informatica.DataManagement.Management
+commit: 8443d587eb48cc2edc78b8cf2bb77dcc4cd6eca5
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
