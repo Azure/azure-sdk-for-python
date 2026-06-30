@@ -68,18 +68,22 @@ async def main():
         print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
         try:
             print(f"Uploading session file: {data_file1} -> {remote_file_path1}")
+            with open(data_file1, "rb") as f:
+                content1 = f.read()
             await project_client.agents.upload_session_file(
                 agent_name=agent_name,
-                session_id=session.agent_session_id,
-                file_path=data_file1,
+                agent_session_id=session.agent_session_id,
+                content=content1,
                 remote_path=remote_file_path1,
             )
 
             print(f"Uploading session file: {data_file2} -> {remote_file_path2}")
+            with open(data_file2, "rb") as f:
+                content2 = f.read()
             await project_client.agents.upload_session_file(
                 agent_name=agent_name,
-                session_id=session.agent_session_id,
-                file_path=data_file2,
+                agent_session_id=session.agent_session_id,
+                content=content2,
                 remote_path=remote_file_path2,
             )
 
@@ -94,7 +98,7 @@ async def main():
 
             print(f"Downloading and printing content from '{remote_file_path1}'")
             content_bytes = b""
-            async for chunk in await project_client.agents.download_session_file_as_bytes(
+            async for chunk in await project_client.agents.download_session_file(
                 agent_name=agent_name,
                 agent_session_id=session.agent_session_id,
                 remote_path=remote_file_path1,
