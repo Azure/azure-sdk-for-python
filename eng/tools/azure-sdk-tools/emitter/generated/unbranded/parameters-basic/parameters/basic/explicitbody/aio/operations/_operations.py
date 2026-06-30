@@ -17,13 +17,12 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ... import models as _models2
+from ... import models as _models2, types as _types_models2
 from ...._utils.model_base import SdkJSONEncoder
 from ...._utils.serialization import Deserializer, Serializer
 from ....aio._configuration import BasicClientConfiguration
 from ...operations._operations import build_explicit_body_simple_request
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -60,11 +59,11 @@ class ExplicitBodyOperations:
         """
 
     @overload
-    async def simple(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def simple(self, body: _types_models2.User, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """simple.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.basic.explicitbody.types.User
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -87,11 +86,12 @@ class ExplicitBodyOperations:
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def simple(self, body: Union[_models2.User, JSON, IO[bytes]], **kwargs: Any) -> None:
+    async def simple(self, body: Union[_models2.User, _types_models2.User, IO[bytes]], **kwargs: Any) -> None:
         """simple.
 
-        :param body: Is one of the following types: User, JSON, IO[bytes] Required.
-        :type body: ~parameters.basic.explicitbody.models.User or JSON or IO[bytes]
+        :param body: Is either a User type or a IO[bytes] type. Required.
+        :type body: ~parameters.basic.explicitbody.models.User or
+         ~parameters.basic.explicitbody.types.User or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

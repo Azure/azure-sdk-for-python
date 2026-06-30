@@ -27,7 +27,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import (
     HeaderParamClientConfiguration,
     MixedParamsClientConfiguration,
@@ -40,7 +40,6 @@ from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -343,11 +342,11 @@ class _HeaderParamClientOperationsMixin(
         """
 
     @overload
-    def with_body(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def with_body(self, body: _types.Input, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_body.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.azure.clientgenerator.core.clientinitialization.default.types.Input
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -372,13 +371,13 @@ class _HeaderParamClientOperationsMixin(
 
     @distributed_trace
     def with_body(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.Input, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.Input, _types.Input, IO[bytes]], **kwargs: Any
     ) -> None:
         """with_body.
 
-        :param body: Is one of the following types: Input, JSON, IO[bytes] Required.
-        :type body: ~specs.azure.clientgenerator.core.clientinitialization.default.models.Input or JSON
-         or IO[bytes]
+        :param body: Is either a Input type or a IO[bytes] type. Required.
+        :type body: ~specs.azure.clientgenerator.core.clientinitialization.default.models.Input or
+         ~specs.azure.clientgenerator.core.clientinitialization.default.types.Input or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -499,11 +498,11 @@ class _MultipleParamsClientOperationsMixin(
         """
 
     @overload
-    def with_body(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def with_body(self, body: _types.Input, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """with_body.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.azure.clientgenerator.core.clientinitialization.default.types.Input
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -528,13 +527,13 @@ class _MultipleParamsClientOperationsMixin(
 
     @distributed_trace
     def with_body(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.Input, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.Input, _types.Input, IO[bytes]], **kwargs: Any
     ) -> None:
         """with_body.
 
-        :param body: Is one of the following types: Input, JSON, IO[bytes] Required.
-        :type body: ~specs.azure.clientgenerator.core.clientinitialization.default.models.Input or JSON
-         or IO[bytes]
+        :param body: Is either a Input type or a IO[bytes] type. Required.
+        :type body: ~specs.azure.clientgenerator.core.clientinitialization.default.models.Input or
+         ~specs.azure.clientgenerator.core.clientinitialization.default.types.Input or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -665,11 +664,14 @@ class _MixedParamsClientOperationsMixin(
         """
 
     @overload
-    def with_body(self, body: JSON, *, region: str, content_type: str = "application/json", **kwargs: Any) -> None:
+    def with_body(
+        self, body: _types.WithBodyRequest, *, region: str, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """with_body.
 
         :param body: Required.
-        :type body: JSON
+        :type body:
+         ~specs.azure.clientgenerator.core.clientinitialization.default.types.WithBodyRequest
         :keyword region: Required.
         :paramtype region: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -698,14 +700,15 @@ class _MixedParamsClientOperationsMixin(
 
     @distributed_trace
     def with_body(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.WithBodyRequest, JSON, IO[bytes]], *, region: str, **kwargs: Any
+        self, body: Union[_models.WithBodyRequest, _types.WithBodyRequest, IO[bytes]], *, region: str, **kwargs: Any
     ) -> None:
         """with_body.
 
-        :param body: Is one of the following types: WithBodyRequest, JSON, IO[bytes] Required.
+        :param body: Is either a WithBodyRequest type or a IO[bytes] type. Required.
         :type body:
-         ~specs.azure.clientgenerator.core.clientinitialization.default.models.WithBodyRequest or JSON
-         or IO[bytes]
+         ~specs.azure.clientgenerator.core.clientinitialization.default.models.WithBodyRequest or
+         ~specs.azure.clientgenerator.core.clientinitialization.default.types.WithBodyRequest or
+         IO[bytes]
         :keyword region: Required.
         :paramtype region: str
         :return: None

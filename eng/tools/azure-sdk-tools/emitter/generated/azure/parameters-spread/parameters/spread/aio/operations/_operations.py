@@ -25,7 +25,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -81,12 +81,12 @@ class ModelOperations:
 
     @overload
     async def spread_as_request_body(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.BodyParameter, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """spread_as_request_body.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.types.BodyParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -113,12 +113,12 @@ class ModelOperations:
 
     @distributed_trace_async
     async def spread_as_request_body(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
+        self, body: Union[JSON, _types.BodyParameter, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
     ) -> None:
         """spread_as_request_body.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, BodyParameter, IO[bytes] Required.
+        :type body: JSON or ~parameters.spread.types.BodyParameter or IO[bytes]
         :keyword name: Required.
         :paramtype name: str
         :return: None
@@ -194,12 +194,12 @@ class ModelOperations:
 
     @overload
     async def spread_composite_request_only_with_body(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.BodyParameter, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """spread_composite_request_only_with_body.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.types.BodyParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -226,12 +226,13 @@ class ModelOperations:
 
     @distributed_trace_async
     async def spread_composite_request_only_with_body(
-        self, body: Union[_models.BodyParameter, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BodyParameter, _types.BodyParameter, IO[bytes]], **kwargs: Any
     ) -> None:
         """spread_composite_request_only_with_body.
 
-        :param body: Is one of the following types: BodyParameter, JSON, IO[bytes] Required.
-        :type body: ~parameters.spread.models.BodyParameter or JSON or IO[bytes]
+        :param body: Is either a BodyParameter type or a IO[bytes] type. Required.
+        :type body: ~parameters.spread.models.BodyParameter or ~parameters.spread.types.BodyParameter
+         or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -360,14 +361,20 @@ class ModelOperations:
 
     @overload
     async def spread_composite_request(
-        self, name: str, body: JSON, *, test_header: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: _types.BodyParameter,
+        *,
+        test_header: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """spread_composite_request.
 
         :param name: Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.types.BodyParameter
         :keyword test_header: Required.
         :paramtype test_header: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -400,14 +407,20 @@ class ModelOperations:
 
     @distributed_trace_async
     async def spread_composite_request(
-        self, name: str, body: Union[_models.BodyParameter, JSON, IO[bytes]], *, test_header: str, **kwargs: Any
+        self,
+        name: str,
+        body: Union[_models.BodyParameter, _types.BodyParameter, IO[bytes]],
+        *,
+        test_header: str,
+        **kwargs: Any
     ) -> None:
         """spread_composite_request.
 
         :param name: Required.
         :type name: str
-        :param body: Is one of the following types: BodyParameter, JSON, IO[bytes] Required.
-        :type body: ~parameters.spread.models.BodyParameter or JSON or IO[bytes]
+        :param body: Is either a BodyParameter type or a IO[bytes] type. Required.
+        :type body: ~parameters.spread.models.BodyParameter or ~parameters.spread.types.BodyParameter
+         or IO[bytes]
         :keyword test_header: Required.
         :paramtype test_header: str
         :return: None
@@ -484,14 +497,20 @@ class ModelOperations:
 
     @overload
     async def spread_composite_request_mix(
-        self, name: str, body: JSON, *, test_header: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: _types.SpreadCompositeRequestMixRequest,
+        *,
+        test_header: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """spread_composite_request_mix.
 
         :param name: Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.types.SpreadCompositeRequestMixRequest
         :keyword test_header: Required.
         :paramtype test_header: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -524,14 +543,21 @@ class ModelOperations:
 
     @distributed_trace_async
     async def spread_composite_request_mix(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, test_header: str, prop: str = _Unset, **kwargs: Any
+        self,
+        name: str,
+        body: Union[JSON, _types.SpreadCompositeRequestMixRequest, IO[bytes]] = _Unset,
+        *,
+        test_header: str,
+        prop: str = _Unset,
+        **kwargs: Any
     ) -> None:
         """spread_composite_request_mix.
 
         :param name: Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SpreadCompositeRequestMixRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~parameters.spread.types.SpreadCompositeRequestMixRequest or IO[bytes]
         :keyword test_header: Required.
         :paramtype test_header: str
         :keyword prop: Required.
@@ -627,12 +653,12 @@ class AliasOperations:
 
     @overload
     async def spread_as_request_body(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.SpreadAsRequestBodyRequest, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """spread_as_request_body.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.types.SpreadAsRequestBodyRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -659,12 +685,17 @@ class AliasOperations:
 
     @distributed_trace_async
     async def spread_as_request_body(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
+        self,
+        body: Union[JSON, _types.SpreadAsRequestBodyRequest, IO[bytes]] = _Unset,
+        *,
+        name: str = _Unset,
+        **kwargs: Any
     ) -> None:
         """spread_as_request_body.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SpreadAsRequestBodyRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~parameters.spread.types.SpreadAsRequestBodyRequest or IO[bytes]
         :keyword name: Required.
         :paramtype name: str
         :return: None
@@ -744,14 +775,20 @@ class AliasOperations:
 
     @overload
     async def spread_parameter_with_inner_model(
-        self, id: str, body: JSON, *, x_ms_test_header: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        id: str,
+        body: _types.SpreadParameterWithInnerModelRequest,
+        *,
+        x_ms_test_header: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """spread_parameter_with_inner_model.
 
         :param id: Required.
         :type id: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.types.SpreadParameterWithInnerModelRequest
         :keyword x_ms_test_header: Required.
         :paramtype x_ms_test_header: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -786,7 +823,7 @@ class AliasOperations:
     async def spread_parameter_with_inner_model(
         self,
         id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.SpreadParameterWithInnerModelRequest, IO[bytes]] = _Unset,
         *,
         x_ms_test_header: str,
         name: str = _Unset,
@@ -796,8 +833,9 @@ class AliasOperations:
 
         :param id: Required.
         :type id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SpreadParameterWithInnerModelRequest,
+         IO[bytes] Required.
+        :type body: JSON or ~parameters.spread.types.SpreadParameterWithInnerModelRequest or IO[bytes]
         :keyword x_ms_test_header: Required.
         :paramtype x_ms_test_header: str
         :keyword name: Required.
@@ -881,14 +919,20 @@ class AliasOperations:
 
     @overload
     async def spread_as_request_parameter(
-        self, id: str, body: JSON, *, x_ms_test_header: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        id: str,
+        body: _types.SpreadAsRequestParameterRequest,
+        *,
+        x_ms_test_header: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """spread_as_request_parameter.
 
         :param id: Required.
         :type id: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.types.SpreadAsRequestParameterRequest
         :keyword x_ms_test_header: Required.
         :paramtype x_ms_test_header: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -923,7 +967,7 @@ class AliasOperations:
     async def spread_as_request_parameter(
         self,
         id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.SpreadAsRequestParameterRequest, IO[bytes]] = _Unset,
         *,
         x_ms_test_header: str,
         name: str = _Unset,
@@ -933,8 +977,9 @@ class AliasOperations:
 
         :param id: Required.
         :type id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SpreadAsRequestParameterRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~parameters.spread.types.SpreadAsRequestParameterRequest or IO[bytes]
         :keyword x_ms_test_header: Required.
         :paramtype x_ms_test_header: str
         :keyword name: Required.
@@ -1033,14 +1078,20 @@ class AliasOperations:
 
     @overload
     async def spread_with_multiple_parameters(
-        self, id: str, body: JSON, *, x_ms_test_header: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        id: str,
+        body: _types.SpreadWithMultipleParametersRequest,
+        *,
+        x_ms_test_header: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """spread_with_multiple_parameters.
 
         :param id: Required.
         :type id: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.types.SpreadWithMultipleParametersRequest
         :keyword x_ms_test_header: Required.
         :paramtype x_ms_test_header: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1075,7 +1126,7 @@ class AliasOperations:
     async def spread_with_multiple_parameters(
         self,
         id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.SpreadWithMultipleParametersRequest, IO[bytes]] = _Unset,
         *,
         x_ms_test_header: str,
         required_string: str = _Unset,
@@ -1088,8 +1139,9 @@ class AliasOperations:
 
         :param id: Required.
         :type id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SpreadWithMultipleParametersRequest,
+         IO[bytes] Required.
+        :type body: JSON or ~parameters.spread.types.SpreadWithMultipleParametersRequest or IO[bytes]
         :keyword x_ms_test_header: Required.
         :paramtype x_ms_test_header: str
         :keyword required_string: required string. Required.
@@ -1195,14 +1247,20 @@ class AliasOperations:
 
     @overload
     async def spread_parameter_with_inner_alias(
-        self, id: str, body: JSON, *, x_ms_test_header: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        id: str,
+        body: _types.SpreadParameterWithInnerAliasRequest,
+        *,
+        x_ms_test_header: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """spread an alias with contains another alias property as body.
 
         :param id: Required.
         :type id: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.types.SpreadParameterWithInnerAliasRequest
         :keyword x_ms_test_header: Required.
         :paramtype x_ms_test_header: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -1237,7 +1295,7 @@ class AliasOperations:
     async def spread_parameter_with_inner_alias(
         self,
         id: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.SpreadParameterWithInnerAliasRequest, IO[bytes]] = _Unset,
         *,
         x_ms_test_header: str,
         name: str = _Unset,
@@ -1248,8 +1306,9 @@ class AliasOperations:
 
         :param id: Required.
         :type id: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SpreadParameterWithInnerAliasRequest,
+         IO[bytes] Required.
+        :type body: JSON or ~parameters.spread.types.SpreadParameterWithInnerAliasRequest or IO[bytes]
         :keyword x_ms_test_header: Required.
         :paramtype x_ms_test_header: str
         :keyword name: name of the Thing. Required.

@@ -19,13 +19,12 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ... import models as _models2
+from ... import models as _models2, types as _types_models2
 from ...._utils.model_base import SdkJSONEncoder, _deserialize
 from ...._utils.serialization import Deserializer, Serializer
 from ....aio._configuration import JsonClientConfiguration
 from ...operations._operations import build_property_get_request, build_property_send_request
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -64,11 +63,13 @@ class PropertyOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(
+        self, body: _types_models2.JsonEncodedNameModel, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~serialization.encodedname.json.property.types.JsonEncodedNameModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -91,12 +92,14 @@ class PropertyOperations:
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def send(self, body: Union[_models2.JsonEncodedNameModel, JSON, IO[bytes]], **kwargs: Any) -> None:
+    async def send(
+        self, body: Union[_models2.JsonEncodedNameModel, _types_models2.JsonEncodedNameModel, IO[bytes]], **kwargs: Any
+    ) -> None:
         """send.
 
-        :param body: Is one of the following types: JsonEncodedNameModel, JSON, IO[bytes] Required.
-        :type body: ~serialization.encodedname.json.property.models.JsonEncodedNameModel or JSON or
-         IO[bytes]
+        :param body: Is either a JsonEncodedNameModel type or a IO[bytes] type. Required.
+        :type body: ~serialization.encodedname.json.property.models.JsonEncodedNameModel or
+         ~serialization.encodedname.json.property.types.JsonEncodedNameModel or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

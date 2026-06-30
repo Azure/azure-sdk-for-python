@@ -26,13 +26,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import AzureExampleClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -96,12 +95,18 @@ class _AzureExampleClientOperationsMixin(
 
     @overload
     def basic_action(
-        self, body: JSON, *, query_param: str, header_param: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: _types.ActionRequest,
+        *,
+        query_param: str,
+        header_param: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ActionResponse:
         """basic_action.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.azure.example.basic.types.ActionRequest
         :keyword query_param: Required.
         :paramtype query_param: str
         :keyword header_param: Required.
@@ -142,12 +147,18 @@ class _AzureExampleClientOperationsMixin(
 
     @distributed_trace
     def basic_action(
-        self, body: Union[_models.ActionRequest, JSON, IO[bytes]], *, query_param: str, header_param: str, **kwargs: Any
+        self,
+        body: Union[_models.ActionRequest, _types.ActionRequest, IO[bytes]],
+        *,
+        query_param: str,
+        header_param: str,
+        **kwargs: Any
     ) -> _models.ActionResponse:
         """basic_action.
 
-        :param body: Is one of the following types: ActionRequest, JSON, IO[bytes] Required.
-        :type body: ~specs.azure.example.basic.models.ActionRequest or JSON or IO[bytes]
+        :param body: Is either a ActionRequest type or a IO[bytes] type. Required.
+        :type body: ~specs.azure.example.basic.models.ActionRequest or
+         ~specs.azure.example.basic.types.ActionRequest or IO[bytes]
         :keyword query_param: Required.
         :paramtype query_param: str
         :keyword header_param: Required.

@@ -28,12 +28,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import AlternateTypeClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -296,11 +295,13 @@ class ExternalTypeOperations:
         """
 
     @overload
-    def put_property(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put_property(
+        self, body: _types.ModelWithFeatureProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """put_property.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.azure.clientgenerator.core.alternatetype.types.ModelWithFeatureProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -325,13 +326,13 @@ class ExternalTypeOperations:
 
     @distributed_trace
     def put_property(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.ModelWithFeatureProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ModelWithFeatureProperty, _types.ModelWithFeatureProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """put_property.
 
-        :param body: Is one of the following types: ModelWithFeatureProperty, JSON, IO[bytes] Required.
+        :param body: Is either a ModelWithFeatureProperty type or a IO[bytes] type. Required.
         :type body: ~specs.azure.clientgenerator.core.alternatetype.models.ModelWithFeatureProperty or
-         JSON or IO[bytes]
+         ~specs.azure.clientgenerator.core.alternatetype.types.ModelWithFeatureProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

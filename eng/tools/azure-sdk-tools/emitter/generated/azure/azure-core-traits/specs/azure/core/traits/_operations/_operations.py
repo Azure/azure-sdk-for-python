@@ -29,13 +29,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import TraitsClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC, prep_if_match, prep_if_none_match
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -246,14 +245,14 @@ class _TraitsClientOperationsMixin(
 
     @overload
     def repeatable_action(
-        self, id: int, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, id: int, body: _types.UserActionParam, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.UserActionResponse:
         """Test for repeatable requests.
 
         :param id: The user's id. Required.
         :type id: int
         :param body: The body parameter. Required.
-        :type body: JSON
+        :type body: ~specs.azure.core.traits.types.UserActionParam
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -282,15 +281,16 @@ class _TraitsClientOperationsMixin(
 
     @distributed_trace
     def repeatable_action(
-        self, id: int, body: Union[_models.UserActionParam, JSON, IO[bytes]], **kwargs: Any
+        self, id: int, body: Union[_models.UserActionParam, _types.UserActionParam, IO[bytes]], **kwargs: Any
     ) -> _models.UserActionResponse:
         """Test for repeatable requests.
 
         :param id: The user's id. Required.
         :type id: int
-        :param body: The body parameter. Is one of the following types: UserActionParam, JSON,
-         IO[bytes] Required.
-        :type body: ~specs.azure.core.traits.models.UserActionParam or JSON or IO[bytes]
+        :param body: The body parameter. Is either a UserActionParam type or a IO[bytes] type.
+         Required.
+        :type body: ~specs.azure.core.traits.models.UserActionParam or
+         ~specs.azure.core.traits.types.UserActionParam or IO[bytes]
         :return: UserActionResponse. The UserActionResponse is compatible with MutableMapping
         :rtype: ~specs.azure.core.traits.models.UserActionResponse
         :raises ~azure.core.exceptions.HttpResponseError:

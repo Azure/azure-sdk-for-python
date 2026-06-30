@@ -26,13 +26,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ClientDefaultValueClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -133,12 +132,12 @@ class _ClientDefaultValueClientOperationsMixin(
 
     @overload
     def put_model_property(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.ModelWithDefaultValues, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ModelWithDefaultValues:
         """put_model_property.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.azure.clientgenerator.core.clientdefaultvalue.types.ModelWithDefaultValues
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -165,13 +164,14 @@ class _ClientDefaultValueClientOperationsMixin(
 
     @distributed_trace
     def put_model_property(
-        self, body: Union[_models.ModelWithDefaultValues, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ModelWithDefaultValues, _types.ModelWithDefaultValues, IO[bytes]], **kwargs: Any
     ) -> _models.ModelWithDefaultValues:
         """put_model_property.
 
-        :param body: Is one of the following types: ModelWithDefaultValues, JSON, IO[bytes] Required.
+        :param body: Is either a ModelWithDefaultValues type or a IO[bytes] type. Required.
         :type body: ~specs.azure.clientgenerator.core.clientdefaultvalue.models.ModelWithDefaultValues
-         or JSON or IO[bytes]
+         or ~specs.azure.clientgenerator.core.clientdefaultvalue.types.ModelWithDefaultValues or
+         IO[bytes]
         :return: ModelWithDefaultValues. The ModelWithDefaultValues is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.clientdefaultvalue.models.ModelWithDefaultValues
         :raises ~azure.core.exceptions.HttpResponseError:

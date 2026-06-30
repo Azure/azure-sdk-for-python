@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -45,7 +45,6 @@ from ...operations._operations import (
 )
 from .._configuration import ManagementGroupClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -143,7 +142,7 @@ class ManagementGroupChildResourcesOperations:
         self,
         management_group_id: str,
         management_group_child_resource_name: str,
-        resource: Union[_models.ManagementGroupChildResource, JSON, IO[bytes]],
+        resource: Union[_models.ManagementGroupChildResource, _types.ManagementGroupChildResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -249,7 +248,7 @@ class ManagementGroupChildResourcesOperations:
         self,
         management_group_id: str,
         management_group_child_resource_name: str,
-        resource: JSON,
+        resource: _types.ManagementGroupChildResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -262,7 +261,7 @@ class ManagementGroupChildResourcesOperations:
          Required.
         :type management_group_child_resource_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.resourcemanager.managementgroup.types.ManagementGroupChildResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -307,7 +306,7 @@ class ManagementGroupChildResourcesOperations:
         self,
         management_group_id: str,
         management_group_child_resource_name: str,
-        resource: Union[_models.ManagementGroupChildResource, JSON, IO[bytes]],
+        resource: Union[_models.ManagementGroupChildResource, _types.ManagementGroupChildResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ManagementGroupChildResource]:
         """Create a ManagementGroupChildResource.
@@ -317,10 +316,10 @@ class ManagementGroupChildResourcesOperations:
         :param management_group_child_resource_name: The name of the ManagementGroupChildResource.
          Required.
         :type management_group_child_resource_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         ManagementGroupChildResource, JSON, IO[bytes] Required.
+        :param resource: Resource create parameters. Is either a ManagementGroupChildResource type or a
+         IO[bytes] type. Required.
         :type resource: ~azure.resourcemanager.managementgroup.models.ManagementGroupChildResource or
-         JSON or IO[bytes]
+         ~azure.resourcemanager.managementgroup.types.ManagementGroupChildResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ManagementGroupChildResource. The
          ManagementGroupChildResource is compatible with MutableMapping
         :rtype:
@@ -412,7 +411,7 @@ class ManagementGroupChildResourcesOperations:
         self,
         management_group_id: str,
         management_group_child_resource_name: str,
-        properties: JSON,
+        properties: _types.ManagementGroupChildResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -425,7 +424,7 @@ class ManagementGroupChildResourcesOperations:
          Required.
         :type management_group_child_resource_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.resourcemanager.managementgroup.types.ManagementGroupChildResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -468,7 +467,7 @@ class ManagementGroupChildResourcesOperations:
         self,
         management_group_id: str,
         management_group_child_resource_name: str,
-        properties: Union[_models.ManagementGroupChildResource, JSON, IO[bytes]],
+        properties: Union[_models.ManagementGroupChildResource, _types.ManagementGroupChildResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ManagementGroupChildResource:
         """Update a ManagementGroupChildResource.
@@ -478,10 +477,10 @@ class ManagementGroupChildResourcesOperations:
         :param management_group_child_resource_name: The name of the ManagementGroupChildResource.
          Required.
         :type management_group_child_resource_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         ManagementGroupChildResource, JSON, IO[bytes] Required.
+        :param properties: The resource properties to be updated. Is either a
+         ManagementGroupChildResource type or a IO[bytes] type. Required.
         :type properties: ~azure.resourcemanager.managementgroup.models.ManagementGroupChildResource or
-         JSON or IO[bytes]
+         ~azure.resourcemanager.managementgroup.types.ManagementGroupChildResource or IO[bytes]
         :return: ManagementGroupChildResource. The ManagementGroupChildResource is compatible with
          MutableMapping
         :rtype: ~azure.resourcemanager.managementgroup.models.ManagementGroupChildResource

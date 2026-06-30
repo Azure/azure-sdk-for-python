@@ -6,7 +6,7 @@ from typing import Any, Mapping, TYPE_CHECKING, Union, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
-    from .. import _types, models as _models
+    from .. import _unions, models as _models
 
 
 class NewModel(_Model):
@@ -26,7 +26,7 @@ class NewModel(_Model):
         name="enumProp", visibility=["read", "create", "update", "delete", "query"]
     )
     """Required. \"newEnumMember\""""
-    union_prop: "_types.NewUnion" = rest_field(
+    union_prop: "_unions.NewUnion" = rest_field(
         name="unionProp", visibility=["read", "create", "update", "delete", "query"]
     )
     """Required. Is either a str type or a int type."""
@@ -37,7 +37,7 @@ class NewModel(_Model):
         *,
         new_prop: str,
         enum_prop: Union[str, "_models.NewEnum"],
-        union_prop: "_types.NewUnion",
+        union_prop: "_unions.NewUnion",
     ) -> None: ...
 
     @overload

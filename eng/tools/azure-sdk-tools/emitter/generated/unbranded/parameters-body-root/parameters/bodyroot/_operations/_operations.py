@@ -17,13 +17,12 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import BodyRootClientConfiguration
 from .._utils.model_base import SdkJSONEncoder
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -66,11 +65,13 @@ class _BodyRootClientOperationsMixin(
         """
 
     @overload
-    def nested(self, body_root_parameters: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def nested(
+        self, body_root_parameters: _types.BodyRootModel, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """nested.
 
         :param body_root_parameters: Required.
-        :type body_root_parameters: JSON
+        :type body_root_parameters: ~parameters.bodyroot.types.BodyRootModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -94,13 +95,13 @@ class _BodyRootClientOperationsMixin(
         """
 
     def nested(  # pylint: disable=inconsistent-return-statements
-        self, body_root_parameters: Union[_models.BodyRootModel, JSON, IO[bytes]], **kwargs: Any
+        self, body_root_parameters: Union[_models.BodyRootModel, _types.BodyRootModel, IO[bytes]], **kwargs: Any
     ) -> None:
         """nested.
 
-        :param body_root_parameters: Is one of the following types: BodyRootModel, JSON, IO[bytes]
-         Required.
-        :type body_root_parameters: ~parameters.bodyroot.models.BodyRootModel or JSON or IO[bytes]
+        :param body_root_parameters: Is either a BodyRootModel type or a IO[bytes] type. Required.
+        :type body_root_parameters: ~parameters.bodyroot.models.BodyRootModel or
+         ~parameters.bodyroot.types.BodyRootModel or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

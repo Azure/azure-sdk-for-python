@@ -26,13 +26,12 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models2
+from ... import models as _models2, types as _types_models2
 from ...._utils.model_base import SdkJSONEncoder, _deserialize
 from ...._utils.serialization import Deserializer, Serializer
 from ....aio._configuration import ExactNameClientConfiguration
 from ...operations._operations import build_enum_value_send_request
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -72,12 +71,12 @@ class EnumValueOperations:
 
     @overload
     async def send(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types_models2.EndpointConfig, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.EndpointConfig:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.azure.clientgenerator.core.exactname.enumvalue.types.EndpointConfig
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -104,13 +103,13 @@ class EnumValueOperations:
 
     @distributed_trace_async
     async def send(
-        self, body: Union[_models2.EndpointConfig, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models2.EndpointConfig, _types_models2.EndpointConfig, IO[bytes]], **kwargs: Any
     ) -> _models2.EndpointConfig:
         """send.
 
-        :param body: Is one of the following types: EndpointConfig, JSON, IO[bytes] Required.
-        :type body: ~specs.azure.clientgenerator.core.exactname.enumvalue.models.EndpointConfig or JSON
-         or IO[bytes]
+        :param body: Is either a EndpointConfig type or a IO[bytes] type. Required.
+        :type body: ~specs.azure.clientgenerator.core.exactname.enumvalue.models.EndpointConfig or
+         ~specs.azure.clientgenerator.core.exactname.enumvalue.types.EndpointConfig or IO[bytes]
         :return: EndpointConfig. The EndpointConfig is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.exactname.enumvalue.models.EndpointConfig
         :raises ~azure.core.exceptions.HttpResponseError:

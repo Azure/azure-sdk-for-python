@@ -26,7 +26,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -38,7 +38,6 @@ from ...operations._operations import (
 )
 from .._configuration import HierarchyBuildingClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -78,12 +77,12 @@ class AnimalOperationsOperations:
 
     @overload
     async def update_pet_as_animal(
-        self, animal: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, animal: _types.Animal, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Animal:
         """Update a pet as an animal.
 
         :param animal: Required.
-        :type animal: JSON
+        :type animal: ~specs.azure.clientgenerator.core.hierarchybuilding.types.Animal
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -110,13 +109,13 @@ class AnimalOperationsOperations:
 
     @distributed_trace_async
     async def update_pet_as_animal(
-        self, animal: Union[_models.Animal, JSON, IO[bytes]], **kwargs: Any
+        self, animal: Union[_models.Animal, _types.Animal, IO[bytes]], **kwargs: Any
     ) -> _models.Animal:
         """Update a pet as an animal.
 
-        :param animal: Is one of the following types: Animal, JSON, IO[bytes] Required.
-        :type animal: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Animal or JSON or
-         IO[bytes]
+        :param animal: Is either a Animal type or a IO[bytes] type. Required.
+        :type animal: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Animal or
+         ~specs.azure.clientgenerator.core.hierarchybuilding.types.Animal or IO[bytes]
         :return: Animal. The Animal is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Animal
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -198,12 +197,12 @@ class AnimalOperationsOperations:
 
     @overload
     async def update_dog_as_animal(
-        self, animal: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, animal: _types.Animal, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Animal:
         """Update a dog as an animal.
 
         :param animal: Required.
-        :type animal: JSON
+        :type animal: ~specs.azure.clientgenerator.core.hierarchybuilding.types.Animal
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -230,13 +229,13 @@ class AnimalOperationsOperations:
 
     @distributed_trace_async
     async def update_dog_as_animal(
-        self, animal: Union[_models.Animal, JSON, IO[bytes]], **kwargs: Any
+        self, animal: Union[_models.Animal, _types.Animal, IO[bytes]], **kwargs: Any
     ) -> _models.Animal:
         """Update a dog as an animal.
 
-        :param animal: Is one of the following types: Animal, JSON, IO[bytes] Required.
-        :type animal: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Animal or JSON or
-         IO[bytes]
+        :param animal: Is either a Animal type or a IO[bytes] type. Required.
+        :type animal: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Animal or
+         ~specs.azure.clientgenerator.core.hierarchybuilding.types.Animal or IO[bytes]
         :return: Animal. The Animal is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Animal
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -336,12 +335,12 @@ class PetOperationsOperations:
 
     @overload
     async def update_pet_as_pet(
-        self, pet: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, pet: _types.Pet, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Pet:
         """Update a pet as a pet.
 
         :param pet: Required.
-        :type pet: JSON
+        :type pet: ~specs.azure.clientgenerator.core.hierarchybuilding.types.Pet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -367,11 +366,12 @@ class PetOperationsOperations:
         """
 
     @distributed_trace_async
-    async def update_pet_as_pet(self, pet: Union[_models.Pet, JSON, IO[bytes]], **kwargs: Any) -> _models.Pet:
+    async def update_pet_as_pet(self, pet: Union[_models.Pet, _types.Pet, IO[bytes]], **kwargs: Any) -> _models.Pet:
         """Update a pet as a pet.
 
-        :param pet: Is one of the following types: Pet, JSON, IO[bytes] Required.
-        :type pet: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Pet or JSON or IO[bytes]
+        :param pet: Is either a Pet type or a IO[bytes] type. Required.
+        :type pet: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Pet or
+         ~specs.azure.clientgenerator.core.hierarchybuilding.types.Pet or IO[bytes]
         :return: Pet. The Pet is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Pet
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -453,12 +453,12 @@ class PetOperationsOperations:
 
     @overload
     async def update_dog_as_pet(
-        self, pet: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, pet: _types.Pet, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Pet:
         """Update a dog as a pet.
 
         :param pet: Required.
-        :type pet: JSON
+        :type pet: ~specs.azure.clientgenerator.core.hierarchybuilding.types.Pet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -484,11 +484,12 @@ class PetOperationsOperations:
         """
 
     @distributed_trace_async
-    async def update_dog_as_pet(self, pet: Union[_models.Pet, JSON, IO[bytes]], **kwargs: Any) -> _models.Pet:
+    async def update_dog_as_pet(self, pet: Union[_models.Pet, _types.Pet, IO[bytes]], **kwargs: Any) -> _models.Pet:
         """Update a dog as a pet.
 
-        :param pet: Is one of the following types: Pet, JSON, IO[bytes] Required.
-        :type pet: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Pet or JSON or IO[bytes]
+        :param pet: Is either a Pet type or a IO[bytes] type. Required.
+        :type pet: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Pet or
+         ~specs.azure.clientgenerator.core.hierarchybuilding.types.Pet or IO[bytes]
         :return: Pet. The Pet is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Pet
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -588,12 +589,12 @@ class DogOperationsOperations:
 
     @overload
     async def update_dog_as_dog(
-        self, dog: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, dog: _types.Dog, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Dog:
         """Update a dog as a dog.
 
         :param dog: Required.
-        :type dog: JSON
+        :type dog: ~specs.azure.clientgenerator.core.hierarchybuilding.types.Dog
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -619,11 +620,12 @@ class DogOperationsOperations:
         """
 
     @distributed_trace_async
-    async def update_dog_as_dog(self, dog: Union[_models.Dog, JSON, IO[bytes]], **kwargs: Any) -> _models.Dog:
+    async def update_dog_as_dog(self, dog: Union[_models.Dog, _types.Dog, IO[bytes]], **kwargs: Any) -> _models.Dog:
         """Update a dog as a dog.
 
-        :param dog: Is one of the following types: Dog, JSON, IO[bytes] Required.
-        :type dog: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Dog or JSON or IO[bytes]
+        :param dog: Is either a Dog type or a IO[bytes] type. Required.
+        :type dog: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Dog or
+         ~specs.azure.clientgenerator.core.hierarchybuilding.types.Dog or IO[bytes]
         :return: Dog. The Dog is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.hierarchybuilding.models.Dog
         :raises ~azure.core.exceptions.HttpResponseError:

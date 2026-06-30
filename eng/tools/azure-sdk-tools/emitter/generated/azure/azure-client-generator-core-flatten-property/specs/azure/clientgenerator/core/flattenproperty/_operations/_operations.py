@@ -26,13 +26,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import FlattenPropertyClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -136,12 +135,12 @@ class _FlattenPropertyClientOperationsMixin(
 
     @overload
     def put_flatten_model(
-        self, input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, input: _types.FlattenModel, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.FlattenModel:
         """put_flatten_model.
 
         :param input: Required.
-        :type input: JSON
+        :type input: ~specs.azure.clientgenerator.core.flattenproperty.types.FlattenModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -168,13 +167,13 @@ class _FlattenPropertyClientOperationsMixin(
 
     @distributed_trace
     def put_flatten_model(
-        self, input: Union[_models.FlattenModel, JSON, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.FlattenModel, _types.FlattenModel, IO[bytes]], **kwargs: Any
     ) -> _models.FlattenModel:
         """put_flatten_model.
 
-        :param input: Is one of the following types: FlattenModel, JSON, IO[bytes] Required.
-        :type input: ~specs.azure.clientgenerator.core.flattenproperty.models.FlattenModel or JSON or
-         IO[bytes]
+        :param input: Is either a FlattenModel type or a IO[bytes] type. Required.
+        :type input: ~specs.azure.clientgenerator.core.flattenproperty.models.FlattenModel or
+         ~specs.azure.clientgenerator.core.flattenproperty.types.FlattenModel or IO[bytes]
         :return: FlattenModel. The FlattenModel is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.flattenproperty.models.FlattenModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -256,12 +255,12 @@ class _FlattenPropertyClientOperationsMixin(
 
     @overload
     def put_nested_flatten_model(
-        self, input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, input: _types.NestedFlattenModel, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.NestedFlattenModel:
         """put_nested_flatten_model.
 
         :param input: Required.
-        :type input: JSON
+        :type input: ~specs.azure.clientgenerator.core.flattenproperty.types.NestedFlattenModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -288,13 +287,13 @@ class _FlattenPropertyClientOperationsMixin(
 
     @distributed_trace
     def put_nested_flatten_model(
-        self, input: Union[_models.NestedFlattenModel, JSON, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.NestedFlattenModel, _types.NestedFlattenModel, IO[bytes]], **kwargs: Any
     ) -> _models.NestedFlattenModel:
         """put_nested_flatten_model.
 
-        :param input: Is one of the following types: NestedFlattenModel, JSON, IO[bytes] Required.
+        :param input: Is either a NestedFlattenModel type or a IO[bytes] type. Required.
         :type input: ~specs.azure.clientgenerator.core.flattenproperty.models.NestedFlattenModel or
-         JSON or IO[bytes]
+         ~specs.azure.clientgenerator.core.flattenproperty.types.NestedFlattenModel or IO[bytes]
         :return: NestedFlattenModel. The NestedFlattenModel is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.flattenproperty.models.NestedFlattenModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -376,12 +375,12 @@ class _FlattenPropertyClientOperationsMixin(
 
     @overload
     def put_flatten_unknown_model(
-        self, input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, input: _types.FlattenUnknownModel, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.FlattenUnknownModel:
         """put_flatten_unknown_model.
 
         :param input: Required.
-        :type input: JSON
+        :type input: ~specs.azure.clientgenerator.core.flattenproperty.types.FlattenUnknownModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -408,13 +407,13 @@ class _FlattenPropertyClientOperationsMixin(
 
     @distributed_trace
     def put_flatten_unknown_model(
-        self, input: Union[_models.FlattenUnknownModel, JSON, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.FlattenUnknownModel, _types.FlattenUnknownModel, IO[bytes]], **kwargs: Any
     ) -> _models.FlattenUnknownModel:
         """put_flatten_unknown_model.
 
-        :param input: Is one of the following types: FlattenUnknownModel, JSON, IO[bytes] Required.
+        :param input: Is either a FlattenUnknownModel type or a IO[bytes] type. Required.
         :type input: ~specs.azure.clientgenerator.core.flattenproperty.models.FlattenUnknownModel or
-         JSON or IO[bytes]
+         ~specs.azure.clientgenerator.core.flattenproperty.types.FlattenUnknownModel or IO[bytes]
         :return: FlattenUnknownModel. The FlattenUnknownModel is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.flattenproperty.models.FlattenUnknownModel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -496,12 +495,12 @@ class _FlattenPropertyClientOperationsMixin(
 
     @overload
     def put_flatten_read_only_model(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types.Solution, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Solution:
         """put_flatten_read_only_model.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.azure.clientgenerator.core.flattenproperty.types.Solution
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -528,13 +527,13 @@ class _FlattenPropertyClientOperationsMixin(
 
     @distributed_trace
     def put_flatten_read_only_model(
-        self, body: Union[_models.Solution, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.Solution, _types.Solution, IO[bytes]], **kwargs: Any
     ) -> _models.Solution:
         """put_flatten_read_only_model.
 
-        :param body: Is one of the following types: Solution, JSON, IO[bytes] Required.
-        :type body: ~specs.azure.clientgenerator.core.flattenproperty.models.Solution or JSON or
-         IO[bytes]
+        :param body: Is either a Solution type or a IO[bytes] type. Required.
+        :type body: ~specs.azure.clientgenerator.core.flattenproperty.models.Solution or
+         ~specs.azure.clientgenerator.core.flattenproperty.types.Solution or IO[bytes]
         :return: Solution. The Solution is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.flattenproperty.models.Solution
         :raises ~azure.core.exceptions.HttpResponseError:

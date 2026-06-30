@@ -24,7 +24,7 @@ from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
-    from .. import _types
+    from .. import _unions
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -265,7 +265,7 @@ class NoEnvelopeDefaultOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def get(self, *, kind: Optional[str] = None, **kwargs: Any) -> "_types.PetInline":
+    def get(self, *, kind: Optional[str] = None, **kwargs: Any) -> "_unions.PetInline":
         """get.
 
         :keyword kind: Default value is None.
@@ -285,7 +285,7 @@ class NoEnvelopeDefaultOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType["_types.PetInline"] = kwargs.pop("cls", None)
+        cls: ClsType["_unions.PetInline"] = kwargs.pop("cls", None)
 
         _request = build_no_envelope_default_get_request(
             kind=kind,
@@ -315,7 +315,7 @@ class NoEnvelopeDefaultOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize("_types.PetInline", response.json())
+            deserialized = _deserialize("_unions.PetInline", response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -323,7 +323,7 @@ class NoEnvelopeDefaultOperations:
         return deserialized  # type: ignore
 
     @overload
-    def put(self, input: _models.Cat, *, content_type: str = "application/json", **kwargs: Any) -> "_types.PetInline":
+    def put(self, input: _models.Cat, *, content_type: str = "application/json", **kwargs: Any) -> "_unions.PetInline":
         """put.
 
         :param input: Required.
@@ -337,7 +337,7 @@ class NoEnvelopeDefaultOperations:
         """
 
     @overload
-    def put(self, input: _models.Dog, *, content_type: str = "application/json", **kwargs: Any) -> "_types.PetInline":
+    def put(self, input: _models.Dog, *, content_type: str = "application/json", **kwargs: Any) -> "_unions.PetInline":
         """put.
 
         :param input: Required.
@@ -350,7 +350,7 @@ class NoEnvelopeDefaultOperations:
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    def put(self, input: "_types.PetInline", **kwargs: Any) -> "_types.PetInline":
+    def put(self, input: "_unions.PetInline", **kwargs: Any) -> "_unions.PetInline":
         """put.
 
         :param input: Is either a Cat type or a Dog type. Required.
@@ -371,7 +371,7 @@ class NoEnvelopeDefaultOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType["_types.PetInline"] = kwargs.pop("cls", None)
+        cls: ClsType["_unions.PetInline"] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = json.dumps(input, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
@@ -405,7 +405,7 @@ class NoEnvelopeDefaultOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize("_types.PetInline", response.json())
+            deserialized = _deserialize("_unions.PetInline", response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -430,7 +430,7 @@ class NoEnvelopeCustomDiscriminatorOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def get(self, *, type: Optional[str] = None, **kwargs: Any) -> "_types.PetInlineWithCustomDiscriminator":
+    def get(self, *, type: Optional[str] = None, **kwargs: Any) -> "_unions.PetInlineWithCustomDiscriminator":
         """get.
 
         :keyword type: Default value is None.
@@ -450,7 +450,7 @@ class NoEnvelopeCustomDiscriminatorOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType["_types.PetInlineWithCustomDiscriminator"] = kwargs.pop("cls", None)
+        cls: ClsType["_unions.PetInlineWithCustomDiscriminator"] = kwargs.pop("cls", None)
 
         _request = build_no_envelope_custom_discriminator_get_request(
             type=type,
@@ -480,7 +480,7 @@ class NoEnvelopeCustomDiscriminatorOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize("_types.PetInlineWithCustomDiscriminator", response.json())
+            deserialized = _deserialize("_unions.PetInlineWithCustomDiscriminator", response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -490,7 +490,7 @@ class NoEnvelopeCustomDiscriminatorOperations:
     @overload
     def put(
         self, input: _models.Cat, *, content_type: str = "application/json", **kwargs: Any
-    ) -> "_types.PetInlineWithCustomDiscriminator":
+    ) -> "_unions.PetInlineWithCustomDiscriminator":
         """put.
 
         :param input: Required.
@@ -506,7 +506,7 @@ class NoEnvelopeCustomDiscriminatorOperations:
     @overload
     def put(
         self, input: _models.Dog, *, content_type: str = "application/json", **kwargs: Any
-    ) -> "_types.PetInlineWithCustomDiscriminator":
+    ) -> "_unions.PetInlineWithCustomDiscriminator":
         """put.
 
         :param input: Required.
@@ -520,8 +520,8 @@ class NoEnvelopeCustomDiscriminatorOperations:
         """
 
     def put(
-        self, input: "_types.PetInlineWithCustomDiscriminator", **kwargs: Any
-    ) -> "_types.PetInlineWithCustomDiscriminator":
+        self, input: "_unions.PetInlineWithCustomDiscriminator", **kwargs: Any
+    ) -> "_unions.PetInlineWithCustomDiscriminator":
         """put.
 
         :param input: Is either a Cat type or a Dog type. Required.
@@ -542,7 +542,7 @@ class NoEnvelopeCustomDiscriminatorOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType["_types.PetInlineWithCustomDiscriminator"] = kwargs.pop("cls", None)
+        cls: ClsType["_unions.PetInlineWithCustomDiscriminator"] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = json.dumps(input, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
@@ -576,7 +576,7 @@ class NoEnvelopeCustomDiscriminatorOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize("_types.PetInlineWithCustomDiscriminator", response.json())
+            deserialized = _deserialize("_unions.PetInlineWithCustomDiscriminator", response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -601,7 +601,7 @@ class EnvelopeObjectDefaultOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def get(self, *, kind: Optional[str] = None, **kwargs: Any) -> "_types.PetWithEnvelope":
+    def get(self, *, kind: Optional[str] = None, **kwargs: Any) -> "_unions.PetWithEnvelope":
         """get.
 
         :keyword kind: Default value is None.
@@ -621,7 +621,7 @@ class EnvelopeObjectDefaultOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType["_types.PetWithEnvelope"] = kwargs.pop("cls", None)
+        cls: ClsType["_unions.PetWithEnvelope"] = kwargs.pop("cls", None)
 
         _request = build_envelope_object_default_get_request(
             kind=kind,
@@ -651,7 +651,7 @@ class EnvelopeObjectDefaultOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize("_types.PetWithEnvelope", response.json())
+            deserialized = _deserialize("_unions.PetWithEnvelope", response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -661,7 +661,7 @@ class EnvelopeObjectDefaultOperations:
     @overload
     def put(
         self, input: _models.Cat, *, content_type: str = "application/json", **kwargs: Any
-    ) -> "_types.PetWithEnvelope":
+    ) -> "_unions.PetWithEnvelope":
         """put.
 
         :param input: Required.
@@ -677,7 +677,7 @@ class EnvelopeObjectDefaultOperations:
     @overload
     def put(
         self, input: _models.Dog, *, content_type: str = "application/json", **kwargs: Any
-    ) -> "_types.PetWithEnvelope":
+    ) -> "_unions.PetWithEnvelope":
         """put.
 
         :param input: Required.
@@ -690,7 +690,7 @@ class EnvelopeObjectDefaultOperations:
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    def put(self, input: "_types.PetWithEnvelope", **kwargs: Any) -> "_types.PetWithEnvelope":
+    def put(self, input: "_unions.PetWithEnvelope", **kwargs: Any) -> "_unions.PetWithEnvelope":
         """put.
 
         :param input: Is either a Cat type or a Dog type. Required.
@@ -711,7 +711,7 @@ class EnvelopeObjectDefaultOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType["_types.PetWithEnvelope"] = kwargs.pop("cls", None)
+        cls: ClsType["_unions.PetWithEnvelope"] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = json.dumps(input, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
@@ -745,7 +745,7 @@ class EnvelopeObjectDefaultOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize("_types.PetWithEnvelope", response.json())
+            deserialized = _deserialize("_unions.PetWithEnvelope", response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -770,7 +770,7 @@ class EnvelopeObjectCustomPropertiesOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    def get(self, *, pet_type: Optional[str] = None, **kwargs: Any) -> "_types.PetWithCustomNames":
+    def get(self, *, pet_type: Optional[str] = None, **kwargs: Any) -> "_unions.PetWithCustomNames":
         """get.
 
         :keyword pet_type: Default value is None.
@@ -790,7 +790,7 @@ class EnvelopeObjectCustomPropertiesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType["_types.PetWithCustomNames"] = kwargs.pop("cls", None)
+        cls: ClsType["_unions.PetWithCustomNames"] = kwargs.pop("cls", None)
 
         _request = build_envelope_object_custom_properties_get_request(
             pet_type=pet_type,
@@ -820,7 +820,7 @@ class EnvelopeObjectCustomPropertiesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize("_types.PetWithCustomNames", response.json())
+            deserialized = _deserialize("_unions.PetWithCustomNames", response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -830,7 +830,7 @@ class EnvelopeObjectCustomPropertiesOperations:
     @overload
     def put(
         self, input: _models.Cat, *, content_type: str = "application/json", **kwargs: Any
-    ) -> "_types.PetWithCustomNames":
+    ) -> "_unions.PetWithCustomNames":
         """put.
 
         :param input: Required.
@@ -846,7 +846,7 @@ class EnvelopeObjectCustomPropertiesOperations:
     @overload
     def put(
         self, input: _models.Dog, *, content_type: str = "application/json", **kwargs: Any
-    ) -> "_types.PetWithCustomNames":
+    ) -> "_unions.PetWithCustomNames":
         """put.
 
         :param input: Required.
@@ -859,7 +859,7 @@ class EnvelopeObjectCustomPropertiesOperations:
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    def put(self, input: "_types.PetWithCustomNames", **kwargs: Any) -> "_types.PetWithCustomNames":
+    def put(self, input: "_unions.PetWithCustomNames", **kwargs: Any) -> "_unions.PetWithCustomNames":
         """put.
 
         :param input: Is either a Cat type or a Dog type. Required.
@@ -880,7 +880,7 @@ class EnvelopeObjectCustomPropertiesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType["_types.PetWithCustomNames"] = kwargs.pop("cls", None)
+        cls: ClsType["_unions.PetWithCustomNames"] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = json.dumps(input, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
@@ -914,7 +914,7 @@ class EnvelopeObjectCustomPropertiesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize("_types.PetWithCustomNames", response.json())
+            deserialized = _deserialize("_unions.PetWithCustomNames", response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

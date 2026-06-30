@@ -26,13 +26,12 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import build_property_get_request, build_property_send_request
 from .._configuration import JsonClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -71,11 +70,13 @@ class PropertyOperations:
         """
 
     @overload
-    async def send(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def send(
+        self, body: _types.JsonEncodedNameModel, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """send.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~serialization.encodedname.json.types.JsonEncodedNameModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -99,11 +100,14 @@ class PropertyOperations:
         """
 
     @distributed_trace_async
-    async def send(self, body: Union[_models.JsonEncodedNameModel, JSON, IO[bytes]], **kwargs: Any) -> None:
+    async def send(
+        self, body: Union[_models.JsonEncodedNameModel, _types.JsonEncodedNameModel, IO[bytes]], **kwargs: Any
+    ) -> None:
         """send.
 
-        :param body: Is one of the following types: JsonEncodedNameModel, JSON, IO[bytes] Required.
-        :type body: ~serialization.encodedname.json.models.JsonEncodedNameModel or JSON or IO[bytes]
+        :param body: Is either a JsonEncodedNameModel type or a IO[bytes] type. Required.
+        :type body: ~serialization.encodedname.json.models.JsonEncodedNameModel or
+         ~serialization.encodedname.json.types.JsonEncodedNameModel or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

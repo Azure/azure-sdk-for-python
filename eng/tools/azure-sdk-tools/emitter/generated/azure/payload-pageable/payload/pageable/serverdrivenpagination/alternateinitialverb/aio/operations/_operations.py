@@ -25,14 +25,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models2
+from ... import models as _models2, types as _types_models2
 from ..... import models as _models4
 from ....._utils.model_base import SdkJSONEncoder, _deserialize
 from ....._utils.serialization import Deserializer, Serializer
 from .....aio._configuration import PageableClientConfiguration
 from ...operations._operations import build_server_driven_pagination_alternate_initial_verb_post_request
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -72,12 +71,12 @@ class ServerDrivenPaginationAlternateInitialVerbOperations:  # pylint: disable=n
 
     @overload
     def post(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types_models2.Filter, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncItemPaged["_models4.Pet"]:
         """post.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~payload.pageable.serverdrivenpagination.alternateinitialverb.types.Filter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -103,12 +102,14 @@ class ServerDrivenPaginationAlternateInitialVerbOperations:  # pylint: disable=n
         """
 
     @distributed_trace
-    def post(self, body: Union[_models2.Filter, JSON, IO[bytes]], **kwargs: Any) -> AsyncItemPaged["_models4.Pet"]:
+    def post(
+        self, body: Union[_models2.Filter, _types_models2.Filter, IO[bytes]], **kwargs: Any
+    ) -> AsyncItemPaged["_models4.Pet"]:
         """post.
 
-        :param body: Is one of the following types: Filter, JSON, IO[bytes] Required.
-        :type body: ~payload.pageable.serverdrivenpagination.alternateinitialverb.models.Filter or JSON
-         or IO[bytes]
+        :param body: Is either a Filter type or a IO[bytes] type. Required.
+        :type body: ~payload.pageable.serverdrivenpagination.alternateinitialverb.models.Filter or
+         ~payload.pageable.serverdrivenpagination.alternateinitialverb.types.Filter or IO[bytes]
         :return: An iterator like instance of Pet
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~payload.pageable.models.Pet]
         :raises ~azure.core.exceptions.HttpResponseError:
