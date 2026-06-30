@@ -113,9 +113,11 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # The checkout's "origin" points at the PR head repo (possibly a
           # fork), so add microsoft/typespec explicitly to fetch its main.
-          git remote get-url upstream >/dev/null 2>&1 \
-            && git remote set-url upstream https://github.com/microsoft/typespec.git \
-            || git remote add upstream https://github.com/microsoft/typespec.git
+          if git remote get-url upstream >/dev/null 2>&1; then
+            git remote set-url upstream https://github.com/microsoft/typespec.git
+          else
+            git remote add upstream https://github.com/microsoft/typespec.git
+          fi
           git fetch --no-tags upstream main
           if ! git merge --no-edit upstream/main; then
             git merge --abort || true
