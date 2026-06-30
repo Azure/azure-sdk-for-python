@@ -4751,7 +4751,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def _create_version_from_code(
         self,
         agent_name: str,
-        content: _models._models.CreateAgentVersionFromCodeContent,
+        content: _models._models._CreateAgentVersionFromCodeContent,
         *,
         code_zip_sha256: str,
         **kwargs: Any
@@ -4765,7 +4765,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
     def _create_version_from_code(
         self,
         agent_name: str,
-        content: Union[_models._models.CreateAgentVersionFromCodeContent, JSON],
+        content: Union[_models._models._CreateAgentVersionFromCodeContent, JSON],
         *,
         code_zip_sha256: str,
         **kwargs: Any
@@ -4784,8 +4784,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param content: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
-        :type content: ~azure.ai.projects.models._models.CreateAgentVersionFromCodeContent or JSON
+        :param content: Is either a _CreateAgentVersionFromCodeContent type or a JSON type. Required.
+        :type content: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeContent or JSON
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
          detection (dedup) and integrity verification. Required.
         :paramtype code_zip_sha256: str

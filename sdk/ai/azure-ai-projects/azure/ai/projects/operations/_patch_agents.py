@@ -23,6 +23,7 @@ from ..models._patch import (
     _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE,
 )
 
+
 def _compute_sha256_from_stream(stream: IO[bytes], *, chunk_size: int = 1024 * 1024) -> str:
     if not isinstance(stream, IOBase) or not stream.seekable():
         raise TypeError("'code' must be provided as a seekable IO[bytes] stream.")
@@ -38,6 +39,7 @@ def _compute_sha256_from_stream(stream: IO[bytes], *, chunk_size: int = 1024 * 1
         digest.update(chunk)
     stream.seek(0)
     return digest.hexdigest()
+
 
 class AgentsOperations(GeneratedAgentsOperations):
     """
@@ -289,12 +291,12 @@ class AgentsOperations(GeneratedAgentsOperations):
                 code_zip_sha256 = _compute_sha256_from_stream(code)
 
         # Build content from expanded parameters using internal model classes
-        metadata_obj = _models._models.CreateAgentVersionFromCodeMetadata(
+        metadata_obj = _models._models._CreateAgentVersionFromCodeMetadata(
             definition=definition,
             description=description,
             metadata=metadata,
         )
-        content = _models._models.CreateAgentVersionFromCodeContent(
+        content = _models._models._CreateAgentVersionFromCodeContent(
             metadata=metadata_obj,
             code=code,
         )
@@ -329,4 +331,3 @@ class AgentsOperations(GeneratedAgentsOperations):
                         new_exc.model = exc.model
                         raise new_exc from exc
             raise
-

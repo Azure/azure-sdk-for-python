@@ -258,12 +258,12 @@ class AgentsOperations(GeneratedAgentsOperations):
                 code_zip_sha256 = _compute_sha256_from_stream(code)
 
         # Build content from expanded parameters using internal model classes
-        metadata_obj = _models._models.CreateAgentVersionFromCodeMetadata(
+        metadata_obj = _models._models._CreateAgentVersionFromCodeMetadata(
             definition=definition,
             description=description,
             metadata=metadata,
         )
-        content = _models._models.CreateAgentVersionFromCodeContent(
+        content = _models._models._CreateAgentVersionFromCodeContent(
             metadata=metadata_obj,
             code=code,
         )
