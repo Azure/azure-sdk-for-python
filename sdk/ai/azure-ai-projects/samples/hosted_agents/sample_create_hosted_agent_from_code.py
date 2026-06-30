@@ -39,7 +39,6 @@ USAGE:
          BUNDLED; defaults to `true` (REMOTE_BUILD).
 """
 
-import hashlib
 import os
 import tempfile
 from pathlib import Path
@@ -62,7 +61,7 @@ agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
 use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "true").strip().lower() == "true"
 
-dependency_resolution, _, code_zip_bytes, code_zip_sha256 = select_echo_agent_code_zip(use_remote_build)
+dependency_resolution, code_zip_bytes = select_echo_agent_code_zip(use_remote_build)
 
 with (
     DefaultAzureCredential() as credential,
@@ -99,7 +98,7 @@ with (
     )
 
     # Download the zip for the version we just created, and write to disk.
-    version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
+    downloaded_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
 
     downloaded_bytes = b"".join(
         project_client.agents.download_code(
@@ -108,10 +107,8 @@ with (
         )
     )
 
-    version_zip_path.write_bytes(downloaded_bytes)
-    downloaded_version_sha256 = hashlib.sha256(downloaded_bytes).hexdigest()
+    downloaded_zip_path.write_bytes(downloaded_bytes)
 
     print(
-        f"Downloaded version code zip to {version_zip_path}: {version_zip_path.stat().st_size} bytes, "
-        f"sha256={downloaded_version_sha256} (matches uploaded: {downloaded_version_sha256 == code_zip_sha256})"
+        f"Downloaded version code zip to {downloaded_zip_path}: {downloaded_zip_path.stat().st_size} bytes, "
     )
