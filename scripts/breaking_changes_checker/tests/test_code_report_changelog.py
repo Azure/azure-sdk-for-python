@@ -11,12 +11,18 @@ import subprocess
 import tempfile
 import sys
 import time
+from unittest import mock
 
 import pytest
 
 CHECKER_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+SCRIPTS_DIR = os.path.dirname(CHECKER_DIR)
 MAX_APIMANAGEMENT_APISTUB_CODE_REPORT_SECONDS = 120
+
+for _path in (SCRIPTS_DIR, CHECKER_DIR):
+    if _path not in sys.path:
+        sys.path.insert(0, _path)
 
 
 def _code_report_args(use_apistub: bool = False):
@@ -321,3 +327,64 @@ def test_compare_code_reports_for_azure_mgmt_apimanagement_apistub():
         expected_changelog_file="expected_apimanagement_5_6b1_changelog.txt",
         order_insensitive=True,
     )
+
+
+def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local():
+    """``--use-apistub`` without ``-s`` must diff local source against the previous PyPI release.
+
+    Regression test for the empty-changelog bug where both ``current`` and
+    ``stable`` were generated from the same (installed) version:
+      * ``current`` must be generated from the local source (``from_pypi=False``).
+      * ``stable`` must be generated from the previous released PyPI version
+        (resolved via ``PyPIClient.get_relevant_versions``), not the installed one.
+    """
+    from breaking_changes_checker import detect_breaking_changes
+
+    pypi_client = mock.MagicMock()
+    # get_relevant_versions(...)[1] is the previous relevant/stable version.
+    pypi_client.get_relevant_versions.return_value = ["31.0.0b1", "30.2.0"]
+
+    checker = mock.MagicMock()
+    checker.report_changes.return_value = ""
+    checker.breaking_changes = []
+
+    with mock.patch("pypi_tools.pypi.PyPIClient", return_value=pypi_client), mock.patch.object(
+        detect_breaking_changes, "build_report_from_apistub", return_value={}
+    ) as build_report, mock.patch.object(
+        detect_breaking_changes, "compare_report_dicts", return_value=checker
+    ) as compare:
+        detect_breaking_changes.main(
+            package_name="azure-mgmt-network",
+            target_module="azure.mgmt.network",
+            version=None,
+            in_venv=False,
+            pkg_dir="/tmp/azure-mgmt-network",
+            changelog=True,
+            code_report=False,
+            latest_pypi_version=False,
+            source_report=None,
+            target_report=None,
+            use_apistub=True,
+        )
+
+    assert build_report.call_count == 2, "Expected separate apistub reports for current and stable"
+
+    calls_by_label = {call.kwargs["label"]: call for call in build_report.call_args_list}
+    assert set(calls_by_label) == {"current", "stable"}
+
+    # "current" comes from the local source.
+    current_call = calls_by_label["current"]
+    assert current_call.kwargs["from_pypi"] is False
+    assert current_call.kwargs.get("version") is None
+
+    # "stable" comes from the previous PyPI release, not the installed version.
+    stable_call = calls_by_label["stable"]
+    assert stable_call.kwargs["from_pypi"] is True
+    assert stable_call.kwargs["version"] == "30.2.0"
+
+    # The diff compares (stable, current) so the two reports must differ in version source.
+    pypi_client.get_relevant_versions.assert_called_once_with("azure-mgmt-network")
+    compare.assert_called_once()
+    stable_arg, current_arg = compare.call_args.args[0], compare.call_args.args[1]
+    assert stable_arg is not None and current_arg is not None
+

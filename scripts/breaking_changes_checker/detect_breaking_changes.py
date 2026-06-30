@@ -664,18 +664,16 @@ def report_azure_mgmt_versioned_module(code_report):
     return merged_report
 
 
-def generate_apistub_markdown(package_name: str, out_dir: str, version: Optional[str] = None) -> str:
+def generate_apistub_markdown(
+    package_name: str, out_dir: str, version: Optional[str] = None, from_pypi: bool = True
+) -> str:
     """Generate ``api.md`` for ``package_name`` and return its path.
 
-    Delegates to ``azpysdk apistub``, which downloads the released wheel from
-    PyPI (the installed version is used when ``version`` is not provided),
-    generates the APIView token file, and exports it to ``api.md``.
+    Delegates to ``azpysdk apistub``. When ``from_pypi`` is set, the released
+    wheel for ``version`` is downloaded from PyPI; otherwise ``api.md`` is
+    generated from the local source in ``out_dir``. The APIView token file is
+    generated and exported to ``api.md``.
     """
-    if not version:
-        from importlib.metadata import version as _pkg_version
-
-        version = _pkg_version(package_name)
-
     azpysdk = shutil.which("azpysdk")
     if not azpysdk:
         raise RuntimeError(
@@ -684,12 +682,17 @@ def generate_apistub_markdown(package_name: str, out_dir: str, version: Optional
         )
 
     # Use a fresh temp dir per call so a stale api.md is never picked up.
-    dest_dir = tempfile.mkdtemp(prefix=f"apistub_{package_name}_{version}_")
+    suffix = version if from_pypi else "local"
+    dest_dir = tempfile.mkdtemp(prefix=f"apistub_{package_name}_{suffix}_")
 
-    subprocess.check_call(
-        [azpysdk, "apistub", "--generate-from-pypi", version, "--dest-dir", dest_dir, "."],
-        cwd=out_dir,
-    )
+    command = [azpysdk, "apistub", "--dest-dir", dest_dir]
+    if from_pypi:
+        if not version:
+            raise ValueError("A version is required when generating api.md from PyPI.")
+        command += ["--generate-from-pypi", version]
+    command.append(".")
+
+    subprocess.check_call(command, cwd=out_dir)
     api_md = os.path.join(dest_dir, "api.md")
     if not os.path.isfile(api_md):
         raise FileNotFoundError(f"apistub did not produce api.md at {api_md}")
@@ -702,6 +705,7 @@ def build_report_from_apistub(
     version: Optional[str] = None,
     debug: bool = False,
     label: str = "",
+    from_pypi: bool = True,
 ) -> Dict:
     """Generate api.md via apistub and convert it to a code report dict.
 
@@ -709,7 +713,7 @@ def build_report_from_apistub(
     ``code_report.json`` are copied into ``out_dir`` (prefixed with ``label``)
     so they can be inspected after the run instead of being left in a temp dir.
     """
-    api_md = generate_apistub_markdown(package_name, out_dir, version)
+    api_md = generate_apistub_markdown(package_name, out_dir, version, from_pypi=from_pypi)
     report = convert_api_md_to_report(api_md)
     if debug:
         prefix = f"{label}_" if label else ""
@@ -739,7 +743,7 @@ def main(
     # If code_report is set, only generate a code report for the package and return
     if code_report:
         if use_apistub:
-            public_api = build_report_from_apistub(package_name, pkg_dir)
+            public_api = build_report_from_apistub(package_name, pkg_dir, from_pypi=False)
         else:
             public_api = build_library_report(target_module)
         with open("code_report.json", "w") as fd:
@@ -755,8 +759,29 @@ def main(
     # If using apistub, generate api.md for the stable (PyPI) and current (local)
     # versions, convert both to code reports, and compare them directly.
     if use_apistub:
-        current = build_report_from_apistub(package_name, pkg_dir, debug=debug, label="current")
-        stable = build_report_from_apistub(package_name, pkg_dir, version=version, debug=debug, label="stable")
+        # Resolve the previous released version on PyPI when one was not provided,
+        # otherwise apistub falls back to the installed version and "stable" would
+        # match "current", producing an empty changelog.
+        if not version:
+            from pypi_tools.pypi import PyPIClient
+
+            client = PyPIClient()
+            try:
+                if latest_pypi_version:
+                    version = str(client.get_ordered_versions(package_name)[-1])
+                else:
+                    version = str(client.get_relevant_versions(package_name)[1])
+            except IndexError:
+                _LOGGER.warning(f"No relevant version for {package_name} on PyPi. Exiting...")
+                exit(0)
+        # "current" is generated from the local source, "stable" from the
+        # resolved PyPI version.
+        current = build_report_from_apistub(
+            package_name, pkg_dir, debug=debug, label="current", from_pypi=False
+        )
+        stable = build_report_from_apistub(
+            package_name, pkg_dir, version=version, debug=debug, label="stable", from_pypi=True
+        )
         checker = compare_report_dicts(stable, current, package_name, changelog)
         print(checker.report_changes())
         if not changelog and checker.breaking_changes:
