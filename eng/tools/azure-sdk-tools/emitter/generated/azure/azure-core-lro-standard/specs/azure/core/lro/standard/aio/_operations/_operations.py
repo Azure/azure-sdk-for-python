@@ -29,7 +29,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._operations._operations import (
     build_standard_create_or_replace_request,
     build_standard_delete_request,
@@ -39,7 +39,6 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import StandardClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -49,7 +48,7 @@ class _StandardClientOperationsMixin(
 ):
 
     async def _create_or_replace_initial(
-        self, name: str, resource: Union[_models.User, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, resource: Union[_models.User, _types.User, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -134,7 +133,7 @@ class _StandardClientOperationsMixin(
 
     @overload
     async def begin_create_or_replace(
-        self, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, resource: _types.User, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.User]:
         """Adds a user or replaces a user's fields.
 
@@ -143,7 +142,7 @@ class _StandardClientOperationsMixin(
         :param name: The name of user. Required.
         :type name: str
         :param resource: The resource instance. Required.
-        :type resource: JSON
+        :type resource: ~specs.azure.core.lro.standard.types.User
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -176,7 +175,7 @@ class _StandardClientOperationsMixin(
 
     @distributed_trace_async
     async def begin_create_or_replace(
-        self, name: str, resource: Union[_models.User, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, resource: Union[_models.User, _types.User, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.User]:
         """Adds a user or replaces a user's fields.
 
@@ -184,9 +183,9 @@ class _StandardClientOperationsMixin(
 
         :param name: The name of user. Required.
         :type name: str
-        :param resource: The resource instance. Is one of the following types: User, JSON, IO[bytes]
-         Required.
-        :type resource: ~specs.azure.core.lro.standard.models.User or JSON or IO[bytes]
+        :param resource: The resource instance. Is either a User type or a IO[bytes] type. Required.
+        :type resource: ~specs.azure.core.lro.standard.models.User or
+         ~specs.azure.core.lro.standard.types.User or IO[bytes]
         :return: An instance of AsyncLROPoller that returns User. The User is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~specs.azure.core.lro.standard.models.User]

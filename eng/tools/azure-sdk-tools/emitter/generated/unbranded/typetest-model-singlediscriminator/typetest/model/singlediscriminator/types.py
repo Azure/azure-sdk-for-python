@@ -1,0 +1,109 @@
+# coding=utf-8
+
+from typing import Literal, Union
+from typing_extensions import Required, TypedDict
+
+
+class Eagle(TypedDict, total=False):
+    """The second level model in polymorphic single levels inheritance which contains references to
+    other polymorphic instances.
+
+    :ivar wingspan: Required.
+    :vartype wingspan: int
+    :ivar kind: Required. Default value is "eagle".
+    :vartype kind: Literal["eagle"]
+    :ivar friends:
+    :vartype friends: list["Bird"]
+    :ivar hate:
+    :vartype hate: dict[str, "Bird"]
+    :ivar partner:
+    :vartype partner: "Bird"
+    """
+
+    wingspan: Required[int]
+    """Required."""
+    kind: Required[Literal["eagle"]]
+    """Required. Default value is \"eagle\"."""
+    friends: list["Bird"]
+    hate: dict[str, "Bird"]
+    partner: "Bird"
+
+
+class Fish(TypedDict, total=False):
+    """A discriminated model with no defined subtypes. The discriminator is declared but no models
+    extend it.
+
+    :ivar kind: Required.
+    :vartype kind: str
+    :ivar size: Required.
+    :vartype size: int
+    """
+
+    kind: Required[str]
+    """Required."""
+    size: Required[int]
+    """Required."""
+
+
+class Goose(TypedDict, total=False):
+    """The second level model in polymorphic single level inheritance.
+
+    :ivar wingspan: Required.
+    :vartype wingspan: int
+    :ivar kind: Required. Default value is "goose".
+    :vartype kind: Literal["goose"]
+    """
+
+    wingspan: Required[int]
+    """Required."""
+    kind: Required[Literal["goose"]]
+    """Required. Default value is \"goose\"."""
+
+
+class SeaGull(TypedDict, total=False):
+    """The second level model in polymorphic single level inheritance.
+
+    :ivar wingspan: Required.
+    :vartype wingspan: int
+    :ivar kind: Required. Default value is "seagull".
+    :vartype kind: Literal["seagull"]
+    """
+
+    wingspan: Required[int]
+    """Required."""
+    kind: Required[Literal["seagull"]]
+    """Required. Default value is \"seagull\"."""
+
+
+class Sparrow(TypedDict, total=False):
+    """The second level model in polymorphic single level inheritance.
+
+    :ivar wingspan: Required.
+    :vartype wingspan: int
+    :ivar kind: Required. Default value is "sparrow".
+    :vartype kind: Literal["sparrow"]
+    """
+
+    wingspan: Required[int]
+    """Required."""
+    kind: Required[Literal["sparrow"]]
+    """Required. Default value is \"sparrow\"."""
+
+
+class TRex(TypedDict, total=False):
+    """The second level legacy model in polymorphic single level inheritance.
+
+    :ivar size: Required.
+    :vartype size: int
+    :ivar kind: Required. Default value is "t-rex".
+    :vartype kind: Literal["t-rex"]
+    """
+
+    size: Required[int]
+    """Required."""
+    kind: Required[Literal["t-rex"]]
+    """Required. Default value is \"t-rex\"."""
+
+
+Bird = Union[Eagle, Goose, SeaGull, Sparrow]
+Dinosaur = Union[TRex]

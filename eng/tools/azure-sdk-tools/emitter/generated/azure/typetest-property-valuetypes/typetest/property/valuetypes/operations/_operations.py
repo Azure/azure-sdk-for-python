@@ -27,12 +27,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ValueTypesClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -941,11 +940,11 @@ class BooleanOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.BooleanProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.BooleanProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -970,12 +969,13 @@ class BooleanOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.BooleanProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BooleanProperty, _types.BooleanProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: BooleanProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.BooleanProperty or JSON or IO[bytes]
+        :param body: body. Is either a BooleanProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.BooleanProperty or
+         ~typetest.property.valuetypes.types.BooleanProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1116,11 +1116,11 @@ class StringOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.StringProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.StringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1145,12 +1145,13 @@ class StringOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.StringProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.StringProperty, _types.StringProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: StringProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.StringProperty or JSON or IO[bytes]
+        :param body: body. Is either a StringProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.StringProperty or
+         ~typetest.property.valuetypes.types.StringProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1291,11 +1292,11 @@ class BytesOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.BytesProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.BytesProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1320,12 +1321,13 @@ class BytesOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.BytesProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BytesProperty, _types.BytesProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: BytesProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.BytesProperty or JSON or IO[bytes]
+        :param body: body. Is either a BytesProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.BytesProperty or
+         ~typetest.property.valuetypes.types.BytesProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1466,11 +1468,11 @@ class IntOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.IntProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.IntProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1495,12 +1497,13 @@ class IntOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.IntProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.IntProperty, _types.IntProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: IntProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.IntProperty or JSON or IO[bytes]
+        :param body: body. Is either a IntProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.IntProperty or
+         ~typetest.property.valuetypes.types.IntProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1641,11 +1644,11 @@ class FloatOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.FloatProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.FloatProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1670,12 +1673,13 @@ class FloatOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.FloatProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.FloatProperty, _types.FloatProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: FloatProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.FloatProperty or JSON or IO[bytes]
+        :param body: body. Is either a FloatProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.FloatProperty or
+         ~typetest.property.valuetypes.types.FloatProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1816,11 +1820,11 @@ class DecimalOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.DecimalProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.DecimalProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1845,12 +1849,13 @@ class DecimalOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.DecimalProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.DecimalProperty, _types.DecimalProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: DecimalProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.DecimalProperty or JSON or IO[bytes]
+        :param body: body. Is either a DecimalProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.DecimalProperty or
+         ~typetest.property.valuetypes.types.DecimalProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1991,11 +1996,11 @@ class Decimal128Operations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.Decimal128Property, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.Decimal128Property
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2020,12 +2025,13 @@ class Decimal128Operations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.Decimal128Property, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.Decimal128Property, _types.Decimal128Property, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: Decimal128Property, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.Decimal128Property or JSON or IO[bytes]
+        :param body: body. Is either a Decimal128Property type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.Decimal128Property or
+         ~typetest.property.valuetypes.types.Decimal128Property or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2166,11 +2172,11 @@ class DatetimeOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.DatetimeProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.DatetimeProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2195,12 +2201,13 @@ class DatetimeOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.DatetimeProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.DatetimeProperty, _types.DatetimeProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: DatetimeProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.DatetimeProperty or JSON or IO[bytes]
+        :param body: body. Is either a DatetimeProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.DatetimeProperty or
+         ~typetest.property.valuetypes.types.DatetimeProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2341,11 +2348,11 @@ class DurationOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.DurationProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.DurationProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2370,12 +2377,13 @@ class DurationOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.DurationProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.DurationProperty, _types.DurationProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: DurationProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.DurationProperty or JSON or IO[bytes]
+        :param body: body. Is either a DurationProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.DurationProperty or
+         ~typetest.property.valuetypes.types.DurationProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2516,11 +2524,11 @@ class EnumOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.EnumProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.EnumProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2545,12 +2553,13 @@ class EnumOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.EnumProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.EnumProperty, _types.EnumProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: EnumProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.EnumProperty or JSON or IO[bytes]
+        :param body: body. Is either a EnumProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.EnumProperty or
+         ~typetest.property.valuetypes.types.EnumProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2693,11 +2702,13 @@ class ExtensibleEnumOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(
+        self, body: _types.ExtensibleEnumProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.ExtensibleEnumProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2722,13 +2733,13 @@ class ExtensibleEnumOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.ExtensibleEnumProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ExtensibleEnumProperty, _types.ExtensibleEnumProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: ExtensibleEnumProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.ExtensibleEnumProperty or JSON or IO[bytes]
+        :param body: body. Is either a ExtensibleEnumProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.ExtensibleEnumProperty or
+         ~typetest.property.valuetypes.types.ExtensibleEnumProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2869,11 +2880,11 @@ class ModelOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.ModelProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.ModelProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2898,12 +2909,13 @@ class ModelOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.ModelProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.ModelProperty, _types.ModelProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: ModelProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.ModelProperty or JSON or IO[bytes]
+        :param body: body. Is either a ModelProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.ModelProperty or
+         ~typetest.property.valuetypes.types.ModelProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3047,11 +3059,13 @@ class CollectionsStringOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(
+        self, body: _types.CollectionsStringProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.CollectionsStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3076,13 +3090,13 @@ class CollectionsStringOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.CollectionsStringProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.CollectionsStringProperty, _types.CollectionsStringProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: CollectionsStringProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.CollectionsStringProperty or JSON or IO[bytes]
+        :param body: body. Is either a CollectionsStringProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.CollectionsStringProperty or
+         ~typetest.property.valuetypes.types.CollectionsStringProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3225,11 +3239,13 @@ class CollectionsIntOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(
+        self, body: _types.CollectionsIntProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.CollectionsIntProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3254,13 +3270,13 @@ class CollectionsIntOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.CollectionsIntProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.CollectionsIntProperty, _types.CollectionsIntProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: CollectionsIntProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.CollectionsIntProperty or JSON or IO[bytes]
+        :param body: body. Is either a CollectionsIntProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.CollectionsIntProperty or
+         ~typetest.property.valuetypes.types.CollectionsIntProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3404,11 +3420,13 @@ class CollectionsModelOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(
+        self, body: _types.CollectionsModelProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.CollectionsModelProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3433,13 +3451,13 @@ class CollectionsModelOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.CollectionsModelProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.CollectionsModelProperty, _types.CollectionsModelProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: CollectionsModelProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.CollectionsModelProperty or JSON or IO[bytes]
+        :param body: body. Is either a CollectionsModelProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.CollectionsModelProperty or
+         ~typetest.property.valuetypes.types.CollectionsModelProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3583,11 +3601,13 @@ class DictionaryStringOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(
+        self, body: _types.DictionaryStringProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.DictionaryStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3612,13 +3632,13 @@ class DictionaryStringOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.DictionaryStringProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.DictionaryStringProperty, _types.DictionaryStringProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: DictionaryStringProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.DictionaryStringProperty or JSON or IO[bytes]
+        :param body: body. Is either a DictionaryStringProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.DictionaryStringProperty or
+         ~typetest.property.valuetypes.types.DictionaryStringProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3759,11 +3779,11 @@ class NeverOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.NeverProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.NeverProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3788,12 +3808,13 @@ class NeverOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.NeverProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.NeverProperty, _types.NeverProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: NeverProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.NeverProperty or JSON or IO[bytes]
+        :param body: body. Is either a NeverProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.NeverProperty or
+         ~typetest.property.valuetypes.types.NeverProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3936,11 +3957,11 @@ class UnknownStringOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.UnknownStringProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.UnknownStringProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3965,13 +3986,13 @@ class UnknownStringOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.UnknownStringProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.UnknownStringProperty, _types.UnknownStringProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: UnknownStringProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.UnknownStringProperty or JSON or IO[bytes]
+        :param body: body. Is either a UnknownStringProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.UnknownStringProperty or
+         ~typetest.property.valuetypes.types.UnknownStringProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4112,11 +4133,11 @@ class UnknownIntOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.UnknownIntProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.UnknownIntProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4141,12 +4162,13 @@ class UnknownIntOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.UnknownIntProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.UnknownIntProperty, _types.UnknownIntProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: UnknownIntProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.UnknownIntProperty or JSON or IO[bytes]
+        :param body: body. Is either a UnknownIntProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.UnknownIntProperty or
+         ~typetest.property.valuetypes.types.UnknownIntProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4287,11 +4309,11 @@ class UnknownDictOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.UnknownDictProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.UnknownDictProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4316,13 +4338,13 @@ class UnknownDictOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.UnknownDictProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.UnknownDictProperty, _types.UnknownDictProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: UnknownDictProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.UnknownDictProperty or JSON or IO[bytes]
+        :param body: body. Is either a UnknownDictProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.UnknownDictProperty or
+         ~typetest.property.valuetypes.types.UnknownDictProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4463,11 +4485,11 @@ class UnknownArrayOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.UnknownArrayProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.UnknownArrayProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4492,13 +4514,13 @@ class UnknownArrayOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.UnknownArrayProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.UnknownArrayProperty, _types.UnknownArrayProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: UnknownArrayProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.UnknownArrayProperty or JSON or IO[bytes]
+        :param body: body. Is either a UnknownArrayProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.UnknownArrayProperty or
+         ~typetest.property.valuetypes.types.UnknownArrayProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4641,11 +4663,11 @@ class StringLiteralOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.StringLiteralProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.StringLiteralProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4670,13 +4692,13 @@ class StringLiteralOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.StringLiteralProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.StringLiteralProperty, _types.StringLiteralProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: StringLiteralProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.StringLiteralProperty or JSON or IO[bytes]
+        :param body: body. Is either a StringLiteralProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.StringLiteralProperty or
+         ~typetest.property.valuetypes.types.StringLiteralProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4817,11 +4839,11 @@ class IntLiteralOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.IntLiteralProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.IntLiteralProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4846,12 +4868,13 @@ class IntLiteralOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.IntLiteralProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.IntLiteralProperty, _types.IntLiteralProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: IntLiteralProperty, JSON, IO[bytes] Required.
-        :type body: ~typetest.property.valuetypes.models.IntLiteralProperty or JSON or IO[bytes]
+        :param body: body. Is either a IntLiteralProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.IntLiteralProperty or
+         ~typetest.property.valuetypes.types.IntLiteralProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4992,11 +5015,11 @@ class FloatLiteralOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, body: _types.FloatLiteralProperty, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.FloatLiteralProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5021,13 +5044,13 @@ class FloatLiteralOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.FloatLiteralProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.FloatLiteralProperty, _types.FloatLiteralProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: FloatLiteralProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.FloatLiteralProperty or JSON or IO[bytes]
+        :param body: body. Is either a FloatLiteralProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.FloatLiteralProperty or
+         ~typetest.property.valuetypes.types.FloatLiteralProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5170,11 +5193,13 @@ class BooleanLiteralOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(
+        self, body: _types.BooleanLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.BooleanLiteralProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5199,13 +5224,13 @@ class BooleanLiteralOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.BooleanLiteralProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.BooleanLiteralProperty, _types.BooleanLiteralProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: BooleanLiteralProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.BooleanLiteralProperty or JSON or IO[bytes]
+        :param body: body. Is either a BooleanLiteralProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.BooleanLiteralProperty or
+         ~typetest.property.valuetypes.types.BooleanLiteralProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5349,11 +5374,13 @@ class UnionStringLiteralOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(
+        self, body: _types.UnionStringLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.UnionStringLiteralProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5378,14 +5405,15 @@ class UnionStringLiteralOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.UnionStringLiteralProperty, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models.UnionStringLiteralProperty, _types.UnionStringLiteralProperty, IO[bytes]],
+        **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: UnionStringLiteralProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.UnionStringLiteralProperty or JSON or
-         IO[bytes]
+        :param body: body. Is either a UnionStringLiteralProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.UnionStringLiteralProperty or
+         ~typetest.property.valuetypes.types.UnionStringLiteralProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5528,11 +5556,13 @@ class UnionIntLiteralOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(
+        self, body: _types.UnionIntLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.UnionIntLiteralProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5557,13 +5587,13 @@ class UnionIntLiteralOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.UnionIntLiteralProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.UnionIntLiteralProperty, _types.UnionIntLiteralProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: UnionIntLiteralProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.UnionIntLiteralProperty or JSON or IO[bytes]
+        :param body: body. Is either a UnionIntLiteralProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.UnionIntLiteralProperty or
+         ~typetest.property.valuetypes.types.UnionIntLiteralProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5707,11 +5737,13 @@ class UnionFloatLiteralOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(
+        self, body: _types.UnionFloatLiteralProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.UnionFloatLiteralProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5736,13 +5768,13 @@ class UnionFloatLiteralOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.UnionFloatLiteralProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.UnionFloatLiteralProperty, _types.UnionFloatLiteralProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: UnionFloatLiteralProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.UnionFloatLiteralProperty or JSON or IO[bytes]
+        :param body: body. Is either a UnionFloatLiteralProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.UnionFloatLiteralProperty or
+         ~typetest.property.valuetypes.types.UnionFloatLiteralProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5885,11 +5917,13 @@ class UnionEnumValueOperations:
         """
 
     @overload
-    def put(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(
+        self, body: _types.UnionEnumValueProperty, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Put operation.
 
         :param body: body. Required.
-        :type body: JSON
+        :type body: ~typetest.property.valuetypes.types.UnionEnumValueProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5914,13 +5948,13 @@ class UnionEnumValueOperations:
 
     @distributed_trace
     def put(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models.UnionEnumValueProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.UnionEnumValueProperty, _types.UnionEnumValueProperty, IO[bytes]], **kwargs: Any
     ) -> None:
         """Put operation.
 
-        :param body: body. Is one of the following types: UnionEnumValueProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~typetest.property.valuetypes.models.UnionEnumValueProperty or JSON or IO[bytes]
+        :param body: body. Is either a UnionEnumValueProperty type or a IO[bytes] type. Required.
+        :type body: ~typetest.property.valuetypes.models.UnionEnumValueProperty or
+         ~typetest.property.valuetypes.types.UnionEnumValueProperty or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

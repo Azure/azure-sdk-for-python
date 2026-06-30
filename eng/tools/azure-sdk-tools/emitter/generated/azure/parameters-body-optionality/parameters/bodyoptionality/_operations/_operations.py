@@ -24,7 +24,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models1
+from .. import models as _models1, types as _types_models1
 from .._configuration import BodyOptionalityClientConfiguration
 from .._utils.model_base import SdkJSONEncoder
 from .._utils.serialization import Serializer
@@ -88,11 +88,13 @@ class _BodyOptionalityClientOperationsMixin(
         """
 
     @overload
-    def required_explicit(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def required_explicit(
+        self, body: _types_models1.BodyModel, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """required_explicit.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.bodyoptionality.types.BodyModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -117,12 +119,13 @@ class _BodyOptionalityClientOperationsMixin(
 
     @distributed_trace
     def required_explicit(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models1.BodyModel, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models1.BodyModel, _types_models1.BodyModel, IO[bytes]], **kwargs: Any
     ) -> None:
         """required_explicit.
 
-        :param body: Is one of the following types: BodyModel, JSON, IO[bytes] Required.
-        :type body: ~parameters.bodyoptionality.models.BodyModel or JSON or IO[bytes]
+        :param body: Is either a BodyModel type or a IO[bytes] type. Required.
+        :type body: ~parameters.bodyoptionality.models.BodyModel or
+         ~parameters.bodyoptionality.types.BodyModel or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -188,11 +191,13 @@ class _BodyOptionalityClientOperationsMixin(
         """
 
     @overload
-    def required_implicit(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def required_implicit(
+        self, body: _types_models1.BodyModel, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """required_implicit.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.bodyoptionality.types.BodyModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -217,12 +222,12 @@ class _BodyOptionalityClientOperationsMixin(
 
     @distributed_trace
     def required_implicit(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
+        self, body: Union[JSON, _types_models1.BodyModel, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
     ) -> None:
         """required_implicit.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, BodyModel, IO[bytes] Required.
+        :type body: JSON or ~parameters.bodyoptionality.types.BodyModel or IO[bytes]
         :keyword name: Required.
         :paramtype name: str
         :return: None

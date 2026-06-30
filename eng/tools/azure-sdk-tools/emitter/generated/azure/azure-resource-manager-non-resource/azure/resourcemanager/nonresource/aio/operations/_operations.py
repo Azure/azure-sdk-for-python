@@ -27,7 +27,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -36,7 +36,6 @@ from ...operations._operations import (
 )
 from .._configuration import NonResourceClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -155,7 +154,13 @@ class NonResourceOperationsOperations:
 
     @overload
     async def create(
-        self, location: str, parameter: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        parameter: str,
+        body: _types.NonResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.NonResource:
         """create.
 
@@ -164,7 +169,7 @@ class NonResourceOperationsOperations:
         :param parameter: Another parameter. Required.
         :type parameter: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.resourcemanager.nonresource.types.NonResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -195,7 +200,11 @@ class NonResourceOperationsOperations:
 
     @distributed_trace_async
     async def create(
-        self, location: str, parameter: str, body: Union[_models.NonResource, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        parameter: str,
+        body: Union[_models.NonResource, _types.NonResource, IO[bytes]],
+        **kwargs: Any
     ) -> _models.NonResource:
         """create.
 
@@ -203,9 +212,9 @@ class NonResourceOperationsOperations:
         :type location: str
         :param parameter: Another parameter. Required.
         :type parameter: str
-        :param body: The request body. Is one of the following types: NonResource, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.resourcemanager.nonresource.models.NonResource or JSON or IO[bytes]
+        :param body: The request body. Is either a NonResource type or a IO[bytes] type. Required.
+        :type body: ~azure.resourcemanager.nonresource.models.NonResource or
+         ~azure.resourcemanager.nonresource.types.NonResource or IO[bytes]
         :return: NonResource. The NonResource is compatible with MutableMapping
         :rtype: ~azure.resourcemanager.nonresource.models.NonResource
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -26,12 +26,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models2
+from ... import models as _models2, types as _types_models2
 from ..._configuration import BytesClientConfiguration
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -142,12 +141,12 @@ class PropertyOperations:
 
     @overload
     def default(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types_models2.DefaultBytesProperty, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.DefaultBytesProperty:
         """default.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~encode.bytes.types.DefaultBytesProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -174,12 +173,13 @@ class PropertyOperations:
 
     @distributed_trace
     def default(
-        self, body: Union[_models2.DefaultBytesProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models2.DefaultBytesProperty, _types_models2.DefaultBytesProperty, IO[bytes]], **kwargs: Any
     ) -> _models2.DefaultBytesProperty:
         """default.
 
-        :param body: Is one of the following types: DefaultBytesProperty, JSON, IO[bytes] Required.
-        :type body: ~encode.bytes.models.DefaultBytesProperty or JSON or IO[bytes]
+        :param body: Is either a DefaultBytesProperty type or a IO[bytes] type. Required.
+        :type body: ~encode.bytes.models.DefaultBytesProperty or
+         ~encode.bytes.types.DefaultBytesProperty or IO[bytes]
         :return: DefaultBytesProperty. The DefaultBytesProperty is compatible with MutableMapping
         :rtype: ~encode.bytes.models.DefaultBytesProperty
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -261,12 +261,12 @@ class PropertyOperations:
 
     @overload
     def base64(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types_models2.Base64BytesProperty, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.Base64BytesProperty:
         """base64.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~encode.bytes.types.Base64BytesProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -293,12 +293,13 @@ class PropertyOperations:
 
     @distributed_trace
     def base64(
-        self, body: Union[_models2.Base64BytesProperty, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models2.Base64BytesProperty, _types_models2.Base64BytesProperty, IO[bytes]], **kwargs: Any
     ) -> _models2.Base64BytesProperty:
         """base64.
 
-        :param body: Is one of the following types: Base64BytesProperty, JSON, IO[bytes] Required.
-        :type body: ~encode.bytes.models.Base64BytesProperty or JSON or IO[bytes]
+        :param body: Is either a Base64BytesProperty type or a IO[bytes] type. Required.
+        :type body: ~encode.bytes.models.Base64BytesProperty or ~encode.bytes.types.Base64BytesProperty
+         or IO[bytes]
         :return: Base64BytesProperty. The Base64BytesProperty is compatible with MutableMapping
         :rtype: ~encode.bytes.models.Base64BytesProperty
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -380,12 +381,12 @@ class PropertyOperations:
 
     @overload
     def base64_url(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types_models2.Base64urlBytesProperty, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.Base64urlBytesProperty:
         """base64_url.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~encode.bytes.types.Base64urlBytesProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -412,12 +413,15 @@ class PropertyOperations:
 
     @distributed_trace
     def base64_url(
-        self, body: Union[_models2.Base64urlBytesProperty, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models2.Base64urlBytesProperty, _types_models2.Base64urlBytesProperty, IO[bytes]],
+        **kwargs: Any
     ) -> _models2.Base64urlBytesProperty:
         """base64_url.
 
-        :param body: Is one of the following types: Base64urlBytesProperty, JSON, IO[bytes] Required.
-        :type body: ~encode.bytes.models.Base64urlBytesProperty or JSON or IO[bytes]
+        :param body: Is either a Base64urlBytesProperty type or a IO[bytes] type. Required.
+        :type body: ~encode.bytes.models.Base64urlBytesProperty or
+         ~encode.bytes.types.Base64urlBytesProperty or IO[bytes]
         :return: Base64urlBytesProperty. The Base64urlBytesProperty is compatible with MutableMapping
         :rtype: ~encode.bytes.models.Base64urlBytesProperty
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -500,12 +504,12 @@ class PropertyOperations:
 
     @overload
     def base64_url_array(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types_models2.Base64urlArrayBytesProperty, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models2.Base64urlArrayBytesProperty:
         """base64_url_array.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~encode.bytes.types.Base64urlArrayBytesProperty
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -534,13 +538,15 @@ class PropertyOperations:
 
     @distributed_trace
     def base64_url_array(
-        self, body: Union[_models2.Base64urlArrayBytesProperty, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models2.Base64urlArrayBytesProperty, _types_models2.Base64urlArrayBytesProperty, IO[bytes]],
+        **kwargs: Any
     ) -> _models2.Base64urlArrayBytesProperty:
         """base64_url_array.
 
-        :param body: Is one of the following types: Base64urlArrayBytesProperty, JSON, IO[bytes]
-         Required.
-        :type body: ~encode.bytes.models.Base64urlArrayBytesProperty or JSON or IO[bytes]
+        :param body: Is either a Base64urlArrayBytesProperty type or a IO[bytes] type. Required.
+        :type body: ~encode.bytes.models.Base64urlArrayBytesProperty or
+         ~encode.bytes.types.Base64urlArrayBytesProperty or IO[bytes]
         :return: Base64urlArrayBytesProperty. The Base64urlArrayBytesProperty is compatible with
          MutableMapping
         :rtype: ~encode.bytes.models.Base64urlArrayBytesProperty

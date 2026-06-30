@@ -19,7 +19,7 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._operations._operations import (
     build_nested_discriminator_get_missing_discriminator_request,
     build_nested_discriminator_get_model_request,
@@ -32,7 +32,6 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
 from .._configuration import NestedDiscriminatorClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -112,11 +111,11 @@ class _NestedDiscriminatorClientOperationsMixin(
         """
 
     @overload
-    async def put_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def put_model(self, input: _types.Fish, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put_model.
 
         :param input: Required.
-        :type input: JSON
+        :type input: ~typetest.model.nesteddiscriminator.types.Fish
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -139,11 +138,12 @@ class _NestedDiscriminatorClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def put_model(self, input: Union[_models.Fish, JSON, IO[bytes]], **kwargs: Any) -> None:
+    async def put_model(self, input: Union[_models.Fish, _types.Fish, IO[bytes]], **kwargs: Any) -> None:
         """put_model.
 
-        :param input: Is one of the following types: Fish, JSON, IO[bytes] Required.
-        :type input: ~typetest.model.nesteddiscriminator.models.Fish or JSON or IO[bytes]
+        :param input: Is either a Fish type or a IO[bytes] type. Required.
+        :type input: ~typetest.model.nesteddiscriminator.models.Fish or
+         ~typetest.model.nesteddiscriminator.types.Fish or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -267,11 +267,13 @@ class _NestedDiscriminatorClientOperationsMixin(
         """
 
     @overload
-    async def put_recursive_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def put_recursive_model(
+        self, input: _types.Fish, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """put_recursive_model.
 
         :param input: Required.
-        :type input: JSON
+        :type input: ~typetest.model.nesteddiscriminator.types.Fish
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -296,11 +298,12 @@ class _NestedDiscriminatorClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def put_recursive_model(self, input: Union[_models.Fish, JSON, IO[bytes]], **kwargs: Any) -> None:
+    async def put_recursive_model(self, input: Union[_models.Fish, _types.Fish, IO[bytes]], **kwargs: Any) -> None:
         """put_recursive_model.
 
-        :param input: Is one of the following types: Fish, JSON, IO[bytes] Required.
-        :type input: ~typetest.model.nesteddiscriminator.models.Fish or JSON or IO[bytes]
+        :param input: Is either a Fish type or a IO[bytes] type. Required.
+        :type input: ~typetest.model.nesteddiscriminator.models.Fish or
+         ~typetest.model.nesteddiscriminator.types.Fish or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

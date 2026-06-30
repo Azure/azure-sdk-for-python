@@ -26,13 +26,12 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import EnumDiscriminatorClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -242,11 +241,11 @@ class _EnumDiscriminatorClientOperationsMixin(
         """
 
     @overload
-    def put_extensible_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put_extensible_model(self, input: _types.Dog, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Send model with extensible enum discriminator type.
 
         :param input: Dog to create. Required.
-        :type input: JSON
+        :type input: ~typetest.model.enumdiscriminator.types.Dog
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -271,12 +270,13 @@ class _EnumDiscriminatorClientOperationsMixin(
 
     @distributed_trace
     def put_extensible_model(  # pylint: disable=inconsistent-return-statements
-        self, input: Union[_models.Dog, JSON, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.Dog, _types.Dog, IO[bytes]], **kwargs: Any
     ) -> None:
         """Send model with extensible enum discriminator type.
 
-        :param input: Dog to create. Is one of the following types: Dog, JSON, IO[bytes] Required.
-        :type input: ~typetest.model.enumdiscriminator.models.Dog or JSON or IO[bytes]
+        :param input: Dog to create. Is either a Dog type or a IO[bytes] type. Required.
+        :type input: ~typetest.model.enumdiscriminator.models.Dog or
+         ~typetest.model.enumdiscriminator.types.Dog or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -513,11 +513,11 @@ class _EnumDiscriminatorClientOperationsMixin(
         """
 
     @overload
-    def put_fixed_model(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put_fixed_model(self, input: _types.Snake, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """Send model with fixed enum discriminator type.
 
         :param input: Snake to create. Required.
-        :type input: JSON
+        :type input: ~typetest.model.enumdiscriminator.types.Snake
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -542,12 +542,13 @@ class _EnumDiscriminatorClientOperationsMixin(
 
     @distributed_trace
     def put_fixed_model(  # pylint: disable=inconsistent-return-statements
-        self, input: Union[_models.Snake, JSON, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.Snake, _types.Snake, IO[bytes]], **kwargs: Any
     ) -> None:
         """Send model with fixed enum discriminator type.
 
-        :param input: Snake to create. Is one of the following types: Snake, JSON, IO[bytes] Required.
-        :type input: ~typetest.model.enumdiscriminator.models.Snake or JSON or IO[bytes]
+        :param input: Snake to create. Is either a Snake type or a IO[bytes] type. Required.
+        :type input: ~typetest.model.enumdiscriminator.models.Snake or
+         ~typetest.model.enumdiscriminator.types.Snake or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

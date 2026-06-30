@@ -19,13 +19,12 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import RecursiveClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -80,11 +79,11 @@ class _RecursiveClientOperationsMixin(
         """
 
     @overload
-    def put(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def put(self, input: _types.Extension, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """put.
 
         :param input: Required.
-        :type input: JSON
+        :type input: ~typetest.model.recursive.types.Extension
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -108,12 +107,13 @@ class _RecursiveClientOperationsMixin(
         """
 
     def put(  # pylint: disable=inconsistent-return-statements
-        self, input: Union[_models.Extension, JSON, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.Extension, _types.Extension, IO[bytes]], **kwargs: Any
     ) -> None:
         """put.
 
-        :param input: Is one of the following types: Extension, JSON, IO[bytes] Required.
-        :type input: ~typetest.model.recursive.models.Extension or JSON or IO[bytes]
+        :param input: Is either a Extension type or a IO[bytes] type. Required.
+        :type input: ~typetest.model.recursive.models.Extension or
+         ~typetest.model.recursive.types.Extension or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

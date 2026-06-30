@@ -17,12 +17,11 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models1
+from .. import models as _models1, types as _types_models1
 from ..._configuration import BasicClientConfiguration
 from ..._utils.model_base import SdkJSONEncoder
 from ..._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -76,11 +75,11 @@ class ExplicitBodyOperations:
         """
 
     @overload
-    def simple(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def simple(self, body: _types_models1.User, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """simple.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.basic.explicitbody.types.User
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -104,12 +103,13 @@ class ExplicitBodyOperations:
         """
 
     def simple(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models1.User, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models1.User, _types_models1.User, IO[bytes]], **kwargs: Any
     ) -> None:
         """simple.
 
-        :param body: Is one of the following types: User, JSON, IO[bytes] Required.
-        :type body: ~parameters.basic.explicitbody.models.User or JSON or IO[bytes]
+        :param body: Is either a User type or a IO[bytes] type. Required.
+        :type body: ~parameters.basic.explicitbody.models.User or
+         ~parameters.basic.explicitbody.types.User or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

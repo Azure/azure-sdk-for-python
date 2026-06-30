@@ -19,13 +19,12 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import NotDiscriminatedClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -97,11 +96,11 @@ class _NotDiscriminatedClientOperationsMixin(
         """
 
     @overload
-    def post_valid(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def post_valid(self, input: _types.Siamese, *, content_type: str = "application/json", **kwargs: Any) -> None:
         """post_valid.
 
         :param input: Required.
-        :type input: JSON
+        :type input: ~typetest.model.notdiscriminated.types.Siamese
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -125,12 +124,13 @@ class _NotDiscriminatedClientOperationsMixin(
         """
 
     def post_valid(  # pylint: disable=inconsistent-return-statements
-        self, input: Union[_models.Siamese, JSON, IO[bytes]], **kwargs: Any
+        self, input: Union[_models.Siamese, _types.Siamese, IO[bytes]], **kwargs: Any
     ) -> None:
         """post_valid.
 
-        :param input: Is one of the following types: Siamese, JSON, IO[bytes] Required.
-        :type input: ~typetest.model.notdiscriminated.models.Siamese or JSON or IO[bytes]
+        :param input: Is either a Siamese type or a IO[bytes] type. Required.
+        :type input: ~typetest.model.notdiscriminated.models.Siamese or
+         ~typetest.model.notdiscriminated.types.Siamese or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -250,11 +250,13 @@ class _NotDiscriminatedClientOperationsMixin(
         """
 
     @overload
-    def put_valid(self, input: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Siamese:
+    def put_valid(
+        self, input: _types.Siamese, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Siamese:
         """put_valid.
 
         :param input: Required.
-        :type input: JSON
+        :type input: ~typetest.model.notdiscriminated.types.Siamese
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -277,11 +279,12 @@ class _NotDiscriminatedClientOperationsMixin(
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    def put_valid(self, input: Union[_models.Siamese, JSON, IO[bytes]], **kwargs: Any) -> _models.Siamese:
+    def put_valid(self, input: Union[_models.Siamese, _types.Siamese, IO[bytes]], **kwargs: Any) -> _models.Siamese:
         """put_valid.
 
-        :param input: Is one of the following types: Siamese, JSON, IO[bytes] Required.
-        :type input: ~typetest.model.notdiscriminated.models.Siamese or JSON or IO[bytes]
+        :param input: Is either a Siamese type or a IO[bytes] type. Required.
+        :type input: ~typetest.model.notdiscriminated.models.Siamese or
+         ~typetest.model.notdiscriminated.types.Siamese or IO[bytes]
         :return: Siamese. The Siamese is compatible with MutableMapping
         :rtype: ~typetest.model.notdiscriminated.models.Siamese
         :raises ~corehttp.exceptions.HttpResponseError:

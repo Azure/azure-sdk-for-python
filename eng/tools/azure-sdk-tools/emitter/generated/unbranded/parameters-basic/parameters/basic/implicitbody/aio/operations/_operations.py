@@ -17,6 +17,7 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
+from ... import types as _types_models2
 from ...._utils.model_base import SdkJSONEncoder
 from ...._utils.serialization import Deserializer, Serializer
 from ....aio._configuration import BasicClientConfiguration
@@ -60,11 +61,13 @@ class ImplicitBodyOperations:
         """
 
     @overload
-    async def simple(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def simple(
+        self, body: _types_models2.SimpleRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """simple.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.basic.implicitbody.types.SimpleRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -87,11 +90,13 @@ class ImplicitBodyOperations:
         :raises ~corehttp.exceptions.HttpResponseError:
         """
 
-    async def simple(self, body: Union[JSON, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any) -> None:
+    async def simple(
+        self, body: Union[JSON, _types_models2.SimpleRequest, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
+    ) -> None:
         """simple.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SimpleRequest, IO[bytes] Required.
+        :type body: JSON or ~parameters.basic.implicitbody.types.SimpleRequest or IO[bytes]
         :keyword name: Required.
         :paramtype name: str
         :return: None

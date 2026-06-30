@@ -25,13 +25,12 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._operations._operations import build_duration_duration_constant_request
 from ..._utils.model_base import SdkJSONEncoder
 from ..._utils.utils import ClientMixinABC
 from .._configuration import DurationClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -57,11 +56,13 @@ class _DurationClientOperationsMixin(
         """
 
     @overload
-    async def duration_constant(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    async def duration_constant(
+        self, body: _types.DurationModel, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """Test duration with azure specific encoding.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.azure.encode.duration.types.DurationModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -87,11 +88,14 @@ class _DurationClientOperationsMixin(
         """
 
     @distributed_trace_async
-    async def duration_constant(self, body: Union[_models.DurationModel, JSON, IO[bytes]], **kwargs: Any) -> None:
+    async def duration_constant(
+        self, body: Union[_models.DurationModel, _types.DurationModel, IO[bytes]], **kwargs: Any
+    ) -> None:
         """Test duration with azure specific encoding.
 
-        :param body: Is one of the following types: DurationModel, JSON, IO[bytes] Required.
-        :type body: ~specs.azure.encode.duration.models.DurationModel or JSON or IO[bytes]
+        :param body: Is either a DurationModel type or a IO[bytes] type. Required.
+        :type body: ~specs.azure.encode.duration.models.DurationModel or
+         ~specs.azure.encode.duration.types.DurationModel or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:

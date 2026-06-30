@@ -17,7 +17,8 @@ from corehttp.runtime import AsyncPipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from ... import models as _models2
+from ... import models as _models2, types as _types_models2
+from .... import types as _types_models3
 from ...._utils.model_base import SdkJSONEncoder
 from ...._utils.serialization import Deserializer, Serializer
 from ....aio._configuration import SpreadClientConfiguration
@@ -68,12 +69,12 @@ class ModelOperations:
 
     @overload
     async def spread_as_request_body(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types_models2.BodyParameter, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """spread_as_request_body.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.model.types.BodyParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -99,12 +100,12 @@ class ModelOperations:
         """
 
     async def spread_as_request_body(
-        self, body: Union[JSON, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
+        self, body: Union[JSON, _types_models2.BodyParameter, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
     ) -> None:
         """spread_as_request_body.
 
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, BodyParameter, IO[bytes] Required.
+        :type body: JSON or ~parameters.spread.model.types.BodyParameter or IO[bytes]
         :keyword name: Required.
         :paramtype name: str
         :return: None
@@ -178,12 +179,12 @@ class ModelOperations:
 
     @overload
     async def spread_composite_request_only_with_body(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, body: _types_models2.BodyParameter, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """spread_composite_request_only_with_body.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.model.types.BodyParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -209,12 +210,13 @@ class ModelOperations:
         """
 
     async def spread_composite_request_only_with_body(
-        self, body: Union[_models2.BodyParameter, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models2.BodyParameter, _types_models2.BodyParameter, IO[bytes]], **kwargs: Any
     ) -> None:
         """spread_composite_request_only_with_body.
 
-        :param body: Is one of the following types: BodyParameter, JSON, IO[bytes] Required.
-        :type body: ~parameters.spread.model.models.BodyParameter or JSON or IO[bytes]
+        :param body: Is either a BodyParameter type or a IO[bytes] type. Required.
+        :type body: ~parameters.spread.model.models.BodyParameter or
+         ~parameters.spread.model.types.BodyParameter or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -338,14 +340,20 @@ class ModelOperations:
 
     @overload
     async def spread_composite_request(
-        self, name: str, body: JSON, *, test_header: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: _types_models2.BodyParameter,
+        *,
+        test_header: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """spread_composite_request.
 
         :param name: Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.model.types.BodyParameter
         :keyword test_header: Required.
         :paramtype test_header: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -377,14 +385,20 @@ class ModelOperations:
         """
 
     async def spread_composite_request(
-        self, name: str, body: Union[_models2.BodyParameter, JSON, IO[bytes]], *, test_header: str, **kwargs: Any
+        self,
+        name: str,
+        body: Union[_models2.BodyParameter, _types_models2.BodyParameter, IO[bytes]],
+        *,
+        test_header: str,
+        **kwargs: Any
     ) -> None:
         """spread_composite_request.
 
         :param name: Required.
         :type name: str
-        :param body: Is one of the following types: BodyParameter, JSON, IO[bytes] Required.
-        :type body: ~parameters.spread.model.models.BodyParameter or JSON or IO[bytes]
+        :param body: Is either a BodyParameter type or a IO[bytes] type. Required.
+        :type body: ~parameters.spread.model.models.BodyParameter or
+         ~parameters.spread.model.types.BodyParameter or IO[bytes]
         :keyword test_header: Required.
         :paramtype test_header: str
         :return: None
@@ -459,14 +473,20 @@ class ModelOperations:
 
     @overload
     async def spread_composite_request_mix(
-        self, name: str, body: JSON, *, test_header: str, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: _types_models3.SpreadCompositeRequestMixRequest,
+        *,
+        test_header: str,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> None:
         """spread_composite_request_mix.
 
         :param name: Required.
         :type name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~parameters.spread.types.SpreadCompositeRequestMixRequest
         :keyword test_header: Required.
         :paramtype test_header: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -498,14 +518,21 @@ class ModelOperations:
         """
 
     async def spread_composite_request_mix(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, test_header: str, prop: str = _Unset, **kwargs: Any
+        self,
+        name: str,
+        body: Union[JSON, _types_models3.SpreadCompositeRequestMixRequest, IO[bytes]] = _Unset,
+        *,
+        test_header: str,
+        prop: str = _Unset,
+        **kwargs: Any
     ) -> None:
         """spread_composite_request_mix.
 
         :param name: Required.
         :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, SpreadCompositeRequestMixRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~parameters.spread.types.SpreadCompositeRequestMixRequest or IO[bytes]
         :keyword test_header: Required.
         :paramtype test_header: str
         :keyword prop: Required.

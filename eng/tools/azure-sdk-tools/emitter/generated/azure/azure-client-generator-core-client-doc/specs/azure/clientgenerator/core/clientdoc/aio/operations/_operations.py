@@ -26,13 +26,12 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import build_documentation_harvest_request
 from .._configuration import ClientDocClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -71,11 +70,13 @@ class DocumentationOperations:
         """
 
     @overload
-    async def harvest(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Plant:
+    async def harvest(
+        self, body: _types.Plant, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Plant:
         """Retrieves a plant from the garden by submitting its name.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specs.azure.clientgenerator.core.clientdoc.types.Plant
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -99,11 +100,12 @@ class DocumentationOperations:
         """
 
     @distributed_trace_async
-    async def harvest(self, body: Union[_models.Plant, JSON, IO[bytes]], **kwargs: Any) -> _models.Plant:
+    async def harvest(self, body: Union[_models.Plant, _types.Plant, IO[bytes]], **kwargs: Any) -> _models.Plant:
         """Retrieves a plant from the garden by submitting its name.
 
-        :param body: Is one of the following types: Plant, JSON, IO[bytes] Required.
-        :type body: ~specs.azure.clientgenerator.core.clientdoc.models.Plant or JSON or IO[bytes]
+        :param body: Is either a Plant type or a IO[bytes] type. Required.
+        :type body: ~specs.azure.clientgenerator.core.clientdoc.models.Plant or
+         ~specs.azure.clientgenerator.core.clientdoc.types.Plant or IO[bytes]
         :return: Plant. The Plant is compatible with MutableMapping
         :rtype: ~specs.azure.clientgenerator.core.clientdoc.models.Plant
         :raises ~azure.core.exceptions.HttpResponseError:

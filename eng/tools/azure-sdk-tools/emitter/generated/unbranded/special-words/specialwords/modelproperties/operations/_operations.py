@@ -17,12 +17,11 @@ from corehttp.runtime import PipelineClient
 from corehttp.runtime.pipeline import PipelineResponse
 from corehttp.utils import case_insensitive_dict
 
-from .. import models as _models1
+from .. import models as _models1, types as _types_models1
 from ..._configuration import SpecialWordsClientConfiguration
 from ..._utils.model_base import SdkJSONEncoder
 from ..._utils.serialization import Deserializer, Serializer
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -106,11 +105,13 @@ class ModelPropertiesOperations:
         """
 
     @overload
-    def same_as_model(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def same_as_model(
+        self, body: _types_models1.SameAsModel, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """same_as_model.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specialwords.modelproperties.types.SameAsModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -134,12 +135,13 @@ class ModelPropertiesOperations:
         """
 
     def same_as_model(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models1.SameAsModel, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models1.SameAsModel, _types_models1.SameAsModel, IO[bytes]], **kwargs: Any
     ) -> None:
         """same_as_model.
 
-        :param body: Is one of the following types: SameAsModel, JSON, IO[bytes] Required.
-        :type body: ~specialwords.modelproperties.models.SameAsModel or JSON or IO[bytes]
+        :param body: Is either a SameAsModel type or a IO[bytes] type. Required.
+        :type body: ~specialwords.modelproperties.models.SameAsModel or
+         ~specialwords.modelproperties.types.SameAsModel or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -205,11 +207,13 @@ class ModelPropertiesOperations:
         """
 
     @overload
-    def dict_methods(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def dict_methods(
+        self, body: _types_models1.DictMethods, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """dict_methods.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specialwords.modelproperties.types.DictMethods
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -233,12 +237,13 @@ class ModelPropertiesOperations:
         """
 
     def dict_methods(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models1.DictMethods, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models1.DictMethods, _types_models1.DictMethods, IO[bytes]], **kwargs: Any
     ) -> None:
         """dict_methods.
 
-        :param body: Is one of the following types: DictMethods, JSON, IO[bytes] Required.
-        :type body: ~specialwords.modelproperties.models.DictMethods or JSON or IO[bytes]
+        :param body: Is either a DictMethods type or a IO[bytes] type. Required.
+        :type body: ~specialwords.modelproperties.models.DictMethods or
+         ~specialwords.modelproperties.types.DictMethods or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:
@@ -302,11 +307,13 @@ class ModelPropertiesOperations:
         """
 
     @overload
-    def with_list(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> None:
+    def with_list(
+        self, body: _types_models1.ModelWithList, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
         """with_list.
 
         :param body: Required.
-        :type body: JSON
+        :type body: ~specialwords.modelproperties.types.ModelWithList
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -330,12 +337,13 @@ class ModelPropertiesOperations:
         """
 
     def with_list(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[_models1.ModelWithList, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models1.ModelWithList, _types_models1.ModelWithList, IO[bytes]], **kwargs: Any
     ) -> None:
         """with_list.
 
-        :param body: Is one of the following types: ModelWithList, JSON, IO[bytes] Required.
-        :type body: ~specialwords.modelproperties.models.ModelWithList or JSON or IO[bytes]
+        :param body: Is either a ModelWithList type or a IO[bytes] type. Required.
+        :type body: ~specialwords.modelproperties.models.ModelWithList or
+         ~specialwords.modelproperties.types.ModelWithList or IO[bytes]
         :return: None
         :rtype: None
         :raises ~corehttp.exceptions.HttpResponseError:

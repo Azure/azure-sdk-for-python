@@ -1,0 +1,157 @@
+# coding=utf-8
+
+from typing_extensions import Required, TypedDict
+
+
+class DefaultDurationProperty(TypedDict, total=False):
+    """DefaultDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class Float64MillisecondsDurationProperty(TypedDict, total=False):
+    """Float64MillisecondsDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class Float64SecondsDurationProperty(TypedDict, total=False):
+    """Float64SecondsDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class FloatMillisecondsDurationArrayProperty(TypedDict, total=False):
+    """FloatMillisecondsDurationArrayProperty.
+
+    :ivar value: Required.
+    :vartype value: list[str]
+    """
+
+    value: Required[list[str]]
+    """Required."""
+
+
+class FloatMillisecondsDurationProperty(TypedDict, total=False):
+    """FloatMillisecondsDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class FloatMillisecondsLargerUnitDurationProperty(TypedDict, total=False):  # pylint: disable=name-too-long
+    """FloatMillisecondsLargerUnitDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class FloatSecondsDurationArrayProperty(TypedDict, total=False):
+    """FloatSecondsDurationArrayProperty.
+
+    :ivar value: Required.
+    :vartype value: list[str]
+    """
+
+    value: Required[list[str]]
+    """Required."""
+
+
+class FloatSecondsDurationProperty(TypedDict, total=False):
+    """FloatSecondsDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class FloatSecondsLargerUnitDurationProperty(TypedDict, total=False):
+    """FloatSecondsLargerUnitDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class Int32MillisecondsDurationProperty(TypedDict, total=False):
+    """Int32MillisecondsDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class Int32MillisecondsLargerUnitDurationProperty(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Int32MillisecondsLargerUnitDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class Int32SecondsDurationProperty(TypedDict, total=False):
+    """Int32SecondsDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class Int32SecondsLargerUnitDurationProperty(TypedDict, total=False):
+    """Int32SecondsLargerUnitDurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
+
+
+class ISO8601DurationProperty(TypedDict, total=False):
+    """ISO8601DurationProperty.
+
+    :ivar value: Required.
+    :vartype value: str
+    """
+
+    value: Required[str]
+    """Required."""
