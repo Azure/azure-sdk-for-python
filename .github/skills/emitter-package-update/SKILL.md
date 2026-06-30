@@ -72,6 +72,17 @@ npx npm-check-updates --packageFile eng/emitter-package.json -u
 
 Align `@azure-tools/openai-typespec` and `@typespec/openapi3` with the versions pinned in [azure-rest-api-specs/package.json](https://github.com/Azure/azure-rest-api-specs/blob/main/package.json) to ensure consistency between the emitter and the spec repo. Read the spec repo's current values for those two packages and set them to match in `eng/emitter-package.json` (do not assume specific version numbers — use whatever the spec repo currently pins).
 
+> **Cooldown caveat (`min-release-age`):** This repo's `.npmrc` enforces a `min-release-age`
+> cooldown (e.g. 7 days), which is why `npm-check-updates` above intentionally skips versions
+> newer than the cooldown window. The same cooldown applies to the alignment step: if the
+> version the spec repo pins for `@azure-tools/openai-typespec` or `@typespec/openapi3` was
+> published **inside** the cooldown window, do **not** adopt it — `tsp-client generate-lock-file`
+> (step 5) will fail with `npm error code ETARGET … No matching version found for
+> <pkg>@<version> with a date before <cutoff>`. In that case keep the latest cooldown-passing
+> version (usually the value already pinned) and defer the alignment until the spec repo's
+> version clears the cooldown. To check a publish date: `npm view <pkg> time --json`. Only the
+> packages that actually clear the cooldown should change here.
+
 If a specific version was requested, pin `@azure-tools/typespec-python` to that exact
 version in `eng/emitter-package.json` (overriding what npm-check-updates picked).
 
@@ -130,6 +141,15 @@ This regenerates `eng/emitter-package-lock.json`.
 > change (skip the lock file in step 6), and call out in the PR body that
 > `eng/emitter-package-lock.json` still needs to be regenerated in an environment with
 > npm-registry access before merge.
+
+> **Cooldown failure (`ETARGET`):** If this step fails with
+> `npm error code ETARGET … No matching version found for <pkg>@<version> with a date before
+> <cutoff>`, a pinned version is newer than the repo's `min-release-age` cooldown window (see
+> the cooldown caveat in step 2). This is **not** a network problem — do not use the
+> restricted-network fallback. Instead, revert that package to the latest cooldown-passing
+> version, re-run `git diff --quiet -- eng/emitter-package.json` (step 3), and only proceed if a
+> valid change remains. If reverting leaves no diff, there is nothing to release until the
+> cooldown clears.
 
 ### 6. Commit Changes
 
