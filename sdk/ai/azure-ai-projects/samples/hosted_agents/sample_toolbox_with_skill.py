@@ -146,7 +146,7 @@ def main() -> None:
                     "MCP_SERVER_URL": toolbox_mcp_url,
                 },
                 protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
-            ), 
+            ),
             code=zip_bytes,
         )
         print(f"Created hosted agent version: {created.version}")

@@ -84,7 +84,7 @@ async def main() -> None:
                     dependency_resolution=dependency_resolution,
                 ),
                 protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
-            ),            
+            ),
             code=code_zip_bytes,
         )
         print(f"Created code-based hosted agent version: {created.version}")
