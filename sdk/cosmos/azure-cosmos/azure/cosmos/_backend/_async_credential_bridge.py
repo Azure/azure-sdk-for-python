@@ -178,7 +178,16 @@ class AsyncTokenCredentialBridge:
         adds one to the bridge's refcount; the matching close subtracts one and
         tears the loop down only at zero. The bridge holds a strong reference to
         the credential, so its ``id`` stays valid and unique while it is
-        registered.
+        registered. That strong reference deliberately keeps the credential alive
+        for as long as any client/driver still holds this bridge (until the
+        refcount reaches zero) -- so a credential can outlive the client that
+        passed it; the customer still owns calling ``close()`` on it.
+
+        The bridge's timeouts are fixed by the **first** caller: a later
+        ``acquire`` of the same credential with different ``token_timeout`` /
+        ``join_timeout`` keeps the first caller's values (first-wins, because one
+        credential maps to one shared loop) and logs a warning naming the
+        divergence, rather than silently honoring values it cannot apply.
         """
         key = id(async_credential)
         with _REGISTRY_LOCK:
@@ -189,8 +198,41 @@ class AsyncTokenCredentialBridge:
                 bridge = cls(async_credential, token_timeout=token_timeout, join_timeout=join_timeout)
                 bridge._registry_key = key
                 _REGISTRY[key] = bridge
+            else:
+                # Reusing the shared bridge: its loop and timeouts were fixed by
+                # the FIRST caller. A later caller asking for different timeouts
+                # silently gets the first caller's values (first-wins, by design
+                # -- one credential object maps to one shared loop). Surface the
+                # divergence so the misconfiguration is not invisible.
+                bridge._warn_on_timeout_divergence(token_timeout, join_timeout)
             bridge._refcount += 1
             return bridge
+
+    def _warn_on_timeout_divergence(
+        self, token_timeout: Optional[float], join_timeout: Optional[float]
+    ) -> None:
+        """Warn when a later ``acquire`` requests timeouts differing from this
+        shared bridge's. The shared loop keeps the first caller's values
+        (first-wins); this only makes the otherwise-silent divergence visible and
+        does not change behavior. ``join_timeout=None`` is resolved through the
+        same env default the constructor uses so the comparison is apples-to-apples.
+        """
+        if token_timeout != self._token_timeout:
+            _LOGGER.warning(
+                "Async-credential bridge (credential id=%s) is shared across clients; "
+                "keeping the first caller's token_timeout=%r and ignoring the newly "
+                "requested token_timeout=%r. All clients built from one credential object "
+                "share a single token-fetch loop and its timeouts; set them uniformly.",
+                self._registry_key, self._token_timeout, token_timeout,
+            )
+        requested_join = _join_timeout_from_env() if join_timeout is None else join_timeout
+        if requested_join != self._join_timeout:
+            _LOGGER.warning(
+                "Async-credential bridge (credential id=%s) is shared across clients; "
+                "keeping the first caller's join_timeout=%r and ignoring the newly "
+                "requested join_timeout=%r.",
+                self._registry_key, self._join_timeout, requested_join,
+            )
 
     def __init__(
         self,

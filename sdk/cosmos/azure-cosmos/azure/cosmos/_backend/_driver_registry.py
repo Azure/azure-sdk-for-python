@@ -92,6 +92,38 @@ class StrictEngineIsolationError(ValueError):
     """
 
 
+class ProxyPolicyConflictError(ValueError):
+    """Raised at client construction when a ``CosmosClient`` requests an explicit
+    ``proxy_allowed`` that differs from the value already established for this process.
+
+    Why this is separate from the engine-isolation guard above: ``proxy_allowed`` is
+    not a per-account setting. It configures the Rust runtime (the Tokio reactor +
+    ``CosmosDriverRuntime``), which is a process-global singleton built once -- by
+    whichever client triggers the first operation -- and frozen for the life of the
+    process (``runtime.rs`` ``OnceLock``). So every Rust-backed client in the process
+    that sets ``proxy_allowed`` must agree on one value. The binding does enforce this,
+    but only lazily at the first operation and with a race-determined winner under
+    concurrent construction; this guard makes the conflict deterministic and fail-fast
+    at construction, in both default and strict mode (the engine-isolation registry
+    cannot catch it because it treats ``proxy_allowed`` as just another per-account
+    config field). Clients that leave ``proxy_allowed`` unset (``None``) never set or
+    conflict with the policy, mirroring the binding's ``proxy_allowed_conflicts``.
+
+    To avoid this error, establish the policy deterministically: construct one client
+    with the desired ``proxy_allowed`` before any others (and before any concurrent
+    client construction), and set the same value -- or leave it unset -- on the rest.
+    """
+
+
+# Process-global ``proxy_allowed`` policy. Unlike the per-account ``_REGISTRY`` above,
+# this is a single value for the whole process because the Rust runtime it configures is
+# a process singleton. ``_PROXY_POLICY_SET`` distinguishes "no explicit value seen yet"
+# from "explicitly set to None" (the binding treats ``proxy_allowed=None`` as "no
+# opinion", so a None-setting client never establishes the policy). Guarded by _LOCK.
+_PROXY_POLICY: Optional[bool] = None
+_PROXY_POLICY_SET: bool = False
+
+
 # Canonical endpoint -> the live engines for that account. Each key is a
 # ``(credential_key, config)`` pair -- one engine (a rust driver the binding would
 # build and cache) -- mapped to the number of live clients holding it. An account drops
@@ -146,6 +178,50 @@ def make_credential_key(master_key: Optional[str], token_credential: Optional[An
     if master_key is not None:
         return "mk:" + hashlib.sha256(master_key.encode("utf-8")).hexdigest()
     return None
+
+
+def register_proxy_policy(config: Optional[PreparedClientConfig]) -> None:
+    """Enforce a single process-wide ``proxy_allowed`` policy, fail-fast at construction.
+
+    The Rust runtime's proxy setting is process-global (one ``OnceLock``-backed runtime
+    per process), so every Rust-backed client that sets ``proxy_allowed`` must agree on
+    one value. This makes that agreement deterministic at construction instead of leaving
+    it to the binding's lazy, race-determined check at the first operation.
+
+    Rules (mirroring the binding's ``proxy_allowed_conflicts``):
+
+    * A client that does not set ``proxy_allowed`` (``None``) is always compatible and
+      never establishes the policy -- it accepts whatever value wins.
+    * The first client with an explicit value establishes the process policy.
+    * A later client with a *different* explicit value raises
+      ``ProxyPolicyConflictError``. An equal value is accepted (idempotent).
+
+    Called from ``_shared`` at client construction, before ``register_client_config``,
+    so a proxy conflict fails before the client records any engine registration to
+    release. The Rust ``OnceLock`` conflict check remains the backstop -- this guard
+    only turns the late, nondeterministic failure into an early, deterministic one. It
+    does not eliminate the case where a ``None``-setting client operates first and
+    lazily pins the runtime to its default before an explicit-value client is built;
+    that requires the "construct the proxy-setting client first" discipline.
+    """
+    if config is None or config.proxy_allowed is None:
+        return
+    requested = config.proxy_allowed
+    global _PROXY_POLICY, _PROXY_POLICY_SET  # pylint: disable=global-statement
+    with _LOCK:
+        if not _PROXY_POLICY_SET:
+            _PROXY_POLICY = requested
+            _PROXY_POLICY_SET = True
+            return
+        if _PROXY_POLICY != requested:
+            raise ProxyPolicyConflictError(
+                "proxy_allowed is process-global for the Rust backend and was already "
+                "established as proxy_allowed={established!r} by an earlier CosmosClient; "
+                "this client requests proxy_allowed={requested!r}. Set the same "
+                "proxy_allowed value on every Rust-backed CosmosClient in the process "
+                "(or leave it unset), and construct the client that sets it first, "
+                "before any others.".format(established=_PROXY_POLICY, requested=requested)
+            )
 
 
 def register_client_config(
@@ -253,5 +329,8 @@ def _reset_for_tests() -> None:
     """Clear the registry. Tests use this to stay isolated from each other, since
     the registry lives for the whole process.
     """
+    global _PROXY_POLICY, _PROXY_POLICY_SET  # pylint: disable=global-statement
     with _LOCK:
         _REGISTRY.clear()
+        _PROXY_POLICY = None
+        _PROXY_POLICY_SET = False

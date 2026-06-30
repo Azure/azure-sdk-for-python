@@ -16,8 +16,8 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 from custom_tcp_connector import ProxiedTCPConnector
 from workload_configs import *
 
-_NOISY_ERRORS = set([404, 409, 412])
-_NOISY_SUB_STATUS_CODES = set([0, None])
+_NOISY_ERRORS = {404, 409, 412}
+_NOISY_SUB_STATUS_CODES = {0, None}
 _REQUIRED_ATTRIBUTES = [
     "resource_type",
     "verb",
@@ -27,10 +27,8 @@ _REQUIRED_ATTRIBUTES = [
     "duration",
 ]
 
-# Response header carrying the RU (request-unit) charge. The SDK surfaces it on
-# every successful op on BOTH backends, so capturing it per call (see
-# _make_ru_hook) is the only reliable RU source: the workload log keeps only
-# errors and slow (>=1s) calls, so a normal fast success never reaches it.
+# Response header carrying the RU charge. The SDK sets it on every successful op
+# on both backends, so reading it per call is the reliable RU source.
 _REQUEST_CHARGE_HEADER = "x-ms-request-charge"
 
 
@@ -39,11 +37,10 @@ _REQUEST_CHARGE_HEADER = "x-ms-request-charge"
 # ---------------------------------------------------------------------------
 
 def _extra_kwargs(excluded_locations):
-    """Build optional per-call kwargs shared by every operation.
+    """Build the optional per-call kwargs shared by every operation.
 
-    Adds ``excluded_locations`` when set, and a ``timeout`` (end-to-end operation
-    deadline, seconds) when COSMOS_REQUEST_TIMEOUT > 0 so the baseline and Rust
-    runs can be pinned to the same timeout policy for a fair tail comparison.
+    Adds ``excluded_locations`` when set, and a ``timeout`` (seconds) when
+    COSMOS_REQUEST_TIMEOUT > 0 so both runs use the same timeout.
     """
     extra = {}
     if excluded_locations:
@@ -69,12 +66,9 @@ def _record_error(stats, operation, error):
 def _make_ru_hook(op_name, stats):
     """Build a ``response_hook`` that records *op_name*'s RU charge into *stats*.
 
-    The SDK calls ``response_hook(headers, body)`` exactly once per successful
-    operation on both backends (rust via ``parse_backend_response``, core-python
-    via the legacy connection), with the gateway's ``x-ms-request-charge`` header
-    present. Recording it here makes RU per operation auditable from the result
-    row (``mean_ru``) -- the workload log cannot, as it keeps only errors and
-    slow (>=1s) calls. Returns ``None`` when there is no ``stats`` to record into.
+    The SDK calls the hook once per successful operation on both backends with the
+    ``x-ms-request-charge`` header set, which makes RU per operation readable from
+    the result row. Returns ``None`` when there is no ``stats`` to record into.
     """
     if stats is None:
         return None
@@ -105,10 +99,9 @@ def _with_ru_hook(op_name, stats, kwargs):
 def _timed_call(op_name, stats, fn, *args, **kwargs):
     """Run *fn*, timing it and recording the result.
 
-    On success it records the latency and the RU charge (via an injected
-    ``response_hook``); on failure it records the error and returns None instead
-    of raising, so one bad call cannot stop the rest of the batch the caller is
-    looping over.
+    On success it records the latency and RU charge; on failure it records the
+    error and returns None instead of raising, so one bad call does not stop the
+    batch the caller is looping over.
     """
     _with_ru_hook(op_name, stats, kwargs)
     start = time.perf_counter_ns()
@@ -123,13 +116,11 @@ def _timed_call(op_name, stats, fn, *args, **kwargs):
 
 
 async def _timed_call_async(op_name, stats, fn, *args, **kwargs):
-    """Build and await ``fn(*args, **kwargs)``, timing it and recording the result.
+    """Await ``fn(*args, **kwargs)``, timing it and recording the result.
 
     Takes the callable plus its args (not a pre-built coroutine) so it can inject
-    the RU-capturing ``response_hook`` the same way the sync path does. On success
-    it records the latency and RU charge; on failure it records the error and
-    returns None instead of raising, so one bad call cannot stop the rest of the
-    batch run together.
+    the RU-capturing ``response_hook``. On success it records the latency and RU
+    charge; on failure it records the error and returns None instead of raising.
     """
     _with_ru_hook(op_name, stats, kwargs)
     start = time.perf_counter_ns()
@@ -161,11 +152,9 @@ def get_existing_random_item():
 
 
 def create_random_item():
-    # This item serializes to ~730 bytes of JSON (measured: 730-733 B across the
-    # random ids/timestamps), comfortably under the 1 KB point-operation SLA cap,
-    # so every op stays in the SLA's "items up to 1 KB" band. It is a single fixed
-    # shape — not configurable. To probe the 1 KB boundary itself, enlarge
-    # `description` (and re-measure); to model larger documents, grow it further.
+    # This item serializes to about 730 bytes of JSON, just under the 1 KB point-
+    # operation limit. It is a single fixed shape. To model larger documents,
+    # grow `description`.
     paragraph1 = (
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
         "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
@@ -396,11 +385,9 @@ async def query_items_concurrently(container, excluded_locations, num_queries, s
 async def _loop_lag_monitor(stats, interval_s=0.05):
     """Sample event-loop scheduling delay and feed the worst per-window into stats.
 
-    Sleeps ``interval_s`` then measures how much LONGER than that the wake-up
-    actually took: that excess is time the single asyncio loop thread was busy and
-    could not service this timer on schedule -- event-loop lag. A large lag means
-    the loop itself (GIL-bound Python) is the bottleneck, not the SDK or the
-    service, which would otherwise be misread as the Rust driver being slow. Runs
+    Sleeps ``interval_s`` then measures how much longer than that the wake-up took.
+    That excess is time the loop thread was busy and could not service the timer on
+    schedule. A large value means the loop is the bottleneck, not the SDK. Runs
     until cancelled; a no-op when there is no ``stats`` to record into.
     """
     if stats is None:
@@ -417,17 +404,15 @@ async def _loop_lag_monitor(stats, interval_s=0.05):
 
 
 # ---------------------------------------------------------------------------
-# Open-loop (constant-arrival) async driver — coordinated-omission-correct
+# Open-loop (constant-arrival) async driver
 # ---------------------------------------------------------------------------
 #
-# The default driver is closed-loop: it fires a wave and waits for all of it
-# before the next. When the system stalls it simply stops issuing requests, so
-# the stall is under-sampled and the measured tail looks better than a real
-# client would see -- "coordinated omission". This driver instead issues at a
-# fixed arrival rate and times every operation from its INTENDED arrival instant,
-# so time spent waiting to be issued (under load) lands in the latency. Only the
-# single-SDK-call point ops are supported; create/delete have untimed companion
-# steps that do not fit a clean fixed-arrival model -- run those closed-loop.
+# The default driver is closed-loop: it fires a wave and waits for it before the
+# next. When the system stalls it stops issuing requests, so the stall is under-
+# sampled and the measured tail looks better than a real client would see. This
+# driver issues at a fixed rate and times each operation from its intended start,
+# so time spent waiting to be issued lands in the latency. Only the single-call
+# point ops are supported; run create/delete closed-loop.
 
 _OPEN_LOOP_SUPPORTED = ("read", "upsert", "replace", "patch")
 
@@ -480,12 +465,12 @@ async def _open_loop_call_async(op_name, stats, scheduled_ns, fn, *args, **kwarg
 
 async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inflight, stop_event=None):
     """Constant-arrival async driver. Fires ``ops`` round-robin at ``rate`` ops/sec
-    without a wave barrier, timing each from its intended arrival. Runs until
-    ``stop_event`` is set (or the task is cancelled); a semaphore bounds in-flight
-    work so a stall cannot OOM the rig. On stop it drains the in-flight tasks so
-    their latencies are recorded and the client can close cleanly.
+    without waiting for each wave, timing each from its intended start. Runs until
+    ``stop_event`` is set or the task is cancelled; a semaphore bounds in-flight
+    work so a stall cannot run the process out of memory. On stop it drains the
+    in-flight tasks so their latencies are recorded and the client closes cleanly.
     """
-    op_list = [o for o in sorted(ops) if o != "query"]  # query has no SLA
+    op_list = [o for o in sorted(ops) if o != "query"]  # query has no latency target
     if not op_list:
         return
     for o in op_list:
@@ -515,9 +500,8 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
             if scheduled_ns > now_ns:
                 await asyncio.sleep((scheduled_ns - now_ns) / 1_000_000_000)
             elif now_ns - scheduled_ns > 5_000_000_000:
-                # >5 s behind: rebase the schedule so the backlog cannot grow
-                # forever. The lateness already recorded as latency captured the
-                # omission; we just stop trying to "catch up" infinitely.
+                # More than 5 s behind: rebase the schedule so the backlog cannot
+                # grow forever. The lateness was already recorded as latency.
                 start_ns = now_ns - seq * interval_ns
                 scheduled_ns = now_ns
             op = op_list[seq % len(op_list)]
@@ -530,9 +514,8 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
     except asyncio.CancelledError:
         raise
     finally:
-        # Drain whatever is still in flight so their latencies land in stats and
-        # nothing is left pending when the client closes (clean teardown on both
-        # the cooperative-stop path and a cancellation).
+        # Drain whatever is still in flight so their latencies are recorded and
+        # nothing is left pending when the client closes.
         if inflight:
             await asyncio.gather(*inflight, return_exceptions=True)
 

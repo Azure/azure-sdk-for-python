@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Unified Cosmos DB workload — operations, proxy, and sync/async controlled by env vars.
+"""Unified Cosmos DB workload — operations and sync/async controlled by env vars.
 
 Environment variables:
-  WORKLOAD_OPERATIONS  comma-separated list of operations (default: read,write,query)
+  WORKLOAD_OPERATIONS  comma-separated operations (default: read,create,upsert,replace,delete,patch)
   WORKLOAD_USE_PROXY   route through Envoy proxy (default: false)
-  WORKLOAD_USE_SYNC    use sync client instead of async (default: false)
+  WORKLOAD_USE_SYNC    use the sync client instead of async (default: false)
 """
 
-import logging
-import os
 import asyncio
 import gc
+import logging
+import os
 import signal
 import threading
 import time
@@ -21,36 +21,99 @@ from azure.cosmos.aio import CosmosClient as AsyncClient
 from azure.cosmos import CosmosClient as SyncClient, documents
 from azure.core.pipeline.transport import AioHttpTransport
 
-from workload_utils import *
-# `import *` skips underscore-prefixed names, so import the loop-lag monitor explicitly.
-from workload_utils import _loop_lag_monitor
-from workload_configs import *
+import perf_provenance
+from workload_configs import (
+    CLIENT_EXCLUDED_LOCATIONS,
+    CONCURRENT_QUERIES,
+    CONCURRENT_REQUESTS,
+    COSMOS_CONTAINER,
+    COSMOS_CREDENTIAL,
+    COSMOS_DATABASE,
+    COSMOS_URI,
+    ENABLE_DIAGNOSTICS_LOGGING,
+    PREFERRED_LOCATIONS,
+    REQUEST_EXCLUDED_LOCATIONS,
+    USE_MULTIPLE_WRITABLE_LOCATIONS,
+    WORKLOAD_ARRIVAL_RATE,
+    WORKLOAD_GC_FREEZE,
+    WORKLOAD_LOOP_LAG_MONITOR,
+    WORKLOAD_MAX_INFLIGHT,
+    WORKLOAD_NUM_CLIENTS,
+    WORKLOAD_OPERATIONS,
+    WORKLOAD_SKIP_CLOSE,
+    WORKLOAD_USE_PROXY,
+    WORKLOAD_USE_SYNC,
+)
+from workload_utils import (
+    _loop_lag_monitor,
+    create_custom_session,
+    create_item,
+    create_item_concurrently,
+    create_logger,
+    delete_item,
+    delete_item_concurrently,
+    get_user_agent,
+    patch_item,
+    patch_item_concurrently,
+    query_items,
+    query_items_concurrently,
+    read_item,
+    read_item_concurrently,
+    replace_item,
+    replace_item_concurrently,
+    run_open_loop,
+    upsert_item,
+    upsert_item_concurrently,
+)
+
+# Perf reporting is optional: it needs hdrhistogram and psutil. If they are not
+# installed the import fails and the workload still runs, just without reporting.
+try:
+    from perf_config import get_perf_config
+    from perf_stats import Stats
+    from perf_reporter import PerfReporter
+    _PERF_IMPORT_ERROR = None
+except ImportError as exc:
+    get_perf_config = Stats = PerfReporter = None
+    _PERF_IMPORT_ERROR = exc
 
 
 _gc_frozen = False
 
 
-def _wrap_backend_for_provenance(client, is_async, client_logger):
-    """Record CONCRETE backend provenance instead of trusting COSMOS_BACKEND.
+def _start_reporter():
+    """Return a started (Stats, PerfReporter) pair, or (None, None).
 
-    This is the drill's single biggest source of error: a row tagged "rust" that
-    actually ran the core-python path would mislabel every number on it. So we
-    derive the truth from the live client rather than the env flag:
-
-      1. Read the backend object the client REALLY built (``client._backend`` is
-         None for core-python, a RustBackend for Rust) and (a) assert it matches
-         the COSMOS_BACKEND label -- failing loudly BEFORE any work if the
-         requested engine is not the one that loaded -- and (b) record its class
-         name as ``runtime_backend`` on every results row.
-      2. Wrap that object's ``execute`` so we count, per operation, how many calls
-         the Rust driver actually FULFILLED (returned a non-None response for).
-         The item helpers fall back to the legacy core-python pipeline whenever
-         ``execute`` returns None, so this counter is the concrete, per-row proof
-         (``rust_execute_calls``) that the Rust path -- not azure-core -- did the
-         work. A core-python client has no backend object, so nothing is wrapped
-         and the counter stays 0 by construction.
+    Returns (None, None) when the optional perf dependencies are missing or when
+    reporting is disabled or has no results endpoint configured.
     """
-    import perf_provenance
+    if get_perf_config is None:
+        logging.getLogger(__name__).info("Perf reporting disabled: %s", _PERF_IMPORT_ERROR)
+        return None, None
+    perf_config = get_perf_config()
+    if perf_config["enabled"] and perf_config["results_endpoint"]:
+        stats = Stats()
+        reporter = PerfReporter(stats, perf_config)
+        reporter.start()
+        return stats, reporter
+    return None, None
+
+
+def _wrap_backend_for_provenance(client, is_async, client_logger):
+    """Record which backend the client actually built, instead of trusting COSMOS_BACKEND.
+
+    A row tagged "rust" that actually ran core-python would mislabel every number,
+    so derive the truth from the live client:
+
+      1. Read the backend object the client built (None for core-python, a
+         RustBackend for Rust). Fail loudly if it does not match the COSMOS_BACKEND
+         label, and record its class name as ``runtime_backend`` on every row.
+      2. Wrap its ``execute`` to count how many operations the Rust driver actually
+         handled (returned a non-None response). The item helpers fall back to
+         core-python when ``execute`` returns None, so this count is per-row proof
+         the Rust path did the work. core-python has no backend object, so nothing
+         is wrapped and the count stays 0.
+    """
 
     backend = getattr(client, "_backend", None)
     runtime_name = "core-python" if backend is None else type(backend).__name__
@@ -91,14 +154,11 @@ def _wrap_backend_for_provenance(client, is_async, client_logger):
 
 
 def _maybe_freeze_gc(client_logger):
-    """Optionally freeze the GC once per process, after warmup.
+    """Freeze the GC once per process, after warmup, when WORKLOAD_GC_FREEZE is set.
 
-    gc.freeze() moves every object that already exists into a permanent
-    generation that the collector never rescans, so steady-state GC work (and the
-    pauses it adds to the latency tail) shrinks. We only do this when explicitly
-    asked (WORKLOAD_GC_FREEZE=true) because the default run should measure the SDK
-    as it really behaves, GC included. Idempotent: the module flag ensures we
-    freeze a single, consistent snapshot even when many clients share the process.
+    gc.freeze() stops existing objects from being rescanned, which keeps GC pauses
+    out of the latency tail. Off by default so a normal run measures the SDK with
+    GC included. The module flag makes this run only once when clients share a process.
     """
     global _gc_frozen
     if WORKLOAD_GC_FREEZE and not _gc_frozen:
@@ -108,24 +168,17 @@ def _maybe_freeze_gc(client_logger):
 
 
 def _install_async_stop(stop_event):
-    """Register SIGINT/SIGTERM on the running event loop to request a graceful
-    stop instead of letting the signal raise KeyboardInterrupt at a random await.
+    """Handle SIGINT/SIGTERM by setting stop_event for a graceful stop.
 
-    Why this matters: the load loops below never finish on their own — the run is
-    bounded externally by ``timeout --signal=INT``. With no handler, that SIGINT
-    becomes a KeyboardInterrupt (a BaseException, so NOT caught by the per-wave
-    ``except Exception``) that fires wherever the code happens to be awaiting. If
-    it lands inside the client's async close, the close is abandoned half-done;
-    for the Rust backend that leaves its non-daemon Tokio runtime threads alive,
-    so the process never exits and ``timeout`` has to SIGKILL it (exit 137).
+    The load loops never finish on their own; the run is bounded externally by
+    ``timeout --signal=INT``. Without a handler that signal raises KeyboardInterrupt
+    at a random await, which can abandon the client's async close half-done and
+    leave the Rust runtime threads alive so the process never exits. The handler
+    just sets the event; the loops poll it between waves and exit normally, so the
+    finally blocks close the client cleanly.
 
-    The handler just sets an asyncio.Event. The loops poll it between waves and
-    exit NORMALLY, so the ``finally`` blocks that close the client run with the
-    loop still alive and no exception pending -> deterministic, clean teardown.
-
-    add_signal_handler is POSIX/main-thread only. On Windows or a non-main thread
-    it is unavailable; we return False and the caller keeps the KeyboardInterrupt
-    fallback (which still drains the finally blocks, just less deterministically).
+    add_signal_handler works only on the POSIX main thread. Elsewhere it is
+    unavailable, so we return False and the caller keeps the KeyboardInterrupt fallback.
     """
     loop = asyncio.get_running_loop()
     installed = False
@@ -147,26 +200,12 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
 
     owns_reporter = False
     if stats is None:
-        try:
-            from perf_config import get_perf_config
+        stats, reporter = _start_reporter()
+        owns_reporter = stats is not None
 
-            perf_config = get_perf_config()
-            if perf_config["enabled"] and perf_config["results_endpoint"]:
-                from perf_stats import Stats
-                from perf_reporter import PerfReporter
-
-                stats = Stats()
-                reporter = PerfReporter(stats, perf_config)
-                reporter.start()
-                owns_reporter = True
-        except ImportError as e:
-            logging.getLogger(__name__).info("Perf reporting disabled: %s", e)
-
-    # A None stop_event means this is the single-client direct path, so we own the
-    # event and install the signal handler here. In multi-client mode the parent
-    # (run_multi_client_async) creates ONE shared event, installs the handler once,
-    # and passes it in, so a single SIGINT stops every client (installing per
-    # client would last-win the handler and leave the others spinning forever).
+    # A None stop_event means the single-client path, so install the handler here.
+    # Multi-client mode passes in one shared event with the handler already set, so
+    # one signal stops every client (a per-client handler would overwrite the others).
     if stop_event is None:
         stop_event = asyncio.Event()
         _install_async_stop(stop_event)
@@ -201,45 +240,32 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
             _wrap_backend_for_provenance(client, is_async=True, client_logger=client_logger)
             _maybe_freeze_gc(client_logger)
 
-            # One event-loop lag monitor per process. Only the single-client direct
-            # path (owns_reporter) starts it here; in multi-client mode it is
-            # started once in run_multi_client_async so N clients do not spawn N
-            # monitors all writing the same gauge.
+            # One loop-lag monitor per process. Only the single-client path starts
+            # it here; multi-client mode starts one in run_multi_client_async.
             monitor_task = None
             if owns_reporter and WORKLOAD_LOOP_LAG_MONITOR and stats is not None:
                 monitor_task = asyncio.create_task(_loop_lag_monitor(stats))
 
             try:
                 if WORKLOAD_ARRIVAL_RATE > 0:
-                    # Open-loop, constant-arrival load (WORKLOAD_ARRIVAL_RATE ops/sec
-                    # PER CLIENT). Unlike the closed-loop driver below it does not
-                    # wait between waves and times each op from its intended arrival,
-                    # so the tail reflects coordinated omission. See
-                    # docs/RUST_PYTHON_PERFORMANCE.md, "Measurement caveats".
+                    # Open-loop load at WORKLOAD_ARRIVAL_RATE ops/sec per client. It
+                    # does not wait between waves and times each op from its intended
+                    # start, so the tail includes time spent waiting to be issued.
                     await run_open_loop(
                         cont, REQUEST_EXCLUDED_LOCATIONS, stats, ops,
                         WORKLOAD_ARRIVAL_RATE, WORKLOAD_MAX_INFLIGHT, stop_event,
                     )
                 else:
-                    # Closed-loop, batched-wave load: each op below launches
-                    # CONCURRENT_REQUESTS calls and waits for the WHOLE wave (an
-                    # asyncio.gather barrier inside each *_concurrently) before the
-                    # next op runs. Two consequences for throughput: (1) a wave does
-                    # not refill as calls finish — it is gated by its SLOWEST call
-                    # (the tail, not the mean), so in-flight decays from N toward 0
-                    # each wave; and (2) the enabled ops run in SEQUENTIAL phases, so
-                    # with all six each is in flight only ~1/6 of the time. Real
-                    # req/s is therefore well below the open-loop (concurrency /
-                    # per_op) formula — read achieved req/s from the rows as
-                    # count / window_seconds, not from the formula. See
-                    # docs/RUST_PYTHON_PERFORMANCE.md, "Concurrency is not throughput".
+                    # Closed-loop load: each op launches CONCURRENT_REQUESTS calls and
+                    # waits for the whole wave before the next op runs. A wave does not
+                    # refill as calls finish, so in-flight decays from N toward 0, and
+                    # the enabled ops run one phase at a time. Read achieved req/s from
+                    # the rows as count / window_seconds, not from concurrency / latency.
                     #
-                    # The loop runs until a SIGINT/SIGTERM sets stop_event (checked
-                    # between waves) so the run ends by falling out of the loop, not
-                    # by a KeyboardInterrupt fired mid-await. KeyboardInterrupt is
-                    # only the fallback when the signal handler could not be installed
-                    # (non-POSIX / non-main thread); we catch it here and break so the
-                    # finally blocks below still close the client cleanly.
+                    # The loop runs until stop_event is set between waves, so the run
+                    # ends by falling out of the loop. KeyboardInterrupt is only the
+                    # fallback when the signal handler could not be installed; we catch
+                    # it and break so the finally blocks close the client cleanly.
                     try:
                         while not stop_event.is_set():
                             try:
@@ -303,11 +329,9 @@ def run_workload_sync(client_id, client_logger):
                            "Set WORKLOAD_USE_SYNC=false or WORKLOAD_USE_PROXY=false.")
     ops = WORKLOAD_OPERATIONS
 
-    # Same cooperative-stop contract as the async path, but the sync loop has no
-    # event loop, so we use a plain signal.signal handler that sets a threading
-    # flag the load loop polls between waves. The handler only flips the flag (it
-    # does not raise), so a SIGINT cannot interrupt the `with SyncClient(...)` exit
-    # mid-close; the loop falls through and the context manager closes cleanly.
+    # The sync loop has no event loop, so a signal handler sets a threading flag the
+    # loop polls between waves. It does not raise, so a signal cannot interrupt the
+    # client close; the loop falls through and the context manager closes cleanly.
     stop_flag = threading.Event()
 
     def _on_signal(signum, frame):
@@ -320,23 +344,7 @@ def run_workload_sync(client_id, client_logger):
         # Not the main thread: fall back to default KeyboardInterrupt handling.
         pass
 
-    stats = None
-    perf_config = None
-    reporter = None
-
-    try:
-        from perf_config import get_perf_config
-
-        perf_config = get_perf_config()
-        if perf_config["enabled"] and perf_config["results_endpoint"]:
-            from perf_stats import Stats
-            from perf_reporter import PerfReporter
-
-            stats = Stats()
-            reporter = PerfReporter(stats, perf_config)
-            reporter.start()
-    except ImportError as e:
-        logging.getLogger(__name__).info("Perf reporting disabled: %s", e)
+    stats, reporter = _start_reporter()
 
     try:
         connection_policy = documents.ConnectionPolicy()
@@ -357,11 +365,9 @@ def run_workload_sync(client_id, client_logger):
             time.sleep(1)
             _wrap_backend_for_provenance(client, is_async=False, client_logger=client_logger)
 
-            # Sync mode is FULLY SERIAL: each op below runs its CONCURRENT_REQUESTS
-            # calls in a plain for-loop, one at a time, so real concurrency is 1
-            # regardless of CONCURRENT_REQUESTS and throughput is ~ 1 / mean_op
-            # latency. Use async mode to drive real concurrency. See
-            # docs/RUST_PYTHON_PERFORMANCE.md, "Concurrency is not throughput".
+            # Sync mode is fully serial: each op runs its CONCURRENT_REQUESTS calls
+            # one at a time, so real concurrency is 1 and throughput is about
+            # 1 / mean latency. Use async mode to drive real concurrency.
             while not stop_flag.is_set():
                 try:
                     if "create" in ops:
@@ -405,25 +411,11 @@ def run_workload_sync(client_id, client_logger):
 
 async def run_multi_client_async(prefix, client_logger):
     """Spawn multiple async clients in a single process with shared metrics."""
-    stats = None
-    reporter = None
-    try:
-        from perf_config import get_perf_config
-        perf_config = get_perf_config()
-        if perf_config["enabled"] and perf_config["results_endpoint"]:
-            from perf_stats import Stats
-            from perf_reporter import PerfReporter
-            stats = Stats()
-            reporter = PerfReporter(stats, perf_config)
-            reporter.start()
-    except ImportError as e:
-        logging.getLogger(__name__).info("Perf reporting disabled: %s", e)
+    stats, reporter = _start_reporter()
 
     try:
-        # One shared stop_event for every client in this process: install the
-        # SIGINT/SIGTERM handler ONCE here and pass the event to each client.
-        # (If each client installed its own handler the last registration would
-        # win and only one client would ever see the stop -> the rest would spin.)
+        # One shared stop_event for every client: install the handler once and pass
+        # the event to each client, so one signal stops them all.
         stop_event = asyncio.Event()
         _install_async_stop(stop_event)
 
@@ -436,21 +428,17 @@ async def run_multi_client_async(prefix, client_logger):
                 client_id, client_logger, stats=stats, reporter=reporter,
                 stop_event=stop_event,
             ))
-        # One process-wide event-loop lag monitor for all clients sharing this loop
-        # (the per-client path skips it because owns_reporter is False here).
+        # One loop-lag monitor for all clients sharing this loop (the per-client
+        # path skips it because owns_reporter is False here).
         monitor_task = None
         if WORKLOAD_LOOP_LAG_MONITOR and stats is not None:
             monitor_task = asyncio.create_task(_loop_lag_monitor(stats))
         try:
-            # return_exceptions=True so one client failing (for example, while it
-            # is being built) does not stop the others sharing this process. But
-            # the results MUST be inspected (methodology gap NEW#4): in a
-            # "many clients x many accounts" stress run, a client that dies early
-            # otherwise hides behind the aggregate numbers -- the run looks like N
-            # healthy clients when only some survived. Surface every per-client
-            # failure and fail the process so a partially dead run can never be
-            # read as a clean one. (Cancellation on graceful stop is expected and
-            # is not a failure.)
+            # return_exceptions=True so one client failing does not stop the others
+            # in this process. We then inspect the results: a client that dies early
+            # would otherwise hide behind the aggregate numbers. Surface every
+            # per-client failure and fail the process so a partially dead run is not
+            # read as a clean one. (Cancellation on graceful stop is expected.)
             results = await asyncio.gather(*tasks, return_exceptions=True)
             failures = [
                 (cid, r)

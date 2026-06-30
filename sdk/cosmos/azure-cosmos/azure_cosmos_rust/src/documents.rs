@@ -15,8 +15,8 @@ use pyo3::types::PyTuple;
 use azure_data_cosmos_driver::models::CosmosOperation;
 
 use crate::wire::{
-    extract_body_bytes, extract_common_prepared_inputs, extract_item_id, extract_required_item_id,
-    run_item_operation, run_item_operation_async,
+    extract_body_bytes, extract_common_prepared_inputs, extract_create_item_id,
+    extract_required_item_id, run_item_operation, run_item_operation_async,
 };
 
 // create_item: write-with-body; the id is read from the body.
@@ -29,7 +29,7 @@ pub(crate) fn create_item<'py>(
     let (container_link, partition_key_header, modifiers) =
         extract_common_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    let item_id = extract_item_id(&body_bytes)?;
+    let item_id = extract_create_item_id(prepared, &body_bytes)?;
 
     run_item_operation(
         py,
@@ -55,7 +55,7 @@ pub(crate) fn upsert_item<'py>(
     let (container_link, partition_key_header, modifiers) =
         extract_common_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    let item_id = extract_item_id(&body_bytes)?;
+    let item_id = extract_create_item_id(prepared, &body_bytes)?;
 
     run_item_operation(
         py,
@@ -215,7 +215,7 @@ pub(crate) fn create_item_async<'py>(
     let (container_link, partition_key_header, modifiers) =
         extract_common_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    let item_id = extract_item_id(&body_bytes)?;
+    let item_id = extract_create_item_id(prepared, &body_bytes)?;
 
     run_item_operation_async(
         py,
@@ -239,7 +239,7 @@ pub(crate) fn upsert_item_async<'py>(
     let (container_link, partition_key_header, modifiers) =
         extract_common_prepared_inputs(prepared)?;
     let body_bytes = extract_body_bytes(prepared)?;
-    let item_id = extract_item_id(&body_bytes)?;
+    let item_id = extract_create_item_id(prepared, &body_bytes)?;
 
     run_item_operation_async(
         py,
@@ -359,4 +359,3 @@ pub(crate) fn patch_item_async<'py>(
         move |item_ref| CosmosOperation::patch_item(item_ref).with_body(body_bytes),
     )
 }
-

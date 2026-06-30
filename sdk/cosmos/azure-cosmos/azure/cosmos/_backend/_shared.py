@@ -46,9 +46,44 @@ import threading
 from typing import Any, Optional
 
 from .base import PreparedClientConfig, init_client_args
-from ._driver_registry import make_credential_key, register_client_config, release_client_config
+from ._driver_registry import (
+    make_credential_key,
+    register_client_config,
+    register_proxy_policy,
+    release_client_config,
+)
 
 _LOGGER = logging.getLogger(__name__)
+
+
+class _UnmatchableDriverError(BaseException):
+    """Sentinel that is never raised.
+
+    It exists so the ``except`` clause translating the binding's
+    ``DriverTransportError`` stays valid even when the compiled binding predates
+    that exception (an older ``_rust`` build that does not export it). Catching an
+    exception class that is never raised is a safe no-op.
+    """
+
+
+def driver_transport_error_type(rust_module: Optional[Any]) -> type:
+    """Return the binding's ``DriverTransportError`` class for ``except`` use.
+
+    The binding raises ``DriverTransportError`` (a subclass of ``RuntimeError``)
+    when a driver operation fails *without* a wire response -- a transport
+    failure, a client-side validation error, or a pre-HTTP timeout. The backends
+    translate it into azure-core's ``ServiceResponseError`` so customer
+    ``except (ServiceRequestError, ServiceResponseError)`` handlers and the SDK's
+    transport-retry policies behave the same as on the legacy azure-core path.
+
+    When the loaded binding does not expose the type (an older build), return an
+    unmatchable sentinel so the translation simply does not fire and the original
+    ``RuntimeError`` propagates unchanged -- preserving backward compatibility.
+    """
+    exc = getattr(rust_module, "DriverTransportError", None) if rust_module is not None else None
+    if isinstance(exc, type) and issubclass(exc, BaseException):
+        return exc
+    return _UnmatchableDriverError
 
 
 def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
@@ -129,6 +164,12 @@ class RustBackendShared:
         # never releases a registration it never made; set it False only once
         # registration succeeds.
         self._config_released = True
+        # proxy_allowed is process-global for the Rust runtime (one OnceLock-backed
+        # runtime per process), not per-account like the engine registration below.
+        # Enforce a single process-wide policy here, fail-fast and deterministic, before
+        # recording any engine registration -- a proxy conflict must raise before there
+        # is a registration to release. No-op for clients that leave proxy_allowed unset.
+        register_proxy_policy(client_config)
         register_client_config(
             endpoint,
             client_config,

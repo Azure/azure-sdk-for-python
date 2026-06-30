@@ -45,6 +45,7 @@ from .constants import (
     BACKEND_NAME_RUST,
     DEFAULT_BACKEND_NAME,
     RUST_STRICT_ISOLATION_ENV_VAR,
+    STRICT_ISOLATION_FALSE_VALUES,
     STRICT_ISOLATION_TRUE_VALUES,
     VALID_BACKEND_NAMES,
 )
@@ -76,18 +77,26 @@ _ALL_CONSISTENCY_LEVELS = (
 def resolve_backend_name(explicit: Optional[str]) -> str:
     """Apply the precedence rules above and return a name in ``VALID_BACKEND_NAMES``.
 
+    Surrounding whitespace and case are tolerated -- env vars and copy-paste
+    routinely carry a trailing newline or odd casing (``RUST``, `` rust``), and
+    those should not fail. An empty or whitespace-only value counts as "not
+    specified" and uses ``DEFAULT_BACKEND_NAME``. A value that is non-empty but
+    not a known backend (a genuine typo) still raises ``ValueError`` loudly,
+    rather than silently falling back. No aliases: there is one canonical
+    spelling per backend.
+
     Shared between the sync and async factories so the rules, valid
     values, and error message live in one place.
     """
-    if explicit is not None:
-        choice = explicit
-    else:
-        choice = os.environ.get(BACKEND_ENV_VAR, DEFAULT_BACKEND_NAME)
+    raw = explicit if explicit is not None else os.environ.get(BACKEND_ENV_VAR)
+    choice = raw.strip().lower() if raw is not None else ""
+    if not choice:
+        return DEFAULT_BACKEND_NAME
     if choice not in VALID_BACKEND_NAMES:
         raise ValueError(
             "Invalid backend {!r}. Expected one of {}. "
             "Set the constructor kwarg _backend=, or the {} environment variable.".format(
-                choice, VALID_BACKEND_NAMES, BACKEND_ENV_VAR
+                raw, VALID_BACKEND_NAMES, BACKEND_ENV_VAR
             )
         )
     return choice
@@ -97,10 +106,14 @@ def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
     """Decide whether the Rust backend uses strict per-account engine isolation.
 
     Precedence (highest wins): an explicit factory toggle, then the
-    ``COSMOS_RUST_STRICT_ISOLATION`` environment variable, then off. The env var is
-    truthy only for the values in ``STRICT_ISOLATION_TRUE_VALUES`` (case-insensitive);
-    anything else -- including unset and the empty string -- is off. Shared by the
-    sync and async factories so the rule lives in one place.
+    ``COSMOS_RUST_STRICT_ISOLATION`` environment variable, then off. The env var
+    is matched case-insensitively after trimming whitespace:
+    ``STRICT_ISOLATION_TRUE_VALUES`` turn it on, ``STRICT_ISOLATION_FALSE_VALUES``
+    (and unset or empty) turn it off, and **any other value raises**
+    ``ValueError``. That last part is deliberate: this is a safety toggle, so a
+    typo that clearly meant "on" (``treu``, ``enabled``, ``2``) must fail loudly
+    instead of silently leaving the guard off. Shared by the sync and async
+    factories so the rule lives in one place.
 
     When on, a second ``CosmosClient`` to an account whose config differs from the
     first live client's raises
@@ -112,7 +125,21 @@ def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
     value = os.environ.get(RUST_STRICT_ISOLATION_ENV_VAR)
     if value is None:
         return False
-    return value.strip().lower() in STRICT_ISOLATION_TRUE_VALUES
+    normalized = value.strip().lower()
+    if normalized in STRICT_ISOLATION_TRUE_VALUES:
+        return True
+    if normalized == "" or normalized in STRICT_ISOLATION_FALSE_VALUES:
+        return False
+    raise ValueError(
+        "Invalid {} value {!r}. Expected one of {} (on) or {} (off), or leave it "
+        "unset. A safety toggle is never silently disabled by an unrecognized "
+        "value.".format(
+            RUST_STRICT_ISOLATION_ENV_VAR,
+            value,
+            STRICT_ISOLATION_TRUE_VALUES,
+            STRICT_ISOLATION_FALSE_VALUES,
+        )
+    )
 
 
 def _is_async_credential(credential: Any) -> bool:
@@ -217,8 +244,9 @@ def _resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
     )
 
 
-# Transport / TLS knobs the legacy pipeline honors but the Rust driver cannot yet
-# -- it owns its own HTTP stack. Each maps to a constructor kwarg the legacy path
+# Transport / TLS knobs the legacy pipeline honors but the Rust path still cannot
+# accept as explicit objects -- it owns its own HTTP stack. Each maps to a
+# constructor kwarg the legacy path
 # consumes (``proxy_config`` / ``ssl_config`` via ``_build_connection_policy``;
 # ``proxies`` / ``transport`` via the connection; ``connection_verify`` /
 # ``connection_cert`` for TLS). On the Rust path they are rejected at construction
@@ -245,16 +273,17 @@ def reject_unsupported_transport_settings(
     def _fail(setting: str, detail: str) -> None:
         raise ValueError(
             "_backend='rust' cannot honor {setting}= yet: {detail}. The Rust "
-            "driver owns its own HTTP/TLS stack and has no hook for it. Remove "
-            "the setting, or use the core-python backend.".format(
+            "driver owns its own HTTP/TLS stack. Remove the setting (for proxy, "
+            "use proxy_allowed= with environment variables), or use the "
+            "core-python backend.".format(
                 setting=setting, detail=detail
             )
         )
 
     if proxy_config is not None:
-        _fail("proxy_config", "the Rust driver has no proxy configuration hook")
+        _fail("proxy_config", "the Rust driver has no explicit proxy-config object hook")
     if proxies:
-        _fail("proxies", "the Rust driver has no proxy configuration hook")
+        _fail("proxies", "the Rust driver has no explicit proxy-config object hook")
     # connection_verify defaults to True/None (verify) -- only a custom CA path or
     # an explicit disable is unsupported.
     if connection_verify is False:
@@ -291,6 +320,7 @@ def build_client_config(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
+    proxy_allowed: Optional[bool] = None,
 ) -> Optional[PreparedClientConfig]:
     """Collect the client-construction settings the Rust backend can carry into
     a :class:`PreparedClientConfig`, or ``None`` when there is nothing to carry.
@@ -318,7 +348,16 @@ def build_client_config(
       is carried so the chosen level actually reaches the driver. Bounded
       Staleness / Consistent Prefix (and any unrecognized value) are rejected
       loudly rather than silently dropped (see :func:`_resolve_consistency_level`).
+    * ``proxy_allowed`` -- ``None`` carries nothing; ``True`` lets the Rust driver
+      use proxy settings from environment variables; ``False`` forces a direct
+      connection (no proxy).
     """
+    if proxy_allowed is not None and not isinstance(proxy_allowed, bool):
+        raise ValueError(
+            "proxy_allowed must be a bool when provided; got {!r}.".format(
+                type(proxy_allowed).__name__
+            )
+        )
     preferred = tuple(preferred_locations) if preferred_locations else ()
     excluded = tuple(excluded_locations) if excluded_locations else ()
     hedging_threshold_ms = _resolve_hedging(availability_strategy)
@@ -334,6 +373,7 @@ def build_client_config(
         and hedging_threshold_ms is None
         and suffix is None
         and consistency is None
+        and proxy_allowed is None
     ):
         return None
     return PreparedClientConfig(
@@ -344,6 +384,7 @@ def build_client_config(
         hedging_threshold_ms=hedging_threshold_ms,
         user_agent_suffix=suffix,
         consistency_level=consistency,
+        proxy_allowed=proxy_allowed,
     )
 
 
@@ -416,6 +457,7 @@ def make_backend(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
+    proxy_allowed: Optional[bool] = None,
     strict_isolation: Optional[bool] = None,
     proxy_config: Any = None,
     proxies: Any = None,
@@ -435,8 +477,10 @@ def make_backend(
     getting its own isolated engine. The transport/TLS settings
     (``proxy_config`` / ``proxies`` / ``connection_verify`` / ``connection_cert``
     / ``ssl_config`` / ``transport``) are not folded into the config -- the Rust
-    path can't honor them yet, so they are rejected here; they are ignored
-    entirely on the core-python branch, which honors them as before.
+    path still can't honor explicit proxy/transport objects, so they are rejected
+    here; they are ignored entirely on the core-python branch, which honors them
+    as before. ``proxy_allowed`` is the Rust-path proxy switch carried into the
+    driver runtime.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:
@@ -465,9 +509,8 @@ def make_backend(
                 availability_strategy=availability_strategy,
                 user_agent_suffix=user_agent_suffix,
                 consistency_level=consistency_level,
+                proxy_allowed=proxy_allowed,
             ),
             strict_isolation=resolve_strict_isolation(strict_isolation),
         )
     return None
-
-

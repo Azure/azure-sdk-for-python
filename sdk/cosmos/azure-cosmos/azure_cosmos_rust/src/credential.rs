@@ -59,7 +59,9 @@ impl PyTokenCredential {
             .getattr("expires_on")
             .and_then(|value| value.extract())
             .map_err(|e| {
-                credential_error(format!("token credential returned no int `expires_on`: {e}"))
+                credential_error(format!(
+                    "token credential returned no int `expires_on`: {e}"
+                ))
             })?;
         let expires = OffsetDateTime::from_unix_timestamp(expires_on).map_err(|e| {
             credential_error(format!("token credential `expires_on` out of range: {e}"))
@@ -77,6 +79,20 @@ impl std::fmt::Debug for PyTokenCredential {
 
 #[async_trait::async_trait]
 impl TokenCredential for PyTokenCredential {
+    // KNOWN LIMITATION -- CAE / claims challenges are not propagated (by design,
+    // upstream-bounded). `_options` carries the driver's `TokenRequestOptions`,
+    // but two facts make forwarding it a no-op today:
+    //   1. The driver never sends any: `authorization_policy.rs` calls
+    //      `credential.get_token(&[COSMOS_AAD_SCOPE], None)` -- always `None`,
+    //      with no 401-challenge / Continuous-Access-Evaluation handling.
+    //   2. azure_core's `TokenRequestOptions` models no claims/tenant_id field
+    //      (only a `ClientMethodOptions` Context), so there is nothing to lift
+    //      into Python's `get_token(claims=..., tenant_id=...)` even if we tried.
+    // Net: on a CAE/conditional-access 401, the driver re-fetches the same token
+    // without claims and the challenge cannot be satisfied. This is a real gap
+    // for AAD tenants that enforce CAE, but it lives in the driver + azure_core,
+    // not in this binding -- forwarding `_options` here would change nothing.
+    // Revisit once the driver plumbs challenge claims through `get_token`.
     async fn get_token(
         &self,
         scopes: &[&str],
@@ -91,4 +107,3 @@ impl TokenCredential for PyTokenCredential {
 fn credential_error(message: String) -> AzureError {
     AzureError::new(AzureErrorKind::Credential, message)
 }
-

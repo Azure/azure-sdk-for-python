@@ -70,6 +70,9 @@ class TestHappyPathComposition(unittest.TestCase):
         self.assertEqual(prepared.container_link, "dbs/db/colls/orders")
         # The id comes from the body (nothing was minted; the body had one).
         self.assertEqual(item_id, "order-42")
+        # The same id is forwarded on item_id so the binding skips re-parsing
+        # the body just to read it.
+        self.assertEqual(prepared.item_id, "order-42")
         # The body bytes are the compact JSON form.
         self.assertEqual(
             prepared.body_bytes,
@@ -138,6 +141,8 @@ class TestAutoIdGeneration(unittest.TestCase):
         self.assertRegex(item_id, _UUID4_PATTERN)
         self.assertEqual(body["id"], item_id)
         self.assertIn(f'"id":"{item_id}"', prepared.body_bytes.decode())
+        # The minted id is forwarded on item_id (fast-path: no body re-parse).
+        self.assertEqual(prepared.item_id, item_id)
 
     def test_disabled_id_generation_leaves_body_without_id(self):
         """With ``enable_automatic_id_generation=False`` no id is minted: the
@@ -153,6 +158,9 @@ class TestAutoIdGeneration(unittest.TestCase):
         self.assertEqual(item_id, "")
         self.assertNotIn("id", body)
         self.assertNotIn(b'"id"', prepared.body_bytes)
+        # No real id, so the fast-path hint stays unset and the binding falls
+        # back to parsing the body (which reproduces the missing-id error).
+        self.assertIsNone(prepared.item_id)
 
     def test_disable_flag_lands_in_options(self):
         """``enable_automatic_id_generation=False`` sets the

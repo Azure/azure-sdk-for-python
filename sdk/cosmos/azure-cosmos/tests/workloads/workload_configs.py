@@ -3,7 +3,6 @@
 # All configuration is driven by environment variables with sensible defaults.
 import logging
 import os
-from perf_config import _safe_int
 
 from azure.identity import DefaultAzureCredential
 
@@ -31,6 +30,42 @@ def _safe_int(value, default):
         return default
 
 
+# Names exported by ``from workload_configs import *`` (keeps stdlib modules and
+# DefaultAzureCredential from leaking into importers).
+__all__ = [
+    "PREFERRED_LOCATIONS",
+    "CLIENT_EXCLUDED_LOCATIONS",
+    "REQUEST_EXCLUDED_LOCATIONS",
+    "COSMOS_PROXY_URI",
+    "COSMOS_URI",
+    "COSMOS_KEY",
+    "COSMOS_CREDENTIAL",
+    "COSMOS_CONTAINER",
+    "COSMOS_DATABASE",
+    "USER_AGENT_PREFIX",
+    "LOG_LEVEL",
+    "ENABLE_DIAGNOSTICS_LOGGING",
+    "APP_INSIGHTS_CONNECTION_STRING",
+    "CIRCUIT_BREAKER_ENABLED",
+    "USE_MULTIPLE_WRITABLE_LOCATIONS",
+    "CONCURRENT_REQUESTS",
+    "CONCURRENT_QUERIES",
+    "WORKLOAD_NUM_CLIENTS",
+    "PARTITION_KEY",
+    "NUMBER_OF_LOGICAL_PARTITIONS",
+    "THROUGHPUT",
+    "REQUEST_TIMEOUT",
+    "WORKLOAD_OPERATIONS",
+    "WORKLOAD_USE_PROXY",
+    "WORKLOAD_USE_SYNC",
+    "WORKLOAD_ARRIVAL_RATE",
+    "WORKLOAD_MAX_INFLIGHT",
+    "WORKLOAD_GC_FREEZE",
+    "WORKLOAD_LOOP_LAG_MONITOR",
+    "WORKLOAD_SKIP_CLOSE",
+]
+
+
 PREFERRED_LOCATIONS = _parse_region_list("COSMOS_PREFERRED_LOCATIONS")
 CLIENT_EXCLUDED_LOCATIONS = _parse_region_list("COSMOS_CLIENT_EXCLUDED_LOCATIONS")
 REQUEST_EXCLUDED_LOCATIONS = _parse_region_list("COSMOS_REQUEST_EXCLUDED_LOCATIONS")
@@ -41,18 +76,13 @@ COSMOS_CREDENTIAL = COSMOS_KEY if COSMOS_KEY else DefaultAzureCredential()
 COSMOS_CONTAINER = os.environ.get("COSMOS_CONTAINER", "scale_cont")
 COSMOS_DATABASE = os.environ.get("COSMOS_DATABASE", "scale_db")
 USER_AGENT_PREFIX = os.environ.get("COSMOS_USER_AGENT_PREFIX", "")
-# Quiet by default for measurement. DEBUG makes the SDK and this harness log
-# heavily, which adds CPU and file-I/O overhead that confounds a perf comparison
-# (see also ENABLE_DIAGNOSTICS_LOGGING). Set COSMOS_LOG_LEVEL=DEBUG only when
-# debugging, never for an SLA/perf run.
+# Quiet by default. DEBUG makes the SDK and harness log heavily, adding CPU and
+# file-I/O cost that skews a perf comparison. Use DEBUG only when debugging.
 LOG_LEVEL = getattr(logging, os.environ.get("COSMOS_LOG_LEVEL", "WARNING"), logging.WARNING)
-# Per-request diagnostics logging. OFF by default: when on, the SDK emits a
-# diagnostics record for *every* request, which the WorkloadLoggerFilter processes
-# and writes to a rotating file — real CPU / latency / file-I/O overhead that
-# confounds a perf comparison and can bias the two backends unequally (they log
-# different volumes). RU is now read from the row (mean_ru) and 429s from the
-# errors count, so a perf run does not need this. Turn it on
-# (COSMOS_ENABLE_DIAGNOSTICS_LOGGING=true) only for debugging.
+# Per-request diagnostics logging. Off by default: when on, the SDK writes a
+# record for every request, adding CPU and file-I/O cost that skews a perf run.
+# RU comes from the result row and 429s from the error count, so a perf run does
+# not need this. Turn it on only for debugging.
 ENABLE_DIAGNOSTICS_LOGGING = (
     os.environ.get("COSMOS_ENABLE_DIAGNOSTICS_LOGGING", "false").lower() == "true"
 )
@@ -73,19 +103,15 @@ NUMBER_OF_LOGICAL_PARTITIONS = int(
 THROUGHPUT = _safe_int(os.environ.get("COSMOS_THROUGHPUT", "100000"), 100000)  # For DR drills, set COSMOS_THROUGHPUT=1000000
 
 # Per-request end-to-end timeout in seconds, passed as the `timeout` kwarg on
-# every timed operation (the SDK scopes it to TimeoutScope.OPERATION). UNSET or
-# <= 0 means "do not pass one" — each backend then keeps its own default (legacy
-# ~65 s per-attempt on core-python; ~6 s end-to-end on Rust). To compare the
-# extreme tail fairly, set the SAME COSMOS_REQUEST_TIMEOUT on both the baseline
-# and the Rust run; otherwise a tail difference is the timeout *policy*, not the
-# SDK (see docs/RUST_PYTHON_PERFORMANCE.md). Sub-second values clamp to a 1 s floor on
-# the Rust path.
+# every timed operation. Unset or <= 0 means each backend keeps its own default
+# (about 65 s per attempt on core-python, about 6 s end-to-end on Rust). Set the
+# same value on both runs so a tail difference reflects the SDK, not the timeout.
+# Sub-second values clamp to a 1 s floor on the Rust path.
 REQUEST_TIMEOUT = _safe_float(os.environ.get("COSMOS_REQUEST_TIMEOUT", "0"), 0.0)
 
-# Workload behavior. WORKLOAD_OPERATIONS picks which operations the loop runs:
-# any subset of the six point operations, plus "query" for context. Comma
-# separated, case-insensitive. "write" is a backward-compatible alias for
-# "upsert".
+# WORKLOAD_OPERATIONS picks which operations the loop runs: any subset of the six
+# point operations, plus "query". Comma-separated, case-insensitive. "write" is
+# an alias for "upsert".
 _VALID_OPERATIONS = {"read", "create", "upsert", "replace", "delete", "patch", "query"}
 _OPERATION_ALIASES = {"write": "upsert"}
 _raw_operations = [
@@ -107,34 +133,28 @@ if _unknown_ops:
 WORKLOAD_USE_PROXY = os.environ.get("WORKLOAD_USE_PROXY", "false").lower() == "true"
 WORKLOAD_USE_SYNC = os.environ.get("WORKLOAD_USE_SYNC", "false").lower() == "true"
 
-# Open-loop (constant-arrival) load. Default 0 = OFF -> the existing closed-loop
-# batched-wave driver is used, unchanged. When > 0, the async driver instead fires
-# operations at this fixed rate (ops/sec) WITHOUT waiting for each wave, and times
-# every operation from its INTENDED arrival instant. That makes the measured tail
-# include the time a request waited to be issued under load -- the "coordinated
-# omission" a closed-loop generator hides. Only meaningful on the async path.
+# Open-loop arrival rate (ops/sec). Default 0 uses the closed-loop wave driver.
+# When > 0, the async driver fires operations at this fixed rate without waiting
+# for each wave, and times each from its intended start, so the tail includes
+# time a request waited to be issued. Async path only.
 WORKLOAD_ARRIVAL_RATE = _safe_float(os.environ.get("WORKLOAD_ARRIVAL_RATE", "0"), 0.0)
-# Safety cap on simultaneously in-flight operations in open-loop mode, so a stalled
-# service cannot let the backlog grow without bound and OOM the generator. The
-# backlog still shows up as rising latency (the intended-arrival clock keeps
-# advancing); this only bounds memory.
+# Cap on in-flight operations in open-loop mode, so a stalled service cannot grow
+# the backlog without bound and run the generator out of memory. The backlog still
+# shows up as rising latency; this only bounds memory.
 WORKLOAD_MAX_INFLIGHT = _safe_int(os.environ.get("WORKLOAD_MAX_INFLIGHT", "10000"), 10000)
 
-# Freeze the garbage collector after warmup (gc.freeze moves existing objects to a
-# permanent generation so they are never rescanned). Default OFF. Turn ON for a
-# measurement run where you want GC pauses out of the latency tail; leave OFF to
-# measure the SDK as it really runs. Recorded GC counters (gc_collections etc.)
-# show whether GC is firing either way.
+# Freeze the garbage collector after warmup (gc.freeze stops existing objects from
+# being rescanned). Default off. Turn on to keep GC pauses out of the latency
+# tail; leave off to measure the SDK as it really runs.
 WORKLOAD_GC_FREEZE = os.environ.get("WORKLOAD_GC_FREEZE", "false").lower() == "true"
 
-# Event-loop lag monitor (async only). Default ON: a lightweight background task
-# samples how late the loop services a timer and reports the worst value per window
-# as loop_lag_max_ms, so loop saturation (the single GIL-bound loop thread becoming
-# the bottleneck) is visible. Set false to disable.
+# Event-loop lag monitor (async only). Default on: a background task samples how
+# late the loop services a timer and reports the worst value per window as
+# loop_lag_max_ms, so a saturated loop is visible. Set false to disable.
 WORKLOAD_LOOP_LAG_MONITOR = (
     os.environ.get("WORKLOAD_LOOP_LAG_MONITOR", "true").lower() == "true"
 )
 
-# When true, the client is created without a context manager (no automatic close).
-# Simulates applications that don't properly close the Cosmos client.
+# When true, the client is created without a context manager (no automatic close),
+# to model applications that do not close the Cosmos client.
 WORKLOAD_SKIP_CLOSE = os.environ.get("WORKLOAD_SKIP_CLOSE", "false").lower() == "true"

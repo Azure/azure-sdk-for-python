@@ -10,8 +10,8 @@
 #   system_cpu_percent climb). That plateau is the single-process ceiling -- set
 #   by the service, the driver's connection pool, the GIL, and this VM's CPU.
 #
-#   This is the doc's "most important output": not a single faster/slower verdict,
-#   but the honest shape of how each backend scales.
+#   The most important output is not a single faster/slower verdict, but the
+#   honest shape of how each backend scales.
 #
 #   It is CLOSED-LOOP on purpose -- concurrency is the independent variable here,
 #   so we hold it fixed per point and read the achieved req/s (count/window_seconds)
@@ -100,23 +100,42 @@ echo "=== Running post-run integrity gate (Phase C) ==="
 # Same gate Phase A runs: prove every cell did real, low-error work on both
 # backends, dropped no reporting window, and -- critically for the drill's
 # biggest error source -- that each row actually ran on the engine it claims
-# (binding_calls provenance, --prefix sweep-). It never aborts the sweep (we are
-# already done); it prints PASS/FAIL so an unattended run cannot pass unnoticed.
+# (binding_calls provenance, --prefix sweep-). A failure here fails the script
+# (the sweep itself is already done) so an unattended run cannot pass unnoticed.
+overall_rc=0
 if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "sweep-"; then
   echo "=== integrity gate PASSED ==="
 else
   echo "!! integrity gate FAILED -- inspect the rows/logs above before trusting results." >&2
+  overall_rc=1
 fi
 
 echo
-echo "=== Phase C complete. Read results from ${RESULTS_COSMOS_DATABASE}/${RESULTS_COSMOS_CONTAINER},"
-echo "    filtering workload_id LIKE 'sweep-%-${STAMP}', dropping warmup (elapsed_seconds > 600)."
-echo "    For each op+backend, plot achieved req/s (SUM(count)/SUM(window_seconds)) and the"
-echo "    tail against concurrency: the curve rises then FLATTENS at the single-process ceiling,"
-echo "    and the two backends' lines reveal the crossover."
+echo "=== Running automated scaling verdict (Phase C) ==="
+# Replaces the old "plot req/s vs concurrency and read the knee/crossover off the
+# chart by eye" instruction. scale_verdict.py pools throughput per point, finds
+# the saturation knee automatically (first level whose gain over the previous one
+# drops below 5%), flags error/CPU saturation, and reports the rust-vs-core
+# crossover -- all reproducibly. It exits non-zero on a provenance violation.
+if python3 scale_verdict.py --stamp "${STAMP}" --prefix "sweep-"; then
+  echo "=== scaling verdict provenance gate PASSED ==="
+else
+  echo "!! scaling verdict provenance gate FAILED -- explain the flagged points before trusting the knee/crossover." >&2
+  overall_rc=1
+fi
+
 echo
 echo "    SCALE-OUT (to push past one process toward the account's thousands/sec, esp. writes):"
-echo "      pick the plateau concurrency C*, then run N copies in parallel and SUM their req/s, e.g.:"
+echo "      take the plateau concurrency C* the verdict reports above, then run N copies in"
+echo "      parallel and SUM their req/s, e.g.:"
 echo "        for i in \$(seq 1 N); do ( export COSMOS_BACKEND=rust WORKLOAD_OPERATIONS=upsert \\"
 echo "          COSMOS_CONCURRENT_REQUESTS=C* PERF_WORKLOAD_ID=scaleout-upsert-rust-p\$i-${STAMP}; \\"
 echo "          timeout --signal=INT ${DURATION_SECONDS}s python3 workload.py ) & done; wait"
+
+echo
+if [[ "${overall_rc}" != "0" ]]; then
+  echo "=== Phase C FAILED (a provenance/integrity gate failed); exit ${overall_rc}. ===" >&2
+else
+  echo "=== Phase C OK (all gates passed). ==="
+fi
+exit "${overall_rc}"

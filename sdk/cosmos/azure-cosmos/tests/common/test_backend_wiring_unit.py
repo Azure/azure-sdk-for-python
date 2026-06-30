@@ -35,9 +35,11 @@ from azure.cosmos._backend.base import raise_account_read_unsupported
 from azure.cosmos._backend import _driver_registry
 from azure.cosmos._backend._driver_registry import (
     StrictEngineIsolationError,
+    ProxyPolicyConflictError,
     _reset_for_tests as _reset_driver_registry,
     make_credential_key,
     register_client_config,
+    register_proxy_policy,
     release_client_config,
 )
 from azure.cosmos._backend.constants import (
@@ -51,6 +53,7 @@ from azure.cosmos._backend.factory import (
     build_client_config,
     make_backend,
     reject_unsupported_transport_settings,
+    resolve_backend_name,
     resolve_strict_isolation,
 )
 from azure.cosmos._backend._async_credential_bridge import (
@@ -825,6 +828,61 @@ def test_prepared_client_config_is_frozen():
         setattr(config, "preferred_locations", ("East US",))
 
 
+def test_prepared_client_config_repr_distinguishes_every_field():
+    """Every behavior-affecting field must change ``repr()`` when it changes.
+
+    Motivation (silent-correctness guard): the Rust binding keys its shared
+    driver cache on ``salted_hash(PreparedClientConfig.__repr__())`` (see
+    ``runtime.rs`` ``config_fingerprint``). The cache is correct only if the repr
+    is *total* -- i.e. two configs that differ in any field the driver honors
+    render different reprs. If a field were ever excluded from the repr (e.g. a
+    future ``field(repr=False)`` or a hand-written ``__repr__`` that forgets a
+    field), two semantically-different configs would hash equal and the second
+    client would silently share a driver built with the first client's settings
+    (regions, consistency, throttling, hedging, proxy). That failure is silent
+    and dangerous, so this test pins repr totality.
+
+    The check is field-driven: for every dataclass field we build a baseline and
+    a variant that differs only in that field, and assert their reprs differ.
+    Adding a new field with a distinguishable value below keeps this guard
+    honest as the config grows.
+    """
+    import dataclasses
+
+    # A distinguishable non-default value per field. Every declared field MUST
+    # appear here, so adding a field without updating this map fails the test
+    # (the assertion below), forcing a conscious decision.
+    variants = {
+        "preferred_locations": ("East US",),
+        "excluded_locations": ("Central US",),
+        "throttling_max_retry_count": 7,
+        "throttling_max_retry_wait_time_seconds": 12.5,
+        "hedging_threshold_ms": 250,
+        "user_agent_suffix": "checkout-westus2",
+        "consistency_level": "Eventual",
+        "proxy_allowed": True,
+    }
+
+    field_names = {f.name for f in dataclasses.fields(PreparedClientConfig)}
+    assert field_names == set(variants), (
+        "PreparedClientConfig fields changed; update the `variants` map so the "
+        "repr-totality guard covers every behavior-affecting field. "
+        "Missing from test: {}; stale in test: {}".format(
+            field_names - set(variants), set(variants) - field_names
+        )
+    )
+
+    baseline = PreparedClientConfig()
+    baseline_repr = repr(baseline)
+    for name, value in variants.items():
+        changed = dataclasses.replace(baseline, **{name: value})
+        assert repr(changed) != baseline_repr, (
+            "Changing field {!r} did not change PreparedClientConfig.__repr__; "
+            "the Rust driver cache would treat these two configs as identical "
+            "and silently share a driver.".format(name)
+        )
+
+
 def test_factory_carries_preferred_locations_into_rust_backend(monkeypatch):
     """make_backend folds preferred_locations into the backend's client config;
     with none passed, the config is None (unchanged behavior)."""
@@ -1047,6 +1105,68 @@ def test_build_client_config_no_consistency_carries_nothing():
     assert build_client_config(None, consistency_level="") is None
 
 
+@pytest.mark.parametrize("proxy_allowed", [True, False])
+def test_build_client_config_only_proxy_allowed_still_builds_config(proxy_allowed):
+    """Proxy allowance is a runtime-level Rust switch; an explicit value must
+    still produce a config even when no other startup setting is tuned."""
+    config = build_client_config(None, proxy_allowed=proxy_allowed)
+    assert isinstance(config, PreparedClientConfig)
+    assert config.proxy_allowed is proxy_allowed
+
+
+def test_build_client_config_rejects_non_bool_proxy_allowed():
+    """proxy_allowed is a boolean contract; reject non-bool values at client
+    construction instead of failing later at first operation."""
+    with pytest.raises(ValueError, match="proxy_allowed must be a bool"):
+        build_client_config(None, proxy_allowed="true")
+
+
+@pytest.mark.parametrize("first, second", [(True, False), (False, True)])
+def test_register_proxy_policy_rejects_later_differing_explicit_value(first, second):
+    """proxy_allowed is process-global for the Rust runtime, so once one client sets
+    an explicit value a later client requesting a *different* explicit value must fail
+    fast at construction -- deterministically, instead of relying on the binding's late,
+    race-determined OnceLock check at first operation. (_isolate_driver_registry resets
+    the process policy between tests.)"""
+    register_proxy_policy(build_client_config(None, proxy_allowed=first))
+    with pytest.raises(ProxyPolicyConflictError, match="process-global"):
+        register_proxy_policy(build_client_config(None, proxy_allowed=second))
+
+
+@pytest.mark.parametrize("value", [True, False])
+def test_register_proxy_policy_accepts_repeated_equal_value(value):
+    """Two clients that agree on proxy_allowed are compatible: the second must not
+    raise (idempotent), matching the binding allowing an equal value."""
+    register_proxy_policy(build_client_config(None, proxy_allowed=value))
+    register_proxy_policy(build_client_config(None, proxy_allowed=value))
+
+
+@pytest.mark.parametrize("explicit", [True, False])
+def test_register_proxy_policy_unset_client_never_sets_or_conflicts(explicit):
+    """A client that leaves proxy_allowed unset (None) accepts whatever value wins and
+    never establishes the policy itself -- mirroring the binding's proxy_allowed_conflicts
+    (None never conflicts and None never pins). So None-before-explicit and
+    explicit-before-None both pass, and the explicit value is the one that sticks."""
+    # None first: it must not establish a policy, so a later explicit value is accepted.
+    register_proxy_policy(build_client_config(None, proxy_allowed=None))
+    register_proxy_policy(build_client_config(None, proxy_allowed=explicit))
+    # And a None client after an explicit value is always compatible.
+    register_proxy_policy(build_client_config(None, proxy_allowed=None))
+    # The explicit value is now the policy: a later differing explicit value conflicts.
+    with pytest.raises(ProxyPolicyConflictError):
+        register_proxy_policy(build_client_config(None, proxy_allowed=not explicit))
+
+
+def test_register_proxy_policy_tolerates_none_config():
+    """An untuned client carries no config object at all (build_client_config returns
+    None); the policy check must treat that exactly like proxy_allowed unset."""
+    register_proxy_policy(None)
+    # Still no policy established: an explicit value afterward sets it cleanly.
+    register_proxy_policy(build_client_config(None, proxy_allowed=True))
+    with pytest.raises(ProxyPolicyConflictError):
+        register_proxy_policy(build_client_config(None, proxy_allowed=False))
+
+
 @pytest.mark.parametrize("level", ["BoundedStaleness", "ConsistentPrefix"])
 def test_build_client_config_rejects_unsupported_consistency_level(level):
     """Bounded Staleness / Consistent Prefix have no driver equivalent yet, so
@@ -1075,6 +1195,7 @@ def test_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
         availability_strategy=True,
         user_agent_suffix="checkout-westus2",
         consistency_level="Eventual",
+        proxy_allowed=True,
     )
     assert isinstance(backend, RustBackend)
     assert backend._client_config == PreparedClientConfig(
@@ -1084,6 +1205,7 @@ def test_factory_carries_all_startup_settings_into_rust_backend(monkeypatch):
         hedging_threshold_ms=500,
         user_agent_suffix="checkout-westus2",
         consistency_level="Eventual",
+        proxy_allowed=True,
     )
 
 
@@ -1098,6 +1220,7 @@ def test_async_factory_carries_all_startup_settings_into_rust_backend(monkeypatc
         availability_strategy={"threshold_ms": 15},
         user_agent_suffix="reporting-eastus",
         consistency_level="Session",
+        proxy_allowed=False,
     )
     assert isinstance(backend, AsyncRustBackend)
     assert backend._client_config == PreparedClientConfig(
@@ -1105,6 +1228,7 @@ def test_async_factory_carries_all_startup_settings_into_rust_backend(monkeypatc
         hedging_threshold_ms=15,
         user_agent_suffix="reporting-eastus",
         consistency_level="Session",
+        proxy_allowed=False,
     )
 
 
@@ -1179,7 +1303,6 @@ class _AsyncContextManagerCredential:
 
     async def get_token(self, *scopes, **kwargs):  # noqa: D401
         return ("token-value", 9999999999)
-
 
 
 def test_resolve_credential_master_key_string():
@@ -1620,7 +1743,6 @@ def test_container_dispatch_routes_to_rust_backend(monkeypatch):
     assert fake_module.create_item.called, "Rust path should have been taken"
 
 
-
 def test_container_dispatch_skipped_when_backend_attrs_absent():
     """A container built over a connection with no backend set at all skips
     the backend and does not fail."""
@@ -1855,11 +1977,12 @@ def test_async_rust_backend_close_releases_handle_once(monkeypatch):
 # Transport / TLS knobs the Rust path can't honor fail loud at construction
 # ---------------------------------------------------------------------------
 #
-# The Rust driver owns its own HTTP/TLS stack and has no hook for a proxy, a
-# custom CA, a client certificate, or a stand-in transport. Rather than silently
-# ignoring these (and failing later with opaque connection/cert errors far from
-# the call site), the factory rejects them at construction with a clear message
-# naming the setting. core-python is unaffected -- it still honors them.
+# The Rust driver owns its own HTTP/TLS stack and has no hook for explicit proxy
+# objects, a custom CA, a client certificate, or a stand-in transport. Rather
+# than silently ignoring these (and failing later with opaque connection/cert
+# errors far from the call site), the factory rejects them at construction with
+# a clear message naming the setting. core-python is unaffected -- it still
+# honors them.
 
 _M15_URL = "https://x.documents.azure.com"
 
@@ -2235,23 +2358,70 @@ def test_async_second_client_different_config_default_isolates(recwarn):
 
 
 def test_resolve_strict_isolation_precedence(monkeypatch):
-    """Explicit kwarg wins; otherwise the env var decides (truthy values only);
-    otherwise off."""
+    """Explicit kwarg wins; otherwise the env var decides; unset/empty is off."""
     # Explicit True/False beats the env var.
     monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, "false")
     assert resolve_strict_isolation(True) is True
     monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, "true")
     assert resolve_strict_isolation(False) is False
-    # No explicit value -> the env var decides, case-insensitively.
-    for truthy in ("1", "true", "TRUE", "Yes", "on"):
+    # No explicit value -> the env var decides, case- and whitespace-insensitively.
+    for truthy in ("1", "true", "TRUE", "Yes", "on", "  on  ", "ON\n"):
         monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, truthy)
         assert resolve_strict_isolation(None) is True
-    for falsy in ("0", "false", "no", "", "anything-else"):
+    for falsy in ("0", "false", "FALSE", "no", "off", " off ", ""):
         monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, falsy)
         assert resolve_strict_isolation(None) is False
     # Unset -> off.
     monkeypatch.delenv(RUST_STRICT_ISOLATION_ENV_VAR, raising=False)
     assert resolve_strict_isolation(None) is False
+
+
+def test_resolve_strict_isolation_rejects_unrecognized(monkeypatch):
+    """A safety toggle is never silently disabled: an unrecognized value (a typo
+    that clearly meant 'on') raises instead of quietly leaving the guard off."""
+    for bad in ("treu", "enabled", "2", "yes please", "tru e"):
+        monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, bad)
+        with pytest.raises(ValueError, match="COSMOS_RUST_STRICT_ISOLATION"):
+            resolve_strict_isolation(None)
+    # An explicit kwarg still wins and never consults the (bad) env var.
+    monkeypatch.setenv(RUST_STRICT_ISOLATION_ENV_VAR, "treu")
+    assert resolve_strict_isolation(True) is True
+    assert resolve_strict_isolation(False) is False
+
+
+def test_resolve_backend_name_normalizes_case_and_whitespace(monkeypatch):
+    """Case and surrounding whitespace are tolerated (env vars and copy-paste
+    routinely add a trailing newline or odd case); the canonical name comes back."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    for variant in ("rust", "RUST", "Rust", " rust", "rust\n", "  rust  "):
+        assert resolve_backend_name(variant) == BACKEND_NAME_RUST
+    for variant in ("core-python", "CORE-PYTHON", " Core-Python "):
+        assert resolve_backend_name(variant) == BACKEND_NAME_CORE_PYTHON
+    # Same normalization on the env-var path.
+    monkeypatch.setenv(BACKEND_ENV_VAR, "  RUST\n")
+    assert resolve_backend_name(None) == BACKEND_NAME_RUST
+
+
+def test_resolve_backend_name_empty_means_default(monkeypatch):
+    """An empty or whitespace-only value counts as 'not specified' and uses the
+    default rather than raising."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    assert resolve_backend_name(None) == BACKEND_NAME_CORE_PYTHON
+    assert resolve_backend_name("") == BACKEND_NAME_CORE_PYTHON
+    assert resolve_backend_name("   ") == BACKEND_NAME_CORE_PYTHON
+    monkeypatch.setenv(BACKEND_ENV_VAR, "")
+    assert resolve_backend_name(None) == BACKEND_NAME_CORE_PYTHON
+    monkeypatch.setenv(BACKEND_ENV_VAR, "   ")
+    assert resolve_backend_name(None) == BACKEND_NAME_CORE_PYTHON
+
+
+def test_resolve_backend_name_still_rejects_genuine_typos(monkeypatch):
+    """Normalization is only case/whitespace -- a real typo (and underscore
+    spelling, which is not an alias) still fails loud."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    for bad in ("turbo", "rustt", "core_python", "python"):
+        with pytest.raises(ValueError, match="Invalid backend"):
+            resolve_backend_name(bad)
 
 
 def test_make_backend_threads_strict_isolation_kwarg():
@@ -2298,4 +2468,74 @@ def test_make_backend_strict_isolation_from_env(monkeypatch):
     first = make_backend(BACKEND_NAME_RUST, url=url, credential="k")
     assert first is not None and first._strict_isolation is True
 
+# ---------------------------------------------------------------------------
+# Response-less driver errors map to azure-core ServiceResponseError (A2)
+# ---------------------------------------------------------------------------
+#
+# When a driver op fails *without* a wire response (transport failure,
+# client-side validation, a pre-HTTP timeout), the binding raises a typed
+# DriverTransportError (a RuntimeError subclass). The backends translate it into
+# azure-core's ServiceResponseError so customer
+# `except (ServiceRequestError, ServiceResponseError)` handlers and the SDK's
+# transport-retry policies behave the same as on the legacy azure-core path,
+# instead of seeing a bare RuntimeError.
 
+
+def _transport_test_request():
+    return PreparedRequest(
+        op="read_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b"",
+        partition_key_header='["a"]',
+        headers={},
+    )
+
+
+def test_sync_backend_maps_transport_error_to_service_response_error(monkeypatch):
+    """A DriverTransportError from the sync dispatch surfaces as ServiceResponseError,
+    preserving the driver's status/message in the new exception."""
+    from azure.core.exceptions import ServiceResponseError
+    import azure.cosmos._backend.rust as rust_mod
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    backend._handle = "handle"  # skip the (blocking) handle build
+    monkeypatch.setattr(rust_mod, "_rust_module", object())  # pretend binding present
+
+    transport_exc_type = rust_mod._DRIVER_TRANSPORT_ERROR
+    message = "driver execute_singleton_operation failed: status 503 (ServiceUnavailable): boom"
+
+    def boom(handle, prepared):
+        raise transport_exc_type(message)
+
+    monkeypatch.setattr(rust_mod, "_resolve_dispatch", lambda op: boom)
+
+    with pytest.raises(ServiceResponseError) as excinfo:
+        backend.execute(_transport_test_request())
+    assert "ServiceUnavailable" in str(excinfo.value)
+    assert isinstance(excinfo.value.__cause__, transport_exc_type)
+
+
+def test_async_backend_maps_transport_error_to_service_response_error(monkeypatch):
+    """The async backend performs the same translation on its await path."""
+    from azure.core.exceptions import ServiceResponseError
+    import azure.cosmos.aio._backend.rust as async_rust_mod
+
+    backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    backend._handle = "handle"  # skip the (background-thread) handle build
+    monkeypatch.setattr(async_rust_mod, "_rust_module", object())
+
+    transport_exc_type = async_rust_mod._DRIVER_TRANSPORT_ERROR
+    message = "driver execute_singleton_operation failed: status 503 (ServiceUnavailable): boom"
+
+    async def boom(handle, prepared):
+        raise transport_exc_type(message)
+
+    monkeypatch.setattr(async_rust_mod, "_resolve_async_dispatch", lambda op: boom)
+
+    async def run():
+        with pytest.raises(ServiceResponseError) as excinfo:
+            await backend.execute(_transport_test_request())
+        assert "ServiceUnavailable" in str(excinfo.value)
+        assert isinstance(excinfo.value.__cause__, transport_exc_type)
+
+    asyncio.run(run())

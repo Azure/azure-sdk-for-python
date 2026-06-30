@@ -32,6 +32,35 @@ use serde::Deserialize;
 
 use crate::runtime::{drivers, require_runtime_context};
 
+// A driver operation that failed *without* a wire response (transport failure,
+// client-side validation, a timeout before any HTTP round-trip). The Python
+// backend translates this into azure-core's `ServiceResponseError` so customer
+// `except (ServiceRequestError, ServiceResponseError)` handlers and the SDK's
+// transport-retry policies behave the same as on the legacy azure-core path,
+// instead of seeing a bare `RuntimeError`. It subclasses `RuntimeError` so any
+// existing code that already catches `RuntimeError` keeps working (matching the
+// `AsyncCredentialBridgeReentrantError(RuntimeError)` convention on the Python
+// side). The driver's `CosmosError` carries no transport-vs-response
+// classification, so the binding cannot faithfully split `ServiceRequestError`
+// from `ServiceResponseError`; the message preserves the typed Cosmos status
+// (rendered by `CosmosError`'s Display) and the original error chains as the
+// cause.
+// pyo3's `create_exception!` expansion references `cfg(feature = "gil-refs")`,
+// a pyo3 feature this destination crate does not declare; the cfg is evaluated
+// here (not in pyo3), producing a benign `unexpected_cfgs` warning from
+// external-macro code. Scope the allow to just this generated item.
+#[allow(unexpected_cfgs)]
+mod transport_error {
+    pyo3::create_exception!(
+        azure_cosmos_rust,
+        DriverTransportError,
+        pyo3::exceptions::PyRuntimeError,
+        "A Cosmos driver operation failed without a wire response (transport failure, \
+         client-side validation, or a pre-HTTP timeout)."
+    );
+}
+pub use transport_error::DriverTransportError;
+
 // ---------------------------------------------------------------------------
 // Binding-invocation counter (concrete backend provenance)
 // ---------------------------------------------------------------------------
@@ -187,13 +216,9 @@ pub(crate) fn run_item_operation_async<'py>(
         let _abort_guard = abort_guard;
         let response_result = join.await.map_err(|join_error| {
             if join_error.is_cancelled() {
-                PyRuntimeError::new_err(
-                    "cosmos async operation was cancelled before it completed",
-                )
+                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
             } else {
-                PyRuntimeError::new_err(format!(
-                    "cosmos async operation task failed: {join_error}"
-                ))
+                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
             }
         })?;
         Python::with_gil(|py| {
@@ -237,9 +262,13 @@ async fn run_singleton_future(
     let mut op = build_op(item_ref);
 
     if let Some(activity) = modifiers.activity_header.as_ref() {
-        if let Ok(uuid) = activity.parse::<uuid::Uuid>() {
-            op = op.with_activity_id(ActivityId::from(uuid.to_string()));
-        }
+        // Forward the correlation id verbatim. The legacy path forwards any
+        // x-ms-activity-id string; gating on UUID-parseability silently dropped
+        // non-UUID correlation ids (e.g. an application-supplied trace id), so
+        // server-side request correlation broke for exactly those requests --
+        // the moment a customer is trying to trace one. ActivityId accepts any
+        // string, and the service treats the header as opaque.
+        op = op.with_activity_id(ActivityId::from(activity.clone()));
     }
     if let Some(session) = modifiers.session_header.as_ref() {
         op = op.with_session_token(SessionToken::from(session.clone()));
@@ -266,7 +295,8 @@ async fn run_singleton_future(
 /// `BackendResponse` 4-tuple. A CosmosError carrying a wire response (404 / 409
 /// / 412 / ...) becomes the same 4-tuple as success so the Python parser raises
 /// the right typed exception; only a response-less error (transport failure,
-/// client-side validation) becomes a RuntimeError.
+/// client-side validation) becomes a `DriverTransportError`, which the Python
+/// backend maps to azure-core's `ServiceResponseError`.
 fn tuple_from_result<'py>(
     py: Python<'py>,
     response_result: Result<CosmosResponse, CosmosError>,
@@ -279,7 +309,10 @@ fn tuple_from_result<'py>(
             {
                 Ok(raw_http_error)
             } else {
-                Err(PyRuntimeError::new_err(format!(
+                // No wire response: surface a typed transport error (Display
+                // preserves the Cosmos status) the Python layer maps to
+                // ServiceResponseError, rather than a bare RuntimeError.
+                Err(DriverTransportError::new_err(format!(
                     "driver execute_singleton_operation failed: {cosmos_error}"
                 )))
             }
@@ -338,6 +371,33 @@ pub(crate) struct OpModifiers {
     excluded_regions_value: Option<ExcludedRegions>,
     end_to_end_timeout: Option<EndToEndOperationLatencyPolicy>,
     custom_headers: HashMap<HeaderName, HeaderValue>,
+}
+
+/// Option-keys that legitimately ride in the ``PreparedRequest.headers`` dict
+/// but are NOT wire headers: they are consumed elsewhere in the Python prep
+/// (``disableAutomaticIdGeneration`` -> id minting) or lifted to a typed
+/// driver field (``partitionKey`` -> the partition-key argument), so
+/// `extract_op_modifiers` correctly drops them. Listed here only so the
+/// ``COSMOS_WIRE_STRICT`` diagnostic does not flag these expected drops as
+/// drift. Compared against the lowercased key.
+const INTENTIONALLY_IGNORED_OPTION_KEYS: &[&str] =
+    &["disableautomaticidgeneration", "partitionkey"];
+
+fn is_intentionally_ignored_option_key(lower: &str) -> bool {
+    INTENTIONALLY_IGNORED_OPTION_KEYS.contains(&lower)
+}
+
+/// ``COSMOS_WIRE_STRICT=1`` (or ``true``) turns the silent drop of an
+/// unrecognized option-key in `extract_op_modifiers` into a hard error, so a
+/// Python-side wire knob that was never wired into Rust is caught in tests/CI
+/// instead of producing wrong wire bytes with green tests. Unset by default
+/// => production behavior is unchanged (lenient silent drop). Read only when a
+/// genuinely unrecognized, non-allowlisted key is encountered (rare/never in
+/// production), so the hot path pays nothing.
+fn wire_strict_enabled() -> bool {
+    std::env::var("COSMOS_WIRE_STRICT")
+        .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+        .unwrap_or(false)
 }
 
 fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifiers> {
@@ -438,7 +498,37 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
             // initial_headers, or a future site writing the wire name
             // directly). Forward as-is.
             other if other.starts_with("x-ms-") || other == "prefer" => None,
-            _ => continue,
+            // Unrecognized key. In normal operation a handful of
+            // prep-internal option-keys (e.g. ``disableAutomaticIdGeneration``
+            // on every create/upsert/replace, ``partitionKey``) ride in the
+            // headers dict but are NOT wire headers -- they are consumed
+            // elsewhere in the Python prep (id minting) or lifted to a typed
+            // driver field (partition key), so dropping them here is correct
+            // and matches the legacy path.
+            //
+            // The hazard (the silent-correctness landmine) is a *new* wire
+            // knob added on the Python side (``flatten_options_to_headers`` /
+            // ``COMMON_OPTIONS``) without a matching arm above: it would be
+            // dropped here, producing wrong wire bytes with green tests.
+            // ``COSMOS_WIRE_STRICT=1`` (for tests / CI / local dev) turns an
+            // unrecognized, non-allowlisted key into a hard error so the drift
+            // is caught immediately. Production leaves the env unset and keeps
+            // the lenient silent drop, so there is ZERO behavior change unless
+            // the flag is set. The allowlist check runs first so the hot path
+            // (allowlisted keys) never reads the environment.
+            _ => {
+                if !is_intentionally_ignored_option_key(&lower) && wire_strict_enabled() {
+                    return Err(PyValueError::new_err(format!(
+                        "COSMOS_WIRE_STRICT: option-key '{key_str}' reached the Rust wire \
+                         layer (extract_op_modifiers) with no translation arm; it would be \
+                         silently dropped on the fast path, emitting wrong wire bytes. Add a \
+                         wire-name arm here (and update \
+                         _request_prep.RUST_HANDLED_OPTION_KEYS), or, if it is a non-wire \
+                         prep-internal flag, add it to INTENTIONALLY_IGNORED_OPTION_KEYS."
+                    )));
+                }
+                continue;
+            }
         };
         // Stringify the value: Python may have written a non-str
         // (e.g. int for indexing_directive); coerce via str() so the
@@ -826,10 +916,42 @@ pub(crate) fn extract_item_id(body: &[u8]) -> PyResult<String> {
         .ok_or_else(|| PyValueError::new_err("body has no string `id` field"))
 }
 
+/// Resolve the item id for a create / upsert without re-parsing the whole body.
+///
+/// Python already holds the document dict and resolved its id during request prep
+/// (`ensure_item_id` for create, the body's own id for upsert), so it carries the
+/// id on `PreparedRequest.item_id`. Prefer that: reading one Python attribute is
+/// O(1), whereas re-parsing the body to find `id` has no early exit -- serde must
+/// scan the entire document to consume it. On a small item that is microseconds
+/// against a multi-ms network call, but on a large body (e.g. a 256 KB blob) at
+/// thousands/sec it is real, repeated CPU for one field Python already had.
+///
+/// Fall back to parsing the body only when the attribute is absent or empty -- an
+/// older Python prep that did not set it. The fallback also preserves the existing
+/// "body has no string `id`" / "non-string id" error behavior, because Python only
+/// fills the attribute with a non-empty string id (anything else stays unset and
+/// lands here). For create/upsert the body's id is authoritative and Python derived
+/// `item_id` from that same body, so the attribute and the body always agree.
+pub(crate) fn extract_create_item_id<'py>(
+    prepared: &Bound<'py, PyAny>,
+    body: &[u8],
+) -> PyResult<String> {
+    if let Some(id) = prepared
+        .getattr("item_id")?
+        .extract::<Option<String>>()?
+        .filter(|s| !s.is_empty())
+    {
+        return Ok(id);
+    }
+    extract_item_id(body)
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{extract_item_id, json_value_to_pk_component, parse_container_link,
-        parse_partition_key_header};
+    use super::{
+        extract_item_id, is_intentionally_ignored_option_key, json_value_to_pk_component,
+        parse_container_link, parse_partition_key_header,
+    };
 
     // Tests for the per-operation parsers: the container-link split, the
     // partition-key header parse, the body-id read, and the per-value
@@ -889,12 +1011,15 @@ mod tests {
             "[123]",
             "[true]",
             "[null]",
-            "[{}]",            // PK path missing -> undefined
-            r#"["t1","r1"]"#,  // hierarchical
+            "[{}]",           // PK path missing -> undefined
+            r#"["t1","r1"]"#, // hierarchical
             r#"["t1","r1","s1"]"#,
-            r#"["t1",null]"#,  // hierarchical with missing leaf
+            r#"["t1",null]"#, // hierarchical with missing leaf
         ] {
-            assert!(parse_partition_key_header(header).is_ok(), "should parse: {header}");
+            assert!(
+                parse_partition_key_header(header).is_ok(),
+                "should parse: {header}"
+            );
         }
     }
 
@@ -926,5 +1051,42 @@ mod tests {
         let arr: serde_json::Value = serde_json::from_str("[1,2]").unwrap();
         assert!(json_value_to_pk_component(arr).is_err());
     }
-}
 
+    #[test]
+    fn pk_component_accepts_large_integer_as_finite_f64() {
+        // A large-integer partition key (> 2^53) is converted via `as_f64()`,
+        // which lossily rounds it but still returns a *finite* Some(_), so the
+        // "non-finite number" guard does not reject it. This is correct, not a
+        // bug: Cosmos hashes numeric partition keys as IEEE-754 doubles on both
+        // the client and the server, so the same rounding happens server-side
+        // and routing stays consistent. This test pins that behavior so a future
+        // change to integer-PK handling (e.g. attempting exact i64 routing) is a
+        // conscious, reviewed decision rather than a silent regression.
+        let big: serde_json::Value = serde_json::from_str("9007199254740993").unwrap(); // 2^53 + 1
+        assert!(big.is_i64(), "fixture must be an integer, not a float");
+        assert!(
+            json_value_to_pk_component(big).is_ok(),
+            "large integer PK must map to a finite f64 component without error"
+        );
+    }
+
+    // ---- intentionally-ignored option-key allowlist ---------------------------
+
+    #[test]
+    fn ignored_allowlist_covers_prep_internal_keys_only() {
+        // Prep-internal flags that legitimately ride in the headers dict but are
+        // NOT wire headers must be on the allowlist, so COSMOS_WIRE_STRICT does
+        // not flag the expected silent drop as drift. Keys are compared lowered.
+        assert!(is_intentionally_ignored_option_key(
+            "disableautomaticidgeneration"
+        ));
+        assert!(is_intentionally_ignored_option_key("partitionkey"));
+        // A would-be new wire knob (or any real wire-name key) must NOT be on the
+        // allowlist, so strict mode can catch Python<->Rust drift on it.
+        assert!(!is_intentionally_ignored_option_key("indexingdirective"));
+        assert!(!is_intentionally_ignored_option_key("somenewknob"));
+        assert!(!is_intentionally_ignored_option_key(
+            "x-ms-cosmos-priority-level"
+        ));
+    }
+}

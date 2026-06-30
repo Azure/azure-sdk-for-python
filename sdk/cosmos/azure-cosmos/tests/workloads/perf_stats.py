@@ -32,23 +32,18 @@ class Stats:
         # min 1 microsecond, max 60 seconds (in microseconds), 3 significant digits
         self._histograms: dict[str, HdrHistogram] = {}
         self._error_counts: dict[str, int] = {}
-        # Running RU (request-unit) charge per operation: sum and sample count,
-        # so drain can report mean RU per op. Fed by record_ru from the SDK
-        # response_hook (x-ms-request-charge). This is the data source for the
-        # "same work" RU-parity check; the workload log cannot provide it (it
-        # keeps only errors and slow calls).
+        # Running RU charge per operation: sum and sample count, so drain can
+        # report mean RU per op. Fed by record_ru from the SDK response_hook
+        # (x-ms-request-charge).
         self._ru_sums: dict[str, float] = {}
         self._ru_counts: dict[str, int] = {}
         # Bounded from the start so a burst of errors before the first drain
         # cannot grow this without limit. drain_all resets it to the same limit.
         self._errors: deque = deque(maxlen=2000)
         # Worst event-loop scheduling delay seen this interval, in milliseconds.
-        # Fed by the async loop-lag monitor (workload_utils._loop_lag_monitor) and
-        # drained per flush. It is process-wide (not per operation), so it lives
-        # outside the per-op histograms. A large value means the single asyncio
-        # event-loop thread could not service timers on time -- the loop itself
-        # (GIL-bound Python) is the bottleneck, not the SDK or the service. See
-        # docs/RUST_PYTHON_PERFORMANCE.md, "Is the event loop the bottleneck?".
+        # Fed by the async loop-lag monitor and drained per flush. It is process-
+        # wide, not per operation, so it lives outside the per-op histograms. A
+        # large value means the loop is the bottleneck, not the SDK.
         self._loop_lag_max_ms: float = 0.0
 
     def record(self, operation: str, duration_ms: float):
@@ -64,13 +59,11 @@ class Stats:
             self._histograms[operation].record_value(value_us)
 
     def record_ru(self, operation: str, request_charge: float):
-        """Record the RU (request-unit) charge of a successful operation.
+        """Record the RU charge of a successful operation.
 
-        Kept as a running sum + count so drain_all can report the mean RU per
-        operation (``mean_ru``) -- the data source for the doc's "same work"
-        RU-parity check. Fed from the SDK ``response_hook`` (the
-        ``x-ms-request-charge`` header), which fires once per successful op on
-        both backends.
+        Kept as a running sum and count so drain_all can report the mean RU per
+        operation. Fed from the SDK ``response_hook`` (the ``x-ms-request-charge``
+        header), which fires once per successful op on both backends.
         """
         with self._lock:
             if operation not in self._ru_sums:
@@ -129,9 +122,14 @@ class Stats:
 
         Returns (summaries, errors) where summaries is a list of dicts with:
         operation, count, errors, min_ms, max_ms, mean_ms, p50_ms, p90_ms, p99_ms,
-        p99_9_ms, mean_ru, ru_sum, ru_count
+        p99_9_ms, hist_b64, mean_ru, ru_sum, ru_count
         and errors is a list of dicts with: operation, error_message, source_message,
         error_status_code, error_sub_status_code, timestamp.
+
+        ``hist_b64`` is the base64-encoded full HdrHistogram for the window (None when
+        the op only had errors). It exists so an offline analyzer can MERGE every
+        window of a point for a TRUE pooled tail, which per-window scalar percentiles
+        cannot give.
         """
         with self._lock:
             summaries: list[dict] = []
@@ -144,12 +142,9 @@ class Stats:
                 hist = self._histograms.get(op)
                 errors = self._error_counts.get(op, 0)
                 count = hist.total_count if hist else 0
-                # Mean RU per successful op (x-ms-request-charge). 0.0 when no
-                # RU samples were recorded for this op in the interval. ru_sum /
-                # ru_count are also emitted raw so a cross-window aggregate can be
-                # COUNT-WEIGHTED — SUM(ru_sum)/SUM(ru_count) — rather than an
-                # unweighted average of per-window means (matches the CPU check's
-                # SUM(cpu_seconds)/SUM(count) shape).
+                # Mean RU per successful op. 0.0 when no RU samples were recorded
+                # this interval. ru_sum / ru_count are also emitted raw so a
+                # cross-window average can be count-weighted.
                 ru_count = self._ru_counts.get(op, 0)
                 ru_sum = self._ru_sums.get(op, 0.0)
                 mean_ru = (ru_sum / ru_count) if ru_count else 0.0
@@ -170,22 +165,25 @@ class Stats:
                             # p99.9 captures the slow tail, where the move to
                             # the Rust backend tends to show its cost first.
                             "p99_9_ms": hist.get_value_at_percentile(99.9) / 1000.0,
-                            # Mean RU per op: the "same work" / RU-parity gate.
-                            # ru_sum / ru_count let the aggregate be count-weighted.
+                            # Base64 of this window's full HdrHistogram, captured
+                            # before the per-window reset below. Per-window scalar
+                            # percentiles cannot be pooled across windows, so storing
+                            # the histogram lets an offline analyzer merge windows
+                            # into a true pooled p50/p99/p99.9 for the whole point.
+                            "hist_b64": hist.encode().decode("ascii"),
+                            # Mean RU per op; ru_sum / ru_count let the aggregate be
+                            # count-weighted.
                             "mean_ru": mean_ru,
                             "ru_sum": ru_sum,
                             "ru_count": ru_count,
                         }
                     )
                 else:
-                    # count == 0 but errors > 0: every call of this operation
-                    # failed, so there is no latency to report. The row is still
-                    # emitted to surface the errors, with 0.0 *placeholders* for
-                    # every latency field. These 0.0s are NOT fast results: any
-                    # pass/fail gate must guard latency with the precondition
-                    # count > 0 (and count ≈ baseline, errors ≈ 0), or a fully
-                    # failed op would read as p99 = 0 and falsely pass. See
-                    # docs/RUST_PYTHON_PERFORMANCE.md, "What counts as a pass" (check 0).
+                    # count == 0 but errors > 0: every call failed, so there is no
+                    # latency. The row is still emitted to surface the errors, with
+                    # 0.0 placeholders for the latency fields. These are not fast
+                    # results: a pass/fail check must require count > 0 before
+                    # reading latency, or a fully failed op would read as p99 = 0.
                     summaries.append(
                         {
                             "operation": op,
@@ -198,6 +196,8 @@ class Stats:
                             "p90_ms": 0.0,
                             "p99_ms": 0.0,
                             "p99_9_ms": 0.0,
+                            # No latency samples (all calls failed), so no histogram.
+                            "hist_b64": None,
                             "mean_ru": mean_ru,
                             "ru_sum": ru_sum,
                             "ru_count": ru_count,

@@ -20,17 +20,17 @@ from perf_config import _safe_int_env
 from perf_stats import Stats
 import perf_provenance
 
+try:
+    from azure.cosmos import __version__ as _AZURE_COSMOS_VERSION
+except Exception:
+    _AZURE_COSMOS_VERSION = "unknown"
+
 logger = logging.getLogger(__name__)
 
 
 def _get_sdk_version() -> str:
-    """Get the azure-cosmos SDK version string."""
-    try:
-        from azure.cosmos import __version__
-
-        return __version__
-    except Exception:
-        return "unknown"
+    """Return the azure-cosmos SDK version string."""
+    return _AZURE_COSMOS_VERSION
 
 
 def _get_cpu_percent(process) -> float:
@@ -44,10 +44,8 @@ def _get_cpu_percent(process) -> float:
 def _get_cpu_times(process) -> tuple:
     """Return cumulative (user, system) CPU seconds for the process.
 
-    Unlike ``cpu_percent`` (a sampled rate), ``cpu_times`` is a monotonically
-    increasing counter, so the difference between two reads is the EXACT CPU time
-    spent in that window -- the right input for the CPU-per-op gate (check 3),
-    which is the migration's headline number. Returns (0.0, 0.0) on any error.
+    cpu_times is a counter, so the difference between two reads is the exact CPU
+    time spent in that window. Returns (0.0, 0.0) on any error.
     """
     try:
         t = process.cpu_times()
@@ -60,12 +58,9 @@ def _get_gc_stats() -> tuple:
     """Return cumulative (collections, collected, uncollectable) across all GC
     generations.
 
-    ``gc.get_stats`` returns per-generation cumulative counters; summing them and
-    differencing across a window gives how many GC passes ran and how many objects
-    they reclaimed in that window. A tail (P99.9) that moves with GC activity is a
-    Python-garbage problem, and a real Rust-path tail win is partly *less* garbage
-    crossing the boundary -- so recording GC makes that mechanism visible instead
-    of hiding inside a "bad window". Returns (0, 0, 0) on any error.
+    Differencing these counters across a window gives how many GC passes ran and
+    how many objects they reclaimed. A tail that moves with GC activity points to
+    Python garbage rather than the SDK. Returns (0, 0, 0) on any error.
     """
     try:
         stats = gc.get_stats()
@@ -86,16 +81,10 @@ def _get_memory_bytes(process) -> int:
 
 
 def _get_thread_count(process) -> int:
-    """Get the process's current OS thread count.
+    """Return the process's current OS thread count.
 
-    On the **sync** path this is the shared Tokio runtime's threads; on the
-    **async** path it is the driver's own runtime and connection threads. (The
-    interim async thread-pool stopgap — a dedicated pool capped at 256 — was
-    retired when the async path went true-async; see docs/RUST_PYTHON_PERFORMANCE.md.
-    A large, thread-shaped RSS step that tracks this count would therefore now
-    be a *new* regression, not the old pool filling.) Recorded so RSS steps and
-    any concurrency-sweep tail bend can be tied to threads actually in use, not
-    inferred.
+    On Rust this counts the driver's runtime and connection threads. Recorded so an
+    RSS step can be tied to threads actually in use. Returns 0 on any error.
     """
     try:
         return process.num_threads()
@@ -140,35 +129,26 @@ class PerfReporter:
         self._hostname = socket.gethostname()
         self._sdk_version = _get_sdk_version()
         self._process = psutil.Process()
-        # Monotonic time of the last successful drain. Each row stores the
-        # ACTUAL seconds it covers (window_seconds = now - this), so throughput
-        # is count / window_seconds rather than count / the configured interval.
-        # When a flush is skipped (e.g. _ensure_container raises because the
-        # results account is briefly unreachable), the stats keep accumulating
-        # and the next successful drain covers a longer window; storing the real
-        # window keeps req/s correct instead of ~2x too high on the merged row.
+        # Monotonic time of the last successful drain. Each row stores the actual
+        # seconds it covers (window_seconds = now - this), so throughput is
+        # count / window_seconds. If a flush is skipped the next drain covers a
+        # longer window, which keeps req/s correct instead of too high.
         self._last_flush_monotonic = time.monotonic()
         # Reporter start (monotonic), for the elapsed_seconds each row carries so
-        # warmup windows can be excluded from the verdict — the first windows
-        # include cold start and the Rust driver warming its connection pools
-        # (RSS steps up once), which would otherwise skew the tail and the
-        # memory-slope check. (The old async thread-pool fill that used to
-        # dominate this step is retired — see _get_thread_count.) Reset in
-        # _run after the CPU warmup so elapsed starts at the first real window.
+        # warmup windows can be dropped later. Reset in _run after the CPU warmup
+        # so elapsed starts at the first real window.
         self._start_monotonic = self._last_flush_monotonic
-        # Baselines for the EXACT per-window CPU and GC deltas, primed in _run
-        # after warmup (so the first window starts clean) and advanced on every
-        # successful flush in lockstep with window_seconds. Initialised here so a
-        # flush that somehow runs before _run still has something to subtract.
+        # Baselines for the per-window CPU and GC deltas, primed in _run after
+        # warmup and advanced on every flush. Initialised here so a flush that runs
+        # before _run still has something to subtract.
         self._last_cpu_user, self._last_cpu_system = _get_cpu_times(self._process)
         self._last_gc_collections, self._last_gc_collected, self._last_gc_uncollectable = (
             _get_gc_stats()
         )
-        # Provenance baselines (see perf_provenance): advanced like the CPU/GC
-        # baselines so each row carries the per-window count of operations the
-        # Rust path fulfilled at the Python boundary (rust_execute_calls) and that
-        # the Rust binding itself counted (binding_calls). None for binding means
-        # the extension predates the counter; we then persist -1 as "unknown".
+        # Provenance baselines, advanced like the CPU/GC baselines so each row
+        # carries the per-window count of operations the Rust path handled
+        # (rust_execute_calls) and that the Rust binding counted (binding_calls).
+        # None for binding means the extension has no counter; we store -1 then.
         self._last_execute_calls = perf_provenance.execute_count()
         self._last_binding_calls = perf_provenance.binding_operation_count() or 0
 
@@ -279,13 +259,9 @@ class PerfReporter:
         concurrency = _safe_int_env("COSMOS_CONCURRENT_REQUESTS", 100)
         preferred = os.environ.get("COSMOS_PREFERRED_LOCATIONS", "")
         excluded = os.environ.get("COSMOS_CLIENT_EXCLUDED_LOCATIONS", "")
-        # Run-manifest fields (methodology gap NEW#3): the per-op end-to-end
-        # timeout and the arrival mode are central to how the tail compares
-        # between backends (a different timeout or open- vs closed-loop changes
-        # what the p99/p99.9 even MEAN), yet neither was persisted, so a post-hoc
-        # audit could not prove two rows were taken under the same policy. Stamp
-        # them on every row. arrival_rate == 0.0 means closed-loop (the default);
-        # > 0 means open-loop at that ops/sec per client, capped by max_inflight.
+        # Record the per-op timeout and arrival mode on every row, so two rows can
+        # be checked for the same policy later. arrival_rate == 0.0 means
+        # closed-loop; > 0 means open-loop at that ops/sec per client.
         request_timeout = _safe_int_env("COSMOS_REQUEST_TIMEOUT", 0)
         try:
             arrival_rate = float(os.environ.get("WORKLOAD_ARRIVAL_RATE", "0") or "0")
@@ -311,34 +287,27 @@ class PerfReporter:
         )
 
         summaries, errors = self._stats.drain_all()
-        # The drain is the instant these counts stop accumulating, so measure the
-        # window here (monotonic, immune to wall-clock changes). It is normally
-        # the configured interval, but ~2x (or more) when a previous flush was
-        # skipped; storing it keeps throughput = count / window_seconds honest.
+        # The drain is when these counts stop accumulating, so measure the window
+        # here. It is normally the configured interval, but longer when a previous
+        # flush was skipped; storing it keeps count / window_seconds honest.
         now_monotonic = time.monotonic()
         window_seconds = round(now_monotonic - self._last_flush_monotonic, 3)
         self._last_flush_monotonic = now_monotonic
         # Seconds since the (post-warmup) reporter start, so a query can drop
-        # warmup windows — e.g. WHERE c.elapsed_seconds > 1800 — instead of letting
-        # cold start or connection-pool warmup decide the verdict. See the SLA doc.
+        # warmup windows instead of letting cold start decide the result.
         elapsed_seconds = round(now_monotonic - self._start_monotonic, 3)
-        # CPU-seconds the process spent in this window, measured EXACTLY from the
-        # cpu_times() counter delta (user + system), not from a sampled cpu_percent.
-        # This is the input for the CPU-per-op gate (check 3) -- the migration's
-        # headline number -- so it is worth measuring precisely. The user/system
-        # split is also kept: the Rust driver's native networking work tends to land
-        # in *system* time, so a shift in the split is itself informative. Normalize
-        # in the SLA doc as CPU-seconds per 1k ops = SUM(cpu_seconds)/SUM(count)*1000,
-        # meaningful on a SINGLE-op run (an all-six run shares CPU across ops).
+        # CPU-seconds the process spent in this window, from the cpu_times() counter
+        # delta (user + system). The user/system split is kept because Rust's native
+        # networking tends to land in system time. Compare as CPU-seconds per 1k ops
+        # on a single-op run (an all-six run shares CPU across ops).
         cur_cpu_user, cur_cpu_system = _get_cpu_times(self._process)
         cpu_user_seconds = round(max(0.0, cur_cpu_user - self._last_cpu_user), 4)
         cpu_system_seconds = round(max(0.0, cur_cpu_system - self._last_cpu_system), 4)
         cpu_seconds = round(cpu_user_seconds + cpu_system_seconds, 4)
         self._last_cpu_user, self._last_cpu_system = cur_cpu_user, cur_cpu_system
-        # GC activity in this window (delta of cumulative counters): how many GC
-        # passes ran and how many objects they reclaimed. Correlate with p99_9_ms to
-        # see whether a tail spike is GC-driven (a Python-garbage effect), and watch
-        # it drop on the Rust path, which allocates fewer Python objects per op.
+        # GC activity in this window: how many GC passes ran and how many objects
+        # they reclaimed. Correlate with p99_9_ms to see whether a tail spike is
+        # GC-driven; expect it lower on Rust, which allocates fewer Python objects.
         cur_gc_collections, cur_gc_collected, cur_gc_uncollectable = _get_gc_stats()
         gc_collections = max(0, cur_gc_collections - self._last_gc_collections)
         gc_collected = max(0, cur_gc_collected - self._last_gc_collected)
@@ -347,17 +316,13 @@ class PerfReporter:
         self._last_gc_collected = cur_gc_collected
         self._last_gc_uncollectable = cur_gc_uncollectable
         # Worst event-loop scheduling delay this window (ms); 0 on the sync path or
-        # when the monitor is not running. A large value means the single asyncio
-        # loop thread is the bottleneck, not the SDK -- see the SLA doc.
+        # when the monitor is off. A large value means the loop is the bottleneck.
         loop_lag_max_ms = round(self._stats.drain_loop_lag(), 3)
-        # Per-window provenance deltas (see perf_provenance). rust_execute_calls:
-        # ops the Rust path fulfilled at the Python boundary this window;
-        # binding_calls: ops the Rust binding itself counted (-1 == the extension
-        # has no counter, i.e. an older build, so callers do not read 0 as proof
-        # the binding was skipped). Both are 0 for a genuine core-python run: it
-        # has no backend object to wrap and never enters the binding. The
-        # post-run gate cross-checks these against `count` to confirm a row tagged
-        # "rust" really ran on Rust -- not on the COSMOS_BACKEND label alone.
+        # Per-window provenance deltas. rust_execute_calls: ops the Rust path
+        # handled this window; binding_calls: ops the Rust binding counted (-1 when
+        # the extension has no counter, so 0 is not read as proof it was skipped).
+        # Both are 0 for a core-python run. The post-run gate checks these against
+        # `count` to confirm a row tagged "rust" really ran on Rust.
         cur_execute_calls = perf_provenance.execute_count()
         rust_execute_calls = max(0, cur_execute_calls - self._last_execute_calls)
         self._last_execute_calls = cur_execute_calls
@@ -380,13 +345,11 @@ class PerfReporter:
                 "count": s["count"],
                 "errors": s["errors"],
                 # Actual seconds this row covers, so throughput is
-                # count / window_seconds — correct even when a skipped flush made
-                # this row merge more than one interval. Do NOT divide count by
-                # the configured PERF_REPORT_INTERVAL; that is wrong for merged
-                # windows and for the (usually shorter) final flush.
+                # count / window_seconds. Do not divide count by the configured
+                # interval; that is wrong for merged windows and the final flush.
                 "window_seconds": window_seconds,
                 # Seconds since (post-warmup) start, so warmup windows can be
-                # excluded from the verdict (checks 1 & 4 in the SLA doc).
+                # dropped from the result.
                 "elapsed_seconds": elapsed_seconds,
                 "min_ms": round(s["min_ms"], 3),
                 "max_ms": round(s["max_ms"], 3),
@@ -395,44 +358,38 @@ class PerfReporter:
                 "p90_ms": round(s["p90_ms"], 3),
                 "p99_ms": round(s["p99_ms"], 3),
                 "p99_9_ms": round(s.get("p99_9_ms", 0.0), 3),
-                # Mean RU (request-unit) charge per successful op, from the
-                # x-ms-request-charge response header. The data source for the
-                # "same work" RU-parity check (the workload log keeps only
-                # errors and slow calls, so it cannot provide this).
+                # Base64 HdrHistogram for this window (None on an all-errors row).
+                # Lets an offline analyzer merge every window of a point for a true
+                # pooled p50/p99/p99.9, which the per-window scalars cannot give.
+                "hist_b64": s.get("hist_b64"),
+                # Mean RU charge per successful op, from the x-ms-request-charge
+                # response header. Used to check both backends do the same work.
                 "mean_ru": round(s.get("mean_ru", 0.0), 3),
-                # Raw RU total + sample count, so a cross-window aggregate can be
-                # count-weighted (SUM(ru_sum)/SUM(ru_count)) instead of an unweighted
-                # average of per-window means. RU/op is near-constant so the two
-                # barely differ, but this keeps check 5 strict like the CPU check.
+                # Raw RU total and sample count, so a cross-window average can be
+                # count-weighted (SUM(ru_sum)/SUM(ru_count)) rather than an average
+                # of per-window means.
                 "ru_sum": round(s.get("ru_sum", 0.0), 4),
                 "ru_count": s.get("ru_count", 0),
                 "cpu_percent": round(cpu, 1),
-                # CPU-seconds in this window, EXACT from the cpu_times() delta;
-                # normalize by work in the SLA doc as CPU-seconds per 1k ops
-                # (single-op runs — see comment above). cpu_user/system split it.
+                # CPU-seconds in this window, from the cpu_times() delta. Compare as
+                # CPU-seconds per 1k ops on single-op runs. cpu_user/system split it.
                 "cpu_seconds": cpu_seconds,
                 "cpu_user_seconds": cpu_user_seconds,
                 "cpu_system_seconds": cpu_system_seconds,
-                # GC activity this window (deltas): passes run, objects reclaimed,
-                # objects it could not reclaim. A p99_9_ms that tracks gc_collections
-                # is a Python-garbage tail, not the SDK; expect these lower on Rust.
+                # GC activity this window: passes run, objects reclaimed, objects it
+                # could not reclaim. A p99_9_ms that tracks gc_collections is a
+                # Python-garbage tail, not the SDK; expect these lower on Rust.
                 "gc_collections": gc_collections,
                 "gc_collected": gc_collected,
                 "gc_uncollectable": gc_uncollectable,
                 # Worst event-loop scheduling delay this window (ms); 0 on the sync
-                # path or when the async loop-lag monitor is not running. Large =>
-                # the single asyncio loop thread is the bottleneck, not the SDK.
+                # path or when the monitor is off. Large means the loop is the
+                # bottleneck, not the SDK.
                 "loop_lag_max_ms": loop_lag_max_ms,
                 "memory_bytes": mem,
-                # OS thread count at this sample. On the **async** path this is
-                # the Rust driver's own runtime and connection threads; on the
-                # **sync** path, the shared Tokio runtime's threads. (The interim
-                # async thread-pool stopgap — a dedicated pool capped at 256 — is
-                # retired, so thread_count no longer tracks a worker pool on the
-                # async path; a large thread-shaped RSS step that tracks this
-                # count would now be a *new* regression, not the old pool filling.
-                # See _get_thread_count and docs/RUST_PYTHON_PERFORMANCE.md.) Correlate
-                # with memory_bytes to tell a one-time warmup RSS step from a leak.
+                # OS thread count at this sample (on Rust, the driver's runtime and
+                # connection threads). Correlate with memory_bytes to tell a one-time
+                # warmup RSS step from a leak.
                 "thread_count": threads,
                 "system_cpu_percent": round(sys_cpu, 1),
                 "system_total_memory_bytes": sys_total,

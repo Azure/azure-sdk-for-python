@@ -25,8 +25,11 @@ from azure.cosmos._backend.base import (
 from azure.cosmos._backend._shared import (
     RustBackendShared,
     close_credential_bridge_quietly,
+    driver_transport_error_type,
 )
 from azure.cosmos._backend.constants import BACKEND_NAME_RUST
+
+from azure.core.exceptions import ServiceResponseError
 
 from .base import AsyncCosmosBackend, BackendResponse, PreparedRequest
 
@@ -42,6 +45,11 @@ except ImportError:
         "_rust module not available; AsyncRustBackend operations "
         "will raise NotImplementedError until the Rust module is built."
     )
+
+# The binding's response-less transport error, captured once at load. A driver
+# op that fails before any wire response raises this; we re-raise it as
+# azure-core's ServiceResponseError (see driver_transport_error_type).
+_DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
 
 
 # Look up the binding's ``<op>_async`` function for an operation. Read live from
@@ -280,5 +288,12 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
         # The *_item_async function returns an awaitable that finishes on the driver's
         # own runtime, so awaiting it uses no Python thread. Only the one-time
         # init_client in _ensure_handle still runs on a background thread.
-        result = await dispatch(handle, prepared)
+        # A response-less driver failure (transport error, client-side validation,
+        # pre-HTTP timeout) surfaces as the binding's DriverTransportError;
+        # translate it to azure-core's ServiceResponseError so customer handlers
+        # and transport-retry policies match the legacy path.
+        try:
+            result = await dispatch(handle, prepared)
+        except _DRIVER_TRANSPORT_ERROR as exc:
+            raise ServiceResponseError(message=str(exc)) from exc
         return build_backend_response(*result)

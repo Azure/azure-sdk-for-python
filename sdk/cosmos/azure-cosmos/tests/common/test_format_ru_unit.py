@@ -81,6 +81,37 @@ class TestFormatRuCharge(unittest.TestCase):
         """
         self.assertEqual(format_ru_charge(-1.5), "-1.5")
 
+    def test_golden_values_match_canonical_wire_form(self):
+        """Golden table: representative real charges -> exact canonical string.
+
+        These are the request-charge values customers actually see for
+        common operations (a 1-RU point read, a few-RU query, a heavier
+        write). This locks the *exact* bytes the Rust backend stamps on
+        ``x-ms-request-charge`` so a future formatting change is a visible
+        test diff, not a silent customer-parser break.
+
+        Note the deliberate cross-backend canonicalization for whole-number
+        charges: the service may send a bare integer string (e.g. ``"1"``)
+        for a 1-RU read, while the Rust backend parses the charge to a float
+        and re-renders it through this helper as ``"1.0"``. Both backends are
+        internally consistent and numerically equal; this test pins ``"1.0"``
+        (not ``"1"``) as the Rust path's canonical form so that choice is
+        explicit and reviewed rather than incidental.
+        """
+        golden = {
+            1.0: "1.0",       # typical point read (server may wire this as "1")
+            2.27: "2.27",     # small single-partition query
+            3.71: "3.71",     # heavier read
+            5.0: "5.0",       # whole-number write charge -> "5.0", not "5"
+            10.29: "10.29",   # multi-document / indexed write
+        }
+        for charge, expected in golden.items():
+            self.assertEqual(
+                format_ru_charge(charge),
+                expected,
+                msg="charge {!r} must render as {!r}".format(charge, expected),
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

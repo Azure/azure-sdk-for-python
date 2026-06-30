@@ -1,38 +1,28 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Post-run integrity gate for the latency matrix (methodology red-flag #2).
+"""Post-run integrity gate for the latency matrix.
 
-WHY THIS EXISTS (plain English):
-  Every reporting window's row is written to Cosmos with a best-effort upsert
-  that, on failure, is ONLY logged -- there is no retry and no backfill
-  (perf_reporter.py upsert_item try/except). Under pressure a write can fail,
-  and that window's data silently vanishes. A vanished BAD window (a latency
-  spike, an error burst) would make the run look healthier than it was.
+Each window's row is written to Cosmos with a best-effort upsert that is only
+logged on failure, so under pressure a window's data can silently vanish. A
+vanished bad window would make the run look healthier than it was. This script
+catches that with two checks at the end of a run:
 
-  This makes that failure impossible to MISS instead of impossible to HAPPEN,
-  by enforcing the two cheap checks at the end of every run:
+  1. Row-continuity -- each row stamps ``window_seconds`` (how long it covers) and
+     ``elapsed_seconds`` (seconds since post-warmup start). In a healthy run the
+     jump in elapsed_seconds between two rows equals the later row's
+     window_seconds; a larger jump means a window was dropped.
 
-    1. Row-continuity -- each row stamps `window_seconds` (how long it covers)
-       and `elapsed_seconds` (seconds since post-warmup start). For a healthy
-       run the rows tile the timeline with no holes: the jump in elapsed_seconds
-       between two consecutive rows equals the later row's window_seconds. A
-       larger jump means a window in between was dropped -> we point at the hole.
+  2. Reporter-warning scan -- grep the per-cell logs for the reporter's own
+     "upsert failed" warnings. Zero hits means nothing was dropped at the source.
 
-    2. Reporter-warning scan -- grep the per-cell workload logs for the
-       reporter's own "PerfReporter upsert failed" / "error upsert failed"
-       warnings. Zero hits means nothing was dropped at the source.
-
-  Exit code is non-zero if EITHER check finds a problem, so a caller (the matrix
-  driver, the hourly monitor, CI) can treat it as a hard gate, not a footnote.
+Exit code is non-zero if either check finds a problem, so a caller can treat it
+as a hard gate.
 
 USAGE:
   source ./perf_env.sh            # exports RESULTS_COSMOS_* (incl. the key)
   python3 perf_validate.py [--stamp YYYYMMDD-HHMMSS] [--log-dir logs/latency-...]
-      --stamp    which run to check; default = the most recent lat-* stamp
-                 found in the results container.
-      --log-dir  per-cell logs to scan for reporter warnings; optional but
-                 recommended (the continuity check alone cannot see a drop that
-                 happened to land on a window the run never reached).
+      --stamp    which run to check; default = the most recent lat-* stamp.
+      --log-dir  per-cell logs to scan for reporter warnings; optional.
 """
 
 import argparse
@@ -105,15 +95,13 @@ _MAX_ERROR_FRACTION = 0.01
 
 
 def check_quality(container, stamp: str):
-    """Flag #4 gate: every cell must have real work (count > 0) and near-zero
-    errors, and every operation must have BOTH backends present, BEFORE any
-    latency number is believed. This is intentionally the first check -- a
-    "fast" p50 means nothing if it came from a cell that did nothing.
+    """Every cell must have real work (count > 0) and near-zero errors, and every
+    operation must have both backends present, before any latency number is
+    believed. This runs first: a "fast" p50 means nothing if the cell did nothing.
 
-    NOTE: we do NOT require core and rust to have EQUAL counts. They run the
-    same duration closed-loop, so the faster backend legitimately completes more
-    ops; equal counts would be the wrong test. Parity here means "both sides did
-    substantial, low-error work on the same operation", not "identical totals".
+    We do not require core and rust to have equal counts. They run the same
+    duration closed-loop, so the faster backend completes more ops; equal counts
+    would be the wrong test. We just need both sides to do real, low-error work.
     """
     rows = list(
         container.query_items(
@@ -258,31 +246,21 @@ def check_warnings(log_dir: str):
 
 
 def check_provenance(container, stamp: str):
-    """Concrete backend-provenance gate: prove every cell ran on the engine its
-    label claims, derived from counters in the rows -- NOT from COSMOS_BACKEND.
+    """Prove every cell ran on the engine its label claims, from counters in the
+    rows rather than COSMOS_BACKEND.
 
-    This is the drill's single biggest source of error. Each row carries, beside
-    the declared ``config_backend``:
-      * ``runtime_backend``    -- the class of the backend object the client
-                                really built (read off the live client).
-      * ``rust_execute_calls`` -- ops the Rust path fulfilled at the Python
-                                boundary this window.
-      * ``binding_calls``      -- ops the Rust BINDING itself counted (-1 when the
-                                extension predates the counter -> unknown).
+    Each row carries, beside the declared ``config_backend``:
+      * ``runtime_backend``    -- the class of the backend object the client built.
+      * ``rust_execute_calls`` -- ops the Rust path handled this window.
+      * ``binding_calls``      -- ops the Rust binding counted (-1 when unknown).
 
-    Rules, per cell (workload_id):
-      * config_backend == "rust": it must have actually run on Rust. We require
-        BOTH provenance signals to corroborate real work -- binding_calls > 0 and
-        rust_execute_calls > 0 -- and the binding's count must cover essentially
-        all the operations (binding_calls >= count, allowing a small slack for the
-        in-flight wave still open at the final flush). A "rust" cell that did work
-        with zero binding calls ran the core-python path and is mislabeled -> BAD.
-        If binding_calls is unknown (-1, old extension) we cannot prove it from
-        the binding and fall back to rust_execute_calls > 0, but say so.
-      * config_backend == "core-python": it must NOT have touched Rust. Both
-        rust_execute_calls and binding_calls must be 0 (binding_calls == -1 is
-        also fine: no extension at all). Any Rust activity on a core-python cell
-        means the run is cross-contaminated -> BAD.
+    Rules per cell (workload_id):
+      * "rust": must have run on Rust. Require binding_calls > 0 and
+        rust_execute_calls > 0, and binding_calls must cover essentially all
+        operations (a small slack for the wave open at the final flush). If
+        binding_calls is unknown (-1), fall back to rust_execute_calls > 0.
+      * "core-python": must not have touched Rust. Both counts must be 0
+        (binding_calls == -1 is also fine).
     """
     rows = list(
         container.query_items(

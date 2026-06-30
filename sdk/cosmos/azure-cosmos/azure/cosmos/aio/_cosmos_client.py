@@ -160,6 +160,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
     :keyword proxy_config: Connection proxy configuration.
     :paramtype proxy_config: ~azure.cosmos.ProxyConfiguration
+    :keyword bool proxy_allowed: Rust backend only. When set with ``_backend="rust"``,
+        allows (``True``) or disables (``False``) proxy usage from environment
+        variables (for example ``HTTPS_PROXY`` / ``HTTP_PROXY``).
     :keyword ssl_config: Connection SSL configuration.
     :paramtype ssl_config: ~azure.cosmos.SSLConfiguration
     :keyword bool connection_verify: Whether to verify the connection, default value is True.
@@ -222,9 +225,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # Pick the backend for this client (precedence: ``_backend=``
         # kwarg > COSMOS_BACKEND env var > ``core-python``). The factory
         # returns an ``AsyncRustBackend`` for the ``rust`` selection, or
-        # ``None`` for ``core-python`` — ``None`` is the signal that
+        # ``None`` for ``core-python`` -- ``None`` is the signal that
         # container methods should use the legacy ``CreateItem`` path.
         backend_choice = kwargs.pop("_backend", None)
+        proxy_allowed = kwargs.pop("proxy_allowed", None)
         # Read (don't pop) the startup settings the Rust backend can carry to the
         # driver; the legacy connection policy still receives them via **kwargs
         # below. The retry dials mirror _build_connection_policy's precedence
@@ -250,6 +254,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             availability_strategy=availability_strategy,
             user_agent_suffix=kwargs.get("user_agent_suffix"),
             consistency_level=consistency_level,
+            proxy_allowed=proxy_allowed,
             # Transport/TLS knobs the Rust path can't honor yet: read (don't pop)
             # so the legacy connection still consumes them on the core-python path,
             # while the Rust branch rejects them instead of silently ignoring them.

@@ -191,6 +191,12 @@ class PreparedClientConfig:
     #: rather than silently dropping them.
     consistency_level: Optional[str] = None
 
+    #: Runtime-level proxy switch for the Rust driver. ``True`` lets the driver
+    #: use proxy settings from environment variables (such as ``HTTPS_PROXY`` /
+    #: ``HTTP_PROXY``); ``False`` forces a direct connection (no proxy); ``None``
+    #: carries nothing, so the runtime keeps its existing env/default behavior.
+    proxy_allowed: Optional[bool] = None
+
 
 
 @dataclass(frozen=True)
@@ -521,4 +527,3 @@ def raise_account_read_unsupported(backend: Any) -> None:
         "(_backend='rust'). The Rust driver reads account metadata internally for "
         "routing but does not yet expose it across the binding."
     )
-

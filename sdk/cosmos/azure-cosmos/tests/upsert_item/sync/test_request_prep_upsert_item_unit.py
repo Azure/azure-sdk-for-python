@@ -48,8 +48,9 @@ from azure.cosmos._helpers._request_prep import build_upsert_item_prepared
 
 def test_baseline_is_write_with_body_not_bodiless():
     """An upsert carries the id inside the body, so the prep serialises the
-    body to JSON bytes and leaves ``item_id`` unset -- unlike the bodiless
-    delete / read prep."""
+    body to JSON bytes -- unlike the bodiless delete / read prep. It also copies
+    the body's id onto ``item_id`` as a fast-path hint so the binding can skip
+    re-parsing the whole body just to read one field."""
     prepared = build_upsert_item_prepared(
         container_link="dbs/d/colls/orders",
         body={"id": "order-42", "pk": "customerA", "total": 109.5},
@@ -62,9 +63,9 @@ def test_baseline_is_write_with_body_not_bodiless():
     assert prepared.container_link == "dbs/d/colls/orders"
     assert prepared.body_bytes == b'{"id":"order-42","pk":"customerA","total":109.5}'
     assert prepared.partition_key_header == '["customerA"]'
-    # The id rides in the body, so the dedicated id slot stays empty
-    # (create / upsert never carry item_id; delete / read do).
-    assert prepared.item_id is None
+    # The id is authoritative in the body; the prep also forwards it on item_id
+    # so the binding reads one Python attribute instead of re-parsing the body.
+    assert prepared.item_id == "order-42"
     # Dropped-and-recreated container guard: the rid is stamped under the standard key.
     assert prepared.headers[Constants.ContainerRID] == "RID=="
 

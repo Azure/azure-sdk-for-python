@@ -312,10 +312,12 @@ def test_replace_and_upsert_prep_differ_only_by_op_and_item_id():
 
     assert replace_prepared.op == OP_REPLACE_ITEM
     assert upsert_prepared.op == OP_UPSERT_ITEM
-    # Replace carries the resolved id; upsert leaves it for the binding to
-    # read out of the body.
+    # Replace carries the resolved target id; upsert now also forwards the body's
+    # id on item_id as a fast-path hint (the binding skips re-parsing the body).
+    # Here the body id equals the replace target, so both land on "order-42" and
+    # the two preps differ only by op.
     assert replace_prepared.item_id == "order-42"
-    assert upsert_prepared.item_id is None
+    assert upsert_prepared.item_id == "order-42"
     # Every field on the wire is byte-identical.
     assert replace_prepared.container_link == upsert_prepared.container_link
     assert replace_prepared.body_bytes == upsert_prepared.body_bytes

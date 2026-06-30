@@ -15,6 +15,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Optional
 
+from azure.core.exceptions import ServiceResponseError
 
 from .base import (
     OP_TO_BINDING_METHOD,
@@ -24,7 +25,7 @@ from .base import (
     PreparedRequest,
     build_backend_response,
 )
-from ._shared import RustBackendShared
+from ._shared import RustBackendShared, driver_transport_error_type
 from .constants import BACKEND_NAME_RUST
 
 _LOGGER = logging.getLogger(__name__)
@@ -39,6 +40,11 @@ except ImportError:
         "_rust module not available; RustBackend operations "
         "will raise NotImplementedError until the Rust module is built."
     )
+
+# The binding's response-less transport error, captured once at load. A driver
+# op that fails before any wire response raises this; we re-raise it as
+# azure-core's ServiceResponseError (see driver_transport_error_type).
+_DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
 
 
 # Look up the binding's function for an operation. Read live from ``_rust_module``
@@ -156,4 +162,12 @@ class RustBackend(RustBackendShared, CosmosBackend):
             prepared.op,
             OP_TO_BINDING_METHOD.get(prepared.op),
         )
-        return build_backend_response(*dispatch(handle, prepared))
+        # A response-less driver failure (transport error, client-side
+        # validation, pre-HTTP timeout) surfaces as the binding's
+        # DriverTransportError; translate it to azure-core's ServiceResponseError
+        # so customer handlers and transport-retry policies match the legacy path.
+        try:
+            raw_response = dispatch(handle, prepared)
+        except _DRIVER_TRANSPORT_ERROR as exc:
+            raise ServiceResponseError(message=str(exc)) from exc
+        return build_backend_response(*raw_response)

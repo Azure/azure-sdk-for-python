@@ -54,6 +54,12 @@ echo "    ops = ${OPERATIONS[*]} (closed-loop, one op per process)"
 echo "    logs -> ${LOG_DIR}"
 echo
 
+# Overall script status. A real child failure or a failed provenance/integrity
+# gate flips this to 1 so the sweep exits non-zero (an unattended/CI run cannot
+# silently "pass"). Substantive verdict findings (a WATCH/STAIRCASE op) stay
+# informational -- only hard failures fail the script.
+overall_rc=0
+
 for bk in "${BACKENDS[@]}"; do
   echo ">>> backend=${bk}: launching ${#OPERATIONS[@]} single-op processes in parallel for ${DURATION_SECONDS}s"
   pids=()
@@ -78,11 +84,15 @@ for bk in "${BACKENDS[@]}"; do
   echo "    waiting for backend=${bk} batch to finish..."
   fail=0
   for pid in "${pids[@]}"; do
-    if ! wait "${pid}"; then
-      rc=$?
-      # Graceful stop => exit 0 (handled by `wait` returning success). A non-zero
-      # here is one of: 130 = SIGINT fell back to KeyboardInterrupt (handler did
-      # not engage; data OK), or a real failure (137 hung-and-killed, 124, other).
+    # Capture the CHILD's real exit code. `wait "$pid" || rc=$?` puts wait on the
+    # left of `||`, so $? is the child's status -- unlike `if ! wait ...; then
+    # rc=$?`, where the `!` makes $? the negated condition (always 0 in the
+    # branch), silently losing the real code. `rc=0` first so a clean exit reads 0.
+    rc=0
+    wait "${pid}" || rc=$?
+    if [[ "${rc}" != "0" ]]; then
+      # 130 = SIGINT fell back to KeyboardInterrupt (handler did not engage; data
+      # OK), or a real failure (137 hung-and-killed, 124, other).
       # Treat 130 as a soft warning; everything else fails the batch.
       if [[ "${rc}" == "130" ]]; then
         echo "    !! pid=${pid} exited 130 (graceful handler did not engage; data OK)" >&2
@@ -93,21 +103,48 @@ for bk in "${BACKENDS[@]}"; do
     fi
   done
   echo "    backend=${bk} batch complete (fail=${fail})"
+  # A real child failure in this batch fails the whole sweep.
+  if [[ "${fail}" != "0" ]]; then
+    overall_rc=1
+  fi
   echo
 done
 
-echo "=== Phase B complete. Read results from ${RESULTS_COSMOS_DATABASE}/${RESULTS_COSMOS_CONTAINER},"
-echo "    filtering workload_id LIKE 'leak-%-${STAMP}'. For each op, plot memory_bytes vs"
-echo "    elapsed_seconds: a flat line after warmup = no leak; a steady upward slope = a leak."
+echo "=== Phase B sweep complete. Automated leak verdict (no eyeballing) below;"
+echo "    raw rows are in ${RESULTS_COSMOS_DATABASE}/${RESULTS_COSMOS_CONTAINER}, workload_id LIKE 'leak-%-${STAMP}'."
+
+echo
+echo "=== Running automated leak verdict (Phase B) ==="
+# Replaces the old "plot memory_bytes vs elapsed_seconds and judge the slope by
+# eye" instruction. leak_verdict.py fits the final-plateau slope with a 95% CI
+# (so "flat" is statistical, not visual), cross-checks with a robust Theil-Sen
+# slope, detects staircase steps, and enforces backend provenance. Informational
+# at the sweep level (a WATCH/STAIRCASE op is a finding, not a harness failure),
+# but it exits non-zero on a provenance violation so a mislabeled run is loud.
+if python3 leak_verdict.py --stamp "${STAMP}" --prefix "leak-"; then
+  echo "=== leak verdict provenance gate PASSED ==="
+else
+  echo "!! leak verdict provenance gate FAILED -- explain the flagged rows before trusting the verdict." >&2
+  overall_rc=1
+fi
 
 echo
 echo "=== Running post-run integrity gate (Phase B) ==="
 # Close the gap that only Phase A used to gate: prove no reporting window was
 # dropped (a dropped BAD window could hide a leak step) and that every "rust" row
-# actually ran on Rust (binding_calls provenance, --prefix leak-). Informational;
-# it never aborts the soak.
+# actually ran on Rust (binding_calls provenance, --prefix leak-). A failure here
+# fails the sweep so a mislabeled/incomplete run cannot pass unnoticed.
 if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "leak-"; then
   echo "=== integrity gate PASSED ==="
 else
   echo "!! integrity gate FAILED -- inspect the rows/logs above before trusting the leak verdict." >&2
+  overall_rc=1
 fi
+
+echo
+if [[ "${overall_rc}" != "0" ]]; then
+  echo "=== Phase B FAILED (a child process failed or a provenance/integrity gate failed); exit ${overall_rc}. ===" >&2
+else
+  echo "=== Phase B OK (all batches clean, all gates passed). ==="
+fi
+exit "${overall_rc}"

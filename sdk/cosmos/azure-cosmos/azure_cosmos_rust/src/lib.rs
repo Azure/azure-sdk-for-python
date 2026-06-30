@@ -135,6 +135,12 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     // every operation, so the perf harness can prove the Rust path actually ran
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.
     m.add_function(wrap_pyfunction!(wire::operation_count, m)?)?;
+    // Typed transport error the Python backend maps to azure-core's
+    // ServiceResponseError (see wire::DriverTransportError).
+    m.add(
+        "DriverTransportError",
+        m.py().get_type_bound::<wire::DriverTransportError>(),
+    )?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     Ok(())
 }

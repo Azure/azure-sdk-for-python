@@ -92,6 +92,42 @@ _SEQUENCE_VALUED_OPTION_KEYS = frozenset({"preTriggerInclude", "postTriggerInclu
 # own wire-name branch in ``flatten_options_to_headers``.)
 _TRUTHY_GATED_OPTION_KEYS = frozenset({"indexingDirective", "throughputBucket"})
 
+# Option-keys that ``flatten_options_to_headers`` hands to the binding as their
+# raw camelCase form, expecting the RUST fast path to translate them to the
+# ``x-ms-*`` wire header (or lift them to a typed driver field). This is the
+# shared vocabulary of the header/option mapping that is split across two
+# languages: this module owns truthy-gating and a handful of translations, while
+# ``extract_op_modifiers`` (azure_cosmos_rust/src/wire.rs) owns the camelCase ->
+# ``x-ms-`` table and the typed-field lifting.
+#
+# WHY THIS MATTERS (the landmine): the Rust match ends in ``_ => continue``, so
+# any option-key Python emits that Rust does not recognise is SILENTLY DROPPED --
+# no error, wrong wire bytes, green tests. Adding a knob on the Python side alone
+# would therefore quietly no-op on the fast path. Two guards defend this:
+#   1. ``test_rust_option_key_parity`` enforces that every key below has a matching
+#      arm in ``wire.rs`` (and vice versa), turning contract drift into a loud test
+#      failure. This relies on the new key being added to *this* set.
+#   2. The Rust ``COSMOS_WIRE_STRICT=1`` runtime gate (extract_op_modifiers in
+#      wire.rs) hard-errors on any unrecognised, non-allowlisted key that actually
+#      reaches the binding -- catching a key that drifted into
+#      ``flatten_options_to_headers`` / ``COMMON_OPTIONS`` even when this set was
+#      not updated. Off by default (production keeps the lenient silent drop, zero
+#      behavior change); set it in tests/CI.
+# Keep this set, the Rust ``extract_op_modifiers`` arms, and the parity test in
+# lockstep.
+RUST_HANDLED_OPTION_KEYS = frozenset({
+    "preTriggerInclude",
+    "postTriggerInclude",
+    "indexingDirective",
+    "priorityLevel",
+    "throughputBucket",
+    "containerRID",
+    "maxIntegratedCacheStaleness",
+    "responsePayloadOnWriteDisabled",
+    "excludedLocations",
+    "sessionToken",
+})
+
 
 def _normalize_option_value(option_key: str, value: Any) -> Any:
     """Return the wire-ready value for one option-key / value pair.
@@ -314,6 +350,11 @@ def build_create_item_prepared(
         body_bytes=body_bytes,
         partition_key_header=partition_key_header,
         headers=headers,
+        # Pass the id Python already resolved so the binding does not re-parse the
+        # whole (possibly large) body just to read one field. Only a non-empty
+        # string id qualifies; "" / non-string is left unset so the binding's
+        # body-parse fallback reproduces the existing missing/non-string-id error.
+        item_id=item_id if isinstance(item_id, str) and item_id else None,
     )
     return prepared, item_id
 
@@ -575,6 +616,19 @@ def _build_write_with_body_prepared(
 
     partition_key_header = serialize_partition_key_to_wire(partition_key_value)
     body_bytes = serialize_body_to_bytes(body)
+
+    # Upsert (item_id is None) derives the wire id from the body. Python already
+    # holds the document dict, so pass the body's id through on
+    # PreparedRequest.item_id and let the binding skip re-parsing the whole
+    # (possibly large) body just to read one field. Only a non-empty string id
+    # qualifies; anything else is left unset so the binding's body-parse fallback
+    # reproduces the existing missing/non-string-id error. Replace passes an
+    # explicit item_id (the URL target) and is left untouched -- its id must come
+    # from the `item` argument, never the body.
+    if item_id is None:
+        body_id = body.get("id")
+        if isinstance(body_id, str) and body_id:
+            item_id = body_id
 
     # Build the wire-headers map from the options dict (shared across all
     # point operations -- see ``flatten_options_to_headers``). That helper

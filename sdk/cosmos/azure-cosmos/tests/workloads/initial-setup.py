@@ -1,16 +1,24 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+import asyncio
 import os
+from datetime import datetime
 
 from azure.cosmos import PartitionKey, ThroughputProperties
-from workload_utils import create_logger, create_random_item
-from workload_configs import COSMOS_URI, COSMOS_KEY, PREFERRED_LOCATIONS, COSMOS_CONTAINER, COSMOS_DATABASE, \
-    NUMBER_OF_LOGICAL_PARTITIONS, PARTITION_KEY, THROUGHPUT
-
 from azure.cosmos.aio import CosmosClient as AsyncClient
-import asyncio
 
-from datetime import datetime
+from workload_configs import (
+    COSMOS_CONTAINER,
+    COSMOS_DATABASE,
+    COSMOS_KEY,
+    COSMOS_URI,
+    NUMBER_OF_LOGICAL_PARTITIONS,
+    PARTITION_KEY,
+    PREFERRED_LOCATIONS,
+    THROUGHPUT,
+)
+from workload_utils import create_logger, create_random_item
+
 
 async def write_item_concurrently_initial(container, num_upserts):
     tasks = []

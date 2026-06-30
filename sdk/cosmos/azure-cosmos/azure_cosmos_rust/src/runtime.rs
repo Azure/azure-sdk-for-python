@@ -26,9 +26,9 @@ use azure_data_cosmos_driver::{
     driver::{CosmosDriver, CosmosDriverRuntime},
     models::AccountReference,
     options::{
-        AvailabilityStrategy, DriverOptions, ExcludedRegions, HedgeThreshold, HedgingStrategy,
-        OperationOptions, OperationOptionsBuilder, ReadConsistencyStrategy, Region,
-        ThrottlingRetryOptionsBuilder, UserAgentSuffix,
+        AvailabilityStrategy, ConnectionPoolOptions, DriverOptions, ExcludedRegions,
+        HedgeThreshold, HedgingStrategy, OperationOptions, OperationOptionsBuilder,
+        ReadConsistencyStrategy, Region, ThrottlingRetryOptionsBuilder, UserAgentSuffix,
     },
 };
 use tokio::runtime::Runtime as TokioRuntime;
@@ -47,6 +47,7 @@ use crate::credential::PyTokenCredential;
 pub(crate) struct RuntimeContext {
     pub(crate) tokio_rt: TokioRuntime,
     pub(crate) driver_runtime: Arc<CosmosDriverRuntime>,
+    proxy_allowed: Option<bool>,
 }
 
 /// One cached driver plus a count of how many live clients use it.
@@ -154,6 +155,22 @@ fn compose_cache_key(endpoint: &str, credential_fp: &str, config_fp: &str) -> St
     format!("{endpoint}\u{1f}{credential_fp}\u{1f}{config_fp}")
 }
 
+/// The runtime is process-global, so `proxy_allowed` can only be set once.
+/// A later explicit request that differs from the initialized value is a conflict.
+///
+/// The winner is whichever client wins the `OnceLock` `get_or_init` race -- NOT
+/// "the first client in source order". Under concurrent client construction with
+/// differing `proxy_allowed`, which value initializes the process runtime is
+/// nondeterministic and the loser gets a hard error. The contract is therefore
+/// "set `proxy_allowed` to the same value on every Rust client", not "set it on
+/// the first one".
+fn proxy_allowed_conflicts(initialized: Option<bool>, requested: Option<bool>) -> bool {
+    match requested {
+        Some(value) => initialized != Some(value),
+        None => false,
+    }
+}
+
 // Keep init errors too, so every later caller sees the same failure reason.
 static RUNTIME_CONTEXT: OnceLock<Result<RuntimeContext, String>> = OnceLock::new();
 static DRIVERS: OnceLock<RwLock<HashMap<String, DriverEntry>>> = OnceLock::new();
@@ -162,22 +179,51 @@ pub(crate) fn drivers() -> &'static RwLock<HashMap<String, DriverEntry>> {
     DRIVERS.get_or_init(|| RwLock::new(HashMap::new()))
 }
 
-fn runtime_context(py: Python<'_>) -> PyResult<&'static RuntimeContext> {
+fn runtime_context(
+    py: Python<'_>,
+    requested_proxy_allowed: Option<bool>,
+) -> PyResult<&'static RuntimeContext> {
     let ctx_or_error = RUNTIME_CONTEXT.get_or_init(|| {
         py.allow_threads(|| {
             let tokio_rt =
                 TokioRuntime::new().map_err(|e| format!("failed to start tokio runtime: {e}"))?;
+            let mut runtime_builder = CosmosDriverRuntime::builder();
+            if let Some(proxy_allowed) = requested_proxy_allowed {
+                let connection_pool = ConnectionPoolOptions::builder()
+                    .with_proxy_allowed(proxy_allowed)
+                    .build()
+                    .map_err(|e| format!("invalid connection pool options: {e}"))?;
+                runtime_builder = runtime_builder.with_connection_pool(connection_pool);
+            }
             let driver_runtime = tokio_rt
-                .block_on(async { CosmosDriverRuntime::builder().build().await })
+                .block_on(async { runtime_builder.build().await })
                 .map_err(|e| format!("driver runtime build failed: {e}"))?;
             Ok(RuntimeContext {
                 tokio_rt,
                 driver_runtime,
+                proxy_allowed: requested_proxy_allowed,
             })
         })
     });
     match ctx_or_error {
-        Ok(ctx) => Ok(ctx),
+        Ok(ctx) => {
+            if proxy_allowed_conflicts(ctx.proxy_allowed, requested_proxy_allowed) {
+                let initialized = match ctx.proxy_allowed {
+                    Some(true) => "true",
+                    Some(false) => "false",
+                    None => "unset",
+                };
+                let requested = match requested_proxy_allowed {
+                    Some(true) => "true",
+                    Some(false) => "false",
+                    None => "unset",
+                };
+                return Err(PyValueError::new_err(format!(
+                    "Rust runtime proxy configuration is process-global and was already initialized with proxy_allowed={initialized}; cannot honor proxy_allowed={requested} for this client. The process-global runtime adopts the proxy_allowed of whichever client initializes it first -- a race under concurrent construction, not source order -- so set proxy_allowed to the same value on every Rust CosmosClient in the process."
+                )));
+            }
+            Ok(ctx)
+        }
         Err(message) => Err(PyRuntimeError::new_err(message.clone())),
     }
 }
@@ -199,8 +245,9 @@ pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static Runtim
 // A call with the same endpoint, credential, and config returns the same handle and
 // adds one reference to the shared driver; any difference builds a new driver. The
 // optional `config` is a Python `PreparedClientConfig` of construction settings the
-// driver honors -- preferred_locations plus account-level operation options
-// (excluded locations, throttle-retry caps, hedging threshold, consistency level).
+// driver honors -- preferred_locations, runtime proxy allowance, plus account-level
+// operation options (excluded locations, throttle-retry caps, hedging threshold,
+// consistency level).
 // They apply when the driver for this key is first built; later clients with the
 // same key share it.
 
@@ -216,16 +263,15 @@ pub(crate) fn init_client(
     let endpoint_url = Url::parse(endpoint)
         .map_err(|e| PyValueError::new_err(format!("invalid endpoint URL: {e}")))?;
 
-    let runtime_ctx = runtime_context(py)?;
+    let requested_proxy_allowed = proxy_allowed_from_config(config)?;
+    let runtime_ctx = runtime_context(py, requested_proxy_allowed)?;
 
     // Fingerprint the credential first so it joins the key: a different credential
     // must not reuse another's driver. Reading a token credential's identity or
     // hashing the master key exposes no secret. Erroring when neither is given stops
     // a credential-less call before it builds a driver.
     let credential_fp = match credential {
-        Some(token_credential) => {
-            token_credential_fingerprint(token_credential.as_ptr() as usize)
-        }
+        Some(token_credential) => token_credential_fingerprint(token_credential.as_ptr() as usize),
         None => {
             let key = master_key.ok_or_else(|| {
                 PyValueError::new_err(
@@ -355,6 +401,15 @@ pub(crate) fn init_client(
     Ok(handle)
 }
 
+/// Read the optional `proxy_allowed` runtime switch from the prepared config.
+/// Missing attribute or `None` means "unset" (use runtime env/default behavior).
+fn proxy_allowed_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<Option<bool>> {
+    match config {
+        Some(client_config) => get_config_opt::<bool>(client_config, "proxy_allowed"),
+        None => Ok(None),
+    }
+}
+
 /// Read the optional `preferred_locations` off the prepared client config and
 /// turn each region name into a driver `Region` for preferred-region routing.
 ///
@@ -391,9 +446,7 @@ fn preferred_regions_from_config(config: &Bound<'_, PyAny>) -> PyResult<Vec<Regi
 /// fails that check is a hard error rather than a silent drop. `try_new` (not `new`)
 /// is used so an invalid value returns a `ValueError` instead of panicking across the
 /// FFI boundary.
-fn user_agent_suffix_from_config(
-    config: &Bound<'_, PyAny>,
-) -> PyResult<Option<UserAgentSuffix>> {
+fn user_agent_suffix_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<UserAgentSuffix>> {
     let suffix = match get_config_opt::<String>(config, "user_agent_suffix")? {
         Some(suffix) => suffix,
         None => return Ok(None),
@@ -422,9 +475,7 @@ fn user_agent_suffix_from_config(
 /// driver keeps its defaults. Each field is read defensively: a missing
 /// attribute or a Python `None` is "unset" rather than an error, so the binding
 /// stays compatible with older/newer `PreparedClientConfig` shapes.
-fn operation_options_from_config(
-    config: &Bound<'_, PyAny>,
-) -> PyResult<Option<OperationOptions>> {
+fn operation_options_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<OperationOptions>> {
     let mut builder = OperationOptionsBuilder::new();
     let mut any_set = false;
 
@@ -563,7 +614,7 @@ pub(crate) fn close_client(handle: &str) -> PyResult<()> {
 mod tests {
     use super::{
         apply_close, compose_cache_key, config_fingerprint_from_repr, master_key_fingerprint,
-        read_consistency_from_str, token_credential_fingerprint,
+        proxy_allowed_conflicts, read_consistency_from_str, token_credential_fingerprint,
     };
     use azure_data_cosmos_driver::options::ReadConsistencyStrategy;
 
@@ -622,6 +673,15 @@ mod tests {
         assert_eq!(read_consistency_from_str(""), None);
     }
 
+    #[test]
+    fn proxy_allowed_conflicts_only_when_later_call_is_explicit_and_differs() {
+        assert!(!proxy_allowed_conflicts(None, None));
+        assert!(!proxy_allowed_conflicts(Some(true), None));
+        assert!(!proxy_allowed_conflicts(Some(true), Some(true)));
+        assert!(proxy_allowed_conflicts(Some(true), Some(false)));
+        assert!(proxy_allowed_conflicts(None, Some(true)));
+    }
+
     // ---- Cache-key / credential-fingerprint isolation -------------------------
     //
     // The cache is keyed by (endpoint, credential). These tests pin the security
@@ -634,14 +694,20 @@ mod tests {
     fn master_key_fingerprint_is_stable_for_equal_keys() {
         // Same key string -> same fingerprint within the process, so two clients
         // with the same master key share one driver.
-        assert_eq!(master_key_fingerprint("secret-key"), master_key_fingerprint("secret-key"));
+        assert_eq!(
+            master_key_fingerprint("secret-key"),
+            master_key_fingerprint("secret-key")
+        );
     }
 
     #[test]
     fn master_key_fingerprint_differs_for_different_keys() {
         // Different keys -> different fingerprints, so a different credential is a
         // cache miss and gets its own driver instead of reusing another's auth.
-        assert_ne!(master_key_fingerprint("key-a"), master_key_fingerprint("key-b"));
+        assert_ne!(
+            master_key_fingerprint("key-a"),
+            master_key_fingerprint("key-b")
+        );
     }
 
     #[test]
@@ -669,8 +735,14 @@ mod tests {
     fn token_credential_fingerprint_tracks_object_identity() {
         // The same object identity (address) fingerprints equally (shared driver);
         // a different identity fingerprints differently (its own driver).
-        assert_eq!(token_credential_fingerprint(0x1000), token_credential_fingerprint(0x1000));
-        assert_ne!(token_credential_fingerprint(0x1000), token_credential_fingerprint(0x2000));
+        assert_eq!(
+            token_credential_fingerprint(0x1000),
+            token_credential_fingerprint(0x1000)
+        );
+        assert_ne!(
+            token_credential_fingerprint(0x1000),
+            token_credential_fingerprint(0x2000)
+        );
     }
 
     #[test]
@@ -679,11 +751,20 @@ mod tests {
         // fingerprint differently (its own driver); absent config is a fixed value.
         let a = "PreparedClientConfig(preferred_locations=('West US',))";
         let b = "PreparedClientConfig(preferred_locations=('East US',))";
-        assert_eq!(config_fingerprint_from_repr(Some(a)), config_fingerprint_from_repr(Some(a)));
-        assert_ne!(config_fingerprint_from_repr(Some(a)), config_fingerprint_from_repr(Some(b)));
+        assert_eq!(
+            config_fingerprint_from_repr(Some(a)),
+            config_fingerprint_from_repr(Some(a))
+        );
+        assert_ne!(
+            config_fingerprint_from_repr(Some(a)),
+            config_fingerprint_from_repr(Some(b))
+        );
         assert_eq!(config_fingerprint_from_repr(None), "cfg:none");
         // A present config never collides with the no-config sentinel.
-        assert_ne!(config_fingerprint_from_repr(Some(a)), config_fingerprint_from_repr(None));
+        assert_ne!(
+            config_fingerprint_from_repr(Some(a)),
+            config_fingerprint_from_repr(None)
+        );
     }
 
     #[test]
@@ -743,4 +824,3 @@ mod tests {
         );
     }
 }
-

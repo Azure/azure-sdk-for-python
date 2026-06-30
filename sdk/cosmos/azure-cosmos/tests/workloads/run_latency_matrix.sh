@@ -77,7 +77,7 @@ for (( r=1; r<=REPEATS; r++ )); do
         timeout --signal=INT --kill-after=120s --preserve-status "${DURATION_SECONDS}s" \
           python3 workload.py >"${log}" 2>&1 || rc=$?
       rc="${rc:-0}"
-      # Exit classification (methodology flag #3 -- no ambiguous pass).
+      # Exit classification (no ambiguous pass).
       # workload.py installs an asyncio SIGINT/SIGTERM handler that sets a stop
       # event; the load loop polls it between waves and exits NORMALLY, so the
       # client closes cleanly and the process returns 0. With --preserve-status
@@ -108,12 +108,10 @@ echo
 echo "=== Phase A complete. Read results from ${RESULTS_COSMOS_DATABASE}/${RESULTS_COSMOS_CONTAINER},"
 echo "    filtering workload_id LIKE 'lat-%-${STAMP}' and dropping warmup rows (elapsed_seconds > 600)."
 echo
-# Integrity gate (methodology flags #2 and #4): refuse a silent "looks good".
-# Before anyone reads a percentile, prove every cell did real, low-error work on
-# both backends (check 0), that no reporting window was dropped (check 1), and
-# that the reporter logged no failed writes (check 2). Non-zero exit => a hole
-# the analyst must see. It never aborts the matrix (we are already done here);
-# it just prints PASS/FAIL so an unattended run cannot pass unnoticed.
+# Integrity gate: before anyone reads a percentile, prove every cell did real,
+# low-error work on both backends, that no reporting window was dropped, and that
+# the reporter logged no failed writes. It never aborts the matrix; it just prints
+# PASS/FAIL so an unattended run cannot pass unnoticed.
 echo "=== Running post-run integrity gate ==="
 if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "lat-"; then
   echo "=== integrity gate PASSED ==="
