@@ -8,9 +8,9 @@
   - Model `ConnectionMonitorTest` added property `system_data`
   - Enum `ConnectionState` added member `EXTERNAL_BLOCKER`
   - Enum `DirectPeeringType` added member `PEER_PROP`
-  - Model `ErrorDetail` added property `target`
-  - Model `ErrorDetail` added property `details`
   - Model `ErrorDetail` added property `additional_info`
+  - Model `ErrorDetail` added property `details`
+  - Model `ErrorDetail` added property `target`
   - Model `Operation` added property `properties`
   - Model `PeerAsn` added property `properties`
   - Model `PeerAsn` added property `system_data`
@@ -56,59 +56,59 @@
 
 ### Breaking Changes
 
-  - Model `CdnPeeringPrefix` deleted or renamed its instance variable `prefix`
   - Model `CdnPeeringPrefix` deleted or renamed its instance variable `azure_region`
   - Model `CdnPeeringPrefix` deleted or renamed its instance variable `azure_service`
-  - Model `CdnPeeringPrefix` deleted or renamed its instance variable `is_primary_region`
   - Model `CdnPeeringPrefix` deleted or renamed its instance variable `bgp_community`
-  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `source_agent`
+  - Model `CdnPeeringPrefix` deleted or renamed its instance variable `is_primary_region`
+  - Model `CdnPeeringPrefix` deleted or renamed its instance variable `prefix`
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `destination`
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `destination_port`
-  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `test_frequency_in_sec`
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `is_test_successful`
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `path`
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `provisioning_state`
+  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `source_agent`
+  - Model `ConnectionMonitorTest` deleted or renamed its instance variable `test_frequency_in_sec`
   - Model `Operation` deleted or renamed its instance variable `service_specification`
+  - Model `PeerAsn` deleted or renamed its instance variable `error_message`
   - Model `PeerAsn` deleted or renamed its instance variable `peer_asn`
   - Model `PeerAsn` deleted or renamed its instance variable `peer_contact_detail`
   - Model `PeerAsn` deleted or renamed its instance variable `peer_name`
   - Model `PeerAsn` deleted or renamed its instance variable `validation_state`
-  - Model `PeerAsn` deleted or renamed its instance variable `error_message`
   - Model `Peering` deleted or renamed its instance variable `direct`
   - Model `Peering` deleted or renamed its instance variable `exchange`
   - Model `Peering` deleted or renamed its instance variable `peering_location`
   - Model `Peering` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringLocation` deleted or renamed its instance variable `azure_region`
+  - Model `PeeringLocation` deleted or renamed its instance variable `country`
   - Model `PeeringLocation` deleted or renamed its instance variable `direct`
   - Model `PeeringLocation` deleted or renamed its instance variable `exchange`
   - Model `PeeringLocation` deleted or renamed its instance variable `peering_location`
-  - Model `PeeringLocation` deleted or renamed its instance variable `country`
-  - Model `PeeringLocation` deleted or renamed its instance variable `azure_region`
   - Model `PeeringRegisteredAsn` deleted or renamed its instance variable `asn`
   - Model `PeeringRegisteredAsn` deleted or renamed its instance variable `peering_service_prefix_key`
   - Model `PeeringRegisteredAsn` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `error_message`
+  - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `peering_service_prefix_key`
   - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `prefix`
   - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `prefix_validation_state`
-  - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `peering_service_prefix_key`
-  - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `error_message`
   - Model `PeeringRegisteredPrefix` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringService` deleted or renamed its instance variable `log_analytics_workspace_properties`
   - Model `PeeringService` deleted or renamed its instance variable `peering_service_location`
   - Model `PeeringService` deleted or renamed its instance variable `peering_service_provider`
-  - Model `PeeringService` deleted or renamed its instance variable `provisioning_state`
-  - Model `PeeringService` deleted or renamed its instance variable `provider_primary_peering_location`
   - Model `PeeringService` deleted or renamed its instance variable `provider_backup_peering_location`
-  - Model `PeeringService` deleted or renamed its instance variable `log_analytics_workspace_properties`
+  - Model `PeeringService` deleted or renamed its instance variable `provider_primary_peering_location`
+  - Model `PeeringService` deleted or renamed its instance variable `provisioning_state`
+  - Model `PeeringServiceLocation` deleted or renamed its instance variable `azure_region`
   - Model `PeeringServiceLocation` deleted or renamed its instance variable `country`
   - Model `PeeringServiceLocation` deleted or renamed its instance variable `state`
-  - Model `PeeringServiceLocation` deleted or renamed its instance variable `azure_region`
-  - Model `PeeringServicePrefix` deleted or renamed its instance variable `prefix`
-  - Model `PeeringServicePrefix` deleted or renamed its instance variable `prefix_validation_state`
-  - Model `PeeringServicePrefix` deleted or renamed its instance variable `learned_type`
   - Model `PeeringServicePrefix` deleted or renamed its instance variable `error_message`
   - Model `PeeringServicePrefix` deleted or renamed its instance variable `events`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `learned_type`
   - Model `PeeringServicePrefix` deleted or renamed its instance variable `peering_service_prefix_key`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `prefix`
+  - Model `PeeringServicePrefix` deleted or renamed its instance variable `prefix_validation_state`
   - Model `PeeringServicePrefix` deleted or renamed its instance variable `provisioning_state`
-  - Model `PeeringServiceProvider` deleted or renamed its instance variable `service_provider_name`
   - Model `PeeringServiceProvider` deleted or renamed its instance variable `peering_locations`
+  - Model `PeeringServiceProvider` deleted or renamed its instance variable `service_provider_name`
   - Deleted or renamed model `CdnPeeringPrefixListResult`
   - Deleted or renamed model `ConnectionMonitorTestListResult`
   - Deleted or renamed model `OperationListResult`
@@ -125,22 +125,22 @@
   - Deleted or renamed model `PeeringServiceProviderListResult`
   - Deleted or renamed model `RpUnbilledPrefixListResult`
   - Method `CdnPeeringPrefixesOperations.list` changed its parameter `peering_location` from `positional_or_keyword` to `keyword_only`
-  - Method `LegacyPeeringsOperations.list` changed its parameter `peering_location` from `positional_or_keyword` to `keyword_only`
-  - Method `LegacyPeeringsOperations.list` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
   - Method `LegacyPeeringsOperations.list` changed its parameter `asn` from `positional_or_keyword` to `keyword_only`
   - Method `LegacyPeeringsOperations.list` changed its parameter `direct_peering_type` from `positional_or_keyword` to `keyword_only`
+  - Method `LegacyPeeringsOperations.list` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
+  - Method `LegacyPeeringsOperations.list` changed its parameter `peering_location` from `positional_or_keyword` to `keyword_only`
   - Method `LookingGlassOperations.invoke` changed its parameter `command` from `positional_or_keyword` to `keyword_only`
-  - Method `LookingGlassOperations.invoke` changed its parameter `source_type` from `positional_or_keyword` to `keyword_only`
-  - Method `LookingGlassOperations.invoke` changed its parameter `source_location` from `positional_or_keyword` to `keyword_only`
   - Method `LookingGlassOperations.invoke` changed its parameter `destination_ip` from `positional_or_keyword` to `keyword_only`
-  - Method `PeeringLocationsOperations.list` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
+  - Method `LookingGlassOperations.invoke` changed its parameter `source_location` from `positional_or_keyword` to `keyword_only`
+  - Method `LookingGlassOperations.invoke` changed its parameter `source_type` from `positional_or_keyword` to `keyword_only`
   - Method `PeeringLocationsOperations.list` changed its parameter `direct_peering_type` from `positional_or_keyword` to `keyword_only`
+  - Method `PeeringLocationsOperations.list` changed its parameter `kind` from `positional_or_keyword` to `keyword_only`
   - Method `PeeringServiceLocationsOperations.list` changed its parameter `country` from `positional_or_keyword` to `keyword_only`
   - Method `PrefixesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `PrefixesOperations.list_by_peering_service` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `prefix` from `positional_or_keyword` to `keyword_only`
   - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `as_path` from `positional_or_keyword` to `keyword_only`
   - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `origin_as_validation_state` from `positional_or_keyword` to `keyword_only`
+  - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `prefix` from `positional_or_keyword` to `keyword_only`
   - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `rpki_validation_state` from `positional_or_keyword` to `keyword_only`
   - Method `ReceivedRoutesOperations.list_by_peering` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `RpUnbilledPrefixesOperations.list` changed its parameter `consolidate` from `positional_or_keyword` to `keyword_only`
