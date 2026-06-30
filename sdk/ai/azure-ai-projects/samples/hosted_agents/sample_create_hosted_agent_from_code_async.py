@@ -65,7 +65,7 @@ async def main() -> None:
     subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
     use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "true").strip().lower() == "true"
 
-    dependency_resolution, code_zip_bytes = select_echo_agent_code_zip(use_remote_build)
+    dependency_resolution, code_zip_stream = select_echo_agent_code_zip(use_remote_build)
 
     async with (
         DefaultAzureCredential() as credential,
@@ -84,7 +84,7 @@ async def main() -> None:
                 ),
                 protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
             ),
-            code=code_zip_bytes,
+            code=code_zip_stream,
         )
         print(f"Created code-based hosted agent version: {created.version}")
 

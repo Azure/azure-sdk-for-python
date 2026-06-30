@@ -127,28 +127,29 @@ def main() -> None:
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
 
         zip_filename = "hosted-toolbox-agent.zip"
-        zip_bytes, _, _ = zip(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
+        _, _, zip_path = zip(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
 
-        created = project_client.agents.create_version_from_code(
-            agent_name=agent_name,
-            description="Hosted agent code for toolbox MCP skills with shipping-cost skill.",
-            definition=HostedAgentDefinition(
-                cpu="0.5",
-                memory="1Gi",
-                code_configuration=CodeConfiguration(
-                    runtime="python_3_14",
-                    entry_point=["python", "main.py"],
-                    dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+        with zip_path.open("rb") as code_stream:
+            created = project_client.agents.create_version_from_code(
+                agent_name=agent_name,
+                description="Hosted agent code for toolbox MCP skills with shipping-cost skill.",
+                definition=HostedAgentDefinition(
+                    cpu="0.5",
+                    memory="1Gi",
+                    code_configuration=CodeConfiguration(
+                        runtime="python_3_14",
+                        entry_point=["python", "main.py"],
+                        dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+                    ),
+                    environment_variables={
+                        "FOUNDRY_PROJECT_ENDPOINT": endpoint,
+                        "FOUNDRY_MODEL_NAME": model_name,
+                        "MCP_SERVER_URL": toolbox_mcp_url,
+                    },
+                    protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
                 ),
-                environment_variables={
-                    "FOUNDRY_PROJECT_ENDPOINT": endpoint,
-                    "FOUNDRY_MODEL_NAME": model_name,
-                    "MCP_SERVER_URL": toolbox_mcp_url,
-                },
-                protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
-            ),
-            code=zip_bytes,
-        )
+                code=code_stream,
+            )
         print(f"Created hosted agent version: {created.version}")
 
         wait_for_agent_version_active(

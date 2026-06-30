@@ -240,7 +240,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         agent_name: str,
         *,
         definition: _models.HostedAgentDefinition,
-        code: Union[bytes, IO[bytes]],
+        code: IO[bytes],
         code_zip_sha256: Optional[str] = None,
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -263,8 +263,10 @@ class AgentsOperations(GeneratedAgentsOperations):
         :keyword definition: The hosted agent definition including code_configuration (runtime,
          entry_point), cpu, memory, and protocol_versions. Required.
         :paramtype definition: ~azure.ai.projects.models.HostedAgentDefinition
-        :keyword code: The code zip file (max 250 MB). Required.
-        :paramtype code: Union[bytes, IO[bytes]]
+        :keyword code: The code zip file stream (max 250 MB). Required. The stream must
+         expose a ``name`` attribute (for example, a stream returned by
+         :meth:`pathlib.Path.open`) and that name must end with ``.zip``.
+        :paramtype code: IO[bytes]
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
          detection (dedup) and integrity verification. If not provided, it will be calculated
          automatically from the code content. Default value is None.
@@ -285,10 +287,7 @@ class AgentsOperations(GeneratedAgentsOperations):
 
         # If code_zip_sha256 is not provided, calculate it from the code content
         if code_zip_sha256 is None:
-            if isinstance(code, bytes):
-                code_zip_sha256 = hashlib.sha256(code).hexdigest()
-            else:
-                code_zip_sha256 = _compute_sha256_from_stream(code)
+            code_zip_sha256 = _compute_sha256_from_stream(code)
 
         # Build content from expanded parameters using internal model classes
         metadata_obj = _models._models._CreateAgentVersionFromCodeMetadata(  # pylint: disable=protected-access
