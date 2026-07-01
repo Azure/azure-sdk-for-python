@@ -1,18 +1,12 @@
 # Release History
 
-## 1.0.0b55 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0b55 (2026-07-01)
 
 ### Bugs Fixed
 - Align GenAI main-agent span processor with upstream OpenTelemetry SDK (>= 1.43)
   immutable `BoundedAttributes` on span end, fixing a `TypeError` when writing
   `microsoft.gen_ai.main_agent.*` attributes in `on_end`
   ([#47796](https://github.com/Azure/azure-sdk-for-python/pull/47796))
-
-### Other Changes
 
 ## 1.0.0b54 (2026-06-30)
 
