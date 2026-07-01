@@ -43,9 +43,12 @@ class AgentsOperations(GeneratedAgentsOperations):
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
+        draft: Optional[bool] = None,
         **kwargs: Any,
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version.
+        """Create an agent version.
+
+        Creates a new version for the specified agent and returns the created version resource.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -71,17 +74,23 @@ class AgentsOperations(GeneratedAgentsOperations):
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
         :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
+        :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
+         release. The service defaults to ``false`` if a value is not specified by the caller. Draft
+         versions are recorded but excluded from default 'latest' resolution and are not auto-promoted.
+         Default value is None.
+        :paramtype draft: bool
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
 
     @overload
     async def create_version(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version.
+        """Create an agent version.
+
+        Creates a new version for the specified agent and returns the created version resource.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -99,13 +108,14 @@ class AgentsOperations(GeneratedAgentsOperations):
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
 
     @overload
     async def create_version(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version.
+        """Create an agent version.
+
+        Creates a new version for the specified agent and returns the created version resource.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -123,7 +133,6 @@ class AgentsOperations(GeneratedAgentsOperations):
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        ...
 
     @distributed_trace_async
     async def create_version(
@@ -135,9 +144,12 @@ class AgentsOperations(GeneratedAgentsOperations):
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
+        draft: Optional[bool] = None,
         **kwargs: Any,
     ) -> _models.AgentVersionDetails:
-        """Create a new agent version.
+        """Create an agent version.
+
+        Creates a new version for the specified agent and returns the created version resource.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
          retrieve/update/delete the agent.
@@ -162,6 +174,11 @@ class AgentsOperations(GeneratedAgentsOperations):
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
         :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
+        :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
+         release. The service defaults to ``false`` if a value is not specified by the caller. Draft
+         versions are recorded but excluded from default 'latest' resolution and are not auto-promoted.
+         Default value is None.
+        :paramtype draft: bool
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -183,6 +200,7 @@ class AgentsOperations(GeneratedAgentsOperations):
                 metadata=metadata,
                 description=description,
                 blueprint_reference=blueprint_reference,
+                draft=draft,
                 **kwargs,
             )
         except HttpResponseError as exc:
