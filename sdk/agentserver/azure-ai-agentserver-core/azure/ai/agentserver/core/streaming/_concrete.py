@@ -476,16 +476,24 @@ default; documented in Phase 1 PR per T028."""
 # directory or clobber a sibling stream.
 _SAFE_STREAM_ID_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 
+#: The reserved shape produced by the hash-encoding branch (``h_`` + 64 lowercase
+# hex). A verbatim id of this exact shape is NOT used verbatim — otherwise it
+# could alias the hash-encoding of a different, unsafe id — so it is itself
+# hash-encoded, keeping the verbatim and hashed namespaces disjoint.
+_HASHED_STREAM_ID_RE = re.compile(r"^h_[0-9a-f]{64}$")
+
 
 def _safe_stream_filename(stream_id: str) -> str:
     """Return a filesystem-safe ``<stem>.jsonl`` filename for a stream id.
 
-    Well-formed ids (``[A-Za-z0-9._-]`` with no ``.``/``..`` path segment) are
-    used verbatim for readability and cross-language compatibility. Any id
-    containing a path separator, a ``.``/``..`` segment, a NUL, or any other
-    filesystem-unsafe character is SHA-256 hash-encoded to an ``h_<hex>`` stem so
-    it can never traverse out of the storage directory or collide with a sibling
-    stream. Mirrors the .NET port's filename hardening.
+    Well-formed ids (``[A-Za-z0-9._-]`` with no ``.``/``..`` path segment, and
+    not already shaped like the reserved ``h_<64hex>`` hash stem) are used
+    verbatim for readability and cross-language compatibility. Any id containing
+    a path separator, a ``.``/``..`` segment, a NUL, any other filesystem-unsafe
+    character, OR the reserved ``h_<64hex>`` shape is SHA-256 hash-encoded to an
+    ``h_<hex>`` stem so it can never traverse out of the storage directory or
+    collide with a sibling stream (the verbatim and hashed namespaces stay
+    disjoint). Mirrors the .NET port's filename hardening.
 
     :param stream_id: The (possibly attacker-/user-controlled) stream id.
     :type stream_id: str
@@ -493,7 +501,12 @@ def _safe_stream_filename(stream_id: str) -> str:
     :rtype: str
     """
     segments = stream_id.split("/")
-    if _SAFE_STREAM_ID_RE.match(stream_id) and not any(seg in (".", "..") for seg in segments):
+    is_wellformed = (
+        _SAFE_STREAM_ID_RE.match(stream_id)
+        and not any(seg in (".", "..") for seg in segments)
+        and not _HASHED_STREAM_ID_RE.match(stream_id)
+    )
+    if is_wellformed:
         return f"{stream_id}.jsonl"
     digest = hashlib.sha256(stream_id.encode("utf-8")).hexdigest()
     return f"h_{digest}.jsonl"

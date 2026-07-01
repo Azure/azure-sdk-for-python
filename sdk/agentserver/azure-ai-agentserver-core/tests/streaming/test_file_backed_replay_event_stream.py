@@ -138,6 +138,21 @@ class TestSafeStreamFilename:
 
         assert _safe_stream_filename("../a") != _safe_stream_filename("../b")
 
+    def test_verbatim_hash_shaped_id_does_not_alias_hash_namespace(self) -> None:
+        """Spec 037 #4 — a well-formed id literally shaped like the reserved
+        ``h_<64hex>`` stem must NOT be used verbatim, or it would alias the
+        hash-encoding of a different unsafe id. It is itself hashed.
+        """
+        import hashlib
+
+        from azure.ai.agentserver.core.streaming._concrete import _safe_stream_filename
+
+        unsafe = "../evil"
+        collider = "h_" + hashlib.sha256(unsafe.encode("utf-8")).hexdigest()
+        # The collider looks well-formed but must be hash-encoded, so it does NOT
+        # land on the same file as the unsafe id's hash.
+        assert _safe_stream_filename(collider) != _safe_stream_filename(unsafe)
+
 
 # ----------------------------------------------------------------
 # Rule 28 — deterministic recovery

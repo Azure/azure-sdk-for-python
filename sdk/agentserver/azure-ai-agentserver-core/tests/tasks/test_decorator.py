@@ -104,6 +104,7 @@ class TestSpec037InputIdValidation:
     same charset/length pattern as ``task_id``.
     """
 
+    @pytest.mark.asyncio
     async def test_bad_input_id_rejected(self) -> None:
         @task(name="t")
         async def my_task(ctx: TaskContext[str]) -> int:  # pragma: no cover
@@ -112,6 +113,7 @@ class TestSpec037InputIdValidation:
         with pytest.raises(ValueError, match="input_id"):
             await my_task.start(task_id="t1", input="x", input_id="bad id with spaces")
 
+    @pytest.mark.asyncio
     async def test_valid_input_id_passes_validation(self) -> None:
         # A ``caresp_...``-style id (as the responses layer supplies) satisfies
         # the pattern; validation must not reject it. (No manager wired, so the

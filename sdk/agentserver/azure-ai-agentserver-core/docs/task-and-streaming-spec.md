@@ -3938,7 +3938,10 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   compatibility); ANY other id (containing a path separator, a `.`/`..`
   segment, a NUL, or any other filesystem-unsafe character) MUST be
   deterministically SHA-256 hash-encoded to an `h_<hex>` stem so it can
-  never escape `storage_dir` or collide with a sibling stream.
+  never escape `storage_dir` or collide with a sibling stream. A
+  well-formed id that itself matches the reserved `h_<64hex>` shape is
+  also hash-encoded, so the verbatim and hashed namespaces stay disjoint
+  (no verbatim id can alias another id's hash).
 - **C-STR-FBR-2.** Constructor MUST rehydrate from an existing
   file (crash-recovery friendly).
 - **C-STR-FBR-3.** Optional `serializer` / `deserializer` callbacks
