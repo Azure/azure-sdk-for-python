@@ -18,18 +18,18 @@ from azure.ai.agentserver.core import _platform_headers as _canonical
 
 _SHARED_CONSTANTS = [
     "APIM_REQUEST_ID",
-    "CHAT_ISOLATION_KEY",
     "CLIENT_HEADER_PREFIX",
     "CLIENT_REQUEST_ID",
     "ERROR_DETAIL",
     "ERROR_SOURCE",
+    "FOUNDRY_CALL_ID",
     "MAX_ERROR_DETAIL_LENGTH",
     "PLATFORM_ERROR_TAG",
     "REQUEST_ID",
     "SERVER_VERSION",
     "SESSION_ID",
     "TRACEPARENT",
-    "USER_ISOLATION_KEY",
+    "USER_ID",
 ]
 
 

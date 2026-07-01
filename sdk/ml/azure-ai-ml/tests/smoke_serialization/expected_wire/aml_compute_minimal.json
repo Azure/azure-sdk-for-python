@@ -1,0 +1,17 @@
+{
+  "properties": {
+    "computeType": "AmlCompute",
+    "disableLocalAuth": true,
+    "properties": {
+      "enableNodePublicIp": true,
+      "osType": "Linux",
+      "remoteLoginPortPublicAccess": "NotSpecified",
+      "scaleSettings": {
+        "maxNodeCount": 4,
+        "minNodeCount": 0,
+        "nodeIdleTimeBeforeScaleDown": "PT2M"
+      },
+      "vmSize": "STANDARD_DS3_V2"
+    }
+  }
+}

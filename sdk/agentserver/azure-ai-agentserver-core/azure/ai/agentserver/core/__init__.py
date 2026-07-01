@@ -11,11 +11,13 @@ Public API::
     from azure.ai.agentserver.core import (
         AgentConfig,
         AgentServerHost,
+        FoundryAgentRequestContext,
         configure_observability,
         create_error_response,
         detach_context,
         end_span,
         flush_spans,
+        get_request_context,
         record_error,
         read_request_id,
         set_current_span,
@@ -29,6 +31,12 @@ from ._base import AgentServerHost
 from ._config import AgentConfig
 from ._errors import create_error_response
 from ._middleware import InboundRequestLoggingMiddleware
+from ._request_context import (
+    FoundryAgentRequestContext,
+    get_request_context,
+    reset_request_context,
+    set_request_context,
+)
 from ._request_id import RequestIdMiddleware, read_request_id
 from ._server_version import build_server_version
 from ._tracing import (
@@ -46,6 +54,7 @@ __all__ = [
     "AgentConfig",
     "AgentServerHost",
     "InboundRequestLoggingMiddleware",
+    "FoundryAgentRequestContext",
     "RequestIdMiddleware",
     "build_server_version",
     "configure_observability",
@@ -53,9 +62,12 @@ __all__ = [
     "detach_context",
     "end_span",
     "flush_spans",
+    "get_request_context",
     "record_error",
     "read_request_id",
+    "reset_request_context",
     "set_current_span",
+    "set_request_context",
     "trace_stream",
 ]
 __version__ = VERSION

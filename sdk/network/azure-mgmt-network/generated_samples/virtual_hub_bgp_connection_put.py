@@ -42,12 +42,20 @@ def main():
                 },
                 "peerAsn": 20000,
                 "peerIp": "192.168.1.5",
+                "routingConfiguration": {
+                    "inboundRouteMap": {
+                        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/virtualHubs/hub1/routeMaps/routeMap1"
+                    },
+                    "outboundRouteMap": {
+                        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/virtualHubs/hub1/routeMaps/routeMap2"
+                    },
+                },
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/VirtualHubBgpConnectionPut.json
+# x-ms-original-file: 2025-07-01/VirtualHubBgpConnectionPut.json
 if __name__ == "__main__":
     main()

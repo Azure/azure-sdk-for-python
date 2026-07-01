@@ -1,17 +1,16 @@
 import pytest
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AcrDetails
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ArmResourceId as RestArmResourceId
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
-from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryProperties
-from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryRegionArmDetails as RestRegistryRegionArmDetails
-from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountDetails
-from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountType as RestStorageAccountType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SystemCreatedAcrAccount as RestSystemCreatedAcrAccount
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AcrDetails
+from azure.ai.ml._restclient.arm_ml_service.models import ArmResourceId as RestArmResourceId
+from azure.ai.ml._restclient.arm_ml_service.models import Registry as RestRegistry
+from azure.ai.ml._restclient.arm_ml_service.models import RegistryProperties
+from azure.ai.ml._restclient.arm_ml_service.models import RegistryRegionArmDetails as RestRegistryRegionArmDetails
+from azure.ai.ml._restclient.arm_ml_service.models import StorageAccountDetails
+from azure.ai.ml._restclient.arm_ml_service.models import StorageAccountType as RestStorageAccountType
+from azure.ai.ml._restclient.arm_ml_service.models import SystemCreatedAcrAccount as RestSystemCreatedAcrAccount
+from azure.ai.ml._restclient.arm_ml_service.models import (
     SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount
 from azure.ai.ml.constants._registry import StorageAccountType
 
 # from azure.ai.ml.entities._util import load_from_dict
@@ -45,6 +44,13 @@ storage_id_2 = (
 hns = False
 
 
+def _user_created_acr(resource_id):
+    """Build an arm_ml_service AcrDetails carrying a user-created ACR via its untyped wire field."""
+    acr = AcrDetails()
+    acr["userCreatedAcrAccount"] = {"armResourceId": {"resourceId": resource_id}}
+    return acr
+
+
 @pytest.mark.unittest
 @pytest.mark.production_experiences_test
 class TestRegistryEntity:
@@ -65,7 +71,6 @@ class TestRegistryEntity:
             name=name,
             id="registry id",
             properties=RegistryProperties(
-                tags=interior_tags,
                 public_network_access=pna,
                 discovery_url=discovery_url,
                 intellectual_property_publisher=ipp,
@@ -75,11 +80,7 @@ class TestRegistryEntity:
                     RestRegistryRegionArmDetails(
                         location=loc_2,
                         acr_details=[
-                            AcrDetails(
-                                user_created_acr_account=UserCreatedAcrAccount(
-                                    arm_resource_id=RestArmResourceId(resource_id=acr_id_1)
-                                )
-                            ),
+                            _user_created_acr(acr_id_1),
                             AcrDetails(
                                 system_created_acr_account=RestSystemCreatedAcrAccount(
                                     acr_account_sku=sku, arm_resource_id=RestArmResourceId(resource_id=acr_id_2)
@@ -165,7 +166,8 @@ class TestRegistryEntity:
         assert isinstance(rest_user_acr, AcrDetails)
         assert isinstance(rest_system_acr, AcrDetails)
 
-        assert rest_user_acr.user_created_acr_account.arm_resource_id.resource_id == "some user id"
+        # ``userCreatedAcrAccount`` is an untyped wire field on the arm_ml_service AcrDetails model.
+        assert rest_user_acr["userCreatedAcrAccount"]["armResourceId"]["resourceId"] == "some user id"
         # Ensure that arm_resource_id is never set by entity->rest converter.
         assert rest_system_acr.system_created_acr_account.arm_resource_id == None
         assert rest_system_acr.system_created_acr_account.acr_account_sku == "Premium"
@@ -185,7 +187,10 @@ class TestRegistryEntity:
         user_details = RegistryRegionDetails(storage_config=user_storage)
         rest_user_storage = user_details._storage_config_to_rest_object()
         assert len(rest_user_storage) == 1
-        assert rest_user_storage[0].user_created_storage_account.arm_resource_id.resource_id == "some user storage id"
+        # ``userCreatedStorageAccount`` is an untyped wire field on the arm_ml_service model.
+        assert (
+            rest_user_storage[0]["userCreatedStorageAccount"]["armResourceId"]["resourceId"] == "some user storage id"
+        )
         new_user_storage = RegistryRegionDetails._storage_config_from_rest_object(rest_user_storage)
         assert new_user_storage[0] == "some user storage id"
 
