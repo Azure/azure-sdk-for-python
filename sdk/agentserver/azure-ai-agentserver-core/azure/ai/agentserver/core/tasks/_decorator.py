@@ -1307,14 +1307,8 @@ class Task(Generic[Input, Output]):
 
 @overload
 def task(
-    fn: Callable[[TaskContext[Input]], Awaitable[Output]],
-) -> Task[Input, Output]: ...
-
-
-@overload
-def task(
     *,
-    name: str | None = ...,
+    name: str,
     title: str | None = ...,
     timeout: timedelta | None = ...,
     retry: RetryPolicy | None = ...,
@@ -1340,29 +1334,31 @@ def task(
     handle's ``.start`` / ``.run`` calls; the framework auto-generates
     a GUID and defaults ``input_id`` to ``task_id`` (1:1 invariant).
 
-    Can be used with or without arguments::
+    ``name`` is required — always use the parameterized form::
 
-        @task
+        @task(name="my-task")
         async def my_task(ctx: TaskContext[MyInput]) -> MyOutput: ...
 
-        @task(name="custom-name")
-        async def my_task(ctx: TaskContext[MyInput]) -> MyOutput: ...
-
-    :param fn: The async function to decorate (when used without parens).
+    :param fn: The async function to decorate (parameterized form only; the
+        bare ``@task`` form is rejected because it cannot supply a ``name``).
     :type fn: Callable[..., Any] | None
-    :keyword name: **Stable identity anchor.** Used for recovery routing and
-        source stamping. Defaults to ``fn.__qualname__``. Always provide an
-        explicit name for production tasks — if you rename the function later,
-        existing in-flight tasks are still recovered correctly because the
-        framework matches on this name, not the Python function name.
+    :keyword name: **Required stable identity anchor.** Used for recovery routing
+        and source stamping. There is no function-derived default: deriving it
+        from ``fn.__qualname__`` would silently rebind task identity whenever the
+        function is renamed or moved, orphaning in-flight tasks on the next
+        deploy. Omitting it (or passing whitespace) raises ``ValueError`` at
+        decoration.
     :keyword title: Static human-readable string.
     :keyword timeout: Per-turn, wall-clock, resilient, cooperative-only
-        execution budget. When the budget elapses for the current turn,
-        ``ctx.timeout_exceeded`` is set then ``ctx.cancel`` is set; the
-        handler decides whether to wind down. The watchdog does NOT
-        force-stop the handler. See the developer guide §4 Timeout for
-        the full mechanic (including the crash-mid-turn budget-preserving
-        recovery semantics).
+        execution budget. Defaults to 1 day when unset; a supplied value may
+        lower the budget but 1 day is a hard ceiling (a larger or negative value
+        raises ``ValueError`` at decoration). This caps a single handler
+        invocation only — it is NOT a task-lifetime bound. When the budget
+        elapses for the current turn, ``ctx.timeout_exceeded`` is set then
+        ``ctx.cancel`` is set; the handler decides whether to wind down. The
+        watchdog does NOT force-stop the handler. See the developer guide
+        §4 Timeout for the full mechanic (including the crash-mid-turn
+        budget-preserving recovery semantics).
     :keyword retry: Default retry policy for this task. Recovery-safe: applied
         by the framework on every entry, including crash recovery.
     :return: A ``Task[Input, Output]`` wrapper.
@@ -1715,14 +1711,8 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
 
 @overload
 def multi_turn_task(
-    fn: Callable[[TaskContext[Input]], Awaitable[Output]],
-) -> MultiTurnTask[Input, Output]: ...
-
-
-@overload
-def multi_turn_task(
     *,
-    name: str | None = ...,
+    name: str,
     title: str | None = ...,
     timeout: timedelta | None = ...,
     retry: RetryPolicy | None = ...,
@@ -1750,13 +1740,17 @@ def multi_turn_task(
         signal — there is no ``ctx.suspend``. The chain stays
         alive across handler raises.
 
-        :param fn: The handler to decorate when used without parentheses;
-            ``None`` in the parameterized form.
+        :param fn: The handler to decorate (parameterized form only; the bare
+            ``@multi_turn_task`` form is rejected because it cannot supply a
+            ``name``).
         :type fn: Callable[..., Any] | None
-        :keyword name: Stable chain-identity anchor.
+        :keyword name: **Required** stable chain-identity anchor (no
+            function-derived default; omitting it raises ``ValueError``).
         :keyword title: Static human-readable string. Callable-factory form is
             not supported.
-        :keyword timeout: Per-turn cooperative timeout.
+        :keyword timeout: Per-turn cooperative timeout. Defaults to 1 day when
+            unset; 1 day is a hard ceiling (larger/negative rejected at
+            decoration). This is a per-turn cap, not a chain-lifetime bound.
         :keyword retry: Default retry policy.
         :keyword steerable: When True, ``start()`` against an in-flight chain
             queues the new input instead of raising ``TaskConflictError``.
