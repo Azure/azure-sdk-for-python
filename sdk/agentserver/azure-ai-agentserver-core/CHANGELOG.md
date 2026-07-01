@@ -9,6 +9,7 @@
 
 ### Other Changes
 
+- File-backed replay streams now sanitize the stream id before using it as an on-disk filename: well-formed ids (`[A-Za-z0-9._-]`, no `.`/`..` segment) are used verbatim, and any id containing a path separator or other unsafe character is SHA-256 hash-encoded to an `h_<hex>` filename so it can never escape the storage directory or collide with another stream. The file-backed terminal sentinel is now written as `{"__terminal__": true}` (the non-durable `emit_time` field was dropped; close-time is best-effort on rehydration).
 - The per-attachment value cap was raised from 2 MiB to **10 MiB** (per-input payloads spill into `task.attachments`). The 1 MB `task.payload` budget, the inline-promotion thresholds (`_input` 200 KiB, steering input 20 KiB), and the 20-attachments-per-task limit are unchanged.
 - `@task` / `@multi_turn_task` now require an explicit `name=` (the stable recovery/identity anchor); the previous `func.__qualname__` fallback is removed because it silently rebound task identity when a handler was renamed or moved, orphaning in-flight tasks. Omitting `name` (or passing whitespace) now raises `ValueError` at decoration.
 - The per-turn task `timeout` now defaults to **1 day** when unset (previously unbounded) and enforces **1 day as a hard ceiling** — a larger or negative value is rejected at registration (`ValueError`). This caps a single handler invocation only; multi-turn chains still live indefinitely across turns (the budget resets each turn).

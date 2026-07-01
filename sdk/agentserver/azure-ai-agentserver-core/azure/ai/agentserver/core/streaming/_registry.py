@@ -39,6 +39,7 @@ from ._concrete import (
     BroadcastEventStream,
     FileBackedReplayEventStream,
     ReplayEventStream,
+    _safe_stream_filename,
 )
 from ._protocol import (
     EventStream,
@@ -134,7 +135,7 @@ class _StreamsRegistry:
         storage_dir = Path(storage_dir)
         storage_dir.mkdir(parents=True, exist_ok=True)
         self._factory = lambda _id: FileBackedReplayEventStream(
-            path=storage_dir / f"{_id}.jsonl",
+            path=storage_dir / _safe_stream_filename(_id),
             cursor_fn=cursor_fn,
             ttl_seconds=ttl_seconds,
             serializer=serializer,

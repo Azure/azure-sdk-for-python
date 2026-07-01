@@ -2811,7 +2811,7 @@ Three SDK-bundled implementations:
 |---|---|---|
 | `BroadcastEventStream` | Live consumers attach before the producer starts. | No buffer. `subscribe(after=...)` is accepted but the `after` argument is silently ignored. Late subscribers miss earlier events. `subscribe()` returns an iterator over events emitted AFTER attach. Multi-subscriber (each gets a private cursor/queue). Goes away ONLY via explicit `delete(id)` — no TTL auto-tombstone. |
 | `ReplayEventStream` | Late subscribers need history. | Per-stream buffer retains all events. `subscribe(after=N)` is honored iff `cursor_fn` was supplied to the configurator; otherwise `after` is ignored. `ttl_seconds`, if supplied, drives per-event eviction (regardless of Active/Closed — events older than `now - ttl_seconds` are evicted from the buffer; see §46). When Closed AND `close_time + ttl_seconds` elapses, the registry auto-tombstones the id. |
-| `FileBackedReplayEventStream` | Crash-recoverable history (multi-turn UIs, resilient response streaming). | Persists each emit to `storage_dir/<id>.jsonl`. **Constructor rehydrates** from an existing file if present — restart-safe. Same per-event TTL + close-clock semantics as `ReplayEventStream`. Optional `serializer: Callable[[Any], bytes]` and `deserializer: Callable[[bytes], Any]` for non-JSON payloads (default JSON). `delete()` (and TTL-since-close auto-tombstone) clean up the file BEFORE the registry tombstones the id. |
+| `FileBackedReplayEventStream` | Crash-recoverable history (multi-turn UIs, resilient response streaming). | Persists each emit to `storage_dir/<filename>.jsonl` (id sanitized per the C-STR-FBR-1 filename-safety rule). **Constructor rehydrates** from an existing file if present — restart-safe. Same per-event TTL + close-clock semantics as `ReplayEventStream`. Optional `serializer: Callable[[Any], bytes]` and `deserializer: Callable[[bytes], Any]` for non-JSON payloads (default JSON). `delete()` (and TTL-since-close auto-tombstone) clean up the file BEFORE the registry tombstones the id. |
 
 Per-backing TTL + tombstone matrix:
 
@@ -3936,7 +3936,14 @@ Items are grouped by area. Each item is identified `C-AREA-N`
 ### C-STR-FBR (file-backed replay)
 
 - **C-STR-FBR-1.** Each stream MUST persist to
-  `storage_dir/<id>.jsonl`.
+  `storage_dir/<filename>.jsonl`, where `<filename>` is derived from
+  the stream id by the **filename-safety rule (normative)**: a
+  well-formed id — matching `^[A-Za-z0-9._-]+$` with no `.`/`..` path
+  segment — is used verbatim (for readability and cross-language
+  compatibility); ANY other id (containing a path separator, a `.`/`..`
+  segment, a NUL, or any other filesystem-unsafe character) MUST be
+  deterministically SHA-256 hash-encoded to an `h_<hex>` stem so it can
+  never escape `storage_dir` or collide with a sibling stream.
 - **C-STR-FBR-2.** Constructor MUST rehydrate from an existing
   file (crash-recovery friendly).
 - **C-STR-FBR-3.** Optional `serializer` / `deserializer` callbacks
@@ -3956,6 +3963,12 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   {"__terminal__": true}
   ```
 
+  The terminal sentinel carries **no** timestamp: close-time is
+  best-effort. On rehydration the close-clock (§46) is anchored at the
+  last real event's `emit_time` (or `now` when the file held no events),
+  NOT at a terminal-record timestamp. A terminal record MUST be accepted
+  even when it carries no `emit_time`; a NON-terminal record missing
+  `emit_time` remains malformed and MUST raise.
 - **C-STR-FBR-6.** **Rehydration robustness.** Constructor MUST
   tolerate a trailing partial line (e.g. from a crash mid-write)
   by truncating it. Mid-file malformed JSON lines MUST raise
