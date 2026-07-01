@@ -785,16 +785,13 @@ The budget is **per-turn** and **wall-clock**:
   `remaining = max(0, timeout - (now - turn_started_at))` from the
   persisted `_turn_started_at` and fires immediately if elapsed.
 - Clock skew is clamped to `[0, timeout]` in both directions.
-- **Known gap on steering drain re-entry:** the canonical Python
-  implementation spawns the watchdog ONCE per `_execute_task`
-  invocation; steering drain re-enters in-place inside
-  `_execute_task_loop` without spawning a fresh watchdog. The
-  steered turn inherits whatever budget remained on the original
-  watchdog. The persisted `_turn_started_at` IS stamped per drain
-  (§52 Phase 1), so a CRASH-then-recover from a drained turn
-  correctly honors the new turn's budget; the in-process drain
-  path itself does not. Other-language implementers SHOULD spawn
-  a fresh watchdog per drain to honor the design intent.
+- **Steering drain re-entry re-arms the watchdog.** The watchdog is
+  spawned per turn — initial entry AND every in-place steering drain
+  re-entry — so a steered turn gets a fresh full budget rather than
+  inheriting whatever remained on the prior turn's watchdog. The
+  persisted `_turn_started_at` is stamped per drain (§52), so both the
+  in-process drain path and a crash-then-recover from a drained turn
+  honor the new turn's budget.
 
 The framework MUST persist `payload["_turn_started_at"]` (ISO-8601
 UTC) at every turn-start boundary: fresh entry, suspended -> in_progress
@@ -3217,15 +3214,12 @@ bounded retry (up to 5 attempts) that re-reads the record and
 replays the drain. Exhausting the retries raises `RuntimeError`
 to the caller.
 
-**Watchdog scope (known gap).** The per-turn timeout watchdog is
-spawned ONCE per execution in `_execute_task` and is NOT
-respawned on drain re-entry today. As a result, a steered turn
-shares the watchdog of the turn that drained it. Other-language
-implementers SHOULD spawn a fresh watchdog on drain re-entry to
-honor the design intent that every turn-start boundary gets a
-fresh per-turn budget (§14, §57). The canonical Python
-implementation has this as a known gap and is patched by relying
-on the persisted `_turn_started_at` only on RECOVERY.
+**Watchdog scope.** The per-turn timeout watchdog is respawned on
+every turn-start boundary — initial entry AND steering drain re-entry
+(via `_spawn_watchdog_for_turn` inside the drain loop) — so a steered
+turn gets a fresh full per-turn budget (§14, §57) rather than sharing
+the prior turn's watchdog. The persisted `_turn_started_at` (stamped
+per drain) additionally backs the RECOVERY path.
 
 ### §53. Suspend write
 

@@ -392,14 +392,22 @@ can choose to wind down early so the next turn gets the lane.
 
 ### 4.10 Timeout
 
-Each task can specify a `timeout` on its decorator. The watchdog
-is **per-turn**, **wall-clock**, and **resilient**:
+Each task can specify a `timeout` on its decorator. It defaults to
+**1 day** when unset, and **1 day is a hard ceiling** — a larger or
+negative value is rejected at decoration (`ValueError`, fail-fast). The
+watchdog is **per-turn**, **wall-clock**, and **resilient**:
 
-- **Per-turn** — the budget resets at every turn boundary
-  (multi-turn) or at the start of each fresh run (one-shot). It is
-  NOT a per-invocation budget; if a recovered handler is re-invoked
-  with the same `ctx.input` after a crash, the timeout starts from
-  the persisted turn-start timestamp — not from the new lifetime's
+- **Per-turn (NOT a task lifetime)** — the budget caps how long a
+  *single* handler invocation (one turn) may run uninterrupted. It
+  resets at every turn boundary (multi-turn) or at the start of each
+  fresh run (one-shot). Do **not** conflate it with the task's lifetime:
+  a multi-turn task can stay alive **indefinitely** — the timeout resets
+  every turn and never expires the task as a whole. The task's *overall*
+  lifetime is governed separately by the platform's **30-day sliding
+  TTL**: a task is cleaned up only after 30 days with **no new turns**,
+  and every turn resets that window. If a recovered handler is
+  re-invoked with the same `ctx.input` after a crash, the timeout starts
+  from the persisted turn-start timestamp — not from the new lifetime's
   re-invocation.
 - **Wall-clock** — the watchdog uses the persisted turn-start
   timestamp (UTC) and "now" wall-clock. It survives crashes: a
@@ -412,7 +420,8 @@ is **per-turn**, **wall-clock**, and **resilient**:
   recovery to reset its clock.
 
 When the watchdog fires it sets `ctx.cancel` and flips
-`ctx.timeout_exceeded`. The handler decides what to do (see §4.9).
+`ctx.timeout_exceeded`. It is cooperative — it does NOT force-stop the
+handler. The handler decides what to do (see §4.9).
 
 ### 4.11 Shutdown
 
@@ -450,7 +459,7 @@ def task(
     *,
     name: str,                          # required — used for registration / recovery
     title: str | None = None,           # static label for telemetry
-    timeout: timedelta | None = None,   # cooperative watchdog
+    timeout: timedelta | None = None,   # per-turn watchdog; defaults to 1 day, hard cap 1 day
     retry: RetryPolicy | None = None,   # None = no retry
 ) -> Callable[[Handler], Task[Input, Output]]: ...
 
@@ -458,7 +467,7 @@ def multi_turn_task(
     *,
     name: str,
     title: str | None = None,
-    timeout: timedelta | None = None,
+    timeout: timedelta | None = None,   # per-turn watchdog; defaults to 1 day, hard cap 1 day
     retry: RetryPolicy | None = None,
     steerable: bool = False,
 ) -> Callable[[Handler], MultiTurnTask[Input, Output]]: ...
