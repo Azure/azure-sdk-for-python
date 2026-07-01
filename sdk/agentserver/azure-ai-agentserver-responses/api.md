@@ -19,38 +19,38 @@ namespace azure.ai.agentserver.responses
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                background: Optional[bool] = ..., 
-                context_management: Optional[list[ContextManagementParam]] = ..., 
-                conversation: Optional[ConversationParam] = ..., 
-                include: Optional[list[Union[str, IncludeEnum]]] = ..., 
-                input: Optional[InputParam] = ..., 
-                instructions: Optional[str] = ..., 
-                max_output_tokens: Optional[int] = ..., 
-                max_tool_calls: Optional[int] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                model: Optional[str] = ..., 
-                parallel_tool_calls: Optional[bool] = ..., 
-                previous_response_id: Optional[str] = ..., 
-                prompt: Optional[Prompt] = ..., 
-                prompt_cache_key: Optional[str] = ..., 
-                prompt_cache_retention: Optional[Literal[in-memory, 24h]] = ..., 
-                reasoning: Optional[Reasoning] = ..., 
-                safety_identifier: Optional[str] = ..., 
-                service_tier: Optional[Literal[auto, default, flex, scale, priority]] = ..., 
-                store: Optional[bool] = ..., 
-                stream: Optional[bool] = ..., 
-                stream_options: Optional[ResponseStreamOptions] = ..., 
-                structured_inputs: Optional[dict[str, Any]] = ..., 
-                temperature: Optional[int] = ..., 
-                text: Optional[ResponseTextParam] = ..., 
-                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceParam]] = ..., 
-                tools: Optional[list[Tool]] = ..., 
-                top_logprobs: Optional[int] = ..., 
-                top_p: Optional[int] = ..., 
-                truncation: Optional[Literal[auto, disabled]] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                background: Optional[bool] = ...,
+                context_management: Optional[list[ContextManagementParam]] = ...,
+                conversation: Optional[ConversationParam] = ...,
+                include: Optional[list[Union[str, IncludeEnum]]] = ...,
+                input: Optional[InputParam] = ...,
+                instructions: Optional[str] = ...,
+                max_output_tokens: Optional[int] = ...,
+                max_tool_calls: Optional[int] = ...,
+                metadata: Optional[Metadata] = ...,
+                model: Optional[str] = ...,
+                parallel_tool_calls: Optional[bool] = ...,
+                previous_response_id: Optional[str] = ...,
+                prompt: Optional[Prompt] = ...,
+                prompt_cache_key: Optional[str] = ...,
+                prompt_cache_retention: Optional[Literal[in-memory, 24h]] = ...,
+                reasoning: Optional[Reasoning] = ...,
+                safety_identifier: Optional[str] = ...,
+                service_tier: Optional[Literal[auto, default, flex, scale, priority]] = ...,
+                store: Optional[bool] = ...,
+                stream: Optional[bool] = ...,
+                stream_options: Optional[ResponseStreamOptions] = ...,
+                structured_inputs: Optional[dict[str, Any]] = ...,
+                temperature: Optional[int] = ...,
+                text: Optional[ResponseTextParam] = ...,
+                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceParam]] = ...,
+                tools: Optional[list[Tool]] = ...,
+                top_logprobs: Optional[int] = ...,
+                top_p: Optional[int] = ...,
+                truncation: Optional[Literal[auto, disabled]] = ...,
                 user: Optional[str] = ...
             ) -> None: ...
 
@@ -61,9 +61,9 @@ namespace azure.ai.agentserver.responses
     class azure.ai.agentserver.responses.FoundryApiError(FoundryStorageError):
 
         def __init__(
-                self, 
-                message: str, 
-                *, 
+                self,
+                message: str,
+                *,
                 response_body: dict[str, Any] | None = ...
             ) -> None: ...
 
@@ -71,9 +71,9 @@ namespace azure.ai.agentserver.responses
     class azure.ai.agentserver.responses.FoundryBadRequestError(FoundryStorageError):
 
         def __init__(
-                self, 
-                message: str, 
-                *, 
+                self,
+                message: str,
+                *,
                 response_body: dict[str, Any] | None = ...
             ) -> None: ...
 
@@ -81,9 +81,9 @@ namespace azure.ai.agentserver.responses
     class azure.ai.agentserver.responses.FoundryResourceNotFoundError(FoundryStorageError):
 
         def __init__(
-                self, 
-                message: str, 
-                *, 
+                self,
+                message: str,
+                *,
                 response_body: dict[str, Any] | None = ...
             ) -> None: ...
 
@@ -91,78 +91,78 @@ namespace azure.ai.agentserver.responses
     class azure.ai.agentserver.responses.FoundryStorageError(Exception):
 
         def __init__(
-                self, 
-                message: str, 
-                *, 
+                self,
+                message: str,
+                *,
                 response_body: dict[str, Any] | None = ...
             ) -> None: ...
 
 
-    class azure.ai.agentserver.responses.FoundryStorageProvider: implements AsyncContextManager 
+    class azure.ai.agentserver.responses.FoundryStorageProvider: implements AsyncContextManager
 
         def __init__(
-                self, 
-                credential: AsyncTokenCredential, 
-                settings: FoundryStorageSettings | None = None, 
+                self,
+                credential: AsyncTokenCredential,
+                settings: FoundryStorageSettings | None = None,
                 get_server_version: Callable[[], str] | None = None
             ) -> None: ...
 
         async def aclose(self) -> None: ...
 
         async def create_response(
-                self, 
-                response: ResponseObject, 
-                input_items: Iterable[OutputItem] | None, 
-                history_item_ids: Iterable[str] | None, 
-                *, 
+                self,
+                response: ResponseObject,
+                input_items: Iterable[OutputItem] | None,
+                history_item_ids: Iterable[str] | None,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
         async def delete_response(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
         async def get_history_item_ids(
-                self, 
-                previous_response_id: str | None, 
-                conversation_id: str | None, 
-                limit: int, 
-                *, 
+                self,
+                previous_response_id: str | None,
+                conversation_id: str | None,
+                limit: int,
+                *,
                 context: PlatformContext | None = ...
             ) -> list[str]: ...
 
         async def get_input_items(
-                self, 
-                response_id: str, 
-                limit: int = 20, 
-                ascending: bool = False, 
-                after: str | None = None, 
-                before: str | None = None, 
-                *, 
+                self,
+                response_id: str,
+                limit: int = 20,
+                ascending: bool = False,
+                after: str | None = None,
+                before: str | None = None,
+                *,
                 context: PlatformContext | None = ...
             ) -> list[OutputItem]: ...
 
         async def get_items(
-                self, 
-                item_ids: Iterable[str], 
-                *, 
+                self,
+                item_ids: Iterable[str],
+                *,
                 context: PlatformContext | None = ...
             ) -> list[OutputItem | None]: ...
 
         async def get_response(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 context: PlatformContext | None = ...
             ) -> ResponseObject: ...
 
         async def update_response(
-                self, 
-                response: ResponseObject, 
-                *, 
+                self,
+                response: ResponseObject,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
@@ -170,8 +170,8 @@ namespace azure.ai.agentserver.responses
     class azure.ai.agentserver.responses.FoundryStorageSettings:
 
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 storage_base_url: str
             ) -> None: ...
 
@@ -182,8 +182,8 @@ namespace azure.ai.agentserver.responses
         def from_env(cls) -> FoundryStorageSettings: ...
 
         def build_url(
-                self, 
-                path: str, 
+                self,
+                path: str,
                 **extra_params: str
             ) -> str: ...
 
@@ -193,131 +193,131 @@ namespace azure.ai.agentserver.responses
         def __init__(self) -> None: ...
 
         async def append_stream_event(
-                self, 
-                response_id: str, 
-                event: StreamEventRecord, 
-                *, 
+                self,
+                response_id: str,
+                event: StreamEventRecord,
+                *,
                 ttl_seconds: int | None = ...
             ) -> bool: ...
 
         async def create_execution(
-                self, 
-                execution: ResponseExecution, 
-                *, 
+                self,
+                execution: ResponseExecution,
+                *,
                 ttl_seconds: int | None = ...
             ) -> None: ...
 
         async def create_response(
-                self, 
-                response: ResponseObject, 
-                input_items: Iterable[OutputItem] | None, 
-                history_item_ids: Iterable[str] | None, 
-                *, 
+                self,
+                response: ResponseObject,
+                input_items: Iterable[OutputItem] | None,
+                history_item_ids: Iterable[str] | None,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
         async def delete(self, response_id: str) -> bool: ...
 
         async def delete_response(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
         async def delete_stream_events(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
         async def get_execution(self, response_id: str) -> ResponseExecution | None: ...
 
         async def get_history_item_ids(
-                self, 
-                previous_response_id: str | None, 
-                conversation_id: str | None, 
-                limit: int, 
-                *, 
+                self,
+                previous_response_id: str | None,
+                conversation_id: str | None,
+                limit: int,
+                *,
                 context: PlatformContext | None = ...
             ) -> list[str]: ...
 
         async def get_input_items(
-                self, 
-                response_id: str, 
-                limit: int = 20, 
-                ascending: bool = False, 
-                after: str | None = None, 
-                before: str | None = None, 
-                *, 
+                self,
+                response_id: str,
+                limit: int = 20,
+                ascending: bool = False,
+                after: str | None = None,
+                before: str | None = None,
+                *,
                 context: PlatformContext | None = ...
             ) -> list[OutputItem]: ...
 
         async def get_items(
-                self, 
-                item_ids: Iterable[str], 
-                *, 
+                self,
+                item_ids: Iterable[str],
+                *,
                 context: PlatformContext | None = ...
             ) -> list[OutputItem | None]: ...
 
         async def get_replay_events(self, response_id: str) -> list[StreamEventRecord] | None: ...
 
         async def get_response(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 context: PlatformContext | None = ...
             ) -> ResponseObject: ...
 
         async def get_stream_events(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 context: PlatformContext | None = ...
             ) -> list[ResponseStreamEvent] | None: ...
 
         async def purge_expired(
-                self, 
-                *, 
+                self,
+                *,
                 now: datetime | None = ...
             ) -> int: ...
 
         async def save_stream_events(
-                self, 
-                response_id: str, 
-                events: list[ResponseStreamEvent], 
-                *, 
+                self,
+                response_id: str,
+                events: list[ResponseStreamEvent],
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
         async def set_cancel_requested(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 ttl_seconds: int | None = ...
             ) -> bool: ...
 
         async def set_response_snapshot(
-                self, 
-                response_id: str, 
-                response: ResponseObject, 
-                *, 
+                self,
+                response_id: str,
+                response: ResponseObject,
+                *,
                 ttl_seconds: int | None = ...
             ) -> bool: ...
 
         async def transition_execution_status(
-                self, 
-                response_id: str, 
-                next_status: ResponseStatus, 
-                *, 
+                self,
+                response_id: str,
+                next_status: ResponseStatus,
+                *,
                 ttl_seconds: int | None = ...
             ) -> bool: ...
 
         async def update_response(
-                self, 
-                response: ResponseObject, 
-                *, 
+                self,
+                response: ResponseObject,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
@@ -325,9 +325,9 @@ namespace azure.ai.agentserver.responses
     class azure.ai.agentserver.responses.PlatformContext:
 
         def __init__(
-                self, 
-                *, 
-                call_id: str | None = ..., 
+                self,
+                *,
+                call_id: str | None = ...,
                 user_id_key: str | None = ...
             ) -> None: ...
 
@@ -335,34 +335,34 @@ namespace azure.ai.agentserver.responses
     class azure.ai.agentserver.responses.ResponseContext:
 
         def __init__(
-                self, 
-                *, 
-                client_headers: dict[str, str] | None = ..., 
-                conversation_id: str | None = ..., 
-                created_at: datetime | None = ..., 
-                history_limit: int = 100, 
-                input_items: list[InputParam] | list[OutputItem] | None = ..., 
-                mode_flags: ResponseModeFlags, 
-                platform_context: PlatformContext | None = ..., 
-                prefetched_history_ids: list[str] | None = ..., 
-                previous_response_id: str | None = ..., 
-                provider: ResponseProviderProtocol | None = ..., 
-                query_parameters: dict[str, str] | None = ..., 
-                request: CreateResponse | None = ..., 
+                self,
+                *,
+                client_headers: dict[str, str] | None = ...,
+                conversation_id: str | None = ...,
+                created_at: datetime | None = ...,
+                history_limit: int = 100,
+                input_items: list[InputParam] | list[OutputItem] | None = ...,
+                mode_flags: ResponseModeFlags,
+                platform_context: PlatformContext | None = ...,
+                prefetched_history_ids: list[str] | None = ...,
+                previous_response_id: str | None = ...,
+                provider: ResponseProviderProtocol | None = ...,
+                query_parameters: dict[str, str] | None = ...,
+                request: CreateResponse | None = ...,
                 response_id: str
             ) -> None: ...
 
         async def get_history(self) -> Sequence[OutputItem]: ...
 
         async def get_input_items(
-                self, 
-                *, 
+                self,
+                *,
                 resolve_references: bool = True
             ) -> Sequence[Item]: ...
 
         async def get_input_text(
-                self, 
-                *, 
+                self,
+                *,
                 resolve_references: bool = True
             ) -> str: ...
 
@@ -371,12 +371,12 @@ namespace azure.ai.agentserver.responses
         property response: ResponseObject    # Read-only
 
         def __init__(
-                self, 
-                *, 
-                agent_reference: AgentReference | None = ..., 
-                model: str | None = ..., 
-                request: CreateResponse | None = ..., 
-                response: ResponseObject | None = ..., 
+                self,
+                *,
+                agent_reference: AgentReference | None = ...,
+                model: str | None = ...,
+                request: CreateResponse | None = ...,
+                response: ResponseObject | None = ...,
                 response_id: str | None = ...
             ) -> None: ...
 
@@ -395,8 +395,8 @@ namespace azure.ai.agentserver.responses
         def add_output_item_computer_call_output(self) -> OutputItemBuilder: ...
 
         def add_output_item_custom_tool_call(
-                self, 
-                call_id: str, 
+                self,
+                call_id: str,
                 name: str
             ) -> OutputItemCustomToolCallBuilder: ...
 
@@ -405,8 +405,8 @@ namespace azure.ai.agentserver.responses
         def add_output_item_file_search_call(self) -> OutputItemFileSearchCallBuilder: ...
 
         def add_output_item_function_call(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 call_id: str
             ) -> OutputItemFunctionCallBuilder: ...
 
@@ -427,10 +427,10 @@ namespace azure.ai.agentserver.responses
         def add_output_item_mcp_approval_response(self) -> OutputItemBuilder: ...
 
         def add_output_item_mcp_call(
-                self, 
-                server_label: str, 
-                name: str, 
-                *, 
+                self,
+                server_label: str,
+                name: str,
+                *,
                 item_id: str | None = ...
             ) -> OutputItemMcpCallBuilder: ...
 
@@ -444,147 +444,32 @@ namespace azure.ai.agentserver.responses
 
         def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
 
-        async def aoutput_item_apply_patch_call(
-                self, 
-                call_id: str, 
-                operation: ApplyPatchFileOperation, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_apply_patch_call_output(
-                self, 
-                call_id: str, 
-                *, 
-                output: str | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_compaction(self, encrypted_content: str) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_computer_call(
-                self, 
-                call_id: str, 
-                action: ComputerAction, 
-                *, 
-                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_computer_call_output(
-                self, 
-                call_id: str, 
-                output: ComputerScreenshotImage, 
-                *, 
-                acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_custom_tool_call_output(
-                self, 
-                call_id: str, 
-                output: str | list[FunctionAndCustomToolCallOutput]
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_call(
-                self, 
-                name: str, 
-                call_id: str, 
-                arguments: str | AsyncIterable[str]
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_call_output(
-                self, 
-                call_id: str, 
-                output: str
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_shell_call(
-                self, 
-                call_id: str, 
-                action: FunctionShellAction, 
-                environment: FunctionShellCallEnvironment, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_shell_call_output(
-                self, 
-                call_id: str, 
-                output: list[FunctionShellCallOutputContent], 
-                *, 
-                max_output_length: int | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_image_gen_call(
-                self, 
-                result_base64: str, 
-                *, 
-                partials: AsyncIterable[str] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_local_shell_call(
-                self, 
-                call_id: str, 
-                action: LocalShellExecAction, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_local_shell_call_output(self, output: str) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_mcp_approval_request(
-                self, 
-                server_label: str, 
-                name: str, 
-                arguments: str
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_mcp_approval_response(
-                self, 
-                approval_request_id: str, 
-                approve: bool = False, 
-                *, 
-                reason: str | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_message(
-                self, 
-                text: str | AsyncIterable[str], 
-                *, 
-                annotations: Sequence[Annotation] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_reasoning_item(self, summary_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_structured_outputs(self, output: Any) -> AsyncIterator[ResponseStreamEvent]: ...
-
         def emit_completed(
-                self, 
-                *, 
+                self,
+                *,
                 usage: ResponseUsage | None = ...
             ) -> ResponseCompletedEvent: ...
 
         def emit_created(
-                self, 
-                *, 
+                self,
+                *,
                 status: str = "in_progress"
             ) -> ResponseCreatedEvent: ...
 
         def emit_failed(
-                self, 
-                *, 
-                code: str | ResponseErrorCode = "server_error", 
-                message: str = "An internal server error occurred.", 
+                self,
+                *,
+                code: str | ResponseErrorCode = "server_error",
+                message: str = "An internal server error occurred.",
                 usage: ResponseUsage | None = ...
             ) -> ResponseFailedEvent: ...
 
         def emit_in_progress(self) -> ResponseInProgressEvent: ...
 
         def emit_incomplete(
-                self, 
-                *, 
-                reason: str | None = ..., 
+                self,
+                *,
+                reason: str | None = ...,
                 usage: ResponseUsage | None = ...
             ) -> ResponseIncompleteEvent: ...
 
@@ -593,108 +478,108 @@ namespace azure.ai.agentserver.responses
         def events(self) -> list[ResponseStreamEvent]: ...
 
         def output_item_apply_patch_call(
-                self, 
-                call_id: str, 
-                operation: ApplyPatchFileOperation, 
-                *, 
+                self,
+                call_id: str,
+                operation: ApplyPatchFileOperation,
+                *,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_apply_patch_call_output(
-                self, 
-                call_id: str, 
-                *, 
-                output: str | None = ..., 
+                self,
+                call_id: str,
+                *,
+                output: str | None = ...,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_compaction(self, encrypted_content: str) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_computer_call(
-                self, 
-                call_id: str, 
-                action: ComputerAction, 
-                *, 
-                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ..., 
+                self,
+                call_id: str,
+                action: ComputerAction,
+                *,
+                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_computer_call_output(
-                self, 
-                call_id: str, 
-                output: ComputerScreenshotImage, 
-                *, 
+                self,
+                call_id: str,
+                output: ComputerScreenshotImage,
+                *,
                 acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_custom_tool_call_output(
-                self, 
-                call_id: str, 
+                self,
+                call_id: str,
                 output: str | list[FunctionAndCustomToolCallOutput]
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_function_call(
-                self, 
-                name: str, 
-                call_id: str, 
+                self,
+                name: str,
+                call_id: str,
                 arguments: str
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_function_call_output(
-                self, 
-                call_id: str, 
+                self,
+                call_id: str,
                 output: str
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_function_shell_call(
-                self, 
-                call_id: str, 
-                action: FunctionShellAction, 
-                environment: FunctionShellCallEnvironment, 
-                *, 
+                self,
+                call_id: str,
+                action: FunctionShellAction,
+                environment: FunctionShellCallEnvironment,
+                *,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_function_shell_call_output(
-                self, 
-                call_id: str, 
-                output: list[FunctionShellCallOutputContent], 
-                *, 
-                max_output_length: int | None = ..., 
+                self,
+                call_id: str,
+                output: list[FunctionShellCallOutputContent],
+                *,
+                max_output_length: int | None = ...,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_image_gen_call(self, result_base64: str) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_local_shell_call(
-                self, 
-                call_id: str, 
-                action: LocalShellExecAction, 
-                *, 
+                self,
+                call_id: str,
+                action: LocalShellExecAction,
+                *,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_local_shell_call_output(self, output: str) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_mcp_approval_request(
-                self, 
-                server_label: str, 
-                name: str, 
+                self,
+                server_label: str,
+                name: str,
                 arguments: str
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_mcp_approval_response(
-                self, 
-                approval_request_id: str, 
-                approve: bool = False, 
-                *, 
+                self,
+                approval_request_id: str,
+                approve: bool = False,
+                *,
                 reason: str | None = ...
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_message(
-                self, 
-                text: str, 
-                *, 
+                self,
+                text: str,
+                *,
                 annotations: Sequence[Annotation] | None = ...
             ) -> Iterator[ResponseStreamEvent]: ...
 
@@ -713,40 +598,40 @@ namespace azure.ai.agentserver.responses
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: AgentReference, 
-                background: Optional[bool] = ..., 
-                completed_at: Optional[datetime] = ..., 
-                conversation: Optional[ConversationReference] = ..., 
-                created_at: datetime, 
-                error: ResponseErrorInfo, 
-                id: str, 
-                incomplete_details: ResponseIncompleteDetails, 
-                instructions: Union[str, list[Item]], 
-                max_output_tokens: Optional[int] = ..., 
-                max_tool_calls: Optional[int] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                model: Optional[str] = ..., 
-                output: list[OutputItem], 
-                output_text: Optional[str] = ..., 
-                parallel_tool_calls: bool, 
-                previous_response_id: Optional[str] = ..., 
-                prompt: Optional[Prompt] = ..., 
-                prompt_cache_key: Optional[str] = ..., 
-                prompt_cache_retention: Optional[Literal[in-memory, 24h]] = ..., 
-                reasoning: Optional[Reasoning] = ..., 
-                safety_identifier: Optional[str] = ..., 
-                service_tier: Optional[Literal[auto, default, flex, scale, priority]] = ..., 
-                status: Optional[Literal[completed, failed, in_progress, cancelled, queued, incomplete]] = ..., 
-                temperature: Optional[int] = ..., 
-                text: Optional[ResponseTextParam] = ..., 
-                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceParam]] = ..., 
-                tools: Optional[list[Tool]] = ..., 
-                top_logprobs: Optional[int] = ..., 
-                top_p: Optional[int] = ..., 
-                truncation: Optional[Literal[auto, disabled]] = ..., 
-                usage: Optional[ResponseUsage] = ..., 
+                self,
+                *,
+                agent_reference: AgentReference,
+                background: Optional[bool] = ...,
+                completed_at: Optional[datetime] = ...,
+                conversation: Optional[ConversationReference] = ...,
+                created_at: datetime,
+                error: ResponseErrorInfo,
+                id: str,
+                incomplete_details: ResponseIncompleteDetails,
+                instructions: Union[str, list[Item]],
+                max_output_tokens: Optional[int] = ...,
+                max_tool_calls: Optional[int] = ...,
+                metadata: Optional[Metadata] = ...,
+                model: Optional[str] = ...,
+                output: list[OutputItem],
+                output_text: Optional[str] = ...,
+                parallel_tool_calls: bool,
+                previous_response_id: Optional[str] = ...,
+                prompt: Optional[Prompt] = ...,
+                prompt_cache_key: Optional[str] = ...,
+                prompt_cache_retention: Optional[Literal[in-memory, 24h]] = ...,
+                reasoning: Optional[Reasoning] = ...,
+                safety_identifier: Optional[str] = ...,
+                service_tier: Optional[Literal[auto, default, flex, scale, priority]] = ...,
+                status: Optional[Literal[completed, failed, in_progress, cancelled, queued, incomplete]] = ...,
+                temperature: Optional[int] = ...,
+                text: Optional[ResponseTextParam] = ...,
+                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceParam]] = ...,
+                tools: Optional[list[Tool]] = ...,
+                top_logprobs: Optional[int] = ...,
+                top_p: Optional[int] = ...,
+                truncation: Optional[Literal[auto, disabled]] = ...,
+                usage: Optional[ResponseUsage] = ...,
                 user: Optional[str] = ...
             ) -> None: ...
 
@@ -758,59 +643,59 @@ namespace azure.ai.agentserver.responses
     class azure.ai.agentserver.responses.ResponseProviderProtocol(Protocol):
 
         async def create_response(
-                self, 
-                response: ResponseObject, 
-                input_items: Iterable[OutputItem] | None, 
-                history_item_ids: Iterable[str] | None, 
-                *, 
+                self,
+                response: ResponseObject,
+                input_items: Iterable[OutputItem] | None,
+                history_item_ids: Iterable[str] | None,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
         async def delete_response(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
         async def get_history_item_ids(
-                self, 
-                previous_response_id: str | None, 
-                conversation_id: str | None, 
-                limit: int, 
-                *, 
+                self,
+                previous_response_id: str | None,
+                conversation_id: str | None,
+                limit: int,
+                *,
                 context: PlatformContext | None = ...
             ) -> list[str]: ...
 
         async def get_input_items(
-                self, 
-                response_id: str, 
-                limit: int = 20, 
-                ascending: bool = False, 
-                after: str | None = None, 
-                before: str | None = None, 
-                *, 
+                self,
+                response_id: str,
+                limit: int = 20,
+                ascending: bool = False,
+                after: str | None = None,
+                before: str | None = None,
+                *,
                 context: PlatformContext | None = ...
             ) -> list[OutputItem]: ...
 
         async def get_items(
-                self, 
-                item_ids: Iterable[str], 
-                *, 
+                self,
+                item_ids: Iterable[str],
+                *,
                 context: PlatformContext | None = ...
             ) -> list[OutputItem | None]: ...
 
         async def get_response(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 context: PlatformContext | None = ...
             ) -> ResponseObject: ...
 
         async def update_response(
-                self, 
-                response: ResponseObject, 
-                *, 
+                self,
+                response: ResponseObject,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
@@ -819,24 +704,24 @@ namespace azure.ai.agentserver.responses
     class azure.ai.agentserver.responses.ResponseStreamProviderProtocol(Protocol):
 
         async def delete_stream_events(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
         async def get_stream_events(
-                self, 
-                response_id: str, 
-                *, 
+                self,
+                response_id: str,
+                *,
                 context: PlatformContext | None = ...
             ) -> list[ResponseStreamEvent] | None: ...
 
         async def save_stream_events(
-                self, 
-                response_id: str, 
-                events: list[ResponseStreamEvent], 
-                *, 
+                self,
+                response_id: str,
+                events: list[ResponseStreamEvent],
+                *,
                 context: PlatformContext | None = ...
             ) -> None: ...
 
@@ -845,11 +730,11 @@ namespace azure.ai.agentserver.responses
         property routes: list[BaseRoute]    # Read-only
 
         def __init__(
-                self, 
-                *, 
-                options: ResponsesServerOptions | None = ..., 
-                prefix: str = "", 
-                store: ResponseProviderProtocol | None = ..., 
+                self,
+                *,
+                options: ResponsesServerOptions | None = ...,
+                prefix: str = "",
+                store: ResponseProviderProtocol | None = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -860,13 +745,13 @@ namespace azure.ai.agentserver.responses
         property sse_keep_alive_enabled: bool    # Read-only
 
         def __init__(
-                self, 
-                *, 
-                additional_server_version: str | None = ..., 
-                create_span_hook: CreateSpanHook | None = ..., 
-                default_fetch_history_count: int = 100, 
-                default_model: str | None = ..., 
-                shutdown_grace_period_seconds: int = 10, 
+                self,
+                *,
+                additional_server_version: str | None = ...,
+                create_span_hook: CreateSpanHook | None = ...,
+                default_fetch_history_count: int = 100,
+                default_model: str | None = ...,
+                shutdown_grace_period_seconds: int = 10,
                 sse_keep_alive_interval_seconds: int | None = ...
             ) -> None: ...
 
@@ -879,13 +764,821 @@ namespace azure.ai.agentserver.responses
         def __aiter__(self) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def __init__(
-                self, 
-                context: ResponseContext, 
-                request: CreateResponse, 
-                *, 
-                configure: Callable[[ResponseObject], None] | None = ..., 
+                self,
+                context: ResponseContext,
+                request: CreateResponse,
+                *,
+                configure: Callable[[ResponseObject], None] | None = ...,
                 text: TextSource
             ) -> None: ...
+
+
+namespace azure.ai.agentserver.responses.aio
+
+    class azure.ai.agentserver.responses.aio.ResponseEventStream(SyncResponseEventStream):
+        property response: ResponseObject    # Read-only
+
+        def __init__(
+                self,
+                *,
+                agent_reference: AgentReference | None = ...,
+                model: str | None = ...,
+                request: CreateResponse | None = ...,
+                response: ResponseObject | None = ...,
+                response_id: str | None = ...
+            ) -> None: ...
+
+        def add_output_item(self, item_id: str) -> OutputItemBuilder: ...
+
+        def add_output_item_apply_patch_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_apply_patch_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_code_interpreter_call(self) -> OutputItemCodeInterpreterCallBuilder: ...
+
+        def add_output_item_compaction(self) -> OutputItemBuilder: ...
+
+        def add_output_item_computer_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_computer_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_custom_tool_call(
+                self,
+                call_id: str,
+                name: str
+            ) -> OutputItemCustomToolCallBuilder: ...
+
+        def add_output_item_custom_tool_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_file_search_call(self) -> OutputItemFileSearchCallBuilder: ...
+
+        def add_output_item_function_call(
+                self,
+                name: str,
+                call_id: str
+            ) -> OutputItemFunctionCallBuilder: ...
+
+        def add_output_item_function_call_output(self, call_id: str) -> OutputItemFunctionCallOutputBuilder: ...
+
+        def add_output_item_function_shell_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_function_shell_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_image_gen_call(self) -> OutputItemImageGenCallBuilder: ...
+
+        def add_output_item_local_shell_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_local_shell_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_approval_request(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_approval_response(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_call(
+                self,
+                server_label: str,
+                name: str,
+                *,
+                item_id: str | None = ...
+            ) -> OutputItemMcpCallBuilder: ...
+
+        def add_output_item_mcp_list_tools(self, server_label: str) -> OutputItemMcpListToolsBuilder: ...
+
+        def add_output_item_message(self) -> OutputItemMessageBuilder: ...
+
+        def add_output_item_reasoning_item(self) -> OutputItemReasoningItemBuilder: ...
+
+        def add_output_item_structured_outputs(self) -> OutputItemBuilder: ...
+
+        def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
+
+        def emit_completed(
+                self,
+                *,
+                usage: ResponseUsage | None = ...
+            ) -> ResponseCompletedEvent: ...
+
+        def emit_created(
+                self,
+                *,
+                status: str = "in_progress"
+            ) -> ResponseCreatedEvent: ...
+
+        def emit_failed(
+                self,
+                *,
+                code: str | ResponseErrorCode = "server_error",
+                message: str = "An internal server error occurred.",
+                usage: ResponseUsage | None = ...
+            ) -> ResponseFailedEvent: ...
+
+        def emit_in_progress(self) -> ResponseInProgressEvent: ...
+
+        def emit_incomplete(
+                self,
+                *,
+                reason: str | None = ...,
+                usage: ResponseUsage | None = ...
+            ) -> ResponseIncompleteEvent: ...
+
+        def emit_queued(self) -> ResponseQueuedEvent: ...
+
+        def events(self) -> list[ResponseStreamEvent]: ...
+
+        async def output_item_apply_patch_call(
+                self,
+                call_id: str,
+                operation: ApplyPatchFileOperation,
+                *,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_apply_patch_call_output(
+                self,
+                call_id: str,
+                *,
+                output: str | None = ...,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_compaction(self, encrypted_content: str) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_computer_call(
+                self,
+                call_id: str,
+                action: ComputerAction,
+                *,
+                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_computer_call_output(
+                self,
+                call_id: str,
+                output: ComputerScreenshotImage,
+                *,
+                acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_custom_tool_call_output(
+                self,
+                call_id: str,
+                output: str | list[FunctionAndCustomToolCallOutput]
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_call(
+                self,
+                name: str,
+                call_id: str,
+                arguments: str | AsyncIterable[str]
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_call_output(
+                self,
+                call_id: str,
+                output: str
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_shell_call(
+                self,
+                call_id: str,
+                action: FunctionShellAction,
+                environment: FunctionShellCallEnvironment,
+                *,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_shell_call_output(
+                self,
+                call_id: str,
+                output: list[FunctionShellCallOutputContent],
+                *,
+                max_output_length: int | None = ...,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_image_gen_call(
+                self,
+                result_base64: str,
+                *,
+                partials: AsyncIterable[str] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_local_shell_call(
+                self,
+                call_id: str,
+                action: LocalShellExecAction,
+                *,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_local_shell_call_output(self, output: str) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_mcp_approval_request(
+                self,
+                server_label: str,
+                name: str,
+                arguments: str
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_mcp_approval_response(
+                self,
+                approval_request_id: str,
+                approve: bool = False,
+                *,
+                reason: str | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_message(
+                self,
+                text: str | AsyncIterable[str],
+                *,
+                annotations: Sequence[Annotation] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_reasoning_item(self, summary_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_structured_outputs(self, output: Any) -> AsyncIterator[ResponseStreamEvent]: ...
+
+
+namespace azure.ai.agentserver.responses.aio.streaming
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemBuilder(BaseOutputItemBuilder):
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self, item: OutputItem) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_done(self, item: OutputItem) -> ResponseOutputItemDoneEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemCodeInterpreterCallBuilder(SyncOutputItemCodeInterpreterCallBuilder):
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str
+            ) -> None: ...
+
+        async def code(self, code_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_code_delta(self, delta: str) -> ResponseCodeInterpreterCallCodeDeltaEvent: ...
+
+        def emit_code_done(self, code: str) -> ResponseCodeInterpreterCallCodeDoneEvent: ...
+
+        def emit_completed(self) -> ResponseCodeInterpreterCallCompletedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_in_progress(self) -> ResponseCodeInterpreterCallInProgressEvent: ...
+
+        def emit_interpreting(self) -> ResponseCodeInterpreterCallInterpretingEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemCustomToolCallBuilder(SyncOutputItemCustomToolCallBuilder):
+        property call_id: str    # Read-only
+        property item_id: str    # Read-only
+        property name: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str,
+                call_id: str,
+                name: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_input_delta(self, delta: str) -> ResponseCustomToolCallInputDeltaEvent: ...
+
+        def emit_input_done(self, input_text: str) -> ResponseCustomToolCallInputDoneEvent: ...
+
+        async def input(self, input_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_completed(self) -> ResponseFileSearchCallCompletedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_in_progress(self) -> ResponseFileSearchCallInProgressEvent: ...
+
+        def emit_searching(self) -> ResponseFileSearchCallSearchingEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemFunctionCallBuilder(SyncOutputItemFunctionCallBuilder):
+        property call_id: str    # Read-only
+        property item_id: str    # Read-only
+        property name: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str,
+                name: str,
+                call_id: str
+            ) -> None: ...
+
+        async def arguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_arguments_delta(self, delta: str) -> ResponseFunctionCallArgumentsDeltaEvent: ...
+
+        def emit_arguments_done(self, arguments: str) -> ResponseFunctionCallArgumentsDoneEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
+        property call_id: str    # Read-only
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str,
+                call_id: str
+            ) -> None: ...
+
+        def emit_added(self, output: str | list[InputTextContentParam | InputImageContentParamAutoParam | InputFileContentParam] | None = None) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_done(self, output: str | list[InputTextContentParam | InputImageContentParamAutoParam | InputFileContentParam] | None = None) -> ResponseOutputItemDoneEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_completed(self) -> ResponseImageGenCallCompletedEvent: ...
+
+        def emit_done(self, result: str) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_generating(self) -> ResponseImageGenCallGeneratingEvent: ...
+
+        def emit_in_progress(self) -> ResponseImageGenCallInProgressEvent: ...
+
+        def emit_partial_image(self, partial_image_b64: str) -> ResponseImageGenCallPartialImageEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemMcpCallBuilder(SyncOutputItemMcpCallBuilder):
+        property item_id: str    # Read-only
+        property name: str    # Read-only
+        property output_index: int    # Read-only
+        property server_label: str    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str,
+                server_label: str,
+                name: str
+            ) -> None: ...
+
+        async def arguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_arguments_delta(self, delta: str) -> ResponseMCPCallArgumentsDeltaEvent: ...
+
+        def emit_arguments_done(self, arguments: str) -> ResponseMCPCallArgumentsDoneEvent: ...
+
+        def emit_completed(self) -> ResponseMCPCallCompletedEvent: ...
+
+        def emit_done(
+                self,
+                *,
+                error: dict[str, Any] | None = ...,
+                output: str | None = ...
+            ) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_failed(self) -> ResponseMCPCallFailedEvent: ...
+
+        def emit_in_progress(self) -> ResponseMCPCallInProgressEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+        property server_label: str    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str,
+                server_label: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_completed(self) -> ResponseMCPListToolsCompletedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_failed(self) -> ResponseMCPListToolsFailedEvent: ...
+
+        def emit_in_progress(self) -> ResponseMCPListToolsInProgressEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemMessageBuilder(SyncOutputItemMessageBuilder):
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str
+            ) -> None: ...
+
+        def add_refusal_content(self) -> RefusalContentBuilder: ...
+
+        def add_text_content(self) -> TextContentBuilder: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        async def refusal_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def text_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemReasoningItemBuilder(SyncOutputItemReasoningItemBuilder):
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str
+            ) -> None: ...
+
+        def add_summary_part(self) -> ReasoningSummaryPartBuilder: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        async def summary_part(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_completed(self) -> ResponseWebSearchCallCompletedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_in_progress(self) -> ResponseWebSearchCallInProgressEvent: ...
+
+        def emit_searching(self) -> ResponseWebSearchCallSearchingEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.ReasoningSummaryPartBuilder:
+        property final_text: str | None    # Read-only
+        property summary_index: int    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                summary_index: int,
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseReasoningSummaryPartAddedEvent: ...
+
+        def emit_done(self) -> ResponseReasoningSummaryPartDoneEvent: ...
+
+        def emit_text_delta(self, text: str) -> ResponseReasoningSummaryTextDeltaEvent: ...
+
+        def emit_text_done(self, final_text: str) -> ResponseReasoningSummaryTextDoneEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.RefusalContentBuilder:
+        property content_index: int    # Read-only
+        property final_refusal: str | None    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                content_index: int,
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseContentPartAddedEvent: ...
+
+        def emit_delta(self, text: str) -> ResponseRefusalDeltaEvent: ...
+
+        def emit_done(self) -> ResponseContentPartDoneEvent: ...
+
+        def emit_refusal_done(self, final_refusal: str) -> ResponseRefusalDoneEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.ResponseEventStream(SyncResponseEventStream):
+        property response: ResponseObject    # Read-only
+
+        def __init__(
+                self,
+                *,
+                agent_reference: AgentReference | None = ...,
+                model: str | None = ...,
+                request: CreateResponse | None = ...,
+                response: ResponseObject | None = ...,
+                response_id: str | None = ...
+            ) -> None: ...
+
+        def add_output_item(self, item_id: str) -> OutputItemBuilder: ...
+
+        def add_output_item_apply_patch_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_apply_patch_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_code_interpreter_call(self) -> OutputItemCodeInterpreterCallBuilder: ...
+
+        def add_output_item_compaction(self) -> OutputItemBuilder: ...
+
+        def add_output_item_computer_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_computer_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_custom_tool_call(
+                self,
+                call_id: str,
+                name: str
+            ) -> OutputItemCustomToolCallBuilder: ...
+
+        def add_output_item_custom_tool_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_file_search_call(self) -> OutputItemFileSearchCallBuilder: ...
+
+        def add_output_item_function_call(
+                self,
+                name: str,
+                call_id: str
+            ) -> OutputItemFunctionCallBuilder: ...
+
+        def add_output_item_function_call_output(self, call_id: str) -> OutputItemFunctionCallOutputBuilder: ...
+
+        def add_output_item_function_shell_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_function_shell_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_image_gen_call(self) -> OutputItemImageGenCallBuilder: ...
+
+        def add_output_item_local_shell_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_local_shell_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_approval_request(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_approval_response(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_call(
+                self,
+                server_label: str,
+                name: str,
+                *,
+                item_id: str | None = ...
+            ) -> OutputItemMcpCallBuilder: ...
+
+        def add_output_item_mcp_list_tools(self, server_label: str) -> OutputItemMcpListToolsBuilder: ...
+
+        def add_output_item_message(self) -> OutputItemMessageBuilder: ...
+
+        def add_output_item_reasoning_item(self) -> OutputItemReasoningItemBuilder: ...
+
+        def add_output_item_structured_outputs(self) -> OutputItemBuilder: ...
+
+        def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
+
+        def emit_completed(
+                self,
+                *,
+                usage: ResponseUsage | None = ...
+            ) -> ResponseCompletedEvent: ...
+
+        def emit_created(
+                self,
+                *,
+                status: str = "in_progress"
+            ) -> ResponseCreatedEvent: ...
+
+        def emit_failed(
+                self,
+                *,
+                code: str | ResponseErrorCode = "server_error",
+                message: str = "An internal server error occurred.",
+                usage: ResponseUsage | None = ...
+            ) -> ResponseFailedEvent: ...
+
+        def emit_in_progress(self) -> ResponseInProgressEvent: ...
+
+        def emit_incomplete(
+                self,
+                *,
+                reason: str | None = ...,
+                usage: ResponseUsage | None = ...
+            ) -> ResponseIncompleteEvent: ...
+
+        def emit_queued(self) -> ResponseQueuedEvent: ...
+
+        def events(self) -> list[ResponseStreamEvent]: ...
+
+        async def output_item_apply_patch_call(
+                self,
+                call_id: str,
+                operation: ApplyPatchFileOperation,
+                *,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_apply_patch_call_output(
+                self,
+                call_id: str,
+                *,
+                output: str | None = ...,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_compaction(self, encrypted_content: str) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_computer_call(
+                self,
+                call_id: str,
+                action: ComputerAction,
+                *,
+                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_computer_call_output(
+                self,
+                call_id: str,
+                output: ComputerScreenshotImage,
+                *,
+                acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_custom_tool_call_output(
+                self,
+                call_id: str,
+                output: str | list[FunctionAndCustomToolCallOutput]
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_call(
+                self,
+                name: str,
+                call_id: str,
+                arguments: str | AsyncIterable[str]
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_call_output(
+                self,
+                call_id: str,
+                output: str
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_shell_call(
+                self,
+                call_id: str,
+                action: FunctionShellAction,
+                environment: FunctionShellCallEnvironment,
+                *,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_shell_call_output(
+                self,
+                call_id: str,
+                output: list[FunctionShellCallOutputContent],
+                *,
+                max_output_length: int | None = ...,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_image_gen_call(
+                self,
+                result_base64: str,
+                *,
+                partials: AsyncIterable[str] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_local_shell_call(
+                self,
+                call_id: str,
+                action: LocalShellExecAction,
+                *,
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_local_shell_call_output(self, output: str) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_mcp_approval_request(
+                self,
+                server_label: str,
+                name: str,
+                arguments: str
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_mcp_approval_response(
+                self,
+                approval_request_id: str,
+                approve: bool = False,
+                *,
+                reason: str | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_message(
+                self,
+                text: str | AsyncIterable[str],
+                *,
+                annotations: Sequence[Annotation] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_reasoning_item(self, summary_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_structured_outputs(self, output: Any) -> AsyncIterator[ResponseStreamEvent]: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.TextContentBuilder:
+        property content_index: int    # Read-only
+        property final_text: str | None    # Read-only
+
+        def __init__(
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                content_index: int,
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseContentPartAddedEvent: ...
+
+        def emit_annotation_added(self, annotation: Annotation) -> ResponseOutputTextAnnotationAddedEvent: ...
+
+        def emit_delta(self, text: str) -> ResponseTextDeltaEvent: ...
+
+        def emit_done(self) -> ResponseContentPartDoneEvent: ...
+
+        def emit_text_done(self, final_text: str | None = None) -> ResponseTextDoneEvent: ...
 
 
 namespace azure.ai.agentserver.responses.hosting
@@ -894,11 +1587,11 @@ namespace azure.ai.agentserver.responses.hosting
         property routes: list[BaseRoute]    # Read-only
 
         def __init__(
-                self, 
-                *, 
-                options: ResponsesServerOptions | None = ..., 
-                prefix: str = "", 
-                store: ResponseProviderProtocol | None = ..., 
+                self,
+                *,
+                options: ResponsesServerOptions | None = ...,
+                prefix: str = "",
+                store: ResponseProviderProtocol | None = ...,
                 **kwargs: Any
             ) -> None: ...
 
@@ -932,12 +1625,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_card_path: Optional[str] = ..., 
-                base_url: Optional[str] = ..., 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                agent_card_path: Optional[str] = ...,
+                base_url: Optional[str] = ...,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 project_connection_id: Optional[str] = ...
             ) -> None: ...
 
@@ -957,14 +1650,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                call_id: str, 
-                id: str, 
-                name: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                call_id: str,
+                id: str,
+                name: str,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -984,14 +1677,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                name: str, 
-                output: Optional[ToolCallOutputContent] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                name: str,
+                output: Optional[ToolCallOutputContent] = ...,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1011,15 +1704,15 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                filter: Optional[str] = ..., 
-                index_asset_id: Optional[str] = ..., 
-                index_name: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                project_connection_id: Optional[str] = ..., 
-                query_type: Optional[Union[str, AzureAISearchQueryType]] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                filter: Optional[str] = ...,
+                index_asset_id: Optional[str] = ...,
+                index_name: Optional[str] = ...,
+                name: Optional[str] = ...,
+                project_connection_id: Optional[str] = ...,
+                query_type: Optional[Union[str, AzureAISearchQueryType]] = ...,
                 top_k: Optional[int] = ...
             ) -> None: ...
 
@@ -1034,9 +1727,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -1049,8 +1742,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -1070,8 +1763,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 error: Error
             ) -> None: ...
 
@@ -1106,9 +1799,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                diff: str, 
+                self,
+                *,
+                diff: str,
                 path: str
             ) -> None: ...
 
@@ -1123,9 +1816,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                diff: str, 
+                self,
+                *,
+                diff: str,
                 path: str
             ) -> None: ...
 
@@ -1139,8 +1832,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 path: str
             ) -> None: ...
 
@@ -1154,8 +1847,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 path: str
             ) -> None: ...
 
@@ -1168,8 +1861,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -1188,8 +1881,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -1212,11 +1905,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                operation: ApplyPatchOperationParam, 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                operation: ApplyPatchOperationParam,
                 status: Union[str, ApplyPatchCallStatusParam]
             ) -> None: ...
 
@@ -1233,11 +1926,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: Optional[str] = ..., 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: Optional[str] = ...,
                 status: Union[str, ApplyPatchCallOutputStatusParam]
             ) -> None: ...
 
@@ -1262,9 +1955,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                diff: str, 
+                self,
+                *,
+                diff: str,
                 path: str
             ) -> None: ...
 
@@ -1279,9 +1972,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                diff: str, 
+                self,
+                *,
+                diff: str,
                 path: str
             ) -> None: ...
 
@@ -1298,11 +1991,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                city: Optional[str] = ..., 
-                country: Optional[str] = ..., 
-                region: Optional[str] = ..., 
+                self,
+                *,
+                city: Optional[str] = ...,
+                country: Optional[str] = ...,
+                region: Optional[str] = ...,
                 timezone: Optional[str] = ...
             ) -> None: ...
 
@@ -1318,10 +2011,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_ids: Optional[list[str]] = ..., 
-                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ..., 
+                self,
+                *,
+                file_ids: Optional[list[str]] = ...,
+                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ...,
                 network_policy: Optional[ContainerNetworkPolicyParam] = ...
             ) -> None: ...
 
@@ -1345,10 +2038,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                azure_ai_search: AzureAISearchToolResource, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                azure_ai_search: AzureAISearchToolResource,
+                description: Optional[str] = ...,
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -1367,13 +2060,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                call_id: str, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                call_id: str,
+                id: str,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1392,13 +2085,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                output: Optional[ToolCallOutputContent] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                output: Optional[ToolCallOutputContent] = ...,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1413,10 +2106,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                indexes: list[AISearchIndexResource], 
+                self,
+                *,
+                description: Optional[str] = ...,
+                indexes: list[AISearchIndexResource],
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -1430,8 +2123,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 storage_queue: AzureFunctionStorageQueue
             ) -> None: ...
 
@@ -1446,10 +2139,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                function: AzureFunctionDefinitionFunction, 
-                input_binding: AzureFunctionBinding, 
+                self,
+                *,
+                function: AzureFunctionDefinitionFunction,
+                input_binding: AzureFunctionBinding,
                 output_binding: AzureFunctionBinding
             ) -> None: ...
 
@@ -1464,10 +2157,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
                 parameters: dict[str, Any]
             ) -> None: ...
 
@@ -1481,9 +2174,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                queue_name: str, 
+                self,
+                *,
+                queue_name: str,
                 queue_service_endpoint: str
             ) -> None: ...
 
@@ -1497,8 +2190,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 azure_function: AzureFunctionDefinition
             ) -> None: ...
 
@@ -1518,14 +2211,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                call_id: str, 
-                id: str, 
-                name: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                call_id: str,
+                id: str,
+                name: str,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1545,14 +2238,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                name: str, 
-                output: Optional[ToolCallOutputContent] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                name: str,
+                output: Optional[ToolCallOutputContent] = ...,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1572,15 +2265,15 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                count: Optional[int] = ..., 
-                description: Optional[str] = ..., 
-                freshness: Optional[str] = ..., 
-                instance_name: str, 
-                market: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                project_connection_id: str, 
+                self,
+                *,
+                count: Optional[int] = ...,
+                description: Optional[str] = ...,
+                freshness: Optional[str] = ...,
+                instance_name: str,
+                market: Optional[str] = ...,
+                name: Optional[str] = ...,
+                project_connection_id: str,
                 set_lang: Optional[str] = ...
             ) -> None: ...
 
@@ -1596,10 +2289,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                bing_custom_search_preview: BingCustomSearchToolParameters, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                bing_custom_search_preview: BingCustomSearchToolParameters,
+                description: Optional[str] = ...,
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -1618,13 +2311,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                call_id: str, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                call_id: str,
+                id: str,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1643,13 +2336,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                output: Optional[ToolCallOutputContent] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                output: Optional[ToolCallOutputContent] = ...,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1664,10 +2357,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 search_configurations: list[BingCustomSearchConfiguration]
             ) -> None: ...
 
@@ -1686,14 +2379,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                count: Optional[int] = ..., 
-                description: Optional[str] = ..., 
-                freshness: Optional[str] = ..., 
-                market: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                project_connection_id: str, 
+                self,
+                *,
+                count: Optional[int] = ...,
+                description: Optional[str] = ...,
+                freshness: Optional[str] = ...,
+                market: Optional[str] = ...,
+                name: Optional[str] = ...,
+                project_connection_id: str,
                 set_lang: Optional[str] = ...
             ) -> None: ...
 
@@ -1708,10 +2401,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 search_configurations: list[BingGroundingSearchConfiguration]
             ) -> None: ...
 
@@ -1727,10 +2420,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                bing_grounding: BingGroundingSearchToolParameters, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                bing_grounding: BingGroundingSearchToolParameters,
+                description: Optional[str] = ...,
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -1749,13 +2442,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                call_id: str, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                call_id: str,
+                id: str,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1774,13 +2467,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                output: Optional[ToolCallOutputContent] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                output: Optional[ToolCallOutputContent] = ...,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1796,10 +2489,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                browser_automation_preview: BrowserAutomationToolParameters, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                browser_automation_preview: BrowserAutomationToolParameters,
+                description: Optional[str] = ...,
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -1818,13 +2511,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                call_id: str, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                call_id: str,
+                id: str,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1843,13 +2536,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                output: Optional[ToolCallOutputContent] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                output: Optional[ToolCallOutputContent] = ...,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -1864,10 +2557,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 project_connection_id: str
             ) -> None: ...
 
@@ -1882,10 +2575,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                connection: BrowserAutomationToolConnectionParameters, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                connection: BrowserAutomationToolConnectionParameters,
+                description: Optional[str] = ...,
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -1899,8 +2592,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 outputs: StructuredOutputDefinition
             ) -> None: ...
 
@@ -1917,11 +2610,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                memory_id: str, 
-                scope: str, 
+                self,
+                *,
+                content: str,
+                memory_id: str,
+                scope: str,
                 updated_at: datetime
             ) -> None: ...
 
@@ -1945,10 +2638,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                button: Union[str, ClickButtonType], 
-                x: int, 
+                self,
+                *,
+                button: Union[str, ClickButtonType],
+                x: int,
                 y: int
             ) -> None: ...
 
@@ -1962,8 +2655,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 url: str
             ) -> None: ...
 
@@ -1977,8 +2670,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 logs: str
             ) -> None: ...
 
@@ -1994,10 +2687,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ..., 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                container: Optional[Union[str, AutoCodeInterpreterToolParam]] = ...,
+                description: Optional[str] = ...,
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -2014,11 +2707,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                created_at: datetime, 
-                id: str, 
-                output: list[ItemField], 
+                self,
+                *,
+                created_at: datetime,
+                id: str,
+                output: list[ItemField],
                 usage: ResponseUsage
             ) -> None: ...
 
@@ -2033,9 +2726,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                encrypted_content: str, 
+                self,
+                *,
+                encrypted_content: str,
                 id: Optional[str] = ...
             ) -> None: ...
 
@@ -2050,10 +2743,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                key: str, 
-                type: Literal["eq", "ne", "gt", "gte", "lt", "lte"], 
+                self,
+                *,
+                key: str,
+                type: Literal["eq", "ne", "gt", "gte", "lt", "lte"],
                 value: Union[str, int, bool, list[Union[str, int]]]
             ) -> None: ...
 
@@ -2067,9 +2760,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                filters: list[Union[ComparisonFilter, Any]], 
+                self,
+                *,
+                filters: list[Union[ComparisonFilter, Any]],
                 type: Literal["and", "or"]
             ) -> None: ...
 
@@ -2082,8 +2775,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -2113,12 +2806,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                acknowledged_safety_checks: Optional[list[ComputerCallSafetyCheckParam]] = ..., 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: ComputerScreenshotImage, 
+                self,
+                *,
+                acknowledged_safety_checks: Optional[list[ComputerCallSafetyCheckParam]] = ...,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: ComputerScreenshotImage,
                 status: Optional[Union[str, FunctionCallItemStatus]] = ...
             ) -> None: ...
 
@@ -2133,10 +2826,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: Optional[str] = ..., 
-                id: str, 
+                self,
+                *,
+                code: Optional[str] = ...,
+                id: str,
                 message: Optional[str] = ...
             ) -> None: ...
 
@@ -2159,9 +2852,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_id: str, 
+                self,
+                *,
+                file_id: str,
                 image_url: str
             ) -> None: ...
 
@@ -2176,9 +2869,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_id: Optional[str] = ..., 
+                self,
+                *,
+                file_id: Optional[str] = ...,
                 image_url: Optional[str] = ...
             ) -> None: ...
 
@@ -2194,10 +2887,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                display_height: int, 
-                display_width: int, 
+                self,
+                *,
+                display_height: int,
+                display_width: int,
                 environment: Union[str, ComputerEnvironment]
             ) -> None: ...
 
@@ -2214,11 +2907,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_ids: Optional[list[str]] = ..., 
-                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ..., 
-                network_policy: Optional[ContainerNetworkPolicyParam] = ..., 
+                self,
+                *,
+                file_ids: Optional[list[str]] = ...,
+                memory_limit: Optional[Union[str, ContainerMemoryLimit]] = ...,
+                network_policy: Optional[ContainerNetworkPolicyParam] = ...,
                 skills: Optional[list[ContainerSkill]] = ...
             ) -> None: ...
 
@@ -2236,12 +2929,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                container_id: str, 
-                end_index: int, 
-                file_id: str, 
-                filename: str, 
+                self,
+                *,
+                container_id: str,
+                end_index: int,
+                file_id: str,
+                filename: str,
                 start_index: int
             ) -> None: ...
 
@@ -2263,9 +2956,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_domains: list[str], 
+                self,
+                *,
+                allowed_domains: list[str],
                 domain_secrets: Optional[list[ContainerNetworkPolicyDomainSecretParam]] = ...
             ) -> None: ...
 
@@ -2290,10 +2983,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                domain: str, 
-                name: str, 
+                self,
+                *,
+                domain: str,
+                name: str,
                 value: str
             ) -> None: ...
 
@@ -2306,8 +2999,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -2326,8 +3019,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 container_id: str
             ) -> None: ...
 
@@ -2340,8 +3033,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -2360,9 +3053,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                compact_threshold: Optional[int] = ..., 
+                self,
+                *,
+                compact_threshold: Optional[int] = ...,
                 type: str
             ) -> None: ...
 
@@ -2375,8 +3068,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 id: str
             ) -> None: ...
 
@@ -2389,8 +3082,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 id: str
             ) -> None: ...
 
@@ -2404,9 +3097,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                x: int, 
+                self,
+                *,
+                x: int,
                 y: int
             ) -> None: ...
 
@@ -2423,38 +3116,38 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                background: Optional[bool] = ..., 
-                context_management: Optional[list[ContextManagementParam]] = ..., 
-                conversation: Optional[ConversationParam] = ..., 
-                include: Optional[list[Union[str, IncludeEnum]]] = ..., 
-                input: Optional[InputParam] = ..., 
-                instructions: Optional[str] = ..., 
-                max_output_tokens: Optional[int] = ..., 
-                max_tool_calls: Optional[int] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                model: Optional[str] = ..., 
-                parallel_tool_calls: Optional[bool] = ..., 
-                previous_response_id: Optional[str] = ..., 
-                prompt: Optional[Prompt] = ..., 
-                prompt_cache_key: Optional[str] = ..., 
-                prompt_cache_retention: Optional[Literal[in-memory, 24h]] = ..., 
-                reasoning: Optional[Reasoning] = ..., 
-                safety_identifier: Optional[str] = ..., 
-                service_tier: Optional[Literal[auto, default, flex, scale, priority]] = ..., 
-                store: Optional[bool] = ..., 
-                stream: Optional[bool] = ..., 
-                stream_options: Optional[ResponseStreamOptions] = ..., 
-                structured_inputs: Optional[dict[str, Any]] = ..., 
-                temperature: Optional[int] = ..., 
-                text: Optional[ResponseTextParam] = ..., 
-                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceParam]] = ..., 
-                tools: Optional[list[Tool]] = ..., 
-                top_logprobs: Optional[int] = ..., 
-                top_p: Optional[int] = ..., 
-                truncation: Optional[Literal[auto, disabled]] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                background: Optional[bool] = ...,
+                context_management: Optional[list[ContextManagementParam]] = ...,
+                conversation: Optional[ConversationParam] = ...,
+                include: Optional[list[Union[str, IncludeEnum]]] = ...,
+                input: Optional[InputParam] = ...,
+                instructions: Optional[str] = ...,
+                max_output_tokens: Optional[int] = ...,
+                max_tool_calls: Optional[int] = ...,
+                metadata: Optional[Metadata] = ...,
+                model: Optional[str] = ...,
+                parallel_tool_calls: Optional[bool] = ...,
+                previous_response_id: Optional[str] = ...,
+                prompt: Optional[Prompt] = ...,
+                prompt_cache_key: Optional[str] = ...,
+                prompt_cache_retention: Optional[Literal[in-memory, 24h]] = ...,
+                reasoning: Optional[Reasoning] = ...,
+                safety_identifier: Optional[str] = ...,
+                service_tier: Optional[Literal[auto, default, flex, scale, priority]] = ...,
+                store: Optional[bool] = ...,
+                stream: Optional[bool] = ...,
+                stream_options: Optional[ResponseStreamOptions] = ...,
+                structured_inputs: Optional[dict[str, Any]] = ...,
+                temperature: Optional[int] = ...,
+                text: Optional[ResponseTextParam] = ...,
+                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceParam]] = ...,
+                tools: Optional[list[Tool]] = ...,
+                top_logprobs: Optional[int] = ...,
+                top_p: Optional[int] = ...,
+                truncation: Optional[Literal[auto, disabled]] = ...,
                 user: Optional[str] = ...
             ) -> None: ...
 
@@ -2469,9 +3162,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                definition: str, 
+                self,
+                *,
+                definition: str,
                 syntax: Union[str, GrammarSyntax1]
             ) -> None: ...
 
@@ -2497,10 +3190,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                format: Optional[CustomToolParamFormat] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                format: Optional[CustomToolParamFormat] = ...,
                 name: str
             ) -> None: ...
 
@@ -2513,8 +3206,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -2534,8 +3227,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 id: str
             ) -> None: ...
 
@@ -2556,9 +3249,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                x: int, 
+                self,
+                *,
+                x: int,
                 y: int
             ) -> None: ...
 
@@ -2572,8 +3265,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 path: list[CoordParam]
             ) -> None: ...
 
@@ -2592,14 +3285,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                additional_info: Optional[dict[str, Any]] = ..., 
-                code: str, 
-                debug_info: Optional[dict[str, Any]] = ..., 
-                details: Optional[list[Error]] = ..., 
-                message: str, 
-                param: Optional[str] = ..., 
+                self,
+                *,
+                additional_info: Optional[dict[str, Any]] = ...,
+                code: str,
+                debug_info: Optional[dict[str, Any]] = ...,
+                details: Optional[list[Error]] = ...,
+                message: str,
+                param: Optional[str] = ...,
                 type: Optional[str] = ...
             ) -> None: ...
 
@@ -2618,13 +3311,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                call_id: str, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                call_id: str,
+                id: str,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -2643,13 +3336,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                output: Optional[ToolCallOutputContent] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                output: Optional[ToolCallOutputContent] = ...,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -2664,10 +3357,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 project_connections: Optional[list[ToolProjectConnection]] = ...
             ) -> None: ...
 
@@ -2683,10 +3376,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_id: str, 
-                filename: str, 
+                self,
+                *,
+                file_id: str,
+                filename: str,
                 index: int
             ) -> None: ...
 
@@ -2701,9 +3394,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_id: str, 
+                self,
+                *,
+                file_id: str,
                 index: int
             ) -> None: ...
 
@@ -2722,13 +3415,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                filters: Optional[Filters] = ..., 
-                max_num_results: Optional[int] = ..., 
-                name: Optional[str] = ..., 
-                ranking_options: Optional[RankingOptions] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                filters: Optional[Filters] = ...,
+                max_num_results: Optional[int] = ...,
+                name: Optional[str] = ...,
+                ranking_options: Optional[RankingOptions] = ...,
                 vector_store_ids: list[str]
             ) -> None: ...
 
@@ -2745,12 +3438,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                attributes: Optional[VectorStoreFileAttributes] = ..., 
-                file_id: Optional[str] = ..., 
-                filename: Optional[str] = ..., 
-                score: Optional[float] = ..., 
+                self,
+                *,
+                attributes: Optional[VectorStoreFileAttributes] = ...,
+                file_id: Optional[str] = ...,
+                filename: Optional[str] = ...,
+                score: Optional[float] = ...,
                 text: Optional[str] = ...
             ) -> None: ...
 
@@ -2763,8 +3456,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -2781,11 +3474,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_data: Optional[str] = ..., 
-                file_id: Optional[str] = ..., 
-                file_url: Optional[str] = ..., 
+                self,
+                *,
+                file_data: Optional[str] = ...,
+                file_id: Optional[str] = ...,
+                file_url: Optional[str] = ...,
                 filename: Optional[str] = ...
             ) -> None: ...
 
@@ -2801,10 +3494,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                detail: Union[str, ImageDetail], 
-                file_id: Optional[str] = ..., 
+                self,
+                *,
+                detail: Union[str, ImageDetail],
+                file_id: Optional[str] = ...,
                 image_url: Optional[str] = ...
             ) -> None: ...
 
@@ -2818,8 +3511,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -2848,11 +3541,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: Union[str, list[Union[InputTextContentParam, InputImageContentParamAutoParam, InputFileContentParam]]], 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: Union[str, list[Union[InputTextContentParam, InputImageContentParamAutoParam, InputFileContentParam]]],
                 status: Optional[Union[str, FunctionCallItemStatus]] = ...
             ) -> None: ...
 
@@ -2867,10 +3560,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                commands: list[str], 
-                max_output_length: int, 
+                self,
+                *,
+                commands: list[str],
+                max_output_length: int,
                 timeout_ms: int
             ) -> None: ...
 
@@ -2885,10 +3578,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                commands: list[str], 
-                max_output_length: Optional[int] = ..., 
+                self,
+                *,
+                commands: list[str],
+                max_output_length: Optional[int] = ...,
                 timeout_ms: Optional[int] = ...
             ) -> None: ...
 
@@ -2901,8 +3594,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -2925,12 +3618,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: FunctionShellActionParam, 
-                call_id: str, 
-                environment: Optional[FunctionShellCallItemParamEnvironment] = ..., 
-                id: Optional[str] = ..., 
+                self,
+                *,
+                action: FunctionShellActionParam,
+                call_id: str,
+                environment: Optional[FunctionShellCallItemParamEnvironment] = ...,
+                id: Optional[str] = ...,
                 status: Optional[Union[str, FunctionShellCallItemStatus]] = ...
             ) -> None: ...
 
@@ -2943,8 +3636,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -2958,8 +3651,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 container_id: str
             ) -> None: ...
 
@@ -2973,8 +3666,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 skills: Optional[list[LocalSkillParam]] = ...
             ) -> None: ...
 
@@ -3001,11 +3694,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                created_by: Optional[str] = ..., 
-                outcome: FunctionShellCallOutputOutcome, 
-                stderr: str, 
+                self,
+                *,
+                created_by: Optional[str] = ...,
+                outcome: FunctionShellCallOutputOutcome,
+                stderr: str,
                 stdout: str
             ) -> None: ...
 
@@ -3020,10 +3713,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                outcome: FunctionShellCallOutputOutcomeParam, 
-                stderr: str, 
+                self,
+                *,
+                outcome: FunctionShellCallOutputOutcomeParam,
+                stderr: str,
                 stdout: str
             ) -> None: ...
 
@@ -3037,8 +3730,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 exit_code: int
             ) -> None: ...
 
@@ -3052,8 +3745,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 exit_code: int
             ) -> None: ...
 
@@ -3071,12 +3764,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                max_output_length: Optional[int] = ..., 
-                output: list[FunctionShellCallOutputContentParam], 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                max_output_length: Optional[int] = ...,
+                output: list[FunctionShellCallOutputContentParam],
                 status: Optional[Union[str, FunctionShellCallItemStatus]] = ...
             ) -> None: ...
 
@@ -3089,8 +3782,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -3103,8 +3796,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -3150,10 +3843,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                environment: Optional[FunctionShellToolParamEnvironment] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                environment: Optional[FunctionShellToolParamEnvironment] = ...,
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -3166,8 +3859,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -3181,8 +3874,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 container_id: str
             ) -> None: ...
 
@@ -3196,8 +3889,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 skills: Optional[list[LocalSkillParam]] = ...
             ) -> None: ...
 
@@ -3220,11 +3913,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
-                parameters: dict[str, Any], 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
+                parameters: dict[str, Any],
                 strict: bool
             ) -> None: ...
 
@@ -3241,11 +3934,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: Union[str, list[FunctionAndCustomToolCallOutput]], 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: Union[str, list[FunctionAndCustomToolCallOutput]],
                 status: Optional[Literal[in_progress, completed, incomplete]] = ...
             ) -> None: ...
 
@@ -3264,13 +3957,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: Union[str, list[FunctionAndCustomToolCallOutput]], 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: Union[str, list[FunctionAndCustomToolCallOutput]],
+                response_id: Optional[str] = ...,
                 status: Optional[Literal[in_progress, completed, incomplete]] = ...
             ) -> None: ...
 
@@ -3289,9 +3982,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                embedding_weight: int, 
+                self,
+                *,
+                embedding_weight: int,
                 text_weight: int
             ) -> None: ...
 
@@ -3329,20 +4022,20 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: Optional[Union[str, ImageGenActionEnum]] = ..., 
-                background: Optional[Literal[transparent, opaque, auto]] = ..., 
-                description: Optional[str] = ..., 
-                input_fidelity: Optional[Union[str, InputFidelity]] = ..., 
-                input_image_mask: Optional[ImageGenToolInputImageMask] = ..., 
-                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], str]] = ..., 
-                moderation: Optional[Literal[auto, low]] = ..., 
-                name: Optional[str] = ..., 
-                output_compression: Optional[int] = ..., 
-                output_format: Optional[Literal[png, webp, jpeg]] = ..., 
-                partial_images: Optional[int] = ..., 
-                quality: Optional[Literal[low, medium, high, auto]] = ..., 
+                self,
+                *,
+                action: Optional[Union[str, ImageGenActionEnum]] = ...,
+                background: Optional[Literal[transparent, opaque, auto]] = ...,
+                description: Optional[str] = ...,
+                input_fidelity: Optional[Union[str, InputFidelity]] = ...,
+                input_image_mask: Optional[ImageGenToolInputImageMask] = ...,
+                model: Optional[Union[Literal[gpt-image-1], Literal[gpt-image-1-mini], Literal[gpt-image-5], str]] = ...,
+                moderation: Optional[Literal[auto, low]] = ...,
+                name: Optional[str] = ...,
+                output_compression: Optional[int] = ...,
+                output_format: Optional[Literal[png, webp, jpeg]] = ...,
+                partial_images: Optional[int] = ...,
+                quality: Optional[Literal[low, medium, high, auto]] = ...,
                 size: Optional[Literal[1024x1024, 1024x1536, 1536x1024, auto]] = ...
             ) -> None: ...
 
@@ -3356,9 +4049,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_id: Optional[str] = ..., 
+                self,
+                *,
+                file_id: Optional[str] = ...,
                 image_url: Optional[str] = ...
             ) -> None: ...
 
@@ -3386,10 +4079,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                name: str, 
+                self,
+                *,
+                description: str,
+                name: str,
                 source: InlineSkillSourceParam
             ) -> None: ...
 
@@ -3404,8 +4097,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 data: str
             ) -> None: ...
 
@@ -3427,11 +4120,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_data: Optional[str] = ..., 
-                file_id: Optional[str] = ..., 
-                file_url: Optional[str] = ..., 
+                self,
+                *,
+                file_data: Optional[str] = ...,
+                file_id: Optional[str] = ...,
+                file_url: Optional[str] = ...,
                 filename: Optional[str] = ...
             ) -> None: ...
 
@@ -3448,11 +4141,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_data: Optional[str] = ..., 
-                file_id: Optional[str] = ..., 
-                file_url: Optional[str] = ..., 
+                self,
+                *,
+                file_data: Optional[str] = ...,
+                file_id: Optional[str] = ...,
+                file_url: Optional[str] = ...,
                 filename: Optional[str] = ...
             ) -> None: ...
 
@@ -3468,10 +4161,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                detail: Union[str, ImageDetail], 
-                file_id: Optional[str] = ..., 
+                self,
+                *,
+                detail: Union[str, ImageDetail],
+                file_id: Optional[str] = ...,
                 image_url: Optional[str] = ...
             ) -> None: ...
 
@@ -3487,10 +4180,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                detail: Optional[Union[str, DetailEnum]] = ..., 
-                file_id: Optional[str] = ..., 
+                self,
+                *,
+                detail: Optional[Union[str, DetailEnum]] = ...,
+                file_id: Optional[str] = ...,
                 image_url: Optional[str] = ...
             ) -> None: ...
 
@@ -3504,8 +4197,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -3519,8 +4212,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -3533,8 +4226,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -3552,12 +4245,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: str, 
-                container_id: str, 
-                id: str, 
-                outputs: list[Union[CodeInterpreterOutputLogs, CodeInterpreterOutputImage]], 
+                self,
+                *,
+                code: str,
+                container_id: str,
+                id: str,
+                outputs: list[Union[CodeInterpreterOutputLogs, CodeInterpreterOutputImage]],
                 status: Literal["in_progress", "completed", "incomplete", "interpreting", "failed"]
             ) -> None: ...
 
@@ -3575,12 +4268,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: ComputerAction, 
-                call_id: str, 
-                id: str, 
-                pending_safety_checks: list[ComputerCallSafetyCheckParam], 
+                self,
+                *,
+                action: ComputerAction,
+                call_id: str,
+                id: str,
+                pending_safety_checks: list[ComputerCallSafetyCheckParam],
                 status: Literal["in_progress", "completed", "incomplete"]
             ) -> None: ...
 
@@ -3597,11 +4290,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                input: str, 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                input: str,
                 name: str
             ) -> None: ...
 
@@ -3617,10 +4310,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
                 output: Union[str, list[FunctionAndCustomToolCallOutput]]
             ) -> None: ...
 
@@ -3633,8 +4326,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -3652,12 +4345,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                created_by: Optional[str] = ..., 
-                id: str, 
-                operation: ApplyPatchFileOperation, 
+                self,
+                *,
+                call_id: str,
+                created_by: Optional[str] = ...,
+                id: str,
+                operation: ApplyPatchFileOperation,
                 status: Union[str, ApplyPatchCallStatus]
             ) -> None: ...
 
@@ -3675,12 +4368,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                created_by: Optional[str] = ..., 
-                id: str, 
-                output: Optional[str] = ..., 
+                self,
+                *,
+                call_id: str,
+                created_by: Optional[str] = ...,
+                id: str,
+                output: Optional[str] = ...,
                 status: Union[str, ApplyPatchCallOutputStatus]
             ) -> None: ...
 
@@ -3698,12 +4391,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: str, 
-                container_id: str, 
-                id: str, 
-                outputs: list[Union[CodeInterpreterOutputLogs, CodeInterpreterOutputImage]], 
+                self,
+                *,
+                code: str,
+                container_id: str,
+                id: str,
+                outputs: list[Union[CodeInterpreterOutputLogs, CodeInterpreterOutputImage]],
                 status: Literal["in_progress", "completed", "incomplete", "interpreting", "failed"]
             ) -> None: ...
 
@@ -3719,10 +4412,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                created_by: Optional[str] = ..., 
-                encrypted_content: str, 
+                self,
+                *,
+                created_by: Optional[str] = ...,
+                encrypted_content: str,
                 id: str
             ) -> None: ...
 
@@ -3740,12 +4433,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: ComputerAction, 
-                call_id: str, 
-                id: str, 
-                pending_safety_checks: list[ComputerCallSafetyCheckParam], 
+                self,
+                *,
+                action: ComputerAction,
+                call_id: str,
+                id: str,
+                pending_safety_checks: list[ComputerCallSafetyCheckParam],
                 status: Literal["in_progress", "completed", "incomplete"]
             ) -> None: ...
 
@@ -3763,12 +4456,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                acknowledged_safety_checks: Optional[list[ComputerCallSafetyCheckParam]] = ..., 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: ComputerScreenshotImage, 
+                self,
+                *,
+                acknowledged_safety_checks: Optional[list[ComputerCallSafetyCheckParam]] = ...,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: ComputerScreenshotImage,
                 status: Optional[Literal[in_progress, completed, incomplete]] = ...
             ) -> None: ...
 
@@ -3785,11 +4478,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                input: str, 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
+                input: str,
                 name: str
             ) -> None: ...
 
@@ -3805,10 +4498,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                id: Optional[str] = ..., 
+                self,
+                *,
+                call_id: str,
+                id: Optional[str] = ...,
                 output: Union[str, list[FunctionAndCustomToolCallOutput]]
             ) -> None: ...
 
@@ -3825,11 +4518,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                id: str, 
-                queries: list[str], 
-                results: Optional[list[FileSearchToolCallResults]] = ..., 
+                self,
+                *,
+                id: str,
+                queries: list[str],
+                results: Optional[list[FileSearchToolCallResults]] = ...,
                 status: Literal["in_progress", "searching", "completed", "incomplete", "failed"]
             ) -> None: ...
 
@@ -3848,13 +4541,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: FunctionShellAction, 
-                call_id: str, 
-                created_by: Optional[str] = ..., 
-                environment: FunctionShellCallEnvironment, 
-                id: str, 
+                self,
+                *,
+                action: FunctionShellAction,
+                call_id: str,
+                created_by: Optional[str] = ...,
+                environment: FunctionShellCallEnvironment,
+                id: str,
                 status: Union[str, LocalShellCallStatus]
             ) -> None: ...
 
@@ -3873,13 +4566,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                call_id: str, 
-                created_by: Optional[str] = ..., 
-                id: str, 
-                max_output_length: int, 
-                output: list[FunctionShellCallOutputContent], 
+                self,
+                *,
+                call_id: str,
+                created_by: Optional[str] = ...,
+                id: str,
+                max_output_length: int,
+                output: list[FunctionShellCallOutputContent],
                 status: Union[str, LocalShellCallOutputStatusEnum]
             ) -> None: ...
 
@@ -3897,12 +4590,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                id: Optional[str] = ...,
+                name: str,
                 status: Optional[Literal[in_progress, completed, incomplete]] = ...
             ) -> None: ...
 
@@ -3918,10 +4611,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                id: str, 
-                result: str, 
+                self,
+                *,
+                id: str,
+                result: str,
                 status: Literal["in_progress", "completed", "generating", "failed"]
             ) -> None: ...
 
@@ -3938,11 +4631,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: LocalShellExecAction, 
-                call_id: str, 
-                id: str, 
+                self,
+                *,
+                action: LocalShellExecAction,
+                call_id: str,
+                id: str,
                 status: Literal["in_progress", "completed", "incomplete"]
             ) -> None: ...
 
@@ -3958,10 +4651,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                id: str, 
-                output: str, 
+                self,
+                *,
+                id: str,
+                output: str,
                 status: Optional[Literal[in_progress, completed, incomplete]] = ...
             ) -> None: ...
 
@@ -3978,11 +4671,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                id: str, 
-                name: str, 
+                self,
+                *,
+                arguments: str,
+                id: str,
+                name: str,
                 server_label: str
             ) -> None: ...
 
@@ -3999,11 +4692,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                approval_request_id: str, 
-                approve: bool, 
-                id: str, 
+                self,
+                *,
+                approval_request_id: str,
+                approve: bool,
+                id: str,
                 reason: Optional[str] = ...
             ) -> None: ...
 
@@ -4020,11 +4713,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                error: Optional[str] = ..., 
-                id: str, 
-                server_label: str, 
+                self,
+                *,
+                error: Optional[str] = ...,
+                id: str,
+                server_label: str,
                 tools: list[MCPListToolsTool]
             ) -> None: ...
 
@@ -4045,15 +4738,15 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                approval_request_id: Optional[str] = ..., 
-                arguments: str, 
-                error: Optional[dict[str, Any]] = ..., 
-                id: str, 
-                name: str, 
-                output: Optional[str] = ..., 
-                server_label: str, 
+                self,
+                *,
+                approval_request_id: Optional[str] = ...,
+                arguments: str,
+                error: Optional[dict[str, Any]] = ...,
+                id: str,
+                name: str,
+                output: Optional[str] = ...,
+                server_label: str,
                 status: Optional[Union[str, MCPToolCallStatus]] = ...
             ) -> None: ...
 
@@ -4070,11 +4763,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[MessageContent], 
-                id: str, 
-                role: Union[str, MessageRole], 
+                self,
+                *,
+                content: list[MessageContent],
+                id: str,
+                role: Union[str, MessageRole],
                 status: Union[str, MessageStatus]
             ) -> None: ...
 
@@ -4092,12 +4785,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: Optional[list[ReasoningTextContent]] = ..., 
-                encrypted_content: Optional[str] = ..., 
-                id: str, 
-                status: Optional[Literal[in_progress, completed, incomplete]] = ..., 
+                self,
+                *,
+                content: Optional[list[ReasoningTextContent]] = ...,
+                encrypted_content: Optional[str] = ...,
+                id: str,
+                status: Optional[Literal[in_progress, completed, incomplete]] = ...,
                 summary: list[SummaryTextContent]
             ) -> None: ...
 
@@ -4139,10 +4832,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: Union[WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind], 
-                id: str, 
+                self,
+                *,
+                action: Union[WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind],
+                id: str,
                 status: Literal["in_progress", "searching", "completed", "failed"]
             ) -> None: ...
 
@@ -4159,11 +4852,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                id: str, 
-                queries: list[str], 
-                results: Optional[list[FileSearchToolCallResults]] = ..., 
+                self,
+                *,
+                id: str,
+                queries: list[str],
+                results: Optional[list[FileSearchToolCallResults]] = ...,
                 status: Literal["in_progress", "searching", "completed", "incomplete", "failed"]
             ) -> None: ...
 
@@ -4181,12 +4874,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                arguments: str,
+                call_id: str,
+                id: Optional[str] = ...,
+                name: str,
                 status: Optional[Literal[in_progress, completed, incomplete]] = ...
             ) -> None: ...
 
@@ -4202,10 +4895,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                id: str, 
-                result: str, 
+                self,
+                *,
+                id: str,
+                result: str,
                 status: Literal["in_progress", "completed", "generating", "failed"]
             ) -> None: ...
 
@@ -4222,11 +4915,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: LocalShellExecAction, 
-                call_id: str, 
-                id: str, 
+                self,
+                *,
+                action: LocalShellExecAction,
+                call_id: str,
+                id: str,
                 status: Literal["in_progress", "completed", "incomplete"]
             ) -> None: ...
 
@@ -4242,10 +4935,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                id: str, 
-                output: str, 
+                self,
+                *,
+                id: str,
+                output: str,
                 status: Optional[Literal[in_progress, completed, incomplete]] = ...
             ) -> None: ...
 
@@ -4262,11 +4955,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                id: str, 
-                name: str, 
+                self,
+                *,
+                arguments: str,
+                id: str,
+                name: str,
                 server_label: str
             ) -> None: ...
 
@@ -4283,11 +4976,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                error: Optional[str] = ..., 
-                id: str, 
-                server_label: str, 
+                self,
+                *,
+                error: Optional[str] = ...,
+                id: str,
+                server_label: str,
                 tools: list[MCPListToolsTool]
             ) -> None: ...
 
@@ -4308,15 +5001,15 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                approval_request_id: Optional[str] = ..., 
-                arguments: str, 
-                error: Optional[dict[str, Any]] = ..., 
-                id: str, 
-                name: str, 
-                output: Optional[str] = ..., 
-                server_label: str, 
+                self,
+                *,
+                approval_request_id: Optional[str] = ...,
+                arguments: str,
+                error: Optional[dict[str, Any]] = ...,
+                id: str,
+                name: str,
+                output: Optional[str] = ...,
+                server_label: str,
                 status: Optional[Union[str, MCPToolCallStatus]] = ...
             ) -> None: ...
 
@@ -4331,9 +5024,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: Union[str, list[MessageContent]], 
+                self,
+                *,
+                content: Union[str, list[MessageContent]],
                 role: Union[str, MessageRole]
             ) -> None: ...
 
@@ -4350,10 +5043,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: list[OutputMessageContent], 
-                id: str, 
+                self,
+                *,
+                content: list[OutputMessageContent],
+                id: str,
                 status: Literal["in_progress", "completed", "incomplete"]
             ) -> None: ...
 
@@ -4371,12 +5064,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: Optional[list[ReasoningTextContent]] = ..., 
-                encrypted_content: Optional[str] = ..., 
-                id: str, 
-                status: Optional[Literal[in_progress, completed, incomplete]] = ..., 
+                self,
+                *,
+                content: Optional[list[ReasoningTextContent]] = ...,
+                encrypted_content: Optional[str] = ...,
+                id: str,
+                status: Optional[Literal[in_progress, completed, incomplete]] = ...,
                 summary: list[SummaryTextContent]
             ) -> None: ...
 
@@ -4390,8 +5083,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 id: str
             ) -> None: ...
 
@@ -4457,10 +5150,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: Union[WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind], 
-                id: str, 
+                self,
+                *,
+                action: Union[WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind],
+                id: str,
                 status: Literal["in_progress", "searching", "completed", "failed"]
             ) -> None: ...
 
@@ -4474,8 +5167,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 keys_property: list[str]
             ) -> None: ...
 
@@ -4515,12 +5208,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                command: list[str], 
-                env: dict[str, str], 
-                timeout_ms: Optional[int] = ..., 
-                user: Optional[str] = ..., 
+                self,
+                *,
+                command: list[str],
+                env: dict[str, str],
+                timeout_ms: Optional[int] = ...,
+                user: Optional[str] = ...,
                 working_directory: Optional[str] = ...
             ) -> None: ...
 
@@ -4535,9 +5228,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -4552,10 +5245,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                name: str, 
+                self,
+                *,
+                description: str,
+                name: str,
                 path: str
             ) -> None: ...
 
@@ -4571,11 +5264,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                bytes: list[int], 
-                logprob: int, 
-                token: str, 
+                self,
+                *,
+                bytes: list[int],
+                logprob: int,
+                token: str,
                 top_logprobs: list[TopLogProb]
             ) -> None: ...
 
@@ -4592,11 +5285,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                approval_request_id: str, 
-                approve: bool, 
-                id: Optional[str] = ..., 
+                self,
+                *,
+                approval_request_id: str,
+                approve: bool,
+                id: Optional[str] = ...,
                 reason: Optional[str] = ...
             ) -> None: ...
 
@@ -4612,11 +5305,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                annotations: Optional[MCPListToolsToolAnnotations] = ..., 
-                description: Optional[str] = ..., 
-                input_schema: MCPListToolsToolInputSchema, 
+                self,
+                *,
+                annotations: Optional[MCPListToolsToolAnnotations] = ...,
+                description: Optional[str] = ...,
+                input_schema: MCPListToolsToolInputSchema,
                 name: str
             ) -> None: ...
 
@@ -4644,16 +5337,16 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ..., 
-                authorization: Optional[str] = ..., 
-                connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ..., 
-                headers: Optional[dict[str, str]] = ..., 
-                project_connection_id: Optional[str] = ..., 
-                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ..., 
-                server_description: Optional[str] = ..., 
-                server_label: str, 
+                self,
+                *,
+                allowed_tools: Optional[Union[list[str], MCPToolFilter]] = ...,
+                authorization: Optional[str] = ...,
+                connector_id: Optional[Literal[connector_dropbox, connector_gmail, connector_googlecalendar, connector_googledrive, connector_microsoftteams, connector_outlookcalendar, connector_outlookemail, connector_sharepoint]] = ...,
+                headers: Optional[dict[str, str]] = ...,
+                project_connection_id: Optional[str] = ...,
+                require_approval: Optional[Union[MCPToolRequireApproval, Literal[always], Literal[never]]] = ...,
+                server_description: Optional[str] = ...,
+                server_label: str,
                 server_url: Optional[str] = ...
             ) -> None: ...
 
@@ -4675,9 +5368,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                read_only: Optional[bool] = ..., 
+                self,
+                *,
+                read_only: Optional[bool] = ...,
                 tool_names: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -4691,9 +5384,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                always: Optional[MCPToolFilter] = ..., 
+                self,
+                *,
+                always: Optional[MCPToolFilter] = ...,
                 never: Optional[MCPToolFilter] = ...
             ) -> None: ...
 
@@ -4710,12 +5403,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                kind: str, 
-                memory_id: str, 
-                scope: str, 
+                self,
+                *,
+                content: str,
+                kind: str,
+                memory_id: str,
+                scope: str,
                 updated_at: datetime
             ) -> None: ...
 
@@ -4733,8 +5426,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 memory_item: MemoryItem
             ) -> None: ...
 
@@ -4747,8 +5440,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 max_memories: Optional[int] = ...
             ) -> None: ...
 
@@ -4767,13 +5460,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                memory_store_name: str, 
-                name: Optional[str] = ..., 
-                scope: str, 
-                search_options: Optional[MemorySearchOptions] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                memory_store_name: str,
+                name: Optional[str] = ...,
+                scope: str,
+                search_options: Optional[MemorySearchOptions] = ...,
                 update_delay: Optional[int] = ...
             ) -> None: ...
 
@@ -4787,8 +5480,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 results: Optional[list[MemorySearchItem]] = ...
             ) -> None: ...
 
@@ -4806,12 +5499,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                id: str, 
-                response_id: Optional[str] = ..., 
-                results: Optional[list[MemorySearchItem]] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                id: str,
+                response_id: Optional[str] = ...,
+                results: Optional[list[MemorySearchItem]] = ...,
                 status: Literal["in_progress", "searching", "completed", "incomplete", "failed"]
             ) -> None: ...
 
@@ -4824,8 +5517,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -4842,11 +5535,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                file_data: Optional[str] = ..., 
-                file_id: Optional[str] = ..., 
-                file_url: Optional[str] = ..., 
+                self,
+                *,
+                file_data: Optional[str] = ...,
+                file_id: Optional[str] = ...,
+                file_url: Optional[str] = ...,
                 filename: Optional[str] = ...
             ) -> None: ...
 
@@ -4862,10 +5555,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                detail: Union[str, ImageDetail], 
-                file_id: Optional[str] = ..., 
+                self,
+                *,
+                detail: Union[str, ImageDetail],
+                file_id: Optional[str] = ...,
                 image_url: Optional[str] = ...
             ) -> None: ...
 
@@ -4879,8 +5572,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -4896,10 +5589,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                annotations: list[Annotation], 
-                logprobs: list[LogProb], 
+                self,
+                *,
+                annotations: list[Annotation],
+                logprobs: list[LogProb],
                 text: str
             ) -> None: ...
 
@@ -4913,8 +5606,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -4928,8 +5621,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 refusal: str
             ) -> None: ...
 
@@ -4977,10 +5670,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                fabric_dataagent_preview: FabricDataAgentToolParameters, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                fabric_dataagent_preview: FabricDataAgentToolParameters,
                 name: Optional[str] = ...
             ) -> None: ...
 
@@ -5084,9 +5777,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                x: int, 
+                self,
+                *,
+                x: int,
                 y: int
             ) -> None: ...
 
@@ -5104,12 +5797,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                consent_link: str, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                consent_link: str,
+                id: str,
+                response_id: Optional[str] = ...,
                 server_label: str
             ) -> None: ...
 
@@ -5132,8 +5825,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -5157,12 +5850,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                auth: OpenApiAuthDetails, 
-                default_params: Optional[list[str]] = ..., 
-                description: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                auth: OpenApiAuthDetails,
+                default_params: Optional[list[str]] = ...,
+                description: Optional[str] = ...,
+                name: str,
                 spec: dict[str, Any]
             ) -> None: ...
 
@@ -5177,10 +5870,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
                 parameters: dict[str, Any]
             ) -> None: ...
 
@@ -5194,8 +5887,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 security_scheme: OpenApiManagedSecurityScheme
             ) -> None: ...
 
@@ -5208,8 +5901,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 audience: str
             ) -> None: ...
 
@@ -5223,8 +5916,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 security_scheme: OpenApiProjectConnectionSecurityScheme
             ) -> None: ...
 
@@ -5237,8 +5930,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 project_connection_id: str
             ) -> None: ...
 
@@ -5252,8 +5945,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 openapi: OpenApiFunctionDefinition
             ) -> None: ...
 
@@ -5273,14 +5966,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                call_id: str, 
-                id: str, 
-                name: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                call_id: str,
+                id: str,
+                name: str,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -5300,14 +5993,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                name: str, 
-                output: Optional[ToolCallOutputContent] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                name: str,
+                output: Optional[ToolCallOutputContent] = ...,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -5320,8 +6013,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -5337,10 +6030,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                annotations: list[Annotation], 
-                logprobs: list[LogProb], 
+                self,
+                *,
+                annotations: list[Annotation],
+                logprobs: list[LogProb],
                 text: str
             ) -> None: ...
 
@@ -5354,8 +6047,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -5369,8 +6062,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 refusal: str
             ) -> None: ...
 
@@ -5391,10 +6084,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                response_id: Optional[str] = ...,
                 type: str
             ) -> None: ...
 
@@ -5413,13 +6106,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                operation: ApplyPatchFileOperation, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                operation: ApplyPatchFileOperation,
+                response_id: Optional[str] = ...,
                 status: Union[str, ApplyPatchCallStatus]
             ) -> None: ...
 
@@ -5438,13 +6131,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                output: Optional[str] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                output: Optional[str] = ...,
+                response_id: Optional[str] = ...,
                 status: Union[str, ApplyPatchCallOutputStatus]
             ) -> None: ...
 
@@ -5464,14 +6157,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                code: str, 
-                container_id: str, 
-                id: str, 
-                outputs: list[Union[CodeInterpreterOutputLogs, CodeInterpreterOutputImage]], 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                code: str,
+                container_id: str,
+                id: str,
+                outputs: list[Union[CodeInterpreterOutputLogs, CodeInterpreterOutputImage]],
+                response_id: Optional[str] = ...,
                 status: Literal["in_progress", "completed", "incomplete", "interpreting", "failed"]
             ) -> None: ...
 
@@ -5488,11 +6181,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                encrypted_content: str, 
-                id: str, 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                encrypted_content: str,
+                id: str,
                 response_id: Optional[str] = ...
             ) -> None: ...
 
@@ -5512,14 +6205,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: ComputerAction, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                pending_safety_checks: list[ComputerCallSafetyCheckParam], 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                action: ComputerAction,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                pending_safety_checks: list[ComputerCallSafetyCheckParam],
+                response_id: Optional[str] = ...,
                 status: Literal["in_progress", "completed", "incomplete"]
             ) -> None: ...
 
@@ -5539,14 +6232,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                acknowledged_safety_checks: Optional[list[ComputerCallSafetyCheckParam]] = ..., 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: ComputerScreenshotImage, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                acknowledged_safety_checks: Optional[list[ComputerCallSafetyCheckParam]] = ...,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: ComputerScreenshotImage,
+                response_id: Optional[str] = ...,
                 status: Optional[Literal[in_progress, completed, incomplete]] = ...
             ) -> None: ...
 
@@ -5565,13 +6258,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                input: str, 
-                name: str, 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: Optional[str] = ...,
+                input: str,
+                name: str,
                 response_id: Optional[str] = ...
             ) -> None: ...
 
@@ -5589,12 +6282,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                output: Union[str, list[FunctionAndCustomToolCallOutput]], 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: Optional[str] = ...,
+                output: Union[str, list[FunctionAndCustomToolCallOutput]],
                 response_id: Optional[str] = ...
             ) -> None: ...
 
@@ -5613,13 +6306,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                id: str, 
-                queries: list[str], 
-                response_id: Optional[str] = ..., 
-                results: Optional[list[FileSearchToolCallResults]] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                id: str,
+                queries: list[str],
+                response_id: Optional[str] = ...,
+                results: Optional[list[FileSearchToolCallResults]] = ...,
                 status: Literal["in_progress", "searching", "completed", "incomplete", "failed"]
             ) -> None: ...
 
@@ -5639,14 +6332,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: FunctionShellAction, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                environment: FunctionShellCallEnvironment, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                action: FunctionShellAction,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                environment: FunctionShellCallEnvironment,
+                id: str,
+                response_id: Optional[str] = ...,
                 status: Union[str, LocalShellCallStatus]
             ) -> None: ...
 
@@ -5666,14 +6359,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                max_output_length: int, 
-                output: list[FunctionShellCallOutputContent], 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                max_output_length: int,
+                output: list[FunctionShellCallOutputContent],
+                response_id: Optional[str] = ...,
                 status: Union[str, LocalShellCallOutputStatusEnum]
             ) -> None: ...
 
@@ -5693,14 +6386,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                call_id: str, 
-                id: Optional[str] = ..., 
-                name: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                call_id: str,
+                id: Optional[str] = ...,
+                name: str,
+                response_id: Optional[str] = ...,
                 status: Optional[Literal[in_progress, completed, incomplete]] = ...
             ) -> None: ...
 
@@ -5718,12 +6411,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                id: str, 
-                response_id: Optional[str] = ..., 
-                result: str, 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                id: str,
+                response_id: Optional[str] = ...,
+                result: str,
                 status: Literal["in_progress", "completed", "generating", "failed"]
             ) -> None: ...
 
@@ -5742,13 +6435,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: LocalShellExecAction, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                action: LocalShellExecAction,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                response_id: Optional[str] = ...,
                 status: Literal["in_progress", "completed", "incomplete"]
             ) -> None: ...
 
@@ -5766,12 +6459,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                id: str, 
-                output: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                id: str,
+                output: str,
+                response_id: Optional[str] = ...,
                 status: Optional[Literal[in_progress, completed, incomplete]] = ...
             ) -> None: ...
 
@@ -5790,13 +6483,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                id: str, 
-                name: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                id: str,
+                name: str,
+                response_id: Optional[str] = ...,
                 server_label: str
             ) -> None: ...
 
@@ -5815,13 +6508,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                approval_request_id: str, 
-                approve: bool, 
-                id: str, 
-                reason: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                approval_request_id: str,
+                approve: bool,
+                id: str,
+                reason: Optional[str] = ...,
                 response_id: Optional[str] = ...
             ) -> None: ...
 
@@ -5840,13 +6533,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                error: Optional[str] = ..., 
-                id: str, 
-                response_id: Optional[str] = ..., 
-                server_label: str, 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                error: Optional[str] = ...,
+                id: str,
+                response_id: Optional[str] = ...,
+                server_label: str,
                 tools: list[MCPListToolsTool]
             ) -> None: ...
 
@@ -5869,17 +6562,17 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                approval_request_id: Optional[str] = ..., 
-                arguments: str, 
-                error: Optional[dict[str, Any]] = ..., 
-                id: str, 
-                name: str, 
-                output: Optional[str] = ..., 
-                response_id: Optional[str] = ..., 
-                server_label: str, 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                approval_request_id: Optional[str] = ...,
+                arguments: str,
+                error: Optional[dict[str, Any]] = ...,
+                id: str,
+                name: str,
+                output: Optional[str] = ...,
+                response_id: Optional[str] = ...,
+                server_label: str,
                 status: Optional[Union[str, MCPToolCallStatus]] = ...
             ) -> None: ...
 
@@ -5898,13 +6591,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                content: list[MessageContent], 
-                id: str, 
-                response_id: Optional[str] = ..., 
-                role: Union[str, MessageRole], 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                content: list[MessageContent],
+                id: str,
+                response_id: Optional[str] = ...,
+                role: Union[str, MessageRole],
                 status: Union[str, MessageStatus]
             ) -> None: ...
 
@@ -5923,12 +6616,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                content: list[OutputMessageContent], 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                content: list[OutputMessageContent],
+                id: str,
+                response_id: Optional[str] = ...,
                 status: Literal["in_progress", "completed", "incomplete"]
             ) -> None: ...
 
@@ -5948,14 +6641,14 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                content: Optional[list[ReasoningTextContent]] = ..., 
-                encrypted_content: Optional[str] = ..., 
-                id: str, 
-                response_id: Optional[str] = ..., 
-                status: Optional[Literal[in_progress, completed, incomplete]] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                content: Optional[list[ReasoningTextContent]] = ...,
+                encrypted_content: Optional[str] = ...,
+                id: str,
+                response_id: Optional[str] = ...,
+                status: Optional[Literal[in_progress, completed, incomplete]] = ...,
                 summary: list[SummaryTextContent]
             ) -> None: ...
 
@@ -6022,12 +6715,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action: Union[WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind], 
-                agent_reference: Optional[AgentReference] = ..., 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                action: Union[WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind],
+                agent_reference: Optional[AgentReference] = ...,
+                id: str,
+                response_id: Optional[str] = ...,
                 status: Literal["in_progress", "searching", "completed", "failed"]
             ) -> None: ...
 
@@ -6040,8 +6733,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -6057,10 +6750,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                annotations: list[Annotation], 
-                logprobs: list[LogProb], 
+                self,
+                *,
+                annotations: list[Annotation],
+                logprobs: list[LogProb],
                 text: str
             ) -> None: ...
 
@@ -6074,8 +6767,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 refusal: str
             ) -> None: ...
 
@@ -6100,10 +6793,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                id: str, 
-                variables: Optional[ResponsePromptVariables] = ..., 
+                self,
+                *,
+                id: str,
+                variables: Optional[ResponsePromptVariables] = ...,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -6123,10 +6816,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                hybrid_search: Optional[HybridSearchOptions] = ..., 
-                ranker: Optional[Union[str, RankerVersionType]] = ..., 
+                self,
+                *,
+                hybrid_search: Optional[HybridSearchOptions] = ...,
+                ranker: Optional[Union[str, RankerVersionType]] = ...,
                 score_threshold: Optional[int] = ...
             ) -> None: ...
 
@@ -6141,10 +6834,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                effort: Optional[Literal[none, minimal, low, medium, high, xhigh]] = ..., 
-                generate_summary: Optional[Literal[auto, concise, detailed]] = ..., 
+                self,
+                *,
+                effort: Optional[Literal[none, minimal, low, medium, high, xhigh]] = ...,
+                generate_summary: Optional[Literal[auto, concise, detailed]] = ...,
                 summary: Optional[Literal[auto, concise, detailed]] = ...
             ) -> None: ...
 
@@ -6158,8 +6851,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -6174,9 +6867,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delta: bytes, 
+                self,
+                *,
+                delta: bytes,
                 sequence_number: int
             ) -> None: ...
 
@@ -6190,8 +6883,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 sequence_number: int
             ) -> None: ...
 
@@ -6206,9 +6899,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delta: str, 
+                self,
+                *,
+                delta: str,
                 sequence_number: int
             ) -> None: ...
 
@@ -6222,8 +6915,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 sequence_number: int
             ) -> None: ...
 
@@ -6240,11 +6933,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delta: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                delta: str,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6261,11 +6954,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                code: str,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6281,10 +6974,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6300,10 +6993,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6319,10 +7012,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6337,9 +7030,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                response: ResponseObject, 
+                self,
+                *,
+                response: ResponseObject,
                 sequence_number: int
             ) -> None: ...
 
@@ -6357,12 +7050,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                item_id: str, 
-                output_index: int, 
-                part: OutputContent, 
+                self,
+                *,
+                content_index: int,
+                item_id: str,
+                output_index: int,
+                part: OutputContent,
                 sequence_number: int
             ) -> None: ...
 
@@ -6380,12 +7073,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                item_id: str, 
-                output_index: int, 
-                part: OutputContent, 
+                self,
+                *,
+                content_index: int,
+                item_id: str,
+                output_index: int,
+                part: OutputContent,
                 sequence_number: int
             ) -> None: ...
 
@@ -6400,9 +7093,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                response: ResponseObject, 
+                self,
+                *,
+                response: ResponseObject,
                 sequence_number: int
             ) -> None: ...
 
@@ -6419,11 +7112,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delta: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                delta: str,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6440,11 +7133,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                input: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                input: str,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6482,11 +7175,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: str, 
-                message: str, 
-                param: str, 
+                self,
+                *,
+                code: str,
+                message: str,
+                param: str,
                 sequence_number: int
             ) -> None: ...
 
@@ -6500,9 +7193,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                code: Union[str, ResponseErrorCode], 
+                self,
+                *,
+                code: Union[str, ResponseErrorCode],
                 message: str
             ) -> None: ...
 
@@ -6517,9 +7210,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                response: ResponseObject, 
+                self,
+                *,
+                response: ResponseObject,
                 sequence_number: int
             ) -> None: ...
 
@@ -6535,10 +7228,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6554,10 +7247,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6573,10 +7266,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6596,11 +7289,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delta: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                delta: str,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6618,12 +7311,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                item_id: str, 
-                name: str, 
-                output_index: int, 
+                self,
+                *,
+                arguments: str,
+                item_id: str,
+                name: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6639,10 +7332,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6658,10 +7351,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6677,10 +7370,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6698,12 +7391,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
-                partial_image_b64: str, 
-                partial_image_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
+                partial_image_b64: str,
+                partial_image_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6718,9 +7411,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                response: ResponseObject, 
+                self,
+                *,
+                response: ResponseObject,
                 sequence_number: int
             ) -> None: ...
 
@@ -6733,8 +7426,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 reason: Optional[Literal[max_output_tokens, content_filter]] = ...
             ) -> None: ...
 
@@ -6749,9 +7442,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                response: ResponseObject, 
+                self,
+                *,
+                response: ResponseObject,
                 sequence_number: int
             ) -> None: ...
 
@@ -6771,10 +7464,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                logprob: int, 
-                token: str, 
+                self,
+                *,
+                logprob: int,
+                token: str,
                 top_logprobs: Optional[list[ResponseLogProbTopLogprobs]] = ...
             ) -> None: ...
 
@@ -6788,9 +7481,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                logprob: Optional[int] = ..., 
+                self,
+                *,
+                logprob: Optional[int] = ...,
                 token: Optional[str] = ...
             ) -> None: ...
 
@@ -6807,11 +7500,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delta: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                delta: str,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6828,11 +7521,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                arguments: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                arguments: str,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6848,10 +7541,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6867,10 +7560,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6886,10 +7579,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6905,10 +7598,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6924,10 +7617,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6943,10 +7636,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -6964,40 +7657,40 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: AgentReference, 
-                background: Optional[bool] = ..., 
-                completed_at: Optional[datetime] = ..., 
-                conversation: Optional[ConversationReference] = ..., 
-                created_at: datetime, 
-                error: ResponseErrorInfo, 
-                id: str, 
-                incomplete_details: ResponseIncompleteDetails, 
-                instructions: Union[str, list[Item]], 
-                max_output_tokens: Optional[int] = ..., 
-                max_tool_calls: Optional[int] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                model: Optional[str] = ..., 
-                output: list[OutputItem], 
-                output_text: Optional[str] = ..., 
-                parallel_tool_calls: bool, 
-                previous_response_id: Optional[str] = ..., 
-                prompt: Optional[Prompt] = ..., 
-                prompt_cache_key: Optional[str] = ..., 
-                prompt_cache_retention: Optional[Literal[in-memory, 24h]] = ..., 
-                reasoning: Optional[Reasoning] = ..., 
-                safety_identifier: Optional[str] = ..., 
-                service_tier: Optional[Literal[auto, default, flex, scale, priority]] = ..., 
-                status: Optional[Literal[completed, failed, in_progress, cancelled, queued, incomplete]] = ..., 
-                temperature: Optional[int] = ..., 
-                text: Optional[ResponseTextParam] = ..., 
-                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceParam]] = ..., 
-                tools: Optional[list[Tool]] = ..., 
-                top_logprobs: Optional[int] = ..., 
-                top_p: Optional[int] = ..., 
-                truncation: Optional[Literal[auto, disabled]] = ..., 
-                usage: Optional[ResponseUsage] = ..., 
+                self,
+                *,
+                agent_reference: AgentReference,
+                background: Optional[bool] = ...,
+                completed_at: Optional[datetime] = ...,
+                conversation: Optional[ConversationReference] = ...,
+                created_at: datetime,
+                error: ResponseErrorInfo,
+                id: str,
+                incomplete_details: ResponseIncompleteDetails,
+                instructions: Union[str, list[Item]],
+                max_output_tokens: Optional[int] = ...,
+                max_tool_calls: Optional[int] = ...,
+                metadata: Optional[Metadata] = ...,
+                model: Optional[str] = ...,
+                output: list[OutputItem],
+                output_text: Optional[str] = ...,
+                parallel_tool_calls: bool,
+                previous_response_id: Optional[str] = ...,
+                prompt: Optional[Prompt] = ...,
+                prompt_cache_key: Optional[str] = ...,
+                prompt_cache_retention: Optional[Literal[in-memory, 24h]] = ...,
+                reasoning: Optional[Reasoning] = ...,
+                safety_identifier: Optional[str] = ...,
+                service_tier: Optional[Literal[auto, default, flex, scale, priority]] = ...,
+                status: Optional[Literal[completed, failed, in_progress, cancelled, queued, incomplete]] = ...,
+                temperature: Optional[int] = ...,
+                text: Optional[ResponseTextParam] = ...,
+                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceParam]] = ...,
+                tools: Optional[list[Tool]] = ...,
+                top_logprobs: Optional[int] = ...,
+                top_p: Optional[int] = ...,
+                truncation: Optional[Literal[auto, disabled]] = ...,
+                usage: Optional[ResponseUsage] = ...,
                 user: Optional[str] = ...
             ) -> None: ...
 
@@ -7013,10 +7706,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item: OutputItem, 
-                output_index: int, 
+                self,
+                *,
+                item: OutputItem,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -7032,10 +7725,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item: OutputItem, 
-                output_index: int, 
+                self,
+                *,
+                item: OutputItem,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -7054,13 +7747,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                annotation: Annotation, 
-                annotation_index: int, 
-                content_index: int, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                annotation: Annotation,
+                annotation_index: int,
+                content_index: int,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -7078,9 +7771,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                response: ResponseObject, 
+                self,
+                *,
+                response: ResponseObject,
                 sequence_number: int
             ) -> None: ...
 
@@ -7098,12 +7791,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
-                part: ResponseReasoningSummaryPartAddedEventPart, 
-                sequence_number: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
+                part: ResponseReasoningSummaryPartAddedEventPart,
+                sequence_number: int,
                 summary_index: int
             ) -> None: ...
 
@@ -7117,8 +7810,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -7136,12 +7829,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
-                part: ResponseReasoningSummaryPartDoneEventPart, 
-                sequence_number: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
+                part: ResponseReasoningSummaryPartDoneEventPart,
+                sequence_number: int,
                 summary_index: int
             ) -> None: ...
 
@@ -7155,8 +7848,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -7174,12 +7867,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                delta: str, 
-                item_id: str, 
-                output_index: int, 
-                sequence_number: int, 
+                self,
+                *,
+                delta: str,
+                item_id: str,
+                output_index: int,
+                sequence_number: int,
                 summary_index: int
             ) -> None: ...
 
@@ -7197,12 +7890,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
-                sequence_number: int, 
-                summary_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
+                sequence_number: int,
+                summary_index: int,
                 text: str
             ) -> None: ...
 
@@ -7220,12 +7913,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                delta: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                content_index: int,
+                delta: str,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -7243,12 +7936,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                item_id: str, 
-                output_index: int, 
-                sequence_number: int, 
+                self,
+                *,
+                content_index: int,
+                item_id: str,
+                output_index: int,
+                sequence_number: int,
                 text: str
             ) -> None: ...
 
@@ -7266,12 +7959,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                delta: str, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                content_index: int,
+                delta: str,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -7289,12 +7982,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                item_id: str, 
-                output_index: int, 
-                refusal: str, 
+                self,
+                *,
+                content_index: int,
+                item_id: str,
+                output_index: int,
+                refusal: str,
                 sequence_number: int
             ) -> None: ...
 
@@ -7308,9 +8001,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                sequence_number: int, 
+                self,
+                *,
+                sequence_number: int,
                 type: str
             ) -> None: ...
 
@@ -7379,8 +8072,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 include_obfuscation: Optional[bool] = ...
             ) -> None: ...
 
@@ -7399,13 +8092,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                delta: str, 
-                item_id: str, 
-                logprobs: list[ResponseLogProb], 
-                output_index: int, 
+                self,
+                *,
+                content_index: int,
+                delta: str,
+                item_id: str,
+                logprobs: list[ResponseLogProb],
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -7424,13 +8117,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content_index: int, 
-                item_id: str, 
-                logprobs: list[ResponseLogProb], 
-                output_index: int, 
-                sequence_number: int, 
+                self,
+                *,
+                content_index: int,
+                item_id: str,
+                logprobs: list[ResponseLogProb],
+                output_index: int,
+                sequence_number: int,
                 text: str
             ) -> None: ...
 
@@ -7444,9 +8137,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                format: Optional[TextResponseFormatConfiguration] = ..., 
+                self,
+                *,
+                format: Optional[TextResponseFormatConfiguration] = ...,
                 verbosity: Optional[Literal[low, medium, high]] = ...
             ) -> None: ...
 
@@ -7463,12 +8156,12 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                input_tokens: int, 
-                input_tokens_details: ResponseUsageInputTokensDetails, 
-                output_tokens: int, 
-                output_tokens_details: ResponseUsageOutputTokensDetails, 
+                self,
+                *,
+                input_tokens: int,
+                input_tokens_details: ResponseUsageInputTokensDetails,
+                output_tokens: int,
+                output_tokens_details: ResponseUsageOutputTokensDetails,
                 total_tokens: int
             ) -> None: ...
 
@@ -7481,8 +8174,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 cached_tokens: int
             ) -> None: ...
 
@@ -7495,8 +8188,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 reasoning_tokens: int
             ) -> None: ...
 
@@ -7512,10 +8205,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -7531,10 +8224,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -7550,10 +8243,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                item_id: str, 
-                output_index: int, 
+                self,
+                *,
+                item_id: str,
+                output_index: int,
                 sequence_number: int
             ) -> None: ...
 
@@ -7580,11 +8273,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                scroll_x: int, 
-                scroll_y: int, 
-                x: int, 
+                self,
+                *,
+                scroll_x: int,
+                scroll_y: int,
+                x: int,
                 y: int
             ) -> None: ...
 
@@ -7609,13 +8302,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                arguments: str, 
-                call_id: str, 
-                id: str, 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                arguments: str,
+                call_id: str,
+                id: str,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -7634,13 +8327,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                call_id: str, 
-                id: str, 
-                output: Optional[ToolCallOutputContent] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                call_id: str,
+                id: str,
+                output: Optional[ToolCallOutputContent] = ...,
+                response_id: Optional[str] = ...,
                 status: Union[str, ToolCallStatus]
             ) -> None: ...
 
@@ -7655,10 +8348,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 project_connections: Optional[list[ToolProjectConnection]] = ...
             ) -> None: ...
 
@@ -7674,10 +8367,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 sharepoint_grounding_preview: SharepointGroundingToolParameters
             ) -> None: ...
 
@@ -7692,9 +8385,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                skill_id: str, 
+                self,
+                *,
+                skill_id: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -7730,11 +8423,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: str, 
-                name: str, 
-                schema: dict[str, Any], 
+                self,
+                *,
+                description: str,
+                name: str,
+                schema: dict[str, Any],
                 strict: bool
             ) -> None: ...
 
@@ -7751,11 +8444,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                id: str, 
-                output: Any, 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                id: str,
+                output: Any,
                 response_id: Optional[str] = ...
             ) -> None: ...
 
@@ -7769,8 +8462,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -7784,8 +8477,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -7798,8 +8491,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -7842,11 +8535,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: str, 
-                schema: ResponseFormatJsonSchemaSchema, 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: str,
+                schema: ResponseFormatJsonSchemaSchema,
                 strict: Optional[bool] = ...
             ) -> None: ...
 
@@ -7859,8 +8552,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -7880,9 +8573,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                mode: Literal["auto", "required"], 
+                self,
+                *,
+                mode: Literal["auto", "required"],
                 tools: list[dict[str, Any]]
             ) -> None: ...
 
@@ -7916,8 +8609,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 name: str
             ) -> None: ...
 
@@ -7941,8 +8634,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 name: str
             ) -> None: ...
 
@@ -7967,9 +8660,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                name: Optional[str] = ...,
                 server_label: str
             ) -> None: ...
 
@@ -7988,8 +8681,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 type: str
             ) -> None: ...
 
@@ -8039,10 +8732,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                name: Optional[str] = ...,
                 project_connection_id: str
             ) -> None: ...
 
@@ -8084,10 +8777,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                bytes: list[int], 
-                logprob: int, 
+                self,
+                *,
+                bytes: list[int],
+                logprob: int,
                 token: str
             ) -> None: ...
 
@@ -8101,8 +8794,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 text: str
             ) -> None: ...
 
@@ -8119,11 +8812,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                end_index: int, 
-                start_index: int, 
-                title: str, 
+                self,
+                *,
+                end_index: int,
+                start_index: int,
+                title: str,
                 url: str
             ) -> None: ...
 
@@ -8140,11 +8833,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                content: str, 
-                memory_id: str, 
-                scope: str, 
+                self,
+                *,
+                content: str,
+                memory_id: str,
+                scope: str,
                 updated_at: datetime
             ) -> None: ...
 
@@ -8172,9 +8865,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                pattern: str, 
+                self,
+                *,
+                pattern: str,
                 url: str
             ) -> None: ...
 
@@ -8188,8 +8881,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 url: Optional[str] = ...
             ) -> None: ...
 
@@ -8205,10 +8898,10 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                queries: Optional[list[str]] = ..., 
-                query: str, 
+                self,
+                *,
+                queries: Optional[list[str]] = ...,
+                query: str,
                 sources: Optional[list[WebSearchActionSearchSources]] = ...
             ) -> None: ...
 
@@ -8222,8 +8915,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 url: str
             ) -> None: ...
 
@@ -8240,11 +8933,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                city: Optional[str] = ..., 
-                country: Optional[str] = ..., 
-                region: Optional[str] = ..., 
+                self,
+                *,
+                city: Optional[str] = ...,
+                country: Optional[str] = ...,
+                region: Optional[str] = ...,
                 timezone: Optional[str] = ...
             ) -> None: ...
 
@@ -8260,11 +8953,11 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                instance_name: str, 
-                name: Optional[str] = ..., 
+                self,
+                *,
+                description: Optional[str] = ...,
+                instance_name: str,
+                name: Optional[str] = ...,
                 project_connection_id: str
             ) -> None: ...
 
@@ -8279,9 +8972,9 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                search_context_size: Optional[Union[str, SearchContextSize]] = ..., 
+                self,
+                *,
+                search_context_size: Optional[Union[str, SearchContextSize]] = ...,
                 user_location: Optional[ApproximateLocation] = ...
             ) -> None: ...
 
@@ -8300,13 +8993,13 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                custom_search_configuration: Optional[WebSearchConfiguration] = ..., 
-                description: Optional[str] = ..., 
-                filters: Optional[WebSearchToolFilters] = ..., 
-                name: Optional[str] = ..., 
-                search_context_size: Optional[Literal[low, medium, high]] = ..., 
+                self,
+                *,
+                custom_search_configuration: Optional[WebSearchConfiguration] = ...,
+                description: Optional[str] = ...,
+                filters: Optional[WebSearchToolFilters] = ...,
+                name: Optional[str] = ...,
+                search_context_size: Optional[Literal[low, medium, high]] = ...,
                 user_location: Optional[WebSearchApproximateLocation] = ...
             ) -> None: ...
 
@@ -8319,8 +9012,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 allowed_domains: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -8334,8 +9027,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 work_iq_preview: WorkIQPreviewToolParameters
             ) -> None: ...
 
@@ -8348,8 +9041,8 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 project_connection_id: str
             ) -> None: ...
 
@@ -8370,15 +9063,15 @@ namespace azure.ai.agentserver.responses.models
 
         @overload
         def __init__(
-                self, 
-                *, 
-                action_id: str, 
-                agent_reference: Optional[AgentReference] = ..., 
-                id: str, 
-                kind: str, 
-                parent_action_id: Optional[str] = ..., 
-                previous_action_id: Optional[str] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                action_id: str,
+                agent_reference: Optional[AgentReference] = ...,
+                id: str,
+                kind: str,
+                parent_action_id: Optional[str] = ...,
+                previous_action_id: Optional[str] = ...,
+                response_id: Optional[str] = ...,
                 status: Literal["completed", "failed", "in_progress", "cancelled"]
             ) -> None: ...
 
@@ -8393,8 +9086,8 @@ namespace azure.ai.agentserver.responses.models.errors
 
         @overload
         def __init__(
-                self, 
-                *, 
+                self,
+                *,
                 error: Error
             ) -> None: ...
 
@@ -8413,14 +9106,14 @@ namespace azure.ai.agentserver.responses.models.errors
 
         @overload
         def __init__(
-                self, 
-                *, 
-                additional_info: Optional[dict[str, Any]] = ..., 
-                code: str, 
-                debug_info: Optional[dict[str, Any]] = ..., 
-                details: Optional[list[Error]] = ..., 
-                message: str, 
-                param: Optional[str] = ..., 
+                self,
+                *,
+                additional_info: Optional[dict[str, Any]] = ...,
+                code: str,
+                debug_info: Optional[dict[str, Any]] = ...,
+                details: Optional[list[Error]] = ...,
+                message: str,
+                param: Optional[str] = ...,
                 type: Optional[str] = ...
             ) -> None: ...
 
@@ -8431,13 +9124,13 @@ namespace azure.ai.agentserver.responses.models.errors
     class azure.ai.agentserver.responses.models.errors.RequestValidationError(ValueError):
 
         def __init__(
-                self, 
-                message: str, 
-                *, 
-                code: str = "invalid_request_error", 
-                debug_info: dict[str, Any] | None = ..., 
-                details: list[dict[str, str]] | None = ..., 
-                error_type: str = "invalid_request_error", 
+                self,
+                message: str,
+                *,
+                code: str = "invalid_request_error",
+                debug_info: dict[str, Any] | None = ...,
+                details: list[dict[str, str]] | None = ...,
+                error_type: str = "invalid_request_error",
                 param: str | None = ...
             ) -> None: ...
 
@@ -8449,19 +9142,19 @@ namespace azure.ai.agentserver.responses.models.errors
 namespace azure.ai.agentserver.responses.models.runtime
 
     def azure.ai.agentserver.responses.models.runtime.build_cancelled_response(
-            response_id: str, 
-            agent_reference: AgentReference | dict[str, Any], 
-            model: str | None, 
+            response_id: str,
+            agent_reference: AgentReference | dict[str, Any],
+            model: str | None,
             created_at: datetime | None = None
         ) -> ResponseObject: ...
 
 
     def azure.ai.agentserver.responses.models.runtime.build_failed_response(
-            response_id: str, 
-            agent_reference: AgentReference | dict[str, Any], 
-            model: str | None, 
-            created_at: datetime | None = None, 
-            error_message: str = "An internal server error occurred.", 
+            response_id: str,
+            agent_reference: AgentReference | dict[str, Any],
+            model: str | None,
+            created_at: datetime | None = None,
+            error_message: str = "An internal server error occurred.",
             error_code: str = "server_error"
         ) -> ResponseObject: ...
 
@@ -8473,9 +9166,9 @@ namespace azure.ai.agentserver.responses.models.runtime
 
         @overload
         def __init__(
-                self, 
-                *, 
-                name: str, 
+                self,
+                *,
+                name: str,
                 version: Optional[str] = ...
             ) -> None: ...
 
@@ -8490,10 +9183,10 @@ namespace azure.ai.agentserver.responses.models.runtime
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: Optional[AgentReference] = ..., 
-                response_id: Optional[str] = ..., 
+                self,
+                *,
+                agent_reference: Optional[AgentReference] = ...,
+                response_id: Optional[str] = ...,
                 type: str
             ) -> None: ...
 
@@ -8509,34 +9202,34 @@ namespace azure.ai.agentserver.responses.models.runtime
         property visible_via_get: bool    # Read-only
 
         def __init__(
-                self, 
-                *, 
-                agent_session_id: str | None = ..., 
-                cancel_requested: bool = False, 
-                cancel_signal: Event | None = ..., 
-                client_disconnected: bool = False, 
-                completed_at: datetime | None = ..., 
-                conversation_id: str | None = ..., 
-                created_at: datetime | None = ..., 
-                execution_task: Task[Any] | None = ..., 
-                initial_agent_reference: AgentReference | dict[str, Any] | None = ..., 
-                initial_model: str | None = ..., 
-                input_items: list[OutputItem] | None = ..., 
-                mode_flags: ResponseModeFlags, 
-                previous_response_id: str | None = ..., 
-                response: ResponseObject | None = ..., 
-                response_context: ResponseContext | None = ..., 
-                response_created_seen: bool = False, 
-                response_id: str, 
-                status: ResponseStatus = "in_progress", 
-                subject: _ResponseEventSubject | None = ..., 
-                updated_at: datetime | None = ..., 
+                self,
+                *,
+                agent_session_id: str | None = ...,
+                cancel_requested: bool = False,
+                cancel_signal: Event | None = ...,
+                client_disconnected: bool = False,
+                completed_at: datetime | None = ...,
+                conversation_id: str | None = ...,
+                created_at: datetime | None = ...,
+                execution_task: Task[Any] | None = ...,
+                initial_agent_reference: AgentReference | dict[str, Any] | None = ...,
+                initial_model: str | None = ...,
+                input_items: list[OutputItem] | None = ...,
+                mode_flags: ResponseModeFlags,
+                previous_response_id: str | None = ...,
+                response: ResponseObject | None = ...,
+                response_context: ResponseContext | None = ...,
+                response_created_seen: bool = False,
+                response_id: str,
+                status: ResponseStatus = "in_progress",
+                subject: _ResponseEventSubject | None = ...,
+                updated_at: datetime | None = ...,
                 user_id_key: str | None = ...
             ) -> None: ...
 
         def apply_event(
-                self, 
-                normalized: ResponseStreamEvent, 
+                self,
+                normalized: ResponseStreamEvent,
                 all_events: list[ResponseStreamEvent]
             ) -> None: ...
 
@@ -8548,10 +9241,10 @@ namespace azure.ai.agentserver.responses.models.runtime
     class azure.ai.agentserver.responses.models.runtime.ResponseModeFlags:
 
         def __init__(
-                self, 
-                *, 
-                background: bool, 
-                store: bool, 
+                self,
+                *,
+                background: bool,
+                store: bool,
                 stream: bool
             ) -> None: ...
 
@@ -8566,40 +9259,40 @@ namespace azure.ai.agentserver.responses.models.runtime
 
         @overload
         def __init__(
-                self, 
-                *, 
-                agent_reference: AgentReference, 
-                background: Optional[bool] = ..., 
-                completed_at: Optional[datetime] = ..., 
-                conversation: Optional[ConversationReference] = ..., 
-                created_at: datetime, 
-                error: ResponseErrorInfo, 
-                id: str, 
-                incomplete_details: ResponseIncompleteDetails, 
-                instructions: Union[str, list[Item]], 
-                max_output_tokens: Optional[int] = ..., 
-                max_tool_calls: Optional[int] = ..., 
-                metadata: Optional[Metadata] = ..., 
-                model: Optional[str] = ..., 
-                output: list[OutputItem], 
-                output_text: Optional[str] = ..., 
-                parallel_tool_calls: bool, 
-                previous_response_id: Optional[str] = ..., 
-                prompt: Optional[Prompt] = ..., 
-                prompt_cache_key: Optional[str] = ..., 
-                prompt_cache_retention: Optional[Literal[in-memory, 24h]] = ..., 
-                reasoning: Optional[Reasoning] = ..., 
-                safety_identifier: Optional[str] = ..., 
-                service_tier: Optional[Literal[auto, default, flex, scale, priority]] = ..., 
-                status: Optional[Literal[completed, failed, in_progress, cancelled, queued, incomplete]] = ..., 
-                temperature: Optional[int] = ..., 
-                text: Optional[ResponseTextParam] = ..., 
-                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceParam]] = ..., 
-                tools: Optional[list[Tool]] = ..., 
-                top_logprobs: Optional[int] = ..., 
-                top_p: Optional[int] = ..., 
-                truncation: Optional[Literal[auto, disabled]] = ..., 
-                usage: Optional[ResponseUsage] = ..., 
+                self,
+                *,
+                agent_reference: AgentReference,
+                background: Optional[bool] = ...,
+                completed_at: Optional[datetime] = ...,
+                conversation: Optional[ConversationReference] = ...,
+                created_at: datetime,
+                error: ResponseErrorInfo,
+                id: str,
+                incomplete_details: ResponseIncompleteDetails,
+                instructions: Union[str, list[Item]],
+                max_output_tokens: Optional[int] = ...,
+                max_tool_calls: Optional[int] = ...,
+                metadata: Optional[Metadata] = ...,
+                model: Optional[str] = ...,
+                output: list[OutputItem],
+                output_text: Optional[str] = ...,
+                parallel_tool_calls: bool,
+                previous_response_id: Optional[str] = ...,
+                prompt: Optional[Prompt] = ...,
+                prompt_cache_key: Optional[str] = ...,
+                prompt_cache_retention: Optional[Literal[in-memory, 24h]] = ...,
+                reasoning: Optional[Reasoning] = ...,
+                safety_identifier: Optional[str] = ...,
+                service_tier: Optional[Literal[auto, default, flex, scale, priority]] = ...,
+                status: Optional[Literal[completed, failed, in_progress, cancelled, queued, incomplete]] = ...,
+                temperature: Optional[int] = ...,
+                text: Optional[ResponseTextParam] = ...,
+                tool_choice: Optional[Union[str, ToolChoiceOptions, ToolChoiceParam]] = ...,
+                tools: Optional[list[Tool]] = ...,
+                top_logprobs: Optional[int] = ...,
+                top_p: Optional[int] = ...,
+                truncation: Optional[Literal[auto, disabled]] = ...,
+                usage: Optional[ResponseUsage] = ...,
                 user: Optional[str] = ...
             ) -> None: ...
 
@@ -8613,9 +9306,9 @@ namespace azure.ai.agentserver.responses.models.runtime
 
         @overload
         def __init__(
-                self, 
-                *, 
-                sequence_number: int, 
+                self,
+                *,
+                sequence_number: int,
                 type: str
             ) -> None: ...
 
@@ -8683,18 +9376,18 @@ namespace azure.ai.agentserver.responses.models.runtime
         property terminal: bool    # Read-only
 
         def __init__(
-                self, 
-                *, 
-                emitted_at: datetime | None = ..., 
-                event_type: str, 
-                payload: Mapping[str, Any], 
+                self,
+                *,
+                emitted_at: datetime | None = ...,
+                event_type: str,
+                payload: Mapping[str, Any],
                 sequence_number: int
             ) -> None: ...
 
         @classmethod
         def from_generated(
-                cls, 
-                event: ResponseStreamEvent, 
+                cls,
+                event: ResponseStreamEvent,
                 payload: Mapping[str, Any]
             ) -> StreamEventRecord: ...
 
@@ -8703,9 +9396,9 @@ namespace azure.ai.agentserver.responses.models.runtime
         property terminal_event_seen: bool    # Read-only
 
         def __init__(
-                self, 
-                *, 
-                events: list[StreamEventRecord] | None = ..., 
+                self,
+                *,
+                events: list[StreamEventRecord] | None = ...,
                 response_id: str
             ) -> None: ...
 
@@ -8719,9 +9412,9 @@ namespace azure.ai.agentserver.responses.streaming
         property output_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
                 item_id: str
             ) -> None: ...
 
@@ -8735,13 +9428,11 @@ namespace azure.ai.agentserver.responses.streaming
         property output_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
                 item_id: str
             ) -> None: ...
-
-        async def acode(self, code_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def code(self, code_text: str) -> Iterator[ResponseStreamEvent]: ...
 
@@ -8767,15 +9458,13 @@ namespace azure.ai.agentserver.responses.streaming
         property output_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
-                item_id: str, 
-                call_id: str, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str,
+                call_id: str,
                 name: str
             ) -> None: ...
-
-        async def ainput(self, input_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def emit_added(self) -> ResponseOutputItemAddedEvent: ...
 
@@ -8793,9 +9482,9 @@ namespace azure.ai.agentserver.responses.streaming
         property output_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
                 item_id: str
             ) -> None: ...
 
@@ -8817,15 +9506,13 @@ namespace azure.ai.agentserver.responses.streaming
         property output_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
-                item_id: str, 
-                name: str, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str,
+                name: str,
                 call_id: str
             ) -> None: ...
-
-        async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def arguments(self, args: str) -> Iterator[ResponseStreamEvent]: ...
 
@@ -8844,10 +9531,10 @@ namespace azure.ai.agentserver.responses.streaming
         property output_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
-                item_id: str, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str,
                 call_id: str
             ) -> None: ...
 
@@ -8861,9 +9548,9 @@ namespace azure.ai.agentserver.responses.streaming
         property output_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
                 item_id: str
             ) -> None: ...
 
@@ -8887,15 +9574,13 @@ namespace azure.ai.agentserver.responses.streaming
         property server_label: str    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
-                item_id: str, 
-                server_label: str, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str,
+                server_label: str,
                 name: str
             ) -> None: ...
-
-        async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def arguments(self, args: str) -> Iterator[ResponseStreamEvent]: ...
 
@@ -8908,9 +9593,9 @@ namespace azure.ai.agentserver.responses.streaming
         def emit_completed(self) -> ResponseMCPCallCompletedEvent: ...
 
         def emit_done(
-                self, 
-                *, 
-                error: dict[str, Any] | None = ..., 
+                self,
+                *,
+                error: dict[str, Any] | None = ...,
                 output: str | None = ...
             ) -> ResponseOutputItemDoneEvent: ...
 
@@ -8925,10 +9610,10 @@ namespace azure.ai.agentserver.responses.streaming
         property server_label: str    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
-                item_id: str, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                item_id: str,
                 server_label: str
             ) -> None: ...
 
@@ -8948,19 +9633,15 @@ namespace azure.ai.agentserver.responses.streaming
         property output_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
                 item_id: str
             ) -> None: ...
 
         def add_refusal_content(self) -> RefusalContentBuilder: ...
 
         def add_text_content(self) -> TextContentBuilder: ...
-
-        async def arefusal_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def atext_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def emit_added(self) -> ResponseOutputItemAddedEvent: ...
 
@@ -8976,15 +9657,13 @@ namespace azure.ai.agentserver.responses.streaming
         property output_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
                 item_id: str
             ) -> None: ...
 
         def add_summary_part(self) -> ReasoningSummaryPartBuilder: ...
-
-        async def asummary_part(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def emit_added(self) -> ResponseOutputItemAddedEvent: ...
 
@@ -8998,9 +9677,9 @@ namespace azure.ai.agentserver.responses.streaming
         property output_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
                 item_id: str
             ) -> None: ...
 
@@ -9020,10 +9699,10 @@ namespace azure.ai.agentserver.responses.streaming
         property summary_index: int    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
-                summary_index: int, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                summary_index: int,
                 item_id: str
             ) -> None: ...
 
@@ -9041,10 +9720,10 @@ namespace azure.ai.agentserver.responses.streaming
         property final_refusal: str | None    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
-                content_index: int, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                content_index: int,
                 item_id: str
             ) -> None: ...
 
@@ -9061,12 +9740,12 @@ namespace azure.ai.agentserver.responses.streaming
         property response: ResponseObject    # Read-only
 
         def __init__(
-                self, 
-                *, 
-                agent_reference: AgentReference | None = ..., 
-                model: str | None = ..., 
-                request: CreateResponse | None = ..., 
-                response: ResponseObject | None = ..., 
+                self,
+                *,
+                agent_reference: AgentReference | None = ...,
+                model: str | None = ...,
+                request: CreateResponse | None = ...,
+                response: ResponseObject | None = ...,
                 response_id: str | None = ...
             ) -> None: ...
 
@@ -9085,8 +9764,8 @@ namespace azure.ai.agentserver.responses.streaming
         def add_output_item_computer_call_output(self) -> OutputItemBuilder: ...
 
         def add_output_item_custom_tool_call(
-                self, 
-                call_id: str, 
+                self,
+                call_id: str,
                 name: str
             ) -> OutputItemCustomToolCallBuilder: ...
 
@@ -9095,8 +9774,8 @@ namespace azure.ai.agentserver.responses.streaming
         def add_output_item_file_search_call(self) -> OutputItemFileSearchCallBuilder: ...
 
         def add_output_item_function_call(
-                self, 
-                name: str, 
+                self,
+                name: str,
                 call_id: str
             ) -> OutputItemFunctionCallBuilder: ...
 
@@ -9117,10 +9796,10 @@ namespace azure.ai.agentserver.responses.streaming
         def add_output_item_mcp_approval_response(self) -> OutputItemBuilder: ...
 
         def add_output_item_mcp_call(
-                self, 
-                server_label: str, 
-                name: str, 
-                *, 
+                self,
+                server_label: str,
+                name: str,
+                *,
                 item_id: str | None = ...
             ) -> OutputItemMcpCallBuilder: ...
 
@@ -9134,147 +9813,32 @@ namespace azure.ai.agentserver.responses.streaming
 
         def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
 
-        async def aoutput_item_apply_patch_call(
-                self, 
-                call_id: str, 
-                operation: ApplyPatchFileOperation, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_apply_patch_call_output(
-                self, 
-                call_id: str, 
-                *, 
-                output: str | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_compaction(self, encrypted_content: str) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_computer_call(
-                self, 
-                call_id: str, 
-                action: ComputerAction, 
-                *, 
-                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_computer_call_output(
-                self, 
-                call_id: str, 
-                output: ComputerScreenshotImage, 
-                *, 
-                acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_custom_tool_call_output(
-                self, 
-                call_id: str, 
-                output: str | list[FunctionAndCustomToolCallOutput]
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_call(
-                self, 
-                name: str, 
-                call_id: str, 
-                arguments: str | AsyncIterable[str]
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_call_output(
-                self, 
-                call_id: str, 
-                output: str
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_shell_call(
-                self, 
-                call_id: str, 
-                action: FunctionShellAction, 
-                environment: FunctionShellCallEnvironment, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_shell_call_output(
-                self, 
-                call_id: str, 
-                output: list[FunctionShellCallOutputContent], 
-                *, 
-                max_output_length: int | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_image_gen_call(
-                self, 
-                result_base64: str, 
-                *, 
-                partials: AsyncIterable[str] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_local_shell_call(
-                self, 
-                call_id: str, 
-                action: LocalShellExecAction, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_local_shell_call_output(self, output: str) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_mcp_approval_request(
-                self, 
-                server_label: str, 
-                name: str, 
-                arguments: str
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_mcp_approval_response(
-                self, 
-                approval_request_id: str, 
-                approve: bool = False, 
-                *, 
-                reason: str | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_message(
-                self, 
-                text: str | AsyncIterable[str], 
-                *, 
-                annotations: Sequence[Annotation] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_reasoning_item(self, summary_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_structured_outputs(self, output: Any) -> AsyncIterator[ResponseStreamEvent]: ...
-
         def emit_completed(
-                self, 
-                *, 
+                self,
+                *,
                 usage: ResponseUsage | None = ...
             ) -> ResponseCompletedEvent: ...
 
         def emit_created(
-                self, 
-                *, 
+                self,
+                *,
                 status: str = "in_progress"
             ) -> ResponseCreatedEvent: ...
 
         def emit_failed(
-                self, 
-                *, 
-                code: str | ResponseErrorCode = "server_error", 
-                message: str = "An internal server error occurred.", 
+                self,
+                *,
+                code: str | ResponseErrorCode = "server_error",
+                message: str = "An internal server error occurred.",
                 usage: ResponseUsage | None = ...
             ) -> ResponseFailedEvent: ...
 
         def emit_in_progress(self) -> ResponseInProgressEvent: ...
 
         def emit_incomplete(
-                self, 
-                *, 
-                reason: str | None = ..., 
+                self,
+                *,
+                reason: str | None = ...,
                 usage: ResponseUsage | None = ...
             ) -> ResponseIncompleteEvent: ...
 
@@ -9283,108 +9847,108 @@ namespace azure.ai.agentserver.responses.streaming
         def events(self) -> list[ResponseStreamEvent]: ...
 
         def output_item_apply_patch_call(
-                self, 
-                call_id: str, 
-                operation: ApplyPatchFileOperation, 
-                *, 
+                self,
+                call_id: str,
+                operation: ApplyPatchFileOperation,
+                *,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_apply_patch_call_output(
-                self, 
-                call_id: str, 
-                *, 
-                output: str | None = ..., 
+                self,
+                call_id: str,
+                *,
+                output: str | None = ...,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_compaction(self, encrypted_content: str) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_computer_call(
-                self, 
-                call_id: str, 
-                action: ComputerAction, 
-                *, 
-                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ..., 
+                self,
+                call_id: str,
+                action: ComputerAction,
+                *,
+                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_computer_call_output(
-                self, 
-                call_id: str, 
-                output: ComputerScreenshotImage, 
-                *, 
+                self,
+                call_id: str,
+                output: ComputerScreenshotImage,
+                *,
                 acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_custom_tool_call_output(
-                self, 
-                call_id: str, 
+                self,
+                call_id: str,
                 output: str | list[FunctionAndCustomToolCallOutput]
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_function_call(
-                self, 
-                name: str, 
-                call_id: str, 
+                self,
+                name: str,
+                call_id: str,
                 arguments: str
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_function_call_output(
-                self, 
-                call_id: str, 
+                self,
+                call_id: str,
                 output: str
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_function_shell_call(
-                self, 
-                call_id: str, 
-                action: FunctionShellAction, 
-                environment: FunctionShellCallEnvironment, 
-                *, 
+                self,
+                call_id: str,
+                action: FunctionShellAction,
+                environment: FunctionShellCallEnvironment,
+                *,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_function_shell_call_output(
-                self, 
-                call_id: str, 
-                output: list[FunctionShellCallOutputContent], 
-                *, 
-                max_output_length: int | None = ..., 
+                self,
+                call_id: str,
+                output: list[FunctionShellCallOutputContent],
+                *,
+                max_output_length: int | None = ...,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_image_gen_call(self, result_base64: str) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_local_shell_call(
-                self, 
-                call_id: str, 
-                action: LocalShellExecAction, 
-                *, 
+                self,
+                call_id: str,
+                action: LocalShellExecAction,
+                *,
                 status: str = "completed"
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_local_shell_call_output(self, output: str) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_mcp_approval_request(
-                self, 
-                server_label: str, 
-                name: str, 
+                self,
+                server_label: str,
+                name: str,
                 arguments: str
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_mcp_approval_response(
-                self, 
-                approval_request_id: str, 
-                approve: bool = False, 
-                *, 
+                self,
+                approval_request_id: str,
+                approve: bool = False,
+                *,
                 reason: str | None = ...
             ) -> Iterator[ResponseStreamEvent]: ...
 
         def output_item_message(
-                self, 
-                text: str, 
-                *, 
+                self,
+                text: str,
+                *,
                 annotations: Sequence[Annotation] | None = ...
             ) -> Iterator[ResponseStreamEvent]: ...
 
@@ -9398,10 +9962,10 @@ namespace azure.ai.agentserver.responses.streaming
         property final_text: str | None    # Read-only
 
         def __init__(
-                self, 
-                stream: ResponseEventStream, 
-                output_index: int, 
-                content_index: int, 
+                self,
+                stream: ResponseEventStream,
+                output_index: int,
+                content_index: int,
                 item_id: str
             ) -> None: ...
 

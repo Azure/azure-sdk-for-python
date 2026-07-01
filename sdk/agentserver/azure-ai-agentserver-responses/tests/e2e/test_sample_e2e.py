@@ -19,6 +19,7 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
     TextResponse,
 )
+from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
 from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam, ItemMessage
 from azure.ai.agentserver.responses.models._generated import StructuredOutputsOutputItem
 
@@ -191,7 +192,7 @@ def test_sample2_streaming_handler_non_streaming_returns_full_text() -> None:
 
 async def _sample3_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Convenience handler: emits a greeting using output_item_message()."""
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
 
     stream.response.temperature = 0.7
     stream.response.max_output_tokens = 1024
@@ -200,7 +201,7 @@ async def _sample3_handler(request: CreateResponse, context: ResponseContext, ca
     yield stream.emit_in_progress()
 
     user_text = await context.get_input_text()
-    for event in stream.output_item_message(f"Hello, {user_text}! Welcome."):
+    async for event in stream.output_item_message(f"Hello, {user_text}! Welcome."):
         yield event
 
     yield stream.emit_completed()
@@ -1047,10 +1048,10 @@ TINY_IMAGE_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8
 async def _image_gen_convenience_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
-    async for event in stream.aoutput_item_image_gen_call(TINY_IMAGE_B64):
+    async for event in stream.output_item_image_gen_call(TINY_IMAGE_B64):
         yield event
     yield stream.emit_completed()
 
@@ -1303,7 +1304,7 @@ def test_sample14_file_input_file_id_handler() -> None:
 async def _annotations_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses.models import FileCitationBody, FilePath, UrlCitationBody
 
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
     annotations = [
@@ -1311,7 +1312,7 @@ async def _annotations_handler(request: CreateResponse, context: ResponseContext
         FileCitationBody(file_id="/sources/paper.pdf", index=1, filename="paper.pdf"),
         UrlCitationBody(url="https://example.com/guide", start_index=0, end_index=10, title="Guide"),
     ]
-    async for event in stream.aoutput_item_message("Here are your sources.", annotations=annotations):
+    async for event in stream.output_item_message("Here are your sources.", annotations=annotations):
         yield event
     yield stream.emit_completed()
 
@@ -1349,10 +1350,10 @@ def test_sample15_non_streaming_annotations_in_output() -> None:
 async def _structured_convenience_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
-    async for event in stream.aoutput_item_structured_outputs({"sentiment": "positive", "confidence": 0.95}):
+    async for event in stream.output_item_structured_outputs({"sentiment": "positive", "confidence": 0.95}):
         yield event
     yield stream.emit_completed()
 

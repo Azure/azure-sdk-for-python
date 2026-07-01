@@ -32,6 +32,7 @@ from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesAgentServerHost,
 )
+from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
 
 app = ResponsesAgentServerHost()
 
@@ -43,12 +44,12 @@ TINY_IMAGE_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8
 @app.create("image.convenience")
 async def convenience_handler(request: CreateResponse, context: ResponseContext):
     """Return an image using the convenience one-liner."""
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
     # One call emits: added → in_progress → generating → completed → done(result)
-    async for event in stream.aoutput_item_image_gen_call(TINY_IMAGE_B64):
+    async for event in stream.output_item_image_gen_call(TINY_IMAGE_B64):
         yield event
 
     yield stream.emit_completed()
