@@ -1307,6 +1307,17 @@ class Task(Generic[Input, Output]):
 
 @overload
 def task(
+    fn: Callable[[TaskContext[Input]], Awaitable[Output]],
+    *,
+    name: str,
+    title: str | None = ...,
+    timeout: timedelta | None = ...,
+    retry: RetryPolicy | None = ...,
+) -> Task[Input, Output]: ...
+
+
+@overload
+def task(
     *,
     name: str,
     title: str | None = ...,
@@ -1707,6 +1718,18 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
                 await provider.delete(task_id, force=True)
             except TaskNotFound:
                 pass  # idempotent: already gone
+
+
+@overload
+def multi_turn_task(
+    fn: Callable[[TaskContext[Input]], Awaitable[Output]],
+    *,
+    name: str,
+    title: str | None = ...,
+    timeout: timedelta | None = ...,
+    retry: RetryPolicy | None = ...,
+    steerable: bool = ...,
+) -> MultiTurnTask[Input, Output]: ...
 
 
 @overload
