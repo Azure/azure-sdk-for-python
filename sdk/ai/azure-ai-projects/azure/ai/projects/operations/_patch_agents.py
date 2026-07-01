@@ -10,11 +10,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import hashlib
 from io import IOBase
-from typing import Union, Optional, Any, IO, overload
+from typing import Union, Optional, Any, IO, overload, cast
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
-from .. import models as _models
+from .. import models as _models, types as _types
 from ..models._patch import (
     _FOUNDRY_FEATURES_HEADER_NAME,
     _has_header_case_insensitive,
@@ -61,6 +61,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
+        draft: Optional[bool] = None,
         **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
@@ -97,7 +98,12 @@ class AgentsOperations(GeneratedAgentsOperations):
 
     @overload
     def create_version(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: _types.CreateAgentVersionRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
@@ -109,7 +115,7 @@ class AgentsOperations(GeneratedAgentsOperations):
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.ai.projects.types.CreateAgentVersionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -147,12 +153,13 @@ class AgentsOperations(GeneratedAgentsOperations):
     def create_version(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, _types.CreateAgentVersionRequest, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
+        draft: Optional[bool] = None,
         **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
@@ -164,8 +171,9 @@ class AgentsOperations(GeneratedAgentsOperations):
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :param body: Is one of the following types: JSON, CreateAgentVersionRequest, IO[bytes]
+         Required.
+        :type body: JSON or ~azure.ai.projects.types.CreateAgentVersionRequest or IO[bytes]
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
@@ -180,6 +188,11 @@ class AgentsOperations(GeneratedAgentsOperations):
         :paramtype description: str
         :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
         :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
+        :keyword draft: (Preview) Whether this agent version is a draft (candidate) rather than a
+         release. The service defaults to ``false`` if a value is not specified by the caller. Draft
+         versions are recorded but excluded from default 'latest' resolution and are not auto-promoted.
+         Default value is None.
+        :paramtype draft: bool
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -195,13 +208,25 @@ class AgentsOperations(GeneratedAgentsOperations):
                 kwargs["headers"] = headers
 
         try:
+            if body is _Unset:
+                return super().create_version(
+                    agent_name,
+                    definition=definition,
+                    metadata=metadata,
+                    description=description,
+                    blueprint_reference=blueprint_reference,
+                    draft=draft,
+                    **kwargs,
+                )
+            if isinstance(body, IOBase):
+                return super().create_version(
+                    agent_name,
+                    cast(IO[bytes], body),
+                    **kwargs,
+                )
             return super().create_version(
                 agent_name,
-                body,
-                definition=definition,
-                metadata=metadata,
-                description=description,
-                blueprint_reference=blueprint_reference,
+                cast(_types.CreateAgentVersionRequest, body),
                 **kwargs,
             )
         except HttpResponseError as exc:
