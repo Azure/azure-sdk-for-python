@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Fixed a resource leak where replica clients that were no longer part of the auto-failover set were not closed during client refresh.
+- Fixed auto-failover replica discovery so that a DNS SRV lookup timeout is distinguished from an empty replica list. A timeout now correctly triggers the longer fallback refresh interval, while an empty result refreshes at the normal interval.
+
 ### Other Changes
 
 - Bumped minimum dependency on `azure-core` to `>=1.31.0`.
