@@ -50,6 +50,86 @@ F = TypeVar("F", bound=Callable[..., Any])
 _VALID_TASK_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
 _MAX_TASK_ID_LENGTH = 256
 
+#: Spec 037 #8 — per-turn execution timeout: default to 1 day when unset and
+# treat 1 day as a HARD ceiling. A developer-supplied timeout may lower the
+# budget, but a larger (or negative) value is rejected at registration
+# (fail-fast, not clamped). This is a PER-TURN cap, not a task-lifetime bound:
+# a multi-turn chain can live indefinitely (the timeout resets every turn); the
+# task's overall lifetime is governed by the platform's 30-day sliding TTL.
+# Mirrors the .NET port's ``TaskEngineConstants.ResolveTaskTimeout``.
+_DEFAULT_TASK_TIMEOUT = timedelta(days=1)
+_MAX_TASK_TIMEOUT = timedelta(days=1)
+
+
+def _validate_task_name(name: str | None) -> None:
+    """Spec 037 #7 — ``name`` is a required, explicit, stable identity anchor.
+
+    The task ``name`` is the durable recovery / identity anchor — it must survive
+    process restarts and source refactors so in-flight tasks are re-routed to the
+    right handler. Deriving it from ``func.__qualname__`` silently rebinds identity
+    whenever the developer renames or moves the function, orphaning in-flight
+    tasks on the next deploy. It is therefore required and must be non-empty after
+    trimming.
+
+    :param name: The task name supplied to ``@task`` / ``@multi_turn_task``.
+    :type name: str | None
+    :raises ValueError: When ``name`` is missing or whitespace-only.
+    """
+    if name is None or not name.strip():
+        raise ValueError(
+            "@task / @multi_turn_task requires an explicit non-empty `name=` "
+            "(the stable recovery/identity anchor). Deriving it from the function "
+            "name would silently rebind task identity on rename/move."
+        )
+    if len(name) > _MAX_TASK_ID_LENGTH:
+        raise ValueError(f"task name must be {_MAX_TASK_ID_LENGTH} characters or fewer, got {len(name)}")
+
+
+def _validate_timeout(timeout: timedelta | None) -> None:
+    """Spec 037 #8 — reject a per-turn timeout that is negative or exceeds the
+    1-day hard ceiling (fail-fast at registration, not clamped).
+
+    :param timeout: The developer-supplied per-turn timeout, or ``None``.
+    :type timeout: ~datetime.timedelta | None
+    :raises ValueError: When ``timeout`` is negative or greater than 1 day.
+    """
+    if timeout is None:
+        return
+    if timeout.total_seconds() < 0:
+        raise ValueError(f"timeout must be >= 0, got {timeout}")
+    if timeout > _MAX_TASK_TIMEOUT:
+        raise ValueError(f"timeout must be <= 1 day (the per-turn hard ceiling), got {timeout}")
+
+
+def _resolve_effective_timeout(timeout: timedelta | None) -> timedelta:
+    """Resolve the effective per-turn timeout budget (Spec 037 #8).
+
+    An unset timeout defaults to 1 day; a supplied value is used as-is (already
+    validated at registration by :func:`_validate_timeout`).
+
+    :param timeout: The task's configured per-turn timeout, or ``None``.
+    :type timeout: ~datetime.timedelta | None
+    :return: The effective per-turn timeout budget.
+    :rtype: ~datetime.timedelta
+    """
+    return timeout if timeout is not None else _DEFAULT_TASK_TIMEOUT
+
+
+def _validate_input_id(input_id: str) -> None:
+    """Spec 037 #12 — validate a caller-supplied ``input_id`` against the same
+    charset/length pattern as ``task_id``.
+
+    :param input_id: The caller-supplied input id.
+    :type input_id: str
+    :raises ValueError: When ``input_id`` is empty, too long, or contains
+        characters outside the task-id charset.
+    """
+    if not input_id or len(input_id) > _MAX_TASK_ID_LENGTH:
+        raise ValueError(f"input_id must be 1-{_MAX_TASK_ID_LENGTH} characters, got {len(input_id)}")
+    if not _VALID_TASK_ID_RE.match(input_id):
+        raise ValueError(f"input_id contains invalid characters: {input_id!r}. Allowed: [a-zA-Z0-9\\-_.:]")
+
+
 #: Prefix for framework-reserved tags. Developer tags with this prefix are
 #: silently stripped to prevent collisions with auto-stamped tags.
 _RESERVED_TAG_PREFIX = "_task_"
@@ -499,6 +579,8 @@ class Task(Generic[Input, Output]):
 
             task_id = _uuid.uuid4().hex
         _validate_task_id(task_id)
+        if input_id is not None:
+            _validate_input_id(input_id)
         if if_last_input_id is not None and input_id is None:
             raise TypeError(
                 "if_last_input_id requires input_id (a precondition without an advancing id is not meaningful)"
@@ -577,6 +659,8 @@ class Task(Generic[Input, Output]):
 
             task_id = _uuid.uuid4().hex
         _validate_task_id(task_id)
+        if input_id is not None:
+            _validate_input_id(input_id)
         if if_last_input_id is not None and input_id is None:
             raise TypeError(
                 "if_last_input_id requires input_id (a precondition without an advancing id is not meaningful)"
@@ -1294,6 +1378,8 @@ def task(
     # @multi_turn_task for steerable chains.
     _validate_task_kwargs(**_extra_kwargs)
     _validate_title(title)
+    _validate_task_name(name)
+    _validate_timeout(timeout)
 
     def _wrap(func: Callable[..., Any]) -> Task[Any, Any]:
         if not asyncio.iscoroutinefunction(func):
@@ -1303,7 +1389,7 @@ def task(
         input_type, output_type = _extract_generic_args(func)
 
         opts = TaskOptions(
-            name=name or func.__qualname__,
+            name=name,  # type: ignore[arg-type]  # _validate_task_name guarantees non-None
             title=title,
             tags={},
             timeout=timeout,
@@ -1682,6 +1768,8 @@ def multi_turn_task(
     _validate_multi_turn_task_kwargs(**_extra_kwargs)
     #  /  — title must be str | None
     _validate_title(title)
+    _validate_task_name(name)
+    _validate_timeout(timeout)
 
     def _wrap(func: Callable[..., Any]) -> MultiTurnTask[Any, Any]:
         #  — handler-signature validation
@@ -1690,7 +1778,7 @@ def multi_turn_task(
         input_type, output_type = _extract_generic_args(func)
 
         opts = TaskOptions(
-            name=name or func.__qualname__,
+            name=name,  # type: ignore[arg-type]  # _validate_task_name guarantees non-None
             title=title,
             tags={},
             timeout=timeout,

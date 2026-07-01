@@ -9,6 +9,9 @@
 
 ### Other Changes
 
+- `@task` / `@multi_turn_task` now require an explicit `name=` (the stable recovery/identity anchor); the previous `func.__qualname__` fallback is removed because it silently rebound task identity when a handler was renamed or moved, orphaning in-flight tasks. Omitting `name` (or passing whitespace) now raises `ValueError` at decoration.
+- The per-turn task `timeout` now defaults to **1 day** when unset (previously unbounded) and enforces **1 day as a hard ceiling** — a larger or negative value is rejected at registration (`ValueError`). This caps a single handler invocation only; multi-turn chains still live indefinitely across turns (the budget resets each turn).
+- A caller-supplied `input_id` on `Task.start` / `Task.run` (and the multi-turn equivalents) is now validated against the same charset/length pattern as `task_id`; an invalid id raises `ValueError` before any provider call.
 - `RetryPolicy` now enforces hard caps at construction (fail-fast, not clamped): `max_attempts` must be 1–10 and `max_delay` must be 0–1 hour; out-of-range values raise `ValueError`. The zero-argument module-level presets (`exponential_backoff()`, `fixed_delay()`, `linear_backoff()`) now match their `RetryPolicy.<preset>()` classmethod values so retry cadence is identical across the Python and .NET implementations.
 - Added `azure-core` as a dependency, and a `hosted` optional-dependencies extra (pulling in `azure-identity`) for hosted-agent deployments.
 - `resolve_graceful_shutdown_timeout()` now honors the `AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS` environment variable, letting operators shorten shutdown so task checkpoints can flush before long-running requests finish.
