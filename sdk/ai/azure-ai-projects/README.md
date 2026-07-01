@@ -3,8 +3,8 @@
 The AI Projects client library is part of the Microsoft Foundry SDK, and provides easy access to
 resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 
-* **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents** (Preview), which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
-* **Enhance Agents with specialized tools**:
+* **Create and run Agents** using methods on the `.agents` client property. This includes **Hosted Agents**, which let you run your own containerized agent runtime while using Microsoft Foundry for managed hosting and scaling.
+* **Enhance Agents with specialized tools and toolbox tools** such as:
   * Agent-to-Agent (A2A) (Preview)
   * Azure AI Search
   * Azure Functions
@@ -12,6 +12,7 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
   * Bing Grounding
   * Browser Automation (Preview)
   * Code Interpreter
+  * Computer
   * Computer Use (Preview)
   * Fabric IQ (Preview)
   * File Search
@@ -22,11 +23,13 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
   * Microsoft SharePoint (Preview)
   * Model Context Protocol (MCP)
   * OpenAPI
+  * Reminder Tool (Preview)
   * Toolbox Search (Preview)
   * Web Search
   * Web Search (Preview)
   * Work IQ (Preview)
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
+* **Create and version toolboxes** that bundle collections of tools and skills for your agents, using `.toolboxes` operations.
 * **Fine-tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using `.connections` operations.
@@ -39,7 +42,8 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
 * **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using `.beta.red_teams` operations.
 * **Create and manage routines (preview)** that execute triggered actions based on configured conditions, using `.beta.routines` operations.
 * **Manage skills (preview)** as reusable capabilities that can be included in toolboxes and agents, using `.beta.skills` operations.
-* **Create and version toolboxes (preview)** that bundle collections of tools and skills for your agents, using `.beta.toolboxes` operations.
+
+**Important:** This stable package includes Preview features. Preview features available through stable methods require setting `allow_preview=True` when constructing the client, while Preview features exposed via the .beta sub-clients do not. Preview features may change or be removed in future versions and are not recommended for production use.
 
 The client library uses version `v1` of the Microsoft Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
