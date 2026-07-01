@@ -231,9 +231,10 @@ async def run_check(
             cmd += ["--service", service]
         if mark_arg:
             cmd += ["--mark_arg", mark_arg]
-        check_dest_dir = get_check_dest_dir(package, check, dest_dir)
-        if check_dest_dir and check == "apistub":
-            cmd += ["--dest-dir", check_dest_dir]
+        if check == "apistub":
+            check_dest_dir = get_check_dest_dir(package, check, dest_dir)
+            if check_dest_dir:
+                cmd += ["--dest-dir", check_dest_dir]
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
         env["PROXY_URL"] = f"http://localhost:{proxy_port}"
@@ -510,14 +511,12 @@ def configure_interrupt_handling():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="""
+    parser = argparse.ArgumentParser(description="""
 This script is the single point for all checks invoked by CI within this repo. It works in two phases.
     1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
     2. Invoke one or multiple `checks` environments for each package identified as in scope.
 In the case of an environment invoking `pytest`, results can be collected in a junit xml file, and test markers can be selected via --mark_arg.
-"""
-    )
+""")
 
     parser.add_argument(
         "glob_string",
