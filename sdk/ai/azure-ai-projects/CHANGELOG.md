@@ -1,5 +1,20 @@
 # Release History
 
+## 2.4.0 (Unreleased)
+
+### Features Added
+
+* Placeholder
+
+### Breaking Changes
+
+* Placeholder
+
+### Bugs Fixed
+
+* Placeholder
+
+
 ## 2.3.0 (2026-07-01)
 
 ### Features Added
