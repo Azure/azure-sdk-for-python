@@ -200,7 +200,6 @@ def _calculate_backoff_duration(attempts: int) -> float:
     calculated = MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 << safe_shift)
 
     # Cap at max duration
-    if calculated > MAX_STARTUP_BACKOFF_DURATION:
-        calculated = MAX_STARTUP_BACKOFF_DURATION
+    calculated = min(calculated, MAX_STARTUP_BACKOFF_DURATION)
 
     return _jitter(calculated, JITTER_RATIO)
