@@ -106,10 +106,10 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         Checks if the configuration setting have been updated since the last refresh.
 
-        :param str key: key to check for chances
+        :param str key: key to check for changes
         :param str label: label to check for changes
-        :param str etag: etag to check for changes
-        :param Mapping[str, str] headers: headers to use for the request
+        :param Optional[str] etag: etag to check for changes
+        :param Dict[str, str] headers: headers to use for the request
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value if a change was detected.
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
@@ -132,7 +132,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     self.LOGGER.debug("Refresh all triggered by key: %s label %s.", key, label)
                     return True, None
             else:
-                raise e
+                raise
         return False, None
 
     @distributed_trace
@@ -290,10 +290,10 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         Checks if any of the watch keys have changed, and updates them if they have.
 
         :param Mapping[Tuple[str, str], Optional[str]] watched_settings: The configuration settings to check for changes
-        :param Mapping[str, str] headers: The headers to use for the request
+        :param Dict[str, str] headers: The headers to use for the request
 
-        :return: Updated value of the configuration watched settings.
-        :rtype: Union[Dict[Tuple[str, str], str], None]
+        :return: Updated value of the configuration watched settings. Empty if no change was detected.
+        :rtype: Mapping[Tuple[str, str], Optional[str]]
         """
         updated_watched_settings = dict(watched_settings)
         trigger_refresh = False
@@ -319,8 +319,8 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
         :param str key: The key of the configuration setting
         :param str label: The label of the configuration setting
-        :return: The configuration setting
-        :rtype: ConfigurationSetting
+        :return: The configuration setting, or None if not found
+        :rtype: Optional[ConfigurationSetting]
         """
         return self._client.get_configuration_setting(key=key, label=label, **kwargs)
 
@@ -343,7 +343,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             if e.status_code == 404:
                 self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot.", snapshot_name)
                 return False
-            raise e
+            raise
         if snapshot.composition_type != SnapshotComposition.KEY:
             raise ValueError(f"Composition type for '{snapshot_name}' must be 'key'.")
         return True
@@ -403,12 +403,12 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         endpoint: str,
         credential: Optional["TokenCredential"],
         user_agent: str,
-        retry_total,
-        retry_backoff_max,
-        replica_discovery_enabled,
-        min_backoff_sec,
-        max_backoff_sec,
-        load_balancing_enabled,
+        retry_total: int,
+        retry_backoff_max: int,
+        replica_discovery_enabled: bool,
+        min_backoff_sec: int,
+        max_backoff_sec: int,
+        load_balancing_enabled: bool,
         **kwargs,
     ):
         super(ConfigurationClientManager, self).__init__(
@@ -445,6 +445,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         method returns None.
 
         :return: The next client to be used for the request.
+        :rtype: Optional[_ConfigurationClientWrapper]
         """
         if not self._active_clients:
             self._last_active_client_name = ""
@@ -483,10 +484,12 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
         if self._next_update_time and self._next_update_time > time.time():
             return
 
-        failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
-
-        if failover_endpoints is None:
-            # SRV record not found, so we should refresh after a longer interval
+        try:
+            failover_endpoints = find_auto_failover_endpoints(
+                self._original_endpoint, self._replica_discovery_enabled
+            )
+        except TimeoutError:
+            # SRV record resolution timed out, so we should refresh after a longer interval
             self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
             return
 
@@ -530,6 +533,12 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
                         )
                     )
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
+        # Close any replica clients that are no longer part of the failover.
+        retained_endpoints = {self._original_client.endpoint}
+        retained_endpoints.update(client.endpoint for client in discovered_clients)
+        for client in self._replica_clients:
+            if client.endpoint not in retained_endpoints:
+                client.close()
         if not self._load_balancing_enabled:
             random.shuffle(discovered_clients)
             self._replica_clients = [self._original_client] + discovered_clients

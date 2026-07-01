@@ -8,13 +8,14 @@ from typing import Dict, Optional, List, Tuple
 from importlib.metadata import version, PackageNotFoundError
 from ._constants import (
     REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE,
-    ServiceFabricEnvironmentVariable,
-    AzureFunctionEnvironmentVariable,
-    AzureWebAppEnvironmentVariable,
-    ContainerAppEnvironmentVariable,
-    KubernetesEnvironmentVariable,
+    SERVICE_FABRIC_ENVIRONMENT_VARIABLE,
+    AZURE_FUNCTION_ENVIRONMENT_VARIABLE,
+    AZURE_WEB_APP_ENVIRONMENT_VARIABLE,
+    CONTAINER_APP_ENVIRONMENT_VARIABLE,
+    KUBERNETES_ENVIRONMENT_VARIABLE,
     APP_CONFIG_AI_MIME_PROFILE,
     APP_CONFIG_AICC_MIME_PROFILE,
+    SNAPSHOT_REFERENCE_TAG,
 )
 
 # Feature flag filter names
@@ -29,17 +30,11 @@ TARGETING_FILTER_KEY = "TRGT"  # cspell:disable-line
 
 FEATURE_FLAG_USES_TELEMETRY_TAG = "Telemetry"
 FEATURE_FLAG_USES_SEED_TAG = "Seed"
-FEATURE_FLAG_MAX_VARIANTS_KEY = "MaxVariants"
-FEATURE_FLAG_FEATURES_KEY = "FFFeatures"
-
-CHAT_COMPLETION_PROFILE = "chat-completion"
-
 
 # Feature flag constants for telemetry
 LOAD_BALANCING_FEATURE = "LB"
 AI_CONFIGURATION_FEATURE = "AI"
 AI_CHAT_COMPLETION_FEATURE = "AICC"
-SNAPSHOT_REFERENCE_TAG = "SnapshotRef"
 
 # Correlation context constants
 FEATUREMANAGEMENT_PACKAGE = "featuremanagement"
@@ -240,15 +235,13 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         :param feature_flag: The feature flag to analyze for filter usage.
         :type feature_flag: FeatureFlagConfigurationSetting
         """
-        # Constants are already imported at module level
-
         if feature_flag.filters:
-            for filter in feature_flag.filters:
-                if filter.get("name") in PERCENTAGE_FILTER_NAMES:
+            for feature_filter in feature_flag.filters:
+                if feature_filter.get("name") in PERCENTAGE_FILTER_NAMES:
                     self.feature_filter_usage[PERCENTAGE_FILTER_KEY] = True
-                elif filter.get("name") in TIME_WINDOW_FILTER_NAMES:
+                elif feature_filter.get("name") in TIME_WINDOW_FILTER_NAMES:
                     self.feature_filter_usage[TIME_WINDOW_FILTER_KEY] = True
-                elif filter.get("name") in TARGETING_FILTER_NAMES:
+                elif feature_filter.get("name") in TARGETING_FILTER_NAMES:
                     self.feature_filter_usage[TARGETING_FILTER_KEY] = True
                 else:
                     self.feature_filter_usage[CUSTOM_FILTER_KEY] = True
@@ -322,15 +315,15 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         :return: The detected host type.
         :rtype: str
         """
-        if os.environ.get(AzureFunctionEnvironmentVariable):
+        if os.environ.get(AZURE_FUNCTION_ENVIRONMENT_VARIABLE):
             return HostType.AZURE_FUNCTION
-        if os.environ.get(AzureWebAppEnvironmentVariable):
+        if os.environ.get(AZURE_WEB_APP_ENVIRONMENT_VARIABLE):
             return HostType.AZURE_WEB_APP
-        if os.environ.get(ContainerAppEnvironmentVariable):
+        if os.environ.get(CONTAINER_APP_ENVIRONMENT_VARIABLE):
             return HostType.CONTAINER_APP
-        if os.environ.get(KubernetesEnvironmentVariable):
+        if os.environ.get(KUBERNETES_ENVIRONMENT_VARIABLE):
             return HostType.KUBERNETES
-        if os.environ.get(ServiceFabricEnvironmentVariable):
+        if os.environ.get(SERVICE_FABRIC_ENVIRONMENT_VARIABLE):
             return HostType.SERVICE_FABRIC
 
         return HostType.UNIDENTIFIED

@@ -187,7 +187,7 @@ class TestCalculateBackoffDuration(unittest.TestCase):
         # Input -1 -> internal 0, which is < 1
         with self.assertRaises(ValueError) as context:
             _calculate_backoff_duration(-1)
-        self.assertIn("Number of attempts must be at least 1", str(context.exception))
+        self.assertIn("Number of attempts must be at least 0", str(context.exception))
 
         with self.assertRaises(ValueError):
             _calculate_backoff_duration(-2)

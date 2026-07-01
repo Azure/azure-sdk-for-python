@@ -19,11 +19,11 @@ ETAG_KEY = "ETag"
 # Environment Variable Constants
 # ------------------------------------------------------------------------
 REQUEST_TRACING_DISABLED_ENVIRONMENT_VARIABLE = "AZURE_APP_CONFIGURATION_TRACING_DISABLED"
-AzureFunctionEnvironmentVariable = "FUNCTIONS_EXTENSION_VERSION"
-AzureWebAppEnvironmentVariable = "WEBSITE_SITE_NAME"
-ContainerAppEnvironmentVariable = "CONTAINER_APP_NAME"
-KubernetesEnvironmentVariable = "KUBERNETES_PORT"
-ServiceFabricEnvironmentVariable = "Fabric_NodeName"  # cspell:disable-line
+AZURE_FUNCTION_ENVIRONMENT_VARIABLE = "FUNCTIONS_EXTENSION_VERSION"
+AZURE_WEB_APP_ENVIRONMENT_VARIABLE = "WEBSITE_SITE_NAME"
+CONTAINER_APP_ENVIRONMENT_VARIABLE = "CONTAINER_APP_NAME"
+KUBERNETES_ENVIRONMENT_VARIABLE = "KUBERNETES_PORT"
+SERVICE_FABRIC_ENVIRONMENT_VARIABLE = "Fabric_NodeName"  # cspell:disable-line
 
 # ------------------------------------------------------------------------
 # Telemetry and Tracing Constants
@@ -38,9 +38,9 @@ SNAPSHOT_REFERENCE_TAG = "SnapshotRef"
 APP_CONFIG_AI_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/"
 APP_CONFIG_AICC_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/chat-completion"
 
-# =============================================================================
+# ------------------------------------------------------------------------
 # Startup Retry Constants
-# =============================================================================
+# ------------------------------------------------------------------------
 # Timeout
 DEFAULT_STARTUP_TIMEOUT = 100  # seconds
 

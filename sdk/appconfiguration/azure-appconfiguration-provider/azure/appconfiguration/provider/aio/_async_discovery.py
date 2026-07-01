@@ -25,8 +25,8 @@ async def find_auto_failover_endpoints(endpoint: str, replica_discovery_enabled:
 
     replicas = await _find_replicas(origin.target)
 
-    if not replicas:
-        return None  # Timeout
+    if replicas is None:
+        raise TimeoutError("Timed out while resolving auto-failover replica endpoints.")
 
     srv_records = [origin] + replicas
     endpoints = []
