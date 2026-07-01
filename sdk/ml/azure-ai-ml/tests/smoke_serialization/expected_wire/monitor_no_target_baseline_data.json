@@ -1,0 +1,111 @@
+{
+  "properties": {
+    "action": {
+      "actionType": "CreateMonitor",
+      "monitorDefinition": {
+        "computeConfiguration": {
+          "computeIdentity": {
+            "computeIdentityType": "AmlToken"
+          },
+          "computeType": "ServerlessSpark",
+          "instanceType": "standard_e8s_v3",
+          "runtimeVersion": "3.4"
+        },
+        "monitoringTarget": {
+          "deploymentId": "azureml:iris-endpoint:my-iris-deployment",
+          "taskType": "classification"
+        },
+        "signals": {
+          "data-drift-signal": {
+            "metricThresholds": [
+              {
+                "dataType": "Numerical",
+                "metric": "jensenShannonDistance",
+                "threshold": {
+                  "value": 0.5
+                }
+              },
+              {
+                "dataType": "Categorical",
+                "metric": "pearsonsChiSquaredTest",
+                "threshold": {
+                  "value": 0.2
+                }
+              }
+            ],
+            "mode": "Disabled",
+            "signalType": "DataDrift"
+          },
+          "data-quality-signal": {
+            "metricThresholds": [
+              {
+                "dataType": "Numerical",
+                "metric": "nullValueRate",
+                "threshold": {
+                  "value": 0.5
+                }
+              },
+              {
+                "dataType": "Categorical",
+                "metric": "outOfBoundsRate",
+                "threshold": {
+                  "value": 0.2
+                }
+              }
+            ],
+            "mode": "Disabled",
+            "signalType": "DataQuality"
+          },
+          "prediction-drift-signal": {
+            "metricThresholds": [
+              {
+                "dataType": "Numerical",
+                "metric": "jensenShannonDistance",
+                "threshold": {
+                  "value": 0.5
+                }
+              },
+              {
+                "dataType": "Categorical",
+                "metric": "pearsonsChiSquaredTest",
+                "threshold": {
+                  "value": 0.2
+                }
+              }
+            ],
+            "mode": "Disabled",
+            "modelType": "classification",
+            "signalType": "PredictionDrift"
+          }
+        }
+      }
+    },
+    "description": "Loan approval model monitoring setup with minimal configurations",
+    "displayName": "Loan Approval model monitoring",
+    "properties": {},
+    "tags": {},
+    "trigger": {
+      "frequency": "week",
+      "interval": 1,
+      "schedule": {
+        "hours": [
+          22,
+          20
+        ],
+        "minutes": [
+          0,
+          30
+        ],
+        "weekDays": [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday"
+        ]
+      },
+      "timeZone": "utc",
+      "triggerType": "Recurrence"
+    }
+  }
+}

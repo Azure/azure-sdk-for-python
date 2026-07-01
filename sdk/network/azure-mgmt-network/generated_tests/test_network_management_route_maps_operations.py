@@ -25,7 +25,7 @@ class TestNetworkManagementRouteMapsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             route_map_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestNetworkManagementRouteMapsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestNetworkManagementRouteMapsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
             route_map_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestNetworkManagementRouteMapsOperations(AzureMgmtRecordedTestCase):
         response = self.client.route_maps.list(
             resource_group_name=resource_group.name,
             virtual_hub_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

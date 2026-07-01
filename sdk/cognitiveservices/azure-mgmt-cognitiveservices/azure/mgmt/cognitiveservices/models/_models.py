@@ -4071,6 +4071,10 @@ class DeploymentProperties(_Model):
      ~azure.mgmt.cognitiveservices.models.DeploymentProvisioningState
     :ivar model: Properties of Cognitive Services account deployment model.
     :vartype model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+    :ivar speculative_decoding: Speculative decoding settings for the deployment. This
+     configuration applies to Fireworks model formats.
+    :vartype speculative_decoding:
+     ~azure.mgmt.cognitiveservices.models.DeploymentSpeculativeDecoding
     :ivar scale_settings: Properties of Cognitive Services account deployment model. (Deprecated,
      please use Deployment.sku instead.).
     :vartype scale_settings: ~azure.mgmt.cognitiveservices.models.DeploymentScaleSettings
@@ -4124,6 +4128,11 @@ class DeploymentProperties(_Model):
      and \"Canceled\"."""
     model: Optional["_models.DeploymentModel"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Properties of Cognitive Services account deployment model."""
+    speculative_decoding: Optional["_models.DeploymentSpeculativeDecoding"] = rest_field(
+        name="speculativeDecoding", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Speculative decoding settings for the deployment. This configuration applies to Fireworks model
+     formats."""
     scale_settings: Optional["_models.DeploymentScaleSettings"] = rest_field(
         name="scaleSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4189,6 +4198,7 @@ class DeploymentProperties(_Model):
         self,
         *,
         model: Optional["_models.DeploymentModel"] = None,
+        speculative_decoding: Optional["_models.DeploymentSpeculativeDecoding"] = None,
         scale_settings: Optional["_models.DeploymentScaleSettings"] = None,
         rai_policy_name: Optional[str] = None,
         version_upgrade_option: Optional[Union[str, "_models.DeploymentModelVersionUpgradeOption"]] = None,
@@ -4318,6 +4328,43 @@ class DeploymentSizeCapacity(_Model):
     """The total available capacity for this deployment size."""
     largest_deployment_capacity: Optional[int] = rest_field(name="largestDeploymentCapacity", visibility=["read"])
     """The largest contiguous deployment capacity available for this deployment size."""
+
+
+class DeploymentSpeculativeDecoding(_Model):
+    """Speculative decoding settings for a deployment.
+
+    :ivar draft_model: Draft model used to generate speculative decoding tokens. Required.
+    :vartype draft_model: ~azure.mgmt.cognitiveservices.models.DeploymentModel
+    :ivar draft_token_count: The number of draft tokens attempted per speculation step.
+    :vartype draft_token_count: int
+    """
+
+    draft_model: "_models.DeploymentModel" = rest_field(
+        name="draftModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Draft model used to generate speculative decoding tokens. Required."""
+    draft_token_count: Optional[int] = rest_field(
+        name="draftTokenCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of draft tokens attempted per speculation step."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        draft_model: "_models.DeploymentModel",
+        draft_token_count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class DomainAvailability(_Model):
@@ -5184,8 +5231,6 @@ class ManagedComputeCapacityProperties(_Model):
 
     :ivar accelerator_type: The type of accelerator (e.g., Azure.A100, Azure.H100).
     :vartype accelerator_type: str
-    :ivar location: The Azure region where the capacity is available.
-    :vartype location: str
     :ivar available_accelerators: The number of available accelerators in the region.
     :vartype available_accelerators: int
     :ivar deployment_size_capacities: Capacity information broken down by deployment size.
@@ -5195,8 +5240,6 @@ class ManagedComputeCapacityProperties(_Model):
 
     accelerator_type: Optional[str] = rest_field(name="acceleratorType", visibility=["read"])
     """The type of accelerator (e.g., Azure.A100, Azure.H100)."""
-    location: Optional[str] = rest_field(visibility=["read"])
-    """The Azure region where the capacity is available."""
     available_accelerators: Optional[int] = rest_field(name="availableAccelerators", visibility=["read"])
     """The number of available accelerators in the region."""
     deployment_size_capacities: Optional[list["_models.DeploymentSizeCapacity"]] = rest_field(
@@ -5330,6 +5373,9 @@ class ManagedComputeDeploymentProperties(_Model):
      "OnceCurrentVersionExpired", and "NoAutoUpgrade".
     :vartype version_upgrade_option: str or
      ~azure.mgmt.cognitiveservices.models.DeploymentModelVersionUpgradeOption
+    :ivar capabilities: Deployment capabilities represented as key-value pairs. Example: {
+     assetsV2: "true" }.
+    :vartype capabilities: dict[str, str]
     :ivar compute_id: Foundry compute ARM resource ID for VM-backed managed compute deployments.
      Required when sku.name is VmManagedCompute; immutable after creation.
     :vartype compute_id: str
@@ -5369,6 +5415,8 @@ class ManagedComputeDeploymentProperties(_Model):
     )
     """Template auto-upgrade policy. Defaults to OnceNewDefaultVersionAvailable. Known values are:
      \"OnceNewDefaultVersionAvailable\", \"OnceCurrentVersionExpired\", and \"NoAutoUpgrade\"."""
+    capabilities: Optional[dict[str, str]] = rest_field(visibility=["read"])
+    """Deployment capabilities represented as key-value pairs. Example: { assetsV2: \"true\" }."""
     compute_id: Optional[str] = rest_field(name="computeId", visibility=["read", "create"])
     """Foundry compute ARM resource ID for VM-backed managed compute deployments. Required when
      sku.name is VmManagedCompute; immutable after creation."""
@@ -8700,6 +8748,435 @@ class RaiContentFilterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RaiEgressHeaderTransform(_Model):
+    """A header transformation applied to matched traffic. For Set or Insert operations, exactly one
+    of value or valueRef must be provided. For Remove operations, neither value nor valueRef should
+    be set.
+
+    :ivar operation: The operation to perform on this header. Required. Known values are: "Set",
+     "Insert", and "Remove".
+    :vartype operation: str or ~azure.mgmt.cognitiveservices.models.RaiEgressHeaderOperation
+    :ivar name: The HTTP header name (e.g., "Authorization", "X-Custom-Auth"). Required.
+    :vartype name: str
+    :ivar value: A static header value. Write-only: accepted on create/update, never returned on
+     read. If omitted on update, the existing value is preserved. Use this for non-sensitive values;
+     for credentials, use valueRef instead.
+    :vartype value: str
+    :ivar value_ref: A dynamic header value resolved at request time from a secret or managed
+     identity.
+    :vartype value_ref: ~azure.mgmt.cognitiveservices.models.RaiEgressHeaderValueRef
+    """
+
+    operation: Union[str, "_models.RaiEgressHeaderOperation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation to perform on this header. Required. Known values are: \"Set\", \"Insert\", and
+     \"Remove\"."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The HTTP header name (e.g., \"Authorization\", \"X-Custom-Auth\"). Required."""
+    value: Optional[str] = rest_field(visibility=["create", "update"])
+    """A static header value. Write-only: accepted on create/update, never returned on read. If
+     omitted on update, the existing value is preserved. Use this for non-sensitive values; for
+     credentials, use valueRef instead."""
+    value_ref: Optional["_models.RaiEgressHeaderValueRef"] = rest_field(
+        name="valueRef", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A dynamic header value resolved at request time from a secret or managed identity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation: Union[str, "_models.RaiEgressHeaderOperation"],
+        name: str,
+        value: Optional[str] = None,
+        value_ref: Optional["_models.RaiEgressHeaderValueRef"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiEgressHeaderValueRef(_Model):
+    """A dynamic source for a header value. Exactly one of secretRef or managedIdentityRef must be
+    set.
+
+    :ivar secret_ref: Resolve the value from a stored secret.
+    :vartype secret_ref: ~azure.mgmt.cognitiveservices.models.RaiEgressSecretRef
+    :ivar managed_identity_ref: Resolve the value from a managed-identity token.
+    :vartype managed_identity_ref: ~azure.mgmt.cognitiveservices.models.RaiEgressManagedIdentityRef
+    """
+
+    secret_ref: Optional["_models.RaiEgressSecretRef"] = rest_field(
+        name="secretRef", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resolve the value from a stored secret."""
+    managed_identity_ref: Optional["_models.RaiEgressManagedIdentityRef"] = rest_field(
+        name="managedIdentityRef", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resolve the value from a managed-identity token."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secret_ref: Optional["_models.RaiEgressSecretRef"] = None,
+        managed_identity_ref: Optional["_models.RaiEgressManagedIdentityRef"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiEgressManagedIdentityRef(_Model):
+    """A reference to a managed-identity token used as a header value.
+
+    :ivar resource: The resource/audience the token is requested for. Required.
+    :vartype resource: str
+    :ivar format: Optional format for the resolved token; "{value}" is the placeholder, e.g.
+     "Bearer {value}".
+    :vartype format: str
+    """
+
+    resource: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource/audience the token is requested for. Required."""
+    format: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional format for the resolved token; \"{value}\" is the placeholder, e.g. \"Bearer
+     {value}\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource: str,
+        format: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiEgressPolicyConfig(_Model):
+    """Egress (outbound network) policy configuration nested within an RAI policy. Controls which
+    external endpoints sandboxed agents can reach and what transformations (header injection, URL
+    rewrite) are applied to matching traffic.
+
+    :ivar mode: The enforcement mode for egress rules. If omitted on create, the server defaults to
+     Enforced. On subsequent GET requests, the server always returns the effective mode. Known
+     values are: "Enforced" and "Audit".
+    :vartype mode: str or ~azure.mgmt.cognitiveservices.models.RaiEgressMode
+    :ivar default_action: The default action when no user-defined rules match. Deny blocks
+     unmatched traffic; Allow permits it. Transform and Rewrite rules are always applied to their
+     matched traffic regardless of this setting — defaultAction only governs traffic that does not
+     match any rule. If omitted on create, the server defaults to Deny (fail-closed). On subsequent
+     GET requests, the server always returns the effective value. Known values are: "Allow" and
+     "Deny".
+    :vartype default_action: str or ~azure.mgmt.cognitiveservices.models.RaiEgressDefaultAction
+    :ivar description: Description of the egress policy.
+    :vartype description: str
+    :ivar rules: Ordered list of egress rules. First matching rule wins. Rules are evaluated in
+     declaration order; the first rule whose match criteria are satisfied determines the action
+     taken on the request.
+    :vartype rules: list[~azure.mgmt.cognitiveservices.models.RaiEgressRule]
+    """
+
+    mode: Optional[Union[str, "_models.RaiEgressMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The enforcement mode for egress rules. If omitted on create, the server defaults to Enforced.
+     On subsequent GET requests, the server always returns the effective mode. Known values are:
+     \"Enforced\" and \"Audit\"."""
+    default_action: Optional[Union[str, "_models.RaiEgressDefaultAction"]] = rest_field(
+        name="defaultAction", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The default action when no user-defined rules match. Deny blocks unmatched traffic; Allow
+     permits it. Transform and Rewrite rules are always applied to their matched traffic regardless
+     of this setting — defaultAction only governs traffic that does not match any rule. If omitted
+     on create, the server defaults to Deny (fail-closed). On subsequent GET requests, the server
+     always returns the effective value. Known values are: \"Allow\" and \"Deny\"."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the egress policy."""
+    rules: Optional[list["_models.RaiEgressRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Ordered list of egress rules. First matching rule wins. Rules are evaluated in declaration
+     order; the first rule whose match criteria are satisfied determines the action taken on the
+     request."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.RaiEgressMode"]] = None,
+        default_action: Optional[Union[str, "_models.RaiEgressDefaultAction"]] = None,
+        description: Optional[str] = None,
+        rules: Optional[list["_models.RaiEgressRule"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiEgressRewriteTarget(_Model):
+    """Where a Rewrite action sends matched traffic. At least one field must be set; omitted fields
+    retain the original request values. This constraint is enforced by the server (400 Bad Request
+    if all fields are omitted).
+
+    :ivar scheme: Target scheme. Original scheme is kept if omitted. Known values are: "http" and
+     "https".
+    :vartype scheme: str or ~azure.mgmt.cognitiveservices.models.RaiEgressScheme
+    :ivar host: Target host. Original host is kept if omitted.
+    :vartype host: str
+    :ivar path: Target path (literal string). Original path (and query) is kept if omitted.
+    :vartype path: str
+    """
+
+    scheme: Optional[Union[str, "_models.RaiEgressScheme"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Target scheme. Original scheme is kept if omitted. Known values are: \"http\" and \"https\"."""
+    host: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Target host. Original host is kept if omitted."""
+    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Target path (literal string). Original path (and query) is kept if omitted."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        scheme: Optional[Union[str, "_models.RaiEgressScheme"]] = None,
+        host: Optional[str] = None,
+        path: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiEgressRule(_Model):
+    """A single egress rule. Rules are evaluated in order; first match wins.
+
+    :ivar name: Name of the rule. Must be unique within the policy. Required.
+    :vartype name: str
+    :ivar description: Description of the rule.
+    :vartype description: str
+    :ivar rule_type: The type of rule (e.g., Fqdn). Determines how match criteria are interpreted.
+     Required. "Fqdn"
+    :vartype rule_type: str or ~azure.mgmt.cognitiveservices.models.RaiEgressRuleType
+    :ivar match: The match criteria for this rule.
+    :vartype match: ~azure.mgmt.cognitiveservices.models.RaiEgressRuleMatch
+    :ivar action: The action to take when this rule matches, including the action type and any
+     type-specific configuration (headers for Transform, rewrite target for Rewrite). Required.
+    :vartype action: ~azure.mgmt.cognitiveservices.models.RaiEgressRuleAction
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the rule. Must be unique within the policy. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Description of the rule."""
+    rule_type: Union[str, "_models.RaiEgressRuleType"] = rest_field(
+        name="ruleType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of rule (e.g., Fqdn). Determines how match criteria are interpreted. Required.
+     \"Fqdn\""""
+    match: Optional["_models.RaiEgressRuleMatch"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The match criteria for this rule."""
+    action: "_models.RaiEgressRuleAction" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The action to take when this rule matches, including the action type and any type-specific
+     configuration (headers for Transform, rewrite target for Rewrite). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        rule_type: Union[str, "_models.RaiEgressRuleType"],
+        action: "_models.RaiEgressRuleAction",
+        description: Optional[str] = None,
+        match: Optional["_models.RaiEgressRuleMatch"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiEgressRuleAction(_Model):
+    """The action an egress rule takes when it matches.
+
+    * Allow/Deny: no additional fields needed; headers and rewrite must not be set.
+    * Transform: headers is required with at least one entry; rewrite must not be set.
+    * Rewrite: rewrite is required with at least one of scheme/host/path;
+    headers is optional for injecting headers alongside the redirect.
+
+    :ivar action_type: The kind of action. Required. Known values are: "Allow", "Deny",
+     "Transform", and "Rewrite".
+    :vartype action_type: str or ~azure.mgmt.cognitiveservices.models.RaiEgressRuleActionType
+    :ivar headers: Header transforms to apply. Required for Transform; optional for Rewrite; not
+     allowed for Allow or Deny.
+    :vartype headers: list[~azure.mgmt.cognitiveservices.models.RaiEgressHeaderTransform]
+    :ivar rewrite: Destination override. Required for Rewrite; not allowed otherwise.
+    :vartype rewrite: ~azure.mgmt.cognitiveservices.models.RaiEgressRewriteTarget
+    """
+
+    action_type: Union[str, "_models.RaiEgressRuleActionType"] = rest_field(
+        name="actionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The kind of action. Required. Known values are: \"Allow\", \"Deny\", \"Transform\", and
+     \"Rewrite\"."""
+    headers: Optional[list["_models.RaiEgressHeaderTransform"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Header transforms to apply. Required for Transform; optional for Rewrite; not allowed for Allow
+     or Deny."""
+    rewrite: Optional["_models.RaiEgressRewriteTarget"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Destination override. Required for Rewrite; not allowed otherwise."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action_type: Union[str, "_models.RaiEgressRuleActionType"],
+        headers: Optional[list["_models.RaiEgressHeaderTransform"]] = None,
+        rewrite: Optional["_models.RaiEgressRewriteTarget"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiEgressRuleMatch(_Model):
+    """The match criteria for an egress rule. If both host and path are omitted, the rule matches all
+    traffic. Host uses DNS wildcard syntax (e.g., "*.openai.com" matches "api.openai.com"). Path
+    uses URI prefix matching with '*' as a single-segment wildcard (e.g., "/v1/*" matches
+    "/v1/chat").
+
+    :ivar host: Host pattern to match using DNS wildcard syntax (e.g., "*.openai.com"). A leading
+     "*." matches any subdomain. Omit to match all hosts.
+    :vartype host: str
+    :ivar path: Path pattern to match using URI prefix with '*' wildcard (e.g., "/v1/*"). Omit to
+     match all paths.
+    :vartype path: str
+    """
+
+    host: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Host pattern to match using DNS wildcard syntax (e.g., \"*.openai.com\"). A leading \"*.\"
+     matches any subdomain. Omit to match all hosts."""
+    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Path pattern to match using URI prefix with '*' wildcard (e.g., \"/v1/*\"). Omit to match all
+     paths."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        host: Optional[str] = None,
+        path: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RaiEgressSecretRef(_Model):
+    """A reference to a stored secret used as a header value.
+
+    :ivar secret_id: Identifier of the secret to inject. Required.
+    :vartype secret_id: str
+    :ivar secret_key: Optional key within the secret.
+    :vartype secret_key: str
+    :ivar format: Optional format for the resolved value; "{value}" is the placeholder, e.g.
+     "Bearer {value}".
+    :vartype format: str
+    """
+
+    secret_id: str = rest_field(name="secretId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the secret to inject. Required."""
+    secret_key: Optional[str] = rest_field(name="secretKey", visibility=["read", "create", "update", "delete", "query"])
+    """Optional key within the secret."""
+    format: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional format for the resolved value; \"{value}\" is the placeholder, e.g. \"Bearer
+     {value}\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        secret_id: str,
+        secret_key: Optional[str] = None,
+        format: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RaiExternalSafetyProviderSchema(ProxyResource):
     """Cognitive Services Rai External Safety provider Schema.
 
@@ -8998,6 +9475,9 @@ class RaiPolicyProperties(_Model):
     :vartype custom_blocklists: list[~azure.mgmt.cognitiveservices.models.CustomBlocklistConfig]
     :ivar safety_providers: The list of Safety Providers.
     :vartype safety_providers: list[~azure.mgmt.cognitiveservices.models.SafetyProviderConfig]
+    :ivar egress_policy: Egress (outbound network) policy controlling which external endpoints
+     sandboxed agents can reach. Includes rules with Allow/Deny/Transform/Rewrite actions.
+    :vartype egress_policy: ~azure.mgmt.cognitiveservices.models.RaiEgressPolicyConfig
     """
 
     type: Optional[Union[str, "_models.RaiPolicyType"]] = rest_field(visibility=["read"])
@@ -9025,6 +9505,11 @@ class RaiPolicyProperties(_Model):
         name="safetyProviders", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of Safety Providers."""
+    egress_policy: Optional["_models.RaiEgressPolicyConfig"] = rest_field(
+        name="egressPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Egress (outbound network) policy controlling which external endpoints sandboxed agents can
+     reach. Includes rules with Allow/Deny/Transform/Rewrite actions."""
 
     @overload
     def __init__(
@@ -9035,6 +9520,7 @@ class RaiPolicyProperties(_Model):
         content_filters: Optional[list["_models.RaiPolicyContentFilter"]] = None,
         custom_blocklists: Optional[list["_models.CustomBlocklistConfig"]] = None,
         safety_providers: Optional[list["_models.SafetyProviderConfig"]] = None,
+        egress_policy: Optional["_models.RaiEgressPolicyConfig"] = None,
     ) -> None: ...
 
     @overload

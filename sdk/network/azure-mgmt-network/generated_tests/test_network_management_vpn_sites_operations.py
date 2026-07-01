@@ -24,7 +24,7 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
         response = self.client.vpn_sites.get(
             resource_group_name=resource_group.name,
             vpn_site_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -100,7 +100,7 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vpn_site_name="str",
             vpn_site_parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -112,7 +112,7 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
         response = self.client.vpn_sites.begin_delete(
             resource_group_name=resource_group.name,
             vpn_site_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -123,7 +123,7 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
     def test_vpn_sites_list_by_resource_group(self, resource_group):
         response = self.client.vpn_sites.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -133,7 +133,7 @@ class TestNetworkManagementVpnSitesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_vpn_sites_list(self, resource_group):
         response = self.client.vpn_sites.list(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

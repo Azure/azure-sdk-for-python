@@ -40,6 +40,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-04-01/BackupsUnderAccount_Migrate.json
+# x-ms-original-file: 2026-04-15-preview/BackupsUnderAccount_Migrate.json
 if __name__ == "__main__":
     main()
