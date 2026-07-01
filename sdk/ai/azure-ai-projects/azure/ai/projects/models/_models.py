@@ -161,7 +161,7 @@ class Tool(_Model):
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
     CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
     ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
-    OpenApiTool, ReminderPreviewTool, SharepointPreviewTool, FunctionShellToolParam,
+    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam,
     ToolSearchToolParam, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
@@ -169,7 +169,7 @@ class Tool(_Model):
      "local_shell", "shell", "custom", "namespace", "tool_search", "web_search_preview",
      "apply_patch", "a2a_preview", "bing_custom_search_preview", "browser_automation_preview",
      "fabric_dataagent_preview", "sharepoint_grounding_preview", "memory_search_preview",
-     "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
+     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
      "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
      "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
@@ -182,7 +182,7 @@ class Tool(_Model):
      \"local_shell\", \"shell\", \"custom\", \"namespace\", \"tool_search\", \"web_search_preview\",
      \"apply_patch\", \"a2a_preview\", \"bing_custom_search_preview\",
      \"browser_automation_preview\", \"fabric_dataagent_preview\", \"sharepoint_grounding_preview\",
-     \"memory_search_preview\", \"reminder_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
+     \"memory_search_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
      \"toolbox_search_preview\", \"azure_ai_search\", \"azure_function\", \"bing_grounding\",
      \"capture_structured_outputs\", and \"openapi\"."""
 
@@ -12623,47 +12623,6 @@ class RedTeam(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ReminderPreviewTool(Tool, discriminator="reminder_preview"):
-    """A built-in tool that schedules the agent to re-invoke itself after a delay. The model passes a
-    single ``minutes`` argument (positive integer) when calling this tool. The service creates a
-    one-shot timer routine that fires after the specified delay and re-invokes the agent on the
-    same conversation thread. No pre-created routine is required.
-
-    :ivar type: The type of the tool. Always ``reminder_preview``. Required. REMINDER_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.REMINDER_PREVIEW
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    """
-
-    type: Literal[ToolType.REMINDER_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``reminder_preview``. Required. REMINDER_PREVIEW."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.REMINDER_PREVIEW  # type: ignore
 
 
 class ReminderPreviewToolboxTool(ToolboxTool, discriminator="reminder_preview"):
