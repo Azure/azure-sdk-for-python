@@ -81,6 +81,14 @@ def main():
                     },
                     "tags": {},
                 },
+                "routingConfiguration": {
+                    "inboundRouteMap": {
+                        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/virtualHubs/virtualHub1/routeMaps/routeMap1"
+                    },
+                    "outboundRouteMap": {
+                        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Network/virtualHubs/virtualHub1/routeMaps/routeMap2"
+                    },
+                },
                 "routingWeight": 0,
                 "sharedKey": "Abc123",
                 "trafficSelectorPolicies": [],
@@ -123,6 +131,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/VirtualNetworkGatewayConnectionCreate.json
+# x-ms-original-file: 2025-07-01/VirtualNetworkGatewayConnectionCreate.json
 if __name__ == "__main__":
     main()

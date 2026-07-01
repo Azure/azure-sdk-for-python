@@ -101,6 +101,31 @@ jobs:
           path: _typespec
           fetch-depth: 0
 
+      - name: Sync PR head with microsoft/typespec main
+        # Only relevant for PR-sourced runs. Merging main into the PR head
+        # ensures the regenerated diff reflects only the PR's changes on top of
+        # current main, rather than including changes the PR is simply behind on.
+        if: steps.typespec-info.outputs.typespec_pr_number != ''
+        working-directory: _typespec
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # The checkout's "origin" points at the PR head repo (possibly a
+          # fork), so add microsoft/typespec explicitly to fetch its main.
+          if git remote get-url upstream >/dev/null 2>&1; then
+            git remote set-url upstream https://github.com/microsoft/typespec.git
+          else
+            git remote add upstream https://github.com/microsoft/typespec.git
+          fi
+          git fetch --no-tags upstream main
+          if ! git merge --no-edit upstream/main; then
+            git merge --abort || true
+            echo "::error::microsoft/typespec PR #${{ steps.typespec-info.outputs.typespec_pr_number }} conflicts with microsoft/typespec main. Please update the PR branch by merging (or rebasing onto) the latest main and resolving the conflicts, then re-run this workflow."
+            exit 1
+          fi
+          echo "::notice::Merged microsoft/typespec main into PR head ($(git rev-parse --short HEAD))"
+
       - name: Setup Node.js
         # SHA corresponds to actions/setup-node@v6
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
