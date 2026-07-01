@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.containerregistry import ContainerRegistryManagementClient
     pip install azure-identity
     pip install azure-mgmt-containerregistry
 # USAGE
-    python archive_version_create.py
+    python cache_rule_create_user_assigned_mi_google.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,16 +31,32 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.archive_versions.begin_create(
+    response = client.cache_rules.begin_create(
         resource_group_name="myResourceGroup",
         registry_name="myRegistry",
-        package_type="rpm",
-        archive_name="myArchiveName",
-        archive_version_name="myArchiveVersionName",
+        cache_rule_name="myCacheRule",
+        cache_rule_create_parameters={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myUserAssignedIdentity": {}
+                },
+            },
+            "properties": {
+                "additionalAuthenticationProperties": {
+                    "authenticationType": "GoogleArtifactRegistry",
+                    "projectNumber": "123456789012",
+                    "workloadIdentityPool": "my-workload-identity-pool",
+                    "workloadIdentityProvider": "my-workload-identity-provider",
+                },
+                "sourceRepository": "us-west1-docker.pkg.dev/repository/hello-world",
+                "targetRepository": "cached-acr/hello-world",
+            },
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-01-preview/ArchiveVersionCreate.json
+# x-ms-original-file: 2026-03-01-preview/CacheRuleCreateUserAssignedMIGoogle.json
 if __name__ == "__main__":
     main()
