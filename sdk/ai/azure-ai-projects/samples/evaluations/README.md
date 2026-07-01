@@ -114,6 +114,13 @@ Located in the [agentic_evaluators](https://github.com/Azure/azure-sdk-for-pytho
 | [sample_generic_agentic_evaluator](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/evaluations/agentic_evaluators/sample_generic_agentic_evaluator) | Generic agentic evaluator example |
 
 
+### Endpoint-Based (Custom) Evaluators
+
+| Sample | Description | Requirements |
+|--------|-------------|--------------|
+| [sample_endpoint_evaluator_with_api_key.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator_with_api_key.py) | Bring your own HTTP endpoint as an evaluator, authenticated with an API key | Scoring endpoint, `azure-mgmt-cognitiveservices` |
+| [sample_endpoint_evaluator_with_entra_id.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_endpoint_evaluator_with_entra_id.py) | Bring your own HTTP endpoint as an evaluator, authenticated with Entra ID managed identity | Scoring endpoint with Easy Auth, `azure-mgmt-cognitiveservices` |
+
 ### Evaluation Result Insights & Analysis
 
 | Sample | Description |

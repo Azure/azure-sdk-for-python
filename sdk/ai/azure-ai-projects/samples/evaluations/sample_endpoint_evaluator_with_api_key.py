@@ -50,7 +50,7 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" azure-mgmt-cognitiveservices python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) AZURE_SUBSCRIPTION_ID - Required. The Azure subscription ID containing your project.
     3) AZURE_RESOURCE_GROUP - Required. The resource group containing your Azure AI account.
@@ -93,7 +93,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
 resource_group = os.environ["AZURE_RESOURCE_GROUP"]
 endpoint_url = os.environ["ENDPOINT_URL"]
@@ -117,6 +117,7 @@ with (
     # The connection stores the endpoint URL and API key credentials. At evaluation
     # time, the service resolves the connection and sends the API key in the request
     # header to your endpoint.
+    # Note: create is idempotent — it creates or updates the connection if it already exists.
     print("[1/5] Creating workspace connection with API Key auth...")
 
     mgmt_client = CognitiveServicesManagementClient(
@@ -267,3 +268,17 @@ with (
             break
         time.sleep(5)
         print(f"  Status: {run.status} — polling again...")
+
+    # ── Cleanup ────────────────────────────────────────────────────────
+    # The connection, evaluator, and evaluation are left in place so you can
+    # inspect results in the Foundry portal. Uncomment the following to delete them:
+    # mgmt_client.account_connections.delete(
+    #     resource_group_name=resource_group,
+    #     account_name=account_name,
+    #     connection_name=connection_name,
+    # )
+    # print(f"  Connection deleted: {connection_name}")
+    # project_client.beta.evaluators.delete(name="my-endpoint-evaluator-apikey")
+    # print("  Evaluator deleted: my-endpoint-evaluator-apikey")
+    # client.evals.delete(eval_id=eval_object.id)
+    # print(f"  Evaluation deleted: {eval_object.id}")
