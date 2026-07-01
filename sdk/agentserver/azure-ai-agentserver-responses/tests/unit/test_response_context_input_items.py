@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from azure.ai.agentserver.responses._response_context import IsolationContext, ResponseContext
+from azure.ai.agentserver.responses._response_context import PlatformContext, ResponseContext
 from azure.ai.agentserver.responses.models._generated import (
     CreateResponse,
     Item,
@@ -91,7 +91,7 @@ async def test_get_input_items__resolves_single_reference() -> None:
     # Resolved via to_item(): OutputItemMessage → ItemMessage
     assert isinstance(items[0], ItemMessage)
     assert items[0].role == "assistant"
-    provider.get_items.assert_awaited_once_with(["item_abc"], isolation=ctx.isolation)
+    provider.get_items.assert_awaited_once_with(["item_abc"], context=ctx.platform_context)
 
 
 # ------------------------------------------------------------------
@@ -258,17 +258,17 @@ async def test_get_input_items__empty_input() -> None:
 
 
 # ------------------------------------------------------------------
-# Isolation context is forwarded to provider
+# Platform context is forwarded to provider
 # ------------------------------------------------------------------
 
 
 @pytest.mark.asyncio
-async def test_get_input_items__forwards_isolation() -> None:
-    """Isolation context is passed through to provider.get_items()."""
+async def test_get_input_items__forwards_platform_context() -> None:
+    """Platform context is passed through to provider.get_items()."""
     ref = ItemReferenceParam(id="item_iso")
     resolved = OutputItemMessage(id="item_iso", role="assistant", content=[], status="completed")
     provider = _mock_provider(get_items_return=[resolved])
-    isolation = IsolationContext(user_key="user_123", chat_key="chat_456")
+    isolation = PlatformContext(user_id_key="user_123", call_id="call_456")
 
     request = _make_request([ref])
     ctx = ResponseContext(
@@ -277,14 +277,14 @@ async def test_get_input_items__forwards_isolation() -> None:
         request=request,
         input_items=[ref],
         provider=provider,
-        isolation=isolation,
+        platform_context=isolation,
     )
 
     items = await ctx.get_input_items()
 
     assert len(items) == 1
     assert isinstance(items[0], ItemMessage)  # resolved via to_item()
-    provider.get_items.assert_awaited_once_with(["item_iso"], isolation=isolation)
+    provider.get_items.assert_awaited_once_with(["item_iso"], context=isolation)
 
 
 # ------------------------------------------------------------------

@@ -34,7 +34,7 @@ class _RecordingProvider:
         self.updates: list[dict[str, Any]] = []
         self.fail = fail
 
-    async def update_response(self, response, *, isolation=None):  # noqa: ANN001
+    async def update_response(self, response, *, context=None):  # noqa: ANN001
         if self.fail:
             raise RuntimeError("boom")
         self.updates.append(response.as_dict())
@@ -66,7 +66,7 @@ async def test_t18_no_op_matrix():
         runtime_options=_opts(True),
         store=False,
         background=True,
-        isolation=None,
+        context=None,
         response_id="r1",
         last_snapshot=None,
         terminal_seen=False,
@@ -80,7 +80,7 @@ async def test_t18_no_op_matrix():
         runtime_options=_opts(True),
         store=True,
         background=False,
-        isolation=None,
+        context=None,
         response_id="r1",
         last_snapshot=None,
         terminal_seen=False,
@@ -94,7 +94,7 @@ async def test_t18_no_op_matrix():
         runtime_options=_opts(False),
         store=True,
         background=True,
-        isolation=None,
+        context=None,
         response_id="r1",
         last_snapshot=None,
         terminal_seen=False,
@@ -108,7 +108,7 @@ async def test_t18_no_op_matrix():
         runtime_options=_opts(True),
         store=True,
         background=True,
-        isolation=None,
+        context=None,
         response_id="r1",
         last_snapshot=None,
         terminal_seen=False,
@@ -127,7 +127,7 @@ async def test_t20_idempotent_when_snapshot_unchanged():
         runtime_options=_opts(True),
         store=True,
         background=True,
-        isolation=None,
+        context=None,
         response_id="r1",
         last_snapshot=None,
         terminal_seen=False,
@@ -139,7 +139,7 @@ async def test_t20_idempotent_when_snapshot_unchanged():
         runtime_options=_opts(True),
         store=True,
         background=True,
-        isolation=None,
+        context=None,
         response_id="r1",
         last_snapshot=snap,
         terminal_seen=False,
@@ -158,7 +158,7 @@ async def test_t21_status_as_is_in_snapshot():
         runtime_options=_opts(True),
         store=True,
         background=True,
-        isolation=None,
+        context=None,
         response_id="r1",
         last_snapshot=None,
         terminal_seen=False,
@@ -180,7 +180,7 @@ async def test_t22_failure_swallowed_and_tagged():
         runtime_options=_opts(True),
         store=True,
         background=True,
-        isolation=None,
+        context=None,
         response_id="r1",
         last_snapshot=b"prev",
         terminal_seen=False,
@@ -198,7 +198,7 @@ async def test_t22b_drop_after_terminal():
         runtime_options=_opts(True),
         store=True,
         background=True,
-        isolation=None,
+        context=None,
         response_id="r1",
         last_snapshot=None,
         terminal_seen=True,
@@ -268,33 +268,33 @@ def test_t22d_no_implicit_checkpoints_zero_checkpoint_handler():
         def __init__(self) -> None:
             self._inner: dict[str, Any] = {}
 
-        async def create_response(self, response, input_items, history_item_ids, *, isolation=None):  # noqa: ANN001
+        async def create_response(self, response, input_items, history_item_ids, *, context=None):  # noqa: ANN001
             self._inner[response.id] = response
 
-        async def update_response(self, response, *, isolation=None):  # noqa: ANN001
+        async def update_response(self, response, *, context=None):  # noqa: ANN001
             update_count["n"] += 1
             self._inner[response.id] = response
 
-        async def get_response(self, response_id, *, isolation=None):  # noqa: ANN001
+        async def get_response(self, response_id, *, context=None):  # noqa: ANN001
             from azure.ai.agentserver.responses.store._foundry_errors import FoundryResourceNotFoundError
 
             if response_id not in self._inner:
                 raise FoundryResourceNotFoundError("not found")
             return self._inner[response_id]
 
-        async def delete_response(self, response_id, *, isolation=None):  # noqa: ANN001
+        async def delete_response(self, response_id, *, context=None):  # noqa: ANN001
             self._inner.pop(response_id, None)
 
         async def get_input_items(
-            self, response_id, limit=20, ascending=False, after=None, before=None, *, isolation=None
+            self, response_id, limit=20, ascending=False, after=None, before=None, *, context=None
         ):  # noqa: ANN001,E501
             return []
 
-        async def get_items(self, item_ids, *, isolation=None):  # noqa: ANN001
+        async def get_items(self, item_ids, *, context=None):  # noqa: ANN001
             return [None for _ in item_ids]
 
         async def get_history_item_ids(
-            self, previous_response_id, conversation_id, limit, *, isolation=None
+            self, previous_response_id, conversation_id, limit, *, context=None
         ):  # noqa: ANN001,E501
             return []
 

@@ -216,7 +216,7 @@ class TestResilientOrchestratorExecuteInTask:
         )
 
         from azure.ai.agentserver.responses._response_context import (
-            IsolationContext,
+            PlatformContext,
             ResponseContext,
         )
         from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
@@ -225,7 +225,7 @@ class TestResilientOrchestratorExecuteInTask:
             response_id="resp_456",
             mode_flags=ResponseModeFlags(stream=False, store=True, background=True),
             request=None,
-            isolation=IsolationContext(),
+            platform_context=PlatformContext(),
         )
 
         ctx = MagicMock()
@@ -629,7 +629,7 @@ class TestMalformedInputFailsClosed:
         ctx.metadata = _FakeTaskMetadata()
         ctx.task_id = "poison-task"
         # Malformed: response_id present (addressable) but NO request.
-        ctx.input = {"response_id": "resp_malformed", "user_isolation_key": "u"}
+        ctx.input = {"response_id": "resp_malformed", "user_id_key": "u"}
 
         with patch(
             "azure.ai.agentserver.responses.hosting._orchestrator._run_background_non_stream",
@@ -680,8 +680,7 @@ class TestPersistCrashFailedRecovery:
 
         params = {
             # Persisted isolation keys (what _start_resilient_background stamps).
-            "user_isolation_key": "user-123",
-            "chat_isolation_key": "chat-456",
+            "user_id_key": "user-123",
             # No "_context_ref": it is stripped from the resilient input, so the
             # old code's isolation derivation always yielded None here.
         }
@@ -693,10 +692,10 @@ class TestPersistCrashFailedRecovery:
         provider.create_response.assert_awaited_once()
 
         # Bug 2: every store call must target the client's partition built from
-        # the persisted isolation keys.
-        create_iso = provider.create_response.call_args.kwargs["isolation"]
-        assert create_iso.user_key == "user-123"
-        assert create_iso.chat_key == "chat-456"
-        get_iso = provider.get_response.call_args.kwargs["isolation"]
-        assert get_iso.user_key == "user-123"
-        assert get_iso.chat_key == "chat-456"
+        # the persisted user_id_key.
+        create_iso = provider.create_response.call_args.kwargs["context"]
+        assert create_iso.user_id_key == "user-123"
+        assert create_iso.call_id is None
+        get_iso = provider.get_response.call_args.kwargs["context"]
+        assert get_iso.user_id_key == "user-123"
+        assert get_iso.call_id is None

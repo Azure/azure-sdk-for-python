@@ -11,7 +11,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from typing import Any, AsyncIterator, Dict, Iterable
 
-from .._response_context import IsolationContext
+from .._response_context import PlatformContext
 from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
 from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
@@ -82,7 +82,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         input_items: Iterable[OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> None:
         """Persist a new response envelope and optional input/history references.
 
@@ -95,8 +95,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :type input_items: Iterable[OutputItem] | None
         :param history_item_ids: Optional history item IDs to link to the response.
         :type history_item_ids: Iterable[str] | None
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :rtype: None
         :raises ResponseAlreadyExistsError: If a non-deleted response with the same ID already exists.
         """
@@ -134,13 +134,13 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             if conversation_id is not None:
                 self._conversation_responses[conversation_id].append(response_id)
 
-    async def get_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> ResponseObject:
+    async def get_response(self, response_id: str, *, context: PlatformContext | None = None) -> ResponseObject:
         """Retrieve one response envelope by identifier.
 
         :param response_id: The unique identifier of the response to retrieve.
         :type response_id: str
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: A deep copy of the stored response envelope.
         :rtype: ~azure.ai.agentserver.responses.models._generated.Response
         :raises KeyError: If the response does not exist or has been deleted.
@@ -151,7 +151,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
                 raise KeyError(f"response '{response_id}' not found")
             return deepcopy(entry.response)
 
-    async def update_response(self, response: ResponseObject, *, isolation: IsolationContext | None = None) -> None:
+    async def update_response(self, response: ResponseObject, *, context: PlatformContext | None = None) -> None:
         """Update a stored response envelope.
 
         Replaces the stored response with a deep copy and updates
@@ -159,8 +159,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
         :param response: The response envelope with updated fields.
         :type response: ~azure.ai.agentserver.responses.models._generated.Response
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :rtype: None
         :raises KeyError: If the response does not exist or has been deleted.
         """
@@ -174,15 +174,15 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
             entry.execution.set_response_snapshot(deepcopy(response))
             entry.output_item_ids = self._store_output_items_unlocked(response)
 
-    async def delete_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> None:
+    async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:
         """Delete a stored response envelope by identifier.
 
         Marks the entry as deleted and clears the response payload.
 
         :param response_id: The unique identifier of the response to delete.
         :type response_id: str
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :rtype: None
         :raises KeyError: If the response does not exist or has already been deleted.
         """
@@ -201,7 +201,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         after: str | None = None,
         before: str | None = None,
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> list[OutputItem]:
         """Retrieve input/history items for a response with basic cursor paging.
 
@@ -218,8 +218,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :type after: str | None
         :param before: Cursor ID; only return items before this ID.
         :type before: str | None
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: A list of input/history items matching the pagination criteria.
         :rtype: list[OutputItem]
         :raises KeyError: If the response does not exist.
@@ -260,7 +260,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         self,
         item_ids: Iterable[str],
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> list[OutputItem | None]:
         """Retrieve items by ID, preserving request order.
 
@@ -268,8 +268,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
         :param item_ids: The item identifiers to look up.
         :type item_ids: Iterable[str]
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: A list of output items in the same order as *item_ids*; missing items are ``None``.
         :rtype: list[OutputItem | None]
         """
@@ -284,7 +284,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         conversation_id: str | None,
         limit: int,
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> list[str]:
         """Resolve history item IDs from previous response and/or conversation scope.
 
@@ -297,8 +297,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :type conversation_id: str | None
         :param limit: Maximum number of history item IDs to return.
         :type limit: int
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: A list of history item IDs within the given scope.
         :rtype: list[str]
         """

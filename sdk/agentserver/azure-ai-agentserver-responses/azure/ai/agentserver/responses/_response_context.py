@@ -112,30 +112,34 @@ class ConversationChainMetadataNamespace(Protocol):
     async def flush(self) -> None: ...
 
 
-class IsolationContext:
-    """Platform-injected isolation keys for multi-tenant state partitioning.
+class PlatformContext:
+    """Platform-injected identity context for multi-tenant state partitioning.
 
-    The Foundry hosting platform injects ``x-agent-user-isolation-key`` and
-    ``x-agent-chat-isolation-key`` headers on every protocol request (not on
-    health probes).  These opaque strings serve as partition keys:
+    The Foundry hosting platform injects ``x-agent-user-id`` and (on container
+    protocol version ``2.0.0``) ``x-agent-foundry-call-id`` headers on every
+    protocol request (not on health probes):
 
-    - ``user_key`` — unique per user across all sessions; use for user-private state.
-    - ``chat_key`` — represents where conversation state lives; in 1:1 chats the
-      two keys are equal.
+    - ``user_id_key`` — global, cross-agent per-user partition key; the same user
+      yields the same value regardless of which agent they interact with.  Use it
+      as the primary partition key for per-user state.
+    - ``call_id`` — opaque per-request call identifier (protocol ``2.0.0`` only).
+      Providers **MUST** forward it on outbound Foundry API calls so 1P services
+      can resolve the server-side-stored caller context.  Never parse it.
 
-    When the headers are absent (e.g. local development), both keys are ``None``.
-    When the platform sends the header with an empty value, the key is an empty
-    string.  Use ``is None`` to detect whether the header was present at all.
+    When a header is absent (e.g. local development, or ``call_id`` under protocol
+    version ``1.0.0``), the corresponding field is ``None``.  When the platform
+    sends the header with an empty value, the field is an empty string.  Use
+    ``is None`` to detect whether the header was present at all.
     """
 
-    def __init__(self, *, user_key: str | None = None, chat_key: str | None = None) -> None:
-        self.user_key = user_key
-        """Partition key for user-private state (from ``x-agent-user-isolation-key``).
+    def __init__(self, *, user_id_key: str | None = None, call_id: str | None = None) -> None:
+        self.user_id_key = user_id_key
+        """Partition key for per-user state (from ``x-agent-user-id``).
         ``None`` when the header was not sent."""
 
-        self.chat_key = chat_key
-        """Partition key for conversation/shared state (from ``x-agent-chat-isolation-key``).
-        ``None`` when the header was not sent."""
+        self.call_id = call_id
+        """Opaque per-request call identifier (from ``x-agent-foundry-call-id``).
+        ``None`` when the header was not sent (protocol ``1.0.0`` or local dev)."""
 
 
 class ResponseContext:  # pylint: disable=too-many-instance-attributes
@@ -149,7 +153,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         - :attr:`request` — parsed CreateResponse.
         - :attr:`created_at` — UTC timestamp.
         - :attr:`client_headers` / :attr:`query_parameters` — request metadata.
-        - :attr:`isolation` — tenant partition keys.
+        - :attr:`platform_context` — tenant partition identity (user id / call id).
         - :attr:`conversation_id` / :attr:`previous_response_id`.
         - :attr:`conversation_chain_id` — derived chain identifier.
 
@@ -182,7 +186,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
     created_at: datetime
     client_headers: dict[str, str]
     query_parameters: dict[str, str]
-    isolation: IsolationContext
+    platform_context: PlatformContext
     conversation_id: "str | None"
     is_recovery: bool
     is_steered_turn: bool
@@ -206,7 +210,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         history_limit: int = 100,
         client_headers: dict[str, str] | None = None,
         query_parameters: dict[str, str] | None = None,
-        isolation: IsolationContext | None = None,
+        platform_context: PlatformContext | None = None,
         prefetched_history_ids: list[str] | None = None,
         steerable: bool = False,
         agent_name: str = "",
@@ -218,7 +222,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self.created_at = created_at if created_at is not None else datetime.now(timezone.utc)
         self.client_headers: dict[str, str] = client_headers or {}
         self.query_parameters: dict[str, str] = query_parameters or {}
-        self.isolation: IsolationContext = isolation if isolation is not None else IsolationContext()
+        self.platform_context: PlatformContext = platform_context if platform_context is not None else PlatformContext()
         self._provider: "ResponseProviderProtocol | None" = provider
         _items: list[Any]
         if input_items is not None:
@@ -452,7 +456,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
 
         # Batch-resolve references if we have a provider and pending refs.
         if reference_ids and self._provider is not None:
-            resolved = await self._provider.get_items(reference_ids, isolation=self.isolation)
+            resolved = await self._provider.get_items(reference_ids, context=self.platform_context)
             for idx, pos in enumerate(reference_positions):
                 if idx < len(resolved) and resolved[idx] is not None:
                     converted = to_item(resolved[idx])  # type: ignore[arg-type]
@@ -516,12 +520,12 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
                 self._previous_response_id,
                 self.conversation_id,
                 self._history_limit,
-                isolation=self.isolation,
+                context=self.platform_context,
             )
         if not item_ids:
             self._history_cache = ()
             return self._history_cache
 
-        items = await self._provider.get_items(item_ids, isolation=self.isolation)
+        items = await self._provider.get_items(item_ids, context=self.platform_context)
         self._history_cache = tuple(item for item in items if item is not None)
         return self._history_cache

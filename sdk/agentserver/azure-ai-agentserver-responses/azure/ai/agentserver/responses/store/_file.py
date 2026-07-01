@@ -29,9 +29,9 @@ semantics. In particular:
 - ``conversation_id`` membership is tracked alongside the
   ``previous_response_id`` chain so that :meth:`get_history_item_ids`
   walks both, matching :class:`InMemoryResponseProvider`.
-- :class:`IsolationContext` is accepted but ignored, identical to
+- :class:`PlatformContext` is accepted but ignored, identical to
   :class:`InMemoryResponseProvider`. If the in-memory provider ever
-  starts partitioning by isolation, this provider should follow suit.
+  starts partitioning by platform context, this provider should follow suit.
 
 **Not for production use.** This is a local-dev convenience. It does not
 support distributed access, has no SLA, and uses ``asyncio.Lock`` for
@@ -77,7 +77,7 @@ from copy import deepcopy
 from pathlib import Path
 from typing import Any, Iterable
 
-from .._response_context import IsolationContext
+from .._response_context import PlatformContext
 from ..models._generated import OutputItem, ResponseObject
 from ..models._helpers import get_conversation_id
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
@@ -254,7 +254,7 @@ class FileResponseStore(ResponseProviderProtocol):
         input_items: Iterable[OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> None:
         """Persist a new response envelope.
 
@@ -264,14 +264,14 @@ class FileResponseStore(ResponseProviderProtocol):
         :type input_items: Iterable[OutputItem] | None
         :param history_item_ids: Optional history item ids to link.
         :type history_item_ids: Iterable[str] | None
-        :keyword isolation: Isolation context (accepted but unused —
+        :keyword context: Platform context (accepted but unused —
             matches :class:`InMemoryResponseProvider`).
-        :paramtype isolation: IsolationContext | None
+        :paramtype context: PlatformContext | None
         :rtype: None
         :raises ResponseAlreadyExistsError: If a non-deleted response with
             the same id already exists.
         """
-        del isolation
+        del context
         response_id = str(getattr(response, "id"))
         async with self._lock:
             target = self._response_path(response_id)
@@ -313,19 +313,19 @@ class FileResponseStore(ResponseProviderProtocol):
             if conversation_id is not None:
                 self._add_response_to_conversation_unlocked(conversation_id, response_id)
 
-    async def get_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> ResponseObject:
+    async def get_response(self, response_id: str, *, context: PlatformContext | None = None) -> ResponseObject:
         """Retrieve one response envelope by identifier.
 
         :param response_id: The response identifier.
         :type response_id: str
-        :keyword isolation: Isolation context (accepted but unused —
+        :keyword context: Platform context (accepted but unused —
             matches :class:`InMemoryResponseProvider`).
-        :paramtype isolation: IsolationContext | None
+        :paramtype context: PlatformContext | None
         :returns: The persisted response envelope (deep-copied).
         :rtype: ResponseObject
         :raises KeyError: If the response does not exist or has been deleted.
         """
-        del isolation
+        del context
         async with self._lock:
             if self._deleted_marker(response_id).exists():
                 raise KeyError(f"response '{response_id}' not found")
@@ -334,7 +334,7 @@ class FileResponseStore(ResponseProviderProtocol):
                 raise KeyError(f"response '{response_id}' not found")
             return _dict_to_response(deepcopy(self._rehydrate_output(data)))
 
-    async def update_response(self, response: ResponseObject, *, isolation: IsolationContext | None = None) -> None:
+    async def update_response(self, response: ResponseObject, *, context: PlatformContext | None = None) -> None:
         """Update a stored response envelope.
 
         Output items present on the updated response are persisted to the
@@ -344,13 +344,13 @@ class FileResponseStore(ResponseProviderProtocol):
 
         :param response: The new response envelope.
         :type response: ResponseObject
-        :keyword isolation: Isolation context (accepted but unused —
+        :keyword context: Platform context (accepted but unused —
             matches :class:`InMemoryResponseProvider`).
-        :paramtype isolation: IsolationContext | None
+        :paramtype context: PlatformContext | None
         :rtype: None
         :raises KeyError: If the response does not exist or has been deleted.
         """
-        del isolation
+        del context
         response_id = str(getattr(response, "id"))
         async with self._lock:
             if self._deleted_marker(response_id).exists():
@@ -365,7 +365,7 @@ class FileResponseStore(ResponseProviderProtocol):
             _atomic_write_json(target, self._pointerize_output(response_dict))
             self._update_indexes_unlocked(response_id, output_item_ids=output_ids)
 
-    async def delete_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> None:
+    async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:
         """Soft-delete a stored response envelope by identifier.
 
         Writes a deleted marker file so that subsequent
@@ -375,13 +375,13 @@ class FileResponseStore(ResponseProviderProtocol):
 
         :param response_id: The response identifier.
         :type response_id: str
-        :keyword isolation: Isolation context (accepted but unused —
+        :keyword context: Platform context (accepted but unused —
             matches :class:`InMemoryResponseProvider`).
-        :paramtype isolation: IsolationContext | None
+        :paramtype context: PlatformContext | None
         :rtype: None
         :raises KeyError: If the response does not exist or has already been deleted.
         """
-        del isolation
+        del context
         async with self._lock:
             if self._deleted_marker(response_id).exists():
                 raise KeyError(f"response '{response_id}' not found")
@@ -402,7 +402,7 @@ class FileResponseStore(ResponseProviderProtocol):
         after: str | None = None,
         before: str | None = None,
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> list[OutputItem]:
         """Retrieve input + history items for a response with cursor paging.
 
@@ -421,15 +421,15 @@ class FileResponseStore(ResponseProviderProtocol):
         :type after: str | None
         :param before: Cursor — return items before this id.
         :type before: str | None
-        :keyword isolation: Isolation context (accepted but unused —
+        :keyword context: Platform context (accepted but unused —
             matches :class:`InMemoryResponseProvider`).
-        :paramtype isolation: IsolationContext | None
+        :paramtype context: PlatformContext | None
         :returns: Paginated list of items.
         :rtype: list[OutputItem]
         :raises KeyError: If the response does not exist.
         :raises ValueError: If the response has been deleted.
         """
-        del isolation
+        del context
         async with self._lock:
             target = self._response_path(response_id)
             if not target.exists():
@@ -466,7 +466,7 @@ class FileResponseStore(ResponseProviderProtocol):
         self,
         item_ids: Iterable[str],
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> list[OutputItem | None]:
         """Retrieve items by id, preserving request order.
 
@@ -475,13 +475,13 @@ class FileResponseStore(ResponseProviderProtocol):
 
         :param item_ids: The item ids to look up.
         :type item_ids: Iterable[str]
-        :keyword isolation: Isolation context (accepted but unused —
+        :keyword context: Platform context (accepted but unused —
             matches :class:`InMemoryResponseProvider`).
-        :paramtype isolation: IsolationContext | None
+        :paramtype context: PlatformContext | None
         :returns: Items in the same order as ``item_ids``, ``None`` for misses.
         :rtype: list[OutputItem | None]
         """
-        del isolation
+        del context
         async with self._lock:
             results: list[OutputItem | None] = []
             for iid in item_ids:
@@ -495,7 +495,7 @@ class FileResponseStore(ResponseProviderProtocol):
         conversation_id: str | None,
         limit: int,
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> list[str]:
         """Resolve history item ids from previous response and/or conversation.
 
@@ -516,13 +516,13 @@ class FileResponseStore(ResponseProviderProtocol):
         :type conversation_id: str | None
         :param limit: Maximum number of history item ids to return.
         :type limit: int
-        :keyword isolation: Isolation context (accepted but unused —
+        :keyword context: Platform context (accepted but unused —
             matches :class:`InMemoryResponseProvider`).
-        :paramtype isolation: IsolationContext | None
+        :paramtype context: PlatformContext | None
         :returns: List of history item ids (possibly empty).
         :rtype: list[str]
         """
-        del isolation
+        del context
         async with self._lock:
             resolved: list[str] = []
 

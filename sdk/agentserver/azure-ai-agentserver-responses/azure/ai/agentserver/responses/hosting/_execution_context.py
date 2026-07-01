@@ -38,8 +38,8 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         parsed: CreateResponse,
         agent_session_id: str | None = None,
         context: ResponseContext | None = None,
-        user_isolation_key: str | None = None,
-        chat_isolation_key: str | None = None,
+        user_id: str | None = None,
+        call_id: str | None = None,
         prefetched_history_ids: list[str] | None = None,
     ) -> None:
         self.response_id = response_id
@@ -56,6 +56,6 @@ class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
         self.parsed = parsed
         self.agent_session_id = agent_session_id
         self.context = context
-        self.user_isolation_key = user_isolation_key
-        self.chat_isolation_key = chat_isolation_key
+        self.user_id = user_id
+        self.call_id = call_id
         self.prefetched_history_ids = prefetched_history_ids

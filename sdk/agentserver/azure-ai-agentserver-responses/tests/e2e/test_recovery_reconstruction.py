@@ -41,8 +41,7 @@ def _build_params_for_recovery() -> dict:
         disposition="re-invoke",
         agent_reference={"name": "test-agent"},
         agent_session_id="session_xyz",
-        user_isolation_key=None,
-        chat_isolation_key=None,
+        user_id_key=None,
         client_headers={"client-trace-id": "abc"},
         query_parameters={"q": "1"},
     ).to_task_input()
