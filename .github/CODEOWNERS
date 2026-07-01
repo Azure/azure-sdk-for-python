@@ -217,7 +217,7 @@
 
 # ServiceLabel: %Device Update
 # PRLabel: %Device Update
-/sdk/deviceupdate/    @dpokluda @sedols
+/sdk/deviceupdate/    @josephmsft @darkoa-msft @devlie
 
 # ServiceLabel: %Digital Twins
 # PRLabel: %Digital Twins
