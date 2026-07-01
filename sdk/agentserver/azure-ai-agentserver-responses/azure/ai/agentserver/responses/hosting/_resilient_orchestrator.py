@@ -219,7 +219,7 @@ def _reconstruct_from_params(
         initial_agent_reference=resilient.agent_reference,
         agent_session_id=resilient.agent_session_id,
         conversation_id=conversation_id,
-        chat_isolation_key=resilient.chat_isolation_key,
+        user_id_key=resilient.user_id_key,
     )
 
     context = ResponseContext(
@@ -236,7 +236,7 @@ def _reconstruct_from_params(
         # fresh entry. Previously hard-set to ``{}`` — a latent drop bug.
         client_headers=dict(resilient.client_headers),
         query_parameters=dict(resilient.query_parameters),
-        isolation=resilient.isolation(),
+        platform_context=resilient.platform_context(),
         # History is a prefetch optimization; re-derived on demand via the
         # existing ``get_history_item_ids`` read (Spec 033 §3.1).
         prefetched_history_ids=None,
@@ -498,7 +498,7 @@ class ResilientResponseOrchestrator:
         :paramtype is_recovery: bool
         :keyword response_id: The response id.
         :paramtype response_id: str
-        :keyword params: The raw resilient-task input (for isolation on the failed write).
+        :keyword params: The raw resilient-task input (for platform-context routing on the failed write).
         :paramtype params: dict[str, Any]
         :keyword background: The request's background flag.
         :paramtype background: bool
@@ -594,7 +594,7 @@ class ResilientResponseOrchestrator:
 
         try:
             context.persisted_response = await self._provider.get_response(
-                context.response_id, isolation=context.isolation
+                context.response_id, context=context.platform_context
             )
         except (KeyError, FoundryResourceNotFoundError):
             logger.info(
@@ -826,7 +826,7 @@ class ResilientResponseOrchestrator:
         # NOT re-invoke the handler with partial state. Rather than letting the
         # body raise (which could leave a poison, re-firing task and never
         # settle the client's response), fail-close to a terminal: if we can
-        # still address the client's response (response_id + isolation are in
+        # still address the client's response (response_id + platform context are in
         # the raw input), mark it failed in the store; then settle the task.
         try:
             resilient = ResilientResponseInput.from_task_input(params)
@@ -1027,8 +1027,7 @@ class ResilientResponseOrchestrator:
             disposition=disposition,
             agent_reference=ctx.agent_reference,
             agent_session_id=ctx.agent_session_id,
-            user_isolation_key=ctx.user_isolation_key,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
             client_headers=dict(ctx.context.client_headers) if ctx.context is not None else {},
             query_parameters=dict(ctx.context.query_parameters) if ctx.context is not None else {},
         )
@@ -1173,13 +1172,13 @@ class ResilientResponseOrchestrator:
 
         :param response_id: The response identifier.
         :param params: The task input params (used to extract
-            isolation context for storage routing).
+            platform context for storage routing).
         """
         from ..models._generated import (
             ResponseObject,
         )  # pylint: disable=import-outside-toplevel
         from ._resilient_input import (
-            isolation_from_params,
+            platform_context_from_params,
         )  # pylint: disable=import-outside-toplevel
         from ..store._foundry_errors import (
             FoundryResourceNotFoundError,
@@ -1188,18 +1187,18 @@ class ResilientResponseOrchestrator:
         _TERMINAL_STATUSES = {"completed", "failed", "cancelled", "incomplete"}
 
         # Runtime-only object references never reach the persisted task input
-        # (Spec 033 §3.1 — they live in ``RuntimeRefs``), so isolation is rebuilt
-        # from the persisted isolation keys via the single derivation site
+        # (Spec 033 §3.1 — they live in ``RuntimeRefs``), so the platform context is rebuilt
+        # from the persisted user_id_key via the single derivation site
         # (Spec 033 FR-003) — same partition the client reads. Otherwise the
         # failed marker would land in the default/unscoped partition.
-        isolation = isolation_from_params(params)
+        platform_context = platform_context_from_params(params)
 
         # (Spec 014 T-066) Race-safe idempotent check. If the store already
         # holds a terminal response for this id, leave it alone — the crash
         # happened after terminal persistence, and overwriting would corrupt
         # the result.
         try:
-            existing = await self._provider.get_response(response_id, isolation=isolation)
+            existing = await self._provider.get_response(response_id, context=platform_context)
             existing_status = getattr(existing, "status", None) or (
                 existing.get("status") if isinstance(existing, dict) else None
             )
@@ -1226,7 +1225,7 @@ class ResilientResponseOrchestrator:
         )
 
         try:
-            await self._provider.update_response(ResponseObject(failed_response), isolation=isolation)
+            await self._provider.update_response(ResponseObject(failed_response), context=platform_context)
         except (KeyError, FoundryResourceNotFoundError):
             # Response was never persisted at response.created — try
             # create instead so the failed terminal still lands. The Foundry
@@ -1238,7 +1237,7 @@ class ResilientResponseOrchestrator:
                     ResponseObject(failed_response),
                     input_items=[],
                     history_item_ids=None,
-                    isolation=isolation,
+                    context=platform_context,
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error(

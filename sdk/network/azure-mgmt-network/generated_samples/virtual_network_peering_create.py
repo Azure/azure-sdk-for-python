@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/VirtualNetworkPeeringCreate.json
+# x-ms-original-file: 2025-07-01/VirtualNetworkPeeringCreate.json
 if __name__ == "__main__":
     main()

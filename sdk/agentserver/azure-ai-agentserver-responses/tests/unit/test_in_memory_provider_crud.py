@@ -4,7 +4,7 @@
 
 Covers create, read, update, delete of response envelopes,
 output item storage, history resolution via previous_response_id
-and conversation_id, and defensive-copy isolation.
+and conversation_id, and defensive-copy platform context.
 """
 
 from __future__ import annotations

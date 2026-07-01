@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Container protocol version `2.0.0` support: the per-request call ID (`x-agent-foundry-call-id`) and global user ID (`x-agent-user-id`) are read from inbound requests and exposed on `ResponseContext.platform_context`. The per-request call ID is forwarded on all outbound Foundry Storage calls and bound to the request-scoped platform context so handler/tool code making raw outbound calls can forward it; `x-agent-user-id` is used only for container-side partitioning and is not forwarded to 1P services.
+
 - **Resilient background responses.** `ResponsesServerOptions(resilient_background=True)`
   makes `store=true`, `background=true` responses survive process crashes:
   the framework persists handler progress and re-invokes the registered
@@ -74,6 +76,13 @@
 - Added resilient samples demonstrating real SDK integrations (Claude Agent SDK,
   Copilot SDK, LangGraph) and resilient streaming / steering / multi-turn
   patterns.
+
+### Breaking Changes
+
+- Renamed the public `IsolationContext` type to `PlatformContext`. Its fields are now `user_id_key` (from `x-agent-user-id`) and `call_id` (from `x-agent-foundry-call-id`), replacing `user_key` / `chat_key`.
+- `ResponseContext.isolation` is now `ResponseContext.platform_context`.
+- Response provider protocol methods now accept a `context` keyword argument (previously `isolation`).
+- In-process partition enforcement is now keyed on the user ID (`x-agent-user-id`) instead of the chat isolation key. The resilient-task input persisted for a `store=true` background response now carries a single `user_id_key` (the durable per-user partition key) instead of the previous `user_isolation_key` / `chat_isolation_key` pair; conversation scoping continues to use `conversation_id`.
 
 ### Bugs Fixed
 

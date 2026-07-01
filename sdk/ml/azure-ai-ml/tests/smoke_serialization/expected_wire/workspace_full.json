@@ -1,0 +1,17 @@
+{
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "kind": "default",
+  "location": "westus",
+  "properties": {
+    "description": "smoke workspace",
+    "enableDataIsolation": false,
+    "friendlyName": "Smoke Workspace",
+    "hbiWorkspace": false,
+    "publicNetworkAccess": "Enabled"
+  },
+  "tags": {
+    "tag1": "value1"
+  }
+}

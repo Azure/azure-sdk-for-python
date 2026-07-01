@@ -2,6 +2,14 @@
 
 ## 1.0.0b6 (Unreleased)
 
+### Features Added
+
+- Container protocol version `2.0.0` support: reads `x-agent-user-id` and `x-agent-foundry-call-id` from inbound requests and binds them to the request-scoped platform context so the per-request call ID is forwarded on outbound Foundry 1P calls (`x-agent-user-id` is not forwarded to 1P). The values are also exposed on `request.state.user_id` and `request.state.call_id`.
+
+### Breaking Changes
+
+- Replaced `request.state.user_isolation_key` / `request.state.chat_isolation_key` with `request.state.user_id` / `request.state.call_id` per container protocol version `2.0.0`.
+
 ### Samples
 
 - Added samples showing how to build crash-resilient invocation agents on top of the new core resilient-task primitive: `resilient_copilot` (streaming chat with crash recovery), `resilient_multiturn` (suspend/resume conversation), `resilient_langgraph` (LangGraph integration), and `resilient_research` (multi-stage research loop with checkpointing). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for the underlying API.

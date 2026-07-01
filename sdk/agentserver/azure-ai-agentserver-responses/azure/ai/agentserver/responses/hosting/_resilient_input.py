@@ -19,7 +19,7 @@ Design invariants (Spec 033 §3.1 / FR-001..004):
   reference. Process-local references live in the separate :class:`RuntimeRefs`
   cache and are **never** serialized — so the persisted boundary physically
   cannot hold a non-serializable ref.
-* **One isolation derivation.** :meth:`isolation` is the single source.
+* **One platform-context derivation.** :meth:`platform_context` is the single source.
 
 The handler-facing request metadata ``client_headers`` / ``query_parameters`` are
 persisted here so a recovered handler observes the *identical* request metadata it
@@ -32,7 +32,7 @@ import json
 from typing import Any
 
 from ..models._generated import CreateResponse
-from .._response_context import IsolationContext
+from .._response_context import PlatformContext
 
 
 # Keys emitted by :meth:`ResilientResponseInput.to_task_input` / consumed by
@@ -43,28 +43,30 @@ _K_RESPONSE_ID = "response_id"
 _K_DISPOSITION = "disposition"
 _K_AGENT_REFERENCE = "agent_reference"
 _K_AGENT_SESSION_ID = "agent_session_id"
-_K_USER_ISOLATION_KEY = "user_isolation_key"
-_K_CHAT_ISOLATION_KEY = "chat_isolation_key"
+_K_USER_ID_KEY = "user_id_key"
 _K_CLIENT_HEADERS = "client_headers"
 _K_QUERY_PARAMETERS = "query_parameters"
 
 
-def isolation_from_params(params: dict[str, Any]) -> IsolationContext:
-    """Build the isolation context from a persisted resilient-task input dict.
+def platform_context_from_params(params: dict[str, Any]) -> PlatformContext:
+    """Build the platform context from a persisted resilient-task input dict.
 
-    The single isolation derivation site (Spec 033 FR-003): every recovery
-    reader — full reconstruction and the mark-failed path — routes through this
-    one function (directly, or via :meth:`ResilientResponseInput.isolation`) so the
-    partition keys cannot be derived inconsistently.
+    The single platform-context derivation site (Spec 033 FR-003 / protocol
+    ``2.0.0``): every recovery reader — full reconstruction and the mark-failed
+    path — routes through this one function (directly, or via
+    :meth:`ResilientResponseInput.platform_context`) so the partition identity
+    cannot be derived inconsistently. Only the durable ``user_id_key`` is
+    persisted; the per-request ``call_id`` is request-scoped and is ``None`` on a
+    recovered entry (there is no live inbound request to echo it from).
 
     :param params: The persisted resilient-task input dict.
     :type params: dict[str, Any]
-    :returns: The isolation context.
-    :rtype: IsolationContext
+    :returns: The platform context.
+    :rtype: PlatformContext
     """
-    return IsolationContext(
-        user_key=params.get(_K_USER_ISOLATION_KEY),
-        chat_key=params.get(_K_CHAT_ISOLATION_KEY),
+    return PlatformContext(
+        user_id_key=params.get(_K_USER_ID_KEY),
+        call_id=None,
     )
 
 
@@ -156,8 +158,7 @@ class ResilientResponseInput:
         disposition: str,
         agent_reference: Any = None,
         agent_session_id: str | None = None,
-        user_isolation_key: str | None = None,
-        chat_isolation_key: str | None = None,
+        user_id_key: str | None = None,
         client_headers: dict[str, str] | None = None,
         query_parameters: dict[str, str] | None = None,
     ) -> None:
@@ -168,20 +169,20 @@ class ResilientResponseInput:
         # serialization-safe (no leaked ``AgentReference`` model).
         self.agent_reference: dict[str, Any] = _normalize_agent_reference(agent_reference)
         self.agent_session_id = agent_session_id
-        self.user_isolation_key = user_isolation_key
-        self.chat_isolation_key = chat_isolation_key
+        self.user_id_key = user_id_key
         self.client_headers: dict[str, str] = dict(client_headers or {})
         self.query_parameters: dict[str, str] = dict(query_parameters or {})
 
-    def isolation(self) -> IsolationContext:
-        """Return the isolation context — the single derivation site.
+    def platform_context(self) -> PlatformContext:
+        """Return the platform context — the single derivation site.
 
-        :returns: The isolation context built from the persisted isolation keys.
-        :rtype: IsolationContext
+        :returns: The platform context built from the persisted ``user_id_key``
+            (``call_id`` is request-scoped and ``None`` on a recovered entry).
+        :rtype: PlatformContext
         """
-        return IsolationContext(
-            user_key=self.user_isolation_key,
-            chat_key=self.chat_isolation_key,
+        return PlatformContext(
+            user_id_key=self.user_id_key,
+            call_id=None,
         )
 
     def to_task_input(self) -> dict[str, Any]:
@@ -200,8 +201,7 @@ class ResilientResponseInput:
             _K_REQUEST: _serialize_request(self.request),
             _K_AGENT_REFERENCE: _normalize_agent_reference(self.agent_reference),
             _K_AGENT_SESSION_ID: self.agent_session_id,
-            _K_USER_ISOLATION_KEY: self.user_isolation_key,
-            _K_CHAT_ISOLATION_KEY: self.chat_isolation_key,
+            _K_USER_ID_KEY: self.user_id_key,
             _K_CLIENT_HEADERS: dict(self.client_headers),
             _K_QUERY_PARAMETERS: dict(self.query_parameters),
         }
@@ -241,8 +241,7 @@ class ResilientResponseInput:
             disposition=params.get(_K_DISPOSITION) or "re-invoke",
             agent_reference=params.get(_K_AGENT_REFERENCE),
             agent_session_id=params.get(_K_AGENT_SESSION_ID),
-            user_isolation_key=params.get(_K_USER_ISOLATION_KEY),
-            chat_isolation_key=params.get(_K_CHAT_ISOLATION_KEY),
+            user_id_key=params.get(_K_USER_ID_KEY),
             client_headers=params.get(_K_CLIENT_HEADERS),
             query_parameters=params.get(_K_QUERY_PARAMETERS),
         )

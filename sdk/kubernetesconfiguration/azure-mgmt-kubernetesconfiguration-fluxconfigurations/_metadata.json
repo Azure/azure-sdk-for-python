@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.KubernetesConfiguration": "2025-04-01"
   },
-  "commit": "bf2f971b4319da9f5624da7f3c13d487be477897",
+  "commit": "12be16fab6dbfd11c55daefb35c28548f34c3f5c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/kubernetesconfiguration/resource-manager/Microsoft.KubernetesConfiguration/fluxConfigurations",
-  "emitterVersion": "0.61.0"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.33.0"
 }

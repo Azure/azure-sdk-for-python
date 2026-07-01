@@ -70,6 +70,12 @@ class apistub(Check):
             help="Destination directory for generated API stub files.",
         )
         p.add_argument(
+            "--generate-from-pypi",
+            dest="generate_from_pypi",
+            default=None,
+            help="Generate the stub from this released PyPI version instead of local source code.",
+        )
+        p.add_argument(
             "--install-deps",
             dest="install_deps",
             default=False,
@@ -94,6 +100,31 @@ class apistub(Check):
             ],
             package_dir,
         )
+
+    def download_pypi_wheel(self, executable: str, package_name: str, version: str, staging_directory: str) -> str:
+        """Download a released wheel from PyPI into the staging directory and return its path."""
+        logger.info(f"Downloading {package_name}=={version} from PyPI.")
+        self.run_venv_command(
+            executable,
+            [
+                "-m",
+                "pip",
+                "download",
+                f"{package_name}=={version}",
+                "--no-deps",
+                "--only-binary=:all:",
+                "-d",
+                staging_directory,
+            ],
+            cwd=staging_directory,
+            check=True,
+        )
+        found_whl = find_whl(staging_directory, package_name, version)
+        if not found_whl:
+            raise FileNotFoundError(
+                f"No wheel found for package {package_name} version {version} after downloading from PyPI."
+            )
+        return os.path.join(staging_directory, found_whl)
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the apistub check command."""
@@ -133,23 +164,28 @@ class apistub(Check):
                 logger.error(f"Failed to install APIView dependencies: {e}")
                 return getattr(e, "returncode", 1)
 
-            if not os.getenv("PREBUILT_WHEEL_DIR"):
-                create_package_and_install(
-                    distribution_directory=staging_directory,
-                    target_setup=package_dir,
-                    skip_install=True,
-                    cache_dir=None,
-                    work_dir=staging_directory,
-                    force_create=False,
-                    package_type="wheel",
-                    pre_download_disabled=False,
-                    python_executable=executable,
-                )
+            generate_from_pypi = getattr(args, "generate_from_pypi", None)
+
+            if generate_from_pypi:
+                pkg_path = self.download_pypi_wheel(executable, package_name, generate_from_pypi, staging_directory)
+            else:
+                if not os.getenv("PREBUILT_WHEEL_DIR"):
+                    create_package_and_install(
+                        distribution_directory=staging_directory,
+                        target_setup=package_dir,
+                        skip_install=True,
+                        cache_dir=None,
+                        work_dir=staging_directory,
+                        force_create=False,
+                        package_type="wheel",
+                        pre_download_disabled=False,
+                        python_executable=executable,
+                    )
+                pkg_path = get_package_wheel_path(package_dir)
 
             if install_deps:
                 self.pip_freeze(executable)
 
-            pkg_path = get_package_wheel_path(package_dir)
             pkg_path = os.path.abspath(pkg_path)
 
             out_token_path = os.path.abspath(getattr(args, "dest_dir", None) or package_dir)

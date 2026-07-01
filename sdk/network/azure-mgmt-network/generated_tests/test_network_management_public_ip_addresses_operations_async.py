@@ -30,7 +30,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
             network_interface_name="str",
             ip_configuration_name="str",
             public_ip_address_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
             role_instance_name="str",
             network_interface_name="str",
             ip_configuration_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.public_ip_addresses.get(
             resource_group_name=resource_group.name,
             public_ip_address_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -108,7 +108,11 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                     "location": "str",
                     "name": "str",
                     "properties": {
-                        "ddosSettings": {"ddosProtectionPlan": {"id": "str"}, "protectionMode": "str"},
+                        "ddosSettings": {
+                            "ddosCustomPolicy": {"id": "str"},
+                            "ddosProtectionPlan": {"id": "str"},
+                            "protectionMode": "str",
+                        },
                         "deleteOption": "str",
                         "dnsSettings": {
                             "domainNameLabel": "str",
@@ -440,6 +444,11 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -519,6 +528,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -616,6 +626,9 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -665,6 +678,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -767,6 +781,11 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -1050,6 +1069,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "billingSku": "str",
                                                     "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                     "customNetworkInterfaceName": "str",
                                                     "ipConfigurations": [
@@ -1263,6 +1283,11 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -1526,6 +1551,11 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -1593,6 +1623,11 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1853,6 +1888,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                             "name": "str",
                                             "properties": {
                                                 "disableBgpRoutePropagation": bool,
+                                                "disablePeeringRoute": "str",
                                                 "provisioningState": "str",
                                                 "resourceGuid": "str",
                                                 "routes": [
@@ -1864,6 +1900,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                                                             "nextHopType": "str",
                                                             "addressPrefix": "str",
                                                             "hasBgpOverride": bool,
+                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                             "nextHopIpAddress": "str",
                                                             "provisioningState": "str",
                                                         },
@@ -1947,6 +1984,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                             "name": "str",
                             "properties": {
                                 "idleTimeoutInMinutes": 0,
+                                "nat64": "str",
                                 "provisioningState": "str",
                                 "publicIpAddresses": [{"id": "str"}],
                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -1974,7 +2012,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                     "type": "str",
                     "zones": ["str"],
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -1988,7 +2026,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             public_ip_address_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -2001,7 +2039,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
             await self.client.public_ip_addresses.begin_delete(
                 resource_group_name=resource_group.name,
                 public_ip_address_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2013,7 +2051,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
     async def test_public_ip_addresses_list(self, resource_group):
         response = self.client.public_ip_addresses.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -2023,7 +2061,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
     @recorded_by_proxy_async
     async def test_public_ip_addresses_list_all(self, resource_group):
         response = self.client.public_ip_addresses.list_all(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -2036,7 +2074,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
             await self.client.public_ip_addresses.begin_ddos_protection_status(
                 resource_group_name=resource_group.name,
                 public_ip_address_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2051,7 +2089,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 public_ip_address_name="str",
                 parameters={"isRollback": "str"},
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2066,7 +2104,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 public_ip_address_name="str",
                 parameters={"publicIpArmId": "str"},
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -2079,7 +2117,7 @@ class TestNetworkManagementPublicIPAddressesOperationsAsync(AzureMgmtRecordedTes
         response = self.client.public_ip_addresses.list_cloud_service_public_ip_addresses(
             resource_group_name=resource_group.name,
             cloud_service_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

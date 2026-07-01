@@ -366,7 +366,7 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
     from unittest.mock import AsyncMock, MagicMock, patch
 
     from azure.ai.agentserver.responses._response_context import (
-        IsolationContext,
+        PlatformContext,
         ResponseContext,
     )
     from azure.ai.agentserver.responses.hosting._resilient_orchestrator import (
@@ -398,7 +398,7 @@ def test_is_steered_turn_set_on_drain_reentry_via_orchestrator() -> None:
         response_id="resp_drain",
         mode_flags=ResponseModeFlags(stream=False, store=True, background=True),
         request=None,
-        isolation=IsolationContext(),
+        platform_context=PlatformContext(),
     )
 
     ctx = MagicMock()

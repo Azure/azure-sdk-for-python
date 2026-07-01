@@ -17,7 +17,7 @@ import pytest
 from azure.ai.agentserver.responses.hosting._resilient_input import (
     ResilientResponseInput,
     RuntimeRefs,
-    isolation_from_params,
+    platform_context_from_params,
 )
 from azure.ai.agentserver.responses.models._generated import AgentReference, CreateResponse
 
@@ -41,8 +41,7 @@ def _make_input(**overrides) -> ResilientResponseInput:
         disposition="re-invoke",
         agent_reference={"name": "a", "version": "1"},
         agent_session_id="sess_1",
-        user_isolation_key="user-key",
-        chat_isolation_key="chat-key",
+        user_id_key="user-key",
         client_headers={"client-trace-id": "t-1"},
         query_parameters={"foo": "bar"},
     )
@@ -63,8 +62,7 @@ def test_round_trip_preserves_all_fields() -> None:
     assert restored.response_id == "resp_abc"
     assert restored.disposition == "re-invoke"
     assert restored.agent_session_id == "sess_1"
-    assert restored.user_isolation_key == "user-key"
-    assert restored.chat_isolation_key == "chat-key"
+    assert restored.user_id_key == "user-key"
     assert restored.client_headers == {"client-trace-id": "t-1"}
     assert restored.query_parameters == {"foo": "bar"}
     # request carries the input — once.
@@ -137,20 +135,20 @@ def test_from_task_input_non_dict_raises() -> None:
 
 
 def test_isolation_method_and_params_helper_agree() -> None:
-    """The typed ``isolation()`` and the params-based ``isolation_from_params``
+    """The typed ``isolation()`` and the params-based ``platform_context_from_params``
     produce the same partition keys — the single derivation."""
     resilient = _make_input()
     params = resilient.to_task_input()
 
-    iso_typed = resilient.isolation()
-    iso_params = isolation_from_params(params)
+    iso_typed = resilient.platform_context()
+    iso_params = platform_context_from_params(params)
 
-    assert iso_typed.user_key == iso_params.user_key == "user-key"
-    assert iso_typed.chat_key == iso_params.chat_key == "chat-key"
+    assert iso_typed.user_id_key == iso_params.user_id_key == "user-key"
+    assert iso_typed.call_id is iso_params.call_id is None
 
 
 def test_isolation_absent_keys_default_to_none() -> None:
-    resilient = _make_input(user_isolation_key=None, chat_isolation_key=None)
-    iso = resilient.isolation()
-    assert iso.user_key is None
-    assert iso.chat_key is None
+    resilient = _make_input(user_id_key=None)
+    iso = resilient.platform_context()
+    assert iso.user_id_key is None
+    assert iso.call_id is None

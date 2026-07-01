@@ -64,7 +64,7 @@ class _TransientOnceStore:
         self._inner = inner
         self._arm_marker = arm_marker
 
-    async def get_response(self, response_id: str, *, isolation: Any = None) -> Any:
+    async def get_response(self, response_id: str, *, context: Any = None) -> Any:
         if self._arm_marker and os.path.exists(self._arm_marker):
             # Disarm first so only the recovery pre-fetch trips; later GET
             # polls (and the test's terminal read) succeed normally.
@@ -73,7 +73,7 @@ class _TransientOnceStore:
             except OSError:
                 pass
             raise RuntimeError("injected transient store glitch (recovery pre-fetch)")
-        return await self._inner.get_response(response_id, isolation=isolation)
+        return await self._inner.get_response(response_id, context=context)
 
     async def create_response(self, *args: Any, **kwargs: Any) -> Any:
         return await self._inner.create_response(*args, **kwargs)

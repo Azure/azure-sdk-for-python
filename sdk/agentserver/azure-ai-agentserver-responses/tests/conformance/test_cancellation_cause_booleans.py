@@ -94,14 +94,14 @@ def test_client_cancel_endpoint_sets_client_cancelled() -> None:
     e2e variant (real Hypercorn server + real handler observation) is
     covered by ``tests/contract/test_cancel_endpoint.py``.
     """
-    from azure.ai.agentserver.responses._response_context import IsolationContext, ResponseContext
+    from azure.ai.agentserver.responses._response_context import PlatformContext, ResponseContext
     from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
     ctx = ResponseContext(
         response_id="r",
         mode_flags=ResponseModeFlags(stream=False, store=True, background=True),
         request=None,
-        isolation=IsolationContext(),
+        platform_context=PlatformContext(),
     )
     # Simulate the cancel-bridge mutation that
     # ``_endpoint_handler.cancel_response`` performs:
@@ -119,14 +119,14 @@ def test_client_cancel_endpoint_sets_client_cancelled() -> None:
 
 def test_context_composes_multiple_causes_simultaneously() -> None:
     """Setting client_cancelled and shutdown together MUST both stick."""
-    from azure.ai.agentserver.responses._response_context import IsolationContext
+    from azure.ai.agentserver.responses._response_context import PlatformContext
     from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
     ctx = ResponseContext(
         response_id="r",
         mode_flags=ResponseModeFlags(stream=False, store=True, background=False),
         request=None,
-        isolation=IsolationContext(),
+        platform_context=PlatformContext(),
     )
     ctx.client_cancelled = True
     ctx.shutdown.set()
@@ -144,14 +144,14 @@ def test_steering_pressure_has_no_cause_flag() -> None:
     Matches §10 cause matrix (Steering row): cancel set, shutdown not
     set, client_cancelled=False. Handlers infer steering by elimination.
     """
-    from azure.ai.agentserver.responses._response_context import IsolationContext
+    from azure.ai.agentserver.responses._response_context import PlatformContext
     from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
     ctx = ResponseContext(
         response_id="r",
         mode_flags=ResponseModeFlags(stream=False, store=True, background=False),
         request=None,
-        isolation=IsolationContext(),
+        platform_context=PlatformContext(),
     )
     # Simulate steering bridge: only cancel.set() — no cause flag.
     ctx._cancellation_signal.set()
@@ -212,14 +212,14 @@ def test_two_arg_sync_handler_hard_rejected() -> None:
 
 def test_exit_for_recovery_raises_outside_resilient_context() -> None:
     """exit_for_recovery() requires a task context; raises RuntimeError otherwise."""
-    from azure.ai.agentserver.responses._response_context import IsolationContext
+    from azure.ai.agentserver.responses._response_context import PlatformContext
     from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
     ctx = ResponseContext(
         response_id="r",
         mode_flags=ResponseModeFlags(stream=False, store=False, background=False),
         request=None,
-        isolation=IsolationContext(),
+        platform_context=PlatformContext(),
     )
     # _task_context is None for non-resilient / unit-test contexts.
     assert ctx._task_context is None  # type: ignore[attr-defined]
@@ -246,14 +246,14 @@ def test_exit_for_recovery_raises_response_exit_for_recovery_in_resilient_contex
     ``await context.exit_for_recovery()`` raises ``ResponseExitForRecovery``
     (NoReturn); it never returns a value."""
     from azure.ai.agentserver.responses import ResponseExitForRecovery
-    from azure.ai.agentserver.responses._response_context import IsolationContext
+    from azure.ai.agentserver.responses._response_context import PlatformContext
     from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
     ctx = ResponseContext(
         response_id="r",
         mode_flags=ResponseModeFlags(stream=False, store=True, background=True),
         request=None,
-        isolation=IsolationContext(),
+        platform_context=PlatformContext(),
     )
     # Simulate a resilient task body: a non-None task context.
     ctx._task_context = object()  # type: ignore[attr-defined]
@@ -279,14 +279,14 @@ def test_exit_for_recovery_not_swallowed_by_except_exception() -> None:
     """Spec 025 §A.4 (T30b) — the raised ``ResponseExitForRecovery`` propagates
     THROUGH a handler-style ``except Exception`` guard."""
     from azure.ai.agentserver.responses import ResponseExitForRecovery
-    from azure.ai.agentserver.responses._response_context import IsolationContext
+    from azure.ai.agentserver.responses._response_context import PlatformContext
     from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
     ctx = ResponseContext(
         response_id="r",
         mode_flags=ResponseModeFlags(stream=False, store=True, background=True),
         request=None,
-        isolation=IsolationContext(),
+        platform_context=PlatformContext(),
     )
     ctx._task_context = object()  # type: ignore[attr-defined]
 
@@ -311,14 +311,14 @@ def test_exit_for_recovery_works_in_async_generator_handler() -> None:
     handler shape: ``await context.exit_for_recovery()`` raises and propagates
     out of the generator (no ``return <value>`` SyntaxError)."""
     from azure.ai.agentserver.responses import ResponseExitForRecovery
-    from azure.ai.agentserver.responses._response_context import IsolationContext
+    from azure.ai.agentserver.responses._response_context import PlatformContext
     from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
     ctx = ResponseContext(
         response_id="r",
         mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
         request=None,
-        isolation=IsolationContext(),
+        platform_context=PlatformContext(),
     )
     ctx._task_context = object()  # type: ignore[attr-defined]
 

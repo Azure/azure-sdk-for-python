@@ -11,7 +11,7 @@ from ._options import ResponsesServerOptions
 from ._response_context import (
     ConversationChainMetadataNamespace,
     ExitForRecoverySignal,
-    IsolationContext,
+    PlatformContext,
     ResponseContext,
     ResponseExitForRecovery,
 )
@@ -44,7 +44,7 @@ __all__ = [
     "ResponseExitForRecovery",
     "ResponsesAgentServerHost",
     "ResponseContext",
-    "IsolationContext",
+    "PlatformContext",
     "ResponsesServerOptions",
     "ResponseProviderProtocol",
     "InMemoryResponseProvider",

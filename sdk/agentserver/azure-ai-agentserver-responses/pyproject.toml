@@ -44,7 +44,7 @@ exclude = [
     "doc*",
     "azure",
     "azure.ai",
-    "scripts*",
+    "_scripts*",
 ]
 
 [tool.setuptools.package-data]
@@ -69,5 +69,5 @@ azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
 [tool.azure-sdk-build]
 verifytypes = false
 latestdependency = false
-# azure-ai-agentserver-core>=2.0.0b4 is not yet on PyPI
+# azure-ai-agentserver-core>=2.0.0b7 is not yet on PyPI
 mindependency = false

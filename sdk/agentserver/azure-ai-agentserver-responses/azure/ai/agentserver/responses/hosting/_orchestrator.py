@@ -273,7 +273,7 @@ async def _do_checkpoint_persist(
     runtime_options: "ResponsesServerOptions | None",
     store: bool,
     background: bool,
-    isolation: Any,
+    context: Any,
     response_id: str,
     last_snapshot: "bytes | None",
     terminal_seen: bool,
@@ -294,8 +294,8 @@ async def _do_checkpoint_persist(
     :paramtype store: bool
     :keyword background: Whether the response is background.
     :paramtype background: bool
-    :keyword isolation: Tenant isolation context for the provider write.
-    :paramtype isolation: Any
+    :keyword context: Platform context for the provider write.
+    :paramtype context: Any
     :keyword response_id: The response id (for logging).
     :paramtype response_id: str
     :keyword last_snapshot: Serialised bytes of the previously persisted snapshot.
@@ -323,7 +323,7 @@ async def _do_checkpoint_persist(
         return last_snapshot  # idempotent — nothing changed since the last checkpoint
     result = last_snapshot
     try:
-        await provider.update_response(response, isolation=isolation)
+        await provider.update_response(response, context=context)
         result = snapshot_bytes
     except Exception as exc:  # pylint: disable=broad-exception-caught
         setattr(exc, PLATFORM_ERROR_TAG, True)
@@ -624,7 +624,7 @@ async def _bg_persist_at_created(
     :paramtype store: bool
     :keyword provider: The persistence provider.
     :paramtype provider: ResponseProviderProtocol | None
-    :keyword context: The response context (isolation / input items).
+    :keyword context: The response context (platform context / input items).
     :paramtype context: ResponseContext | None
     :keyword response_id: The response id.
     :paramtype response_id: str
@@ -637,7 +637,7 @@ async def _bg_persist_at_created(
     """
     if not (store and provider is not None):
         return False
-    _isolation = context.isolation if context else None
+    _context = context.platform_context if context else None
     _response_obj = generated_models.ResponseObject(initial_snapshot)
     try:
         _history_ids = (
@@ -645,13 +645,13 @@ async def _bg_persist_at_created(
                 record.previous_response_id,
                 None,
                 history_limit,
-                isolation=_isolation,
+                context=_context,
             )
             if record.previous_response_id
             else None
         )
         _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
-        await provider.create_response(_response_obj, _resolved_items, _history_ids, isolation=_isolation)
+        await provider.create_response(_response_obj, _resolved_items, _history_ids, context=_context)
         return True
     except ResponseAlreadyExistsError:
         # Recovery: response was persisted by a prior attempt. The terminal
@@ -789,7 +789,7 @@ async def _bg_persist_terminal(
     :paramtype exit_for_recovery: bool
     :keyword provider_created: True if ``create_response`` already ran at created.
     :paramtype provider_created: bool
-    :keyword context: The response context (for isolation / created_at).
+    :keyword context: The response context (for platform context / created_at).
     :paramtype context: ResponseContext | None
     :keyword response_id: The response id.
     :paramtype response_id: str
@@ -821,10 +821,10 @@ async def _bg_persist_terminal(
         record.set_response_snapshot(storage_error_response)
         record.status = "failed"  # type: ignore[assignment]
         return
-    _isolation = context.isolation if context else None
+    _context = context.platform_context if context else None
     try:
         if provider_created:
-            await provider.update_response(record.response, isolation=_isolation)
+            await provider.update_response(record.response, context=_context)
         else:
             # Response was never created (handler yielded nothing or failed
             # before response.created) — create instead of update. Load history
@@ -835,13 +835,13 @@ async def _bg_persist_terminal(
                     record.previous_response_id,
                     None,
                     history_limit,
-                    isolation=_isolation,
+                    context=_context,
                 )
                 if record.previous_response_id
                 else None
             )
             _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
-            await provider.create_response(record.response, _resolved_items, _history_ids, isolation=_isolation)
+            await provider.create_response(record.response, _resolved_items, _history_ids, context=_context)
     except Exception as persist_exc:  # pylint: disable=broad-exception-caught
         setattr(persist_exc, PLATFORM_ERROR_TAG, True)
         logger.error(
@@ -967,7 +967,7 @@ async def _bg_drain_handler_events(
                     runtime_options=runtime_options,
                     store=store,
                     background=record.mode_flags.background,
-                    isolation=context.isolation if context else None,
+                    context=context.platform_context if context else None,
                     response_id=response_id,
                     last_snapshot=st.checkpoint_snapshot,
                     terminal_seen=st.terminal_seen,
@@ -1249,7 +1249,7 @@ def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") ->
         previous_response_id=ctx.previous_response_id,
         agent_session_id=ctx.agent_session_id,
         conversation_id=ctx.conversation_id,
-        chat_isolation_key=ctx.chat_isolation_key,
+        user_id_key=ctx.user_id,
     )
     # Stash on state so _finalize_stream can access persistence_failed
     state.bg_record = record
@@ -1725,11 +1725,11 @@ class _ResponseOrchestrator:
                     self._apply_storage_error_replacement(ctx, state, record)
                 else:
                     record.response.background = record.mode_flags.background
-                    _isolation = ctx.context.isolation if ctx.context else None
+                    _context = ctx.context.platform_context if ctx.context else None
                     try:
                         if state.provider_created:
                             # bg+stream: initial create already done at response.created — use update
-                            await self._provider.update_response(record.response, isolation=_isolation)
+                            await self._provider.update_response(record.response, context=_context)
                         else:
                             # non-bg stream or bg stream where initial create was never registered:
                             # full create
@@ -1738,7 +1738,7 @@ class _ResponseOrchestrator:
                                     ctx.previous_response_id,
                                     None,
                                     self._runtime_options.default_fetch_history_count,
-                                    isolation=_isolation,
+                                    context=_context,
                                 )
                                 if ctx.previous_response_id
                                 else None
@@ -1748,7 +1748,7 @@ class _ResponseOrchestrator:
                                 generated_models.ResponseObject(response_payload),
                                 _resolved_items,
                                 _history_ids,
-                                isolation=_isolation,
+                                context=_context,
                             )
                     except ResponseAlreadyExistsError:
                         # Recovery: response was persisted by a prior attempt. Convert
@@ -1759,7 +1759,7 @@ class _ResponseOrchestrator:
                             ctx.response_id,
                         )
                         try:
-                            await self._provider.update_response(record.response, isolation=_isolation)
+                            await self._provider.update_response(record.response, context=_context)
                         except Exception as update_exc:  # pylint: disable=broad-exception-caught
                             setattr(update_exc, PLATFORM_ERROR_TAG, True)
                             logger.error(
@@ -1866,7 +1866,7 @@ class _ResponseOrchestrator:
             response_context=ctx.context,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(initial_payload))
         # Bind the per-response stream from the registry — the registry
@@ -1878,14 +1878,14 @@ class _ResponseOrchestrator:
         assert state.bg_record.subject is not None
         await self._runtime_state.add(execution)
         if ctx.store:
-            _isolation = ctx.context.isolation if ctx.context else None
+            _context = ctx.context.platform_context if ctx.context else None
             _initial_response_obj = generated_models.ResponseObject(initial_payload)
             _history_ids = (
                 await self._provider.get_history_item_ids(
                     ctx.previous_response_id,
                     None,
                     self._runtime_options.default_fetch_history_count,
-                    isolation=_isolation,
+                    context=_context,
                 )
                 if ctx.previous_response_id
                 else None
@@ -1896,7 +1896,7 @@ class _ResponseOrchestrator:
                     _initial_response_obj,
                     _resolved_items,
                     _history_ids,
-                    isolation=_isolation,
+                    context=_context,
                 )
                 state.provider_created = True
             except ResponseAlreadyExistsError:
@@ -2020,7 +2020,7 @@ class _ResponseOrchestrator:
             runtime_options=self._runtime_options,
             store=ctx.store,
             background=ctx.background,
-            isolation=ctx.context.isolation if ctx.context is not None else None,
+            context=ctx.context.platform_context if ctx.context is not None else None,
             response_id=ctx.response_id,
             last_snapshot=state.last_persisted_snapshot,
             terminal_seen=state.pending_terminal is not None,
@@ -2740,7 +2740,7 @@ class _ResponseOrchestrator:
             cancel_signal=ctx.cancellation_signal if ctx.background else None,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
         # Copy persistence_failed from the ephemeral record if one was used
@@ -2936,7 +2936,7 @@ class _ResponseOrchestrator:
                 response_context=ctx.context,
                 agent_session_id=ctx.agent_session_id,
                 conversation_id=ctx.conversation_id,
-                chat_isolation_key=ctx.chat_isolation_key,
+                user_id_key=ctx.user_id,
                 initial_model=ctx.model,
                 initial_agent_reference=ctx.agent_reference,
             )
@@ -3194,7 +3194,7 @@ class _ResponseOrchestrator:
             try:
                 await self._provider.update_response(
                     cancelled_response,
-                    isolation=ctx.context.isolation if ctx.context else None,
+                    context=ctx.context.platform_context if ctx.context else None,
                 )
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.debug(
@@ -3275,7 +3275,7 @@ class _ResponseOrchestrator:
             cancel_signal=ctx.cancellation_signal,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
             initial_model=ctx.model,
             initial_agent_reference=ctx.agent_reference,
         )
@@ -3466,7 +3466,7 @@ class _ResponseOrchestrator:
             response_context=ctx.context,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
         record.set_response_snapshot(generated_models.ResponseObject(response_payload))
 
@@ -3479,14 +3479,14 @@ class _ResponseOrchestrator:
             # Persist via provider (non-bg sync: single create at terminal state).
             # §3.1: Persistence failure replaces the response body with storage_error.
             try:
-                _isolation = ctx.context.isolation if ctx.context else None
+                _context = ctx.context.platform_context if ctx.context else None
                 _response_obj = generated_models.ResponseObject(response_payload)
                 _history_ids = (
                     await self._provider.get_history_item_ids(
                         ctx.previous_response_id,
                         None,
                         self._runtime_options.default_fetch_history_count,
-                        isolation=_isolation,
+                        context=_context,
                     )
                     if ctx.previous_response_id
                     else None
@@ -3496,7 +3496,7 @@ class _ResponseOrchestrator:
                     _response_obj,
                     _resolved_items,
                     _history_ids,
-                    isolation=_isolation,
+                    context=_context,
                 )
                 state.provider_created = True
                 # Bookkeeping signal is fired in run_sync's finally block
@@ -3570,7 +3570,7 @@ class _ResponseOrchestrator:
             initial_agent_reference=ctx.agent_reference,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
 
         # Register so GET can observe in-flight state
