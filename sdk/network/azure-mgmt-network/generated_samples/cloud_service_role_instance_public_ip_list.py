@@ -41,6 +41,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-05-01/CloudServiceRoleInstancePublicIpList.json
+# x-ms-original-file: 2025-07-01/CloudServiceRoleInstancePublicIpList.json
 if __name__ == "__main__":
     main()

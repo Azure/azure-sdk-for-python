@@ -13,7 +13,7 @@ import logging
 from typing import Any, Optional
 
 from azure.ai.ml._restclient.arm_ml_service.models import CreatedByType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
+from azure.ai.ml._restclient.arm_ml_service.models import UsageUnit
 
 from ._assets._artifacts._package.base_environment_source import BaseEnvironment
 from ._assets._artifacts._package.inferencing_server import (
