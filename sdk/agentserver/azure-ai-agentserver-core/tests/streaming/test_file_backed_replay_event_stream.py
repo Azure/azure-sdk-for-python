@@ -75,8 +75,9 @@ class TestPersistenceFormat:
         await s._on_delete()
 
     async def test_terminal_marker_format(self, tmp_path: Path) -> None:
-        """Rule 27 — terminal marker has terminal:true + emit_time but
-        no payload field."""
+        """Spec 037 #2 — the terminal marker is exactly ``{"__terminal__": true}``
+        (no ``emit_time``, no ``payload``), matching C-STR-FBR-5 and the .NET port.
+        """
         p = tmp_path / "fb-term.jsonl"
         s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"])
         await s.emit({"n": 1})
@@ -84,10 +85,73 @@ class TestPersistenceFormat:
         lines = [l for l in p.read_text().splitlines() if l]
         assert len(lines) == 2  # 1 payload + 1 terminal
         terminal = json.loads(lines[-1])
-        assert terminal.get("__terminal__") is True
-        assert "emit_time" in terminal
-        assert "payload" not in terminal
+        assert terminal == {"__terminal__": True}
         await s._on_delete()
+
+    async def test_rehydrate_closed_from_terminal_without_emit_time(self, tmp_path: Path) -> None:
+        """Spec 037 #2 — a file whose terminal record carries no ``emit_time``
+        rehydrates as CLOSED (the terminal record's own timestamp is not
+        required; close-time is best-effort from the last real event / now).
+        """
+        p = tmp_path / "fb-noemit.jsonl"
+        with open(p, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"emit_time": 100.0, "payload": {"n": 1}}) + "\n")
+            f.write(json.dumps({"__terminal__": True}) + "\n")
+        s = FileBackedReplayEventStream(path=p, cursor_fn=lambda e: e["n"])
+        assert s._state == s._STATE_CLOSED
+        await s._on_delete()
+
+    async def test_rehydrate_non_terminal_missing_emit_time_still_raises(self, tmp_path: Path) -> None:
+        """Regression guard — a NON-terminal record missing ``emit_time`` is
+        still malformed and raises at construction.
+        """
+        p = tmp_path / "fb-badrec.jsonl"
+        with open(p, "w", encoding="utf-8") as f:
+            f.write(json.dumps({"payload": {"n": 1}}) + "\n")  # no emit_time
+        with pytest.raises(RuntimeError, match="emit_time"):
+            FileBackedReplayEventStream(path=p)
+
+
+class TestSafeStreamFilename:
+    """Spec 037 #4 — stream ids are sanitized before use as on-disk filenames so
+    an attacker-/user-controlled id cannot escape the storage directory or clobber
+    a sibling stream.
+    """
+
+    def test_wellformed_id_used_verbatim(self) -> None:
+        from azure.ai.agentserver.core.streaming._concrete import _safe_stream_filename
+
+        assert _safe_stream_filename("abc-123.def_ID") == "abc-123.def_ID.jsonl"
+
+    def test_path_traversal_and_bad_chars_are_hash_encoded(self) -> None:
+        from azure.ai.agentserver.core.streaming._concrete import _safe_stream_filename
+
+        for bad in ("../evil", "a/b", ".", "..", "x\x00y", "a\\b", "co*star", "with space"):
+            name = _safe_stream_filename(bad)
+            assert name.startswith("h_") and name.endswith(".jsonl"), f"{bad!r} -> {name!r}"
+            # Deterministic + cannot contain a path separator.
+            assert "/" not in name and "\\" not in name
+            assert _safe_stream_filename(bad) == name  # deterministic
+
+    def test_distinct_ids_dont_collide(self) -> None:
+        from azure.ai.agentserver.core.streaming._concrete import _safe_stream_filename
+
+        assert _safe_stream_filename("../a") != _safe_stream_filename("../b")
+
+    def test_verbatim_hash_shaped_id_does_not_alias_hash_namespace(self) -> None:
+        """Spec 037 #4 — a well-formed id literally shaped like the reserved
+        ``h_<64hex>`` stem must NOT be used verbatim, or it would alias the
+        hash-encoding of a different unsafe id. It is itself hashed.
+        """
+        import hashlib
+
+        from azure.ai.agentserver.core.streaming._concrete import _safe_stream_filename
+
+        unsafe = "../evil"
+        collider = "h_" + hashlib.sha256(unsafe.encode("utf-8")).hexdigest()
+        # The collider looks well-formed but must be hash-encoded, so it does NOT
+        # land on the same file as the unsafe id's hash.
+        assert _safe_stream_filename(collider) != _safe_stream_filename(unsafe)
 
 
 # ----------------------------------------------------------------

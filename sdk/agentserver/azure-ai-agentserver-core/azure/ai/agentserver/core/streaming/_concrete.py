@@ -15,9 +15,11 @@ this private path.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import hashlib
 import json
 import logging
 import os
+import re
 import time
 from collections.abc import AsyncIterator, Callable
 from pathlib import Path
@@ -468,6 +470,47 @@ _COMPACTION_INTERVAL = 1000
 """Compact on-disk file after this many evictions (rule 30). Chosen
 default; documented in Phase 1 PR per T028."""
 
+#: Spec 037 #4 — a stream id is well-formed for direct use as a filename stem
+# when it contains only these characters and no ``.``/``..`` path segment. Any
+# other id is deterministically hash-encoded so it cannot escape the storage
+# directory or clobber a sibling stream.
+_SAFE_STREAM_ID_RE = re.compile(r"^[A-Za-z0-9._-]+$")
+
+#: The reserved shape produced by the hash-encoding branch (``h_`` + 64 lowercase
+# hex). A verbatim id of this exact shape is NOT used verbatim — otherwise it
+# could alias the hash-encoding of a different, unsafe id — so it is itself
+# hash-encoded, keeping the verbatim and hashed namespaces disjoint.
+_HASHED_STREAM_ID_RE = re.compile(r"^h_[0-9a-f]{64}$")
+
+
+def _safe_stream_filename(stream_id: str) -> str:
+    """Return a filesystem-safe ``<stem>.jsonl`` filename for a stream id.
+
+    Well-formed ids (``[A-Za-z0-9._-]`` with no ``.``/``..`` path segment, and
+    not already shaped like the reserved ``h_<64hex>`` hash stem) are used
+    verbatim for readability and cross-language compatibility. Any id containing
+    a path separator, a ``.``/``..`` segment, a NUL, any other filesystem-unsafe
+    character, OR the reserved ``h_<64hex>`` shape is SHA-256 hash-encoded to an
+    ``h_<hex>`` stem so it can never traverse out of the storage directory or
+    collide with a sibling stream (the verbatim and hashed namespaces stay
+    disjoint). Mirrors the .NET port's filename hardening.
+
+    :param stream_id: The (possibly attacker-/user-controlled) stream id.
+    :type stream_id: str
+    :return: A safe ``<stem>.jsonl`` filename (no path separators).
+    :rtype: str
+    """
+    segments = stream_id.split("/")
+    is_wellformed = (
+        _SAFE_STREAM_ID_RE.match(stream_id)
+        and not any(seg in (".", "..") for seg in segments)
+        and not _HASHED_STREAM_ID_RE.match(stream_id)
+    )
+    if is_wellformed:
+        return f"{stream_id}.jsonl"
+    digest = hashlib.sha256(stream_id.encode("utf-8")).hexdigest()
+    return f"h_{digest}.jsonl"
+
 
 class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many-instance-attributes
     """File-backed multicast + replay + cursor + per-event TTL.
@@ -536,8 +579,11 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             wrapper = {"emit_time": emit_time, "payload": payload}
         return (json.dumps(wrapper) + "\n").encode("utf-8")
 
-    def _serialize_terminal(self, emit_time: float) -> bytes:
-        return (json.dumps({"emit_time": emit_time, _TERMINAL_MARKER: True}) + "\n").encode("utf-8")
+    def _serialize_terminal(self) -> bytes:
+        # Spec 037 #2 — the terminal record carries no ``emit_time`` (it was
+        # never honored on rehydrate; close-time is best-effort). Matches the
+        # C-STR-FBR-5 shape ``{"__terminal__": true}`` and the .NET port.
+        return (json.dumps({_TERMINAL_MARKER: True}) + "\n").encode("utf-8")
 
     def _deserialize_record(self, line: bytes) -> dict:
         record = json.loads(line.decode("utf-8"))
@@ -581,14 +627,6 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: malformed record at " f"line {idx} of {self._path}"
                 ) from exc
-            if "emit_time" not in rec:
-                self._cleanup_locks()
-                logger.error(
-                    "FileBackedReplayEventStream: record at line %d of %s missing 'emit_time' field", idx, self._path
-                )
-                raise RuntimeError(
-                    f"FileBackedReplayEventStream: record at line {idx} of " f"{self._path} missing 'emit_time' field"
-                )
             if rec.get(_TERMINAL_MARKER):
                 if had_terminal:
                     # Multiple terminals or terminal-not-at-EOF — malformed.
@@ -598,6 +636,8 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                         f"FileBackedReplayEventStream: terminal marker not " f"at end-of-file in {self._path}"
                     )
                 had_terminal = True
+                # Spec 037 #2 — the terminal record carries no ``emit_time`` and
+                # is validated for shape only; skip the emit_time requirement.
                 continue
             if had_terminal:
                 # Records after terminal marker — malformed.
@@ -607,6 +647,14 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 )
                 raise RuntimeError(
                     f"FileBackedReplayEventStream: record at line {idx} of " f"{self._path} follows terminal marker"
+                )
+            if "emit_time" not in rec:
+                self._cleanup_locks()
+                logger.error(
+                    "FileBackedReplayEventStream: record at line %d of %s missing 'emit_time' field", idx, self._path
+                )
+                raise RuntimeError(
+                    f"FileBackedReplayEventStream: record at line {idx} of " f"{self._path} missing 'emit_time' field"
                 )
             records.append(rec)
         # Load into buffer, applying per-event TTL.
@@ -621,11 +669,10 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         self._evict_expired()
         if had_terminal:
             self._state = self._STATE_CLOSED
-            #   — close-clock is anchored at the
-            # terminal record's emit_time (the moment the prior
-            # process actually closed the stream). On rehydration we
-            # honor that wall-clock anchor so a process restart
-            # cannot extend the effective tombstone deadline.
+            # Spec 037 #2 — close-time is best-effort: the terminal record
+            # carries no durable timestamp, so anchor the close-clock at the last
+            # real event's emit_time (else ``now``). A process restart therefore
+            # cannot meaningfully extend the tombstone deadline.
             if records:
                 self._close_time = records[-1]["emit_time"]
             else:
@@ -682,7 +729,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
                 for entry in self._buffer:
                     tmp.write(self._serialize(entry.payload, entry.emit_time))
                 if self._state == self._STATE_CLOSED:
-                    tmp.write(self._serialize_terminal(time.time()))
+                    tmp.write(self._serialize_terminal())
             # Atomic replace (POSIX guarantees atomicity on same fs).
             os.replace(tmp_path, self._path)
             # ``os.replace`` swapped ``self._path`` to a brand-new inode; our
@@ -737,7 +784,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
             # (rule 14), write both records in one fsync.
             record_bytes = self._serialize(payload, emit_time)
             if close:
-                record_bytes += self._serialize_terminal(emit_time)
+                record_bytes += self._serialize_terminal()
             self._file.write(record_bytes)
             self._file.flush()
             os.fsync(self._file.fileno())
@@ -757,7 +804,7 @@ class FileBackedReplayEventStream(_BaseEventStream):  # pylint: disable=too-many
         async with self._lock:
             if self._state != self._STATE_ACTIVE:
                 return
-            self._file.write(self._serialize_terminal(time.time()))
+            self._file.write(self._serialize_terminal())
             self._file.flush()
             os.fsync(self._file.fileno())
             self._state = self._STATE_CLOSED

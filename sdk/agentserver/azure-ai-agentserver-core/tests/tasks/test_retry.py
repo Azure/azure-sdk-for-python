@@ -174,6 +174,55 @@ class TestShouldRetry:
 # ---------------------------------------------------------------------------
 
 
+class TestRetryHardCaps:
+    """Spec 037 #11 — hard caps: <=10 attempts, <=1 hour delay (fail-fast, not clamp)."""
+
+    def test_max_attempts_at_cap_ok(self) -> None:
+        assert RetryPolicy(max_attempts=10).max_attempts == 10
+
+    def test_max_attempts_above_cap_rejected(self) -> None:
+        with pytest.raises(ValueError, match="max_attempts must be <= 10"):
+            RetryPolicy(max_attempts=11)
+
+    def test_max_delay_at_cap_ok(self) -> None:
+        p = RetryPolicy(initial_delay=timedelta(seconds=1), max_delay=timedelta(hours=1))
+        assert p.max_delay == timedelta(hours=1)
+
+    def test_max_delay_above_cap_rejected(self) -> None:
+        with pytest.raises(ValueError, match="max_delay must be <= 1 hour"):
+            RetryPolicy(initial_delay=timedelta(seconds=1), max_delay=timedelta(hours=1, seconds=1))
+
+    def test_max_delay_cap_accepts_float_seconds(self) -> None:
+        # float-seconds form must be capped identically to timedelta form.
+        with pytest.raises(ValueError, match="max_delay must be <= 1 hour"):
+            RetryPolicy(initial_delay=1.0, max_delay=3601.0)
+
+
+class TestModuleLevelPresetParity:
+    """Spec 037 #1 — module-level preset wrappers match their classmethod values
+    (which the .NET port mirrors) so zero-arg presets are identical cross-language.
+    """
+
+    def test_module_exponential_backoff_matches_classmethod(self) -> None:
+        from azure.ai.agentserver.core.tasks._retry import exponential_backoff
+
+        assert exponential_backoff() == RetryPolicy.exponential_backoff()
+        assert exponential_backoff().max_attempts == 3
+
+    def test_module_fixed_delay_matches_classmethod(self) -> None:
+        from azure.ai.agentserver.core.tasks._retry import fixed_delay
+
+        assert fixed_delay() == RetryPolicy.fixed_delay()
+        assert fixed_delay().initial_delay == timedelta(seconds=5)
+        assert fixed_delay().max_attempts == 3
+
+    def test_module_linear_backoff_matches_classmethod(self) -> None:
+        from azure.ai.agentserver.core.tasks._retry import linear_backoff
+
+        assert linear_backoff() == RetryPolicy.linear_backoff()
+        assert linear_backoff().max_attempts == 5
+
+
 class TestPresets:
     def test_exponential_backoff(self) -> None:
         p = RetryPolicy.exponential_backoff(max_attempts=5)
@@ -244,7 +293,7 @@ class TestRetryIntegration:
         """Task fails twice then succeeds on attempt 2."""
         call_log: list[int] = []
 
-        @task(title="retry-test", retry=RetryPolicy.exponential_backoff(max_attempts=3))
+        @task(name="retry-test", title="retry-test", retry=RetryPolicy.exponential_backoff(max_attempts=3))
         async def flaky(ctx: TaskContext[str]) -> str:
             call_log.append(ctx.retry_attempt)
             if ctx.retry_attempt < 2:
@@ -264,7 +313,11 @@ class TestRetryIntegration:
     async def test_retry_exhausted(self, tmp_path) -> None:
         """Task always fails — retries exhaust and TaskFailed is raised."""
 
-        @task(title="always-fail", retry=RetryPolicy(max_attempts=3, retry_on=(ValueError), jitter=False))
+        @task(
+            name="always-fail",
+            title="always-fail",
+            retry=RetryPolicy(max_attempts=3, retry_on=(ValueError), jitter=False),
+        )
         async def always_fail(ctx: TaskContext[str]) -> str:
             raise ValueError(f"boom on attempt {ctx.retry_attempt}")
 
@@ -284,7 +337,9 @@ class TestRetryIntegration:
         """Wrong exception type — fails immediately without retry."""
         attempts: list[int] = []
 
-        @task(title="wrong-exc", retry=RetryPolicy(max_attempts=5, retry_on=(ValueError), jitter=False))
+        @task(
+            name="wrong-exc", title="wrong-exc", retry=RetryPolicy(max_attempts=5, retry_on=(ValueError), jitter=False)
+        )
         async def wrong_exc(ctx: TaskContext[str]) -> str:
             attempts.append(ctx.retry_attempt)
             raise TypeError("not retryable")
@@ -394,7 +449,7 @@ class TestRetryAttemptResilience:
         """
         observed: list[int] = []
 
-        @multi_turn_task(title="recovered-retry-aware")
+        @multi_turn_task(name="recovered-retry-aware", title="recovered-retry-aware")
         async def handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return "ok"

@@ -39,6 +39,7 @@ from ._concrete import (
     BroadcastEventStream,
     FileBackedReplayEventStream,
     ReplayEventStream,
+    _safe_stream_filename,
 )
 from ._protocol import (
     EventStream,
@@ -50,6 +51,12 @@ logger = logging.getLogger("azure.ai.agentserver.streaming")
 
 # Sentinel for tombstoned slots (rule 36a)
 _TOMBSTONE: object = object()
+
+#: Spec 037 #6 — default per-event TTL for file-backed replay streams when the
+# caller does not specify one (10 minutes). Bounds on-disk growth; mirrors the
+# .NET port's default. JSON serialization is the default already (a ``None``
+# serializer/deserializer round-trips via JSON in the stream itself).
+_DEFAULT_STREAM_TTL_SECONDS = 600.0
 
 
 class _StreamsRegistry:
@@ -106,7 +113,7 @@ class _StreamsRegistry:
     def use_file_backed_replay(
         self,
         *,
-        storage_dir: Path,
+        storage_dir: Optional[Path] = None,
         cursor_fn: Optional[Callable[[Any], int]] = None,
         ttl_seconds: Optional[float] = None,
         serializer: Optional[Callable[[Any], bytes]] = None,
@@ -114,27 +121,44 @@ class _StreamsRegistry:
     ) -> None:
         """Configure the registry to construct **file-backed replay** streams.
 
-        Each stream persists its event log to
-        ``storage_dir / f"{id}.jsonl"`` and rehydrates on construction
-        if the file already exists (crash-recovery friendly). Same
+        Each stream persists its event log to ``storage_dir / "<file>.jsonl"``
+        (the id is sanitized to a filesystem-safe name) and rehydrates on
+        construction if the file already exists (crash-recovery friendly). Same
         replay + TTL + cursor semantics as :meth:`use_in_memory_replay`.
 
+        Ergonomic defaults (Spec 037 #6) — the common case is a single call
+        supplying only ``cursor_fn``:
+
+        - ``storage_dir`` defaults to ``resolve_state_subdir("streams")`` (a
+          ``streams`` directory under the shared agent-server state root,
+          alongside ``tasks``).
+        - ``ttl_seconds`` defaults to ``600`` (10 minutes).
+        - ``serializer`` / ``deserializer`` default to JSON.
+
         :keyword storage_dir: Directory the per-stream event logs are written to.
-        :paramtype storage_dir: Path
+            Defaults to ``resolve_state_subdir("streams")``.
+        :paramtype storage_dir: Optional[~pathlib.Path]
         :keyword cursor_fn: Optional cursor extractor enabling
             ``subscribe(after=...)`` re-subscription.
         :paramtype cursor_fn: Optional[Callable[[Any], int]]
-        :keyword ttl_seconds: Optional per-event TTL eviction window.
+        :keyword ttl_seconds: Optional per-event TTL eviction window. Defaults to
+            600 seconds (10 minutes).
         :paramtype ttl_seconds: Optional[float]
-        :keyword serializer: Optional payload-to-bytes serializer.
+        :keyword serializer: Optional payload-to-bytes serializer. Defaults to JSON.
         :paramtype serializer: Optional[Callable[[Any], bytes]]
-        :keyword deserializer: Optional bytes-to-payload deserializer.
+        :keyword deserializer: Optional bytes-to-payload deserializer. Defaults to JSON.
         :paramtype deserializer: Optional[Callable[[bytes], Any]]
         """
+        if storage_dir is None:
+            from .._config import resolve_state_subdir  # pylint: disable=import-outside-toplevel
+
+            storage_dir = resolve_state_subdir("streams")
+        if ttl_seconds is None:
+            ttl_seconds = _DEFAULT_STREAM_TTL_SECONDS
         storage_dir = Path(storage_dir)
         storage_dir.mkdir(parents=True, exist_ok=True)
         self._factory = lambda _id: FileBackedReplayEventStream(
-            path=storage_dir / f"{_id}.jsonl",
+            path=storage_dir / _safe_stream_filename(_id),
             cursor_fn=cursor_fn,
             ttl_seconds=ttl_seconds,
             serializer=serializer,

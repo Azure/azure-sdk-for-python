@@ -160,6 +160,41 @@ class TestMidFlightConfigSwitch:
 # ----------------------------------------------------------------
 
 
+class TestFileBackedReplayDefaults:
+    """Spec 037 #6 — ``use_file_backed_replay`` has ergonomic defaults: no args
+    required; storage under ``resolve_state_subdir("streams")``, 10-minute TTL,
+    JSON serialization. The common case collapses to supplying ``cursor_fn``.
+    """
+
+    async def test_no_args_builds_working_file_backed_factory(self, monkeypatch, tmp_path: Path) -> None:
+        from azure.ai.agentserver.core import _config as _cfg
+
+        # Redirect the state root so the default lands in a temp dir.
+        monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
+        streams.use_file_backed_replay()
+        s = await streams.get_or_create("defaults-1")
+        assert isinstance(s, FileBackedReplayEventStream)
+        await s.emit({"n": 1})
+        # Default storage dir is <state-root>/streams; default JSON round-trips.
+        expected = _cfg.resolve_state_subdir("streams") / "defaults-1.jsonl"
+        assert expected.exists()
+        await streams.delete("defaults-1")
+
+    async def test_default_ttl_is_ten_minutes(self, monkeypatch, tmp_path: Path) -> None:
+        monkeypatch.setenv("AGENTSERVER_STATE_ROOT", str(tmp_path))
+        streams.use_file_backed_replay()
+        s = await streams.get_or_create("defaults-ttl")
+        assert s._ttl_seconds == 600.0
+        await streams.delete("defaults-ttl")
+
+    async def test_explicit_args_override_defaults(self, tmp_path: Path) -> None:
+        streams.use_file_backed_replay(storage_dir=tmp_path, ttl_seconds=42.0)
+        s = await streams.get_or_create("defaults-override")
+        assert s._ttl_seconds == 42.0
+        assert (tmp_path / "defaults-override.jsonl").exists()
+        await streams.delete("defaults-override")
+
+
 class TestSubscriberAcceptanceScenarios:
     async def test_use_in_memory_replay_then_get_or_create(self) -> None:
         """Subscriber #1 — use_in_memory_replay configures Replay impl."""
