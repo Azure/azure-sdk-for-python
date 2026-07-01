@@ -74,7 +74,7 @@ class TestLifecycle:
         """run() on non-existent task → creates and starts, entry_mode='fresh'."""
         observed_mode: list[str] = []
 
-        @task(title="lifecycle-fresh")
+        @task(name="lifecycle-fresh", title="lifecycle-fresh")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_mode.append(ctx.entry_mode)
             return "result"
@@ -92,7 +92,7 @@ class TestLifecycle:
         """run() on pending task → starts it, entry_mode='fresh'."""
         observed_mode: list[str] = []
 
-        @task(title="lifecycle-pending")
+        @task(name="lifecycle-pending", title="lifecycle-pending")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_mode.append(ctx.entry_mode)
             return "started"
@@ -122,7 +122,7 @@ class TestLifecycle:
         """run() on suspended task → resumes with new input, entry_mode='resumed'."""
         observed: list[tuple[str, str]] = []
 
-        @multi_turn_task(title="lifecycle-resume")
+        @multi_turn_task(name="lifecycle-resume", title="lifecycle-resume")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.input))
             return "waiting"
@@ -148,7 +148,7 @@ class TestLifecycle:
                 such a record to exercise the conflict shape per Invariant 1.
         """
 
-        @task(title="lifecycle-conflict")
+        @task(name="lifecycle-conflict", title="lifecycle-conflict")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "never"
 
@@ -181,7 +181,7 @@ class TestLifecycle:
         """run() on stale in_progress task → recovers, entry_mode='recovered'."""
         observed_mode: list[str] = []
 
-        @task(title="lifecycle-stale")
+        @task(name="lifecycle-stale", title="lifecycle-stale")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_mode.append(ctx.entry_mode)
             return "recovered"
@@ -212,7 +212,7 @@ class TestLifecycle:
     async def test_run_completed_task_raises(self, tmp_path) -> None:
         """run() on completed task → TaskConflictError (no restart)."""
 
-        @task(title="lifecycle-completed")
+        @task(name="lifecycle-completed", title="lifecycle-completed")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "never"
 
@@ -241,7 +241,7 @@ class TestLifecycle:
         """start() follows same lifecycle rules as run() — fresh + conflict."""
         observed_mode: list[str] = []
 
-        @task(title="lifecycle-start")
+        @task(name="lifecycle-start", title="lifecycle-start")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_mode.append(ctx.entry_mode)
             return "started"
@@ -280,7 +280,7 @@ class TestLifecycle:
     async def test_task_run_is_awaitable(self, tmp_path) -> None:
         """``await task_run`` returns the same TaskResult as ``await task_run.result()``."""
 
-        @task(title="awaitable")
+        @task(name="awaitable", title="awaitable")
         async def my_task(ctx: TaskContext[str]) -> str:
             return f"echo: {ctx.input}"
 
@@ -319,7 +319,7 @@ class TestLifecycle:
         # test_decorator.py. Here we verify the framework-managed default
         # still recovers a backdated record correctly.
 
-        @task(title="stale-default")
+        @task(name="stale-default", title="stale-default")
         async def my_task(ctx: TaskContext[str]) -> str:
             return "ok"
 

@@ -19,19 +19,125 @@ import pytest
 from azure.ai.agentserver.core.tasks import Task, TaskContext, task
 
 
+class TestSpec037NameRequired:
+    """Spec 037 #7 — ``name`` is a required, explicit, stable identity anchor.
+
+    The prior ``name or func.__qualname__`` fallback silently rebound the
+    recovery-routing identity whenever the function was renamed or moved, which
+    could orphan in-flight tasks. ``name`` is now required at decoration.
+    """
+
+    def test_task_parens_without_name_raises(self) -> None:
+        with pytest.raises(ValueError, match="name"):
+
+            @task()
+            async def my_task(ctx: TaskContext[str]) -> int:  # pragma: no cover
+                return 0
+
+    def test_task_whitespace_name_raises(self) -> None:
+        with pytest.raises(ValueError, match="name"):
+
+            @task(name="   ")
+            async def my_task(ctx: TaskContext[str]) -> int:  # pragma: no cover
+                return 0
+
+    def test_task_explicit_name_ok(self) -> None:
+        @task(name="explicit")
+        async def my_task(ctx: TaskContext[str]) -> int:
+            return 0
+
+        assert my_task.name == "explicit"
+
+    def test_multi_turn_without_name_raises(self) -> None:
+        from azure.ai.agentserver.core.tasks import multi_turn_task
+
+        with pytest.raises(ValueError, match="name"):
+
+            @multi_turn_task
+            async def my_chain(ctx: TaskContext[str]) -> int:  # pragma: no cover
+                return 0
+
+
+class TestSpec037TimeoutCap:
+    """Spec 037 #8 — per-turn timeout defaults to 1 day and is a hard 1-day
+    ceiling (fail-fast on a larger or negative value; not clamped).
+    """
+
+    def test_timeout_above_one_day_rejected(self) -> None:
+        from datetime import timedelta
+
+        with pytest.raises(ValueError, match="timeout"):
+
+            @task(name="t", timeout=timedelta(days=2))
+            async def my_task(ctx: TaskContext[str]) -> int:  # pragma: no cover
+                return 0
+
+    def test_timeout_negative_rejected(self) -> None:
+        from datetime import timedelta
+
+        with pytest.raises(ValueError, match="timeout"):
+
+            @task(name="t", timeout=timedelta(seconds=-1))
+            async def my_task(ctx: TaskContext[str]) -> int:  # pragma: no cover
+                return 0
+
+    def test_timeout_exactly_one_day_ok(self) -> None:
+        from datetime import timedelta
+
+        @task(name="t", timeout=timedelta(days=1))
+        async def my_task(ctx: TaskContext[str]) -> int:
+            return 0
+
+        assert my_task._opts.timeout == timedelta(days=1)
+
+    def test_unset_timeout_resolves_to_one_day(self) -> None:
+        from datetime import timedelta
+
+        from azure.ai.agentserver.core.tasks._decorator import _resolve_effective_timeout
+
+        assert _resolve_effective_timeout(None) == timedelta(days=1)
+        assert _resolve_effective_timeout(timedelta(seconds=30)) == timedelta(seconds=30)
+
+
+class TestSpec037InputIdValidation:
+    """Spec 037 #12 — a caller-supplied ``input_id`` is validated against the
+    same charset/length pattern as ``task_id``.
+    """
+
+    async def test_bad_input_id_rejected(self) -> None:
+        @task(name="t")
+        async def my_task(ctx: TaskContext[str]) -> int:  # pragma: no cover
+            return 0
+
+        with pytest.raises(ValueError, match="input_id"):
+            await my_task.start(task_id="t1", input="x", input_id="bad id with spaces")
+
+    async def test_valid_input_id_passes_validation(self) -> None:
+        # A ``caresp_...``-style id (as the responses layer supplies) satisfies
+        # the pattern; validation must not reject it. (No manager wired, so the
+        # call proceeds past validation and then fails on the missing manager —
+        # a ValueError from validation would fire BEFORE that.)
+        @task(name="t")
+        async def my_task(ctx: TaskContext[str]) -> int:  # pragma: no cover
+            return 0
+
+        with pytest.raises(Exception) as excinfo:
+            await my_task.start(task_id="t1", input="x", input_id="caresp_abc-123.def")
+        assert "input_id" not in str(excinfo.value)
+
+
 class TestTaskDecorator:
     """Tests for the @task decorator."""
 
     def test_bare_decorator(self) -> None:
-        """@task with no arguments produces a Task."""
+        """@task without an explicit name is rejected (Spec 037 #7 — name is a
+        required, stable recovery/identity anchor; no function-derived fallback).
+        """
+        with pytest.raises(ValueError, match="name"):
 
-        @task
-        async def my_task(ctx: TaskContext[str]) -> int:
-            return 42
-
-        assert isinstance(my_task, Task)
-        # Name includes class/method scope when defined inside a method
-        assert "my_task" in my_task.name
+            @task
+            async def my_task(ctx: TaskContext[str]) -> int:  # pragma: no cover
+                return 42
 
     def test_decorator_with_name(self) -> None:
         """@task(name=...) sets a custom name."""
@@ -59,14 +165,14 @@ class TestTaskDecorator:
         """@task rejects synchronous functions."""
         with pytest.raises(TypeError, match="async function"):
 
-            @task
+            @task(name="sync-fn")
             def sync_fn(ctx: TaskContext[str]) -> int:
                 return 1
 
     def test_rejects_non_callable(self) -> None:
         """@task(...) rejects non-callable objects."""
         with pytest.raises((TypeError, AttributeError)):
-            task(42)  # type: ignore[arg-type]
+            task(42, name="non-callable")  # type: ignore[arg-type]
 
     def test_stream_handler_factory_rejected_post_spec_017(self) -> None:
         """: ``stream_handler_factory=`` is REMOVED from
@@ -109,7 +215,7 @@ class TestTypeExtraction:
     def test_input_type_str(self) -> None:
         """Extracts str as Input type from TaskContext[str]."""
 
-        @task
+        @task(name="extract-input-str")
         async def my_task(ctx: TaskContext[str]) -> int:
             return 1
 
@@ -118,7 +224,7 @@ class TestTypeExtraction:
     def test_input_type_dict(self) -> None:
         """Extracts dict as Input type."""
 
-        @task
+        @task(name="extract-input-dict")
         async def my_task(ctx: TaskContext[dict]) -> str:
             return ""
 
@@ -127,7 +233,7 @@ class TestTypeExtraction:
     def test_output_type_int(self) -> None:
         """Extracts int as Output type from return annotation."""
 
-        @task
+        @task(name="extract-output-int")
         async def my_task(ctx: TaskContext[str]) -> int:
             return 1
 

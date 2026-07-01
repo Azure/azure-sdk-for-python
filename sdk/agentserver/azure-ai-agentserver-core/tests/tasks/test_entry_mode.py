@@ -48,7 +48,7 @@ class TestEntryMode:
         """First call to .run() produces entry_mode='fresh'."""
         observed_modes: list[str] = []
 
-        @task(title="test-fresh")
+        @task(name="test-fresh", title="test-fresh")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_modes.append(ctx.entry_mode)
             return "done"
@@ -66,7 +66,7 @@ class TestEntryMode:
         """Calling .run() on a suspended task produces entry_mode='resumed' with new input."""
         observed: list[tuple[str, str]] = []
 
-        @multi_turn_task(title="test-resume")
+        @multi_turn_task(name="test-resume", title="test-resume")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.input))
             return {"partial": True}
@@ -90,7 +90,7 @@ class TestEntryMode:
         """Calling .run() on a stale in_progress task produces entry_mode='recovered'."""
         observed: list[str] = []
 
-        @multi_turn_task(title="test-recover")
+        @multi_turn_task(name="test-recover", title="test-recover")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.entry_mode)
             return "recovered-ok"
@@ -130,7 +130,7 @@ class TestEntryMode:
     async def test_ignoring_entry_mode_works(self, tmp_path) -> None:
         """A function that never reads entry_mode still works fine."""
 
-        @task(title="test-ignore")
+        @task(name="test-ignore", title="test-ignore")
         async def my_task(ctx: TaskContext[str]) -> str:
             # Deliberately NOT reading ctx.entry_mode
             return f"processed: {ctx.input}"
@@ -248,7 +248,7 @@ class TestRecoveryRetryAttempt:
         """
         observed: list[tuple[str, int]] = []
 
-        @multi_turn_task(title="rec-attempt")
+        @multi_turn_task(name="rec-attempt", title="rec-attempt")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append((ctx.entry_mode, ctx.retry_attempt))
             return "done"
@@ -277,7 +277,7 @@ class TestRecoveryRetryAttempt:
         """
         observed: list[int] = []
 
-        @multi_turn_task(title="rec-no-bump")
+        @multi_turn_task(name="rec-no-bump", title="rec-no-bump")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return "ok"
@@ -369,7 +369,7 @@ class TestEntryModeV2Matrix:
     async def test_entry_mode_fresh_one_shot(self, tmp_path) -> None:
         observed_modes: list[str] = []
 
-        @task(title="fr063-fresh-one-shot")
+        @task(name="fr063-fresh-one-shot", title="fr063-fresh-one-shot")
         async def my_task(ctx: TaskContext[str]) -> str:
             observed_modes.append(ctx.entry_mode)
             return "done"

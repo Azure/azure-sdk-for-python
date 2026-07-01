@@ -299,7 +299,7 @@ async def test_task_run_translates_task_immutable_to_completed_conflict(tmp_path
         await _seed_task(provider, "hosted-immutable", "pending")
         provider.fail_once("update", "task_immutable", message="Completed tasks are immutable.")
 
-        @task(title="hosted-immutable")
+        @task(name="hosted-immutable", title="hosted-immutable")
         async def immutable_task(ctx: TaskContext[str]) -> str:
             return "unreachable"
 
@@ -321,7 +321,7 @@ async def test_task_already_exists_observes_status_for_public_conflict(tmp_path)
         provider.hide_first_get_for.add("hosted-create-race")
         provider.fail_once("create", "task_already_exists", message="Task already exists.")
 
-        @task(title="hosted-create-race")
+        @task(name="hosted-create-race", title="hosted-create-race")
         async def create_race_task(ctx: TaskContext[str]) -> str:
             return "unreachable"
 
@@ -343,7 +343,7 @@ async def test_invalid_request_translates_to_task_precondition_failed(tmp_path) 
         await _seed_task(provider, "hosted-invalid-request", "pending")
         provider.fail_once("update", "invalid_request", status_code=400, message="lease rule failed")
 
-        @task(title="hosted-invalid-request")
+        @task(name="hosted-invalid-request", title="hosted-invalid-request")
         async def invalid_request_task(ctx: TaskContext[str]) -> str:
             return "unreachable"
 
@@ -365,7 +365,7 @@ async def test_etag_mismatch_retries_without_exposing_hosted_conflict(tmp_path) 
         await _seed_task(provider, "hosted-etag-retry", "suspended")
         provider.fail_once("update", "etag_mismatch", status_code=412, message="ETag mismatch.")
 
-        @task(title="hosted-etag-retry")
+        @task(name="hosted-etag-retry", title="hosted-etag-retry")
         async def etag_retry_task(ctx: TaskContext[str]) -> str:
             return f"resumed:{ctx.input}"
 

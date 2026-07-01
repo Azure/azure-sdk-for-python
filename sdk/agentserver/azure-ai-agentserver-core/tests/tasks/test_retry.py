@@ -293,7 +293,7 @@ class TestRetryIntegration:
         """Task fails twice then succeeds on attempt 2."""
         call_log: list[int] = []
 
-        @task(title="retry-test", retry=RetryPolicy.exponential_backoff(max_attempts=3))
+        @task(name="retry-test", title="retry-test", retry=RetryPolicy.exponential_backoff(max_attempts=3))
         async def flaky(ctx: TaskContext[str]) -> str:
             call_log.append(ctx.retry_attempt)
             if ctx.retry_attempt < 2:
@@ -313,7 +313,11 @@ class TestRetryIntegration:
     async def test_retry_exhausted(self, tmp_path) -> None:
         """Task always fails — retries exhaust and TaskFailed is raised."""
 
-        @task(title="always-fail", retry=RetryPolicy(max_attempts=3, retry_on=(ValueError), jitter=False))
+        @task(
+            name="always-fail",
+            title="always-fail",
+            retry=RetryPolicy(max_attempts=3, retry_on=(ValueError), jitter=False),
+        )
         async def always_fail(ctx: TaskContext[str]) -> str:
             raise ValueError(f"boom on attempt {ctx.retry_attempt}")
 
@@ -333,7 +337,9 @@ class TestRetryIntegration:
         """Wrong exception type — fails immediately without retry."""
         attempts: list[int] = []
 
-        @task(title="wrong-exc", retry=RetryPolicy(max_attempts=5, retry_on=(ValueError), jitter=False))
+        @task(
+            name="wrong-exc", title="wrong-exc", retry=RetryPolicy(max_attempts=5, retry_on=(ValueError), jitter=False)
+        )
         async def wrong_exc(ctx: TaskContext[str]) -> str:
             attempts.append(ctx.retry_attempt)
             raise TypeError("not retryable")
@@ -443,7 +449,7 @@ class TestRetryAttemptResilience:
         """
         observed: list[int] = []
 
-        @multi_turn_task(title="recovered-retry-aware")
+        @multi_turn_task(name="recovered-retry-aware", title="recovered-retry-aware")
         async def handler(ctx: TaskContext[str]) -> str:
             observed.append(ctx.retry_attempt)
             return "ok"
