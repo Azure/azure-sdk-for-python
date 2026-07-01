@@ -472,7 +472,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
     async def output_item_mcp_approval_response(  # type: ignore[override]
         self,
         approval_request_id: str,
-        approve: bool = False,
+        approve: bool,
         *,
         reason: str | None = None,
     ) -> AsyncIterator[generated_models.ResponseStreamEvent]:

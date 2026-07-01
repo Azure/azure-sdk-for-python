@@ -1132,7 +1132,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def output_item_mcp_approval_response(
         self,
         approval_request_id: str,
-        approve: bool = False,
+        approve: bool,
         *,
         reason: str | None = None,
     ) -> Iterator[generated_models.ResponseStreamEvent]:
