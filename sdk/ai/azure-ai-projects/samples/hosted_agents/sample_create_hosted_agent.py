@@ -7,7 +7,8 @@
 """
 DESCRIPTION:
     This sample demonstrates CRUD operations for Hosted Agent versions
-    using the synchronous AIProjectClient.
+    using the synchronous AIProjectClient. It also invokes the hosted
+    agent via `responses.create`.
 
     This is the only hosted_agents sample that sets up agent identity RBAC
     via `ensure_agent_identity_rbac`.
@@ -84,3 +85,11 @@ with (
 
     fetched = project_client.agents.get_version(agent_name=agent_name, agent_version=created.version)
     print(f"Fetched hosted agent version: {fetched.version}, status: {fetched.status}")
+
+    user_input = "Good morning!"
+    with project_client.get_openai_client(agent_name=agent_name) as openai_client:
+        response = openai_client.responses.create(
+            input=user_input,
+        )
+    print(f"Sent: {user_input}")
+    print(f"Response output: {response.output_text}")

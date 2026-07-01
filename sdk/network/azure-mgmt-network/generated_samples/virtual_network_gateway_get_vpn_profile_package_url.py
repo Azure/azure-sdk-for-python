@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/VirtualNetworkGatewayGetVpnProfilePackageUrl.json
+# x-ms-original-file: 2025-07-01/VirtualNetworkGatewayGetVpnProfilePackageUrl.json
 if __name__ == "__main__":
     main()

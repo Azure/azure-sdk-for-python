@@ -15,6 +15,7 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import PyTorch as RestPy
 from azure.ai.ml._restclient.v2023_04_01_preview.models import Ray as RestRay
 from azure.ai.ml._restclient.v2023_04_01_preview.models import TensorFlow as RestTensorFlow
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import DistributionType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -64,6 +65,12 @@ class DistributionConfiguration(RestTranslatableMixin):
             data = obj
         else:
             data = obj.as_dict()
+
+        # The distribution may arrive as a msrest model (snake_case ``as_dict()``), a shared
+        # arm_ml_service hybrid model (camelCase ``as_dict()``), or a component dict (snake_case with a
+        # ``type`` key). Normalize every key to snake_case so the discriminator lookup and the
+        # ``klass(**data)`` construction below work regardless of the source casing.
+        data = {camel_to_snake(key): value for key, value in data.items()}
 
         type_str = data.pop("distribution_type", None) or data.pop("type", None)
         klass = DISTRIBUTION_TYPE_MAP[type_str.lower()]

@@ -1,4 +1,5 @@
 import json
+from datetime import timedelta
 
 import yaml
 import pytest
@@ -6,14 +7,14 @@ import pytest
 from azure.ai.ml.entities._monitoring.schedule import MonitorSchedule
 from azure.ai.ml.entities._schedule.schedule import Schedule
 from azure.ai.ml.entities._load_functions import load_schedule
-from azure.ai.ml._restclient.v2023_06_01_preview.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.arm_ml_service.models import Schedule as RestSchedule
 
 
 def validate_to_from_rest_translation(json_path: str, yaml_path: str) -> None:
     with open(json_path, "r") as f:
         loaded_json = json.load(f)
 
-    deserialized_schedule = RestSchedule.deserialize(loaded_json)
+    deserialized_schedule = RestSchedule._deserialize(loaded_json, [])
 
     monitor_schedule = load_schedule(yaml_path)
 
@@ -110,5 +111,7 @@ def override_frequency_interval_and_check_window_size(
         signal.production_data.data_window.lookback_window_size = None
 
     to_rest_schedule = schedule._to_rest_object()
+    # arm_ml_service hybrid models keep ``window_size`` as a timedelta (the wire serializes it to
+    # ``P{days}D``); navigate the camelCase monitor definition and compare the in-memory duration.
     for signal in to_rest_schedule.properties.action.monitor_definition.signals.values():
-        assert signal.production_data.window_size == f"P{expected_days}D"
+        assert signal.production_data.window_size == timedelta(days=expected_days)

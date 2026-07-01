@@ -69,10 +69,12 @@ Advanced usage of the `to_llm_input` helper -- converts structured `AnalysisResu
 #### `sample_create_analyzer`
 Creates custom analyzer with field schema for domain-specific extraction.
 - Key concepts: Field types (string, number, date, object, array), extraction methods (extract, generate, classify)
+- **Next step:** to run this workflow on your own folder of documents (validate schema → create → batch test → stdout summary), use the [`cu-sdk-author-analyzer`](../cu-sdk-author-analyzer/SKILL.md) skill.
 
 #### `sample_create_classifier`
 Creates classifier to categorize documents (Loan_Application, Invoice, Bank_Statement).
 - Key concepts: Content categories, segmentation, document routing
+- **Next step:** to run this workflow on your own mixed-document packets, use the [`cu-sdk-author-analyzer-classify-route`](../cu-sdk-author-analyzer-classify-route/SKILL.md) skill.
 
 #### `sample_create_analyzer_with_labels`
 Builds analyzers with training labels (labeled data from Azure Blob Storage).

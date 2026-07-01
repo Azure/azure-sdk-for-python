@@ -21,7 +21,8 @@ containers, and downstream storage services.
 **Request headers** (set by the platform or client):
 
 - :data:`REQUEST_ID` — client-provided correlation ID (echoed back on the response).
-- :data:`USER_ISOLATION_KEY` / :data:`CHAT_ISOLATION_KEY` — platform isolation keys.
+- :data:`USER_ID` — platform per-user (global, cross-agent) identity header.
+- :data:`FOUNDRY_CALL_ID` — platform per-request opaque call identifier (protocol ``2.0.0``).
 - :data:`CLIENT_HEADER_PREFIX` — prefix for pass-through client headers.
 - :data:`TRACEPARENT` — W3C Trace Context propagation header.
 - :data:`CLIENT_REQUEST_ID` — Azure SDK client correlation header.
@@ -50,16 +51,28 @@ SESSION_ID: str = "x-agent-session-id"
 Set on responses by protocol-specific session resolution logic.
 """
 
-# -- Platform isolation -----------------------------------------------------
+# -- Platform identity ------------------------------------------------------
 
-USER_ISOLATION_KEY: str = "x-agent-user-isolation-key"
-"""The ``x-agent-user-isolation-key`` header — the platform-injected
-partition key for user-private state.
+USER_ID: str = "x-agent-user-id"
+"""The ``x-agent-user-id`` header — the platform-injected global,
+cross-agent partition key for per-user state.
+
+The same user yields the same value regardless of which agent they
+interact with.  Use it as the primary partition key for per-user data
+(profiles, preferences, OAuth tokens, memory).  Present on protocol
+requests (not health probes); absent during local development.
 """
 
-CHAT_ISOLATION_KEY: str = "x-agent-chat-isolation-key"
-"""The ``x-agent-chat-isolation-key`` header — the platform-injected
-partition key for conversation-scoped state.
+FOUNDRY_CALL_ID: str = "x-agent-foundry-call-id"
+"""The ``x-agent-foundry-call-id`` header — the platform-minted opaque
+per-request call identifier.
+
+Present only when the agent definition declares container protocol
+version ``2.0.0``.  The container **MUST** forward this value on all
+outbound calls to Foundry platform services (Storage, Toolboxes/MCP
+proxy, A2A) so that 1P services can resolve the server-side-stored
+caller context.  The container never parses it.  Absent under protocol
+version ``1.0.0`` or local development.
 """
 
 # -- Client pass-through ---------------------------------------------------

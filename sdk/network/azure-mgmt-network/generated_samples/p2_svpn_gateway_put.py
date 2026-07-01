@@ -82,6 +82,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/P2SVpnGatewayPut.json
+# x-ms-original-file: 2025-07-01/P2SVpnGatewayPut.json
 if __name__ == "__main__":
     main()

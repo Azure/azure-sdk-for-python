@@ -363,6 +363,7 @@
     "oauthlib",
     "objs",
     "odata",
+    "octocat",
     "oidc",
     "onboarded",
     "onmicrosoft",
@@ -2159,6 +2160,10 @@
     {
       "filename": "sdk/planetarycomputer/azure-planetarycomputer/**",
       "words": ["topo", "haline", "Aproperty", "pygen"]
+    },
+    {
+      "filename": ".github/**",
+      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily"]
     },
     {
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
