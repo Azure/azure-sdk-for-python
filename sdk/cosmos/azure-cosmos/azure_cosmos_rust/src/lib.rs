@@ -29,15 +29,15 @@
 //!         idempotent.
 //!
 //!   * `create_item(handle, prepared) -> (status, sub_status,
-//!                                         headers, body)`
+//!                                         headers, body, diagnostics)`
 //!         Resolves the container, builds a typed
 //!         `CosmosOperation::create_item`, runs it on the Tokio
 //!         runtime with the GIL released, and converts the
-//!         `CosmosResponse` into a 4-tuple matching the Python
+//!         `CosmosResponse` into a tuple matching the Python
 //!         `BackendResponse` dataclass.
 //!
 //!   * `upsert_item(handle, prepared) -> (status, sub_status,
-//!                                         headers, body)`
+//!                                         headers, body, diagnostics)`
 //!         Same input/output shape as `create_item` (write-with-body:
 //!         the document id rides inside `body_bytes`). The only
 //!         difference is the operation kind —
@@ -51,7 +51,7 @@
 //!         `custom_headers`.
 //!
 //!   * `replace_item(handle, prepared) -> (status, sub_status,
-//!                                          headers, body)`
+//!                                          headers, body, diagnostics)`
 //!         Carries a body like `create_item` / `upsert_item`, but the id
 //!         of the document to overwrite comes from `PreparedRequest.item_id`
 //!         (not the body). Maps to `OperationType::Replace`: an existing
@@ -61,7 +61,7 @@
 //!         `custom_headers`.
 //!
 //!   * `delete_item(handle, prepared) -> (status, sub_status,
-//!                                         headers, body)`
+//!                                         headers, body, diagnostics)`
 //!         Same shape as `create_item` but builds a
 //!         `CosmosOperation::delete_item` with no body. The document
 //!         id rides on `PreparedRequest.item_id` because there is no
@@ -69,7 +69,7 @@
 //!         HTTP 204 with an empty body.
 //!
 //!   * `read_item(handle, prepared) -> (status, sub_status,
-//!                                       headers, body)`
+//!                                       headers, body, diagnostics)`
 //!         Same input shape as `delete_item` (bodiless GET, document
 //!         id on `PreparedRequest.item_id`). On success returns HTTP
 //!         200 with the document JSON. Conditional reads
@@ -83,7 +83,7 @@
 //!         through `custom_headers` like any other per-request header.
 //!
 //!   * `patch_item(handle, prepared) -> (status, sub_status,
-//!                                        headers, body)`
+//!                                        headers, body, diagnostics)`
 //!         Carries a body like the write-with-body ops, but the body is
 //!         the `PatchInstructions` payload (`{"operations": [...]}`) rather
 //!         than a document, and the URL id comes from

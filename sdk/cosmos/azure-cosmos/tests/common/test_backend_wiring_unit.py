@@ -276,6 +276,33 @@ def test_rust_backend_dispatches_to_binding(monkeypatch):
     assert resp.body == b'{"id":"x"}'
 
 
+def test_rust_backend_accepts_optional_diagnostics_from_binding(monkeypatch):
+    """The backend accepts diagnostics returned by the binding."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.create_item.return_value = (
+        201,
+        0,
+        {"etag": "v1"},
+        b'{"id":"x"}',
+        "activity=abc duration=8ms requests=1 charge=1RU status=201",
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedRequest(
+        op="create_item",
+        container_link="dbs/d/colls/c",
+        body_bytes=b'{"id":"x"}',
+        partition_key_header='["a"]',
+        headers={},
+    )
+    resp = backend.execute(prepared)
+
+    assert resp.status_code == 201
+    assert resp.diagnostics == "activity=abc duration=8ms requests=1 charge=1RU status=201"
+
+
 def test_rust_backend_returns_structured_http_failure_tuple(monkeypatch):
     """A failed request (like a 409) comes back as a normal response with its
     status, sub-status, headers, and body -- not as an error."""
@@ -436,6 +463,37 @@ def test_async_rust_backend_dispatches_to_binding(monkeypatch):
         fake_module.create_item_async.assert_awaited_once_with("handle-1", prepared)
         assert resp.status_code == 201
         assert resp.body == b'{"id":"x"}'
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_accepts_optional_diagnostics_from_binding(monkeypatch):
+    """Async version: diagnostics returned by the binding are preserved."""
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.create_item_async = AsyncMock(
+        return_value=(
+            201,
+            0,
+            {"etag": "v1"},
+            b'{"id":"x"}',
+            "activity=abc duration=7ms requests=1 charge=1RU status=201",
+        )
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+
+    async def _run():
+        backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+        prepared = PreparedRequest(
+            op="create_item",
+            container_link="dbs/d/colls/c",
+            body_bytes=b'{"id":"x"}',
+            partition_key_header='["a"]',
+            headers={},
+        )
+        resp = await backend.execute(prepared)
+        assert resp.status_code == 201
+        assert resp.diagnostics == "activity=abc duration=7ms requests=1 charge=1RU status=201"
+
     asyncio.run(_run())
 
 
@@ -964,10 +1022,10 @@ def test_async_rust_backend_passes_client_config_to_init_client(monkeypatch):
 
 
 class _ProxyGlobalRuntimeFakeModule:
-    """Test double for the binding that enforces a process-global proxy policy.
+    """Fake Rust module to test process-global proxy policy.
 
-    Mirrors the runtime contract in the Rust binding: the first init_client call
-    locks the process proxy policy; later explicit conflicting values fail.
+    The first client sets the proxy policy for the process. Later clients must
+    use the same policy or leave it unset.
     """
 
     def __init__(self):
@@ -991,7 +1049,7 @@ class _ProxyGlobalRuntimeFakeModule:
 
 
 def test_rust_backend_conflicting_proxy_allowed_raises_at_construction(monkeypatch):
-    """Sync path: conflicting explicit proxy policy fails deterministically at construction."""
+    """Sync path: conflicting proxy policy fails at client construction."""
     fake_module = _ProxyGlobalRuntimeFakeModule()
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
@@ -1029,7 +1087,7 @@ def test_rust_backend_unset_proxy_allowed_does_not_conflict(monkeypatch):
 
 
 def test_async_rust_backend_conflicting_proxy_allowed_raises_at_construction(monkeypatch):
-    """Async path: conflicting explicit proxy policy fails deterministically at construction."""
+    """Async path: conflicting proxy policy fails at client construction."""
     fake_module = _ProxyGlobalRuntimeFakeModule()
     monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
 

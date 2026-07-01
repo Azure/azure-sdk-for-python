@@ -55,10 +55,26 @@ pub(crate) struct RuntimeContext {
 /// The handle `init_client` returns is the `(endpoint, credential, config)` key, so
 /// clients that match on all three share one `CosmosDriver` and clients that differ
 /// get their own. This map is the only per-account cache, since the driver runtime
-/// builds a fresh driver on every `create_driver`. The count keeps the shared driver
-/// alive until the last user closes: `init_client` adds one, `close_client` drops
-/// one, and the driver is evicted at zero. Without it, closing one of two sharers
-/// would evict the driver the other still needs.
+/// builds a fresh driver on every `create_driver`.
+///
+/// All three parts are required -- this is the minimum safe key, not a tuning choice:
+///
+/// * **credential** -- a driver bakes in the auth it signs requests with, so sharing
+///   across credentials would sign one client's requests with another's credential.
+/// * **config** -- a driver bakes in its settings (preferred/excluded regions,
+///   consistency, throttling, hedging, user-agent suffix) at build time, so a client
+///   with different settings would silently inherit another's instead of its own.
+/// * **endpoint** -- different accounts always need different drivers.
+///
+/// A coarser key (endpoint-only, or endpoint+credential) is therefore unsafe: it
+/// would misuse a credential or drop config settings. The cost is more drivers -- more
+/// connection pools and memory -- when a process deliberately varies credential or
+/// config; a normal app (one credential, one config per account) still gets one driver
+/// per account. Sharing only happens when all three match.
+///
+/// The count keeps the shared driver alive until the last user closes: `init_client`
+/// adds one, `close_client` drops one, and the driver is evicted at zero. Without it,
+/// closing one of two sharers would evict the driver the other still needs.
 pub(crate) struct DriverEntry {
     pub(crate) driver: Arc<CosmosDriver>,
     refcount: usize,

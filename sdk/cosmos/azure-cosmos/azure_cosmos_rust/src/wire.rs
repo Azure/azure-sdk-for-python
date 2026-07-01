@@ -3,7 +3,7 @@
 
 //! The shared request/reply translation between Python and the driver: the
 //! singleton-operation runner, the header-to-typed-field translation, the
-//! `BackendResponse` 4-tuple builders, and the partition-key / container-link
+//! `BackendResponse` tuple builders, and the partition-key / container-link
 //! parsers. Every family's operations route through here.
 
 use std::collections::HashMap;
@@ -97,7 +97,7 @@ pub(crate) fn operation_count() -> u64 {
 // then on the Tokio runtime with the GIL released resolve the container, build
 // the operation, apply the activity-id / session-token headers, run it, and
 // turn the CosmosResponse (or a CosmosError that carries a wire response) into
-// the BackendResponse 4-tuple. Only three things vary per op, so each entry
+// the BackendResponse tuple. Only three things vary per op, so each entry
 // point passes them in: the item id, whether no_response applies (writes only),
 // and a closure that builds the operation from the resolved ItemReference.
 
@@ -144,7 +144,7 @@ pub(crate) fn run_item_operation<'py>(
 /// but instead of blocking a worker thread it spawns the driver future on the
 /// shared runtime (the same one the driver was built on, so its connection pool
 /// and timers stay on that runtime) and hands the asyncio event loop an awaitable
-/// that resolves to the `BackendResponse` 4-tuple. Awaiting it uses no Python
+/// that resolves to the `BackendResponse` tuple. Awaiting it uses no Python
 /// thread per in-flight call.
 /// Aborts the spawned driver task if this guard is dropped before the task has
 /// finished. The bridged Python awaitable owns one of these; when asyncio cancels
@@ -292,8 +292,8 @@ async fn run_singleton_future(
 }
 
 /// Turn the driver's `Result<CosmosResponse, CosmosError>` into the
-/// `BackendResponse` 4-tuple. A CosmosError carrying a wire response (404 / 409
-/// / 412 / ...) becomes the same 4-tuple as success so the Python parser raises
+/// `BackendResponse` tuple. A CosmosError carrying a wire response (404 / 409
+/// / 412 / ...) becomes the same tuple shape as success so the Python parser raises
 /// the right typed exception; only a response-less error (transport failure,
 /// client-side validation) becomes a `DriverTransportError`, which the Python
 /// backend maps to azure-core's `ServiceResponseError`.
@@ -586,13 +586,21 @@ fn backend_response_tuple<'py>(
     sub_status: i64,
     response_headers: Bound<'py, PyDict>,
     body: &[u8],
+    diagnostics: Option<&str>,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    // Python backend tuple contract:
+    // (status_code, sub_status, headers, body, diagnostics_or_none).
     let body_py = PyBytes::new_bound(py, body);
+    let diagnostics_py = match diagnostics {
+        Some(value) => value.into_py(py),
+        None => py.None().into_py(py),
+    };
     let items: Vec<PyObject> = vec![
         status_code.into_py(py),
         sub_status.into_py(py),
         response_headers.into_any().unbind(),
         body_py.into_any().unbind(),
+        diagnostics_py,
     ];
     Ok(PyTuple::new_bound(py, &items))
 }
@@ -605,6 +613,7 @@ fn backend_response_tuple_from_success<'py>(
     let status_code = u16::from(status.status_code()) as i64;
     // SubStatusCode wraps a u16; use ``.value()`` to read it.
     let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
+    let diagnostics = response.diagnostics().to_string();
 
     // Copy the driver's typed CosmosResponseHeaders fields into a Python
     // dict keyed by the actual `x-ms-...` wire-header names. This is what
@@ -617,7 +626,14 @@ fn backend_response_tuple_from_success<'py>(
     write_response_headers(&response_headers, driver_headers)?;
 
     let body_vec = response_body_to_vec(response.into_body());
-    backend_response_tuple(py, status_code, sub_status, response_headers, &body_vec)
+    backend_response_tuple(
+        py,
+        status_code,
+        sub_status,
+        response_headers,
+        &body_vec,
+        Some(diagnostics.as_str()),
+    )
 }
 
 /// Map the driver's typed `ResponseBody` to a flat `Vec<u8>` suitable for the
@@ -637,7 +653,7 @@ fn response_body_to_vec(body: ResponseBody) -> Vec<u8> {
     }
 }
 
-/// Build a `BackendResponse` 4-tuple from a driver `CosmosError` that
+/// Build a `BackendResponse` tuple from a driver `CosmosError` that
 /// carries a wire response.
 ///
 /// Returns `Ok(None)` when the error has no wire response (transport
@@ -655,6 +671,7 @@ fn backend_response_tuple_from_cosmos_error<'py>(
     let status = response.status();
     let status_code = u16::from(status.status_code()) as i64;
     let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
+    let diagnostics = response.diagnostics().to_string();
 
     let response_headers = PyDict::new_bound(py);
     write_response_headers(&response_headers, response.headers())?;
@@ -666,6 +683,7 @@ fn backend_response_tuple_from_cosmos_error<'py>(
         sub_status,
         response_headers,
         &body_vec,
+        Some(diagnostics.as_str()),
     )?))
 }
 

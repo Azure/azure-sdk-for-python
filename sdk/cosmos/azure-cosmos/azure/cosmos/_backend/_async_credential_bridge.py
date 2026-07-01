@@ -21,6 +21,11 @@ Terminology used throughout this module:
   actually runs the credential's coroutine. The thread and the loop are different
   things: the thread is *where* work runs, the loop is *what* runs it. Here one
   background thread hosts exactly one event loop.
+* **app event loop** -- the asyncio loop your own program already runs (the one your
+  async ``CosmosClient`` code runs on). The bridge **never** uses this loop; it always
+  creates and uses its own (above), on its own background thread. Keeping the two
+  separate is deliberate: a token fetch can never block, or be blocked by, your
+  application's event loop.
 
 The 5,000-foot view -- unlike the engine-isolation guard, this module is not optional;
 real features stop working without it. The rust driver's ``get_token`` is synchronous:
@@ -46,9 +51,26 @@ the credential you passed is async, it wraps it in this bridge and hands the bri
 the driver in the credential's place. The driver calls the bridge's synchronous
 ``get_token`` from a worker thread; the bridge sends the credential's coroutine to the
 background thread, blocks the worker thread until the token comes back, and returns the
-credential's own token object unchanged. The two threads don't deadlock because only
-one runs Python at a time: while the worker thread sits blocked, it gives up its turn,
-so the background thread is free to run the coroutine and produce the token.
+credential's own token object unchanged. The two threads that meet here -- the driver's
+worker thread (which blocks) and the bridge's background thread (which runs the
+coroutine) -- don't deadlock because only one runs Python at a time: while the worker
+thread sits blocked it releases the GIL, so the background thread is free to run the
+coroutine and produce the token.
+
+The app event loop is a separate thread and is never touched. In an async program there
+are up to three threads in play: (1) the **app event loop thread**, running your own
+``CosmosClient`` code; (2) the driver's **worker thread**, calling ``get_token``; and
+(3) the bridge's **background thread**, running the credential coroutine on the bridge's
+own event loop. Because the bridge uses its own loop -- not the app loop -- one client
+fetching a token can run at the same time as another client using the app loop for
+something else: they are on different threads with different loops and do not contend,
+and the blocking wait in ``get_token`` releases the GIL, so the app loop is never
+starved. Several rust clients sharing one bridge can fetch tokens concurrently too --
+each coroutine is scheduled onto the single bridge loop and each worker thread blocks on
+its own result. The one edge to know: if the *same* credential object is used both here
+(on the bridge loop) and directly on your app loop at once, its internal HTTP session is
+touched from two loops -- normally safe, since ``azure.identity.aio`` credentials
+serialize their token fetches, but worth being aware of.
 
 What this module owns -- and does not. It owns its background thread and tears it down
 cleanly on close: it cancels any in-flight token fetch and shuts the loop's async
@@ -137,10 +159,14 @@ class AsyncTokenCredentialBridge:
     """Wrap an async credential so the driver's synchronous ``get_token`` works.
 
     The bridge picks the credential's coroutine token method once: ``get_token``
-    if that is the coroutine, otherwise ``get_token_info``. Both return a token
-    object with ``.token`` and ``.expires_on``, which is all the driver reads. The
-    event loop and its thread start on the first ``get_token`` call, so a bridge
-    that is never used starts no thread.
+    if that is the coroutine, otherwise ``get_token_info``. ``get_token`` is the
+    classic ``TokenCredential`` method and returns a simple ``AccessToken``;
+    ``get_token_info`` is the newer ``SupportsTokenInfo`` method and returns an
+    ``AccessTokenInfo`` that also carries richer request context (for example CAE
+    claim challenges and proof-of-possession). Either way the bridge reads only
+    ``.token`` and ``.expires_on`` -- all the driver needs -- and forwards any extra
+    keyword arguments through to the credential. The event loop and its thread start
+    on the first ``get_token`` call, so a bridge that is never used starts no thread.
 
     The bridge never closes the wrapped credential -- the customer owns its
     lifetime, just as on the synchronous path. Closing the bridge stops only its
@@ -249,8 +275,11 @@ class AsyncTokenCredentialBridge:
         self._credential = async_credential
         self._token_timeout = token_timeout
         self._join_timeout = _join_timeout_from_env() if join_timeout is None else join_timeout
-        # Pick the coroutine token method once. Prefer get_token; fall back to
-        # get_token_info for a credential that only offers that one. If neither is
+        # Pick the coroutine token method once. Prefer get_token (classic
+        # TokenCredential, returns AccessToken); fall back to get_token_info (newer
+        # SupportsTokenInfo, returns AccessTokenInfo with richer context) for a
+        # credential that only offers that one. Either way we read just .token /
+        # .expires_on. If neither is
         # a coroutine (the factory only wraps async credentials, so this is not
         # expected) default to get_token so any failure shows up clearly at call
         # time.
@@ -331,11 +360,12 @@ class AsyncTokenCredentialBridge:
     def get_token(self, *scopes: Any, **kwargs: Any) -> Any:
         """Synchronously return the access token for ``scopes``.
 
-        Runs the credential's coroutine on the bridge's event loop and waits for
-        it, then returns the credential's own token object (``.token`` /
-        ``.expires_on``) unchanged. The driver calls this from a worker thread
-        when it needs a token to attach to a request it is about to send; waiting
-        here frees the background thread to run.
+        Runs the credential's coroutine on the bridge's **own** event loop (never
+        the app's event loop) and waits for it, then returns the credential's own
+        token object (``.token`` / ``.expires_on``) unchanged. The driver calls this
+        from a worker thread when it needs a token to attach to a request it is about
+        to send; the worker thread blocks here, but its wait releases the GIL, so both
+        the bridge's background thread and the app's event loop keep running.
 
         The wait honors ``token_timeout`` when one is set; otherwise it blocks
         like the synchronous path and relies on the driver's deadlines. Either

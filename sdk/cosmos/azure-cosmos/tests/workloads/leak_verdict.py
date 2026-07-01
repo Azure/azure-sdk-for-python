@@ -257,10 +257,19 @@ def main():
     # ---- provenance gate (enforced) ----
     grp = {}                                  # (config_backend, op) -> [(elapsed, rss)]
     labels = {}                               # (config_backend, op) -> {runtime_backend: count}
+    err_docs = {}                             # (config_backend, op) -> count of error documents
     for r in rows:
         bk = r.get("config_backend")
         op = r.get("operation")
         key = (bk, op)
+        # Error documents are a separate doc type: perf_reporter writes them with an
+        # error_message and none of the measurement fields -- no memory_bytes,
+        # elapsed_seconds, or runtime_backend. They must stay out of the provenance
+        # gate, or their missing runtime_backend reads as a None "mismatch" and fails
+        # a clean run. Tally them instead, so a real error surge is still visible.
+        if r.get("memory_bytes") is None:
+            err_docs[key] = err_docs.get(key, 0) + 1
+            continue
         grp.setdefault(key, []).append((r.get("elapsed_seconds"), r.get("memory_bytes")))
         labels.setdefault(key, {})
         rb = r.get("runtime_backend")
@@ -277,6 +286,12 @@ def main():
             print(f"  FAIL {bk:11s} {op:11s} runtime_backend={seen} (expected all '{exp}')")
     if not gate_fail:
         print("  OK -- every row's runtime_backend matches its config_backend label.")
+    if err_docs:
+        total_err = sum(err_docs.values())
+        print(f"  NOTE: {total_err} error document(s) excluded from the gate/trend "
+              f"(separate doc type, no measurement fields):")
+        for (bk, op), n in sorted(err_docs.items()):
+            print(f"    {bk:11s} {op:11s} error_docs={n}")
     print("GATE:", "FAIL" if gate_fail else "PASS",
           "(None/blank/mismatched runtime_backend rows indicate provenance not proven)")
 

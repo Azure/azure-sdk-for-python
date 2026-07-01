@@ -3,9 +3,31 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Per-process guard, in the python wrapper, for the Rust backend's per-account
-engine isolation.
+"""Per-process guard, in the python wrapper, for the Rust backend's per-engine
+isolation, where an *engine* is one live rust driver keyed by the triple
+``(endpoint, credential, config)`` -- not by account alone.
 
+Three layers are named consistently throughout this module:
+
+* **python wrapper** -- the pure-Python SDK (this guard, ``_shared.py``, ``rust.py``).
+  This guard runs here, on the caller's own python-wrapper thread, at client
+  open/close.
+* **binding layer** -- the Rust extension (``runtime.rs``) the wrapper calls into. It
+  owns the real engine cache, the per-engine refcount, and lazy build/teardown.
+* **rust driver layer** -- the engine itself: one in-process ``CosmosDriver`` on the
+  shared Tokio runtime, holding the connection pools and rust-driver worker threads.
+  It is an in-process object, *not* a separate OS process.
+
+Two terms used everywhere below:
+
+* *Engine identity* is the triple ``(endpoint, credential, config)``: two clients
+  share one engine only when all three match. The account (endpoint) is just the
+  top-level bucket; within it each distinct ``(credential, config)`` pair is its own
+  engine.
+* *Config* is the ``PreparedClientConfig`` -- the subset of ``CosmosClient`` settings
+  that change engine behavior (preferred/excluded locations, consistency level,
+  throttling retry, hedging threshold, user-agent suffix, proxy_allowed). It compares
+  by value; ``None`` means untuned. The binding fingerprints it from its ``repr()``.
 
 The 50,000-foot view -- this module is a *detector, not a fixer*. It has no effect on
 how engines are actually created or freed; that all lives in the binding. So if this

@@ -29,7 +29,7 @@ After a successful build, this is what Python can do:
 from azure.cosmos import _rust
 
 handle = _rust.init_client("https://localhost:8081", "<master key>")
-status, sub_status, headers, body = _rust.create_item(handle, prepared)
+status, sub_status, headers, body, diagnostics = _rust.create_item(handle, prepared)
 ```
 
 Two functions, one module attribute. They get there because `src/lib.rs`
@@ -44,12 +44,13 @@ What each one does:
   the `CosmosDriver` for that endpoint, and caches it. Returns the
   endpoint string back to Python as an opaque "handle." Subsequent calls
   with the same endpoint reuse the cached driver.
-- **`create_item(handle, prepared) -> (status, sub_status, headers, body)`**
+- **`create_item(handle, prepared) -> (status, sub_status, headers, body, diagnostics)`**
   — `prepared` is a Python `PreparedRequest` dataclass the SDK builds
   before calling in. The function pulls its fields out one at a time
   (`getattr` + `extract`), constructs a typed driver operation, runs it
   on the cached Tokio runtime with the GIL released, and returns the
-  driver's response as a 4-tuple the Python parser unpacks.
+  driver's response as a tuple the Python parser unpacks (`diagnostics` can be
+  `None` for older bindings and test doubles).
 - **`__version__`** — string, set from the crate's Cargo version at
   compile time. Useful for "which build of the binding am I running?"
 
@@ -174,9 +175,8 @@ Reading `lib.rs` top-to-bottom you'll see, in this order:
   `extension-module` and `abi3-py39` actually do, why a `.dll` ends up
   named `.pyd`): `../docs/PYTHON_RUST_PACKAGING.md`.
 - **Who calls this crate from the Python side**: `../azure/cosmos/_backend/rust.py`
-  builds the `PreparedRequest` and parses the 4-tuple. Reading it
+  builds the `PreparedRequest` and parses the backend tuple. Reading it
   alongside `lib.rs` shows exactly what every parameter and every return
   value carries.
 - **Why a parity test is failing on the Rust path**: `../docs/V5_PARITY_AUDIT.md`
   enumerates every known driver-side gap with its tracking ID.
-

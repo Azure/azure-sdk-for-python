@@ -30,18 +30,6 @@ The core-python choice is represented by having no backend at all: the factory
 returns ``None`` and the SDK runs its legacy in-place code instead, kept only for
 testing and comparison.
 
-The package is split by job. ``base`` holds the ``CosmosBackend`` abstract class
-every backend implements -- its three dispatch methods are ``execute`` (the one
-implemented today) plus the reserved ``execute_pages`` and ``execute_batch``,
-which raise ``NotImplementedError`` until the feed and batch operations are
-added -- plus the frozen ``PreparedRequest`` / ``BackendResponse`` data classes
-(and the reserved ``PreparedQuery`` / ``QueryPage`` / ``PreparedBatch`` /
-``BatchResponse``) and the operation-kind constants. ``factory``
-picks the backend once when a client is built, preferring the ``_backend=``
-constructor kwarg, then the ``COSMOS_BACKEND`` environment variable, then the
-default of core-python. ``constants`` holds the backend names, and ``rust`` is
-the Rust backend itself.
-
 The async versions of all of this live in ``azure.cosmos.aio._backend``.
 """
 

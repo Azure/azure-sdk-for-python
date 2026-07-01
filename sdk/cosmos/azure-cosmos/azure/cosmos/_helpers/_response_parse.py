@@ -21,7 +21,9 @@
 
 In all paths the headers are also written to
 ``client_connection.last_response_headers`` (the one documented side
-effect, matching the legacy behaviour).
+effect, matching the legacy behaviour). When the Rust backend provides
+diagnostics, they are surfaced through the synthetic header
+``x-ms-cosmos-sdk-diagnostics`` on the same header map.
 
 This module is used when a backend returns a real ``BackendResponse``
 (today: ``RustBackend``). The "core-python" path bypasses it entirely
@@ -48,6 +50,7 @@ from ._format_ru import format_ru_charge
 # Matches ``http_constants.HttpHeaders.RequestCharge``; inlined to avoid
 # an extra import for a single string.
 _REQUEST_CHARGE_HEADER = "x-ms-request-charge"
+_DIAGNOSTICS_HEADER = "x-ms-cosmos-sdk-diagnostics"
 
 
 def parse_backend_response(
@@ -78,6 +81,7 @@ def parse_backend_response(
     """
     headers = _normalise_headers(response)
     _normalise_request_charge_header(headers)
+    _attach_diagnostics_header(headers, response.diagnostics)
 
     if client_connection is not None:
         client_connection.last_response_headers = headers
@@ -149,3 +153,13 @@ def _normalise_request_charge_header(headers: CaseInsensitiveDict) -> None:
     if raw is None or isinstance(raw, str):
         return
     headers[_REQUEST_CHARGE_HEADER] = format_ru_charge(float(raw))
+
+
+def _attach_diagnostics_header(headers: CaseInsensitiveDict, diagnostics: Any) -> None:
+    """Expose backend diagnostics through response headers for parity paths."""
+    if diagnostics is None:
+        return
+    if isinstance(diagnostics, str):
+        headers[_DIAGNOSTICS_HEADER] = diagnostics
+        return
+    headers[_DIAGNOSTICS_HEADER] = str(diagnostics)

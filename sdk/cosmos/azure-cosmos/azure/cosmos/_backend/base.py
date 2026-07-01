@@ -485,17 +485,21 @@ def build_backend_response(
     sub_status: Any,
     headers: Optional[Mapping[str, Any]],
     body: Any,
+    diagnostics: Any = None,
 ) -> BackendResponse:
-    """Wrap the binding's ``(status, sub_status, headers, body)`` tuple as a
-    ``BackendResponse``. Shared by both backends so the conversion stays one
-    definition.
+    """Wrap the binding's response tuple as a ``BackendResponse``.
+
+    The binding currently returns ``(status, sub_status, headers, body)`` plus
+    an optional fifth diagnostics payload. The diagnostics element is optional
+    so older test doubles (or older bindings) that still return a 4-tuple keep
+    working unchanged.
     """
     return BackendResponse(
         status_code=int(status_code),
         sub_status=int(sub_status),
         headers=normalize_response_headers(headers),
         body=bytes(body) if body else b"",
-        diagnostics=None,
+        diagnostics=diagnostics,
     )
 
 

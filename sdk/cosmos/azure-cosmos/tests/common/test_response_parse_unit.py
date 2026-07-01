@@ -52,13 +52,14 @@ from azure.cosmos.exceptions import (
 )
 
 
-def _make_response(*, status_code=200, sub_status=0, headers=None, body=b""):
+def _make_response(*, status_code=200, sub_status=0, headers=None, body=b"", diagnostics=None):
     """Tiny ``BackendResponse`` factory so the test bodies stay readable."""
     return BackendResponse(
         status_code=status_code,
         sub_status=sub_status,
         headers=CaseInsensitiveDict(headers or {}),
         body=body,
+        diagnostics=diagnostics,
     )
 
 
@@ -146,6 +147,28 @@ class TestSuccessWithBody(unittest.TestCase):
     def test_no_response_hook_supplied_does_not_raise(self):
         """The ``response_hook`` parameter is optional; omitting it must not raise."""
         parse_backend_response(_make_response(status_code=201, body=b'{"id":"x"}'))
+
+    def test_backend_diagnostics_are_exposed_via_response_headers(self):
+        """Diagnostics payload from backend is surfaced via response headers and hooks."""
+        cc = _FakeClientConnection()
+        captured = []
+
+        def hook(headers, parsed):
+            captured.append((headers, parsed))
+
+        result = parse_backend_response(
+            _make_response(
+                status_code=201,
+                body=b'{"id":"x"}',
+                diagnostics={"summary": "diag-line"},
+            ),
+            client_connection=cc,
+            response_hook=hook,
+        )
+        response_headers = result.get_response_headers()
+        self.assertEqual(response_headers["x-ms-cosmos-sdk-diagnostics"], "{'summary': 'diag-line'}")
+        self.assertEqual(cc.last_response_headers["x-ms-cosmos-sdk-diagnostics"], "{'summary': 'diag-line'}")
+        self.assertEqual(captured[0][0]["x-ms-cosmos-sdk-diagnostics"], "{'summary': 'diag-line'}")
 
 
 # ---------------------------------------------------------------------------
@@ -313,6 +336,31 @@ class TestFailurePath(unittest.TestCase):
             )
         self.assertEqual(cc.last_response_headers["x-ms-activity-id"], "act-429")
         self.assertEqual(cc.last_response_headers["x-ms-retry-after-ms"], "200")
+
+    def test_backend_diagnostics_are_available_on_failure_headers(self):
+        """Failure responses keep diagnostics on both exception headers and last-response headers."""
+        cc = _FakeClientConnection()
+        try:
+            parse_backend_response(
+                _make_response(
+                    status_code=409,
+                    body=b'{"message":"dup"}',
+                    diagnostics="activity=abc duration=8ms requests=1 charge=1RU status=409",
+                ),
+                client_connection=cc,
+            )
+        except CosmosResourceExistsError as exc:
+            response = cast(Any, exc.response)
+            self.assertEqual(
+                response.headers["x-ms-cosmos-sdk-diagnostics"],
+                "activity=abc duration=8ms requests=1 charge=1RU status=409",
+            )
+        else:
+            self.fail("expected CosmosResourceExistsError")
+        self.assertEqual(
+            cc.last_response_headers["x-ms-cosmos-sdk-diagnostics"],
+            "activity=abc duration=8ms requests=1 charge=1RU status=409",
+        )
 
 
 # ---------------------------------------------------------------------------
