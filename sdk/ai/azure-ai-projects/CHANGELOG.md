@@ -9,9 +9,11 @@
 * Agent code methods are now stable. This includes `.agents.create_version_from_code` and `.agents.download_code` methods. They have moved from the `.beta.agents` subclient to the `.agents` subclient.
 * Toolboxes methods are now stable. They have moved from `.beta.toolboxes` subclient to the `.toolboxes` subclient.
 * Two new methods `.agents.enable` and `.agents.disable`.
-* New Agent tool `ReminderPreviewTool` and toolbox tool `ReminderPreviewToolboxTool`.
-* Optional argument `include_drafts` added to method `.agents.list_versions`.
-* Optional property `draft` added to class `AgentVersionDetails`.
+* New toolbox tool `ReminderPreviewToolboxTool`.
+* New concept of Draft Agent Version:
+  * Optional boolean argument `draft` added to method `.agents.create_version`.
+  * Optional boolean property `draft` added to class `AgentVersionDetails`.
+  * Optional boolean argument `include_drafts` added to method `.agents.list_versions`.
 * Optional property `defer_loading` added to a few Agent tool classes.
 * Optional property `supported_evaluation_levels` added to class `EvaluatorVersion`.
 * Class `BotServiceTenantAuthorizationScheme` added (derived from `AgentEndpointAuthorizationScheme`).
