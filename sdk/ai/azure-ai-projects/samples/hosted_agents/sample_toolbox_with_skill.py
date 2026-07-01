@@ -87,7 +87,7 @@ TOOLBOX_NAME = "toolbox_with_skill"
 def main() -> None:
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
         project_client.get_openai_client(agent_name=agent_name) as hosted_openai_client,
     ):
 
