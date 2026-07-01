@@ -1,5 +1,6 @@
 import argparse
 from functools import partial
+import json
 import logging
 import multiprocessing
 import os
@@ -7,7 +8,7 @@ from pathlib import Path
 import sys
 import time
 
-from typing import Any
+from typing import Any, Optional
 from .package_utils import (
     change_log_generate,
     extract_breaking_change,
@@ -121,7 +122,21 @@ def log_failed_message(message: str, enable_log_error: bool):
         _LOGGER.warning(message)
 
 
-def main(package_path: Path, *, enable_changelog: bool = True, package_result: dict = {}, timeout: int = 900):
+def main(
+    package_path: Path,
+    *,
+    enable_changelog: bool = True,
+    package_result: dict = {},
+    timeout: int = 900,
+    output_json: Optional[Path] = None,
+):
+    """Generate SDK changes for a package.
+
+    By default the generated changelog is written into ``CHANGELOG.md``. When
+    ``output_json`` is provided, run in SDK change detector mode instead: write
+    {"changes": ..., "hasBreakingChange": ...} to that
+    file and do NOT modify ``CHANGELOG.md``.
+    """
 
     package_name = package_path.name
     # When package_result is provided, it means this function is called in pipeline and we should not log error
@@ -141,6 +156,19 @@ def main(package_path: Path, *, enable_changelog: bool = True, package_result: d
             package_result["version"] = last_version
 
         _LOGGER.info(f"[PACKAGE]({package_name})[CHANGELOG]:{md_output}")
+
+        # SDK change detector mode: write JSON result and skip editing CHANGELOG.md
+        if output_json is not None:
+            result = {
+                "changes": md_output,
+                "hasBreakingChange": "Breaking Changes" in md_output,
+            }
+            output_json = Path(output_json)
+            output_json.parent.mkdir(parents=True, exist_ok=True)
+            with open(output_json, "w", encoding="utf-8") as f:
+                json.dump(result, f, indent=2)
+            _LOGGER.info(f"[PACKAGE]({package_name})[SDK CHANGES] written to {output_json}: {json.dumps(result)}")
+            return
 
         # edit CHANGELOG.md with generated content
         version_line = "## 0.0.0 (UnReleased)\n\n"
@@ -201,6 +229,16 @@ def generate_main():
         help="Absolute path to the package directory (e.g. c:/azure-sdk-for-python/sdk/<service>/<package_name>).",
     )
     parser.add_argument(
+        "--output-json",
+        required=False,
+        default=None,
+        help=(
+            "Path to a JSON output file. When provided, run in SDK change detector mode: "
+            'generate the SDK changes, write {"changes": ..., "hasBreakingChange": ...} to this '
+            "file and do NOT modify CHANGELOG.md. When omitted, update CHANGELOG.md as usual."
+        ),
+    )
+    parser.add_argument(
         "--timeout",
         type=int,
         default=900,
@@ -221,7 +259,8 @@ def generate_main():
     if not package_path.is_absolute():
         raise ValueError("--package-path must be an absolute path")
 
-    main(package_path, timeout=args.timeout)
+    output_json = Path(args.output_json) if args.output_json else None
+    main(package_path, timeout=args.timeout, output_json=output_json)
 
 
 if __name__ == "__main__":

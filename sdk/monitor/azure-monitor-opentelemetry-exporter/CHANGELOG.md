@@ -1,11 +1,23 @@
 # Release History
 
-## 1.0.0b54 (Unreleased)
+## 1.0.0b55 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b54 (2026-06-30)
 
 ### Features Added
 - Add `StatsbeatManager.add_metric_callback` to let SDKs/distros add their own metric
   observations to built-in statsbeat metrics
   ([#47363](https://github.com/Azure/azure-sdk-for-python/pull/47363))
+- Implement RFC Retry-After header parsing for 429 responses per [spec](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/822)
+  ([#47601](https://github.com/Azure/azure-sdk-for-python/pull/47601))
 
 ### Breaking Changes
 - Customer Facing SDKStats: Renamed metric dimension attributes from snake_case/dotted to camelCase
@@ -13,9 +25,6 @@
   `drop.code` -> `dropCode`, `drop.reason` -> `dropReason`, `retry.code` -> `retryCode`, `retry.reason` -> `retryReason`)
   ([#47469](https://github.com/Azure/azure-sdk-for-python/pull/47469))
 
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.0.0b53 (2026-06-08)
 

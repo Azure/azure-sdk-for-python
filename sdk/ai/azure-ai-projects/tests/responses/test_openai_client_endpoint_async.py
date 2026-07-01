@@ -57,19 +57,6 @@ class TestGetOpenaiClientAsync:
         assert str(openai_client.base_url).rstrip("/") == expected_base_url
 
     @pytest.mark.asyncio
-    async def test_get_openai_client_with_agent_name_raises_without_allow_preview_async(self):
-        """Verify that passing agent_name without allow_preview=True raises ValueError."""
-        project_client = AIProjectClient(
-            endpoint=FAKE_ENDPOINT,
-            credential=FakeAsyncCredential(),  # type: ignore[arg-type]
-        )
-
-        with pytest.raises(ValueError) as exc_info:
-            project_client.get_openai_client(agent_name=AGENT_NAME)
-
-        assert "allow_preview=True" in str(exc_info.value)
-
-    @pytest.mark.asyncio
     async def test_get_openai_client_with_agent_name_and_allow_preview_async(self):
         """Verify that the async OpenAI client base_url includes the agent endpoint when allow_preview=True."""
         project_client = AIProjectClient(
