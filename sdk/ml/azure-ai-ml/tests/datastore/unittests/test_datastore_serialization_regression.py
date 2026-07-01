@@ -22,6 +22,7 @@ import pytest
 from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
 from azure.ai.ml.entities._credentials import (
     AccountKeyConfiguration,
+    CertificateConfiguration,
     ServicePrincipalConfiguration,
 )
 from azure.ai.ml.entities._datastore.adls_gen1 import AzureDataLakeGen1Datastore
@@ -80,6 +81,46 @@ class TestDatastoreSerializationRegression:
         )
         wire = _serializes_via_arm_operation(ds._to_rest_object())
         assert wire["properties"]["datastoreType"] == "AzureDataLakeGen1"
+
+    def test_adls_gen2_certificate_datastore_body_serializes(self) -> None:
+        # Certificate credentials exercise CertificateConfiguration._to_datastore_rest_object, whose
+        # ``resource_url`` field is a distinct arm wire name (the old msrest model called it
+        # ``resource_uri``). Guards the cert-auth create/update path.
+        ds = AzureDataLakeGen2Datastore(
+            name="ds",
+            account_name="acct",
+            filesystem="fs",
+            credentials=CertificateConfiguration(
+                tenant_id="t",
+                client_id="c",
+                thumbprint="tp",
+                certificate="cert",
+                authority_url="https://login.microsoftonline.com",
+                resource_url="https://storage.azure.com/",
+            ),
+        )
+        wire = _serializes_via_arm_operation(ds._to_rest_object())
+        creds = wire["properties"]["credentials"]
+        assert creds["credentialsType"] == "Certificate"
+        assert creds["resourceUrl"] == "https://storage.azure.com/"
+
+    def test_adls_gen1_certificate_datastore_body_serializes(self) -> None:
+        ds = AzureDataLakeGen1Datastore(
+            name="ds",
+            store_name="store",
+            credentials=CertificateConfiguration(
+                tenant_id="t",
+                client_id="c",
+                thumbprint="tp",
+                certificate="cert",
+                authority_url="https://login.microsoftonline.com",
+                resource_url="https://datalake.azure.net/",
+            ),
+        )
+        wire = _serializes_via_arm_operation(ds._to_rest_object())
+        creds = wire["properties"]["credentials"]
+        assert creds["credentialsType"] == "Certificate"
+        assert creds["resourceUrl"] == "https://datalake.azure.net/"
 
     def test_one_lake_datastore_body_serializes(self) -> None:
         from azure.ai.ml.entities._datastore.one_lake import LakeHouseArtifact
