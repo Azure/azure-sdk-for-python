@@ -508,7 +508,7 @@ class PipelineComponent(Component):
         if self._intellectual_property:
             # hack while full pass through supported is worked on for IPP fields
             component.pop("intellectual_property")
-            component["intellectualProperty"] = self._intellectual_property._to_rest_object().serialize()
+            component["intellectualProperty"] = self._intellectual_property._to_rest_object()
         properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,

@@ -10,7 +10,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     ModelVersionDefaultDeploymentTemplate,
     ModelVersionDetails,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     FlavorData,
     ModelContainer,
     ModelVersion,

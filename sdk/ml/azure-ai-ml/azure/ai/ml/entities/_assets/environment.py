@@ -11,8 +11,8 @@ from typing import Any, Dict, Optional, Union
 import yaml  # type: ignore[import]
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BuildContext as RestBuildContext
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import BuildContext as RestBuildContext
+from azure.ai.ml._restclient.arm_ml_service.models import (
     EnvironmentContainer,
     EnvironmentVersion,
     EnvironmentVersionProperties,
@@ -252,15 +252,21 @@ class Environment(Asset, LocalizableMixin):
             creation_context=(
                 SystemData._from_rest_object(env_rest_object.system_data) if env_rest_object.system_data else None
             ),
-            is_anonymous=rest_env_version.is_anonymous,
+            is_anonymous=rest_env_version.is_anonymous or False,
             image=rest_env_version.image,
             os_type=rest_env_version.os_type,
             inference_config=rest_env_version.inference_config,
             build=BuildContext._from_rest_object(rest_env_version.build) if rest_env_version.build else None,
             properties=rest_env_version.properties,
             intellectual_property=(
-                IntellectualProperty._from_rest_object(rest_env_version.intellectual_property)
-                if rest_env_version.intellectual_property
+                IntellectualProperty._from_rest_object(_ip)
+                if (
+                    _ip := (
+                        rest_env_version.get("intellectualProperty")
+                        if hasattr(rest_env_version, "get")
+                        else getattr(rest_env_version, "intellectual_property", None)
+                    )
+                )
                 else None
             ),
         )

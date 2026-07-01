@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     DataContainer,
     DataContainerProperties,
     DataType,
@@ -174,9 +174,16 @@ class Data(Artifact):
                 is_archived=False,
                 properties=self.properties,
                 data_uri=self.path,
-                auto_delete_setting=self.auto_delete_setting,
             )
-            if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
+            # ``autoDeleteSetting`` exists on the 2023-04 wire contract but was dropped from the
+            # arm_ml_service (2025-12) model; preserve it via wire-key assignment (JSON-direct).
+            if self.auto_delete_setting is not None:
+                auto_delete = self.auto_delete_setting
+                data_version_details["autoDeleteSetting"] = (
+                    auto_delete._to_rest_object() if hasattr(auto_delete, "_to_rest_object") else auto_delete
+                )
+            # ``referenced_uris`` only exists on MLTable data versions.
+            if "referenced_uris" in getattr(data_version_details, "_attr_to_rest_field", {}):
                 data_version_details.referenced_uris = self._referenced_uris
             return DataVersionBase(properties=data_version_details)
 

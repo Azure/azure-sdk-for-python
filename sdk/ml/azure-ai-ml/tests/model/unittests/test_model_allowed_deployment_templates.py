@@ -13,7 +13,7 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     ModelVersionData,
     ModelVersionDetails,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelVersion, ModelVersionProperties
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion, ModelVersionProperties
 from azure.ai.ml.entities import Model
 from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
