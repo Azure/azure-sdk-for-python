@@ -4,7 +4,7 @@ license: MIT
 metadata:
   version: "1.0.0"
   distribution: local
-description: "Emit the azure-ai-projects Python SDK from TypeSpec, apply post-emitter fixes, update changelog, and create a Pull Request. WHEN: \"emit SDK from TypeSpec\", \"generate azure-ai-projects SDK\", \"update azure-ai-projects from TypeSpec\", \"emit from TypeSpec\", \"regenerate azure-ai-projects\". DO NOT USE FOR: other Azure SDK packages, manual code edits without TypeSpec. INVOKES: azsdk-common-generate-sdk-locally skill, post-emitter-fixes.cmd script, git commands, gh CLI for PR creation."
+description: "Emit the azure-ai-projects Python SDK from TypeSpec, apply post-emitter fixes, and create a Pull Request. WHEN: \"emit SDK from TypeSpec\", \"generate azure-ai-projects SDK\", \"update azure-ai-projects from TypeSpec\", \"emit from TypeSpec\", \"regenerate azure-ai-projects\". DO NOT USE FOR: other Azure SDK packages, manual code edits without TypeSpec. INVOKES: PostEmitter.ps1 script, git commands, gh CLI for PR creation."
 compatibility:
   requires: "azure-sdk-mcp server, local azure-sdk-for-python clone, git, gh CLI"
 ---
@@ -16,10 +16,6 @@ applying post-emitter fixes, updating the changelog, installing package from sou
 
 **Working directory:** `sdk/ai/azure-ai-projects`
 
-**Skills:** This workflow relies on skills defined under `.github/skills/` at the root of the repository. Use those skills for SDK generation, building, changelog updates, and other SDK lifecycle operations instead of running commands directly. In particular:
-
-- **`azsdk-common-generate-sdk-locally`** – For generating SDK from TypeSpec, building, running checks/tests, updating changelog, metadata, and version.
-
 ---
 
 ## Step 1: Gather information from the user
@@ -30,11 +26,11 @@ Ask the user the following questions **one at a time**, waiting for each answer 
 
 Ask the user to choose **one** of the following two options for the target topic branch:
 
-1. **Create a new topic branch (with default branch name)**  – Create a new topic branch for the emitted changes. If selected, this default branch name will be used "<github-userid>/<emit-from-typespec-DD-MM-HH-MM>", where `github-userid` is the user's GitHub ID and `DD-MM-HHMM` is the current date-time using date, month, hour and minute. For example, if the GitHub ID is "dargilco" and the current date and time is May 1st, 2026 at 8:13am, the default branch name would be `dargilco/emit-from-typespec-01-05-0813`. This should be the default option, and the default branch name should be displayed. If you press enter without typing anything, this option will be selected.
+1. **Create a new topic branch (with default branch name)**  – Create a new topic branch for the emitted changes. If selected, this default branch name will be used "<github-userid>/<emit-from-typespec-DD-MM-HH-MM>", where `github-userid` is the user's personal GitHub ID (not the Microsoft Enterprise Managed User (EMU) account!) and `DD-MM-HHMM` is the current date-time using date, month, hour and minute. For example, if the GitHub ID is "dargilco" and the current date and time is May 1st, 2026 at 8:13am, the default branch name would be `dargilco/emit-from-typespec-01-05-0813`. This should be the default option, and the default branch name should be displayed. If you press enter without typing anything, this option will be selected.
 
-2. **Create a new topic branch (branch name given by user)** - Ask the user for the branch name. Mention that a common format is "<github-userid>/<work-title>". If the user enters a branch name `feature/azure-ai-projects/2.2.0` then stop and report that they cannot emit directly to the current feature branch.
+2. **Create a new topic branch (branch name given by user)** - Ask the user for the branch name. Mention that a common format is "<github-userid>/<work-title>". If the user enters a branch name `feature/azure-ai-projects/2.3.0` then stop and report that they cannot emit directly to the current feature branch.
 
-3. **Emit to current branch** – Emit directly to the current branch without creating a new topic branch. This is not common, but may be necessary if the user is re-running this workflow because of a previous failure, where the topic branch was already created. If the current branch is named `feature/azure-ai-projects/2.2.0` then stop and report that they cannot emit directly to the current feature branch.
+3. **Emit to current branch** – Emit directly to the current branch without creating a new topic branch. This is not common, but may be necessary if the user is re-running this workflow because of a previous failure, where the topic branch was already created. If the current branch is named `feature/azure-ai-projects/2.3.0` then stop and report that they cannot emit directly to the current feature branch.
 
 ### 1b. TypeSpec source
 
@@ -42,10 +38,9 @@ Ask the user to choose **one** of the following three options for the TypeSpec s
 
 1. **Latest commit on `feature/foundry-release`** – Automatically find the latest commit to the `feature/foundry-release` branch in [Azure/azure-rest-api-specs](https://github.com/Azure/azure-rest-api-specs) that touched files under `specification/ai-foundry/data-plane/Foundry`, and use that commit hash. This should be the default option. If you press enter without typing anything, this option will be selected.
 
-2. **Local TypeSpec folder** – Emit from a local clone of the [azure-rest-api-specs](https://github.com/Azure/azure-rest-api-specs) repository. If selected, ask for the **full folder path** to the TypeSpec project. This is the folder ending with `\specification\ai-foundry\data-plane\Foundry`. If it does not end with that string, stop and report the error to the user. Do not continue.
+2. **Local TypeSpec folder** – Emit from a local clone of the [azure-rest-api-specs](https://github.com/Azure/azure-rest-api-specs) repository. If selected, ask for the **full folder path** to the TypeSpec project. This is the folder ending with `\specification\ai-foundry\data-plane\Foundry\src\sdk-python-js-azure-ai-projects`. If it does not end with that string, stop and report the error to the user. Do not continue.
 
 3. **TypeSpec commit hash** – Emit from a specific commit in the [azure-rest-api-specs](https://github.com/Azure/azure-rest-api-specs) repository. If selected, ask for the **full commit SHA** (40 characters).
-
 
 ---
 
@@ -76,27 +71,22 @@ Replace `<topic-branch>` with the name provided by the user in Step 1a.
 
 ## Step 4: Emit SDK from TypeSpec
 
-Use the **`azsdk-common-generate-sdk-locally`** skill to generate the SDK code. The skill knows how to invoke `azsdk_package_generate_code` and related MCP tools.
+If you are emitting from latest commit or a given commit number, edit file `tsp-location.yaml` to update the full hash commit number, then in the folder `sdk/ai/azure-ai-projects` run the command: `tsp-client update --debug`
 
-Provide the skill with the TypeSpec source selected by the user. With is either:
-
-- **Local folder:** Pass the local spec repo path for local generation. Or,
-- **Commit hash:** Update `commit:` in `tsp-location.yaml` to the full SHA first, then invoke the skill for generation.
+If you are emitting from a local TypeSpec folder, do not edit the file `tsp-location.yaml`. Run the command: `tsp-client update --debug --local-spec-repo <local-folder-path>`, where `<local-folder-path>` is the full path to the local TypeSpec folder ending with `specification\ai-foundry\data-plane\Foundry\src\sdk-python-js-azure-ai-projects`.
 
 Note:
 - You are only allowed to use the `tsp-client update` command. Do not use any of the other `tsp-client` commands.
-- If you are generating from local TypeSpec folder, do not edit the file `tsp-location.yaml`. Leave it as is. It should not be used by the emitter.
-- If you are generating from local TypeSpec folder, make sure that the local folder path you provide `tsp-client update --local-spec-repo` ends with `specification\ai-foundry\data-plane\Foundry`.
 - **If the generation fails**, stop and report the error to the user. Do not continue.
 
 ---
 
-## Step 5: Revert changes to file pyproject.toml
+## Step 5: Revert changes to files pyproject.toml and MANIFEST.in
 
-After the emit, there will be changes to `pyproject.toml` that are not needed. Revert any changes to `pyproject.toml` by running:
+After the emit, there will be changes to `pyproject.toml` and `MANIFEST.in` that are not needed. Revert any changes to these files by running:
 
 ```
-git restore pyproject.toml
+git restore pyproject.toml MANIFEST.in
 ```
 
 ---
@@ -117,13 +107,9 @@ git push -u origin <topic-branch>
 
 ## Step 7: Run post-emitter fixes
 
-After a successful emit, run the post-emitter fix script located in the `sdk/ai/azure-ai-projects` folder:
+After a successful emit, run the PowerShell script named `PostEmitter.ps1` located in the `sdk/ai/azure-ai-projects` folder.
 
-```
-post-emitter-fixes.cmd
-```
-
-This script applies azure-ai-projects-specific corrections to the emitted code (restores `pyproject.toml`, fixes enum names, patches Sphinx doc-string issues, and runs `black` formatting).
+This script applies azure-ai-projects specific corrections to the emitted code (restores `pyproject.toml`, fixes enum names, patches Sphinx doc-string issues, and runs `black` formatting).
 
 **If the script fails**, stop and report the error to the user. Do not continue. Do not attempt to analyze the script failures and fix them with Copilot. The script should be fixed by the engineering team if it is not working.
 
@@ -174,14 +160,21 @@ In the folder `sdk\ai\azure-ai-projects`, run `pip install -e .` to install the 
 
 ---
 
-## Step 12: Update CHANGELOG.md
+## Step 12: Run `apiview-stub-generator` to update api.md and api.metadata.yml files
 
-Use the **`azsdk-common-generate-sdk-locally`** skill's changelog capability (`azsdk_package_update_changelog_content`) to update `CHANGELOG.md` in the `sdk/ai/azure-ai-projects` folder with a summary of changes from the TypeSpec emit. Some guidelines to follow:
-* Start by examining the public SDK API surface of the latest released version of the azure-ai-projects package. The source code for this version can be found in the Main branch of the `azure-sdk-for-python` repository, in the folder `sdk\ai\azure-ai-projects`. 
-* Then compare it to the public SDK API surface of current version in this topic branch. 
-* Look at the existing change log from the latest version (if exists) and edit or add to it to capture all the changes you see. If a change log does not exist for the current version at the top of `CHANGELOG.md`, create a new one.
-* If a new method was added, there is no need to add the list of all new classes that define the inputs and output of the method. It's enough to mention that the new method was added.
-* Show the user the proposed changelog entry and ask for confirmation or edits before saving.
+In the folder `sdk\ai\azure-ai-projects`, run the following command:
+
+```
+azpysdk apistub .
+```
+
+This will update the `api.md` and `api.metadata.yml` files under in local folder.
+
+If it fails, stop and do not continue. If succeeded, do the following cleanup and continue to the next step:
+
+```
+rmdir /s /q build
+```
 
 ---
 

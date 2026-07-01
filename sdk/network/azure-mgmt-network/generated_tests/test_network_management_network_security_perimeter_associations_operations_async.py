@@ -26,7 +26,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAssociationsOperationsAsync(A
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             association_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -60,7 +60,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAssociationsOperationsAsync(A
                     },
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -75,7 +75,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAssociationsOperationsAsync(A
                 resource_group_name=resource_group.name,
                 network_security_perimeter_name="str",
                 association_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -88,7 +88,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAssociationsOperationsAsync(A
         response = self.client.network_security_perimeter_associations.list(
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -102,7 +102,7 @@ class TestNetworkManagementNetworkSecurityPerimeterAssociationsOperationsAsync(A
             network_security_perimeter_name="str",
             association_name="str",
             parameters={},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
             content_type="str",
         )
 

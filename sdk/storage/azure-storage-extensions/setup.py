@@ -4,71 +4,44 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
+# This file remains for two pieces of config that setuptools cannot yet
+# express declaratively in pyproject.toml without opting into experimental
+# config:
+#   1. The limited-API C extension(s) — [tool.setuptools.ext-modules] is
+#      still experimental.
+#   2. The abi3 wheel tag (py_limited_api) — the equivalent
+#      [tool.distutils.bdist_wheel] table is also still experimental.
+# This file can be removed once both experimental gates are dropped in
+# https://github.com/pypa/setuptools/blob/84ed5913724df5a12dc804e1d5efe12508e706d2/setuptools/config/pyprojecttoml.py#L135
+
 import re
+from pathlib import Path
+
 from setuptools import setup, Extension
-from wheel.bdist_wheel import bdist_wheel
-
-
-class bdist_wheel_abi3(bdist_wheel):
-    """Override bdist_wheel tag behavior to add abi3 tag."""
-
-    def get_tag(self):
-        python, abi, plat = super().get_tag()
-
-        if python.startswith("cp"):
-            return python, "abi3", plat
-        return python, abi, plat
-
 
 PACKAGE_NAME = "azure-storage-extensions"
-PACKAGE_PPRINT_NAME = "Azure Storage Extensions"
 
-package_folder_path = PACKAGE_NAME.replace("-", "/")
+# `name` and `version` are declared in pyproject.toml (version dynamically via
+# [tool.setuptools.dynamic]). They are repeated in the setup() call below only
+# because doc-warden's README verification parses setup.py and requires both
+# kwargs to be present. The version is read from _version.py rather than
+# imported so it works under doc-warden's AST exec as well as a normal build;
+# both run with the working directory set to the package root.
+version_text = Path("azure", "storage", "extensions", "checksums", "_version.py").read_text()
+version = re.search(r'VERSION = "(.*?)"', version_text).group(1)
 
-# Version extraction inspired from 'requests'
-with open(os.path.join(package_folder_path, "checksums", "_version.py"), "r") as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
-
-if not version:
-    raise RuntimeError("Cannot find version information")
 
 setup(
     name=PACKAGE_NAME,
     version=version,
-    description=PACKAGE_PPRINT_NAME,
-    long_description=open("README.md", "r", encoding="utf-8").read(),
-    long_description_content_type="text/markdown",
-    license="MIT",
-    author="Microsoft Corporation",
-    author_email="ascl@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensions",
-    keywords="azure, azure sdk",
-    classifiers=[
-        "Development Status :: 4 - Beta",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
-        "Programming Language :: Python :: 3.12",
-        "Programming Language :: Python :: 3.13",
-        "Programming Language :: Python :: 3.14",
-        "License :: OSI Approved :: MIT License",
-    ],
-    zip_safe=False,
-    python_requires=">=3.10",
-    packages=[
-        "azure.storage.extensions.checksums",
-    ],
     ext_package="azure.storage.extensions.checksums",
     ext_modules=[
         Extension(
             "crc64",
-            [os.path.join(package_folder_path, "checksums", "crc64", "crc64module.c")],
-            define_macros=[("Py_LIMITED_API", "3")],
+            ["azure/storage/extensions/checksums/crc64/crc64module.c"],
+            define_macros=[("Py_LIMITED_API", "0x030A0000")],
             py_limited_api=True,
         ),
     ],
-    cmdclass={"bdist_wheel": bdist_wheel_abi3},
+    options={"bdist_wheel": {"py_limited_api": "cp310"}},
 )
