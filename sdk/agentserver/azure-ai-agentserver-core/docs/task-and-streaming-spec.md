@@ -814,8 +814,24 @@ retry behavior for handler-raised exceptions.
 | `jitter` | `True` | Add randomized jitter to delays. |
 | `retry_on` | `None` (all exceptions) | Tuple of exception types to retry; others propagate. A bare exception class is accepted as a single-element tuple. |
 
-Presets: `exponential_backoff()`, `fixed_delay(delay)`,
-`linear_backoff()`, `no_retry()`.
+**Hard caps (normative, fail-fast).** `RetryPolicy(...)` rejects a misconfiguration at
+construction (raises, does NOT clamp) so a task turn cannot retry unboundedly:
+
+- `max_attempts` must be **1–10** (inclusive; counts the first try). `> 10` → `ValueError`.
+- `max_delay` must be **0 – 1 hour**. `> 1 hour` → `ValueError`.
+- `initial_delay` / `max_delay` must be `>= 0`; `max_attempts >= 1`; `backoff_coefficient >= 1.0`;
+  `max_delay >= initial_delay`. Zero delays are valid ("retry immediately").
+
+**Preset values (normative).** The bundled presets — available both as
+`RetryPolicy.<preset>(...)` classmethods and as module-level `tasks.<preset>(...)` wrappers with
+identical zero-argument defaults (mirrored field-for-field by the .NET port) — are:
+
+| Preset | `max_attempts` | `initial_delay` | `max_delay` | `backoff_coefficient` | `jitter` |
+|---|---|---|---|---|---|
+| `exponential_backoff()` | `3` | `1 s` | `60 s` | `2.0` | `True` |
+| `fixed_delay()` | `3` | `5 s` | `5 s` | `1.0` | `False` |
+| `linear_backoff()` | `5` | `1 s` | `60 s` | `1.0` (additive) | `False` |
+| `no_retry()` | `1` | `0 s` | `0 s` | `1.0` | `False` |
 
 Semantics:
 

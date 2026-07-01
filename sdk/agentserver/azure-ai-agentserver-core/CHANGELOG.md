@@ -9,6 +9,7 @@
 
 ### Other Changes
 
+- `RetryPolicy` now enforces hard caps at construction (fail-fast, not clamped): `max_attempts` must be 1–10 and `max_delay` must be 0–1 hour; out-of-range values raise `ValueError`. The zero-argument module-level presets (`exponential_backoff()`, `fixed_delay()`, `linear_backoff()`) now match their `RetryPolicy.<preset>()` classmethod values so retry cadence is identical across the Python and .NET implementations.
 - Added `azure-core` as a dependency, and a `hosted` optional-dependencies extra (pulling in `azure-identity`) for hosted-agent deployments.
 - `resolve_graceful_shutdown_timeout()` now honors the `AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS` environment variable, letting operators shorten shutdown so task checkpoints can flush before long-running requests finish.
 - Added diagnostic logging (logger `azure.ai.agentserver.streaming`) to the event-streaming subsystem covering stream creation/deletion, crash-recovery rehydration of file-backed streams, and corruption/lock-contention failures, to aid debugging in production.
