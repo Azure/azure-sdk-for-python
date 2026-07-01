@@ -2678,9 +2678,10 @@ A process-level singleton that owns the lifecycle of all SDK-bundled
 ```
 streams.use_in_memory_live()                                    # configurator (sync)
 streams.use_in_memory_replay(cursor_fn=..., ttl_seconds=...)    # configurator (sync)
-streams.use_file_backed_replay(storage_dir=..., cursor_fn=...,
-                               ttl_seconds=..., serializer=...,
-                               deserializer=...)                # configurator (sync)
+streams.use_file_backed_replay(cursor_fn=...)                   # configurator (sync)
+#   all kwargs optional: storage_dir defaults to
+#   resolve_state_subdir("streams"); ttl_seconds defaults to 600 (10 min);
+#   serializer/deserializer default to JSON. Explicit args override.
 
 await streams.get(id)                  # raises NotFound if never registered
 await streams.get_or_create(id)        # atomic per id

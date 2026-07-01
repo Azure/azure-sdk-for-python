@@ -9,6 +9,7 @@
 
 ### Other Changes
 
+- `streams.use_file_backed_replay(...)` now has ergonomic defaults so the common case is a single call supplying only `cursor_fn`: `storage_dir` defaults to `resolve_state_subdir("streams")` (a `streams` directory under the agent-server state root, alongside `tasks`), `ttl_seconds` defaults to 600 (10 minutes), and serialization defaults to JSON.
 - File-backed replay streams now sanitize the stream id before using it as an on-disk filename: well-formed ids (`[A-Za-z0-9._-]`, no `.`/`..` segment) are used verbatim, and any id containing a path separator or other unsafe character is SHA-256 hash-encoded to an `h_<hex>` filename so it can never escape the storage directory or collide with another stream. The file-backed terminal sentinel is now written as `{"__terminal__": true}` (the non-durable `emit_time` field was dropped; close-time is best-effort on rehydration).
 - The per-attachment value cap was raised from 2 MiB to **10 MiB** (per-input payloads spill into `task.attachments`). The 1 MB `task.payload` budget, the inline-promotion thresholds (`_input` 200 KiB, steering input 20 KiB), and the 20-attachments-per-task limit are unchanged.
 - `@task` / `@multi_turn_task` now require an explicit `name=` (the stable recovery/identity anchor); the previous `func.__qualname__` fallback is removed because it silently rebound task identity when a handler was renamed or moved, orphaning in-flight tasks. Omitting `name` (or passing whitespace) now raises `ValueError` at decoration.
