@@ -65,6 +65,8 @@ Inside handler functions, the SDK sets these attributes on `request.state`:
 
 - `request.state.invocation_id` — The invocation ID (echoed or generated).
 - `request.state.session_id` — The resolved session ID (POST /invocations only).
+- `request.state.user_id` — The per-user ID from `x-agent-user-id` (container protocol `2.0.0`); use for per-user state.
+- `request.state.call_id` — The per-request call ID from `x-agent-foundry-call-id` (protocol `2.0.0`); forward on outbound Foundry calls.
 
 ### Distributed tracing
 
@@ -91,6 +93,42 @@ app = InvocationAgentServerHost()
 async def handle(request: Request) -> Response:
     data = await request.json()
     return JSONResponse({"greeting": f"Hello, {data['name']}!"})
+
+app.run()
+```
+
+### Multi-user session (per-request call ID)
+
+On container protocol `2.0.0` a single agent session can serve **multiple users**. Forwarding the per-request `x-agent-foundry-call-id` on outbound toolbox calls lets the tool server resolve *which* user made this request and act on their behalf. (`x-agent-user-id` is never forwarded; the tool resolves the user from the call ID server-side. Use `request.state.user_id` only for the container's own per-user state.)
+
+```python
+import os
+
+import httpx
+from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+
+app = InvocationAgentServerHost()
+
+
+@app.invoke_handler
+async def handle(request: Request) -> Response:
+    # platform_headers() echoes x-agent-foundry-call-id only (never x-agent-user-id).
+    headers = get_request_context().platform_headers()
+
+    # Toolbox / MCP — attach the call ID PER CALL (the MCP session is shared across users/turns).
+    async with httpx.AsyncClient() as mcp:
+        resp = await mcp.post(
+            f"{os.environ['FOUNDRY_PROJECT_ENDPOINT']}/toolboxes/github/mcp",
+            headers={"Authorization": f"Bearer {get_agent_token()}", **headers},  # get_agent_token(): the agent's managed-identity token
+            json={"jsonrpc": "2.0", "method": "tools/call",
+                  "params": {"name": "list_my_assigned_issues", "arguments": {}}},
+        )
+        # The toolbox resolved the caller from the call ID and returned THIS user's issues.
+
+    return JSONResponse(resp.json())
 
 app.run()
 ```

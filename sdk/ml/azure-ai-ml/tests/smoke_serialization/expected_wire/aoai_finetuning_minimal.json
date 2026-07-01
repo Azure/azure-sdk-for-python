@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "experimentName": "smoke-experiment",
+    "fineTuningDetails": {
+      "model": {
+        "jobInputType": "mlflow_model",
+        "uri": "azureml://registries/azure-openai/models/gpt-4/versions/1"
+      },
+      "modelProvider": "AzureOpenAI",
+      "taskType": "textCompletion",
+      "trainingData": {
+        "jobInputType": "uri_file",
+        "uri": "https://foo/bar/train.jsonl"
+      }
+    },
+    "isArchived": false,
+    "jobType": "FineTuning",
+    "outputs": {},
+    "properties": {},
+    "tags": {}
+  }
+}

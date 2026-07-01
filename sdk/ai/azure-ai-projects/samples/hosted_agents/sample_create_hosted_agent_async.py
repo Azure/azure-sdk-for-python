@@ -8,6 +8,7 @@
 DESCRIPTION:
     Async variant of `sample_create_hosted_agent.py`. Demonstrates CRUD
     operations for Hosted Agent versions using the asynchronous AIProjectClient.
+    It also invokes the hosted agent via `responses.create`.
 
     This is the only hosted_agents async sample that sets up agent identity
     RBAC via `ensure_agent_identity_rbac_async`.
@@ -86,6 +87,14 @@ async def main() -> None:
 
         fetched = await project_client.agents.get_version(agent_name=agent_name, agent_version=created.version)
         print(f"Fetched hosted agent version: {fetched.version}, status: {fetched.status}")
+
+        user_input = "Good morning!"
+        async with project_client.get_openai_client(agent_name=agent_name) as openai_client:
+            response = await openai_client.responses.create(
+                input=user_input,
+            )
+        print(f"Sent: {user_input}")
+        print(f"Response output: {response.output_text}")
 
 
 if __name__ == "__main__":

@@ -34,8 +34,8 @@ class FrontDoorManagementClientConfiguration:  # pylint: disable=too-many-instan
      None.
     :type cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are "2025-10-01"
-     and None. Default value is "2025-10-01". Note that overriding this default value may result in
-     unsupported behavior.
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

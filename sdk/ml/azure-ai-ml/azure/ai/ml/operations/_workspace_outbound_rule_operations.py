@@ -4,10 +4,10 @@
 
 from typing import Any, Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp import (
+from azure.ai.ml._restclient.arm_ml_service import (
     MachineLearningServicesMgmtClient as ServiceClient102024Preview,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import OutboundRuleBasicResource
+from azure.ai.ml._restclient.arm_ml_service.models import OutboundRuleBasicResource
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger

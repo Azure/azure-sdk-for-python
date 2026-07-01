@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase as JobBaseData
 from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import JobType

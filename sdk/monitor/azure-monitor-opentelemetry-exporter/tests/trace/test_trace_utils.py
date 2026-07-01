@@ -4,7 +4,7 @@
 import unittest
 
 # fixedint was removed as a source dependency. It is used as a dev requirement to test sample score
-from fixedint import Int32
+from fixedint import Int32  # pylint: disable=no-name-in-module
 
 from azure.monitor.opentelemetry.exporter.export.trace._utils import (
     _get_DJB2_sample_score,

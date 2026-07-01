@@ -49,18 +49,6 @@ class TestGetOpenaiClient:
         expected_base_url = FAKE_ENDPOINT.rstrip("/") + "/openai/v1"
         assert str(openai_client.base_url).rstrip("/") == expected_base_url
 
-    def test_get_openai_client_with_agent_name_raises_without_allow_preview(self):
-        """Verify that passing agent_name without allow_preview=True raises ValueError."""
-        project_client = AIProjectClient(
-            endpoint=FAKE_ENDPOINT,
-            credential=FakeCredential(),  # type: ignore[arg-type]
-        )
-
-        with pytest.raises(ValueError) as exc_info:
-            project_client.get_openai_client(agent_name=AGENT_NAME)
-
-        assert "allow_preview=True" in str(exc_info.value)
-
     def test_get_openai_client_with_agent_name_and_allow_preview(self):
         """Verify that the OpenAI client base_url includes the agent endpoint when allow_preview=True."""
         project_client = AIProjectClient(
