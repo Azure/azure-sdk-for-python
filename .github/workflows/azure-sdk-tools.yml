@@ -69,6 +69,9 @@ jobs:
         with:
           python-version: 3.13
 
+      - name: Configure package indexes
+        uses: ./.github/actions/configure-package-indexes
+
       - name: Install uv
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
