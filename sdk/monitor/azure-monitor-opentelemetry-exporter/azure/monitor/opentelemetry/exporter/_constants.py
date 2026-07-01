@@ -301,6 +301,7 @@ _INSTRUMENTATIONS_LIST = [
     "tornado",
     "urllib",
     "urllib3",
+    "httpx",
     _AZURE_SDK_OPENTELEMETRY_NAME,
     "cassandra",
     "tortoiseorm",
@@ -352,6 +353,7 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
     "opentelemetry-instrumentation-tornado",
     "opentelemetry-instrumentation-urllib",
     "opentelemetry.instrumentation.urllib3",
+    "opentelemetry.instrumentation.httpx",
     "opentelemetry.instrumentation.wsgi",
 )
 
