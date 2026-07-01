@@ -1,10 +1,6 @@
 # Release History
 
-## 1.8.9 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.8.9 (2026-07-01)
 
 ### Bugs Fixed
 - Enforce size limits on browser SDK snippet injection to guard against decompression bombs and oversized HTML response bodies (1 MiB compressed / 5 MiB decompressed caps).
