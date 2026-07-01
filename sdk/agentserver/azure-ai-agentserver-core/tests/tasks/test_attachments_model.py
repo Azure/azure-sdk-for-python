@@ -38,7 +38,7 @@ from azure.ai.agentserver.core.tasks._models import TaskCreateRequest, TaskInfo,
 def test_thresholds_match_spec():
     assert _INPUT_THRESHOLD_BYTES == 200 * 1024
     assert _STEERING_THRESHOLD_BYTES == 20 * 1024
-    assert _MAX_ATTACHMENT_SIZE_BYTES == 2 * 1024 * 1024
+    assert _MAX_ATTACHMENT_SIZE_BYTES == 10 * 1024 * 1024
     assert _MAX_ATTACHMENTS == 20
     assert _STEERING_QUEUE_CAP == 9
     assert _FUNCTION_INPUT_KEY == "_input"
@@ -212,6 +212,27 @@ def test_validate_attachment_size_raises_over_cap():
         _validate_attachment_size("task-x", "att-k", huge)
     #: exception.task_id removed
     assert excinfo.value.attachment_key == "att-k"
+
+
+def test_validate_attachment_size_10mib_boundary():
+    """Spec 037 #10 — per-attachment cap is 10 MiB: a value at exactly the cap
+    is accepted; one byte over is rejected.
+    """
+    # A JSON string of N ascii chars serializes to N+2 bytes (the quotes), so
+    # size the raw value so the serialized form lands exactly on the cap.
+    at_cap = "z" * (10 * 1024 * 1024 - 2)
+    _validate_attachment_size("task-x", "att-k", at_cap)  # no raise
+    over_cap = "z" * (10 * 1024 * 1024)
+    with pytest.raises(AttachmentTooLarge):
+        _validate_attachment_size("task-x", "att-k", over_cap)
+
+
+def test_validate_attachment_size_3mib_now_accepted():
+    """Spec 037 #10 — a 3 MiB value (rejected under the old 2 MiB cap) is now
+    accepted under the 10 MiB cap.
+    """
+    three_mib = "z" * (3 * 1024 * 1024)
+    _validate_attachment_size("task-x", "att-k", three_mib)  # no raise
 
 
 def test_validate_attachment_count_under_cap_passes():
