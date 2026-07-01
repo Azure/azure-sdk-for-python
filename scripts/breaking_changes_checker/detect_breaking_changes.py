@@ -726,6 +726,25 @@ def build_report_from_apistub(
     return report
 
 
+def _resolve_pypi_version(package_name: str, latest_pypi_version: bool) -> str:
+    """Resolve the PyPI version to compare against.
+
+    Returns the latest release (which may be a preview) when
+    ``latest_pypi_version`` is set, otherwise the most recent stable release.
+    Exits cleanly when no relevant version exists on PyPI.
+    """
+    from pypi_tools.pypi import PyPIClient
+
+    client = PyPIClient()
+    try:
+        if latest_pypi_version:
+            return str(client.get_ordered_versions(package_name)[-1])
+        return str(client.get_relevant_versions(package_name)[1])
+    except IndexError:
+        _LOGGER.warning(f"No relevant version for {package_name} on PyPi. Exiting...")
+        exit(0)
+
+
 def main(
     package_name: str,
     target_module: str,
@@ -763,17 +782,7 @@ def main(
         # otherwise apistub falls back to the installed version and "stable" would
         # match "current", producing an empty changelog.
         if not version:
-            from pypi_tools.pypi import PyPIClient
-
-            client = PyPIClient()
-            try:
-                if latest_pypi_version:
-                    version = str(client.get_ordered_versions(package_name)[-1])
-                else:
-                    version = str(client.get_relevant_versions(package_name)[1])
-            except IndexError:
-                _LOGGER.warning(f"No relevant version for {package_name} on PyPi. Exiting...")
-                exit(0)
+            version = _resolve_pypi_version(package_name, latest_pypi_version)
         # "current" is generated from the local source, "stable" from the
         # resolved PyPI version.
         current = build_report_from_apistub(package_name, pkg_dir, debug=debug, label="current", from_pypi=False)
@@ -788,20 +797,7 @@ def main(
 
     # For default behavior, find the latest stable version on PyPi
     if not version:
-
-        from pypi_tools.pypi import PyPIClient
-
-        client = PyPIClient()
-
-        try:
-            if latest_pypi_version:
-                versions = client.get_ordered_versions(package_name)
-                version = str(versions[-1])
-            else:
-                version = str(client.get_relevant_versions(package_name)[1])
-        except IndexError:
-            _LOGGER.warning(f"No revelant version for {package_name} on PyPi. Exiting...")
-            exit(0)
+        version = _resolve_pypi_version(package_name, latest_pypi_version)
 
     in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 

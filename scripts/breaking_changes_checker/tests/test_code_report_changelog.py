@@ -7,10 +7,13 @@
 
 import json
 import os
+import shutil
 import subprocess
+import tarfile
 import tempfile
 import sys
 import time
+import zipfile
 from unittest import mock
 
 import pytest
@@ -18,6 +21,7 @@ import pytest
 CHECKER_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 SCRIPTS_DIR = os.path.dirname(CHECKER_DIR)
+REPO_ROOT = os.path.dirname(SCRIPTS_DIR)
 MAX_APIMANAGEMENT_APISTUB_CODE_REPORT_SECONDS = 120
 
 for _path in (SCRIPTS_DIR, CHECKER_DIR):
@@ -27,6 +31,71 @@ for _path in (SCRIPTS_DIR, CHECKER_DIR):
 
 def _code_report_args(use_apistub: bool = False):
     return ["--code-report"] + (["--use-apistub"] if use_apistub else [])
+
+
+def _download_and_extract_sdist(executable: str, package_name: str, version: str, dest_dir: str) -> str:
+    """Download the sdist for ``package_name==version`` and extract it.
+
+    Returns the path to the extracted source tree (the directory that contains
+    ``setup.py``/``pyproject.toml``). ``--use-apistub`` builds the code report
+    from local source, so a real source tree is required.
+    """
+    download_dir = tempfile.mkdtemp(dir=dest_dir)
+    subprocess.check_call(
+        [
+            executable,
+            "-m",
+            "pip",
+            "download",
+            f"{package_name}=={version}",
+            "--no-deps",
+            "--no-binary=:all:",
+            "-d",
+            download_dir,
+        ],
+    )
+    sdists = [f for f in os.listdir(download_dir) if f.endswith((".tar.gz", ".zip"))]
+    if not sdists:
+        raise FileNotFoundError(f"No sdist found for {package_name}=={version}")
+    sdist_path = os.path.join(download_dir, sdists[0])
+    extract_dir = tempfile.mkdtemp(dir=dest_dir)
+    if sdist_path.endswith(".zip"):
+        with zipfile.ZipFile(sdist_path) as archive:
+            archive.extractall(extract_dir)
+    else:
+        with tarfile.open(sdist_path) as archive:
+            archive.extractall(extract_dir)
+    entries = [os.path.join(extract_dir, e) for e in os.listdir(extract_dir)]
+    source_dirs = [e for e in entries if os.path.isdir(e)]
+    return source_dirs[0] if len(source_dirs) == 1 else extract_dir
+
+
+def _prepare_fake_repo(tmpdir: str, package_name: str, source_dir: str) -> str:
+    """Arrange ``source_dir`` inside a minimal fake repo rooted at ``tmpdir``.
+
+    ``azpysdk apistub`` resolves the repo root by walking up from its working
+    directory looking for a ``.git`` marker and reads helper scripts from
+    ``<repo>/eng`` and ``<repo>/scripts``. Recreating just those inside the temp
+    dir lets apistub run against the extracted source while keeping all of its
+    scratch output (``.venv``, ``.staging``, ``.artifacts`` ...) under ``tmpdir``
+    instead of the real repo. apistub is invoked with ``target='.'`` (cwd is the
+    package), so the source can live directly under ``tmpdir`` -- no
+    ``sdk/<service>/`` nesting is required. Returns the package directory
+    (``<tmpdir>/<package_name>``).
+    """
+    os.makedirs(os.path.join(tmpdir, ".git"), exist_ok=True)
+
+    # Symlink the real ``eng`` and ``scripts`` directories so apistub can find
+    # its helper scripts (e.g. Export-APIViewMarkdown.ps1 under ``eng`` and
+    # common_tasks under ``scripts/devops_tasks``) under the fake repo root.
+    for name in ("eng", "scripts"):
+        link = os.path.join(tmpdir, name)
+        if not os.path.exists(link):
+            os.symlink(os.path.join(REPO_ROOT, name), link)
+
+    pkg_dir = os.path.join(tmpdir, package_name)
+    shutil.move(source_dir, pkg_dir)
+    return pkg_dir
 
 
 def _assert_code_report_matches_expected(actual_report_path: str, expected_report_file: str):
@@ -96,13 +165,23 @@ def _generate_and_compare_code_report(
                 ],
             )
 
+        # The apistub-based code report is built from a local package source tree,
+        # so extract the sdist for this version and lay it out inside a fake repo
+        # under the temp dir. The import-based report only needs the installed
+        # package, so the package name works as the target directly.
+        if use_apistub:
+            source_dir = _download_and_extract_sdist(venv.env_exe, package_name, package_version, tmpdir)
+            target_package = _prepare_fake_repo(tmpdir, package_name, source_dir)
+        else:
+            target_package = package_name
+
         start = time.perf_counter()
         result = subprocess.run(
             [
                 venv.env_exe,
                 os.path.join(CHECKER_DIR, "detect_breaking_changes.py"),
                 "-t",
-                package_name,
+                target_package,
                 "-m",
                 target_module,
                 *_code_report_args(use_apistub),
