@@ -66,9 +66,7 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 from collections.abc import AsyncGenerator
-from pathlib import Path
 from typing import Any
 
 from starlette.requests import Request
@@ -76,7 +74,6 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core.streaming import (
     EventStream,
-    EventStreamNotFoundError,
     EventStreamNotFoundError,
     streams,
 )
@@ -94,22 +91,13 @@ logger = logging.getLogger(__name__)
 # Per-turn streams persist to disk so they survive a container crash +
 # restart. ``cursor_fn`` reads the agent's natural sequence number so
 # ``?last_event_id=N`` reconnects skip already-delivered events.
-# ``ttl_seconds=600`` bounds disk usage: once a stream is closed and
-# all its events have aged out, the registry destroys it and removes
-# the file.
-# Default streams dir lives under the unified AGENTSERVER_STATE_ROOT
-# layout at ``<root>/streams/``. This sample owns the ``streams`` subdir
-# name and resolves it via the core state-path helper.
-from azure.ai.agentserver.core._config import resolve_state_subdir
-
-_STREAM_DIR = Path(os.environ.get("AGENTSERVER_STREAMS_DIR", str(resolve_state_subdir("streams"))))
-_STREAM_DIR.mkdir(parents=True, exist_ok=True)
-
-streams.use_file_backed_replay(
-    storage_dir=_STREAM_DIR,
-    cursor_fn=lambda ev: ev["sequence_number"],
-    ttl_seconds=600,
-)
+#
+# The registration uses the ergonomic defaults: ``storage_dir`` defaults to
+# ``resolve_state_subdir("streams")`` (``<AGENTSERVER_STATE_ROOT>/streams``),
+# ``ttl_seconds`` defaults to 600 (10 min, bounding disk usage once a stream is
+# closed and its events age out), and serialization defaults to JSON — so the
+# only thing this sample supplies is the ``cursor_fn``.
+streams.use_file_backed_replay(cursor_fn=lambda ev: ev["sequence_number"])
 
 app = InvocationAgentServerHost()
 
@@ -228,11 +216,11 @@ async def handle_get(request: Request) -> Response:
     Without the SSE accept header: returns the task's current
     snapshot from ``deep_research.get(task_id)``.
 
-    HTTP mapping (from  streaming.md §exceptions table):
-      - 404 if the invocation id was never seen
-        (``EventStreamNotFoundError``).
-      - 410 if the stream was destroyed via TTL eviction or explicit
-        ``streams.delete`` (``EventStreamNotFoundError``).
+    HTTP mapping (from streaming.md §exceptions table):
+      - 404 for ANY missing stream — never registered, explicitly
+        deleted, or destroyed by TTL eviction. The registry exposes a
+        single ``EventStreamNotFoundError`` for all "id is not a live
+        stream" cases; treat it uniformly.
     """
     invocation_id: str = request.state.invocation_id
 
@@ -247,13 +235,8 @@ async def handle_get(request: Request) -> Response:
             stream = await streams.get(invocation_id)
         except EventStreamNotFoundError:
             return JSONResponse(
-                {"status": "not_found", "message": "No stream for this invocation id."},
+                {"status": "not_found", "message": "No live stream for this invocation id."},
                 status_code=404,
-            )
-        except EventStreamNotFoundError:
-            return JSONResponse(
-                {"status": "gone", "message": "Stream for this invocation id has been destroyed."},
-                status_code=410,
             )
 
         return StreamingResponse(
