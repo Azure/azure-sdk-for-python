@@ -157,7 +157,6 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             if not endpoint.endswith("/"):
                 endpoint += "/"
             feature_flag_reference = f"{endpoint}kv/{feature_flag.key}"
-            #breakpoint()
             if feature_flag.label and not feature_flag.label.isspace():
                 feature_flag_reference += f"?label={feature_flag.label}"
 

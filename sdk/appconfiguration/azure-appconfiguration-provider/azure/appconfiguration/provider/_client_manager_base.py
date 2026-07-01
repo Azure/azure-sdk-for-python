@@ -10,6 +10,7 @@ from typing import Optional
 FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL = 3600  # 1 hour in seconds
 MINIMAL_CLIENT_REFRESH_INTERVAL = 30  # 30 seconds
 
+
 @dataclass
 class _ConfigurationClientWrapperBase:
     endpoint: str

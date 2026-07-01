@@ -485,9 +485,7 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
             return
 
         try:
-            failover_endpoints = find_auto_failover_endpoints(
-                self._original_endpoint, self._replica_discovery_enabled
-            )
+            failover_endpoints = find_auto_failover_endpoints(self._original_endpoint, self._replica_discovery_enabled)
         except TimeoutError:
             # SRV record resolution timed out, so we should refresh after a longer interval
             self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL

@@ -13,6 +13,7 @@ from azure.appconfiguration import SecretReferenceConfigurationSetting  # type:i
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from .._azureappconfigurationproviderbase import _RefreshTimer
 
+
 class _SecretProviderBase:
 
     def __init__(self, **kwargs: Any) -> None:
