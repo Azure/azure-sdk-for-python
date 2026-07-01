@@ -4,7 +4,7 @@
 """Task attachments support.
 
 Helpers for the input-promotion mechanism that lets the resilient
-primitive support per-input payloads up to 2 MB by spilling oversized
+primitive support per-input payloads up to 10 MiB by spilling oversized
 inputs into ``task.attachments`` (decoupled from the shared 1 MB
 ``task.payload`` budget). See `the SOT spec`
 for the authoritative wire contract and `the SOT spec`
@@ -81,11 +81,11 @@ _INPUT_THRESHOLD_BYTES = 200 * 1024
 #: ``attachments["_steering_input_<seq>"]``.
 _STEERING_THRESHOLD_BYTES = 20 * 1024
 
-#: Per-attachment value cap (2 MB). Server-side hard cap; enforced
+#: Per-attachment value cap (10 MiB). Server-side hard cap; enforced
 #: client-side via :class:`InputTooLarge` (developer-facing) /
 #: :class:`_AttachmentTooLarge` (provider-internal; see
 #: :func:`_remap_attachment_error`) before any HTTP call.
-_MAX_ATTACHMENT_SIZE_BYTES = 2 * 1024 * 1024
+_MAX_ATTACHMENT_SIZE_BYTES = 10 * 1024 * 1024
 
 #: Per-task attachment-entry cap. Server-side hard cap; enforced
 #: client-side via :class:`_AttachmentLimitExceeded` (provider-internal).

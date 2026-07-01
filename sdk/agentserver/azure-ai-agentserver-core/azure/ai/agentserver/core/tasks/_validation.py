@@ -43,7 +43,7 @@ MAX_TAG_ENTRIES = 16
 MAX_PAYLOAD_BYTES = 1024 * 1024  # 1 MB
 MAX_ERROR_BYTES = 64 * 1024  # 64 KB
 MAX_SOURCE_BYTES = 4 * 1024  # 4 KB
-MAX_ATTACHMENT_VALUE_BYTES = 2 * 1024 * 1024  # 2 MB (also enforced in _attachments)
+MAX_ATTACHMENT_VALUE_BYTES = 10 * 1024 * 1024  # 10 MiB (also enforced in _attachments)
 MAX_ATTACHMENT_ENTRIES = 20  # (also enforced in _attachments)
 MAX_LEASE_IDENTITY_LEN = 256
 

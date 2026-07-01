@@ -337,7 +337,7 @@ async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(manager_
 
 @pytest.mark.asyncio
 async def test_steering_append_oversized_raises_input_too_large(manager_local: TaskManager) -> None:
-    """Parity with function input: steering input > 2 MB raises InputTooLarge.
+    """Parity with function input: steering input > 10 MiB raises InputTooLarge.
 
     Gap-fill: previously only the function-input path was tested for the
     oversize-raises behavior. The steering-input path goes through the

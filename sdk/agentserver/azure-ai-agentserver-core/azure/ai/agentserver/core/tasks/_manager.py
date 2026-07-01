@@ -27,7 +27,7 @@ from ._attachments import (
     _ref_key,
     _resolve_input_storage,
 )
-from ._decorator import TaskOptions, _deserialize_input, _serialize_input
+from ._decorator import TaskOptions, _deserialize_input, _resolve_effective_timeout, _serialize_input
 from ._exceptions import (
     EtagConflict,
     OutputTooLarge,
@@ -1708,8 +1708,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         """Spawn a per-turn timeout watchdog and register it.
 
         Cancels and replaces any existing watchdog for this task so the
-        steering-drain re-entry path can re-arm with a fresh budget.
-        No-op when ``opts.timeout`` is ``None``.
+        steering-drain re-entry path can re-arm with a fresh budget. When
+        ``opts.timeout`` is ``None`` the budget defaults to 1 day (Spec 037 #8).
 
         :keyword task_id: The task identifier.
         :paramtype task_id: str
@@ -1719,9 +1719,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :paramtype ctx: TaskContext[Any]
         """
         await self._cancel_watchdog_for_turn(task_id)
-        if opts.timeout is None:
-            return
-        timeout_seconds = opts.timeout.total_seconds()
+        # Spec 037 #8 — an unset timeout defaults to a 1-day per-turn budget
+        # (was previously "no watchdog"). The value is validated + capped at
+        # registration; here we only resolve the default.
+        effective_timeout = _resolve_effective_timeout(opts.timeout)
+        timeout_seconds = effective_timeout.total_seconds()
         remaining = await self._compute_remaining_for_watchdog(task_id, timeout_seconds, ctx)
         self._timeout_watchdogs[task_id] = asyncio.create_task(
             self._timeout_watchdog(

@@ -10,7 +10,7 @@ Drives a fresh ``TaskManager`` + ``LocalFileTaskProvider`` through the
   slot in ``payload["input"]``.
 - Recovery from both shapes reconstructs the original input value.
 - Suspend deletes the promoted attachment + clears the ref atomically.
-- Oversized inputs (> 2 MB) raise ``InputTooLarge`` pre-HTTP.
+- Oversized inputs (> 10 MiB) raise ``InputTooLarge`` pre-HTTP.
 """
 
 from __future__ import annotations
@@ -171,7 +171,7 @@ async def test_large_input_writes_ref_and_attachment_atomically(manager_local: T
 
 @pytest.mark.asyncio
 async def test_oversized_input_raises_input_too_large(manager_local: TaskManager) -> None:
-    """SC-10: an input that serializes to > 2 MB raises pre-HTTP."""
+    """SC-10: an input that serializes to > 10 MiB raises pre-HTTP."""
 
     too_big = {"v": "z" * (_MAX_ATTACHMENT_SIZE_BYTES + 100)}
 

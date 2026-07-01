@@ -190,7 +190,7 @@ re-scoping:
 3. **Not a bulk-data store.** `ctx.metadata` is small (tens of KB
    per namespace; the whole task payload caps at 1 MB). It is a
    watermark / dedup-token store, not a chat-log store. Per-input
-   payloads up to 2 MB are accepted via the attachments mechanism
+   payloads up to 10 MiB are accepted via the attachments mechanism
    (§23) but anything larger MUST be externalized by the caller.
 4. **Not a competing-consumer queue.** A `task_id` identifies one
    logical unit of work owned by one current lifetime. N workers
@@ -417,7 +417,7 @@ The handler's return value (or the value passed to
 
 | Bound | Limit | Raised as |
 |---|---|---|
-| Per-input maximum size | **2 MB** after JSON serialization, for the function input AND each individual queued steering input. | `InputTooLarge` from `.start()` / `.run()` — pre-network, at the call site. |
+| Per-input maximum size | **10 MiB** after JSON serialization, for the function input AND each individual queued steering input. | `InputTooLarge` from `.start()` / `.run()` — pre-network, at the call site. |
 | Concurrent queued steering inputs | **9** | `SteeringQueueFull` from `.start()` against a steerable task whose queue is full. |
 
 Inputs and outputs that fit easily in the inline payload budget stay
@@ -616,6 +616,11 @@ For multi-turn, `input_id` is the per-turn identity. For one-shot,
 `input_id` defaults to `task_id` (the 1:1 invariant `task_id ==
 input_id`).
 
+A caller-supplied `input_id` MUST be validated against the same
+charset/length pattern as `task_id` (`^[a-zA-Z0-9\-_.:]{1,256}$`);
+a violation raises `ValueError` at the call site before any provider
+call (fail-fast).
+
 Implementations MUST reject `if_last_input_id` provided without
 `input_id` (`TypeError` at the call site). The pair is orthogonal:
 `input_id` alone is idempotency / chain-head tracking;
@@ -780,16 +785,13 @@ The budget is **per-turn** and **wall-clock**:
   `remaining = max(0, timeout - (now - turn_started_at))` from the
   persisted `_turn_started_at` and fires immediately if elapsed.
 - Clock skew is clamped to `[0, timeout]` in both directions.
-- **Known gap on steering drain re-entry:** the canonical Python
-  implementation spawns the watchdog ONCE per `_execute_task`
-  invocation; steering drain re-enters in-place inside
-  `_execute_task_loop` without spawning a fresh watchdog. The
-  steered turn inherits whatever budget remained on the original
-  watchdog. The persisted `_turn_started_at` IS stamped per drain
-  (§52 Phase 1), so a CRASH-then-recover from a drained turn
-  correctly honors the new turn's budget; the in-process drain
-  path itself does not. Other-language implementers SHOULD spawn
-  a fresh watchdog per drain to honor the design intent.
+- **Steering drain re-entry re-arms the watchdog.** The watchdog is
+  spawned per turn — initial entry AND every in-place steering drain
+  re-entry — so a steered turn gets a fresh full budget rather than
+  inheriting whatever remained on the prior turn's watchdog. The
+  persisted `_turn_started_at` is stamped per drain (§52), so both the
+  in-process drain path and a crash-then-recover from a drained turn
+  honor the new turn's budget.
 
 The framework MUST persist `payload["_turn_started_at"]` (ISO-8601
 UTC) at every turn-start boundary: fresh entry, suspended -> in_progress
@@ -814,8 +816,24 @@ retry behavior for handler-raised exceptions.
 | `jitter` | `True` | Add randomized jitter to delays. |
 | `retry_on` | `None` (all exceptions) | Tuple of exception types to retry; others propagate. A bare exception class is accepted as a single-element tuple. |
 
-Presets: `exponential_backoff()`, `fixed_delay(delay)`,
-`linear_backoff()`, `no_retry()`.
+**Hard caps (normative, fail-fast).** `RetryPolicy(...)` rejects a misconfiguration at
+construction (raises, does NOT clamp) so a task turn cannot retry unboundedly:
+
+- `max_attempts` must be **1–10** (inclusive; counts the first try). `> 10` → `ValueError`.
+- `max_delay` must be **0 – 1 hour**. `> 1 hour` → `ValueError`.
+- `initial_delay` / `max_delay` must be `>= 0`; `max_attempts >= 1`; `backoff_coefficient >= 1.0`;
+  `max_delay >= initial_delay`. Zero delays are valid ("retry immediately").
+
+**Preset values (normative).** The bundled presets — available both as
+`RetryPolicy.<preset>(...)` classmethods and as module-level `tasks.<preset>(...)` wrappers with
+identical zero-argument defaults (mirrored field-for-field by the .NET port) — are:
+
+| Preset | `max_attempts` | `initial_delay` | `max_delay` | `backoff_coefficient` | `jitter` |
+|---|---|---|---|---|---|
+| `exponential_backoff()` | `3` | `1 s` | `60 s` | `2.0` | `True` |
+| `fixed_delay()` | `3` | `5 s` | `5 s` | `1.0` | `False` |
+| `linear_backoff()` | `5` | `1 s` | `60 s` | `1.0` (additive) | `False` |
+| `no_retry()` | `1` | `0 s` | `0 s` | `1.0` | `False` |
 
 Semantics:
 
@@ -1192,11 +1210,11 @@ budgets:
 | Slot | Per-task cap | Per-value cap | Entry count cap |
 |---|---|---|---|
 | `payload` | 1 MB | n/a (shared) | unlimited keys |
-| `attachments` | n/a (per-entry only) | 2 MB per attachment | 20 attachments max |
+| `attachments` | n/a (per-entry only) | 10 MiB per attachment | 20 attachments max |
 
 `attachments` lets the framework lift the per-input ceiling from
 "however much fits in payload alongside everything else" to
-**2 MB per input** without evicting metadata budget.
+**10 MiB per input** without evicting metadata budget.
 
 #### 23.1 PATCH merge semantics
 
@@ -1327,7 +1345,7 @@ probability at fleet trillion/sec × 100 years is < 1 in 10^33.
 
 Caps:
 
-- Per-attachment value: **2 MB** serialized.
+- Per-attachment value: **10 MiB** serialized.
 - Per-task attachment count: **20**.
 
 The framework enforces (pre-network) and surfaces developer-facing
@@ -1335,8 +1353,8 @@ exceptions based on which channel the violation occurs on:
 
 | Cap | Where enforced | Developer-facing exception |
 |---|---|---|
-| Per-value (2 MB) on `_input` | Create + PATCH, both providers | `InputTooLarge` (the framework remaps an internal `_AttachmentTooLarge` based on attachment-key prefix) |
-| Per-value (2 MB) on `_steering_input_<seq>` | Steering append site (always reads state first to count) | `InputTooLarge` |
+| Per-value (10 MiB) on `_input` | Create + PATCH, both providers | `InputTooLarge` (the framework remaps an internal `_AttachmentTooLarge` based on attachment-key prefix) |
+| Per-value (10 MiB) on `_steering_input_<seq>` | Steering append site (always reads state first to count) | `InputTooLarge` |
 
 | Per-task count (20) on `create` | Create path | `_AttachmentLimitExceeded` (internal) — reachable only via direct provider use, which is unsupported |
 | Per-task count (20) on `patch` | Local provider (cheap count); hosted PATCH relies on server-side check | `_AttachmentLimitExceeded` (internal) |
@@ -1796,15 +1814,15 @@ Sizes measured as UTF-8 byte length of canonical JSON
 | `payload` (inline JSON) | 1 MB (1024 × 1024) |
 | `error` (JSON dict) | 64 KB (64 × 1024) |
 | `source` (JSON dict) | 4 KB (4 × 1024) |
-| `attachments` per-value | 2 MB (2 × 1024 × 1024) — see §23.7 |
+| `attachments` per-value | 10 MiB (10 × 1024 × 1024) — see §23.7 |
 | `attachments` total entries | 20 — see §23.7 |
 
 Note: `payload` at 1 MB is intentionally narrower than the per-
 input ceiling. The framework offloads large inputs / outputs into
 `attachments` (§23) to lift each developer-observable input or
-output to the 2 MB per-attachment cap without consuming the
+output to the 10 MiB per-attachment cap without consuming the
 payload budget. The developer never sees this offload; they
-observe an effective 2 MB limit on `ctx.input` /
+observe an effective 10 MiB limit on `ctx.input` /
 the handler's `return X` for the turn.
 
 #### 28a.3 Source field validation
@@ -2063,9 +2081,9 @@ Per-decorator kwarg semantics:
 
 | Kwarg | Meaning |
 |---|---|
-| `name` | Stable identity for recovery routing — written to `source.name` and the `_task_name` tag. Changing it strands existing tasks. |
+| `name` | **Required.** Stable identity for recovery routing — written to `source.name` and the `_task_name` tag. Must be an explicit non-empty string; there is no function-derived default (deriving it from `func.__qualname__` would silently rebind identity on rename/move and strand in-flight tasks). Changing it strands existing tasks. |
 | `title` | Human-readable title written to `TaskInfo.title`. |
-| `timeout` | Per-turn cooperative wall-clock watchdog (§14). When elapsed, the framework sets `ctx.timeout_exceeded` then `ctx.cancel`. |
+| `timeout` | **Per-turn** cooperative wall-clock watchdog (§14). Defaults to **1 day** when unset; a supplied value may lower the budget but **1 day is a hard ceiling** — a larger or negative value is rejected at registration (`ValueError`, fail-fast, not clamped). This caps a single uninterrupted handler invocation only; it is **not** a task-lifetime bound (a multi-turn chain lives indefinitely — the budget resets every turn; the task's overall lifetime is governed by the platform's 30-day sliding-TTL inactivity cleanup). When elapsed, the framework sets `ctx.timeout_exceeded` then `ctx.cancel`. |
 | `retry` | `RetryPolicy` for handler-raised exceptions (§15). `None` (default) = no retry. |
 | `steerable` | (`@multi_turn_task` only.) Enables `.start()` against an in-flight chain to queue a steering input instead of raising `TaskConflictError` (§12). |
 
@@ -2657,9 +2675,10 @@ A process-level singleton that owns the lifecycle of all SDK-bundled
 ```
 streams.use_in_memory_live()                                    # configurator (sync)
 streams.use_in_memory_replay(cursor_fn=..., ttl_seconds=...)    # configurator (sync)
-streams.use_file_backed_replay(storage_dir=..., cursor_fn=...,
-                               ttl_seconds=..., serializer=...,
-                               deserializer=...)                # configurator (sync)
+streams.use_file_backed_replay(cursor_fn=...)                   # configurator (sync)
+#   all kwargs optional: storage_dir defaults to
+#   resolve_state_subdir("streams"); ttl_seconds defaults to 600 (10 min);
+#   serializer/deserializer default to JSON. Explicit args override.
 
 await streams.get(id)                  # raises NotFound if never registered
 await streams.get_or_create(id)        # atomic per id
@@ -2790,7 +2809,7 @@ Three SDK-bundled implementations:
 |---|---|---|
 | `BroadcastEventStream` | Live consumers attach before the producer starts. | No buffer. `subscribe(after=...)` is accepted but the `after` argument is silently ignored. Late subscribers miss earlier events. `subscribe()` returns an iterator over events emitted AFTER attach. Multi-subscriber (each gets a private cursor/queue). Goes away ONLY via explicit `delete(id)` — no TTL auto-tombstone. |
 | `ReplayEventStream` | Late subscribers need history. | Per-stream buffer retains all events. `subscribe(after=N)` is honored iff `cursor_fn` was supplied to the configurator; otherwise `after` is ignored. `ttl_seconds`, if supplied, drives per-event eviction (regardless of Active/Closed — events older than `now - ttl_seconds` are evicted from the buffer; see §46). When Closed AND `close_time + ttl_seconds` elapses, the registry auto-tombstones the id. |
-| `FileBackedReplayEventStream` | Crash-recoverable history (multi-turn UIs, resilient response streaming). | Persists each emit to `storage_dir/<id>.jsonl`. **Constructor rehydrates** from an existing file if present — restart-safe. Same per-event TTL + close-clock semantics as `ReplayEventStream`. Optional `serializer: Callable[[Any], bytes]` and `deserializer: Callable[[bytes], Any]` for non-JSON payloads (default JSON). `delete()` (and TTL-since-close auto-tombstone) clean up the file BEFORE the registry tombstones the id. |
+| `FileBackedReplayEventStream` | Crash-recoverable history (multi-turn UIs, resilient response streaming). | Persists each emit to `storage_dir/<filename>.jsonl` (id sanitized per the C-STR-FBR-1 filename-safety rule). **Constructor rehydrates** from an existing file if present — restart-safe. Same per-event TTL + close-clock semantics as `ReplayEventStream`. Optional `serializer: Callable[[Any], bytes]` and `deserializer: Callable[[bytes], Any]` for non-JSON payloads (default JSON). `delete()` (and TTL-since-close auto-tombstone) clean up the file BEFORE the registry tombstones the id. |
 
 Per-backing TTL + tombstone matrix:
 
@@ -3195,15 +3214,12 @@ bounded retry (up to 5 attempts) that re-reads the record and
 replays the drain. Exhausting the retries raises `RuntimeError`
 to the caller.
 
-**Watchdog scope (known gap).** The per-turn timeout watchdog is
-spawned ONCE per execution in `_execute_task` and is NOT
-respawned on drain re-entry today. As a result, a steered turn
-shares the watchdog of the turn that drained it. Other-language
-implementers SHOULD spawn a fresh watchdog on drain re-entry to
-honor the design intent that every turn-start boundary gets a
-fresh per-turn budget (§14, §57). The canonical Python
-implementation has this as a known gap and is patched by relying
-on the persisted `_turn_started_at` only on RECOVERY.
+**Watchdog scope.** The per-turn timeout watchdog is respawned on
+every turn-start boundary — initial entry AND steering drain re-entry
+(via `_spawn_watchdog_for_turn` inside the drain loop) — so a steered
+turn gets a fresh full per-turn budget (§14, §57) rather than sharing
+the prior turn's watchdog. The persisted `_turn_started_at` (stamped
+per drain) additionally backs the RECOVERY path.
 
 ### §53. Suspend write
 
@@ -3706,7 +3722,7 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   `_input`, `_steering_input_<seq>`.
   Worst-case framework attachment usage: 1 + 9 = 10 of 20 slots;
   10 slots remain free.
-- **C-ATT-4.** Per-attachment cap: 2 MB serialized. Per-task
+- **C-ATT-4.** Per-attachment cap: 10 MiB serialized. Per-task
   attachment count cap: 20. Per-value cap MUST be enforced
   client-side on every write site (create + patch) in both
   providers. Provider-level violations MUST surface as the
@@ -3915,7 +3931,17 @@ Items are grouped by area. Each item is identified `C-AREA-N`
 ### C-STR-FBR (file-backed replay)
 
 - **C-STR-FBR-1.** Each stream MUST persist to
-  `storage_dir/<id>.jsonl`.
+  `storage_dir/<filename>.jsonl`, where `<filename>` is derived from
+  the stream id by the **filename-safety rule (normative)**: a
+  well-formed id — matching `^[A-Za-z0-9._-]+$` with no `.`/`..` path
+  segment — is used verbatim (for readability and cross-language
+  compatibility); ANY other id (containing a path separator, a `.`/`..`
+  segment, a NUL, or any other filesystem-unsafe character) MUST be
+  deterministically SHA-256 hash-encoded to an `h_<hex>` stem so it can
+  never escape `storage_dir` or collide with a sibling stream. A
+  well-formed id that itself matches the reserved `h_<64hex>` shape is
+  also hash-encoded, so the verbatim and hashed namespaces stay disjoint
+  (no verbatim id can alias another id's hash).
 - **C-STR-FBR-2.** Constructor MUST rehydrate from an existing
   file (crash-recovery friendly).
 - **C-STR-FBR-3.** Optional `serializer` / `deserializer` callbacks
@@ -3935,6 +3961,12 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   {"__terminal__": true}
   ```
 
+  The terminal sentinel carries **no** timestamp: close-time is
+  best-effort. On rehydration the close-clock (§46) is anchored at the
+  last real event's `emit_time` (or `now` when the file held no events),
+  NOT at a terminal-record timestamp. A terminal record MUST be accepted
+  even when it carries no `emit_time`; a NON-terminal record missing
+  `emit_time` remains malformed and MUST raise.
 - **C-STR-FBR-6.** **Rehydration robustness.** Constructor MUST
   tolerate a trailing partial line (e.g. from a crash mid-write)
   by truncating it. Mid-file malformed JSON lines MUST raise

@@ -307,7 +307,7 @@ class TestTaskFailedCauseInvariant:
         class CustomException(Exception):
             pass
 
-        @task(title="cause-invariant")
+        @task(name="cause-invariant", title="cause-invariant")
         async def raises_custom(ctx: TaskContext[str]) -> str:
             raise CustomException("boom")
 

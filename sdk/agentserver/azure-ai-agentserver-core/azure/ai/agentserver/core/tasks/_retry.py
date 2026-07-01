@@ -13,6 +13,15 @@ from __future__ import annotations
 import random
 from datetime import timedelta
 
+#: Spec 037 #11 — hard caps on the retry knobs. A misconfiguration must not
+# let a task turn retry unboundedly, so values outside these ranges are
+# rejected at construction (fail-fast, not clamped). A developer may still
+# configure smaller values. Retries remain off by default (no policy ⇒ single
+# attempt). Mirrored field-for-field by the .NET port
+# (``TaskEngineConstants.MaxRetryAttempts`` / ``MaxRetryDelay``).
+_MAX_RETRY_ATTEMPTS = 10
+_MAX_RETRY_DELAY = timedelta(hours=1)
+
 
 class RetryPolicy:
     """Retry configuration for resilient tasks.
@@ -75,6 +84,10 @@ class RetryPolicy:
             raise ValueError(f"max_delay ({max_delay}) must be >= initial_delay ({initial_delay})")
         if max_attempts < 1:
             raise ValueError(f"max_attempts must be >= 1, got {max_attempts}")
+        if max_attempts > _MAX_RETRY_ATTEMPTS:
+            raise ValueError(f"max_attempts must be <= {_MAX_RETRY_ATTEMPTS}, got {max_attempts}")
+        if _seconds(max_delay) > _MAX_RETRY_DELAY.total_seconds():
+            raise ValueError(f"max_delay must be <= 1 hour, got {max_delay}")
         normalized_retry_on: tuple[type[Exception], ...] | None = None
         if retry_on is not None:
             # Accept a bare class as a single-element tuple — Pythonic.
@@ -289,7 +302,7 @@ def exponential_backoff(
     initial_delay: "timedelta" = timedelta(seconds=1),
     backoff_coefficient: float = 2.0,
     max_delay: "timedelta" = timedelta(seconds=60),
-    max_attempts: int = 5,
+    max_attempts: int = 3,
     jitter: bool = True,
 ) -> RetryPolicy:
     """Module-level wrapper for :meth:`RetryPolicy.exponential_backoff`.
@@ -300,7 +313,7 @@ def exponential_backoff(
         :keyword backoff_coefficient: Multiplier applied per attempt.
         :keyword max_delay: Cap on the per-attempt delay.
         :keyword max_attempts: Total attempts including the first try.
-        :keyword jitter: When True, add ±15% jitter per attempt.
+        :keyword jitter: When True, add ±25% jitter per attempt.
         :return: A configured :class:`RetryPolicy`.
         :rtype: RetryPolicy
     """
@@ -315,8 +328,8 @@ def exponential_backoff(
 
 def fixed_delay(
     *,
-    delay: "timedelta" = timedelta(seconds=1),
-    max_attempts: int = 5,
+    delay: "timedelta" = timedelta(seconds=5),
+    max_attempts: int = 3,
 ) -> RetryPolicy:
     """Module-level wrapper for :meth:`RetryPolicy.fixed_delay`.
 
