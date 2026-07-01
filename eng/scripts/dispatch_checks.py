@@ -77,7 +77,9 @@ def _normalize_newlines(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
-def get_check_dest_dir(package: str, check: str, dest_dir: Optional[str]) -> Optional[str]:
+def get_check_dest_dir(
+    package: str, check: str, dest_dir: Optional[str]
+) -> Optional[str]:
     if dest_dir and check == "apistub":
         package_name = ParsedSetup.from_path(package).name
         return os.path.join(dest_dir, package_name)

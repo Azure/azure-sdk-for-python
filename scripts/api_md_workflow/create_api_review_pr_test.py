@@ -619,13 +619,17 @@ class ApiReviewPrTests(unittest.TestCase):
             shell=workflow.sys.platform == "win32",
         )
 
-    def test_generate_api_for_package_runtime_executable_uses_package_dir_destination(self):
+    def test_generate_api_for_package_runtime_executable_uses_package_dir_destination(
+        self,
+    ):
         package_dir = Path("sdk/example/azure-example")
         with (
             patch.object(workflow, "find_package_dir", return_value=package_dir),
             patch.object(workflow, "run", return_value=command_result()) as run,
         ):
-            workflow.generate_api_for_package("azure-example", runtime_executable="python")
+            workflow.generate_api_for_package(
+                "azure-example", runtime_executable="python"
+            )
 
         run.assert_called_once_with(
             [
