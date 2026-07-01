@@ -190,7 +190,7 @@ re-scoping:
 3. **Not a bulk-data store.** `ctx.metadata` is small (tens of KB
    per namespace; the whole task payload caps at 1 MB). It is a
    watermark / dedup-token store, not a chat-log store. Per-input
-   payloads up to 2 MB are accepted via the attachments mechanism
+   payloads up to 10 MiB are accepted via the attachments mechanism
    (§23) but anything larger MUST be externalized by the caller.
 4. **Not a competing-consumer queue.** A `task_id` identifies one
    logical unit of work owned by one current lifetime. N workers
@@ -417,7 +417,7 @@ The handler's return value (or the value passed to
 
 | Bound | Limit | Raised as |
 |---|---|---|
-| Per-input maximum size | **2 MB** after JSON serialization, for the function input AND each individual queued steering input. | `InputTooLarge` from `.start()` / `.run()` — pre-network, at the call site. |
+| Per-input maximum size | **10 MiB** after JSON serialization, for the function input AND each individual queued steering input. | `InputTooLarge` from `.start()` / `.run()` — pre-network, at the call site. |
 | Concurrent queued steering inputs | **9** | `SteeringQueueFull` from `.start()` against a steerable task whose queue is full. |
 
 Inputs and outputs that fit easily in the inline payload budget stay
@@ -1213,11 +1213,11 @@ budgets:
 | Slot | Per-task cap | Per-value cap | Entry count cap |
 |---|---|---|---|
 | `payload` | 1 MB | n/a (shared) | unlimited keys |
-| `attachments` | n/a (per-entry only) | 2 MB per attachment | 20 attachments max |
+| `attachments` | n/a (per-entry only) | 10 MiB per attachment | 20 attachments max |
 
 `attachments` lets the framework lift the per-input ceiling from
 "however much fits in payload alongside everything else" to
-**2 MB per input** without evicting metadata budget.
+**10 MiB per input** without evicting metadata budget.
 
 #### 23.1 PATCH merge semantics
 
@@ -1348,7 +1348,7 @@ probability at fleet trillion/sec × 100 years is < 1 in 10^33.
 
 Caps:
 
-- Per-attachment value: **2 MB** serialized.
+- Per-attachment value: **10 MiB** serialized.
 - Per-task attachment count: **20**.
 
 The framework enforces (pre-network) and surfaces developer-facing
@@ -1356,8 +1356,8 @@ exceptions based on which channel the violation occurs on:
 
 | Cap | Where enforced | Developer-facing exception |
 |---|---|---|
-| Per-value (2 MB) on `_input` | Create + PATCH, both providers | `InputTooLarge` (the framework remaps an internal `_AttachmentTooLarge` based on attachment-key prefix) |
-| Per-value (2 MB) on `_steering_input_<seq>` | Steering append site (always reads state first to count) | `InputTooLarge` |
+| Per-value (10 MiB) on `_input` | Create + PATCH, both providers | `InputTooLarge` (the framework remaps an internal `_AttachmentTooLarge` based on attachment-key prefix) |
+| Per-value (10 MiB) on `_steering_input_<seq>` | Steering append site (always reads state first to count) | `InputTooLarge` |
 
 | Per-task count (20) on `create` | Create path | `_AttachmentLimitExceeded` (internal) — reachable only via direct provider use, which is unsupported |
 | Per-task count (20) on `patch` | Local provider (cheap count); hosted PATCH relies on server-side check | `_AttachmentLimitExceeded` (internal) |
@@ -1817,15 +1817,15 @@ Sizes measured as UTF-8 byte length of canonical JSON
 | `payload` (inline JSON) | 1 MB (1024 × 1024) |
 | `error` (JSON dict) | 64 KB (64 × 1024) |
 | `source` (JSON dict) | 4 KB (4 × 1024) |
-| `attachments` per-value | 2 MB (2 × 1024 × 1024) — see §23.7 |
+| `attachments` per-value | 10 MiB (10 × 1024 × 1024) — see §23.7 |
 | `attachments` total entries | 20 — see §23.7 |
 
 Note: `payload` at 1 MB is intentionally narrower than the per-
 input ceiling. The framework offloads large inputs / outputs into
 `attachments` (§23) to lift each developer-observable input or
-output to the 2 MB per-attachment cap without consuming the
+output to the 10 MiB per-attachment cap without consuming the
 payload budget. The developer never sees this offload; they
-observe an effective 2 MB limit on `ctx.input` /
+observe an effective 10 MiB limit on `ctx.input` /
 the handler's `return X` for the turn.
 
 #### 28a.3 Source field validation
@@ -3727,7 +3727,7 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   `_input`, `_steering_input_<seq>`.
   Worst-case framework attachment usage: 1 + 9 = 10 of 20 slots;
   10 slots remain free.
-- **C-ATT-4.** Per-attachment cap: 2 MB serialized. Per-task
+- **C-ATT-4.** Per-attachment cap: 10 MiB serialized. Per-task
   attachment count cap: 20. Per-value cap MUST be enforced
   client-side on every write site (create + patch) in both
   providers. Provider-level violations MUST surface as the

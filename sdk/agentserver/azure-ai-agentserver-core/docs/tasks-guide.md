@@ -220,7 +220,7 @@ typing flows through `task_id.run(input=X) -> Output`.
   output attachment to inspect later. If you want to keep a
   per-turn artifact across crashes, write it through your handler
   (LangGraph checkpoint, your own DB, etc.) before you return.
-- **Per-input size limit** ≈ 2 MB (after JSON serialization).
+- **Per-input size limit** ≈ 10 MiB (after JSON serialization).
   Larger inputs raise `InputTooLarge` at the caller before any
   network round-trip. Externalize (blob store + reference) for
   bigger payloads.
