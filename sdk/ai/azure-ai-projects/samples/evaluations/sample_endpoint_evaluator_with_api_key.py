@@ -79,7 +79,11 @@ from azure.ai.projects.models import (
     EvaluatorMetric,
 )
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
-from azure.mgmt.cognitiveservices.models import ConnectionPropertiesV2BasicResource
+from azure.mgmt.cognitiveservices.models import (
+    ConnectionPropertiesV2BasicResource,
+    ApiKeyAuthConnectionProperties,
+    ConnectionApiKey,
+)
 
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
@@ -125,14 +129,11 @@ with (
         subscription_id=subscription_id,
     )
     connection = ConnectionPropertiesV2BasicResource(
-        properties={
-            "category": "ApiKey",
-            "target": endpoint_url,
-            "authType": "ApiKey",
-            "credentials": {
-                "key": endpoint_api_key,
-            },
-        },
+        properties=ApiKeyAuthConnectionProperties(
+            category="ApiKey",
+            target=endpoint_url,
+            credentials=ConnectionApiKey(key=endpoint_api_key),
+        ),
     )
     mgmt_client.account_connections.create(
         resource_group_name=resource_group,
