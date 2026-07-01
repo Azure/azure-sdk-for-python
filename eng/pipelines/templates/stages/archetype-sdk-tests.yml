@@ -165,7 +165,6 @@ extends:
       - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
         - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
           parameters:
-            BuildTargetingString: ${{ parameters.BuildTargetingString }}
+            BuildTargetingString: ${{ package }}
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             JobName: ${{ parameters.JobName }}
-
