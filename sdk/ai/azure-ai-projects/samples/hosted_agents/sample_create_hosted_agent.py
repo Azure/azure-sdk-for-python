@@ -53,7 +53,6 @@ with (
     AIProjectClient(
         endpoint=endpoint,
         credential=credential,
-        allow_preview=True,
     ) as project_client,
 ):
     created = project_client.agents.create_version(
