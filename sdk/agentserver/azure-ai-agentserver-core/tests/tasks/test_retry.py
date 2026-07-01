@@ -174,6 +174,55 @@ class TestShouldRetry:
 # ---------------------------------------------------------------------------
 
 
+class TestRetryHardCaps:
+    """Spec 037 #11 — hard caps: <=10 attempts, <=1 hour delay (fail-fast, not clamp)."""
+
+    def test_max_attempts_at_cap_ok(self) -> None:
+        assert RetryPolicy(max_attempts=10).max_attempts == 10
+
+    def test_max_attempts_above_cap_rejected(self) -> None:
+        with pytest.raises(ValueError, match="max_attempts must be <= 10"):
+            RetryPolicy(max_attempts=11)
+
+    def test_max_delay_at_cap_ok(self) -> None:
+        p = RetryPolicy(initial_delay=timedelta(seconds=1), max_delay=timedelta(hours=1))
+        assert p.max_delay == timedelta(hours=1)
+
+    def test_max_delay_above_cap_rejected(self) -> None:
+        with pytest.raises(ValueError, match="max_delay must be <= 1 hour"):
+            RetryPolicy(initial_delay=timedelta(seconds=1), max_delay=timedelta(hours=1, seconds=1))
+
+    def test_max_delay_cap_accepts_float_seconds(self) -> None:
+        # float-seconds form must be capped identically to timedelta form.
+        with pytest.raises(ValueError, match="max_delay must be <= 1 hour"):
+            RetryPolicy(initial_delay=1.0, max_delay=3601.0)
+
+
+class TestModuleLevelPresetParity:
+    """Spec 037 #1 — module-level preset wrappers match their classmethod values
+    (which the .NET port mirrors) so zero-arg presets are identical cross-language.
+    """
+
+    def test_module_exponential_backoff_matches_classmethod(self) -> None:
+        from azure.ai.agentserver.core.tasks._retry import exponential_backoff
+
+        assert exponential_backoff() == RetryPolicy.exponential_backoff()
+        assert exponential_backoff().max_attempts == 3
+
+    def test_module_fixed_delay_matches_classmethod(self) -> None:
+        from azure.ai.agentserver.core.tasks._retry import fixed_delay
+
+        assert fixed_delay() == RetryPolicy.fixed_delay()
+        assert fixed_delay().initial_delay == timedelta(seconds=5)
+        assert fixed_delay().max_attempts == 3
+
+    def test_module_linear_backoff_matches_classmethod(self) -> None:
+        from azure.ai.agentserver.core.tasks._retry import linear_backoff
+
+        assert linear_backoff() == RetryPolicy.linear_backoff()
+        assert linear_backoff().max_attempts == 5
+
+
 class TestPresets:
     def test_exponential_backoff(self) -> None:
         p = RetryPolicy.exponential_backoff(max_attempts=5)
