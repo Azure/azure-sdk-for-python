@@ -48,12 +48,13 @@ _VERSION_HEADER_RE = re.compile(r"^##\s+\d+\.\d+")
 
 
 def trim_changelog_if_needed(package_path: Path, size_limit: int = CHANGELOG_SIZE_LIMIT_BYTES) -> bool:
-    """Drop the oldest half of CHANGELOG.md entries when the file grows too large.
+    """Drop the oldest CHANGELOG.md entries so the file fits under ``size_limit``.
 
     The CHANGELOG is concatenated into the package ``long_description`` uploaded to PyPI,
     so it must not grow without bound. When ``CHANGELOG.md`` exceeds ``size_limit`` bytes,
-    keep the newest half of the version entries and replace the older ones with a note
-    pointing to PyPI for the full history.
+    keep the ``# Release History`` header plus as many of the newest version entries as fit
+    under the limit, remove all older entries completely, and append a note pointing to PyPI
+    for the full history.
 
     Returns True if the file was trimmed, False otherwise.
     """
@@ -66,29 +67,49 @@ def trim_changelog_if_needed(package_path: Path, size_limit: int = CHANGELOG_SIZ
     package_name = package_path.name
     trimmed = False
 
+    def byte_len(lines: list[str]) -> int:
+        return sum(len(line.encode("utf-8")) for line in lines)
+
     def trim_proc(content: list[str]):
         nonlocal trimmed
         version_indices = [i for i, line in enumerate(content) if _VERSION_HEADER_RE.match(line)]
-        # Need enough released entries for trimming to be worthwhile. Return before mutating
-        # content so an existing trim note is preserved on this no-op path (modify_file always
-        # writes content back). The note is appended at the end and never matches the version
+        # Nothing to trim if there is at most one entry. Return before mutating content so an
+        # existing trim note is preserved on this no-op path (modify_file always writes content
+        # back). The note is appended after all version headers and never matches the version
         # header regex, so its presence does not affect version_indices.
-        if len(version_indices) < 4:
+        if len(version_indices) < 2:
             return
 
         # Remove any previous trim note so repeated runs don't accumulate duplicates. It lives
         # after all version headers, so version_indices computed above stay valid.
         content[:] = [line for line in content if not line.startswith(_TRIM_NOTE_PREFIX)]
 
-        keep_count = (len(version_indices) + 1) // 2  # ceil(N/2): keep the newest half
-        cut_index = version_indices[keep_count]
-        oldest_kept = content[version_indices[keep_count - 1]].split()[1]
+        # Boundaries of each version section; the header (before the first entry) is always kept.
+        bounds = version_indices + [len(content)]
+        header_bytes = byte_len(content[: version_indices[0]])
+        # Reserve room for the note line so the trimmed file stays under the limit.
+        note_reserve = 256
 
+        # Keep the newest entries whose cumulative size fits under the limit (always keep >= 1).
+        keep_count = 1
+        total = header_bytes + byte_len(content[bounds[0] : bounds[1]])
+        for j in range(1, len(version_indices)):
+            seg_bytes = byte_len(content[bounds[j] : bounds[j + 1]])
+            if total + seg_bytes + note_reserve > size_limit:
+                break
+            total += seg_bytes
+            keep_count = j + 1
+
+        # Everything already fits (should not happen once the file is over the limit, but guard).
+        if keep_count >= len(version_indices):
+            return
+
+        oldest_kept = content[version_indices[keep_count - 1]].split()[1]
         note = (
             f"{_TRIM_NOTE_PREFIX} {oldest_kept} were removed to reduce file size. "
             f"See https://pypi.org/project/{package_name}/{oldest_kept}/ for the older history.\n"
         )
-        del content[cut_index:]
+        del content[version_indices[keep_count] :]
         # Ensure a blank line separates the last kept entry from the note.
         if content and content[-1].strip():
             content.append("\n")

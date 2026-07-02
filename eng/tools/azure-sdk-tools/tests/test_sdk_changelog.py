@@ -241,28 +241,38 @@ def _make_changelog(num_versions: int, body_per_version: str = "  - some change\
     return "".join(lines)
 
 
+def _version_headers(content: str) -> list[str]:
+    import re
+
+    header_re = re.compile(r"^##\s+\S+")
+    return [line.split()[1] for line in content.splitlines() if header_re.match(line)]
+
+
 def test_trim_changelog_when_over_limit(temp_arm_package):
     package_path, changelog_path = temp_arm_package
-    # 6 version entries, big body so the file is comfortably over the tiny limit.
+    # 10 sizeable version entries so the file is well over the tiny limit.
     with open(changelog_path, "w") as f:
-        f.write(_make_changelog(6, body_per_version="  - " + "x" * 200 + "\n"))
+        f.write(_make_changelog(10, body_per_version="  - " + "x" * 400 + "\n"))
 
-    trimmed = trim_changelog_if_needed(package_path, size_limit=1024)
+    trimmed = trim_changelog_if_needed(package_path, size_limit=2048)
 
     assert trimmed is True
     with open(changelog_path, "r") as f:
         content = f.read()
 
-    # Header preserved and newest half (6,5,4) kept.
+    # File is now under the limit and the header is preserved.
+    assert changelog_path.stat().st_size <= 2048
     assert content.startswith("# Release History\n")
-    for kept in ("## 6.0.0", "## 5.0.0", "## 4.0.0"):
-        assert kept in content
-    # Oldest half (3,2,1) removed.
-    for dropped in ("## 3.0.0", "## 2.0.0", "## 1.0.0"):
-        assert dropped not in content
-    # Note points to PyPI for the oldest kept version.
-    assert "> Changelog entries prior to 4.0.0 were removed" in content
-    assert "https://pypi.org/project/azure-mgmt-test/4.0.0/" in content
+
+    kept = _version_headers(content)
+    # Newest entry is always kept; the oldest ones are completely removed.
+    assert "10.0.0" in kept
+    assert "1.0.0" not in kept
+    # The note references exactly the oldest kept version.
+    oldest_kept = kept[-1]
+    assert f"> Changelog entries prior to {oldest_kept} were removed" in content
+    assert f"https://pypi.org/project/azure-mgmt-test/{oldest_kept}/" in content
+    assert content.count("> Changelog entries prior to") == 1
 
 
 def test_trim_changelog_noop_when_under_limit(temp_arm_package):
@@ -278,9 +288,10 @@ def test_trim_changelog_noop_when_under_limit(temp_arm_package):
         assert f.read() == original
 
 
-def test_trim_changelog_skips_when_too_few_entries(temp_arm_package):
+def test_trim_changelog_skips_when_single_entry(temp_arm_package):
+    # With only one version entry there is nothing to trim, even if it is over the limit.
     package_path, changelog_path = temp_arm_package
-    original = _make_changelog(3, body_per_version="  - " + "x" * 500 + "\n")
+    original = _make_changelog(1, body_per_version="  - " + "x" * 2000 + "\n")
     with open(changelog_path, "w") as f:
         f.write(original)
 
@@ -294,14 +305,14 @@ def test_trim_changelog_skips_when_too_few_entries(temp_arm_package):
 def test_trim_changelog_idempotent(temp_arm_package):
     package_path, changelog_path = temp_arm_package
     with open(changelog_path, "w") as f:
-        f.write(_make_changelog(6, body_per_version="  - " + "x" * 200 + "\n"))
+        f.write(_make_changelog(10, body_per_version="  - " + "x" * 400 + "\n"))
 
-    assert trim_changelog_if_needed(package_path, size_limit=1024) is True
+    assert trim_changelog_if_needed(package_path, size_limit=2048) is True
     with open(changelog_path, "r") as f:
         first = f.read()
 
-    # Second run: file is now small, so nothing changes and the note is not duplicated.
-    trim_changelog_if_needed(package_path, size_limit=1024)
+    # Second run: file is now under the limit, so nothing changes and the note is not duplicated.
+    trim_changelog_if_needed(package_path, size_limit=2048)
     with open(changelog_path, "r") as f:
         second = f.read()
 
@@ -309,11 +320,11 @@ def test_trim_changelog_idempotent(temp_arm_package):
     assert second.count("> Changelog entries prior to") == 1
 
 
-def test_trim_changelog_preserves_note_when_too_few_entries(temp_arm_package):
-    # A large file that already has a trim note but now has < 4 version entries and is still
+def test_trim_changelog_preserves_note_when_single_entry(temp_arm_package):
+    # A large file that already has a trim note but now has a single version entry and is still
     # over the limit must keep its note (regression for destructive no-op mutation).
     package_path, changelog_path = temp_arm_package
-    changelog = _make_changelog(3, body_per_version="  - " + "x" * 500 + "\n")
+    changelog = _make_changelog(1, body_per_version="  - " + "x" * 2000 + "\n")
     note = (
         "> Changelog entries prior to 1.0.0 were removed to reduce file size. "
         "See https://pypi.org/project/azure-mgmt-test/1.0.0/ for the older history.\n"
@@ -329,3 +340,30 @@ def test_trim_changelog_preserves_note_when_too_few_entries(temp_arm_package):
         content = f.read()
     assert content == original
     assert note in content
+
+
+def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
+    # Real-world data: the azure-mgmt-sql 4.0.0 CHANGELOG (~215 KB) must be trimmed under the
+    # default 128 KB limit. The 4.0.0 stable entry alone is ~95 KB, so only the newest few
+    # entries fit.
+    fixture = Path(__file__).parent / "data" / "azure-mgmt-sql-4.0.0-CHANGELOG.md"
+    package_path = tmp_path / "azure-mgmt-sql"
+    package_path.mkdir()
+    shutil.copy(fixture, package_path / "CHANGELOG.md")
+
+    trimmed = trim_changelog_if_needed(package_path)
+
+    assert trimmed is True
+    content = (package_path / "CHANGELOG.md").read_text(encoding="utf-8")
+
+    # Result is under the default limit.
+    assert (package_path / "CHANGELOG.md").stat().st_size <= 128 * 1024
+
+    kept = _version_headers(content)
+    # Newest entries kept; everything down to the oldest history is removed completely.
+    assert kept == ["4.0.0", "4.0.0b25", "4.0.0b24"]
+    assert "0.1.0" not in kept
+    assert (
+        "> Changelog entries prior to 4.0.0b24 were removed to reduce file size. "
+        "See https://pypi.org/project/azure-mgmt-sql/4.0.0b24/ for the older history." in content
+    )
