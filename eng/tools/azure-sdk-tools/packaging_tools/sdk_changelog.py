@@ -68,13 +68,17 @@ def trim_changelog_if_needed(package_path: Path, size_limit: int = CHANGELOG_SIZ
 
     def trim_proc(content: list[str]):
         nonlocal trimmed
-        # Remove any previous trim note so repeated runs don't accumulate duplicates.
-        content[:] = [line for line in content if not line.startswith(_TRIM_NOTE_PREFIX)]
-
         version_indices = [i for i, line in enumerate(content) if _VERSION_HEADER_RE.match(line)]
-        # Need enough released entries for trimming to be worthwhile.
+        # Need enough released entries for trimming to be worthwhile. Return before mutating
+        # content so an existing trim note is preserved on this no-op path (modify_file always
+        # writes content back). The note is appended at the end and never matches the version
+        # header regex, so its presence does not affect version_indices.
         if len(version_indices) < 4:
             return
+
+        # Remove any previous trim note so repeated runs don't accumulate duplicates. It lives
+        # after all version headers, so version_indices computed above stay valid.
+        content[:] = [line for line in content if not line.startswith(_TRIM_NOTE_PREFIX)]
 
         keep_count = (len(version_indices) + 1) // 2  # ceil(N/2): keep the newest half
         cut_index = version_indices[keep_count]

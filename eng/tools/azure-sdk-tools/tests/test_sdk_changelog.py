@@ -307,3 +307,25 @@ def test_trim_changelog_idempotent(temp_arm_package):
 
     assert first == second
     assert second.count("> Changelog entries prior to") == 1
+
+
+def test_trim_changelog_preserves_note_when_too_few_entries(temp_arm_package):
+    # A large file that already has a trim note but now has < 4 version entries and is still
+    # over the limit must keep its note (regression for destructive no-op mutation).
+    package_path, changelog_path = temp_arm_package
+    changelog = _make_changelog(3, body_per_version="  - " + "x" * 500 + "\n")
+    note = (
+        "> Changelog entries prior to 1.0.0 were removed to reduce file size. "
+        "See https://pypi.org/project/azure-mgmt-test/1.0.0/ for the older history.\n"
+    )
+    original = changelog + "\n" + note
+    with open(changelog_path, "w") as f:
+        f.write(original)
+
+    trimmed = trim_changelog_if_needed(package_path, size_limit=1024)
+
+    assert trimmed is False
+    with open(changelog_path, "r") as f:
+        content = f.read()
+    assert content == original
+    assert note in content
