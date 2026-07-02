@@ -141,6 +141,14 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     // every operation, so the perf harness can prove the Rust path actually ran
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.
     add_pyfn!(m, wire::operation_count);
+    // Per-attempt wire-diagnostics counters: total attempts and driver-issued
+    // retries/failovers/hedges folded from each response's DiagnosticsContext.
+    // Read by the perf harness as `_rust.attempt_count()` / `_rust.retry_count()`
+    // to distinguish operations requested from wire round trips actually made
+    // (e.g. PATCH ~= 2 attempts/op via client-side Read-Modify-Write; a nonzero
+    // retry count means the retry machinery fired even with 0 terminal errors).
+    add_pyfn!(m, wire::attempt_count);
+    add_pyfn!(m, wire::retry_count);
     // Typed transport error the Python backend maps to azure-core's
     // ServiceResponseError (see wire::DriverTransportError).
     m.add(

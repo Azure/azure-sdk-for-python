@@ -110,6 +110,33 @@ pub use transport_error::DriverTransportError;
 // need a correct running total, not ordering against other memory.
 pub(crate) static BINDING_OP_COUNT: AtomicU64 = AtomicU64::new(0);
 
+/// Per-attempt wire diagnostics counters (tail-latency root-cause investigation).
+///
+/// `BINDING_OP_COUNT` counts *operations the caller asked for*; these two count
+/// *wire attempts the driver actually made* for them. The driver surfaces every
+/// attempt on the response as structured diagnostics
+/// (`CosmosResponse::diagnostics()` -> `DiagnosticsContext`): one
+/// `RequestDiagnostics` per attempt, each tagged with an `execution_context`
+/// (`initial` for a first try, or `retry` / `transport_retry` / `hedging` /
+/// `region_failover` / `circuit_breaker_probe` for anything the driver
+/// re-issued). We fold those records into two process-wide totals so the perf
+/// harness can prove, from inside the binding, how many round trips a run really
+/// made -- the thing a raw operation count hides:
+///   * `BINDING_ATTEMPT_COUNT` -- total attempts (`request_count()` summed).
+///     ~1 per clean create/read; ~2 per PATCH, because the driver runs PATCH as a
+///     client-side Read-Modify-Write (an internal Read plus an ETag-guarded
+///     Replace), so one PATCH op costs two wire round trips.
+///   * `BINDING_RETRY_COUNT` -- attempts whose `execution_context` is NOT
+///     `initial`, i.e. genuine driver-issued retries / failovers / hedges. Stays
+///     0 unless the retry machinery actually fired (a write retried on 503/429
+///     then succeeding records 0 terminal errors but a nonzero retry here).
+/// Both are read-only observability, `Relaxed` like `BINDING_OP_COUNT`; nothing
+/// in the request path reads them to change behavior. Reading the already-built
+/// `DiagnosticsContext` is a cheap in-memory walk (no I/O, no logging), so folding
+/// it in is safe even during a latency measurement without perturbing the tail.
+pub(crate) static BINDING_ATTEMPT_COUNT: AtomicU64 = AtomicU64::new(0);
+pub(crate) static BINDING_RETRY_COUNT: AtomicU64 = AtomicU64::new(0);
+
 /// Total item operations that have entered the rust binding's driver runner in
 /// this process (see `BINDING_OP_COUNT`). Exposed to Python as
 /// `_rust.operation_count()` so the perf harness can confirm, from a counter
@@ -117,6 +144,21 @@ pub(crate) static BINDING_OP_COUNT: AtomicU64 = AtomicU64::new(0);
 #[pyfunction]
 pub(crate) fn operation_count() -> u64 {
     BINDING_OP_COUNT.load(Ordering::Relaxed)
+}
+
+/// Total wire attempts recorded across every completed operation in this process
+/// (see `BINDING_ATTEMPT_COUNT`). Exposed to Python as `_rust.attempt_count()`.
+#[pyfunction]
+pub(crate) fn attempt_count() -> u64 {
+    BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed)
+}
+
+/// Total non-`initial` wire attempts -- driver-issued retries / failovers /
+/// hedges -- recorded across every completed operation in this process (see
+/// `BINDING_RETRY_COUNT`). Exposed to Python as `_rust.retry_count()`.
+#[pyfunction]
+pub(crate) fn retry_count() -> u64 {
+    BINDING_RETRY_COUNT.load(Ordering::Relaxed)
 }
 
 // ---------------------------------------------------------------------------
@@ -657,9 +699,18 @@ fn backend_response_tuple_from_success<'py>(
     let status_code = u16::from(status.status_code()) as i64;
     // SubStatusCode wraps a u16; use ``.value()`` to read it.
     let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
-    let diagnostics = response.diagnostics().to_string();
-
-    // Copy the driver's typed CosmosResponseHeaders fields into a Python
+    // Fold this operation's per-attempt wire diagnostics into the process-wide
+    // attempt/retry counters before stringifying them (see BINDING_ATTEMPT_COUNT).
+    // `diagnostics()` is a cheap Arc clone; the walk touches only in-memory records.
+    let diag = response.diagnostics();
+    BINDING_ATTEMPT_COUNT.fetch_add(diag.request_count() as u64, Ordering::Relaxed);
+    let retries = diag
+        .requests()
+        .iter()
+        .filter(|req| req.execution_context().as_str() != "initial")
+        .count() as u64;
+    BINDING_RETRY_COUNT.fetch_add(retries, Ordering::Relaxed);
+    let diagnostics = diag.to_string();
     // dict keyed by the actual `x-ms-...` wire-header names. This is what
     // the Python parser (`_helpers/_response_parse.py`) reads to populate
     // `client_connection.last_response_headers`, so customer code that
@@ -718,7 +769,17 @@ fn backend_response_tuple_from_cosmos_error<'py>(
     let status = response.status();
     let status_code = u16::from(status.status_code()) as i64;
     let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
-    let diagnostics = response.diagnostics().to_string();
+    // Wire-error responses still made real attempts -- fold them in too so the
+    // counters cover the full round-trip count, not just successes.
+    let diag = response.diagnostics();
+    BINDING_ATTEMPT_COUNT.fetch_add(diag.request_count() as u64, Ordering::Relaxed);
+    let retries = diag
+        .requests()
+        .iter()
+        .filter(|req| req.execution_context().as_str() != "initial")
+        .count() as u64;
+    BINDING_RETRY_COUNT.fetch_add(retries, Ordering::Relaxed);
+    let diagnostics = diag.to_string();
 
     let response_headers = PyDict::new_bound(py);
     write_response_headers(&response_headers, response.headers())?;

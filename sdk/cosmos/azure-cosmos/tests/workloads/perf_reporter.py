@@ -151,6 +151,8 @@ class PerfReporter:
         # None for binding means the extension has no counter; we store -1 then.
         self._last_execute_calls = perf_provenance.execute_count()
         self._last_binding_calls = perf_provenance.binding_operation_count() or 0
+        self._last_attempt_calls = perf_provenance.binding_attempt_count() or 0
+        self._last_retry_calls = perf_provenance.binding_retry_count() or 0
 
     def start(self):
         """Start the background reporting thread (daemon)."""
@@ -212,6 +214,8 @@ class PerfReporter:
         # post-warmup window's execute/binding deltas line up with window_seconds.
         self._last_execute_calls = perf_provenance.execute_count()
         self._last_binding_calls = perf_provenance.binding_operation_count() or 0
+        self._last_attempt_calls = perf_provenance.binding_attempt_count() or 0
+        self._last_retry_calls = perf_provenance.binding_retry_count() or 0
 
         while not self._stop_event.wait(timeout=self._config["report_interval"]):
             try:
@@ -332,6 +336,24 @@ class PerfReporter:
         else:
             binding_calls = max(0, cur_binding_raw - self._last_binding_calls)
             self._last_binding_calls = cur_binding_raw
+        # Per-window wire-attempt deltas from the binding's diagnostics counters
+        # (-1 when the extension has no counter, so 0 is not read as "no retries").
+        # attempt_calls: total wire round trips this window (~= count for clean
+        # reads/creates, ~= 2*count for PATCH's Read-Modify-Write); retry_calls:
+        # driver-issued retries/failovers/hedges (nonzero even at 0 terminal errors
+        # when a write retried then succeeded). Both 0 for a core-python run.
+        cur_attempt_raw = perf_provenance.binding_attempt_count()
+        if cur_attempt_raw is None:
+            attempt_calls = -1
+        else:
+            attempt_calls = max(0, cur_attempt_raw - self._last_attempt_calls)
+            self._last_attempt_calls = cur_attempt_raw
+        cur_retry_raw = perf_provenance.binding_retry_count()
+        if cur_retry_raw is None:
+            retry_calls = -1
+        else:
+            retry_calls = max(0, cur_retry_raw - self._last_retry_calls)
+            self._last_retry_calls = cur_retry_raw
         runtime_backend = perf_provenance.runtime_backend()
         for s in summaries:
             doc = {
@@ -400,6 +422,13 @@ class PerfReporter:
                 "runtime_backend": runtime_backend,
                 "rust_execute_calls": rust_execute_calls,
                 "binding_calls": binding_calls,
+                # Wire round trips this window (attempt_calls) and how many were
+                # driver-issued retries/failovers/hedges (retry_calls). attempt_calls
+                # ~= count for clean reads/creates and ~= 2*count for PATCH's
+                # Read-Modify-Write; retry_calls > 0 means the retry path fired even
+                # if terminal errors were 0. -1 on a build without the counters.
+                "attempt_calls": attempt_calls,
+                "retry_calls": retry_calls,
                 "config_concurrency": concurrency,
                 "config_application_region": preferred,
                 "config_excluded_regions": excluded,

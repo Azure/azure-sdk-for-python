@@ -53,12 +53,12 @@ def runtime_backend() -> str:
     return _runtime_backend
 
 
-def binding_operation_count():
-    """Operations the Rust binding itself has counted (``_rust.operation_count``).
+def _rust_counter(name: str):
+    """Read a cumulative ``u64`` counter exposed by the compiled ``_rust`` binding.
 
-    A non-zero value is proof the binding ran, independent of COSMOS_BACKEND and the
-    Python-side wrapper. Returns None when the extension is not importable or has no
-    counter (an older build), so callers can fall back to the Python-side signals.
+    Returns None when the extension is not importable or lacks the named counter
+    (an older build predating it), so callers can fall back to Python-side signals
+    and a 0 is never mistaken for "the extension was skipped".
     """
     # Imported lazily: the compiled _rust extension is absent on hosts without the
     # Rust build, and importing it at module load would break those hosts.
@@ -70,10 +70,41 @@ def binding_operation_count():
             import _rust as module  # type: ignore
         except Exception:
             return None
-    fn = getattr(module, "operation_count", None)
+    fn = getattr(module, name, None)
     if fn is None:
         return None
     try:
         return int(fn())
     except Exception:
         return None
+
+
+def binding_operation_count():
+    """Operations the Rust binding itself has counted (``_rust.operation_count``).
+
+    A non-zero value is proof the binding ran, independent of COSMOS_BACKEND and the
+    Python-side wrapper. Returns None when the extension is not importable or has no
+    counter (an older build), so callers can fall back to the Python-side signals.
+    """
+    return _rust_counter("operation_count")
+
+
+def binding_attempt_count():
+    """Wire attempts the Rust binding has counted (``_rust.attempt_count``).
+
+    Total ``RequestDiagnostics`` folded across every completed op: ~1 per clean
+    create/read, ~2 per PATCH (client-side Read-Modify-Write = an internal Read
+    plus an ETag-guarded Replace). Divided by the op count this is round-trips per
+    operation. Returns None on a build without the counter.
+    """
+    return _rust_counter("attempt_count")
+
+
+def binding_retry_count():
+    """Driver-issued retries/failovers/hedges the binding has counted
+    (``_rust.retry_count``): attempts whose ``execution_context`` is not
+    ``initial``. Stays 0 unless the retry machinery actually fired -- a write
+    retried on 503/429 then succeeding records 0 terminal errors but bumps this.
+    Returns None on a build without the counter.
+    """
+    return _rust_counter("retry_count")
