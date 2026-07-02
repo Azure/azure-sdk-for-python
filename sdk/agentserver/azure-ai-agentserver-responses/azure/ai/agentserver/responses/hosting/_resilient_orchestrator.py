@@ -729,20 +729,6 @@ class ResilientResponseOrchestrator:
         from ._orchestrator import (  # pylint: disable=import-outside-toplevel
             _run_background_non_stream,
         )
-        from .._response_context import PlatformContext  # pylint: disable=import-outside-toplevel
-
-        # Protocol 2.0.0: the resilient task body is decoupled from the request
-        # turn (it outlives the inbound HTTP request and re-runs on recovery), so
-        # the per-request ``call_id`` is no longer an "active turn" for Foundry
-        # storage — a stale value is rejected ("does not match an active turn").
-        # Persist with ``call_id=None`` (matching the recovery reconstruction),
-        # keeping ``user_id_key`` for per-user partitioning. Covers both the
-        # streaming and non-streaming resilient bodies, fresh and recovered.
-        if context is not None and context.platform_context.call_id is not None:
-            context.platform_context = PlatformContext(
-                user_id_key=context.platform_context.user_id_key,
-                call_id=None,
-            )
 
         try:
             # Dispatch on the request's stream flag: the streaming pipeline goes

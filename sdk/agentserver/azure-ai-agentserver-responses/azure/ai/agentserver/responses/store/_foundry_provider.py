@@ -292,7 +292,16 @@ class FoundryStorageProvider:
         body = serialize_response(response)
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
-        _apply_platform_headers(request, context)
+        # Protocol 2.0.0: UpdateResponse is the Phase-2 terminal/checkpoint write.
+        # For background (and resilient) responses it runs AFTER the client
+        # connection — and thus the per-request call_id's "active turn" — has
+        # ended, so forwarding the now-stale call_id is rejected by Foundry
+        # storage ("does not match an active turn for this session"). The write
+        # targets an already-owned response by id under the container's managed
+        # identity, so no caller call_id is needed — omit it. (CreateResponse
+        # keeps the call_id: Phase 1 runs while the connection/turn is active and
+        # establishes the response owner.)
+        _apply_platform_headers(request, None)
         await self._send_storage_request(request)
 
     async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:
