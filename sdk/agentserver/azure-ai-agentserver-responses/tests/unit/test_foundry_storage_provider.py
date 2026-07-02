@@ -472,7 +472,7 @@ async def test_create_response__sends_platform_headers(credential: Any, settings
     await provider.create_response(ResponseObject(_RESPONSE_DICT), None, None, context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_USER_ID_HEADER] == "u_key_1"  # storage partitions by the durable user id
     assert request.headers[_CALL_ID_HEADER] == "c_key_1"
 
 
@@ -484,17 +484,16 @@ async def test_get_response__sends_platform_headers(credential: Any, settings: F
     await provider.get_response("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_USER_ID_HEADER] == "u_key_2"  # storage partitions by the durable user id
     assert request.headers[_CALL_ID_HEADER] == "c_key_2"
 
 
 @pytest.mark.asyncio
-async def test_update_response__omits_call_id(credential: Any, settings: FoundryStorageSettings) -> None:
-    # Protocol 2.0.0: UpdateResponse is the Phase-2 terminal/checkpoint write.
-    # For background/resilient responses it runs after the client connection (and
-    # its call_id "active turn") has ended, so a stale call_id is rejected by
-    # Foundry storage. The write targets an already-owned response by id under the
-    # container's managed identity, so the call_id is deliberately NOT forwarded.
+async def test_update_response__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+    # Storage forwards BOTH the durable user id (partition key) and the call id.
+    # The resilient/background path strips the stale call_id UPSTREAM (at the
+    # resilient dispatch boundary) so Phase-2 writes carry user_id only; the
+    # provider itself forwards whatever the context holds.
     provider = _make_provider(credential, settings, _make_response(200, {}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
@@ -502,8 +501,8 @@ async def test_update_response__omits_call_id(credential: Any, settings: Foundry
     await provider.update_response(ResponseObject(_RESPONSE_DICT), context=context)
 
     request = provider._client.send_request.call_args[0][0]
-    assert _USER_ID_HEADER not in request.headers  # user_id is never forwarded to 1P
-    assert _CALL_ID_HEADER not in request.headers  # call_id omitted on Phase-2 update
+    assert request.headers[_USER_ID_HEADER] == "u_key_3"  # storage partitions by the durable user id
+    assert request.headers[_CALL_ID_HEADER] == "c_key_3"
 
 
 @pytest.mark.asyncio
@@ -514,7 +513,7 @@ async def test_delete_response__sends_platform_headers(credential: Any, settings
     await provider.delete_response("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_USER_ID_HEADER] == "u_key_4"  # storage partitions by the durable user id
     assert request.headers[_CALL_ID_HEADER] == "c_key_4"
 
 
@@ -526,7 +525,7 @@ async def test_get_input_items__sends_platform_headers(credential: Any, settings
     await provider.get_input_items("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_USER_ID_HEADER] == "u_key_5"  # storage partitions by the durable user id
     assert request.headers[_CALL_ID_HEADER] == "c_key_5"
 
 
@@ -538,7 +537,7 @@ async def test_get_items__sends_platform_headers(credential: Any, settings: Foun
     await provider.get_items(["item_out_001"], context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_USER_ID_HEADER] == "u_key_6"  # storage partitions by the durable user id
     assert request.headers[_CALL_ID_HEADER] == "c_key_6"
 
 
@@ -550,7 +549,7 @@ async def test_get_history_item_ids__sends_platform_headers(credential: Any, set
     await provider.get_history_item_ids(None, None, limit=10, context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_USER_ID_HEADER] == "u_key_7"  # storage partitions by the durable user id
     assert request.headers[_CALL_ID_HEADER] == "c_key_7"
 
 
@@ -567,15 +566,15 @@ async def test_platform_headers__omitted_when_none(credential: Any, settings: Fo
 
 
 @pytest.mark.asyncio
-async def test_platform_headers__user_id_alone_sends_nothing(credential: Any, settings: FoundryStorageSettings) -> None:
-    """user_id is never forwarded to 1P; with only user_id_key set, no headers are sent."""
+async def test_platform_headers__user_id_alone_sends_user_id(credential: Any, settings: FoundryStorageSettings) -> None:
+    """Storage forwards the durable user id even without a call id (e.g. recovery)."""
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
-    isolation = PlatformContext(user_id_key="u_only")
-    await provider.get_response("resp_abc123", context=isolation)
+    context = PlatformContext(user_id_key="u_only")
+    await provider.get_response("resp_abc123", context=context)
 
     request = provider._client.send_request.call_args[0][0]
-    assert _USER_ID_HEADER not in request.headers
+    assert request.headers[_USER_ID_HEADER] == "u_only"
     assert _CALL_ID_HEADER not in request.headers
 
 

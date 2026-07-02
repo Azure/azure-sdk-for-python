@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Callable, Iterable
 from urllib.parse import quote as _url_quote
 
-from azure.ai.agentserver.core.platform_headers import FOUNDRY_CALL_ID, PLATFORM_ERROR_TAG
+from azure.ai.agentserver.core.platform_headers import FOUNDRY_CALL_ID, PLATFORM_ERROR_TAG, USER_ID
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
@@ -93,21 +93,31 @@ def _encode(value: str) -> str:
 
 
 def _apply_platform_headers(request: HttpRequest, context: PlatformContext | None) -> None:
-    """Forward the per-request call ID on an outbound HTTP request when present.
+    """Forward the platform identity headers on an outbound storage request.
 
-    On protocol version ``2.0.0`` the container forwards the per-request call ID
-    (``x-agent-foundry-call-id``) on outbound calls to Foundry platform services;
-    the storage service resolves the caller context server-side from it. The
-    ``x-agent-user-id`` header is **not** forwarded — it is not accepted/trusted
-    by 1P services and is used only for container-side state partitioning.
+    Per the container storage-protocol spec §4, every request to the Foundry
+    storage API MUST forward the platform identity headers when present:
+
+    - ``x-agent-user-id`` — the global, cross-agent per-user key. This is the
+      **durable partition key**: the storage API partitions response data by it,
+      so it must be forwarded on every read/write (including background/resilient
+      Phase-2 writes and crash recovery, which outlive the request turn).
+    - ``x-agent-foundry-call-id`` — the per-request call id (protocol ``2.0.0``
+      only), carrying transient caller-identity context.
+
+    Omitting the user id when present causes data to be stored in the wrong
+    partition or be inaccessible. (Note: this is storage-specific — the toolbox /
+    MCP path forwards only the call id, not the user id.)
 
     :param request: The outbound HTTP request to modify.
     :type request: ~azure.core.rest.HttpRequest
-    :param context: Platform context containing the call ID, or ``None``.
+    :param context: Platform context containing the identity keys, or ``None``.
     :type context: ~azure.ai.agentserver.responses.PlatformContext | None
     """
     if context is None:
         return
+    if context.user_id_key is not None:
+        request.headers[USER_ID] = context.user_id_key
     if context.call_id is not None:
         request.headers[FOUNDRY_CALL_ID] = context.call_id
 
@@ -292,16 +302,7 @@ class FoundryStorageProvider:
         body = serialize_response(response)
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
-        # Protocol 2.0.0: UpdateResponse is the Phase-2 terminal/checkpoint write.
-        # For background (and resilient) responses it runs AFTER the client
-        # connection — and thus the per-request call_id's "active turn" — has
-        # ended, so forwarding the now-stale call_id is rejected by Foundry
-        # storage ("does not match an active turn for this session"). The write
-        # targets an already-owned response by id under the container's managed
-        # identity, so no caller call_id is needed — omit it. (CreateResponse
-        # keeps the call_id: Phase 1 runs while the connection/turn is active and
-        # establishes the response owner.)
-        _apply_platform_headers(request, None)
+        _apply_platform_headers(request, context)
         await self._send_storage_request(request)
 
     async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:
