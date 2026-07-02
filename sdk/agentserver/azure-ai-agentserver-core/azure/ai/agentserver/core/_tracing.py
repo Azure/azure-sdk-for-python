@@ -492,26 +492,31 @@ class _FoundryEnrichmentSpanProcessor:
         # Set agent identity attributes at span end so they cannot be
         # overwritten by underlying frameworks (e.g. LangChain, Semantic Kernel).
         #
-        # Workaround: opentelemetry-sdk <=1.40.0 sets _end_time before calling
+        # Workaround: opentelemetry-sdk sets _end_time before calling
         # _on_ending, which causes set_attribute() to silently no-op despite the
-        # spec requiring mutability during OnEnding.  We write to _attributes
-        # directly until the SDK is fixed.  The try/except guards against future
-        # SDK changes that may rename or remove the internal field.
+        # spec requiring mutability during OnEnding.  We write to the span's
+        # attribute store directly until the SDK is fixed.  opentelemetry-sdk
+        # >=1.43.0 changed ``span._attributes`` from a plain dict to a
+        # ``BoundedAttributes`` whose backing store is ``._dict`` and which no
+        # longer supports item assignment; older versions exposed a mutable
+        # mapping directly.  Resolve ``._dict`` when present so both work.
+        # The try/except guards against future SDK changes to these internals.
         # TODO: switch to span.set_attribute() once the SDK honours the spec.
         attrs = getattr(span, "_attributes", None)
         if attrs is None:
             return
+        target = getattr(attrs, "_dict", attrs)
         try:
             if self.agent_name:
-                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+                target[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
             if self.agent_version:
-                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+                target[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
             if self.agent_id:
-                attrs[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
+                target[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
             if self.agent_blueprint_id:
-                attrs[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
+                target[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
             if self.agent_tenant_id:
-                attrs[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
+                target[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 
