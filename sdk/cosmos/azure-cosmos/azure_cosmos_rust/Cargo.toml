@@ -53,7 +53,6 @@ pyo3-async-runtimes = { version = "0.22", features = ["tokio-runtime"] }
 async-trait = { workspace = true }
 
 # Parsing the account endpoint when constructing AccountReference.
-# Parsing the account endpoint when constructing AccountReference.
 url = { workspace = true }
 
 # Parsing the partition-key header and reading the body id. `serde` (derive)
@@ -62,9 +61,5 @@ url = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 
-# Parsing an activity-id header into a typed UUID.
-uuid = { workspace = true }
-
 # Surfaced at the binding boundary when forwarding driver errors.
 azure_core = { workspace = true }
-

@@ -52,7 +52,7 @@ OP_REPLACE_ITEM = "replace_item"
 OP_PATCH_ITEM = "patch_item"
 
 
-# ``PreparedRequest.op`` -> Rust binding function name. Shared by the sync and
+# ``PreparedRequest.op`` -> binding function name. Shared by the sync and
 # async backends so a new operation is wired in one place, not two.
 OP_TO_BINDING_METHOD = {
     OP_CREATE_ITEM: "create_item",
@@ -65,7 +65,7 @@ OP_TO_BINDING_METHOD = {
 
 
 # Reserved lookups for the query and batch operations, mirroring
-# ``OP_TO_BINDING_METHOD``: each maps an op name to the Rust binding function
+# ``OP_TO_BINDING_METHOD``: each maps an op name to the binding function
 # that runs it. Empty until those operations are added; adding a row does not
 # change the dispatch code.
 QUERY_TO_BINDING_METHOD: dict[str, str] = {}
@@ -110,28 +110,28 @@ class PreparedRequest:
 
 @dataclass(frozen=True)
 class PreparedClientConfig:
-    """Client-construction settings carried to the Rust driver at
+    """Client-construction settings carried to the rust driver at
     ``init_client`` time -- the startup-time analog of :class:`PreparedRequest`.
 
-    Only settings the Rust driver can honor today are carried here; more fields
+    Only settings the rust driver can honor today are carried here; more fields
     are added as the driver gains support, and a backend reads exactly the
     fields it knows. Stored as immutable values so the backend cannot mutate
     what the client passed.
 
     Every field maps to a driver-side setting the binding applies when it builds
-    the per-account driver: ``preferred_locations`` reorders endpoints, while the
-    rest land on a driver-level ``OperationOptions`` (the driver's "account"
+    the per-account rust driver: ``preferred_locations`` reorders endpoints, while
+    the rest land on a driver-level ``OperationOptions`` (the driver's "account"
     layer that every request inherits) -- ``excluded_locations`` to
     ``excluded_regions``, the throttling fields to ``ThrottlingRetryOptions``,
     the hedging fields to an ``AvailabilityStrategy``, and ``consistency_level``
     to the ``ReadConsistencyStrategy``.
 
-    The Rust binding keys its driver cache by ``(endpoint, credential, config)``,
-    so this config is part of what selects an engine: a client whose settings match
-    an existing live client's shares that engine, and a client whose settings differ
-    gets its own engine that honors them (nothing is silently dropped). Building a
-    separate engine per differing config is the default; opting into strict
-    isolation (see
+    The binding keys its rust-driver cache by ``(endpoint, credential, config)``,
+    so this config is part of what selects a rust driver: a client whose settings
+    match an existing live client's shares that rust driver, and a client whose
+    settings differ gets its own rust driver that honors them (nothing is silently
+    dropped). Building a separate rust driver per differing config is the default;
+    opting into strict isolation (see
     :class:`~azure.cosmos._backend._driver_registry.StrictEngineIsolationError`)
     instead raises when a later client's config differs from the first live client's.
     """
@@ -191,7 +191,7 @@ class PreparedClientConfig:
     #: rather than silently dropping them.
     consistency_level: Optional[str] = None
 
-    #: Runtime-level proxy switch for the Rust driver. ``True`` lets the driver
+    #: Runtime-level proxy switch for the rust driver. ``True`` lets the driver
     #: use proxy settings from environment variables (such as ``HTTPS_PROXY`` /
     #: ``HTTP_PROXY``); ``False`` forces a direct connection (no proxy); ``None``
     #: carries nothing, so the runtime keeps its existing env/default behavior.
@@ -421,10 +421,10 @@ class CosmosBackend(abc.ABC):
 
 
 # ---------------------------------------------------------------------------
-# Response-header normalisation (Rust binding dict -> CaseInsensitiveDict)
+# Response-header normalisation (binding dict -> CaseInsensitiveDict)
 # ---------------------------------------------------------------------------
 #
-# The Rust binding hands back a plain dict keyed by the gateway's wire
+# The binding hands back a plain dict keyed by the gateway's wire
 # header names. The legacy core-python path surfaces azure-core's
 # ``CaseInsensitiveDict`` (it just does ``copy.copy(response.headers)`` --
 # the raw gateway headers, no renaming or aliasing). To keep
@@ -437,7 +437,7 @@ class CosmosBackend(abc.ABC):
 def normalize_response_headers(
     headers: Optional[Mapping[str, Any]],
 ) -> Optional[CaseInsensitiveDict]:
-    """Wrap the Rust binding's response-header dict in a ``CaseInsensitiveDict``.
+    """Wrap the binding's response-header dict in a ``CaseInsensitiveDict``.
 
     A pure type-normalisation step: every key from the input is copied
     through unchanged so the rust path surfaces the same gateway header
@@ -528,6 +528,6 @@ def raise_account_read_unsupported(backend: Any) -> None:
         return
     raise NotImplementedError(
         "get_database_account() is not yet available on the Rust backend "
-        "(_backend='rust'). The Rust driver reads account metadata internally for "
+        "(_backend='rust'). The rust driver reads account metadata internally for "
         "routing but does not yet expose it across the binding."
     )

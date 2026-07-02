@@ -8,7 +8,7 @@
 //! driver crate is statically linked into the same binary so the
 //! wheel ships exactly one Rust file.
 //!
-//! Two Python-callable entry points:
+//! Python-callable entry points include:
 //!
 //!   * `init_client(endpoint, master_key=None, config=None, credential=None) -> handle`
 //!         Lazily stands up a per-process Tokio runtime + driver
@@ -109,32 +109,38 @@ mod wire;
 
 use pyo3::prelude::*;
 
+macro_rules! add_pyfn {
+    ($module:expr, $function:path) => {
+        $module.add_function(wrap_pyfunction!($function, $module)?)?;
+    };
+}
+
 // ---------------------------------------------------------------------------
 // Module entry point
 // ---------------------------------------------------------------------------
 
 #[pymodule]
 fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(runtime::init_client, m)?)?;
-    m.add_function(wrap_pyfunction!(runtime::close_client, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::create_item, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::upsert_item, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::replace_item, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::delete_item, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::read_item, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::patch_item, m)?)?;
+    add_pyfn!(m, runtime::init_client);
+    add_pyfn!(m, runtime::close_client);
+    add_pyfn!(m, documents::create_item);
+    add_pyfn!(m, documents::upsert_item);
+    add_pyfn!(m, documents::replace_item);
+    add_pyfn!(m, documents::delete_item);
+    add_pyfn!(m, documents::read_item);
+    add_pyfn!(m, documents::patch_item);
     // Async siblings: each returns a Python awaitable that completes on the
     // driver's runtime, so the async backend holds no worker thread per call.
-    m.add_function(wrap_pyfunction!(documents::create_item_async, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::upsert_item_async, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::replace_item_async, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::delete_item_async, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::read_item_async, m)?)?;
-    m.add_function(wrap_pyfunction!(documents::patch_item_async, m)?)?;
+    add_pyfn!(m, documents::create_item_async);
+    add_pyfn!(m, documents::upsert_item_async);
+    add_pyfn!(m, documents::replace_item_async);
+    add_pyfn!(m, documents::delete_item_async);
+    add_pyfn!(m, documents::read_item_async);
+    add_pyfn!(m, documents::patch_item_async);
     // Concrete backend provenance: a counter incremented inside the binding on
     // every operation, so the perf harness can prove the Rust path actually ran
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.
-    m.add_function(wrap_pyfunction!(wire::operation_count, m)?)?;
+    add_pyfn!(m, wire::operation_count);
     // Typed transport error the Python backend maps to azure-core's
     // ServiceResponseError (see wire::DriverTransportError).
     m.add(

@@ -4,12 +4,46 @@
 //! Per-process runtime, the driver cache, and the client lifecycle entry points
 //! (`init_client` / `close_client`).
 //!
-//! One Tokio runtime and one `CosmosDriverRuntime` are built on the first
-//! `init_client` and live for the process. Drivers are cached by
-//! `(endpoint, credential, config)` and reference-counted: clients that match on all
-//! three share one driver, and it is dropped when the last one closes. A client that
-//! differs in credential or config gets its own driver, so one client's auth or
-//! settings are never used for another.
+//! This file is the rust backend's pooling-and-lifecycle brain. It exists so the
+//! whole process shares one set of runtimes, so clients with the same
+//! `(endpoint, credential, config)` share one reference-counted rust driver
+//! (built and torn down exactly once, at the right times), and so a customer's
+//! construction settings and credential are turned into driver options safely at
+//! the boundary. Without it, every `CosmosClient` on the rust backend would build
+//! its own rust driver -- its own connection pool and routing state -- so N
+//! clients to the same account would mean N connection pools; and there would be
+//! no safe place to decide when to tear a driver down (closing one client could
+//! rip the driver out from under another).
+//!
+//! Three "runtime"-ish things live here; keep them distinct:
+//!   * shared Tokio runtime (`RuntimeContext.tokio_rt`) -- the one process-wide
+//!     thread pool that *runs* async work. General-purpose Tokio; knows nothing
+//!     about Cosmos.
+//!   * driver runtime (`CosmosDriverRuntime`) -- the *factory* that builds rust
+//!     drivers and carries the process-wide connection-pool config. Also one per
+//!     process. It is built *on* the Tokio runtime.
+//!   * rust driver (`CosmosDriver`) -- the per-account *engine* that signs,
+//!     routes, and retries. This is the one thing here that is NOT process-wide:
+//!     there is one per distinct `(endpoint, credential, config)`, produced by
+//!     `driver_runtime.create_driver(...)`, and its async work runs on the shared
+//!     Tokio runtime.
+//!
+//! So the relationship is: one shared Tokio runtime and one driver runtime per
+//! process (bundled together in `RuntimeContext`, behind one `OnceLock`); the
+//! driver runtime is a factory that makes many rust drivers (one per key), which
+//! this file caches and reference-counts.
+//!
+//! The driver handle `init_client` returns is exactly that
+//! `(endpoint, credential, config)` cache key. Clients that match on all three
+//! share one rust driver, and it is dropped when the last one closes. A client
+//! that differs in credential or config gets its own driver, so one client's auth
+//! or settings are never used for another.
+//!
+//! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
+//! `documents.rs`): client = the `CosmosClient`; binding = this compiled `_rust`
+//! extension; rust driver / driver runtime / shared Tokio runtime as above;
+//! driver handle = the cache key string; credential = how the customer proves who
+//! they are.
 
 use std::collections::hash_map::RandomState;
 use std::collections::HashMap;
@@ -18,7 +52,7 @@ use std::sync::{Arc, OnceLock};
 use std::time::Duration;
 
 use parking_lot::RwLock;
-use pyo3::exceptions::{PyRuntimeError, PyValueError};
+use pyo3::exceptions::{PyAttributeError, PyRuntimeError, PyValueError};
 use pyo3::prelude::*;
 use pyo3::types::PyStringMethods;
 
@@ -40,10 +74,28 @@ use crate::credential::PyTokenCredential;
 // Per-process singletons
 // ---------------------------------------------------------------------------
 //
-// One runtime context (Tokio runtime + CosmosDriverRuntime), and a per-endpoint
-// cache of CosmosDrivers. All three are lazily initialised on the first
-// init_client call and live for the lifetime of the Python process.
+// What is process-wide vs per-key, precisely:
+//   * PROCESS-WIDE (one each, built once, live for the whole Python process):
+//     the shared Tokio runtime and the driver runtime, bundled in RuntimeContext
+//     behind the RUNTIME_CONTEXT OnceLock; plus the DRIVERS cache map itself.
+//   * PER (endpoint, credential, config): the rust drivers stored *inside* that
+//     cache. Many can exist; each is reference-counted and dropped when its last
+//     client closes.
+// All of these are lazily initialised on the first init_client call.
 
+/// The two process-wide runtimes, bundled so one `OnceLock` builds both together.
+///
+/// Both fields are one-per-process and built once (see `runtime_context`):
+///   * `tokio_rt` -- the shared Tokio runtime (the thread pool that runs async
+///     work). Not Cosmos-specific.
+///   * `driver_runtime` -- the driver runtime (`CosmosDriverRuntime`): the factory
+///     that builds rust drivers and carries the process-wide connection-pool
+///     config. Built *on* `tokio_rt`.
+///
+/// Neither is a rust driver: a rust driver (`CosmosDriver`) is per
+/// `(endpoint, credential, config)` and lives in the `DRIVERS` cache, not here.
+/// `proxy_allowed` is recorded because it is a process-global switch that can only
+/// be set once (see `proxy_allowed_conflicts`).
 pub(crate) struct RuntimeContext {
     pub(crate) tokio_rt: TokioRuntime,
     pub(crate) driver_runtime: Arc<CosmosDriverRuntime>,
@@ -187,14 +239,51 @@ fn proxy_allowed_conflicts(initialized: Option<bool>, requested: Option<bool>) -
     }
 }
 
+const AUTH_REQUIRED_ERROR: &str = "init_client requires either a master_key or a token credential";
+const AUTH_EXCLUSIVE_ERROR: &str =
+    "init_client received both master_key and token credential; exactly one must be set";
+
+/// Require exactly one auth input -- a master key or a token credential -- at the
+/// API boundary. Rejects "both" (ambiguous: which one signs requests?) and
+/// "neither" (nothing to authenticate with) with a clear message. Without this
+/// check, "neither" would fail deeper down in a less obvious place and "both"
+/// could be resolved silently one way, hiding a real misconfiguration.
+fn validate_auth_inputs(
+    master_key: Option<&str>,
+    credential: Option<&Bound<'_, PyAny>>,
+) -> PyResult<()> {
+    match (master_key, credential) {
+        (Some(_), Some(_)) => Err(PyValueError::new_err(AUTH_EXCLUSIVE_ERROR)),
+        (None, None) => Err(PyValueError::new_err(AUTH_REQUIRED_ERROR)),
+        _ => Ok(()),
+    }
+}
+
 // Keep init errors too, so every later caller sees the same failure reason.
 static RUNTIME_CONTEXT: OnceLock<Result<RuntimeContext, String>> = OnceLock::new();
 static DRIVERS: OnceLock<RwLock<HashMap<String, DriverEntry>>> = OnceLock::new();
 
+/// Accessor for the one process-wide driver cache: the map from driver handle
+/// (`(endpoint, credential, config)` key) to the reference-counted rust driver
+/// for that key. The map is process-wide and created once; the rust drivers it
+/// holds are per-key. Without a single accessor there would be no one shared
+/// cache, so clients could not find each other's drivers to share them.
 pub(crate) fn drivers() -> &'static RwLock<HashMap<String, DriverEntry>> {
     DRIVERS.get_or_init(|| RwLock::new(HashMap::new()))
 }
 
+/// Build (once) or fetch the two process-wide runtimes -- the shared Tokio
+/// runtime and the driver runtime -- and hand back the shared `RuntimeContext`.
+///
+/// The first client to reach here initializes both together inside the
+/// `RUNTIME_CONTEXT` `OnceLock`, with the GIL released (`py.allow_threads`), and
+/// records its `proxy_allowed`. Every later client just fetches the same context
+/// and is checked against that recorded value. Because these runtimes are
+/// process-wide (not per client), the proxy switch can only be set once: a later
+/// client asking for a different value is a hard error (see
+/// `proxy_allowed_conflicts`) rather than a silent mismatch. Without this, every
+/// client would stand up its own Tokio runtime and driver runtime instead of
+/// sharing one pair.
 fn runtime_context(
     py: Python<'_>,
     requested_proxy_allowed: Option<bool>,
@@ -244,6 +333,12 @@ fn runtime_context(
     }
 }
 
+/// Read-only fetch of the process-wide `RuntimeContext` for the per-operation
+/// path (`wire.rs`), which needs the shared Tokio runtime to run a request but
+/// must not (re)build it. Raises a clear "init_client must be called before
+/// {op_name}" if no client has initialized the runtimes yet. Without it, an
+/// operation issued before `init_client` would fail deep down with an obscure
+/// error instead of a plain one naming the missing step.
 pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static RuntimeContext> {
     match RUNTIME_CONTEXT.get() {
         Some(Ok(ctx)) => Ok(ctx),
@@ -258,14 +353,23 @@ pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static Runtim
 // init_client
 // ---------------------------------------------------------------------------
 //
-// A call with the same endpoint, credential, and config returns the same handle and
-// adds one reference to the shared driver; any difference builds a new driver. The
-// optional `config` is a Python `PreparedClientConfig` of construction settings the
-// driver honors -- preferred_locations, runtime proxy allowance, plus account-level
-// operation options (excluded locations, throttle-retry caps, hedging threshold,
-// consistency level).
-// They apply when the driver for this key is first built; later clients with the
-// same key share it.
+// The front door, called once when a customer constructs a `CosmosClient` on the
+// rust backend. It returns the driver handle -- the `(endpoint, credential,
+// config)` cache key -- and makes sure a rust driver for that key exists:
+//   * Fast path: a driver for this key already exists (another client with the
+//     same endpoint, credential, and config), so just add one reference and reuse
+//     it. This is what makes same-settings clients share one rust driver.
+//   * Slow path: no driver yet, so build one on the shared Tokio runtime (via the
+//     process-wide driver runtime) and insert it as the first reference.
+// Process-wide vs per-key: the runtimes are shared once for the process; the rust
+// driver this builds is per key. The optional `config` is a Python
+// `PreparedClientConfig` of construction settings the driver honors --
+// preferred_locations, runtime proxy allowance, plus account-level operation
+// options (excluded locations, throttle-retry caps, hedging threshold,
+// consistency level). They apply when the driver for this key is first built;
+// later clients with the same key share it.
+// Without this entry point there would be no way to get or make a client's rust
+// driver, and no reference counting to share and tear it down safely.
 
 #[pyfunction]
 #[pyo3(signature = (endpoint, master_key=None, config=None, credential=None))]
@@ -276,6 +380,8 @@ pub(crate) fn init_client(
     config: Option<&Bound<'_, PyAny>>,
     credential: Option<&Bound<'_, PyAny>>,
 ) -> PyResult<String> {
+    validate_auth_inputs(master_key, credential)?;
+
     let endpoint_url = Url::parse(endpoint)
         .map_err(|e| PyValueError::new_err(format!("invalid endpoint URL: {e}")))?;
 
@@ -289,11 +395,7 @@ pub(crate) fn init_client(
     let credential_fp = match credential {
         Some(token_credential) => token_credential_fingerprint(token_credential.as_ptr() as usize),
         None => {
-            let key = master_key.ok_or_else(|| {
-                PyValueError::new_err(
-                    "init_client requires either a master_key or a token credential",
-                )
-            })?;
+            let key = master_key.ok_or_else(|| PyValueError::new_err(AUTH_REQUIRED_ERROR))?;
             master_key_fingerprint(key)
         }
     };
@@ -330,8 +432,8 @@ pub(crate) fn init_client(
     // Slow path: build the driver. Held without any of our locks because
     // create_driver is async and may take seconds. The account carries
     // whichever auth the caller supplied: a token credential (wrapped so the
-    // driver can call back into Python for tokens) takes precedence; otherwise
-    // the master key. The Python factory guarantees exactly one is present.
+    // driver can call back into Python for tokens), otherwise the master key.
+    // This binding enforces exactly one input at the API boundary.
     let account = match credential {
         Some(token_credential) => {
             let py_credential: Py<PyAny> = token_credential.clone().unbind();
@@ -341,11 +443,7 @@ pub(crate) fn init_client(
             )
         }
         None => {
-            let key = master_key.ok_or_else(|| {
-                PyValueError::new_err(
-                    "init_client requires either a master_key or a token credential",
-                )
-            })?;
+            let key = master_key.ok_or_else(|| PyValueError::new_err(AUTH_REQUIRED_ERROR))?;
             AccountReference::with_master_key(endpoint_url, key.to_string())
         }
     };
@@ -596,7 +694,13 @@ where
         Ok(value) => value
             .extract::<Option<T>>()
             .map_err(|e| PyValueError::new_err(format!("client config field {attr:?}: {e}"))),
-        Err(_) => Ok(None),
+        Err(err) => {
+            if err.is_instance_of::<PyAttributeError>(config.py()) {
+                Ok(None)
+            } else {
+                Err(err)
+            }
+        }
     }
 }
 
@@ -629,10 +733,14 @@ pub(crate) fn close_client(handle: &str) -> PyResult<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        apply_close, compose_cache_key, config_fingerprint_from_repr, master_key_fingerprint,
-        proxy_allowed_conflicts, read_consistency_from_str, token_credential_fingerprint,
+        apply_close, compose_cache_key, config_fingerprint_from_repr, get_config_opt,
+        master_key_fingerprint, proxy_allowed_conflicts, read_consistency_from_str,
+        token_credential_fingerprint, validate_auth_inputs, AUTH_EXCLUSIVE_ERROR,
+        AUTH_REQUIRED_ERROR,
     };
     use azure_data_cosmos_driver::options::ReadConsistencyStrategy;
+    use pyo3::prelude::*;
+    use pyo3::types::{PyModule, PyString};
 
     // The reference-counted driver cache evicts an endpoint's driver only when
     // its last client closes. apply_close is the decision behind that: it must
@@ -696,6 +804,60 @@ mod tests {
         assert!(!proxy_allowed_conflicts(Some(true), Some(true)));
         assert!(proxy_allowed_conflicts(Some(true), Some(false)));
         assert!(proxy_allowed_conflicts(None, Some(true)));
+    }
+
+    #[test]
+    fn validate_auth_inputs_rejects_missing_and_ambiguous_inputs() {
+        let missing = validate_auth_inputs(None, None).expect_err("missing auth should fail");
+        assert!(
+            missing.to_string().contains(AUTH_REQUIRED_ERROR),
+            "unexpected error: {missing}"
+        );
+
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let cred = PyString::new_bound(py, "token-credential").into_any();
+            let both = validate_auth_inputs(Some("master-key"), Some(&cred))
+                .expect_err("both auth inputs should fail");
+            assert!(
+                both.to_string().contains(AUTH_EXCLUSIVE_ERROR),
+                "unexpected error: {both}"
+            );
+        });
+    }
+
+    #[test]
+    fn get_config_opt_ignores_only_missing_attribute() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+class Config:
+    @property
+    def exploding(self):
+        raise RuntimeError("boom")
+"#,
+                "runtime_config_test.py",
+                "runtime_config_test",
+            )
+            .expect("module must compile");
+            let config = module
+                .getattr("Config")
+                .and_then(|cls| cls.call0())
+                .expect("Config() should construct");
+
+            let missing = get_config_opt::<String>(&config, "missing_attr")
+                .expect("missing attribute should map to None");
+            assert_eq!(missing, None);
+
+            let err = get_config_opt::<String>(&config, "exploding")
+                .expect_err("non-attribute getattr failure must be surfaced");
+            assert!(
+                err.to_string().contains("boom"),
+                "unexpected error: {err}"
+            );
+        });
     }
 
     // ---- Cache-key / credential-fingerprint isolation -------------------------

@@ -3,37 +3,57 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Factory that picks which backend a single client will use.
+"""The single front door and gatekeeper for backend selection.
 
-``CosmosClient`` calls ``make_backend(...)`` exactly once at
-construction time and stores the returned object.
+Consistent terms used throughout this file:
 
-Selection precedence (highest wins):
+* **client** -- the ``CosmosClient`` object a customer creates in their code.
+* **backend** -- which engine runs the database calls: ``core-python`` (the
+  original all-Python one) or ``rust`` (the new one that hands the work to a
+  rust driver).
+* **rust driver** -- the engine itself; it owns the network connection pool, the
+  auth (request signing), and region routing. The **binding** is the compiled
+  ``azure.cosmos._rust`` layer Python calls into to reach it (the compiled file
+  holds both). The binding keeps one rust driver per distinct ``(endpoint,
+  credential, config)`` and reference-counts it, so same-settings clients share
+  one; the **driver handle** is the string that names which rust driver a client
+  uses.
+* **credential** -- how the customer proves who they are (a master key, or a
+  token from ``azure-identity``).
 
-1. ``_backend=`` kwarg passed to the client constructor.
-2. ``COSMOS_BACKEND`` environment variable.
-3. Default: ``core-python``.
+50,000-foot view -- what this file does
+---------------------------------------
 
-An invalid value raises ``ValueError`` at construction time.
+When a customer writes ``CosmosClient(url, credential, _backend="rust")``,
+something has to (1) decide which engine that client will use, and (2) if it is
+the Rust engine, check that everything the customer passed is something the Rust
+engine can actually handle, and repackage it into the shape the driver expects.
+That is this file's whole job. The client calls :func:`make_backend` once, at
+construction, and stores what it returns: a :class:`RustBackend` object if Rust
+was chosen, or ``None`` if core-python was chosen (the rest of the SDK reads
+"no backend object" as "use the original Python path").
 
-When ``rust`` is selected the factory needs the account endpoint and either a
-master-key credential or a token credential (Entra/AAD via ``azure-identity``).
-Both synchronous and asynchronous token credentials are accepted: an async
-credential is wrapped in an :class:`AsyncTokenCredentialBridge` so the driver's
-synchronous ``get_token`` can drive it (see ``_async_credential_bridge``).
-Resource-token auth (per-user / permission credentials) is still rejected
-upfront -- the Rust driver has no resource-token auth branch yet.
+If this file didn't exist: that decide-and-check-and-repackage logic would have
+to live inside ``CosmosClient`` itself -- and be duplicated in both the sync and
+async clients. The moment those two copies drifted, you'd get bugs on one side
+only. Worse, without the up-front checks, a customer who passed something Rust
+can't do yet (say, a custom proxy, or Bounded Staleness consistency) wouldn't
+find out at ``CosmosClient(...)``. It would appear to work, then fail on their
+first database call with a confusing low-level error far from the real cause.
+This file's core value is failing early and clearly, at construction, with a
+message that says exactly what to do instead.
 
-When ``core-python`` is selected the factory returns ``None``; the
-helper layer treats absence-of-backend as the signal to use the legacy
-``client_connection.CreateItem`` path.
+Selection precedence (highest wins): the ``_backend=`` kwarg, then the
+``COSMOS_BACKEND`` environment variable, then the ``core-python`` default. An
+invalid value raises ``ValueError`` at construction time.
 """
 from __future__ import annotations
 
 import asyncio
 import inspect
 import os
-from collections.abc import Iterable, Mapping
+from collections.abc import Mapping
+from collections.abc import Sequence as _AbcSequence
 from typing import Any, Optional, Sequence, Tuple
 
 from .._availability_strategy_config import CrossRegionHedgingStrategy, DEFAULT_THRESHOLD_MS
@@ -75,20 +95,33 @@ _ALL_CONSISTENCY_LEVELS = (
 
 
 def resolve_backend_name(explicit: Optional[str]) -> str:
-    """Apply the precedence rules above and return a name in ``VALID_BACKEND_NAMES``.
+    """Decide the engine name from the ``_backend=`` argument, else the
+    ``COSMOS_BACKEND`` environment variable, else the ``core-python`` default,
+    and return a name in ``VALID_BACKEND_NAMES``.
 
-    Surrounding whitespace and case are tolerated -- env vars and copy-paste
-    routinely carry a trailing newline or odd casing (``RUST``, `` rust``), and
-    those should not fail. An empty or whitespace-only value counts as "not
-    specified" and uses ``DEFAULT_BACKEND_NAME``. A value that is non-empty but
-    not a known backend (a genuine typo) still raises ``ValueError`` loudly,
-    rather than silently falling back. No aliases: there is one canonical
-    spelling per backend.
+    Without it: a stray trailing newline or ``"RUST"`` in caps from a
+    copy-pasted env var would be treated as a typo and rejected; and a real typo
+    would silently fall back to the wrong engine instead of telling the customer.
+    So surrounding whitespace and case are tolerated (``RUST``, `` rust`` all
+    work), an empty or whitespace-only value counts as "not specified" and uses
+    ``DEFAULT_BACKEND_NAME``, but a non-empty value that is not a known backend
+    (a genuine typo) raises ``ValueError`` loudly. There are no aliases: one
+    canonical spelling per backend.
 
     Shared between the sync and async factories so the rules, valid
     values, and error message live in one place.
     """
     raw = explicit if explicit is not None else os.environ.get(BACKEND_ENV_VAR)
+    if raw is not None and not isinstance(raw, str):
+        # The env var is always a string; only the constructor kwarg can be a
+        # non-string. Raise the same clear ValueError the typo path raises, rather
+        # than letting .strip() throw an opaque AttributeError.
+        raise ValueError(
+            "Invalid backend {!r}. Expected one of {} as a string. "
+            "Set the constructor kwarg _backend=, or the {} environment variable.".format(
+                raw, VALID_BACKEND_NAMES, BACKEND_ENV_VAR
+            )
+        )
     choice = raw.strip().lower() if raw is not None else ""
     if not choice:
         return DEFAULT_BACKEND_NAME
@@ -103,17 +136,18 @@ def resolve_backend_name(explicit: Optional[str]) -> str:
 
 
 def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
-    """Decide whether the Rust backend uses strict per-account engine isolation.
+    """Read an on/off safety switch that controls whether the Rust backend uses
+    strict per-account engine isolation.
 
     Precedence (highest wins): an explicit factory toggle, then the
-    ``COSMOS_RUST_STRICT_ISOLATION`` environment variable, then off. The env var
-    is matched case-insensitively after trimming whitespace:
-    ``STRICT_ISOLATION_TRUE_VALUES`` turn it on, ``STRICT_ISOLATION_FALSE_VALUES``
-    (and unset or empty) turn it off, and **any other value raises**
-    ``ValueError``. That last part is deliberate: this is a safety toggle, so a
-    typo that clearly meant "on" (``treu``, ``enabled``, ``2``) must fail loudly
-    instead of silently leaving the guard off. Shared by the sync and async
-    factories so the rule lives in one place.
+    ``COSMOS_RUST_STRICT_ISOLATION`` environment variable, then off. Without it:
+    an unrecognized value like ``"treu"`` would quietly leave the safety switch
+    off, which is exactly the outcome a safety switch must never have -- so it
+    raises instead. The env var is matched case-insensitively after trimming
+    whitespace: ``STRICT_ISOLATION_TRUE_VALUES`` turn it on,
+    ``STRICT_ISOLATION_FALSE_VALUES`` (and unset or empty) turn it off, and any
+    other value raises ``ValueError``. Shared by the sync and async factories so
+    the rule lives in one place.
 
     When on, a second ``CosmosClient`` to an account whose config differs from the
     first live client's raises
@@ -121,6 +155,17 @@ def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
     construction instead of silently building a second isolated engine.
     """
     if explicit is not None:
+        if not isinstance(explicit, bool):
+            # A safety toggle must never be driven by an ambiguous truthy value
+            # (a non-empty string like "false" is truthy and would turn the guard
+            # ON). Require a real bool, matching how the env-var path rejects
+            # unrecognized values below.
+            raise ValueError(
+                "strict_isolation must be a bool when provided; got {!r}. A safety "
+                "toggle is never driven by an ambiguous truthy value.".format(
+                    type(explicit).__name__
+                )
+            )
         return explicit
     value = os.environ.get(RUST_STRICT_ISOLATION_ENV_VAR)
     if value is None:
@@ -143,16 +188,16 @@ def resolve_strict_isolation(explicit: Optional[bool]) -> bool:
 
 
 def _is_async_credential(credential: Any) -> bool:
-    """True when ``credential`` authenticates asynchronously: its ``get_token`` or
-    ``get_token_info`` is a coroutine, or it is an ``azure.identity.aio``-style
-    async context manager.
+    """Detect whether the customer's credential logs in asynchronously: its
+    ``get_token`` or ``get_token_info`` is a coroutine, or it is an
+    ``azure.identity.aio``-style async context manager.
 
-    The binding calls ``get_token`` synchronously on a driver worker thread that
-    has no event loop, so an async credential can't run there directly. When this
-    returns ``True`` the factory wraps the credential in an
-    :class:`AsyncTokenCredentialBridge`, which supplies that event loop, instead
-    of calling it directly. The token method is unwrapped first in case it is
-    decorated.
+    Why it matters: the Rust driver calls ``get_token`` on a plain worker thread
+    that has no async event loop, so an async credential would crash there.
+    Detecting it lets the next step (:func:`_resolve_credential`) wrap it safely
+    in an :class:`AsyncTokenCredentialBridge`, which supplies that event loop,
+    instead of calling it directly. The token method is unwrapped first in case
+    it is decorated.
     """
     for attr in ("get_token", "get_token_info"):
         method = getattr(credential, attr, None)
@@ -173,14 +218,15 @@ def _is_async_credential(credential: Any) -> bool:
 
 
 def _is_resource_token_credential(credential: Any) -> bool:
-    """True when ``credential`` is a resource-token or permission credential rather
-    than a master key or a token credential.
+    """Detect the "per-user permission token" style of credential, rather than a
+    master key or a token credential.
 
-    These take the shape of a mapping of resource link to token (without a
-    ``masterKey`` entry, which is handled earlier), a mapping with
-    ``resourceTokens`` / ``permissionFeed`` keys, or an iterable of permission
-    entries. The Rust driver has no resource-token auth yet, so the factory
-    rejects them at construction instead of failing on the first request.
+    Why: the Rust driver has no code to log in that way yet, so this lets the
+    factory reject it clearly (in :func:`_resolve_credential`) instead of failing
+    deep inside the driver later. These take the shape of a mapping of resource
+    link to token (without a ``masterKey`` entry, which is handled earlier), a
+    mapping with ``resourceTokens`` / ``permissionFeed`` keys, or a concrete
+    sequence (list / tuple) of permission entries.
     """
     if isinstance(credential, str):
         return False
@@ -188,37 +234,57 @@ def _is_resource_token_credential(credential: Any) -> bool:
         # A master-key dict is resolved as a master key before this is reached;
         # any other mapping shape is resource/permission tokens.
         return "masterKey" not in credential
-    # A non-string iterable of permission entries is a permission feed.
-    return isinstance(credential, Iterable)
+    if isinstance(credential, bytes):
+        return False
+    # A permission feed is a concrete sequence (list / tuple) of permission
+    # entries. Restrict to Sequence rather than any Iterable so an unusual custom
+    # credential object that merely happens to be iterable is not mislabeled a
+    # resource-token credential -- it falls through to the generic
+    # "unsupported shape" message instead.
+    return isinstance(credential, _AbcSequence)
 
 
 def _resolve_credential(credential: Any) -> Tuple[Optional[str], Optional[Any]]:
-    """Classify the credential for the Rust backend into either a master key or a
-    synchronous token credential, or raise ``ValueError``.
+    """The credential sorter: turn whatever the customer passed into exactly one
+    of a master key or a synchronous token credential, or raise ``ValueError``.
 
-    Returns ``(master_key, token_credential)`` with exactly one entry set:
+    Without it: an unsupported login would blow up on the first request with an
+    opaque error, not at the line where the customer created the client. So this
+    rejects anything Rust can't do upfront -- at construction. Returns
+    ``(master_key, token_credential)`` with exactly one entry set:
 
-    * a ``str`` or a dict with a ``'masterKey'`` entry -> master key;
+    * a ``str`` or a dict with a ``'masterKey'`` entry -> master key (rejected if
+      empty or, in the dict case, not a non-empty string);
     * an object with a synchronous ``get_token`` (e.g. an ``azure-identity``
       credential) -> token credential, forwarded to the driver, which calls
       ``get_token`` during request signing;
     * an *async* token credential (coroutine ``get_token`` / ``get_token_info``,
-      or the ``azure.identity.aio`` async-context-manager shape) is wrapped in an
-      :class:`AsyncTokenCredentialBridge`, which drives its coroutine on a
+      or the ``azure.identity.aio`` async-context-manager shape) is first wrapped
+      in an :class:`AsyncTokenCredentialBridge`, which drives its coroutine on a
       dedicated event-loop thread and presents the synchronous ``get_token`` the
-      driver calls during request signing -- so async credentials work on the
-      Rust path with no driver change;
+      driver's worker thread calls -- so async credentials work on the Rust path
+      with no driver change;
     * a resource-token / permission-feed credential (per-user scoped tokens) is
       rejected: the Rust driver has no resource-token auth support yet;
     * anything else (``None`` and unrecognized shapes) is rejected.
-
-    Rejecting upfront -- at client construction -- means an unsupported auth
-    shape fails loudly and immediately rather than on the first request.
     """
     if isinstance(credential, str):
+        if not credential:
+            raise ValueError(
+                "_backend='rust' requires a non-empty master-key string."
+            )
         return credential, None
     if isinstance(credential, Mapping) and "masterKey" in credential:
-        return credential["masterKey"], None
+        master_key = credential["masterKey"]
+        if not isinstance(master_key, str) or not master_key:
+            # A non-string (or empty) masterKey would otherwise be accepted here and
+            # fail later in a murkier place (credential-key computation or the
+            # driver). Reject it at construction with a clear message.
+            raise ValueError(
+                "_backend='rust' requires the 'masterKey' entry to be a non-empty "
+                "string; got {!r}.".format(master_key)
+            )
+        return master_key, None
     # Check async *before* the sync get_token acceptance, since an async
     # credential also exposes a (coroutine) get_token. Wrap it rather than reject
     # it: the bridge drives the coroutine on its own event-loop thread and exposes
@@ -264,11 +330,19 @@ def reject_unsupported_transport_settings(
     """Raise ``ValueError`` if any transport/TLS setting the Rust path can't honor
     was passed; do nothing when none were (the common case).
 
-    Defaults must *not* trip: ``connection_verify`` defaults to ``True``/absent
-    (ordinary verification, which the driver already does) and only a custom CA
-    bundle path (a ``str``) or an explicit ``False`` (disable verification) is
-    unsupported; an empty ``proxies`` dict is "no proxy". Every other knob trips
-    when it is present (non-``None``).
+    The Rust driver owns its own network/TLS stack, so it can't accept custom
+    proxy objects, a custom CA bundle, a client certificate, disabled TLS
+    verification, or a stand-in transport. Without this: those settings would be
+    silently ignored, and the customer would think their proxy/cert was in effect
+    when it wasn't -- a security-relevant surprise. So it raises if any were
+    passed.
+
+    It is careful to let the defaults through so a normal client isn't tripped
+    up: ``connection_verify`` defaults to ``True``/absent (ordinary
+    verification, which the driver already does) and only a custom CA bundle path
+    (a ``str``) or an explicit ``False`` (disable verification) is unsupported;
+    an empty ``proxies`` dict is "no proxy". Every other knob trips when it is
+    present (non-``None``).
     """
     def _fail(setting: str, detail: str) -> None:
         raise ValueError(
@@ -311,6 +385,31 @@ def reject_unsupported_transport_settings(
 
 
 
+def _normalize_locations(
+    value: Optional[Sequence[str]], arg_name: str
+) -> Tuple[str, ...]:
+    """Turn a locations argument into a tuple of region strings, or reject a bare
+    string/bytes.
+
+    A bare string like ``"West US"`` is iterable, so ``tuple("West US")`` would
+    silently become ``('W', 'e', 's', 't', ...)`` -- seven bogus one-character
+    "regions" the customer never meant, with no error. Reject that shape up front
+    and require a real sequence of region names (e.g. ``["West US"]``). An empty or
+    absent value means "no preference" and carries nothing.
+    """
+    if not value:
+        return ()
+    if isinstance(value, (str, bytes)):
+        raise ValueError(
+            "{name} must be a sequence of region-name strings (e.g. ['West US']), "
+            "not a bare string; got {val!r}. A bare string is read one character "
+            "at a time, which is never what you want here.".format(
+                name=arg_name, val=value
+            )
+        )
+    return tuple(value)
+
+
 def build_client_config(
     preferred_locations: Optional[Sequence[str]] = None,
     *,
@@ -322,16 +421,18 @@ def build_client_config(
     consistency_level: Optional[str] = None,
     proxy_allowed: Optional[bool] = None,
 ) -> Optional[PreparedClientConfig]:
-    """Collect the client-construction settings the Rust backend can carry into
-    a :class:`PreparedClientConfig`, or ``None`` when there is nothing to carry.
+    """Gather the tuning options the Rust path can carry (preferred/excluded
+    regions, retry caps, region-hedging, user-agent label, consistency level,
+    proxy on/off) into one :class:`PreparedClientConfig`, and return ``None``
+    when the customer tuned nothing.
 
-    Returning ``None`` keeps the no-config path identical to the original
-    two-argument ``init_client`` call (the binding then builds the driver with
-    its defaults). Shared by the sync and async factories so the
+    Why the ``None`` matters: an untuned client then takes the exact same simple
+    path as before (the binding builds the driver with its defaults), so it
+    behaves identically to the old code -- no behavior change for people who
+    didn't ask for one. Shared by the sync and async factories so the
     kwarg-to-config mapping lives in exactly one place.
 
-    Each setting is carried only when the customer actually expressed it, so an
-    untuned client behaves exactly as before:
+    Each setting is carried only when the customer actually expressed it:
 
     * ``preferred_locations`` / ``excluded_locations`` -- empty means "no
       preference / no exclusion".
@@ -358,8 +459,8 @@ def build_client_config(
                 type(proxy_allowed).__name__
             )
         )
-    preferred = tuple(preferred_locations) if preferred_locations else ()
-    excluded = tuple(excluded_locations) if excluded_locations else ()
+    preferred = _normalize_locations(preferred_locations, "preferred_locations")
+    excluded = _normalize_locations(excluded_locations, "excluded_locations")
     hedging_threshold_ms = _resolve_hedging(availability_strategy)
     # An empty string carries nothing, mirroring the "no preference" treatment of
     # the location tuples; only a non-empty label is worth carrying to the driver.
@@ -389,17 +490,18 @@ def build_client_config(
 
 
 def _resolve_consistency_level(consistency_level: Optional[str]) -> Optional[str]:
-    """Validate the requested client consistency level for the Rust path and
-    return the level to carry, or ``None`` when the customer expressed none.
+    """Check the requested client consistency level for the Rust path and return
+    the level to carry, or ``None`` when the customer expressed none.
 
+    Without it: the customer would ask for one consistency guarantee and silently
+    get a different one -- a correctness problem they'd never see coming. So
     ``None`` (or an empty string) carries nothing -- the driver keeps the account
-    default, so an untuned client is unchanged. The three levels the driver
-    supports today (Eventual, Session, Strong) are carried as-is; the binding maps
-    ``"Strong"`` to the driver's ``GlobalStrong``.
-
-    Bounded Staleness and Consistent Prefix have no driver equivalent yet, so they
-    are rejected here with a clear message rather than silently dropped. Any other
-    value is not a recognized Cosmos consistency level and is likewise rejected.
+    default, so an untuned client is unchanged. Eventual, Session and Strong are
+    carried through as-is (the binding maps ``"Strong"`` to the driver's
+    ``GlobalStrong``). Bounded Staleness and Consistent Prefix have no Rust
+    equivalent yet and are rejected here with a clear message rather than silently
+    dropped. Any other value is not a recognized Cosmos consistency level and is
+    likewise rejected.
     """
     if not consistency_level:
         return None
@@ -424,16 +526,17 @@ def _resolve_consistency_level(consistency_level: Optional[str]) -> Optional[str
 
 
 def _resolve_hedging(availability_strategy: Any) -> Optional[int]:
-    """Map the ``availability_strategy`` kwarg to a hedge threshold in ms, or
-    ``None`` to carry nothing.
+    """Translate the ``availability_strategy`` option into a single millisecond
+    threshold the driver understands, or ``None`` to carry nothing.
 
-    Carries a threshold only when the customer *enabled* hedging: ``True`` uses
-    the default threshold and a dict uses its ``threshold_ms`` (validated ``> 0``
-    by reusing :class:`CrossRegionHedgingStrategy`). ``None`` (absent) and
-    ``False`` carry nothing -- matching Python-core, where the client default is
-    "no strategy" -- so sync (kwarg) and async (an explicit ``False``-default
-    parameter) behave identically. Python's ``threshold_steps_ms`` has no driver
-    equivalent and is intentionally dropped.
+    Why: it reuses the existing validator (:class:`CrossRegionHedgingStrategy`)
+    so a bad threshold fails the same way it always did, keeping old and new paths
+    consistent. Carries a threshold only when the customer *enabled* hedging:
+    ``True`` uses the default threshold and a dict uses its ``threshold_ms``
+    (validated ``> 0``). ``None`` (absent) and ``False`` carry nothing -- matching
+    Python-core, where the client default is "no strategy" -- so sync (kwarg) and
+    async (an explicit ``False``-default parameter) behave identically. Python's
+    ``threshold_steps_ms`` has no driver equivalent and is intentionally dropped.
     """
     if availability_strategy is True:
         return DEFAULT_THRESHOLD_MS
@@ -466,21 +569,27 @@ def make_backend(
     ssl_config: Any = None,
     transport: Any = None,
 ) -> Optional[CosmosBackend]:
-    """Build the backend instance a sync ``CosmosClient`` will hold.
+    """The one public entry point that ties the rest of this file together: build
+    the backend instance a sync ``CosmosClient`` will hold.
 
-    Returns a :class:`RustBackend` when Rust is selected, or ``None``
-    when core-python is selected. The keyword settings are only consulted
-    for the Rust branch, where they are folded into the client config the
-    backend carries to the driver. ``strict_isolation`` (kwarg > the
-    ``COSMOS_RUST_STRICT_ISOLATION`` env var > off) controls whether a second
-    client to an account with a different config raises instead of silently
-    getting its own isolated engine. The transport/TLS settings
-    (``proxy_config`` / ``proxies`` / ``connection_verify`` / ``connection_cert``
-    / ``ssl_config`` / ``transport``) are not folded into the config -- the Rust
-    path still can't honor explicit proxy/transport objects, so they are rejected
-    here; they are ignored entirely on the core-python branch, which honors them
-    as before. ``proxy_allowed`` is the Rust-path proxy switch carried into the
-    driver runtime.
+    Without it: the client constructor would have to orchestrate all of the below
+    itself, in two places (sync and async), with the drift bugs that invites. So
+    this resolves the name; if Rust, requires the endpoint URL, rejects
+    unsupported transport settings, sorts the credential, folds the tuning into a
+    config, resolves the isolation switch, and hands back a :class:`RustBackend`.
+    If core-python, it returns ``None``.
+
+    The keyword settings are only consulted for the Rust branch, where they are
+    folded into the client config the backend carries to the driver.
+    ``strict_isolation`` (kwarg > the ``COSMOS_RUST_STRICT_ISOLATION`` env var >
+    off) controls whether a second client to an account with a different config
+    raises instead of silently getting its own isolated engine. The transport/TLS
+    settings (``proxy_config`` / ``proxies`` / ``connection_verify`` /
+    ``connection_cert`` / ``ssl_config`` / ``transport``) are not folded into the
+    config -- the Rust path still can't honor explicit proxy/transport objects, so
+    they are rejected here; they are ignored entirely on the core-python branch,
+    which honors them as before. ``proxy_allowed`` is the Rust-path proxy switch
+    carried into the driver runtime.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:

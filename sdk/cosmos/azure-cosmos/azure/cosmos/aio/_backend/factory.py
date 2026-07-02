@@ -5,6 +5,14 @@
 # -------------------------------------------------------------------------
 """Factory that picks which async backend a single async client will use.
 
+The async counterpart of ``azure.cosmos._backend.factory``. Same terms:
+**client** = the ``CosmosClient`` the customer makes; **backend** =
+``core-python`` (original all-Python) or ``rust`` (hands work to a rust driver);
+**rust driver** = the engine the binding builds (connection pool, request
+signing, region routing), one per ``(endpoint, credential, config)`` and shared
+across same-settings clients; **binding** = the compiled ``azure.cosmos._rust``
+layer Python calls into.
+
 Same precedence and validation as the sync factory (constructor kwarg
 > ``COSMOS_BACKEND`` env var > default ``core-python``). The precedence
 and validation logic itself is in
@@ -53,19 +61,22 @@ def make_async_backend(
     ssl_config: Any = None,
     transport: Any = None,
 ) -> Optional[AsyncCosmosBackend]:
-    """Build the backend instance an async ``CosmosClient`` will hold.
+    """The one public entry point that builds the backend instance an async
+    ``CosmosClient`` will hold -- the async twin of :func:`make_backend`.
 
-    Returns an :class:`AsyncRustBackend` when Rust is selected, or
-    ``None`` when core-python is selected. The keyword settings are only
-    consulted for the Rust branch, where they are folded into the client
-    config (via the shared :func:`build_client_config`) the backend carries
-    to the driver. ``strict_isolation`` (kwarg > the
+    Returns an :class:`AsyncRustBackend` when Rust is selected, or ``None`` when
+    core-python is selected. If Rust: it requires the endpoint URL, rejects
+    unsupported transport settings, sorts the credential, folds the tuning into a
+    config, resolves the isolation switch, and hands back the backend. The keyword
+    settings are only consulted for the Rust branch, where they are folded into the
+    client config (via the shared :func:`build_client_config`) the backend carries
+    to the rust driver. ``strict_isolation`` (kwarg > the
     ``COSMOS_RUST_STRICT_ISOLATION`` env var > off) controls whether a second
-    client to an account with a different config raises instead of silently
-    getting its own isolated engine. The transport/TLS settings the Rust path
-    can't honor yet are rejected here, exactly as in the sync factory;
-    ``proxy_allowed`` is the Rust-path proxy switch carried into the driver
-    runtime.
+    client to an account with a different config raises instead of silently getting
+    its own isolated rust driver. The transport/TLS settings the Rust path can't
+    honor yet are rejected here, exactly as in the sync factory; ``proxy_allowed``
+    is the Rust-path proxy switch carried into the driver runtime. All of this
+    reuses the sync factory's functions, so the sync and async paths cannot drift.
     """
     name = resolve_backend_name(explicit)
     if name == BACKEND_NAME_RUST:

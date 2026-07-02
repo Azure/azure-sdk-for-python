@@ -3,10 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Sync backend that sends operations to the compiled Rust module.
+"""Sync backend that sends operations to the rust driver through the compiled binding.
+
+Terms, consistent across the backend layer: the **binding** is the compiled
+``azure.cosmos._rust`` extension Python calls into; the **rust driver** is the
+engine the binding builds (it owns the connection pool, request signing, and
+region routing); the **driver handle** is the string ``init_client`` returns -- a
+key made from ``(endpoint, credential, config)`` that names *which* rust driver a
+client uses. The compiled ``_rust`` file contains both the binding and the rust
+driver code.
 
 This is one of only two modules allowed to import ``azure.cosmos._rust``
-(a unit test enforces that). The compiled module is not present until it
+(a unit test enforces that). The binding is not present until it
 has been built, so the import is guarded; until then, operations raise
 ``NotImplementedError`` pointing at the build step.
 """
@@ -60,17 +68,19 @@ def _resolve_dispatch(op: str) -> Optional[Any]:
 
 
 class RustBackend(RustBackendShared, CosmosBackend):
-    """Sends operations to the Rust driver.
+    """Sends operations from one ``CosmosClient`` to a shared rust driver.
 
-    The handle that init_client returns -- an opaque token naming the driver-side
-    client built from the endpoint, credential, and config -- is built on the first
-    operation and reused; every operation passes it back. The handle is not the
-    ``CosmosClient``: it is a reference to the driver-side client (which owns the
-    connection pool, auth, and routing), several layers below the public object.
-    Operations route by kind; when the compiled module is missing, every operation
-    raises ``NotImplementedError``.
+    The **driver handle** ``init_client`` returns is built on the first operation
+    and reused; every operation passes it back. The handle is not the
+    ``CosmosClient`` and not the rust driver itself -- it is the driver's key,
+    made from ``(endpoint, credential, config)``. The binding keeps one rust driver
+    per distinct ``(endpoint, credential, config)`` and reference-counts it, so
+    several clients with the same settings share a single rust driver; ``close``
+    drops this client's reference and only the last one shuts the driver down.
+    Operations route by kind; when the compiled binding is missing, every
+    operation raises ``NotImplementedError``.
 
-    Per-client state, endpoint registration, and teardown live in
+    Per-client state, guard registration, and teardown live in
     :class:`~azure.cosmos._backend._shared.RustBackendShared`; this class adds only
     the synchronous (blocking) handle build and dispatch.
     """
@@ -93,6 +103,17 @@ class RustBackend(RustBackendShared, CosmosBackend):
         )
 
     def _ensure_handle(self) -> str:
+        """Return this client's driver handle, building it once on first use.
+
+        On the first operation the binding's ``init_client`` either builds a new
+        rust driver for this ``(endpoint, credential, config)`` or, if one already
+        exists, bumps its reference count and returns the same handle. Without this,
+        every operation would re-init (churning rust drivers) or two threads racing
+        the first call would each build one. A fast no-lock check for the
+        already-built case, plus a lock with a second check inside, makes the
+        build/ask happen exactly once. Raises ``NotImplementedError`` when the
+        compiled binding is absent.
+        """
         # If the handle is already built, return it without locking.
         handle = self._handle
         if handle is not None:
@@ -111,7 +132,15 @@ class RustBackend(RustBackendShared, CosmosBackend):
             return self._handle
 
     def close(self) -> None:
-        """Release the Rust client handle from the process cache."""
+        """Drop this client's reference to the shared rust driver.
+
+        Releases the guard registration once, stops the credential bridge, clears
+        the handle, and tells the binding to ``close_client(handle)`` -- which drops
+        this client's reference; the rust driver is only torn down when the last
+        client sharing it closes. Without this the guard count leaks, the bridge
+        thread keeps running, and the rust driver's connection pool is never
+        released.
+        """
         self._release_config_once()
         self._close_token_credential_bridge()
         with self._handle_lock:
@@ -135,7 +164,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             pass
 
     def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
-        """Send one point operation (read/create/upsert/replace/delete/patch) to the Rust driver."""
+        """Send one point operation (read/create/upsert/replace/delete/patch) to the rust driver."""
         if prepared is None:
             return None
         if _rust_module is None:

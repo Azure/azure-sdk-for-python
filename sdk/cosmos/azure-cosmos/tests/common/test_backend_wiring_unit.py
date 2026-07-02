@@ -2533,6 +2533,80 @@ def test_resolve_strict_isolation_rejects_unrecognized(monkeypatch):
     assert resolve_strict_isolation(False) is False
 
 
+# ---------------------------------------------------------------------------
+# Input-validation robustness: bad-typed inputs fail early and clearly at
+# construction, rather than throwing the wrong exception, failing later in a
+# murkier place, or (worst) silently producing wrong behavior.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("bad", [123, 1.5, True, ["rust"], {"name": "rust"}, object()])
+def test_resolve_backend_name_non_string_raises_valueerror(monkeypatch, bad):
+    """A non-string _backend= must raise a clear ValueError, not an opaque
+    AttributeError from calling .strip() on a non-string."""
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    with pytest.raises(ValueError, match="Invalid backend"):
+        resolve_backend_name(bad)
+
+
+@pytest.mark.parametrize("bad", ["true", "false", "", 1, 0, [], object()])
+def test_resolve_strict_isolation_rejects_non_bool_explicit(monkeypatch, bad):
+    """The explicit strict_isolation value must be a real bool. A truthy non-bool
+    like the string 'false' would otherwise silently turn the safety guard ON."""
+    monkeypatch.delenv(RUST_STRICT_ISOLATION_ENV_VAR, raising=False)
+    with pytest.raises(ValueError, match="strict_isolation must be a bool"):
+        resolve_strict_isolation(bad)
+
+
+@pytest.mark.parametrize("arg_name", ["preferred_locations", "excluded_locations"])
+def test_build_client_config_rejects_bare_string_locations(arg_name):
+    """A bare string region is rejected: tuple('West US') would silently become
+    seven one-character 'regions', which is never what the customer meant."""
+    with pytest.raises(ValueError, match="sequence of region-name strings"):
+        build_client_config(**{arg_name: "West US"})
+
+
+@pytest.mark.parametrize("arg_name", ["preferred_locations", "excluded_locations"])
+def test_build_client_config_rejects_bytes_locations(arg_name):
+    """Bytes are rejected for the same reason a bare string is."""
+    with pytest.raises(ValueError, match="sequence of region-name strings"):
+        build_client_config(**{arg_name: b"West US"})
+
+
+def test_build_client_config_accepts_single_region_in_a_list():
+    """The correct shape -- a one-element list -- carries exactly that one region,
+    proving the guard does not over-reject real sequences."""
+    config = build_client_config(["West US"])
+    assert config == PreparedClientConfig(preferred_locations=("West US",))
+
+
+@pytest.mark.parametrize("bad_master_key", [None, 123, b"key", {"k": "v"}, ""])
+def test_resolve_credential_rejects_non_string_master_key_in_dict(bad_master_key):
+    """A {'masterKey': <non-string or empty>} dict is rejected at construction with
+    a clear message, instead of being accepted and failing later in a murkier
+    place."""
+    with pytest.raises(ValueError, match="'masterKey' entry to be a non-empty string"):
+        _resolve_credential({"masterKey": bad_master_key})
+
+
+def test_resolve_credential_rejects_empty_master_key_string():
+    """An empty master-key string is rejected up front rather than accepted and
+    failing later."""
+    with pytest.raises(ValueError, match="non-empty master-key string"):
+        _resolve_credential("")
+
+
+def test_resolve_credential_iterable_non_sequence_gets_generic_message():
+    """An unusual custom credential object that merely happens to be iterable (a
+    generator, here) but is not a concrete sequence is NOT mislabeled a
+    resource-token credential; it falls through to the generic message."""
+    def _gen():
+        yield {"id": "perm"}
+
+    with pytest.raises(ValueError, match="requires a master-key credential"):
+        _resolve_credential(_gen())
+
+
 def test_resolve_backend_name_normalizes_case_and_whitespace(monkeypatch):
     """Case and surrounding whitespace are tolerated (env vars and copy-paste
     routinely add a trailing newline or odd case); the canonical name comes back."""

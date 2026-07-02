@@ -3,10 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Async backend that sends operations to the compiled Rust module.
+"""Async backend that sends operations to the rust driver through the compiled binding.
+
+Terms, consistent across the backend layer: the **binding** is the compiled
+``azure.cosmos._rust`` extension Python calls into; the **rust driver** is the
+engine the binding builds (it owns the connection pool, request signing, and
+region routing); the **driver handle** is the string ``init_client`` returns -- a
+key made from ``(endpoint, credential, config)`` that names *which* rust driver a
+client uses. The compiled ``_rust`` file contains both the binding and the rust
+driver code.
 
 This is one of only two modules allowed to import ``azure.cosmos._rust``
-(a unit test enforces that). The compiled module is not present until it
+(a unit test enforces that). The binding is not present until it
 has been built, so the import is guarded; until then, operations raise
 ``NotImplementedError`` pointing at the build step.
 """
@@ -65,10 +73,13 @@ def _resolve_async_dispatch(op: str) -> Optional[Any]:
 
 
 def _close_handle_quietly(handle: str) -> None:
-    """Close the driver-side client for ``handle``; never raise.
+    """Drop one client's reference to the shared rust driver named by ``handle``;
+    never raise.
 
-    Used by close(), finalization, and when a handle was built just as the client
-    was closing and now has to be thrown away.
+    Calls the binding's ``close_client(handle)``, which decrements the rust
+    driver's reference count and tears the driver down only when the last client
+    sharing it closes. Used by close(), finalization, and when a handle was built
+    just as the client was closing and now has to be thrown away.
     """
     if _rust_module is None:
         return
@@ -83,16 +94,26 @@ def _close_handle_quietly(handle: str) -> None:
 
 
 class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
-    """Sends async operations to the Rust driver.
+    """Sends async operations from one ``CosmosClient`` to a shared rust driver.
+
+    Terms are the same as the sync backend: the **binding** is the compiled
+    ``azure.cosmos._rust`` extension; the **rust driver** is the engine it builds
+    (connection pool, request signing, region routing); the **driver handle** is
+    the string ``init_client`` returns, a key made from ``(endpoint, credential,
+    config)`` naming which rust driver a client uses. The binding keeps one rust
+    driver per distinct ``(endpoint, credential, config)`` and reference-counts it,
+    so same-settings clients share one rust driver.
 
     Each operation calls the binding's ``*_item_async`` function, which returns an
-    awaitable that finishes on the driver's own runtime. Awaiting it uses no Python
-    thread, so the number of operations in flight is limited by the service and the
-    driver's connection pool, not by a thread count. The only blocking step is
-    building the client once in ``_ensure_handle``, run on a background thread. When
-    the compiled module is missing, every operation raises ``NotImplementedError``.
+    awaitable that finishes on the binding's shared Tokio runtime -- the one
+    process-wide thread pool where every rust driver's work runs, not a per-driver
+    runtime. Awaiting it uses no Python thread, so the number of operations in
+    flight is limited by the service and the driver's connection pool, not by a
+    thread count. The only blocking step is building the handle once in
+    ``_ensure_handle``, run on a background thread. When the compiled binding is
+    missing, every operation raises ``NotImplementedError``.
 
-    Per-client state, endpoint registration, and teardown live in
+    Per-client state, guard registration, and teardown live in
     :class:`~azure.cosmos._backend._shared.RustBackendShared`; this class adds the
     cross-event-loop handle-build coalescing and the awaitable dispatch.
     """
@@ -198,11 +219,13 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
                 self._init_future_loop = None
 
     async def close(self) -> None:
-        """Release the Rust client handle.
+        """Drop this client's reference to the shared rust driver.
 
         Call this once every operation on the client has finished. An operation that
         is still running keeps its own handle, so closing while one is in flight makes
-        that operation fail with a closed-client error.
+        that operation fail with a closed-client error. Releasing this client's
+        reference lets the binding tear the rust driver down when the last client
+        sharing it closes.
         """
         self._release_config_once()
         loop = asyncio.get_running_loop()
@@ -258,7 +281,7 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             pass
 
     async def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
-        """Send one point operation (read/create/upsert/replace/delete/patch) to the Rust driver."""
+        """Send one point operation (read/create/upsert/replace/delete/patch) to the rust driver."""
         if prepared is None:
             return None
         if _rust_module is None:
@@ -285,8 +308,9 @@ class AsyncRustBackend(RustBackendShared, AsyncCosmosBackend):
             prepared.op,
             OP_TO_BINDING_METHOD.get(prepared.op),
         )
-        # The *_item_async function returns an awaitable that finishes on the driver's
-        # own runtime, so awaiting it uses no Python thread. Only the one-time
+        # The *_item_async function returns an awaitable that finishes on the binding's
+        # shared Tokio runtime (one process-wide thread pool, not a per-driver runtime),
+        # so awaiting it uses no Python thread. Only the one-time
         # init_client in _ensure_handle still runs on a background thread.
         # A response-less driver failure (transport error, client-side validation,
         # pre-HTTP timeout) surfaces as the binding's DriverTransportError;

@@ -42,15 +42,19 @@ __all__ = [
 
 
 class AsyncCosmosBackend(abc.ABC):
-    """Abstract dispatch target for any async Cosmos operation.
+    """Abstract dispatch target for any Cosmos operation (async).
 
-    The async helper holds one of these by interface and awaits
-    ``execute``. The operation kind is on ``prepared.op``; the backend
-    branches on it.
+    The async helper holds one of these by interface and awaits ``execute``
+    on it without knowing which concrete backend it has. The operation kind
+    is on ``prepared.op``; the backend branches on it.
 
-    Until the helper layer takes over request prep and response parsing
-    for every operation, ``execute`` may return ``None`` to signal
-    "caller should run the legacy in-place implementation."
+    The helper already builds the ``PreparedRequest`` before awaiting ``execute``
+    and parses the returned ``BackendResponse`` with ``parse_backend_response`` --
+    it does this for every operation -- so a backend only has to send the
+    request and report the reply. ``execute`` may still return ``None`` as a
+    fallback, which tells the helper to run the legacy in-place
+    core-python implementation; that path is kept only for testing, not
+    production.
     """
 
     #: Short identifier surfaced in the startup INFO log and the

@@ -9,17 +9,21 @@ README at `../README.md` is the one you want.
 
 ## What this crate is for
 
-The Python SDK needs to call into a Rust HTTP driver for some operations
-(today: `create_item`). Python can't call Rust functions directly — the
-two languages don't share a calling convention. So we have a small
+The Python SDK needs to call into a Rust HTTP driver for point operations
+and client lifecycle. Python can't call Rust functions directly — the two
+languages don't share a calling convention. So we have a small
 "glue" crate, this one, that does the translation. When it's compiled,
 you get one file: `_rust.pyd` on Windows, `_rust.so` on Linux/macOS.
 That file gets dropped into `azure/cosmos/`, and the Python code
 imports it as `azure.cosmos._rust`.
 
-The whole crate is one source file: `src/lib.rs`, ~320 lines. Reading it
-top-to-bottom is the fastest way to understand what's here. This README
-is the map.
+The binding is split across modules:
+
+- `src/lib.rs` — module registration (`#[pymodule]` export list)
+- `src/runtime.rs` — process runtime + driver cache + `init_client`/`close_client`
+- `src/documents.rs` — point-op entry points (sync + async)
+- `src/wire.rs` — request/response translation, header mapping, tuple shaping
+- `src/credential.rs` — Python token-credential adapter for driver auth
 
 ## What Python actually sees
 
@@ -28,31 +32,20 @@ After a successful build, this is what Python can do:
 ```python
 from azure.cosmos import _rust
 
-handle = _rust.init_client("https://localhost:8081", "<master key>")
+handle = _rust.init_client("https://localhost:8081", master_key="<master key>")
 status, sub_status, headers, body, diagnostics = _rust.create_item(handle, prepared)
 ```
 
-Two functions, one module attribute. They get there because `src/lib.rs`
-declares them with `#[pyfunction]` and then a small init function lists
-them by name (look for `#[pymodule] fn _rust(...)` near the top of
-`lib.rs` — that's the only place a function becomes visible to Python).
+Exports are registered in `src/lib.rs` (`#[pymodule] fn _rust(...)`).
+Current surface:
 
-What each one does:
+- lifecycle: `init_client`, `close_client`
+- point ops (sync): `create_item`, `upsert_item`, `replace_item`, `delete_item`, `read_item`, `patch_item`
+- point ops (async): `*_item_async` for the same six operations
+- diagnostics/provenance: `operation_count`, `DriverTransportError`, `__version__`
 
-- **`init_client(endpoint, master_key) -> handle`** — first call per
-  process spins up a Tokio runtime and a `CosmosDriverRuntime`, builds
-  the `CosmosDriver` for that endpoint, and caches it. Returns the
-  endpoint string back to Python as an opaque "handle." Subsequent calls
-  with the same endpoint reuse the cached driver.
-- **`create_item(handle, prepared) -> (status, sub_status, headers, body, diagnostics)`**
-  — `prepared` is a Python `PreparedRequest` dataclass the SDK builds
-  before calling in. The function pulls its fields out one at a time
-  (`getattr` + `extract`), constructs a typed driver operation, runs it
-  on the cached Tokio runtime with the GIL released, and returns the
-  driver's response as a tuple the Python parser unpacks (`diagnostics` can be
-  `None` for older bindings and test doubles).
-- **`__version__`** — string, set from the crate's Cargo version at
-  compile time. Useful for "which build of the binding am I running?"
+`init_client` requires **exactly one** auth input: either `master_key` or
+`credential` (token credential), never both.
 
 ## Where the Rust driver actually lives
 
@@ -69,17 +62,12 @@ The driver isn't in this repo. We point at a sibling clone of the
 <your repos folder>/
 ├── azure-sdk-for-python/sdk/cosmos/azure-cosmos/   ← this crate
 └── azure-sdk-for-rust/sdk/cosmos/azure_data_cosmos_driver/   ← the driver
-                       /sdk/core/azure_core/                  ← + two more
-                       /sdk/identity/azure_identity/             from the same clone
 ```
 
-Two more `path =` deps live in the workspace `Cargo.toml` one directory
-up, pointing at `azure_core` and `azure_identity` from the same clone.
-
-**Don't change one without the others, and don't mix `path` with `git`.**
-If the binding's `azure_core` resolves to a different copy than the
-driver's `azure_core`, Cargo treats them as two different crates and
-the build fails with this exact error:
+Workspace note: `azure_core` is pinned in the workspace Cargo file to the
+same published version the driver uses, so the binding and driver share one
+`azure_core` crate instance. If they diverge, Cargo type identity breaks
+across the boundary and you get this class of error:
 
 ```
 error[E0308]: mismatched types
@@ -87,13 +75,11 @@ error[E0308]: mismatched types
               found struct `azure_core::Error`
 ```
 
-Same name, two copies, no automatic conversion. The fix is always the
-same: make all three deps (`azure_data_cosmos_driver`, `azure_core`,
-`azure_identity`) `path = ...` entries pointing into the same external
-clone.
+Same name, two copies, no automatic conversion. Keep the driver dependency
+and workspace `azure_core` pin aligned.
 
-If your clones live somewhere other than side-by-side, edit those three
-lines. Nothing else in the build assumes that layout.
+If your clones live somewhere other than side-by-side, edit the driver
+`path = ...` line. Nothing else in this crate assumes that layout.
 
 ## Building from in here (without going through maturin)
 
@@ -120,48 +106,38 @@ into `azure/cosmos/` so Python can import it.
 
 ## What this binding currently forwards on the wire
 
-The Python helper layer hands us a `headers` dict full of Cosmos request
-headers. The driver's typed `CosmosRequestHeaders` only accepts two of
-them today, so those are the only two we forward:
+The Python helper layer hands us a `headers` dict plus prepared fields. The
+binding translates those into:
 
-- `x-ms-activity-id` (we parse it as a UUID before attaching)
-- `x-ms-session-token`
+- typed operation fields (`activity-id`, `session-token`)
+- typed options (`responsePayloadOnWriteDisabled`, `excludedLocations`,
+  `__overall_timeout_seconds`)
+- custom-header passthrough for known wire keys and mapped option keys
+  (for example triggers, indexing directive, priority, throughput bucket,
+  intended collection rid, `if-match`, `if-none-match`, and already wire-named
+  `x-ms-*` headers)
 
-Every other header in the dict — `x-ms-cosmos-intended-collection-rid`,
-trigger headers, indexing directive, priority, and so on — is **silently
-dropped** before the wire. That's not a bug in the binding; it's a
-driver gap. Closing each header is tracked individually in
-`../docs/V5_PARITY_AUDIT.md` § B, with corresponding `xfail` markers in
-the parity test suite that flip green automatically when the gap closes.
+Unknown option keys remain lenient by default (legacy-compatible drop). For
+drift detection in tests/CI, set `COSMOS_WIRE_STRICT=1` to fail fast on
+untranslated non-allowlisted option keys.
 
-If you're investigating a parity-test failure that looks like "header
-present on the Python path, missing on the Rust path" — that's why,
-and it's expected until the driver lands the support.
-
-## File layout (and what's actually in each part of `lib.rs`)
+## File layout
 
 ```
 azure_cosmos_rust/
 ├── Cargo.toml          # cdylib output + pyo3 0.22 (extension-module, abi3-py39)
-│                       # + the three external path deps
+│                       # + external driver path dependency
 ├── src/
-│   └── lib.rs          # everything below
+│   ├── lib.rs          # module export registration
+│   ├── runtime.rs      # runtime/cache/client lifecycle
+│   ├── documents.rs    # six point ops, sync + async
+│   ├── wire.rs         # prepared request parsing + response tuple shaping
+│   └── credential.rs   # Python token credential adapter
 └── README.md           # this file
 ```
 
-Reading `lib.rs` top-to-bottom you'll see, in this order:
-
-1. `use` lines — three of them (`pyo3::prelude::*`, `pyo3::types::{...}`,
-   `pyo3::exceptions::{...}`) plus driver imports.
-2. Per-process singletons (`OnceLock`s) for the Tokio runtime, the
-   driver runtime, and a per-endpoint cache of drivers.
-3. `#[pymodule] fn _rust(...)` — the init function CPython calls once at
-   import time. Two `m.add_function(...)` calls plus one `m.add(...)`
-   are what makes the three names listed above visible to Python.
-4. `#[pyfunction] fn init_client(...)` — see "What Python actually sees."
-5. `#[pyfunction] fn create_item(...)` — same.
-6. Three small private helpers at the bottom: `parse_container_link`,
-   `parse_partition_key_header`, `extract_item_id`.
+Start at `lib.rs` to see the exported surface, then read in this order:
+`runtime.rs` -> `documents.rs` -> `wire.rs` -> `credential.rs`.
 
 ## Where to look when you're stuck
 

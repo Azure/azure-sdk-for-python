@@ -1,10 +1,37 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! The shared request/reply translation between Python and the driver: the
-//! singleton-operation runner, the header-to-typed-field translation, the
-//! `BackendResponse` tuple builders, and the partition-key / container-link
-//! parsers. Every family's operations route through here.
+//! The shared request/reply translation between Python and the rust driver: the
+//! machinery every point operation runs through. If `documents.rs` is the thin
+//! per-operation front counter (six doorways), this file is the engine room
+//! behind all of them. It does the full round trip in both directions:
+//!
+//!   * Request (down): look up the rust driver by handle, parse the container
+//!     link and partition key, sort the customer's headers into the fields the
+//!     driver takes as typed options vs. a plain header pass-through, build the
+//!     operation options, then run the operation on the shared Tokio runtime.
+//!   * Reply (up): turn the driver's response -- or an error that still carries a
+//!     wire response, like a 404/409 -- into the 5-tuple `BackendResponse` the
+//!     Python parser reads; copy every response header into a Python dict keyed by
+//!     the real `x-ms-...` wire names; and map a response-less failure to a typed
+//!     error the Python layer converts to `ServiceResponseError`.
+//!
+//! If this file did not exist, the six functions in `documents.rs` would each
+//! re-implement the driver call, the header sorting, the response-tuple building,
+//! and the error mapping -- the fiddly, correctness-critical details where bugs
+//! hide (wire header names, partition-key shapes, which failures are "transport"
+//! vs "the service said 404", whether `no_response` applies). Duplicated six ways
+//! they would drift, and the customer would see wrong response headers (broken
+//! `etag`/tracing), wrong exception types (their `except ServiceResponseError`
+//! and retry policies stop matching), or a request routed to the wrong partition.
+//! Defining it once keeps all of that correct and identical across every
+//! operation and across both the sync and async paths.
+//!
+//! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
+//! `documents.rs`, `runtime.rs`): binding = this compiled `_rust` extension; rust
+//! driver = the `CosmosDriver` engine; shared Tokio runtime = the one process-wide
+//! Tokio thread pool that runs the driver's work; driver handle = the string
+//! naming which rust driver a client uses.
 
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -32,18 +59,21 @@ use serde::Deserialize;
 
 use crate::runtime::{drivers, require_runtime_context};
 
-// A driver operation that failed *without* a wire response (transport failure,
-// client-side validation, a timeout before any HTTP round-trip). The Python
-// backend translates this into azure-core's `ServiceResponseError` so customer
+// A NEW exception type, defined here, for a driver operation that failed
+// *without* a wire response (transport failure, client-side validation, a timeout
+// before any HTTP round-trip). It keeps the existing exception contract intact in
+// two ways: it subclasses `RuntimeError` (so any code that already catches
+// `RuntimeError` keeps working), and the Python backend translates it into
+// azure-core's `ServiceResponseError` so customer
 // `except (ServiceRequestError, ServiceResponseError)` handlers and the SDK's
 // transport-retry policies behave the same as on the legacy azure-core path,
-// instead of seeing a bare `RuntimeError`. It subclasses `RuntimeError` so any
-// existing code that already catches `RuntimeError` keeps working (matching the
+// instead of seeing a bare `RuntimeError`. (This matches the
 // `AsyncCredentialBridgeReentrantError(RuntimeError)` convention on the Python
-// side). The driver's `CosmosError` carries no transport-vs-response
-// classification, so the binding cannot faithfully split `ServiceRequestError`
-// from `ServiceResponseError`; the message preserves the typed Cosmos status
-// (rendered by `CosmosError`'s Display) and the original error chains as the
+// side.) One honest limitation: the driver's `CosmosError` carries no
+// transport-vs-response classification, so the binding cannot faithfully split
+// `ServiceRequestError` from `ServiceResponseError`; it maps to
+// `ServiceResponseError`, preserves the typed Cosmos status (rendered by
+// `CosmosError`'s Display) in the message, and chains the original error as the
 // cause.
 // pyo3's `create_exception!` expansion references `cfg(feature = "gil-refs")`,
 // a pyo3 feature this destination crate does not declare; the cfg is evaluated
@@ -62,45 +92,48 @@ mod transport_error {
 pub use transport_error::DriverTransportError;
 
 // ---------------------------------------------------------------------------
-// Binding-invocation counter (concrete backend provenance)
+// Binding-invocation counter (a check for the perf drill, not part of serving
+// requests)
 // ---------------------------------------------------------------------------
 //
-// The drill's single biggest source of error is trusting the COSMOS_BACKEND
-// label: a results row tagged "rust" that actually ran the core-python path
-// would mislabel every number on it. This counter answers the question from
-// INSIDE the binding instead of from a Python flag: every item operation, sync
-// or async, increments it on entry to the driver runner below, so it is a direct
-// count of how many times the Rust binding code was actually called. The perf
-// harness reads it through `_rust.operation_count()` and stamps the per-window
-// delta on each row; a core-python process never calls the binding, so for it
-// this number never moves. If a "rust" row did real work but this counter did
-// not advance, the binding was NOT exercised -- and the integrity gate fails on
-// exactly that. `Relaxed` ordering is sufficient: we only need a correct running
-// total, not ordering against other memory.
+// A plain running count, in this process, of how many times the rust binding
+// actually ran an item operation. It exists only so the perf drill can catch its
+// single biggest risk: trusting the COSMOS_BACKEND label. A results row tagged
+// "rust" that actually ran the core-python path would mislabel every number on
+// it. This counter answers "did the rust binding really run this?" from INSIDE
+// the binding: every item operation, sync or async, bumps it on entry to the
+// driver runner below. The perf harness reads it through `_rust.operation_count()`
+// and stamps the per-window delta on each row; a core-python process never calls
+// the binding, so for it this number never moves. Nothing in the request path
+// ever reads it to change behavior -- remove it and customer requests behave
+// identically; you just lose the check. `Relaxed` ordering is enough: we only
+// need a correct running total, not ordering against other memory.
 pub(crate) static BINDING_OP_COUNT: AtomicU64 = AtomicU64::new(0);
 
-/// Total item operations that have entered the Rust binding's driver runner in
+/// Total item operations that have entered the rust binding's driver runner in
 /// this process (see `BINDING_OP_COUNT`). Exposed to Python as
-/// `_rust.operation_count()` so the perf harness can prove, from a counter
-/// incremented inside the binding, that the Rust path ran the work a row claims.
+/// `_rust.operation_count()` so the perf harness can confirm, from a counter
+/// bumped inside the binding, that the rust path really ran the work a row claims.
 #[pyfunction]
 pub(crate) fn operation_count() -> u64 {
     BINDING_OP_COUNT.load(Ordering::Relaxed)
 }
 
 // ---------------------------------------------------------------------------
-// Shared singleton-operation runner
+// Shared singleton-operation runner (sync + async)
 // ---------------------------------------------------------------------------
-//
-// All five per-item ops (create / upsert / replace / delete / read) run the
-// same steps: look up the driver, parse the container link and partition key,
-// then on the Tokio runtime with the GIL released resolve the container, build
-// the operation, apply the activity-id / session-token headers, run it, and
-// turn the CosmosResponse (or a CosmosError that carries a wire response) into
-// the BackendResponse tuple. Only three things vary per op, so each entry
-// point passes them in: the item id, whether no_response applies (writes only),
-// and a closure that builds the operation from the resolved ItemReference.
 
+/// Sync runner shared by all six point operations (`documents.rs` sync entries).
+/// Steps: bump the binding-invocation counter, look up the rust driver by handle,
+/// parse the container link and partition key, then -- with the GIL released --
+/// block the calling thread on the shared Tokio runtime until the driver resolves
+/// the container, builds and runs the operation, and returns. Turn the driver's
+/// `CosmosResponse` (or a `CosmosError` that still carries a wire response) into
+/// the `BackendResponse` tuple the Python parser reads. Only three things vary per
+/// op, so each entry point passes them in: the item id, whether `no_response`
+/// applies (writes only), and a closure that builds the operation from the
+/// resolved `ItemReference`. The async sibling below spawns this same future
+/// instead of blocking, so both paths run identical driver work.
 pub(crate) fn run_item_operation<'py>(
     py: Python<'py>,
     handle: &str,
@@ -112,9 +145,9 @@ pub(crate) fn run_item_operation<'py>(
     honor_content_response: bool,
     build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    // Concrete provenance: record that the Rust binding was actually called for
-    // this operation (see BINDING_OP_COUNT). Counted on entry so it reflects
-    // every op routed into the binding, sync path.
+    // Count that the rust binding actually ran this operation (see
+    // BINDING_OP_COUNT). Bumped on entry so it reflects every op routed into the
+    // binding on the sync path.
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
@@ -140,21 +173,18 @@ pub(crate) fn run_item_operation<'py>(
     tuple_from_result(py, response_result)
 }
 
-/// Async sibling of `run_item_operation`: same inputs and identical driver work,
-/// but instead of blocking a worker thread it spawns the driver future on the
-/// shared runtime (the same one the driver was built on, so its connection pool
-/// and timers stay on that runtime) and hands the asyncio event loop an awaitable
-/// that resolves to the `BackendResponse` tuple. Awaiting it uses no Python
-/// thread per in-flight call.
 /// Aborts the spawned driver task if this guard is dropped before the task has
-/// finished. The bridged Python awaitable owns one of these; when asyncio cancels
-/// the `await` (for example a client-side timeout, or the surrounding task being
-/// cancelled) `pyo3-async-runtimes` drops the bridging future, which drops this
-/// guard, which aborts the Tokio task -- so the in-flight driver operation is
-/// actually cancelled (its connection released, no further work or RU spent)
-/// instead of being detached and left to run to completion with its result thrown
-/// away. On normal completion the task is already finished, so `abort()` is a
-/// harmless no-op.
+/// finished. The problem it solves: a Tokio `JoinHandle` does NOT own its task --
+/// dropping the handle *detaches* the task, leaving it to run to completion in the
+/// background (holding a connection, spending RU) with its result thrown away. So
+/// the async runner keeps this guard (built from the task's `abort_handle()`)
+/// alive for the lifetime of the bridged Python awaitable. When asyncio cancels
+/// the `await` (a client-side timeout, or the surrounding task being cancelled)
+/// `pyo3-async-runtimes` drops the bridging future, which drops this guard, which
+/// calls `abort()` -- so the in-flight driver operation is actually cancelled (its
+/// connection released, no further work or RU spent) instead of detached. On
+/// normal completion the task is already finished, so `abort()` is a harmless
+/// no-op.
 struct AbortOnDrop(tokio::task::AbortHandle);
 
 impl Drop for AbortOnDrop {
@@ -163,6 +193,14 @@ impl Drop for AbortOnDrop {
     }
 }
 
+/// Async sibling of `run_item_operation`: same inputs and identical driver work,
+/// but instead of blocking a worker thread it spawns the driver future on the
+/// shared Tokio runtime (the same runtime the driver was built on, so its
+/// connection pool and timers stay put) and hands the asyncio event loop an
+/// awaitable that resolves to the `BackendResponse` tuple. Awaiting it uses no
+/// Python thread per in-flight call. The awaitable owns an `AbortOnDrop` guard
+/// (see above) so a cancelled `await` actually cancels the driver operation
+/// rather than detaching it.
 pub(crate) fn run_item_operation_async<'py>(
     py: Python<'py>,
     handle: &str,
@@ -174,8 +212,8 @@ pub(crate) fn run_item_operation_async<'py>(
     honor_content_response: bool,
     build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send + 'static,
 ) -> PyResult<Bound<'py, PyAny>> {
-    // Concrete provenance: record that the Rust binding was actually called for
-    // this operation (see BINDING_OP_COUNT). Counted on entry, async path.
+    // Count that the rust binding actually ran this operation (see
+    // BINDING_OP_COUNT). Bumped on entry, async path.
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     // Synchronous extraction (GIL held) -- identical to the sync path. Errors
     // here surface when the coroutine is created, before it is awaited.
@@ -241,10 +279,13 @@ fn lookup_driver(handle: &str) -> PyResult<Arc<CosmosDriver>> {
         })
 }
 
-/// The driver work shared by the sync and async runners: resolve the container,
-/// build the operation from the per-op closure, apply the typed activity-id /
-/// session-token / content-response / options, and execute it. Returns the raw
-/// driver result; the callers turn it into the Python tuple under the GIL.
+/// The driver work shared by both runners -- the sync runner
+/// (`run_item_operation`, which blocks on it) and the async runner
+/// (`run_item_operation_async`, which spawns it) -- so the two paths do identical
+/// work. Resolve the container, build the operation from the per-op closure, apply
+/// the typed activity-id / session-token / content-response / options, and execute
+/// it. Returns the raw driver result; the callers turn it into the Python tuple
+/// under the GIL.
 async fn run_singleton_future(
     driver: Arc<CosmosDriver>,
     database_name: String,
@@ -442,7 +483,7 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
         if lower == "responsepayloadonwritedisabled" {
             // Truthy -> caller asked for "no body"; falsy -> caller
             // explicitly asked for the body.
-            content_response_on_write = if value.is_truthy().unwrap_or(false) {
+            content_response_on_write = if value.is_truthy()? {
                 ContentResponseOnWrite::Disabled
             } else {
                 ContentResponseOnWrite::Enabled
@@ -465,12 +506,15 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
         // Accepts int or float; non-positive or non-finite values are
         // ignored to match the legacy behaviour.
         if lower == "__overall_timeout_seconds" {
-            if let Ok(seconds) = value.extract::<f64>() {
-                if seconds.is_finite() && seconds > 0.0 {
-                    end_to_end_timeout = Some(EndToEndOperationLatencyPolicy::new(
-                        Duration::from_secs_f64(seconds),
-                    ));
-                }
+            let seconds: f64 = value.extract().map_err(|e| {
+                PyValueError::new_err(format!(
+                    "__overall_timeout_seconds must be an int/float number of seconds: {e}"
+                ))
+            })?;
+            if seconds.is_finite() && seconds > 0.0 {
+                end_to_end_timeout = Some(EndToEndOperationLatencyPolicy::new(
+                    Duration::from_secs_f64(seconds),
+                ));
             }
             continue;
         }
@@ -625,7 +669,7 @@ fn backend_response_tuple_from_success<'py>(
     let response_headers = PyDict::new_bound(py);
     write_response_headers(&response_headers, driver_headers)?;
 
-    let body_vec = response_body_to_vec(response.into_body());
+    let body_vec = response_body_to_vec(response.into_body())?;
     backend_response_tuple(
         py,
         status_code,
@@ -645,11 +689,14 @@ fn backend_response_tuple_from_success<'py>(
 /// We concatenate it as a defensive fallback rather than panic — if it ever
 /// fires the test harness will surface a body mismatch that's easier to
 /// diagnose than an unwrap panic from inside the binding.
-fn response_body_to_vec(body: ResponseBody) -> Vec<u8> {
+fn response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
     match body {
-        ResponseBody::NoPayload => Vec::new(),
-        ResponseBody::Bytes(b) => b.to_vec(),
-        ResponseBody::Items(items) => items.iter().flat_map(|b| b.iter().copied()).collect(),
+        ResponseBody::NoPayload => Ok(Vec::new()),
+        ResponseBody::Bytes(b) => Ok(b.to_vec()),
+        ResponseBody::Items(items) => Err(PyRuntimeError::new_err(format!(
+            "unexpected feed response body for point operation: got {} item(s)",
+            items.len()
+        ))),
     }
 }
 
@@ -676,7 +723,7 @@ fn backend_response_tuple_from_cosmos_error<'py>(
     let response_headers = PyDict::new_bound(py);
     write_response_headers(&response_headers, response.headers())?;
 
-    let body_vec = response_body_to_vec(response.body().clone());
+    let body_vec = response_body_to_vec(response.body().clone())?;
     Ok(Some(backend_response_tuple(
         py,
         status_code,
@@ -967,9 +1014,14 @@ pub(crate) fn extract_create_item_id<'py>(
 #[cfg(test)]
 mod tests {
     use super::{
-        extract_item_id, is_intentionally_ignored_option_key, json_value_to_pk_component,
-        parse_container_link, parse_partition_key_header,
+        extract_item_id, extract_op_modifiers, is_intentionally_ignored_option_key,
+        json_value_to_pk_component, parse_container_link, parse_partition_key_header,
+        response_body_to_vec,
     };
+    use azure_core::Bytes;
+    use azure_data_cosmos_driver::models::ResponseBody;
+    use pyo3::prelude::*;
+    use pyo3::types::PyDict;
 
     // Tests for the per-operation parsers: the container-link split, the
     // partition-key header parse, the body-id read, and the per-value
@@ -1106,5 +1158,36 @@ mod tests {
         assert!(!is_intentionally_ignored_option_key(
             "x-ms-cosmos-priority-level"
         ));
+    }
+
+    #[test]
+    fn timeout_header_rejects_non_numeric_values() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let headers = PyDict::new_bound(py);
+            headers
+                .set_item("__overall_timeout_seconds", "not-a-number")
+                .expect("header assignment must succeed");
+            let result = extract_op_modifiers(&headers);
+            match result {
+                Ok(_) => panic!("non-numeric timeout must be rejected"),
+                Err(err) => {
+                    assert!(
+                        err.to_string().contains("__overall_timeout_seconds"),
+                        "unexpected error: {err}"
+                    );
+                }
+            }
+        });
+    }
+
+    #[test]
+    fn point_response_body_rejects_feed_shape() {
+        let body = ResponseBody::from_items(vec![Bytes::from_static(br#"{"id":"a"}"#)]);
+        let err = response_body_to_vec(body).expect_err("feed shape must not be flattened");
+        assert!(
+            err.to_string().contains("unexpected feed response body"),
+            "unexpected error: {err}"
+        );
     }
 }
