@@ -428,3 +428,10 @@ def test_trim_changelog_azure_mgmt_network_fixture(tmp_path):
     _assert_real_changelog_trim(
         tmp_path, "azure-mgmt-network-31.0.0", newest="31.0.0", oldest="30.1.0", kept_count=4
     )
+
+
+def test_trim_changelog_azure_mgmt_datafactory_fixture(tmp_path):
+    # min-keep=4 keeps the 4 newest entries (~90 KB), well under the 192 KB limit.
+    _assert_real_changelog_trim(
+        tmp_path, "azure-mgmt-datafactory-10.0.0b1", newest="10.0.0b1", oldest="9.1.0", kept_count=4
+    )
