@@ -530,7 +530,7 @@ class ResponseContext:
     request: CreateResponse | None                  # Parsed request model
     client_headers: dict[str, str]                  # x-client-* headers from request (keys lowercase)
     query_parameters: dict[str, str]                # Query parameters from the HTTP request
-    isolation: IsolationContext                     # Multi-tenant partition keys (user_key / chat_key)
+    platform_context: PlatformContext               # Platform identity: user_id_key (x-agent-user-id) + call_id (x-agent-foundry-call-id)
 
     # Shutdown surface (distinct from per-request cancellation_signal — see Cancellation)
     shutdown: asyncio.Event                         # Set on graceful server shutdown
