@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class BillingTrustClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for BillingTrustClient.
+class BillingTrustMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for BillingTrustMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

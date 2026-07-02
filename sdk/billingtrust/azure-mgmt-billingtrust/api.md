@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.billingtrust
 
-    class azure.mgmt.billingtrust.BillingTrustClient: implements ContextManager 
+    class azure.mgmt.billingtrust.BillingTrustMgmtClient: implements ContextManager 
         assessments: AssessmentsOperations
         operations: Operations
         rules: RulesOperations
@@ -30,7 +30,7 @@ namespace azure.mgmt.billingtrust
 
 namespace azure.mgmt.billingtrust.aio
 
-    class azure.mgmt.billingtrust.aio.BillingTrustClient: implements AsyncContextManager 
+    class azure.mgmt.billingtrust.aio.BillingTrustMgmtClient: implements AsyncContextManager 
         assessments: AssessmentsOperations
         operations: Operations
         rules: RulesOperations

@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import BillingTrustClientConfiguration
+from ._configuration import BillingTrustMgmtClientConfiguration
 from .operations import AssessmentsOperations, Operations, RulesOperations
 
 if sys.version_info >= (3, 11):
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class BillingTrustClient:
+class BillingTrustMgmtClient:
     """Microsoft.BillingTrust resource provider. Provides Assessment and Rule resources used to
     evaluate trust attributes (such as education-domain qualification and business verification) of
     a billing account.
@@ -72,7 +72,7 @@ class BillingTrustClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = BillingTrustClientConfiguration(
+        self._config = BillingTrustMgmtClientConfiguration(
             credential=credential,
             base_url=cast(str, base_url),
             cloud_setting=cloud_setting,

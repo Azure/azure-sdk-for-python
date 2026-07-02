@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.billingtrust import BillingTrustClient
+from azure.mgmt.billingtrust import BillingTrustMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = BillingTrustClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = BillingTrustMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples

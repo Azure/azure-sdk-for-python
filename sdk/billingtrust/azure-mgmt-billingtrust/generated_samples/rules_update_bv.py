@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.billingtrust import BillingTrustClient
+from azure.mgmt.billingtrust import BillingTrustMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.billingtrust import BillingTrustClient
 
 
 def main():
-    client = BillingTrustClient(
+    client = BillingTrustMgmtClient(
         credential=DefaultAzureCredential(),
     )
 

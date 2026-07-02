@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.billingtrust import BillingTrustClient
+from azure.mgmt.billingtrust.aio import BillingTrustMgmtClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestBillingTrustRulesOperations(AzureMgmtRecordedTestCase):
+class TestBillingTrustMgmtRulesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(BillingTrustClient)
+        self.client = self.create_mgmt_client(BillingTrustMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_rules_get(self, resource_group):
-        response = self.client.rules.get(
+    @recorded_by_proxy_async
+    async def test_rules_get(self, resource_group):
+        response = await self.client.rules.get(
             resource_uri="str",
             rule_name="str",
         )
@@ -30,19 +31,19 @@ class TestBillingTrustRulesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_rules_list(self, resource_group):
+    @recorded_by_proxy_async
+    async def test_rules_list(self, resource_group):
         response = self.client.rules.list(
             resource_uri="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_rules_create_or_update(self, resource_group):
-        response = self.client.rules.create_or_update(
+    @recorded_by_proxy_async
+    async def test_rules_create_or_update(self, resource_group):
+        response = await self.client.rules.create_or_update(
             resource_uri="str",
             rule_name="str",
             resource={
@@ -65,9 +66,9 @@ class TestBillingTrustRulesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_rules_update(self, resource_group):
-        response = self.client.rules.update(
+    @recorded_by_proxy_async
+    async def test_rules_update(self, resource_group):
+        response = await self.client.rules.update(
             resource_uri="str",
             rule_name="str",
             properties={
