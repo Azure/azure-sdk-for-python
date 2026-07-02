@@ -31,6 +31,11 @@ _REQUIRED_ATTRIBUTES = [
 # on both backends, so reading it per call is the reliable RU source.
 _REQUEST_CHARGE_HEADER = "x-ms-request-charge"
 
+# Response header carrying the service-reported processing time in milliseconds.
+# Both the core-python and the Rust backend surface it (the Rust binding copies
+# the driver's server_duration_ms field to this wire name), so reading it per
+# call gives a client-vs-server latency split that is comparable across backends.
+_SERVER_DURATION_HEADER = "x-ms-request-duration-ms"
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -64,11 +69,15 @@ def _record_error(stats, operation, error):
 
 
 def _make_ru_hook(op_name, stats):
-    """Build a ``response_hook`` that records *op_name*'s RU charge into *stats*.
+    """Build a ``response_hook`` that records *op_name*'s RU charge and the
+    service-reported processing time into *stats*.
 
     The SDK calls the hook once per successful operation on both backends with the
     ``x-ms-request-charge`` header set, which makes RU per operation readable from
-    the result row. Returns ``None`` when there is no ``stats`` to record into.
+    the result row. When the response also carries ``x-ms-request-duration-ms``
+    (both backends surface it), the hook records that into the parallel server
+    histogram for the client-vs-server latency split. Returns ``None`` when there
+    is no ``stats`` to record into.
     """
     if stats is None:
         return None
@@ -77,12 +86,17 @@ def _make_ru_hook(op_name, stats):
         if not headers:
             return
         charge = headers.get(_REQUEST_CHARGE_HEADER)
-        if charge is None:
-            return
-        try:
-            stats.record_ru(op_name, float(charge))
-        except (TypeError, ValueError):
-            pass
+        if charge is not None:
+            try:
+                stats.record_ru(op_name, float(charge))
+            except (TypeError, ValueError):
+                pass
+        server_ms = headers.get(_SERVER_DURATION_HEADER)
+        if server_ms is not None:
+            try:
+                stats.record_server_ms(op_name, float(server_ms))
+            except (TypeError, ValueError):
+                pass
 
     return _hook
 

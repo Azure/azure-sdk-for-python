@@ -392,6 +392,17 @@ class PerfReporter:
                 # of per-window means.
                 "ru_sum": round(s.get("ru_sum", 0.0), 4),
                 "ru_count": s.get("ru_count", 0),
+                # Service-reported processing time (x-ms-request-duration-ms) for
+                # this window. server_hist_b64 pools across windows like hist_b64;
+                # the scalar tails let a quick read compare the SERVER tail against
+                # the CLIENT tail (p99_9_ms). A client tail not matched by a server
+                # tail is client-side (transport/binding) overhead, not the service.
+                # server_count < count means the header was missing on some calls.
+                "server_count": s.get("server_count", 0),
+                "server_p50_ms": round(s.get("server_p50_ms", 0.0), 3),
+                "server_p99_ms": round(s.get("server_p99_ms", 0.0), 3),
+                "server_p99_9_ms": round(s.get("server_p99_9_ms", 0.0), 3),
+                "server_hist_b64": s.get("server_hist_b64"),
                 "cpu_percent": round(cpu, 1),
                 # CPU-seconds in this window, from the cpu_times() delta. Compare as
                 # CPU-seconds per 1k ops on single-op runs. cpu_user/system split it.

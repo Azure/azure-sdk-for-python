@@ -31,6 +31,15 @@ class Stats:
         self._lock = threading.Lock()
         # min 1 microsecond, max 60 seconds (in microseconds), 3 significant digits
         self._histograms: dict[str, HdrHistogram] = {}
+        # Parallel histogram of SERVER-reported processing time (the
+        # x-ms-request-duration-ms response header) for the same ops. The client
+        # histogram above measures wall-clock at the caller (network + transport +
+        # binding bridge + service); this one measures only the time the service
+        # itself reports spending. Client minus server localizes a tail: if the
+        # client tail is high but the server tail is not, the cost is client-side
+        # (transport/bridge), not the service. The header is emitted by BOTH the
+        # core-python and the Rust backend, so the split is comparable across them.
+        self._server_histograms: dict[str, HdrHistogram] = {}
         self._error_counts: dict[str, int] = {}
         # Running RU charge per operation: sum and sample count, so drain can
         # report mean RU per op. Fed by record_ru from the SDK response_hook
@@ -57,6 +66,25 @@ class Stats:
             # Clamp to histogram range to prevent crashes on very slow operations
             value_us = max(_MIN_VALUE_US, min(int(duration_ms * 1000), _MAX_VALUE_US))
             self._histograms[operation].record_value(value_us)
+
+    def record_server_ms(self, operation: str, server_ms: float):
+        """Record the service-reported processing time of a successful operation.
+
+        Fed from the SDK ``response_hook`` (the ``x-ms-request-duration-ms``
+        header), which both backends set. Stored in a histogram parallel to the
+        client-latency one so an offline analyzer can pool it per point and
+        compare the SERVER tail against the CLIENT tail: a client tail that is
+        not matched by a server tail is client-side (transport/bridge) overhead.
+        """
+        if server_ms < 0:
+            return
+        with self._lock:
+            if operation not in self._server_histograms:
+                self._server_histograms[operation] = HdrHistogram(
+                    _MIN_VALUE_US, _MAX_VALUE_US, 3
+                )
+            value_us = max(_MIN_VALUE_US, min(int(server_ms * 1000), _MAX_VALUE_US))
+            self._server_histograms[operation].record_value(value_us)
 
     def record_ru(self, operation: str, request_charge: float):
         """Record the RU charge of a successful operation.
@@ -148,6 +176,20 @@ class Stats:
                 ru_count = self._ru_counts.get(op, 0)
                 ru_sum = self._ru_sums.get(op, 0.0)
                 mean_ru = (ru_sum / ru_count) if ru_count else 0.0
+                # Server-reported processing time for this op this window. Emitted
+                # as pooled-able base64 plus scalar tail so the offline analyzer
+                # can compare the SERVER tail against the CLIENT tail per point.
+                shist = self._server_histograms.get(op)
+                if shist and shist.total_count > 0:
+                    server_count = shist.total_count
+                    server_p50_ms = shist.get_value_at_percentile(50.0) / 1000.0
+                    server_p99_ms = shist.get_value_at_percentile(99.0) / 1000.0
+                    server_p99_9_ms = shist.get_value_at_percentile(99.9) / 1000.0
+                    server_hist_b64 = shist.encode().decode("ascii")
+                else:
+                    server_count = 0
+                    server_p50_ms = server_p99_ms = server_p99_9_ms = 0.0
+                    server_hist_b64 = None
                 if count == 0 and errors == 0:
                     continue
                 if count > 0:
@@ -176,6 +218,11 @@ class Stats:
                             "mean_ru": mean_ru,
                             "ru_sum": ru_sum,
                             "ru_count": ru_count,
+                            "server_count": server_count,
+                            "server_p50_ms": server_p50_ms,
+                            "server_p99_ms": server_p99_ms,
+                            "server_p99_9_ms": server_p99_9_ms,
+                            "server_hist_b64": server_hist_b64,
                         }
                     )
                 else:
@@ -201,10 +248,16 @@ class Stats:
                             "mean_ru": mean_ru,
                             "ru_sum": ru_sum,
                             "ru_count": ru_count,
+                            "server_count": server_count,
+                            "server_p50_ms": server_p50_ms,
+                            "server_p99_ms": server_p99_ms,
+                            "server_p99_9_ms": server_p99_9_ms,
+                            "server_hist_b64": server_hist_b64,
                         }
                     )
             # Reset for next interval
             self._histograms.clear()
+            self._server_histograms.clear()
             self._error_counts.clear()
             self._ru_sums.clear()
             self._ru_counts.clear()
