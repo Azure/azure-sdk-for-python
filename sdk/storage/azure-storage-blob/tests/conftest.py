@@ -36,10 +36,6 @@ def add_sanitizers(test_proxy):
         regex=r"(?<=[?&]sktid=)[^&#]+",
         value="00000000-0000-0000-0000-000000000000",
     )
-
-    # Block IDs are generated as random UUIDs, so normalize them to a constant
-    # value in both the request URI (?comp=block&blockid=...) and the commit
-    # block list body (<Latest>...</Latest>) so recordings play back reliably.
     add_uri_regex_sanitizer(
         regex=r"(?<=[?&]blockid=)[^&#]+",
         value="00000000-0000-0000-0000-000000000000",
