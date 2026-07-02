@@ -42,7 +42,7 @@ def is_arm_sdk(package_name: str) -> bool:
 
 # CHANGELOG.md is embedded into the package long_description (see setup.py template),
 # so an unbounded changelog bloats the PyPI metadata. Trim it once it grows past this size.
-CHANGELOG_SIZE_LIMIT_BYTES = 128 * 1024
+CHANGELOG_SIZE_LIMIT_BYTES = 192 * 1024
 _TRIM_NOTE_PREFIX = "> Changelog entries prior to"
 _VERSION_HEADER_RE = re.compile(r"^##\s+\d+\.\d+")
 

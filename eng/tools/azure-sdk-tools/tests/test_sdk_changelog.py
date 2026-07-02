@@ -344,8 +344,8 @@ def test_trim_changelog_preserves_note_when_single_entry(temp_arm_package):
 
 def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
     # Real-world data: the azure-mgmt-sql 4.0.0 CHANGELOG (~215 KB) must be trimmed under the
-    # default 128 KB limit. The 4.0.0 stable entry alone is ~95 KB, so only the newest few
-    # entries fit. The expected trimmed output is checked in as a fixture for easy review.
+    # default 192 KB limit. The 4.0.0 stable entry alone is ~95 KB, so only the newest entries
+    # that fit are kept. The expected trimmed output is checked in as a fixture for easy review.
     data_dir = Path(__file__).parent / "data"
     fixture = data_dir / "azure-mgmt-sql-4.0.0-CHANGELOG.md"
     expected = (data_dir / "azure-mgmt-sql-4.0.0-CHANGELOG.trimmed.md").read_text(encoding="utf-8")
@@ -361,13 +361,14 @@ def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
 
     # Trimmed output matches the checked-in expected fixture exactly and is under the limit.
     assert content == expected
-    assert (package_path / "CHANGELOG.md").stat().st_size <= 128 * 1024
+    assert (package_path / "CHANGELOG.md").stat().st_size <= 192 * 1024
 
     kept = _version_headers(content)
-    # Newest entries kept; everything down to the oldest history is removed completely.
-    assert kept == ["4.0.0", "4.0.0b25", "4.0.0b24"]
+    # Newest entries kept; the oldest history is removed completely.
+    assert kept[0] == "4.0.0"
+    assert kept[-1] == "0.14.0"
     assert "0.1.0" not in kept
     assert (
-        "> Changelog entries prior to 4.0.0b24 were removed to reduce file size. "
-        "See https://pypi.org/project/azure-mgmt-sql/4.0.0b24/ for the older history." in content
+        "> Changelog entries prior to 0.14.0 were removed to reduce file size. "
+        "See https://pypi.org/project/azure-mgmt-sql/0.14.0/ for the older history." in content
     )

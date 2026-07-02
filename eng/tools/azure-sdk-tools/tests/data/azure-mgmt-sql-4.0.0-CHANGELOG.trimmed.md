@@ -1106,4 +1106,1035 @@
 
 - Exclude `generated_samples` and `generated_tests` from wheel
 
-> Changelog entries prior to 4.0.0b24 were removed to reduce file size. See https://pypi.org/project/azure-mgmt-sql/4.0.0b24/ for the older history.
+## 4.0.0b23 (2025-09-10)
+
+### Features Added
+
+  - Added operation DatabasesOperations.list_metric_definitions
+  - Added operation DatabasesOperations.list_metrics
+  - Added operation ElasticPoolsOperations.list_metric_definitions
+  - Added operation ElasticPoolsOperations.list_metrics
+  - Added operation GeoBackupPoliciesOperations.list_by_database
+  - Added operation group ElasticPoolActivitiesOperations
+  - Added operation group ElasticPoolDatabaseActivitiesOperations
+  - Added operation group ServerCommunicationLinksOperations
+  - Added operation group ServiceObjectivesOperations
+  - Model ManagedInstanceEditionCapability has a new parameter zone_redundant
+  - Model ServerUsage has a new parameter next_reset_time
+  - Model ServerUsage has a new parameter resource_name
+
+### Breaking Changes
+
+  - Model DataMaskingRuleListResult no longer has parameter next_link
+  - Model DatabaseExtensions no longer has parameter administrator_login
+  - Model DatabaseExtensions no longer has parameter administrator_login_password
+  - Model DatabaseExtensions no longer has parameter authentication_type
+  - Model DatabaseExtensions no longer has parameter database_edition
+  - Model DatabaseExtensions no longer has parameter max_size_bytes
+  - Model DatabaseExtensions no longer has parameter network_isolation
+  - Model DatabaseExtensions no longer has parameter service_objective_name
+  - Model DatabaseKey no longer has parameter key_version
+  - Model EditionCapability no longer has parameter zone_pinning
+  - Model ElasticPool no longer has parameter auto_pause_delay
+  - Model ElasticPoolEditionCapability no longer has parameter zone_pinning
+  - Model ElasticPoolPerDatabaseSettings no longer has parameter auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability no longer has parameter supported_auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability no longer has parameter supported_min_capacities
+  - Model ElasticPoolPerformanceLevelCapability no longer has parameter supported_per_database_auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability no longer has parameter supported_zones
+  - Model ElasticPoolUpdate no longer has parameter auto_pause_delay
+  - Model EncryptionProtector no longer has parameter key_version
+  - Model GeoBackupPolicyListResult no longer has parameter next_link
+  - Model ImportExportExtensionsOperationResult no longer has parameter blob_uri
+  - Model ImportExportExtensionsOperationResult no longer has parameter private_endpoint_connections
+  - Model ImportExportExtensionsOperationResult no longer has parameter queued_time
+  - Model JobAgent no longer has parameter identity
+  - Model JobAgentUpdate no longer has parameter identity
+  - Model JobAgentUpdate no longer has parameter sku
+  - Model LocationCapabilities no longer has parameter is_zone_resilient_provisioning_allowed
+  - Model LocationCapabilities no longer has parameter supported_job_agent_versions
+  - Model LogicalDatabaseTransparentDataEncryption no longer has parameter scan_state
+  - Model ManagedDatabase no longer has parameter extended_accessibility_info
+  - Model ManagedDatabaseUpdate no longer has parameter extended_accessibility_info
+  - Model ManagedInstance no longer has parameter memory_size_in_gb
+  - Model ManagedInstance no longer has parameter requested_logical_availability_zone
+  - Model ManagedInstanceEditionCapability no longer has parameter is_general_purpose_v2
+  - Model ManagedInstanceFamilyCapability no longer has parameter zone_redundant
+  - Model ManagedInstanceLongTermRetentionBackup no longer has parameter backup_storage_access_tier
+  - Model ManagedInstanceLongTermRetentionPolicy no longer has parameter backup_storage_access_tier
+  - Model ManagedInstancePrivateLinkProperties no longer has parameter required_zone_names
+  - Model ManagedInstanceUpdate no longer has parameter memory_size_in_gb
+  - Model ManagedInstanceUpdate no longer has parameter requested_logical_availability_zone
+  - Model ManagedInstanceVcoresCapability no longer has parameter included_storage_i_ops
+  - Model ManagedInstanceVcoresCapability no longer has parameter included_storage_throughput_m_bps
+  - Model ManagedInstanceVcoresCapability no longer has parameter iops_included_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability no longer has parameter iops_min_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability no longer has parameter supported_memory_sizes_in_gb
+  - Model ManagedInstanceVcoresCapability no longer has parameter supported_storage_i_ops
+  - Model ManagedInstanceVcoresCapability no longer has parameter supported_storage_throughput_m_bps
+  - Model ManagedInstanceVcoresCapability no longer has parameter throughput_m_bps_included_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability no longer has parameter throughput_m_bps_min_value_override_factor_per_selected_storage_gb
+  - Model SensitivityLabel no longer has parameter client_classification_source
+  - Model ServerKey no longer has parameter key_version
+  - Model ServerUsage no longer has parameter id
+  - Model ServerUsage no longer has parameter type
+  - Model ServerUsageListResult no longer has parameter next_link
+  - Model ServiceObjectiveCapability no longer has parameter supported_free_limit_exhaustion_behaviors
+  - Model ServiceObjectiveCapability no longer has parameter supported_zones
+  - Model ServiceObjectiveCapability no longer has parameter zone_pinning
+  - Operation DataMaskingPoliciesOperations.create_or_update no longer has parameter data_masking_policy_name
+  - Operation DataMaskingPoliciesOperations.get no longer has parameter data_masking_policy_name
+  - Operation DataMaskingRulesOperations.create_or_update no longer has parameter data_masking_policy_name
+  - Operation DataMaskingRulesOperations.list_by_database no longer has parameter data_masking_policy_name
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location no longer has parameter filter
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location no longer has parameter skip
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location no longer has parameter top
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location no longer has parameter filter
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location no longer has parameter skip
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location no longer has parameter top
+  - Operation OutboundFirewallRulesOperations.begin_create_or_update has a new required parameter parameters
+  - Parameter administrator_login_password of model ExportDatabaseDefinition is now required
+  - Parameter administrator_login_password of model ImportExistingDatabaseDefinition is now required
+  - Parameter credential of model JobStepOutput is now required
+  - Parameter state of model GeoBackupPolicy is now required
+  - Parameter value of model ServerUsageListResult is now required
+  - Removed operation GeoBackupPoliciesOperations.list
+  - Removed operation ManagedDatabaseSensitivityLabelsOperations.list_by_database
+  - Removed operation ManagedDatabasesOperations.begin_reevaluate_inaccessible_database_state
+  - Removed operation ManagedInstanceLongTermRetentionPoliciesOperations.begin_delete
+  - Removed operation ManagedInstancesOperations.begin_reevaluate_inaccessible_database_state
+  - Removed operation ManagedInstancesOperations.begin_validate_azure_key_vault_encryption_key
+  - Removed operation SensitivityLabelsOperations.list_by_database
+  - Removed operation TransparentDataEncryptionsOperations.begin_resume
+  - Removed operation TransparentDataEncryptionsOperations.begin_suspend
+  - Removed operation VirtualClustersOperations.begin_create_or_update
+  - Removed operation group InstancePoolOperationsOperations
+  - Removed operation group NetworkSecurityPerimeterConfigurationsOperations
+
+## 4.0.0b22 (2025-07-30)
+
+### Features Added
+
+  - Added operation LongTermRetentionBackupsOperations.begin_lock_time_based_immutability
+  - Added operation LongTermRetentionBackupsOperations.begin_lock_time_based_immutability_by_resource_group
+  - Added operation LongTermRetentionBackupsOperations.begin_remove_legal_hold_immutability
+  - Added operation LongTermRetentionBackupsOperations.begin_remove_legal_hold_immutability_by_resource_group
+  - Added operation LongTermRetentionBackupsOperations.begin_remove_time_based_immutability
+  - Added operation LongTermRetentionBackupsOperations.begin_remove_time_based_immutability_by_resource_group
+  - Added operation LongTermRetentionBackupsOperations.begin_set_legal_hold_immutability
+  - Added operation LongTermRetentionBackupsOperations.begin_set_legal_hold_immutability_by_resource_group
+  - Added operation ManagedDatabasesOperations.begin_reevaluate_inaccessible_database_state
+  - Added operation ManagedInstancesOperations.begin_reevaluate_inaccessible_database_state
+  - Added operation ManagedInstancesOperations.begin_validate_azure_key_vault_encryption_key
+  - Added operation TransparentDataEncryptionsOperations.begin_resume
+  - Added operation TransparentDataEncryptionsOperations.begin_suspend
+  - Added operation VirtualClustersOperations.begin_create_or_update
+  - Model DatabaseKey has a new parameter key_version
+  - Model EncryptionProtector has a new parameter key_version
+  - Model LocationCapabilities has a new parameter is_zone_resilient_provisioning_allowed
+  - Model LogicalDatabaseTransparentDataEncryption has a new parameter scan_state
+  - Model LongTermRetentionBackup has a new parameter legal_hold_immutability
+  - Model LongTermRetentionBackup has a new parameter time_based_immutability
+  - Model LongTermRetentionBackup has a new parameter time_based_immutability_mode
+  - Model LongTermRetentionPolicy has a new parameter time_based_immutability
+  - Model LongTermRetentionPolicy has a new parameter time_based_immutability_mode
+  - Model ManagedDatabase has a new parameter extended_accessibility_info
+  - Model ManagedDatabaseUpdate has a new parameter extended_accessibility_info
+  - Model ManagedInstance has a new parameter memory_size_in_gb
+  - Model ManagedInstance has a new parameter requested_logical_availability_zone
+  - Model ManagedInstanceUpdate has a new parameter memory_size_in_gb
+  - Model ManagedInstanceUpdate has a new parameter requested_logical_availability_zone
+  - Model ManagedInstanceVcoresCapability has a new parameter supported_memory_sizes_in_gb
+  - Model Server has a new parameter create_mode
+  - Model Server has a new parameter retention_days
+  - Model ServerKey has a new parameter key_version
+  - Model ServerUpdate has a new parameter create_mode
+  - Model ServerUpdate has a new parameter retention_days
+
+### Breaking Changes
+
+  - Model ManagedInstance no longer has parameter total_memory_mb
+  - Model ManagedInstanceUpdate no longer has parameter total_memory_mb
+  - Model ManagedInstanceVcoresCapability no longer has parameter supported_memory_limits_mb
+
+## 4.0.0b21 (2025-03-23)
+
+### Features Added
+
+  - Added operation GeoBackupPoliciesOperations.list
+  - Added operation ManagedDatabaseSensitivityLabelsOperations.list_by_database
+  - Added operation ManagedInstanceLongTermRetentionPoliciesOperations.begin_delete
+  - Added operation SensitivityLabelsOperations.list_by_database
+  - Added operation group InstancePoolOperationsOperations
+  - Added operation group NetworkSecurityPerimeterConfigurationsOperations
+  - Model DataMaskingRuleListResult has a new parameter next_link
+  - Model DatabaseExtensions has a new parameter administrator_login
+  - Model DatabaseExtensions has a new parameter administrator_login_password
+  - Model DatabaseExtensions has a new parameter authentication_type
+  - Model DatabaseExtensions has a new parameter database_edition
+  - Model DatabaseExtensions has a new parameter max_size_bytes
+  - Model DatabaseExtensions has a new parameter network_isolation
+  - Model DatabaseExtensions has a new parameter service_objective_name
+  - Model EditionCapability has a new parameter zone_pinning
+  - Model ElasticPool has a new parameter auto_pause_delay
+  - Model ElasticPoolEditionCapability has a new parameter zone_pinning
+  - Model ElasticPoolPerDatabaseSettings has a new parameter auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter supported_auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter supported_min_capacities
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter supported_per_database_auto_pause_delay
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter supported_zones
+  - Model ElasticPoolUpdate has a new parameter auto_pause_delay
+  - Model GeoBackupPolicyListResult has a new parameter next_link
+  - Model ImportExportExtensionsOperationResult has a new parameter blob_uri
+  - Model ImportExportExtensionsOperationResult has a new parameter private_endpoint_connections
+  - Model ImportExportExtensionsOperationResult has a new parameter queued_time
+  - Model JobAgent has a new parameter identity
+  - Model JobAgentUpdate has a new parameter identity
+  - Model JobAgentUpdate has a new parameter sku
+  - Model LocationCapabilities has a new parameter supported_job_agent_versions
+  - Model ManagedInstance has a new parameter total_memory_mb
+  - Model ManagedInstanceEditionCapability has a new parameter is_general_purpose_v2
+  - Model ManagedInstanceFamilyCapability has a new parameter zone_redundant
+  - Model ManagedInstanceLongTermRetentionBackup has a new parameter backup_storage_access_tier
+  - Model ManagedInstanceLongTermRetentionPolicy has a new parameter backup_storage_access_tier
+  - Model ManagedInstancePrivateLinkProperties has a new parameter required_zone_names
+  - Model ManagedInstanceUpdate has a new parameter total_memory_mb
+  - Model ManagedInstanceVcoresCapability has a new parameter included_storage_i_ops
+  - Model ManagedInstanceVcoresCapability has a new parameter included_storage_throughput_m_bps
+  - Model ManagedInstanceVcoresCapability has a new parameter iops_included_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability has a new parameter iops_min_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability has a new parameter supported_memory_limits_mb
+  - Model ManagedInstanceVcoresCapability has a new parameter supported_storage_i_ops
+  - Model ManagedInstanceVcoresCapability has a new parameter supported_storage_throughput_m_bps
+  - Model ManagedInstanceVcoresCapability has a new parameter throughput_m_bps_included_value_override_factor_per_selected_storage_gb
+  - Model ManagedInstanceVcoresCapability has a new parameter throughput_m_bps_min_value_override_factor_per_selected_storage_gb
+  - Model SensitivityLabel has a new parameter client_classification_source
+  - Model ServerUsage has a new parameter id
+  - Model ServerUsage has a new parameter type
+  - Model ServerUsageListResult has a new parameter next_link
+  - Model ServiceObjectiveCapability has a new parameter supported_free_limit_exhaustion_behaviors
+  - Model ServiceObjectiveCapability has a new parameter supported_zones
+  - Model ServiceObjectiveCapability has a new parameter zone_pinning
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location has a new optional parameter filter
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location has a new optional parameter skip
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_location has a new optional parameter top
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location has a new optional parameter filter
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location has a new optional parameter skip
+  - Operation LongTermRetentionManagedInstanceBackupsOperations.list_by_resource_group_location has a new optional parameter top
+
+### Breaking Changes
+
+  - Model LongTermRetentionPolicy no longer has parameter backup_storage_access_tier
+  - Model LongTermRetentionPolicy no longer has parameter make_backups_immutable
+  - Model ManagedInstanceEditionCapability no longer has parameter zone_redundant
+  - Model ServerUsage no longer has parameter next_reset_time
+  - Model ServerUsage no longer has parameter resource_name
+  - Operation DataMaskingPoliciesOperations.create_or_update has a new required parameter data_masking_policy_name
+  - Operation DataMaskingPoliciesOperations.get has a new required parameter data_masking_policy_name
+  - Operation DataMaskingRulesOperations.create_or_update has a new required parameter data_masking_policy_name
+  - Operation DataMaskingRulesOperations.list_by_database has a new required parameter data_masking_policy_name
+  - Operation OutboundFirewallRulesOperations.begin_create_or_update no longer has parameter parameters
+  - Removed operation DatabasesOperations.list_metric_definitions
+  - Removed operation DatabasesOperations.list_metrics
+  - Removed operation ElasticPoolsOperations.list_metric_definitions
+  - Removed operation ElasticPoolsOperations.list_metrics
+  - Removed operation GeoBackupPoliciesOperations.list_by_database
+  - Removed operation group ElasticPoolActivitiesOperations
+  - Removed operation group ElasticPoolDatabaseActivitiesOperations
+  - Removed operation group ServerCommunicationLinksOperations
+  - Removed operation group ServiceObjectivesOperations
+
+## 4.0.0b20 (2024-11-04)
+
+### Features Added
+
+  - Model `DistributedAvailabilityGroup` added property `distributed_availability_group_name`
+  - Model `DistributedAvailabilityGroup` added property `partner_link_role`
+  - Model `DistributedAvailabilityGroup` added property `partner_availability_group_name`
+  - Model `DistributedAvailabilityGroup` added property `partner_endpoint`
+  - Model `DistributedAvailabilityGroup` added property `instance_link_role`
+  - Model `DistributedAvailabilityGroup` added property `instance_availability_group_name`
+  - Model `DistributedAvailabilityGroup` added property `failover_mode`
+  - Model `DistributedAvailabilityGroup` added property `seeding_mode`
+  - Model `DistributedAvailabilityGroup` added property `databases`
+  - Added model `CertificateInfo`
+  - Added model `DistributedAvailabilityGroupDatabase`
+  - Added model `DistributedAvailabilityGroupSetRole`
+  - Added model `DistributedAvailabilityGroupsFailoverRequest`
+  - Added enum `FailoverModeType`
+  - Added enum `FailoverType`
+  - Added enum `InstanceRole`
+  - Added enum `LinkRole`
+  - Added enum `ReplicaConnectedState`
+  - Added enum `ReplicaSynchronizationHealth`
+  - Added enum `ReplicationModeType`
+  - Added enum `RoleChangeType`
+  - Added enum `SeedingModeType`
+  - Operation group `DistributedAvailabilityGroupsOperations` added method `begin_failover`
+  - Operation group `DistributedAvailabilityGroupsOperations` added method `begin_set_role`
+
+### Breaking Changes
+
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `target_database`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `source_endpoint`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `primary_availability_group_name`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `secondary_availability_group_name`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `source_replica_id`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `target_replica_id`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `link_state`
+  - Model `DistributedAvailabilityGroup` deleted or renamed its instance variable `last_hardened_lsn`
+  - Deleted or renamed model `ReplicationMode`
+
+## 4.0.0b19 (2024-09-09)
+
+### Features Added
+
+  - The 'ReplicationLinksOperations' method 'begin_create_or_update' was added in the current version
+  - The 'ReplicationLinksOperations' method 'begin_update' was added in the current version
+  - The model or publicly exposed class 'ColumnDataType' had property 'INT' added in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had property 'target_database' added in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had property 'source_endpoint' added in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had property 'primary_availability_group_name' added in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had property 'secondary_availability_group_name' added in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had property 'source_replica_id' added in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had property 'target_replica_id' added in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had property 'link_state' added in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had property 'last_hardened_lsn' added in the current version
+  - The model or publicly exposed class 'FailoverGroup' had property 'secondary_type' added in the current version
+  - The model or publicly exposed class 'FailoverGroupUpdate' had property 'secondary_type' added in the current version
+  - The model or publicly exposed class 'ManagedInstance' had property 'storage_iops' added in the current version
+  - The model or publicly exposed class 'ManagedInstance' had property 'storage_throughput_mbps' added in the current version
+  - The model or publicly exposed class 'ManagedInstanceUpdate' had property 'storage_iops' added in the current version
+  - The model or publicly exposed class 'ManagedInstanceUpdate' had property 'storage_throughput_mbps' added in the current version
+  - The model or publicly exposed class 'ReplicationLink' had property 'partner_database_id' added in the current version
+  - The model or publicly exposed class 'FailoverGroupDatabasesSecondaryType' was added in the current version
+  - The model or publicly exposed class 'ReplicationLinkUpdate' was added in the current version
+  - The model or publicly exposed class 'ReplicationMode' was added in the current version
+  - The 'ReplicationLinksOperations' method 'begin_create_or_update' was added in the current version
+  - The 'ReplicationLinksOperations' method 'begin_update' was added in the current version
+
+### Breaking Changes
+
+  - The 'DistributedAvailabilityGroupsOperations' method 'begin_failover' was deleted or renamed in the current version
+  - The 'DistributedAvailabilityGroupsOperations' method 'begin_set_role' was deleted or renamed in the current version
+  - The 'ColumnDataType' enum had its value 'INT_ENUM' deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had its instance variable 'distributed_availability_group_name' deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had its instance variable 'partner_link_role' deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had its instance variable 'partner_availability_group_name' deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had its instance variable 'partner_endpoint' deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had its instance variable 'instance_link_role' deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had its instance variable 'instance_availability_group_name' deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had its instance variable 'failover_mode' deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had its instance variable 'seeding_mode' deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroup' had its instance variable 'databases' deleted or renamed in the current version
+  - The model or publicly exposed class 'ManagedInstance' had its instance variable 'storage_i_ops' deleted or renamed in the current version
+  - The model or publicly exposed class 'ManagedInstance' had its instance variable 'storage_throughput_m_bps' deleted or renamed in the current version
+  - The model or publicly exposed class 'ManagedInstanceUpdate' had its instance variable 'storage_i_ops' deleted or renamed in the current version
+  - The model or publicly exposed class 'ManagedInstanceUpdate' had its instance variable 'storage_throughput_m_bps' deleted or renamed in the current version
+  - The model or publicly exposed class 'CertificateInfo' was deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroupDatabase' was deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroupSetRole' was deleted or renamed in the current version
+  - The model or publicly exposed class 'DistributedAvailabilityGroupsFailoverRequest' was deleted or renamed in the current version
+  - The model or publicly exposed class 'FailoverModeType' was deleted or renamed in the current version
+  - The model or publicly exposed class 'FailoverType' was deleted or renamed in the current version
+  - The model or publicly exposed class 'InstanceRole' was deleted or renamed in the current version
+  - The model or publicly exposed class 'LinkRole' was deleted or renamed in the current version
+  - The model or publicly exposed class 'ReplicaConnectedState' was deleted or renamed in the current version
+  - The model or publicly exposed class 'ReplicaSynchronizationHealth' was deleted or renamed in the current version
+  - The model or publicly exposed class 'ReplicationModeType' was deleted or renamed in the current version
+  - The model or publicly exposed class 'RoleChangeType' was deleted or renamed in the current version
+  - The model or publicly exposed class 'SeedingModeType' was deleted or renamed in the current version
+  - The 'DistributedAvailabilityGroupsOperations' method 'begin_failover' was deleted or renamed in the current version
+  - The 'DistributedAvailabilityGroupsOperations' method 'begin_set_role' was deleted or renamed in the current version
+
+## 4.0.0b18 (2024-07-11)
+
+### Bugs Fixed
+
+  - Fix import error when import from azure.mgmt.sql.aio
+
+## 4.0.0b17 (2024-05-20)
+
+### Features Added
+
+  - Model DatabaseOperation has a new parameter operation_phase_details
+
+## 4.0.0b16 (2024-04-07)
+
+### Features Added
+
+  - Added operation DistributedAvailabilityGroupsOperations.begin_failover
+  - Added operation DistributedAvailabilityGroupsOperations.begin_set_role
+  - Model DistributedAvailabilityGroup has a new parameter databases
+  - Model DistributedAvailabilityGroup has a new parameter distributed_availability_group_name
+  - Model DistributedAvailabilityGroup has a new parameter failover_mode
+  - Model DistributedAvailabilityGroup has a new parameter instance_availability_group_name
+  - Model DistributedAvailabilityGroup has a new parameter instance_link_role
+  - Model DistributedAvailabilityGroup has a new parameter partner_availability_group_name
+  - Model DistributedAvailabilityGroup has a new parameter partner_endpoint
+  - Model DistributedAvailabilityGroup has a new parameter partner_link_role
+  - Model DistributedAvailabilityGroup has a new parameter seeding_mode
+
+### Breaking Changes
+
+  - Model DistributedAvailabilityGroup no longer has parameter last_hardened_lsn
+  - Model DistributedAvailabilityGroup no longer has parameter link_state
+  - Model DistributedAvailabilityGroup no longer has parameter primary_availability_group_name
+  - Model DistributedAvailabilityGroup no longer has parameter secondary_availability_group_name
+  - Model DistributedAvailabilityGroup no longer has parameter source_endpoint
+  - Model DistributedAvailabilityGroup no longer has parameter source_replica_id
+  - Model DistributedAvailabilityGroup no longer has parameter target_database
+  - Model DistributedAvailabilityGroup no longer has parameter target_replica_id
+
+## 4.0.0b15 (2024-01-11)
+
+### Features Added
+
+  - Added operation ManagedInstancesOperations.begin_refresh_status
+  - Model ManagedInstance has a new parameter authentication_metadata
+  - Model ManagedInstance has a new parameter create_time
+  - Model ManagedInstance has a new parameter database_format
+  - Model ManagedInstance has a new parameter external_governance_status
+  - Model ManagedInstance has a new parameter hybrid_secondary_usage
+  - Model ManagedInstance has a new parameter hybrid_secondary_usage_detected
+  - Model ManagedInstance has a new parameter is_general_purpose_v2
+  - Model ManagedInstance has a new parameter pricing_model
+  - Model ManagedInstance has a new parameter storage_i_ops
+  - Model ManagedInstance has a new parameter storage_throughput_m_bps
+  - Model ManagedInstance has a new parameter virtual_cluster_id
+  - Model ManagedInstanceUpdate has a new parameter authentication_metadata
+  - Model ManagedInstanceUpdate has a new parameter create_time
+  - Model ManagedInstanceUpdate has a new parameter database_format
+  - Model ManagedInstanceUpdate has a new parameter external_governance_status
+  - Model ManagedInstanceUpdate has a new parameter hybrid_secondary_usage
+  - Model ManagedInstanceUpdate has a new parameter hybrid_secondary_usage_detected
+  - Model ManagedInstanceUpdate has a new parameter is_general_purpose_v2
+  - Model ManagedInstanceUpdate has a new parameter pricing_model
+  - Model ManagedInstanceUpdate has a new parameter storage_i_ops
+  - Model ManagedInstanceUpdate has a new parameter storage_throughput_m_bps
+  - Model ManagedInstanceUpdate has a new parameter virtual_cluster_id
+
+## 4.0.0b14 (2023-12-18)
+
+### Features Added
+
+  - Added operation LongTermRetentionBackupsOperations.begin_change_access_tier
+  - Added operation LongTermRetentionBackupsOperations.begin_change_access_tier_by_resource_group
+  - Model LongTermRetentionBackup has a new parameter backup_storage_access_tier
+  - Model LongTermRetentionBackup has a new parameter is_backup_immutable
+  - Model LongTermRetentionPolicy has a new parameter backup_storage_access_tier
+  - Model LongTermRetentionPolicy has a new parameter make_backups_immutable
+
+## 4.0.0b13 (2023-11-17)
+
+### Features Added
+
+  - Added operation group JobPrivateEndpointsOperations
+  - Model FailoverGroupReadOnlyEndpoint has a new parameter target_server
+  - Model FailoverGroupUpdate has a new parameter partner_servers
+  - Model InstancePool has a new parameter dns_zone
+  - Model InstancePool has a new parameter maintenance_configuration_id
+  - Model InstancePoolUpdate has a new parameter dns_zone
+  - Model InstancePoolUpdate has a new parameter license_type
+  - Model InstancePoolUpdate has a new parameter maintenance_configuration_id
+  - Model InstancePoolUpdate has a new parameter sku
+  - Model InstancePoolUpdate has a new parameter subnet_id
+  - Model InstancePoolUpdate has a new parameter v_cores
+  - Model Server has a new parameter is_i_pv6_enabled
+  - Model ServerUpdate has a new parameter is_i_pv6_enabled
+
+## 4.0.0b12 (2023-08-30)
+
+### Features Added
+
+  - Model Database has a new parameter encryption_protector_auto_rotation
+  - Model Database has a new parameter free_limit_exhaustion_behavior
+  - Model Database has a new parameter use_free_limit
+  - Model DatabaseUpdate has a new parameter encryption_protector_auto_rotation
+  - Model DatabaseUpdate has a new parameter free_limit_exhaustion_behavior
+  - Model DatabaseUpdate has a new parameter use_free_limit
+
+## 4.0.0b11 (2023-07-28)
+
+### Features Added
+
+  - Added operation FailoverGroupsOperations.begin_try_planned_before_forced_failover
+  - Model PrivateEndpointConnection has a new parameter group_ids
+  - Model SqlVulnerabilityAssessmentScanRecord has a new parameter last_scan_time
+
+## 4.0.0b10 (2023-04-11)
+
+### Features Added
+
+  - Model ManagedDatabase has a new parameter is_ledger_on
+  - Model ManagedDatabaseUpdate has a new parameter is_ledger_on
+
+## 4.0.0b9 (2023-03-24)
+
+### Features Added
+
+  - Model ElasticPool has a new parameter availability_zone
+  - Model ElasticPool has a new parameter min_capacity
+  - Model ElasticPool has a new parameter preferred_enclave_type
+  - Model ElasticPoolUpdate has a new parameter availability_zone
+  - Model ElasticPoolUpdate has a new parameter min_capacity
+  - Model ElasticPoolUpdate has a new parameter preferred_enclave_type
+
+## 4.0.0b8 (2023-02-17)
+
+### Features Added
+
+  - Added operation ManagedInstancesOperations.begin_start
+  - Added operation ManagedInstancesOperations.begin_stop
+  - Added operation ManagedInstancesOperations.list_outbound_network_dependencies_by_managed_instance
+  - Added operation ServersOperations.begin_refresh_status
+  - Added operation group DatabaseEncryptionProtectorsOperations
+  - Added operation group ManagedLedgerDigestUploadsOperations
+  - Added operation group ServerConfigurationOptionsOperations
+  - Added operation group StartStopManagedInstanceSchedulesOperations
+  - Model Database has a new parameter availability_zone
+  - Model Database has a new parameter encryption_protector
+  - Model Database has a new parameter keys
+  - Model Database has a new parameter manual_cutover
+  - Model Database has a new parameter perform_cutover
+  - Model DatabaseUpdate has a new parameter encryption_protector
+  - Model DatabaseUpdate has a new parameter keys
+  - Model DatabaseUpdate has a new parameter manual_cutover
+  - Model DatabaseUpdate has a new parameter perform_cutover
+  - Model PrivateEndpointConnectionProperties has a new parameter group_ids
+  - Model RecoverableDatabase has a new parameter keys
+  - Model RecoverableDatabaseListResult has a new parameter next_link
+  - Model RestorableDroppedDatabase has a new parameter keys
+  - Model Server has a new parameter external_governance_status
+  - Model ServerUpdate has a new parameter external_governance_status
+  - Operation DatabasesOperations.get has a new optional parameter expand
+  - Operation DatabasesOperations.get has a new optional parameter filter
+  - Operation RecoverableDatabasesOperations.get has a new optional parameter expand
+  - Operation RecoverableDatabasesOperations.get has a new optional parameter filter
+  - Operation RestorableDroppedDatabasesOperations.get has a new optional parameter expand
+  - Operation RestorableDroppedDatabasesOperations.get has a new optional parameter filter
+
+### Breaking Changes
+
+  - Renamed operation TransparentDataEncryptionsOperations.create_or_update to TransparentDataEncryptionsOperations.begin_create_or_update
+
+## 4.0.0b7 (2023-01-29)
+
+### Features Added
+
+  - Model InstanceFailoverGroup has a new parameter secondary_type
+  - Model ManagedDatabase has a new parameter cross_subscription_restorable_dropped_database_id
+  - Model ManagedDatabase has a new parameter cross_subscription_source_database_id
+  - Model ManagedDatabase has a new parameter cross_subscription_target_managed_instance_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_restorable_dropped_database_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_source_database_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_target_managed_instance_id
+
+## 4.0.0b6 (2022-12-30)
+
+### Features Added
+
+  - Model Database has a new parameter preferred_enclave_type
+  - Model DatabaseUpdate has a new parameter preferred_enclave_type
+
+## 4.0.0b5 (2022-11-10)
+
+### Features Added
+
+  - Model ServerDevOpsAuditingSettings has a new parameter is_managed_identity_in_use
+
+## 4.0.0b4 (2022-09-29)
+
+### Features Added
+
+  - Added operation ManagedDatabasesOperations.begin_cancel_move
+  - Added operation ManagedDatabasesOperations.begin_complete_move
+  - Added operation ManagedDatabasesOperations.begin_start_move
+  - Added operation group DatabaseSqlVulnerabilityAssessmentBaselinesOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentExecuteScanOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentScanResultOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentScansOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentsSettingsOperations
+  - Added operation group ManagedDatabaseAdvancedThreatProtectionSettingsOperations
+  - Added operation group ManagedDatabaseMoveOperationsOperations
+  - Added operation group ManagedInstanceAdvancedThreatProtectionSettingsOperations
+  - Added operation group ManagedInstanceDtcsOperations
+  - Added operation group SqlVulnerabilityAssessmentBaselineOperations
+  - Added operation group SqlVulnerabilityAssessmentBaselinesOperations
+  - Added operation group SqlVulnerabilityAssessmentExecuteScanOperations
+  - Added operation group SqlVulnerabilityAssessmentRuleBaselineOperations
+  - Added operation group SqlVulnerabilityAssessmentRuleBaselinesOperations
+  - Added operation group SqlVulnerabilityAssessmentScanResultOperations
+  - Added operation group SqlVulnerabilityAssessmentScansOperations
+  - Added operation group SqlVulnerabilityAssessmentsOperations
+  - Added operation group SqlVulnerabilityAssessmentsSettingsOperations
+  - Added operation group SynapseLinkWorkspacesOperations
+  - Model ManagedDatabase has a new parameter storage_container_identity
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter current_backup_type
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter current_restore_plan_size_mb
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter current_restored_size_mb
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter diff_backup_sets
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter full_backup_sets
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter log_backup_sets
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_queued
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_restored
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_restoring
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_skipped
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_unrestorable
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter type_properties_type
+  - Model ManagedDatabaseUpdate has a new parameter storage_container_identity
+  - Model VirtualCluster has a new parameter version
+  - Model VirtualClusterUpdate has a new parameter version
+
+### Breaking Changes
+
+  - Model VirtualCluster no longer has parameter family
+  - Model VirtualCluster no longer has parameter maintenance_configuration_id
+  - Model VirtualClusterUpdate no longer has parameter family
+  - Model VirtualClusterUpdate no longer has parameter maintenance_configuration_id
+  - Renamed operation ReplicationLinksOperations.delete to ReplicationLinksOperations.begin_delete
+  - Renamed operation VirtualClustersOperations.update_dns_servers to VirtualClustersOperations.begin_update_dns_servers
+
+## 4.0.0b3 (2022-07-06)
+
+**Features**
+
+  - Added operation group DatabaseAdvancedThreatProtectionSettingsOperations
+  - Added operation group EndpointCertificatesOperations
+  - Added operation group ManagedServerDnsAliasesOperations
+  - Added operation group ServerAdvancedThreatProtectionSettingsOperations
+  - Model Database has a new parameter source_resource_id
+  - Model DatabaseBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ExtendedDatabaseBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ExtendedServerBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+  - Model ServerBlobAuditingPolicy has a new parameter is_managed_identity_in_use
+
+**Breaking changes**
+
+  - Model Database no longer has parameter primary_delegated_identity_client_id
+  - Model DatabaseIdentity no longer has parameter delegated_resources
+  - Model DatabaseUpdate no longer has parameter primary_delegated_identity_client_id
+  - Removed operation ReplicationLinksOperations.begin_unlink
+
+## 4.0.0b2 (2022-03-08)
+
+**Features**
+
+  - Added operation group DistributedAvailabilityGroupsOperations
+  - Added operation group IPv6FirewallRulesOperations
+  - Added operation group ServerTrustCertificatesOperations
+  - Model ElasticPool has a new parameter high_availability_replica_count
+  - Model ElasticPoolUpdate has a new parameter high_availability_replica_count
+
+**Breaking changes**
+
+  - Removed operation group OperationsHealthOperations
+
+## 4.0.0b1 (2021-12-21)
+
+**Features**
+
+  - Model ManagedInstanceUpdate has a new parameter current_backup_storage_redundancy
+  - Model ManagedInstanceUpdate has a new parameter requested_backup_storage_redundancy
+  - Model ManagedInstanceUpdate has a new parameter service_principal
+  - Model Database has a new parameter identity
+  - Model Database has a new parameter primary_delegated_identity_client_id
+  - Model Database has a new parameter federated_client_id
+  - Model ManagedInstance has a new parameter current_backup_storage_redundancy
+  - Model ManagedInstance has a new parameter requested_backup_storage_redundancy
+  - Model ManagedInstance has a new parameter service_principal
+  - Model DatabaseUpdate has a new parameter identity
+  - Model DatabaseUpdate has a new parameter primary_delegated_identity_client_id
+  - Model DatabaseUpdate has a new parameter federated_client_id
+  - Added operation TransparentDataEncryptionsOperations.list_by_database
+  - Added operation LedgerDigestUploadsOperations.begin_create_or_update
+  - Added operation LedgerDigestUploadsOperations.begin_disable
+  - Added operation ServerConnectionPoliciesOperations.list_by_server
+  - Added operation ServerConnectionPoliciesOperations.begin_create_or_update
+
+**Breaking changes**
+
+  - Operation TransparentDataEncryptionsOperations.create_or_update has a new signature
+  - Operation TransparentDataEncryptionsOperations.get has a new signature
+  - Model ManagedInstanceUpdate no longer has parameter storage_account_type
+  - Model ManagedInstance no longer has parameter storage_account_type
+  - Model RestorableDroppedDatabase no longer has parameter elastic_pool_id
+  - Removed operation LedgerDigestUploadsOperations.create_or_update
+  - Removed operation LedgerDigestUploadsOperations.disable
+  - Removed operation ServerConnectionPoliciesOperations.create_or_update
+  - Removed operation group TransparentDataEncryptionActivitiesOperations
+
+## 3.0.1 (2021-07-15)
+
+**Bugfixes**
+
+  - Fix default setting for blob_auditing_policy_name
+
+## 3.0.0 (2021-06-18)
+
+**Features**
+
+  - Model Server has a new parameter federated_client_id
+  - Model Server has a new parameter restrict_outbound_network_access
+  - Model ServerUpdate has a new parameter federated_client_id
+  - Model ServerUpdate has a new parameter restrict_outbound_network_access
+  - Model BackupShortTermRetentionPolicy has a new parameter diff_backup_interval_in_hours
+
+**Breaking changes**
+
+  - Operation ReplicationLinksOperations.get has a new signature
+
+## 2.1.0 (2021-05-24)
+
+ - Add resource identity
+
+## 2.0.0 (2021-05-13)
+
+**Features**
+
+  - Model LongTermRetentionBackup has a new parameter requested_backup_storage_redundancy
+  - Model LongTermRetentionBackup has a new parameter backup_storage_redundancy
+  - Model ManagedInstanceKey has a new parameter auto_rotation_enabled
+  - Model ManagedInstanceEncryptionProtector has a new parameter auto_rotation_enabled
+  - Model Database has a new parameter is_infra_encryption_enabled
+  - Model Database has a new parameter is_ledger_on
+  - Model Database has a new parameter secondary_type
+  - Model Database has a new parameter current_backup_storage_redundancy
+  - Model Database has a new parameter high_availability_replica_count
+  - Model Database has a new parameter maintenance_configuration_id
+  - Model Database has a new parameter requested_backup_storage_redundancy
+  - Model ReplicationLink has a new parameter link_type
+  - Model ServerUpdate has a new parameter primary_user_assigned_identity_id
+  - Model ServerUpdate has a new parameter administrators
+  - Model ServerUpdate has a new parameter identity
+  - Model ServerUpdate has a new parameter key_id
+  - Model ServerUpdate has a new parameter workspace_feature
+  - Model DatabaseUpdate has a new parameter is_infra_encryption_enabled
+  - Model DatabaseUpdate has a new parameter is_ledger_on
+  - Model DatabaseUpdate has a new parameter secondary_type
+  - Model DatabaseUpdate has a new parameter current_backup_storage_redundancy
+  - Model DatabaseUpdate has a new parameter high_availability_replica_count
+  - Model DatabaseUpdate has a new parameter maintenance_configuration_id
+  - Model DatabaseUpdate has a new parameter requested_backup_storage_redundancy
+  - Model ManagedInstance has a new parameter primary_user_assigned_identity_id
+  - Model ManagedInstance has a new parameter administrators
+  - Model ManagedInstance has a new parameter key_id
+  - Model ManagedInstance has a new parameter zone_redundant
+  - Model ManagedInstance has a new parameter private_endpoint_connections
+  - Model ServerKey has a new parameter auto_rotation_enabled
+  - Model ExtendedServerBlobAuditingPolicy has a new parameter is_devops_audit_enabled
+  - Model ServiceObjectiveCapability has a new parameter supported_maintenance_configurations
+  - Model EncryptionProtector has a new parameter auto_rotation_enabled
+  - Model FirewallRuleListResult has a new parameter next_link
+  - Model ManagedInstanceUpdate has a new parameter primary_user_assigned_identity_id
+  - Model ManagedInstanceUpdate has a new parameter administrators
+  - Model ManagedInstanceUpdate has a new parameter identity
+  - Model ManagedInstanceUpdate has a new parameter key_id
+  - Model ManagedInstanceUpdate has a new parameter private_endpoint_connections
+  - Model ManagedInstanceUpdate has a new parameter zone_redundant
+  - Model ElasticPoolUpdate has a new parameter maintenance_configuration_id
+  - Model SyncMember has a new parameter private_endpoint_name
+  - Model ElasticPool has a new parameter maintenance_configuration_id
+  - Model ManagedInstanceVcoresCapability has a new parameter supported_maintenance_configurations
+  - Model ManagedInstanceLongTermRetentionBackup has a new parameter backup_storage_redundancy
+  - Model ServerSecurityAlertPolicy has a new parameter system_data
+  - Model ManagedInstanceEditionCapability has a new parameter supported_storage_capabilities
+  - Model ManagedInstanceEditionCapability has a new parameter zone_redundant
+  - Model ServerBlobAuditingPolicy has a new parameter is_devops_audit_enabled
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter supported_maintenance_configurations
+  - Model RestorableDroppedDatabase has a new parameter backup_storage_redundancy
+  - Model RestorableDroppedDatabase has a new parameter tags
+  - Model RestorableDroppedDatabase has a new parameter sku
+  - Model RestorableDroppedDatabase has a new parameter elastic_pool_id
+  - Model DatabaseSecurityAlertPolicy has a new parameter creation_time
+  - Model DatabaseSecurityAlertPolicy has a new parameter system_data
+  - Model SyncGroup has a new parameter conflict_logging_retention_in_days
+  - Model SyncGroup has a new parameter private_endpoint_name
+  - Model SyncGroup has a new parameter sku
+  - Model SyncGroup has a new parameter enable_conflict_logging
+  - Model VirtualClusterUpdate has a new parameter maintenance_configuration_id
+  - Model PrivateLinkResourceProperties has a new parameter required_zone_names
+  - Model VirtualCluster has a new parameter maintenance_configuration_id
+  - Model ManagedServerSecurityAlertPolicy has a new parameter system_data
+  - Model DatabaseUsage has a new parameter type
+  - Model DatabaseUsage has a new parameter id
+  - Model Server has a new parameter primary_user_assigned_identity_id
+  - Model Server has a new parameter key_id
+  - Model Server has a new parameter administrators
+  - Model Server has a new parameter workspace_feature
+  - Model SensitivityLabel has a new parameter column_name
+  - Model SensitivityLabel has a new parameter schema_name
+  - Model SensitivityLabel has a new parameter managed_by
+  - Model SensitivityLabel has a new parameter table_name
+  - Added operation VirtualClustersOperations.update_dns_servers
+  - Added operation ServersOperations.begin_import_database
+  - Added operation DatabasesOperations.list_inaccessible_by_server
+  - Added operation FirewallRulesOperations.replace
+  - Added operation ReplicationLinksOperations.list_by_server
+  - Added operation SensitivityLabelsOperations.update
+  - Added operation ManagedInstancesOperations.list_by_managed_instance
+  - Added operation ManagedDatabaseSensitivityLabelsOperations.update
+  - Added operation LongTermRetentionBackupsOperations.begin_update
+  - Added operation LongTermRetentionBackupsOperations.begin_copy
+  - Added operation LongTermRetentionBackupsOperations.begin_copy_by_resource_group
+  - Added operation LongTermRetentionBackupsOperations.begin_update_by_resource_group
+  - Added operation group DatabaseSchemasOperations
+  - Added operation group DatabaseExtensionsOperations
+  - Added operation group ManagedInstancePrivateEndpointConnectionsOperations
+  - Added operation group DeletedServersOperations
+  - Added operation group ManagedDatabaseTablesOperations
+  - Added operation group MaintenanceWindowOptionsOperations
+  - Added operation group DatabaseSecurityAlertPoliciesOperations
+  - Added operation group ServerTrustGroupsOperations
+  - Added operation group ManagedInstanceAzureADOnlyAuthenticationsOperations
+  - Added operation group SqlAgentOperations
+  - Added operation group TimeZonesOperations
+  - Added operation group ManagedInstancePrivateLinkResourcesOperations
+  - Added operation group RecommendedSensitivityLabelsOperations
+  - Added operation group DatabaseTablesOperations
+  - Added operation group ServerAdvisorsOperations
+  - Added operation group ManagedDatabaseSecurityEventsOperations
+  - Added operation group ServerOperationsOperations
+  - Added operation group DatabaseAdvisorsOperations
+  - Added operation group DatabaseColumnsOperations
+  - Added operation group DataWarehouseUserActivitiesOperations
+  - Added operation group OutboundFirewallRulesOperations
+  - Added operation group ManagedDatabaseSchemasOperations
+  - Added operation group DatabaseRecommendedActionsOperations
+  - Added operation group LongTermRetentionPoliciesOperations
+  - Added operation group ManagedDatabaseQueriesOperations
+  - Added operation group ManagedDatabaseRecommendedSensitivityLabelsOperations
+  - Added operation group ManagedDatabaseTransparentDataEncryptionOperations
+  - Added operation group ServerDevOpsAuditSettingsOperations
+  - Added operation group OperationsHealthOperations
+  - Added operation group LedgerDigestUploadsOperations
+  - Added operation group MaintenanceWindowsOperations
+  - Added operation group ManagedDatabaseColumnsOperations
+
+**Breaking changes**
+
+  - Operation RestorableDroppedDatabasesOperations.get has a new signature
+  - Operation ReplicationLinksOperations.get has a new signature
+  - Parameter old_server_dns_alias_id of model ServerDnsAliasAcquisition is now required
+  - Operation SensitivityLabelsOperations.list_recommended_by_database has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.list_recommended_by_database has a new signature
+  - Operation DatabasesOperations.begin_import_method has a new signature
+  - Operation DatabasesOperations.list_by_server has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.list_current_by_database has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.list_current_by_database has a new signature
+  - Operation ManagedDatabaseSensitivityLabelsOperations.list_recommended_by_database has a new signature
+  - Operation ManagedInstanceAdministratorsOperations.begin_create_or_update has a new signature
+  - Operation ManagedInstanceAdministratorsOperations.begin_delete has a new signature
+  - Operation ManagedInstanceAdministratorsOperations.get has a new signature
+  - Operation ManagedInstancesOperations.get has a new signature
+  - Operation ManagedInstancesOperations.list has a new signature
+  - Operation ManagedInstancesOperations.list_by_instance_pool has a new signature
+  - Operation ManagedInstancesOperations.list_by_resource_group has a new signature
+  - Operation SensitivityLabelsOperations.list_current_by_database has a new signature
+  - Operation SensitivityLabelsOperations.list_current_by_database has a new signature
+  - Operation SensitivityLabelsOperations.list_recommended_by_database has a new signature
+  - Operation ServersOperations.get has a new signature
+  - Operation ServersOperations.list has a new signature
+  - Operation ServersOperations.list_by_resource_group has a new signature
+  - Model BackupShortTermRetentionPolicy no longer has parameter diff_backup_interval_in_hours
+  - Model Database no longer has parameter read_replica_count
+  - Model ReplicationLink no longer has parameter location
+  - Model DatabaseUpdate no longer has parameter read_replica_count
+  - Model FirewallRule no longer has parameter kind
+  - Model FirewallRule no longer has parameter location
+  - Model RestorableDroppedDatabase no longer has parameter service_level_objective
+  - Model RestorableDroppedDatabase no longer has parameter edition
+  - Model RestorableDroppedDatabase no longer has parameter elastic_pool_name
+  - Model DatabaseSecurityAlertPolicy no longer has parameter use_server_default
+  - Model DatabaseSecurityAlertPolicy no longer has parameter kind
+  - Model DatabaseSecurityAlertPolicy no longer has parameter location
+  - Model DatabaseUsage no longer has parameter resource_name
+  - Model DatabaseUsage no longer has parameter next_reset_time
+  - Removed operation DatabasesOperations.begin_create_import_operation
+  - Model DatabaseUsageListResult has a new signature
+  - Model RestorableDroppedDatabaseListResult has a new signature
+  - Removed operation group RecommendedElasticPoolsOperations
+  - Removed operation group BackupLongTermRetentionPoliciesOperations
+  - Removed operation group DatabaseThreatDetectionPoliciesOperations
+  - Removed operation group ServiceTierAdvisorsOperations
+
+## 1.0.0 (2020-11-24)
+
+- GA release
+
+## 1.0.0b1 (2020-10-13)
+
+This is beta preview version.
+
+This version uses a next-generation code generator that introduces important breaking changes, but also important new features (like unified authentication and async programming).
+
+**General breaking changes**
+
+- Credential system has been completly revamped:
+
+  - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
+  - `credentials` parameter has been renamed `credential`
+
+- The `config` attribute no longer exists on a client, configuration should be passed as kwarg. Example: `MyClient(credential, subscription_id, enable_logging=True)`. For a complete set of
+  supported options, see the [parameters accept in init documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+- You can't import a `version` module anymore, use `__version__` instead
+- Operations that used to return a `msrest.polling.LROPoller` now returns a `azure.core.polling.LROPoller` and are prefixed with `begin_`.
+- Exceptions tree have been simplified and most exceptions are now `azure.core.exceptions.HttpResponseError` (`CloudError` has been removed).
+- Most of the operation kwarg have changed. Some of the most noticeable:
+
+  - `raw` has been removed. Equivalent feature can be found using `cls`, a callback that will give access to internal HTTP response for advanced user
+  - For a complete set of
+  supported options, see the [parameters accept in Request documentation of azure-core](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#available-policies)
+
+**General new features**
+
+- Type annotations support using `typing`. SDKs are mypy ready.
+- This client has now stable and official support for async. Check the `aio` namespace of your package to find the async client.
+- This client now support natively tracing library like OpenCensus or OpenTelemetry. See this [tracing quickstart](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/core/azure-core-tracing-opentelemetry) for an overview.
+
+## 0.21.0 (2020-09-03)
+
+**Features**
+
+  - Model DatabaseUpdate has a new parameter storage_account_type
+  - Model Database has a new parameter storage_account_type
+  - Model BackupShortTermRetentionPolicy has a new parameter diff_backup_interval_in_hours
+  - Model ManagedInstance has a new parameter storage_account_type
+  - Model ManagedInstance has a new parameter provisioning_state
+  - Model ManagedInstanceUpdate has a new parameter storage_account_type
+  - Model ManagedInstanceUpdate has a new parameter provisioning_state
+  - Added operation DatabasesOperations.list_inaccessible_by_server
+  - Added operation ServersOperations.import_database
+  - Added operation group ImportExportOperations
+  - Added operation group ServerAzureADOnlyAuthenticationsOperations
+  - Added operation group ManagedInstanceAzureADOnlyAuthenticationsOperations
+
+**Breaking changes**
+
+  - Operation BackupShortTermRetentionPoliciesOperations.create_or_update has a new signature
+  - Operation BackupShortTermRetentionPoliciesOperations.update has a new signature
+  - Removed operation DatabasesOperations.import_method
+  - Removed operation DatabasesOperations.create_import_operation
+  - Removed operation ServerAzureADAdministratorsOperations.disable_azure_ad_only_authentication
+
+## 0.20.0 (2020-06-22)
+
+**Features**
+
+  - Model ManagedDatabase has a new parameter last_backup_name
+  - Model ManagedDatabase has a new parameter auto_complete_restore
+  - Model ManagedDatabaseUpdate has a new parameter last_backup_name
+  - Model ManagedDatabaseUpdate has a new parameter auto_complete_restore
+  - Model ManagedInstanceOperation has a new parameter operation_parameters
+  - Model ManagedInstanceOperation has a new parameter operation_steps
+
+## 0.19.0 (2020-06-22)
+
+**Features**
+
+  - Model SyncGroup has a new parameter use_private_link_connection
+  - Model ManagedInstanceUpdate has a new parameter maintenance_configuration_id
+  - Model SyncMember has a new parameter use_private_link_connection
+  - Model SyncMember has a new parameter sync_member_azure_database_resource_id
+  - Model ManagedInstance has a new parameter maintenance_configuration_id
+  - Added operation ExtendedDatabaseBlobAuditingPoliciesOperations.list_by_database
+  - Added operation ManagedInstancesOperations.failover
+  - Added operation ReplicationLinksOperations.unlink
+  - Added operation ExtendedServerBlobAuditingPoliciesOperations.list_by_server
+
+# 0.18.0 (2020-03-23)
+
+**Features**
+
+  - Added operation group ManagedInstanceOperations
+
+# 0.17.0 (2020-03-02)
+
+**Features**
+
+  - Model ManagedInstanceUpdate has a new parameter minimal_tls_version
+  - Model ServerAzureADAdministrator has a new parameter azure_ad_only_authentication
+  - Model ManagedDatabase has a new parameter long_term_retention_backup_resource_id
+  - Model ManagedDatabaseUpdate has a new parameter long_term_retention_backup_resource_id
+  - Model SensitivityLabel has a new parameter rank
+  - Model ServerUpdate has a new parameter private_endpoint_connections
+  - Model ServerUpdate has a new parameter minimal_tls_version
+  - Model ServerUpdate has a new parameter public_network_access
+  - Model Server has a new parameter private_endpoint_connections
+  - Model Server has a new parameter minimal_tls_version
+  - Model Server has a new parameter public_network_access
+  - Model ManagedInstance has a new parameter minimal_tls_version
+  - Added operation ServerAzureADAdministratorsOperations.disable_azure_ad_only_authentication
+  - Added operation ManagedDatabasesOperations.list_inaccessible_by_instance
+  - Added operation group ManagedInstanceLongTermRetentionPoliciesOperations
+  - Added operation group LongTermRetentionManagedInstanceBackupsOperations
+
+## 0.16.0 (2019-12-17)
+
+**Features**
+
+  - Model ExtendedServerBlobAuditingPolicy has a new parameter
+    queue_delay_ms
+  - Model EditionCapability has a new parameter read_scale
+  - Model EditionCapability has a new parameter
+    supported_storage_capabilities
+  - Model ServiceObjectiveCapability has a new parameter compute_model
+  - Model ServiceObjectiveCapability has a new parameter
+    supported_auto_pause_delay
+  - Model ServiceObjectiveCapability has a new parameter zone_redundant
+  - Model ServiceObjectiveCapability has a new parameter
+    supported_min_capacities
+  - Model ManagedInstanceVersionCapability has a new parameter
+    supported_instance_pool_editions
+  - Model DatabaseBlobAuditingPolicy has a new parameter
+    queue_delay_ms
+  - Model ExtendedDatabaseBlobAuditingPolicy has a new parameter
+    queue_delay_ms
+  - Model ManagedInstanceVcoresCapability has a new parameter
+    supported_storage_sizes
+  - Model ManagedInstanceVcoresCapability has a new parameter
+    instance_pool_supported
+  - Model ManagedInstanceVcoresCapability has a new parameter
+    standalone_supported
+  - Model ManagedInstanceVcoresCapability has a new parameter
+    included_max_size
+  - Model ServerBlobAuditingPolicy has a new parameter queue_delay_ms
+  - Model ElasticPoolPerformanceLevelCapability has a new parameter
+    zone_redundant
+  - Added operation group WorkloadGroupsOperations
+  - Added operation group WorkloadClassifiersOperations
+
+**Breaking changes**
+
+  - Operation ServerAzureADAdministratorsOperations.create_or_update
+    has a new signature
+  - Model ManagedInstanceFamilyCapability no longer has parameter
+    supported_storage_sizes
+  - Model ManagedInstanceFamilyCapability no longer has parameter
+    included_max_size
+
+## 0.15.0 (2019-11-12)
+
+**Breaking changes**
+
+  - Operation DatabasesOperations.failover has a new signature
+  - Operation ManagedInstanceAdministratorsOperations.get has a new
+    signature
+  - Operation ManagedInstanceAdministratorsOperations.delete has a new
+    signature
+  - Operation ManagedInstanceAdministratorsOperations.create_or_update
+    has a new signature
+
+## 0.14.0 (2019-10-04)
+
+**Features**
+
+  - Added operation
+    ServerBlobAuditingPoliciesOperations.list_by_server
+  - Added operation ManagedDatabasesOperations.complete_restore
+  - Added operation
+    DatabaseBlobAuditingPoliciesOperations.list_by_database
+  - Added operation group ManagedDatabaseRestoreDetailsOperations
+
+> Changelog entries prior to 0.14.0 were removed to reduce file size. See https://pypi.org/project/azure-mgmt-sql/0.14.0/ for the older history.
