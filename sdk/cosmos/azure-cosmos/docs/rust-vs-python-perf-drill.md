@@ -24,12 +24,51 @@ Phase D is intentionally out of Iteration 1 scope, see TODO below.
 
 This is the fast "what changed between phases" view so nobody has to hunt in the long sections.
 
-| Phase | Account path | Operation container | Results container | Throughput / request model |
-|------|--------------|---------------------|-------------------|----------------------------|
-| **Phase 0** (light-load latency baseline) | **Compute Gateway** (Gateway path) | `lat_probe_db/lat_probe_cont` (isolated) | `perfdb/perfresults` | Probe container at **20,000 RU/s**; **1 in-flight request** (concurrency=1), arrival rate 0, 1 client, no proxy; **~8 minutes** per operation per engine |
-| **Phase A** (fixed-load baseline) | **Compute Gateway** (Gateway path) | `scale_db/scale_cont` | `perfdb/perfresults` | Operation container at **100,000 RU/s**; results container at **4,000 RU/s**; fixed **100 in-flight requests**; **30-minute** run per operation per engine |
-| **Phase B** (12-hour memory soak) | **Compute Gateway** (Gateway path) | `leak_cont` | `perfdb/perfresults` (same as Phase A) | Not a throughput benchmark; request model changed to a **continuous 12-hour soak** — the six operations run as six parallel processes per engine (engines back-to-back, ~24 h wall-clock) — with ~5-minute memory sampling; integrity gate observed **772,501,793** total requests |
-| **Phase C** (concurrency scale sweep) | **Compute Gateway** (Gateway path) | `scale_db/scale_cont` @ **150,000 RU/s** (Phase A's container, bumped from 100k) | `perfdb/perfresults` | Throughput ceiling test; `read`+`upsert` on both engines swept across **32 → 1024** in-flight, **1800 s per point** (600 s warm-up dropped); achieved req/s = `count / window_seconds`; provenance gate enforced |
+| Phase | Client VM | Account path | Operation container | Results container | Throughput / request model |
+|------|-----------|--------------|---------------------|-------------------|----------------------------|
+| **Phase 0** (light-load latency baseline) | `vm-python-dr-drill` | **Compute Gateway** (Gateway path) | `lat_probe_db/lat_probe_cont` (isolated) | `perfdb/perfresults` | Probe container at **20,000 RU/s**; **1 in-flight request** (concurrency=1), arrival rate 0, 1 client, no proxy; **~8 minutes** per operation per engine |
+| **Phase A** (fixed-load baseline) | `vm-python-phasec` | **Compute Gateway** (Gateway path) | `scale_db/scale_cont` | `perfdb/perfresults` | Operation container at **100,000 RU/s**; results container at **4,000 RU/s**; fixed **100 in-flight requests**; **30-minute** run per operation per engine |
+| **Phase B** (12-hour memory soak) | `vm-python-dr-drill` | **Compute Gateway** (Gateway path) | `leak_cont` | `perfdb/perfresults` (same as Phase A) | Not a throughput benchmark; request model changed to a **continuous 12-hour soak** — the six operations run as six parallel processes per engine (engines back-to-back, ~24 h wall-clock) — with ~5-minute memory sampling; integrity gate observed **772,501,793** total requests |
+| **Phase C** (concurrency scale sweep) | `vm-python-phasec` | **Compute Gateway** (Gateway path) | `scale_db/scale_cont` @ **150,000 RU/s** (Phase A's container, bumped from 100k) | `perfdb/perfresults` | Throughput ceiling test; `read`+`upsert` on both engines swept across **32 → 1024** in-flight, **1800 s per point** (600 s warm-up dropped); achieved req/s = `count / window_seconds`; provenance gate enforced |
+
+---
+
+## What code these results test (engine build & versioning)
+
+**Why this matters first.** A performance number is only meaningful if you know exactly *which*
+code produced it. The Rust path is made of **two separate pieces of code that we version very
+differently**, so before reading any result it helps to know what is under test and how we keep it
+current.
+
+- **The Python SDK + the Rust binding — code we own.** The binding (`azure_cosmos_rust`, a small
+  PyO3 extension compiled into `azure/cosmos/_rust.abi3.so`) is the glue that lets Python call the
+  Rust engine. It lives in **this** repo (`azure-sdk-for-python`) on the drill branch
+  (`users/dibahl/python-sdk-with-rust-driver`), and it is the only Rust-facing code we author and pin.
+- **The Rust driver — code we do *not* own.** The actual engine (`azure_data_cosmos_driver`) lives
+  in the sibling repo **`azure-sdk-for-rust`**. We do not own or pin it; we treat its **`main`**
+  branch as the source of truth so every drill runs against the **latest** driver.
+
+**How the two fit together.** The binding pulls the driver in as a **path dependency** — a sibling
+clone of `azure-sdk-for-rust` on the same VM. That means rebuilding the binding compiles the driver
+from **whatever commit that clone is checked out to**. There is no separate "install the driver"
+step: the driver version is decided entirely by where the sibling clone points.
+
+**How we refresh a VM to the latest code before a run (the workflow):**
+
+1. Update the Python + binding repo to our branch tip (`git fetch` + `git reset --hard` to
+   `origin/users/dibahl/python-sdk-with-rust-driver`).
+2. Update the sibling `azure-sdk-for-rust` clone to **`origin/main`** tip (that is where the newest
+   driver lives — we always build from `main` to get the latest).
+3. Rebuild the binding with `maturin develop --release`. Because the driver is a path dependency,
+   this recompiles the driver from the freshly-updated `main` and drops a new `_rust.abi3.so` next
+   to the Python files. A successful compile confirms the binding is API-compatible with the current
+   driver; we then run a short one-request smoke to confirm it also works at runtime.
+
+**Customer impact.** Because the driver moves quickly on `main`, "the Rust engine" is a moving
+target. Tying results to a driver version is therefore essential: each run is rebuilt against the
+current `main`, so a given phase's numbers reflect the driver as of that phase's run date, not a
+frozen release. When a result is surprising, the first question is always *which driver commit was
+compiled in* — the workflow above makes that answer reproducible.
 
 ---
 
@@ -77,8 +116,9 @@ compare two engines under identical pressure, but it is the wrong number to quot
 Phase 0 fills that gap: a **light-load probe that sends exactly one request at a time**, so there is
 no client queue and the measured latency is a single round trip — the true per-request cost.
 
-**What we did.** Same account, same region (West US 2), same Gateway path, on a separate VM and an
-isolated container so it never disturbs the loaded phases. For each of the six point operations, on
+**What we did.** Same account, same region (West US 2), same Gateway path, on a separate VM
+(`vm-python-dr-drill` — the same VM used for the Phase B soak, kept apart from the Phase A/C
+throughput VM) and an isolated container so it never disturbs the loaded phases. For each of the six point operations, on
 **both engines**, we ran one request at a time (`concurrency=1`, arrival rate 0, one client, no proxy)
 for ~8 minutes. Percentiles below are **pooled exactly** — every reporting window stores its full
 HdrHistogram, and the report tool merges those histograms across the whole run before reading the
@@ -385,6 +425,7 @@ climbing with no ceiling.
 | Setting | Value |
 |---------|-------|
 | What we varied | The **engine** (all-Python vs Rust) and the **operation** (all six) |
+| Client machine | One VM, `vm-python-dr-drill`, in the same West US 2 region as the account (the same VM used for the Phase 0 latency probe; separate from the Phase A/C throughput VM `vm-python-phasec`) |
 | Account routing plane | **Compute Gateway** |
 | Client connection mode | **Gateway** |
 | Duration | **12 hours per engine.** The six operations ran as **six separate processes on the VM at the same time** (one process per operation, all six in parallel), each soaking continuously for the full 12 hours. The two engines ran **back-to-back, never together** (all-Python's 12-hour batch, then Rust's) — so the total wall-clock was **~24 hours**, and at no moment were more than six workload processes running. We keep the engines apart on purpose: run them together and they would fight over the same VM CPU and RAM, which would distort each engine's memory reading. |
@@ -548,7 +589,8 @@ for a customer is concrete: it tells you the **maximum requests/second you can e
 process**, the **concurrency setting that reaches it** (past which you only add latency, not
 throughput), and **whether scaling further needs a bigger RU budget or just more processes**.
 
-**How we ran it.** Same account and Gateway path, on a dedicated VM with the account to itself.
+**How we ran it.** Same account and Gateway path, on a dedicated VM (`vm-python-phasec` — the same
+VM used for the Phase A fixed-load baseline) with the account to itself.
 Operation container `scale_db/scale_cont` provisioned at **150,000 RU/s** (the same physical
 container used in Phase A, re-provisioned up from 100,000 RU/s so RU headroom — not the SDK — is
 guaranteed never to be the bottleneck under the heavier concurrency). For two representative
@@ -563,16 +605,16 @@ the engine it claims before any ceiling is reported.
 | Op | Engine | c32 | c64 | c128 | c256 | c512 | c1024 |
 |----|--------|----:|----:|-----:|-----:|-----:|------:|
 | **Read** | core-python req/s | 936 | 947 | 969 | 954 | 918 | 887 |
-|          | rust req/s | 4,812 | 5,185 | 5,696 | **5,822** | 5,724 | 5,427 |
-|          | core-python p50/p99 ms | 20.5/42 | 41/70 | 83/128 | 167/227 | 352/452 | 722/918 |
-|          | rust p50/p99 ms | 3.3/7 | 6.8/20 | 11.7/30 | 21.5/45 | 41/78 | 82/150 |
-| **Upsert** | core-python req/s | 892 | 1,026 | 1,082 | **1,104** | 1,033 | 1,069 |
-|            | rust req/s | 2,413 | 3,555 | 4,340 | 4,980 | **4,973** | 4,880 |
-|            | core-python p50/p99 ms | 23/50 | 39/67 | 75/112 | 144/191 | 319/389 | 605/736 |
-|            | rust p50/p99 ms | 7.7/13 | 8.3/23 | 14/33 | 25/50 | 47/87 | 93/158 |
+|          | rust req/s | 4,812 | 5,185 | 5,696 | **5,822** | 5,724 | 5,389 |
+|          | core-python p50/p99 ms | 20.5/42.2 | 41.1/70.0 | 82.0/123.4 | 167.2/226.2 | 352.3/451.1 | 722.4/914.4 |
+|          | rust p50/p99 ms | 3.3/7.2 | 6.7/20.0 | 11.7/29.6 | 21.3/44.5 | 40.7/78.1 | 82.3/149.8 |
+| **Upsert** | core-python req/s | 883 | 1,026 | 1,082 | **1,097** | 1,033 | 1,069 |
+|            | rust req/s | 2,413 | 3,555 | 4,338 | **4,955** | 4,921 | 4,863 |
+|            | core-python p50/p99 ms | 23.4/49.9 | 39.1/66.2 | 74.6/111.3 | 143.6/191.5 | 319.0/387.6 | 604.7/734.7 |
+|            | rust p50/p99 ms | 7.7/12.7 | 8.3/22.9 | 14.3/32.8 | 25.2/50.0 | 47.2/87.0 | 92.5/157.4 |
 
-Per-process CPU held steady across the ladder: **core-python ~1.0 core (≈100 %)**, **rust ~2.1–2.35
-cores (≈210–235 %)**. **Zero throttling (0 × 429) at every point** — the 150k RU container was never
+Per-process CPU (median of post-warmup windows) ranged **~85–103 % for core-python** and
+**~129–235 % for rust**. **Zero throttling (0 × 429) at every point** — the 150k RU container was never
 the bottleneck.
 
 **Throughput vs concurrency (req/s):**
@@ -580,12 +622,12 @@ the bottleneck.
 ```
 READ                                UPSERT
         core-py    rust                    core-py    rust
-  32      936      4,812              32      892      2,413
+  32      936      4,812              32      883      2,413
   64      947      5,185              64    1,026      3,555
- 128      969      5,696             128    1,082      4,340
- 256      954     [5,822] peak       256   [1,104]    4,980
- 512      918      5,724             512    1,033     [4,973] knee
-1024      887      5,427            1024    1,069      4,880
+ 128      969      5,696             128    1,082      4,338
+ 256      954     [5,822] peak       256   [1,097]   [4,955] peak
+ 512      918      5,724             512    1,033     [4,921] knee
+1024      887      5,389            1024    1,069      4,863
 
 core-py |=          flat ~0.9k (1 core, GIL)   core-py |=       flat ~1.1k (1 core, GIL)
 rust    |=======    ~6× , knee c256            rust    |=====   ~4× , knee c512
@@ -599,10 +641,11 @@ rust    |=======    ~6× , knee c256            rust    |=====   ~4× , knee c51
 - **core-python is GIL-bound and saturates almost immediately.** Its throughput is essentially flat
   (~0.9k read / ~1.1k upsert req/s) from c32 onward while pinned at ~1 CPU core — adding concurrency
   buys **no** extra throughput, only linearly worse latency (read p50 20 ms → 722 ms at c1024).
-- **rust scales with concurrency to a knee, then flattens.** Read peaks at **c256 (~5,822 req/s)**,
-  upsert around **c512 (~4,973 req/s)**; beyond the knee throughput flattens or dips slightly while
-  latency keeps climbing. **Practical guidance: operate rust around 256–512 in-flight per process**;
-  pushing to 1024 gains nothing.
+- **rust scales with concurrency to a knee, then flattens.** Read peaks at **c256 (~5,822 req/s)**.
+  For upsert, throughput **peaks at c256 (~4,955 req/s)** and the verdict knee is **c512 (~4,921 req/s)**,
+  where gains have flattened. Beyond that, throughput is flat/slightly down while latency keeps
+  climbing. **Practical guidance: operate rust around 256–512 in-flight per process**; pushing to 1024
+  gains nothing.
 - **The wall is the client, not the database.** 0 × 429 everywhere means RU headroom was never the
   limit — core-python is capped by the GIL (~1 core) and rust by client CPU (~2.3 cores). To go
   past one process's ceiling toward the account's full capacity, **scale out** (run N processes at
