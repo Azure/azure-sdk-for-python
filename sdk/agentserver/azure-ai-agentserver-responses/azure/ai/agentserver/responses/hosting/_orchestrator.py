@@ -3713,6 +3713,14 @@ class _ResponseOrchestrator:
             CreateSpan,
         )
 
+        # Protocol 2.0.0: stamp the record's ``user_id_key`` (via ``ctx.user_id``
+        # consumed by ``_register_bg_execution``) so in-process isolation
+        # enforcement is not bypassed for background streaming responses. The
+        # ``call_id`` is already stripped to ``None`` at the resilient dispatch
+        # boundary (the body is turn-decoupled), so persists carry no stale
+        # call id.
+        _user_id_key = context.platform_context.user_id_key if context is not None else None
+
         synthetic_span = CreateSpan(
             name="responses.resilient_stream_body",
             tags={"response.id": response_id},
@@ -3732,6 +3740,8 @@ class _ResponseOrchestrator:
             parsed=parsed,
             agent_session_id=agent_session_id,
             context=context,
+            user_id=_user_id_key,
+            call_id=None,
         )
 
         state = _PipelineState()
