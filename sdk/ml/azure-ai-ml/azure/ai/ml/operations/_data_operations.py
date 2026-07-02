@@ -23,8 +23,8 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023_preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023_preview
+from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
 from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024_preview
 from azure.ai.ml._restclient.v2024_01_01_preview.models import ComputeInstanceDataMount
 from azure.ai.ml._scope_dependent_operations import (
@@ -101,7 +101,7 @@ class DataOperations(_ScopeDependentOperations):
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
         resources (ServiceClient042023Preview or ServiceClient102021Dataplane).
     :type service_client: typing.Union[
-        ~azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient,
         ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
         AzureMachineLearningWorkspaces]
     :param datastore_operations: Represents a client for performing operations on Datastores.

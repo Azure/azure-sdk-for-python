@@ -1,6 +1,6 @@
 import pytest
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import TableVerticalLimitSettings as RestTabularLimitSettings
+from azure.ai.ml._restclient.arm_ml_service.models import TableVerticalLimitSettings as RestTabularLimitSettings
 from azure.ai.ml.entities._job.automl.tabular import TabularLimitSettings
 
 
@@ -52,27 +52,29 @@ class TestLimitSettings:
         )
 
     def _get_rest_obj(self, scenario):
+        default_rest = RestTabularLimitSettings(
+            enable_early_termination=True,
+            exit_score=0.5,
+            max_concurrent_trials=10,
+            max_cores_per_trial=2,
+            max_trials=100,
+            timeout="PT10H",
+            trial_timeout="PT20M",
+        )
+        max_nodes_rest = RestTabularLimitSettings(
+            enable_early_termination=True,
+            exit_score=0.5,
+            max_concurrent_trials=10,
+            max_cores_per_trial=2,
+            max_trials=100,
+            timeout="PT10H",
+            trial_timeout="PT20M",
+        )
+        # ``maxNodes`` is preserved via wire-key (dropped from the arm_ml_service model).
+        max_nodes_rest["maxNodes"] = 4
         rest_objs = {
-            "default": RestTabularLimitSettings(
-                enable_early_termination=True,
-                exit_score=0.5,
-                max_concurrent_trials=10,
-                max_cores_per_trial=2,
-                max_trials=100,
-                timeout="PT10H",
-                trial_timeout="PT20M",
-                max_nodes=None,
-            ),
-            "max_nodes": RestTabularLimitSettings(
-                enable_early_termination=True,
-                exit_score=0.5,
-                max_concurrent_trials=10,
-                max_cores_per_trial=2,
-                max_trials=100,
-                timeout="PT10H",
-                trial_timeout="PT20M",
-                max_nodes=4,
-            ),
+            "default": default_rest,
+            "max_nodes": max_nodes_rest,
         }
         return rest_objs[scenario]
 

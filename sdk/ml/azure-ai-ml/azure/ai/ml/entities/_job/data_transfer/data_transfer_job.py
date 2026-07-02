@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
 from azure.ai.ml._schema.job.data_transfer_job import (
     DataTransferCopyJobSchema,
     DataTransferExportJobSchema,

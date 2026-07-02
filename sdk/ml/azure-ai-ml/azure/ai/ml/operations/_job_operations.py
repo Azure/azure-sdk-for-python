@@ -27,8 +27,8 @@ from azure.ai.ml._restclient.dataset_dataplane import DatasetDataplaneClient as 
 from azure.ai.ml._restclient.model_dataplane import ModelDataplaneClient as ServiceClientModelDataplane
 from azure.ai.ml._restclient.runhistory import RunHistoryClient as ServiceClientRunHistory
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase, ListViewType, UserIdentity
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient022023Preview
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase, ListViewType, UserIdentity
 from azure.ai.ml._restclient.arm_ml_service.models import UserIdentity as UserIdentityArm
 from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import JobBase as JobBase_2401

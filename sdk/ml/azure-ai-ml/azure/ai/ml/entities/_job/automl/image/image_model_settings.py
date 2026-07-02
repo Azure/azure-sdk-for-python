@@ -5,20 +5,19 @@
 from typing import Any, Optional
 
 # pylint: disable=R0902,too-many-locals
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ImageModelSettingsClassification as RestImageModelSettingsClassification,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     LearningRateScheduler,
-    LogTrainingMetrics,
-    LogValidationLoss,
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
 )
+from azure.ai.ml.constants._job.automl import LogTrainingMetrics, LogValidationLoss
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -751,7 +750,7 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
         self.log_validation_loss = log_validation_loss
 
     def _to_rest_object(self) -> RestImageModelSettingsObjectDetection:
-        return RestImageModelSettingsObjectDetection(
+        rest_obj = RestImageModelSettingsObjectDetection(
             advanced_settings=self.advanced_settings,
             ams_gradient=self.ams_gradient,
             beta1=self.beta1,
@@ -795,9 +794,14 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
             tile_predictions_nms_threshold=self.tile_predictions_nms_threshold,
             validation_iou_threshold=self.validation_iou_threshold,
             validation_metric_type=self.validation_metric_type,
-            log_training_metrics=self.log_training_metrics,
-            log_validation_loss=self.log_validation_loss,
         )
+        # ``logTrainingMetrics``/``logValidationLoss`` exist on the 2023-04 wire contract but were
+        # dropped from the arm_ml_service (2025-12) model; preserve them via wire-key assignment.
+        if self.log_training_metrics is not None:
+            rest_obj["logTrainingMetrics"] = self.log_training_metrics
+        if self.log_validation_loss is not None:
+            rest_obj["logValidationLoss"] = self.log_validation_loss
+        return rest_obj
 
     @classmethod
     def _from_rest_object(cls, obj: RestImageModelSettingsObjectDetection) -> "ImageModelSettingsObjectDetection":
@@ -845,8 +849,8 @@ class ImageModelSettingsObjectDetection(ImageModelDistributionSettings):
             tile_predictions_nms_threshold=obj.tile_predictions_nms_threshold,
             validation_iou_threshold=obj.validation_iou_threshold,
             validation_metric_type=obj.validation_metric_type,
-            log_training_metrics=obj.log_training_metrics,
-            log_validation_loss=obj.log_validation_loss,
+            log_training_metrics=obj.get("logTrainingMetrics"),
+            log_validation_loss=obj.get("logValidationLoss"),
         )
 
     def __eq__(self, other: object) -> bool:

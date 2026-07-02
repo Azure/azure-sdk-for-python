@@ -6,8 +6,8 @@
 
 from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.arm_ml_service.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.arm_ml_service.models import SamplingAlgorithmType
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     EarlyTerminationPolicy,

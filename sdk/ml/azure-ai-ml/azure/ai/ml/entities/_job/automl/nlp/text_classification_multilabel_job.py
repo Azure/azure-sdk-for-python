@@ -6,8 +6,8 @@
 
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ClassificationMultilabelPrimaryMetrics, JobBase, TaskType
+from azure.ai.ml._restclient.v2024_01_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2024_01_01_preview.models import ClassificationMultilabelPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._restclient.v2024_01_01_preview.models import (
     TextClassificationMultilabel as RestTextClassificationMultilabel,
 )

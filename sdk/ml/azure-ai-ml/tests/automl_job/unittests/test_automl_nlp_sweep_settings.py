@@ -3,12 +3,11 @@ from typing import Optional
 
 import pytest
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicyType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models import NlpSweepSettings as RestNlpSweepSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.arm_ml_service.models import EarlyTerminationPolicyType
+from azure.ai.ml._restclient.arm_ml_service.models import MedianStoppingPolicy as RestMedianStoppingPolicy
+from azure.ai.ml._restclient.arm_ml_service.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.arm_ml_service.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
 from azure.ai.ml.automl import NlpSweepSettings
@@ -90,16 +89,22 @@ class TestNlpSweepSettings:
         self,
         early_termination_name: Optional[EarlyTerminationPolicyType] = None,
         sampling_algorithm_name: SamplingAlgorithmType = SamplingAlgorithmType.GRID,
-    ) -> RestNlpSweepSettings:
+    ) -> dict:
+        # ``NlpSweepSettings`` is absent from arm_ml_service -> JSON-direct dict wire body. The
+        # early-termination child is built via the entity policy's ``_to_rest_object`` so the
+        # expected wire matches production exactly (including default fields like delayEvaluation).
         early_termination_policy = None
         if early_termination_name == EarlyTerminationPolicyType.BANDIT:
-            early_termination_policy = RestBanditPolicy(evaluation_interval=10, slack_factor=0.2)
+            early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)._to_rest_object()
         elif early_termination_name == EarlyTerminationPolicyType.MEDIAN_STOPPING:
-            early_termination_policy = RestMedianStoppingPolicy(delay_evaluation=5, evaluation_interval=1)
+            early_termination_policy = MedianStoppingPolicy(
+                delay_evaluation=5, evaluation_interval=1
+            )._to_rest_object()
         elif early_termination_name == EarlyTerminationPolicyType.TRUNCATION_SELECTION:
-            early_termination_policy = RestTruncationSelectionPolicy(
+            early_termination_policy = TruncationSelectionPolicy(
                 evaluation_interval=1, truncation_percentage=20, delay_evaluation=5
-            )
-        return RestNlpSweepSettings(
-            sampling_algorithm=sampling_algorithm_name, early_termination=early_termination_policy
-        )
+            )._to_rest_object()
+        rest_obj: dict = {"samplingAlgorithm": sampling_algorithm_name}
+        if early_termination_policy is not None:
+            rest_obj["earlyTermination"] = early_termination_policy
+        return rest_obj
