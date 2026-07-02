@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b7 (Unreleased)
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `2.0.0b8` to pick up cleaned inherited host API signatures.
+
 ## 1.0.0b6 (2026-06-28)
 
 ### Features Added

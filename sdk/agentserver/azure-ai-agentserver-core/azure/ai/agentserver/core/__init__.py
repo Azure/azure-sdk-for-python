@@ -12,6 +12,8 @@ Public API::
         AgentConfig,
         AgentServerHost,
         FoundryAgentRequestContext,
+        MiddlewareFactory,
+        StreamContent,
         configure_observability,
         create_error_response,
         detach_context,
@@ -46,11 +48,14 @@ from ._tracing import (
     set_current_span,
     trace_stream,
 )
+from ._types import MiddlewareFactory, StreamContent
 from ._version import VERSION
 
 __all__ = [
     "AgentConfig",
     "AgentServerHost",
+    "MiddlewareFactory",
+    "StreamContent",
     "InboundRequestLoggingMiddleware",
     "FoundryAgentRequestContext",
     "RequestIdMiddleware",

@@ -47,7 +47,7 @@ namespace azure.ai.agentserver.core
     def azure.ai.agentserver.core.set_request_context(context: FoundryAgentRequestContext) -> Token[FoundryAgentRequestContext]: ...
 
 
-    async def azure.ai.agentserver.core.trace_stream:async(iterator: AsyncIterable[_Content], span: Any) -> AsyncIterator[_Content]: ...
+    async def azure.ai.agentserver.core.trace_stream:async(iterator: AsyncIterable[StreamContent], span: Any) -> AsyncIterator[StreamContent]: ...
 
 
     class azure.ai.agentserver.core.AgentConfig:
@@ -105,7 +105,7 @@ namespace azure.ai.agentserver.core
 
         def add_middleware(
                 self, 
-                middleware_class: _MiddlewareFactory[P], 
+                middleware_class: MiddlewareFactory[P], 
                 *args: args, 
                 **kwargs: kwargs
             ) -> None: ...
@@ -152,7 +152,7 @@ namespace azure.ai.agentserver.core
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
 
         @staticmethod
-        async def sse_keepalive_stream(iterator: AsyncIterable[_Content], interval: int) -> AsyncIterator[_Content]: ...
+        async def sse_keepalive_stream(iterator: AsyncIterable[StreamContent], interval: int) -> AsyncIterator[StreamContent]: ...
 
         def url_path_for(
                 self, 

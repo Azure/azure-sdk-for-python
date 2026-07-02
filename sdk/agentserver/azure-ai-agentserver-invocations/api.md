@@ -27,7 +27,7 @@ namespace azure.ai.agentserver.invocations
 
         def add_middleware(
                 self, 
-                middleware_class: _MiddlewareFactory[P], 
+                middleware_class: MiddlewareFactory[P], 
                 *args: args, 
                 **kwargs: kwargs
             ) -> None: ...
@@ -82,7 +82,7 @@ namespace azure.ai.agentserver.invocations
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
 
         @staticmethod
-        async def sse_keepalive_stream(iterator: AsyncIterable[_Content], interval: int) -> AsyncIterator[_Content]: ...
+        async def sse_keepalive_stream(iterator: AsyncIterable[StreamContent], interval: int) -> AsyncIterator[StreamContent]: ...
 
         def url_path_for(
                 self, 
