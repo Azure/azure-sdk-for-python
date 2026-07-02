@@ -5,6 +5,7 @@ import logging
 import multiprocessing
 import os
 from pathlib import Path
+import re
 import sys
 import time
 
@@ -37,6 +38,63 @@ def is_valid_changelog_content(content: str) -> bool:
 
 def is_arm_sdk(package_name: str) -> bool:
     return package_name.startswith("azure-mgmt-")
+
+
+# CHANGELOG.md is embedded into the package long_description (see setup.py template),
+# so an unbounded changelog bloats the PyPI metadata. Trim it once it grows past this size.
+CHANGELOG_SIZE_LIMIT_BYTES = 128 * 1024
+_TRIM_NOTE_PREFIX = "> Changelog entries prior to"
+_VERSION_HEADER_RE = re.compile(r"^##\s+\d+\.\d+")
+
+
+def trim_changelog_if_needed(package_path: Path, size_limit: int = CHANGELOG_SIZE_LIMIT_BYTES) -> bool:
+    """Drop the oldest half of CHANGELOG.md entries when the file grows too large.
+
+    The CHANGELOG is concatenated into the package ``long_description`` uploaded to PyPI,
+    so it must not grow without bound. When ``CHANGELOG.md`` exceeds ``size_limit`` bytes,
+    keep the newest half of the version entries and replace the older ones with a note
+    pointing to PyPI for the full history.
+
+    Returns True if the file was trimmed, False otherwise.
+    """
+    changelog_path = package_path / "CHANGELOG.md"
+    if not changelog_path.exists():
+        return False
+    if changelog_path.stat().st_size <= size_limit:
+        return False
+
+    package_name = package_path.name
+    trimmed = False
+
+    def trim_proc(content: list[str]):
+        nonlocal trimmed
+        # Remove any previous trim note so repeated runs don't accumulate duplicates.
+        content[:] = [line for line in content if not line.startswith(_TRIM_NOTE_PREFIX)]
+
+        version_indices = [i for i, line in enumerate(content) if _VERSION_HEADER_RE.match(line)]
+        # Need enough released entries for trimming to be worthwhile.
+        if len(version_indices) < 4:
+            return
+
+        keep_count = (len(version_indices) + 1) // 2  # ceil(N/2): keep the newest half
+        cut_index = version_indices[keep_count]
+        oldest_kept = content[version_indices[keep_count - 1]].split()[1]
+
+        note = (
+            f"{_TRIM_NOTE_PREFIX} {oldest_kept} were removed to reduce file size. "
+            f"See https://pypi.org/project/{package_name}/{oldest_kept}/ for the older history.\n"
+        )
+        del content[cut_index:]
+        # Ensure a blank line separates the last kept entry from the note.
+        if content and content[-1].strip():
+            content.append("\n")
+        content.append(note)
+        trimmed = True
+
+    modify_file(str(changelog_path), trim_proc)
+    if trimmed:
+        _LOGGER.info(f"Trimmed CHANGELOG.md for {package_name} to keep the file size under {size_limit} bytes.")
+    return trimmed
 
 
 def execute_func_with_timeout(func, timeout: int = 900) -> Any:
@@ -201,6 +259,9 @@ def main(
                 )
 
         modify_file(str(package_path / "CHANGELOG.md"), edit_changelog_proc)
+
+        # Keep CHANGELOG.md from growing unbounded, since it is embedded into the PyPI long_description.
+        trim_changelog_if_needed(package_path)
 
     except Exception as e:
         log_failed_message(f"Fail to generate changelog for {package_name}: {str(e)}", enable_log_error)

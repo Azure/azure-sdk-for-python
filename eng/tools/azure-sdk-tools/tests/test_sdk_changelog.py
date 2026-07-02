@@ -6,6 +6,7 @@ import tempfile
 import shutil
 
 from packaging_tools.sdk_changelog import main as changelog_main
+from packaging_tools.sdk_changelog import trim_changelog_if_needed
 
 
 @pytest.fixture
@@ -225,3 +226,84 @@ def test_output_json_detector_mode_no_breaking(mock_get_changelog_content, temp_
     # CHANGELOG.md must NOT be modified in detector mode
     with open(changelog_path, "r") as f:
         assert f.read() == "# Release History\n\n"
+
+
+def _make_changelog(num_versions: int, body_per_version: str = "  - some change\n") -> str:
+    lines = ["# Release History\n", "\n"]
+    # Newest version first (highest number), matching real CHANGELOG ordering.
+    for v in range(num_versions, 0, -1):
+        lines.append(f"## {v}.0.0 (2024-01-01)\n")
+        lines.append("\n")
+        lines.append("### Features Added\n")
+        lines.append("\n")
+        lines.append(body_per_version)
+        lines.append("\n")
+    return "".join(lines)
+
+
+def test_trim_changelog_when_over_limit(temp_arm_package):
+    package_path, changelog_path = temp_arm_package
+    # 6 version entries, big body so the file is comfortably over the tiny limit.
+    with open(changelog_path, "w") as f:
+        f.write(_make_changelog(6, body_per_version="  - " + "x" * 200 + "\n"))
+
+    trimmed = trim_changelog_if_needed(package_path, size_limit=1024)
+
+    assert trimmed is True
+    with open(changelog_path, "r") as f:
+        content = f.read()
+
+    # Header preserved and newest half (6,5,4) kept.
+    assert content.startswith("# Release History\n")
+    for kept in ("## 6.0.0", "## 5.0.0", "## 4.0.0"):
+        assert kept in content
+    # Oldest half (3,2,1) removed.
+    for dropped in ("## 3.0.0", "## 2.0.0", "## 1.0.0"):
+        assert dropped not in content
+    # Note points to PyPI for the oldest kept version.
+    assert "> Changelog entries prior to 4.0.0 were removed" in content
+    assert "https://pypi.org/project/azure-mgmt-test/4.0.0/" in content
+
+
+def test_trim_changelog_noop_when_under_limit(temp_arm_package):
+    package_path, changelog_path = temp_arm_package
+    original = _make_changelog(6)
+    with open(changelog_path, "w") as f:
+        f.write(original)
+
+    trimmed = trim_changelog_if_needed(package_path, size_limit=1024 * 1024)
+
+    assert trimmed is False
+    with open(changelog_path, "r") as f:
+        assert f.read() == original
+
+
+def test_trim_changelog_skips_when_too_few_entries(temp_arm_package):
+    package_path, changelog_path = temp_arm_package
+    original = _make_changelog(3, body_per_version="  - " + "x" * 500 + "\n")
+    with open(changelog_path, "w") as f:
+        f.write(original)
+
+    trimmed = trim_changelog_if_needed(package_path, size_limit=1024)
+
+    assert trimmed is False
+    with open(changelog_path, "r") as f:
+        assert f.read() == original
+
+
+def test_trim_changelog_idempotent(temp_arm_package):
+    package_path, changelog_path = temp_arm_package
+    with open(changelog_path, "w") as f:
+        f.write(_make_changelog(6, body_per_version="  - " + "x" * 200 + "\n"))
+
+    assert trim_changelog_if_needed(package_path, size_limit=1024) is True
+    with open(changelog_path, "r") as f:
+        first = f.read()
+
+    # Second run: file is now small, so nothing changes and the note is not duplicated.
+    trim_changelog_if_needed(package_path, size_limit=1024)
+    with open(changelog_path, "r") as f:
+        second = f.read()
+
+    assert first == second
+    assert second.count("> Changelog entries prior to") == 1
