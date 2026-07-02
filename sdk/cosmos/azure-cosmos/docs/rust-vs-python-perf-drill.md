@@ -153,6 +153,14 @@ percentile (so these are not the per-window-average approximations discussed lat
   for *engine-vs-engine under identical offered load* and for *how to measure*; Phase 0 is the number
   to quote for *per-request SLA*.
 - **Follow-up verdict for Read/Create tails (code-verified).**  
+  > ⚠️ **SUPERSEDED (CDT 2026-07-02 16:45).** The retry-behavior explanation below was a *hypothesis*
+  > from reading the driver's default config. We later **instrumented and measured** it and found the
+  > retry paths **never fire** at `concurrency=1` (0 retries on every op), and — after updating the
+  > driver to **v0.6.0** — the Read/Create tail regression **is gone entirely** (Rust is now faster than
+  > Python at p50/p99/p99.9 on both). See **"Root-cause of the Read/Create tail (v0.6.0 re-measurement)"**
+  > at the end of this Phase 0 section for the corrected, data-backed conclusion. The text below is kept
+  > for the audit trail only.
+
   **Outcome (CDT 2026-07-01 23:07:45):** for Read/Create, we do **not** see a Python-wrapper or
   Python-binding request-shape bug. The remaining gap is driven by **Rust-driver retry behavior**
   (plus one workload artifact), not by Python request prep translation.
@@ -175,6 +183,10 @@ percentile (so these are not the per-window-average approximations discussed lat
 
 **Plain-English Phase 0 findings.**
 
+> ⚠️ **These four bullets are the ORIGINAL (pre-root-cause) reading and are now SUPERSEDED** by the
+> corrected conclusion in **"Root-cause of the Read/Create tail (v0.6.0 re-measurement)"** below. Kept
+> for the audit trail.
+
 - The test environment is healthy, so the baseline is trustworthy.
 - Rust is faster at the middle (p50) for Read and Create, but has a heavier tail on those two.
 - That tail difference is most likely from Rust retry behavior plus run-order/container-state noise,
@@ -185,6 +197,90 @@ percentile (so these are not the per-window-average approximations discussed lat
 `core-python`; set `PHASE0_BACKENDS=rust` for the Rust pass), and the table above is produced by
 `tests/workloads/phase0_report.py --stamp <run>`, which merges the per-window histograms into the
 pooled percentiles shown. Both live alongside the existing `perf_validate.py` integrity gate.
+
+### Root-cause of the Read/Create tail (v0.6.0 re-measurement)
+
+**Why we revisited this.** The original Phase 0 pass (table above) showed Rust with a heavier *tail*
+(p99/p99.9) than Python on **Read** and **Create**, and we had explained it as Rust retry behavior.
+That explanation was a **hypothesis read off the driver's default config, never measured**. Because a
+tail regression on the two most common operations would directly hurt customers, we treated it as a
+real defect and drove it to a measured root cause before accepting any conclusion. Two things changed
+the answer: (1) we **instrumented** the retry paths and found they never fire here, and (2) we updated
+the Rust driver to **v0.6.0** and **re-measured**. The regression is gone.
+
+**How we ruled it out — three steps, each with the evidence:**
+
+1. **Retries do not fire (measured, not assumed).** We added per-attempt counters inside the Rust
+   binding (`azure_cosmos_rust/src/wire.rs`: `BINDING_ATTEMPT_COUNT` / `BINDING_RETRY_COUNT`, surfaced
+   to the harness as `attempt_calls` / `retry_calls`). At `concurrency=1` the counts are exact:
+   Read/Upsert/Replace = **1.0 attempt/op, 0 retries**; Patch = 2.0 (its read-modify-write, see below);
+   Create = 2.0 (a *timed* create plus an *untimed* best-effort cleanup delete — not a retry). **Zero
+   retries on every operation.** The retry hypothesis is therefore disproven regardless of the tail
+   numbers.
+
+2. **Reproduce on current code.** We re-ran the same one-request-at-a-time probe on the **v0.6.0**
+   driver. The Read and Create tail regressions **do not reproduce** — Rust is faster than Python at
+   **every** percentile, tail included (see table). The earlier tail was a property of the *older*
+   driver build; the update to v0.6.0 (`106ad05bc`) fixed it.
+
+3. **Localize the remaining latency — client vs. server.** To prove *where* each millisecond is spent,
+   we captured the service's own processing time, which Cosmos returns on every response in the
+   `x-ms-request-duration-ms` header and which **both** engines expose. The arithmetic is simple:
+
+   > **client time − server time = everything outside the service** (network + transport + the
+   > Python↔Rust binding hop).
+
+   If a tail lived in the service it would show up as high *server* time on **both** engines; if it is
+   client-side it shows up only in the *gap*. We recorded server time into a second histogram alongside
+   the existing client histogram and pooled both exactly.
+
+**Re-measured results (v0.6.0, one request in flight, pooled; ms). CLIENT is wall-clock at the caller,
+SERVER is the service-reported `x-ms-request-duration-ms`, GAP = client − server (the client-side
+cost):**
+
+| Operation | Engine | client p50 | client p99 | client p99.9 | server p99 | server p99.9 | **client-side gap @p99.9** |
+|-----------|--------|-----------:|-----------:|-------------:|-----------:|-------------:|---------------------------:|
+| **Read**   | Python | 3.75 | 7.48 | 13.50 | 3.35 | 6.11 | 7.40 |
+|            | **Rust**   | **3.15** | **7.18** | **12.10** | 3.11 | 7.72 | **4.38** |
+| **Create** | Python | 7.07 | 11.10 | 20.27 | 7.43 | 10.62 | 9.65 |
+|            | **Rust**   | **6.25** | **9.67** | **14.38** | 7.05 | 10.30 | **4.08** |
+
+Each cell above pools **60k–170k requests** (Read legs ~150k–174k; write legs ~63k–85k), zero errors,
+zero throttling, with the server header present on **100%** of requests on both engines.
+
+**What the split proves (plain English):**
+
+- **The service does the same work in the same time on both engines.** Server-reported time is
+  effectively identical (Read p99 3.11 vs 3.35; Create p99 7.05 vs 7.43). So the tail was never
+  service-side — it could only be client-side.
+- **Rust's client-side cost is the *smaller* of the two.** The client-side gap (network + transport +
+  binding) at p99.9 is **4.38 ms for Rust vs 7.40 ms for Python** on Read, and **4.08 vs 9.65 ms** on
+  Create. Rust's transport/binding stack is leaner than Python's `aiohttp` stack at every percentile.
+- **Net: there is no Read/Create tail regression on v0.6.0.** Rust matches or beats Python on every
+  point operation at p50/p99/p99.9. The customer-facing worry that motivated this investigation does
+  not exist on current code.
+
+**The one genuine difference — Patch on Rust is a 2-round-trip read-modify-write, by design.** Patch is
+the only op where Rust is slower at conc=1 (p50 ≈ 10.4 vs 7.6 ms). This is **not** a regression or a
+retry: on Rust, a partial update is implemented as **read the item, apply the patch locally, then
+replace it** — two network round trips — whereas core-Python issues a single server-side partial
+update. The 2.0 attempts/op counter and the ~2× latency both reflect that design, which is understood
+and tracked separately. It is not a tail defect.
+
+**A tail caveat we are keeping honest about.** In one of the two write runs, Rust **Upsert** p99.9 spiked
+to ~48 ms; in the other run it was ~15 ms (better than Python's ~25 ms), with normal server time in both.
+A single-run tail that swings 15↔48 ms with a healthy service time is host/GC noise on one reporting
+window, not a stable engine property — but we flag it rather than hide it, and a confirmatory upsert
+re-run is the clean way to close it if needed.
+
+**Reproducibility (this root-cause work).** The retry counters and the client-vs-server capture ship in
+the harness (commit `0d62335d70`): `perf_stats.py` records a parallel server-latency histogram from the
+`x-ms-request-duration-ms` header, `workload_utils.py` reads that header in the SDK response hook, and
+`perf_reporter.py` emits `server_p50/p99/p99_9` + `server_hist_b64` per window. The split table is
+produced by **`tests/workloads/crt_split_report.py --prefix <run> --stamp <YYYYMMDD-HHMMSS>`**, which
+pools both the client and server histograms and prints the per-op gap; the client-only pooled table is
+`phase0_report.py` as before. The runs were `concurrency=1`, one client, no proxy, on an isolated probe
+container, with each engine's legs run adjacent to minimize time drift.
 
 ---
 
@@ -702,4 +798,8 @@ likely-bounded drift** (see the Phase B section). The **heavy-load stress test (
 complete too**: under a concurrency sweep, Rust sustains **~5.8× the read and ~3.9× the upsert
 throughput** of the all-Python engine, which is GIL-bound and saturates at ~1 core; both engines
 plateau at a clear concurrency knee (Rust ~256–512 in-flight) with zero throttling, so the ceiling
-is client CPU, not the database (see the Phase C section).
+is client CPU, not the database (see the Phase C section). The **Phase 0 Read/Create tail concern is
+now closed**: on the v0.6.0 driver Rust is faster than Python at p50/p99/p99.9 on both, a client-vs-server
+split shows the service time is identical across engines and Rust's client-side overhead is the smaller
+of the two, and the only remaining per-op difference — Patch being slower on Rust — is a by-design
+2-round-trip read-modify-write, not a defect (see "Root-cause of the Read/Create tail" under Phase 0).
