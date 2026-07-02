@@ -5,6 +5,7 @@ import logging
 import multiprocessing
 import os
 from pathlib import Path
+import re
 import sys
 import time
 
@@ -37,6 +38,119 @@ def is_valid_changelog_content(content: str) -> bool:
 
 def is_arm_sdk(package_name: str) -> bool:
     return package_name.startswith("azure-mgmt-")
+
+
+# CHANGELOG.md is embedded into the package long_description (see setup.py template), so an
+# unbounded changelog bloats the PyPI metadata. Trimming uses a high-water/low-water pattern:
+# trimming is *triggered* when the file exceeds CHANGELOG_SIZE_LIMIT_BYTES, but when it runs the
+# file is cut down toward CHANGELOG_TRIM_TARGET_BYTES (half the limit). Trimming to a lower
+# target leaves headroom so the file does not immediately exceed the limit again on the next
+# release, avoiding a churny re-trim of the CHANGELOG on almost every generation. At least
+# CHANGELOG_MIN_KEEP_ENTRIES newest entries are always retained for usefulness (unless even that
+# many entries would exceed the hard size limit, in which case as many as fit are kept).
+CHANGELOG_SIZE_LIMIT_BYTES = 128 * 1024
+CHANGELOG_TRIM_TARGET_BYTES = CHANGELOG_SIZE_LIMIT_BYTES // 2
+CHANGELOG_MIN_KEEP_ENTRIES = 4
+_TRIM_NOTE_PREFIX = "> Changelog entries prior to"
+_VERSION_HEADER_RE = re.compile(r"^##\s+\d+\.\d+")
+
+
+def trim_changelog_if_needed(
+    package_path: Path,
+    size_limit: int = CHANGELOG_SIZE_LIMIT_BYTES,
+    trim_target: Optional[int] = None,
+) -> bool:
+    """Drop the oldest CHANGELOG.md entries when the file grows too large.
+
+    The CHANGELOG is concatenated into the package ``long_description`` uploaded to PyPI, so it
+    must not grow without bound. Trimming is triggered when ``CHANGELOG.md`` exceeds
+    ``size_limit`` bytes; when it runs, the file is cut down toward ``trim_target`` bytes
+    (defaults to half of ``size_limit``) by keeping the ``# Release History`` header plus the
+    newest version entries, removing older entries completely, and appending a note pointing to
+    PyPI for the full history. Cutting toward the lower target (rather than just under the limit)
+    leaves headroom so the file does not immediately exceed the limit again on the next release.
+
+    At least ``CHANGELOG_MIN_KEEP_ENTRIES`` newest entries are always kept for usefulness, even if
+    that exceeds ``trim_target`` -- unless keeping that many would exceed the hard ``size_limit``,
+    in which case only as many newest entries as fit under ``size_limit`` are kept (at least one).
+
+    Returns True if the file was trimmed, False otherwise.
+    """
+    changelog_path = package_path / "CHANGELOG.md"
+    if not changelog_path.exists():
+        return False
+    # Use the normalized (LF) UTF-8 byte length rather than stat().st_size: on Windows the file
+    # is stored with CRLF line endings, so st_size would over-count relative to the LF content the
+    # pipeline (Linux) actually ships, causing inconsistent trigger behavior across platforms.
+    if len(changelog_path.read_text(encoding="utf-8").encode("utf-8")) <= size_limit:
+        return False
+
+    if trim_target is None:
+        trim_target = size_limit // 2
+
+    package_name = package_path.name
+    trimmed = False
+
+    def byte_len(lines: list[str]) -> int:
+        return sum(len(line.encode("utf-8")) for line in lines)
+
+    def trim_proc(content: list[str]):
+        nonlocal trimmed
+        version_indices = [i for i, line in enumerate(content) if _VERSION_HEADER_RE.match(line)]
+        # Nothing to trim if there is at most one entry. Return before mutating content so an
+        # existing trim note is preserved on this no-op path (modify_file always writes content
+        # back). The note is appended after all version headers and never matches the version
+        # header regex, so its presence does not affect version_indices.
+        if len(version_indices) < 2:
+            return
+
+        # Remove any previous trim note so repeated runs don't accumulate duplicates. It lives
+        # after all version headers, so version_indices computed above stay valid.
+        content[:] = [line for line in content if not line.startswith(_TRIM_NOTE_PREFIX)]
+
+        # Boundaries of each version section; the header (before the first entry) is always kept.
+        n = len(version_indices)
+        bounds = version_indices + [len(content)]
+        header_bytes = byte_len(content[: version_indices[0]])
+        seg_bytes = [byte_len(content[bounds[j] : bounds[j + 1]]) for j in range(n)]
+        # Reserve room for the note line so the trimmed file stays under the target/limit.
+        note_reserve = 256
+
+        # Keep the newest entries whose cumulative size fits under the target (always keep >= 1).
+        keep_count = 1
+        total = header_bytes + seg_bytes[0]
+        for j in range(1, n):
+            if total + seg_bytes[j] + note_reserve > trim_target:
+                break
+            total += seg_bytes[j]
+            keep_count = j + 1
+
+        # Always keep at least CHANGELOG_MIN_KEEP_ENTRIES for usefulness, even past the target...
+        keep_count = min(n, max(keep_count, CHANGELOG_MIN_KEEP_ENTRIES))
+        # ...but never exceed the hard size limit: drop the oldest kept entries until it fits.
+        while keep_count > 1 and header_bytes + sum(seg_bytes[:keep_count]) + note_reserve > size_limit:
+            keep_count -= 1
+
+        # Everything already fits (should not happen once the file is over the limit, but guard).
+        if keep_count >= n:
+            return
+
+        oldest_kept = content[version_indices[keep_count - 1]].split()[1]
+        note = (
+            f"{_TRIM_NOTE_PREFIX} {oldest_kept} were removed to reduce file size. "
+            f"See https://pypi.org/project/{package_name}/{oldest_kept}/ for the older history.\n"
+        )
+        del content[version_indices[keep_count] :]
+        # Ensure a blank line separates the last kept entry from the note.
+        if content and content[-1].strip():
+            content.append("\n")
+        content.append(note)
+        trimmed = True
+
+    modify_file(str(changelog_path), trim_proc)
+    if trimmed:
+        _LOGGER.info(f"Trimmed CHANGELOG.md for {package_name} down to under {trim_target} bytes.")
+    return trimmed
 
 
 def execute_func_with_timeout(func, timeout: int = 900) -> Any:
@@ -201,6 +315,9 @@ def main(
                 )
 
         modify_file(str(package_path / "CHANGELOG.md"), edit_changelog_proc)
+
+        # Keep CHANGELOG.md from growing unbounded, since it is embedded into the PyPI long_description.
+        trim_changelog_if_needed(package_path)
 
     except Exception as e:
         log_failed_message(f"Fail to generate changelog for {package_name}: {str(e)}", enable_log_error)
