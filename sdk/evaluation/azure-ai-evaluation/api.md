@@ -60,12 +60,12 @@ namespace azure.ai.evaluation
 
 
     class azure.ai.evaluation.AzureOpenAIModelConfiguration(TypedDict):
+        key "api_key": NotRequired[str]
+        key "api_version": NotRequired[str]
         key "azure_deployment": str
         key "azure_endpoint": str
-        api_key: NotRequired[str]
-        api_version: NotRequired[str]
-        credential: NotRequired[Any]
-        type: NotRequired[Literal["azure_openai"]]
+        key "credential": NotRequired[Any]
+        key "type": NotRequired[Literal["azure_openai"]]
 
 
     @experimental
@@ -249,15 +249,15 @@ namespace azure.ai.evaluation
 
 
     class azure.ai.evaluation.Conversation(TypedDict):
+        key "context": NotRequired[Dict[str, Any]]
         key "messages": Union[List[Message], List[Dict]]
-        context: NotRequired[Dict[str, Any]]
 
 
     class azure.ai.evaluation.EvaluationResult(TypedDict):
         key "metrics": Dict
+        key "oai_eval_run_ids": NotRequired[List[Dict[str, str]]]
         key "rows": List[Dict]
-        oai_eval_run_ids: NotRequired[List[Dict[str, str]]]
-        studio_url: NotRequired[str]
+        key "studio_url": NotRequired[str]
 
 
     class azure.ai.evaluation.EvaluatorConfig(TypedDict, total=False):
@@ -485,8 +485,8 @@ namespace azure.ai.evaluation
 
     class azure.ai.evaluation.Message(TypedDict):
         key "content": Union[str, List[Dict]]
+        key "context": NotRequired[Dict[str, Any]]
         key "role": str
-        context: NotRequired[Dict[str, Any]]
 
 
     class azure.ai.evaluation.MeteorScoreEvaluator(EvaluatorBase):
@@ -513,11 +513,11 @@ namespace azure.ai.evaluation
 
     class azure.ai.evaluation.OpenAIModelConfiguration(TypedDict):
         key "api_key": str
+        key "base_url": NotRequired[str]
+        key "extra_headers": NotRequired[Dict[str, str]]
         key "model": str
-        base_url: NotRequired[str]
-        extra_headers: NotRequired[Dict[str, str]]
-        organization: NotRequired[str]
-        type: NotRequired[Literal["openai"]]
+        key "organization": NotRequired[str]
+        key "type": NotRequired[Literal["openai"]]
 
 
     @experimental
