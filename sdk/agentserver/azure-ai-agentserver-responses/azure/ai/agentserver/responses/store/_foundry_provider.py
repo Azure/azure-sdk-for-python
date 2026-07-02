@@ -93,13 +93,21 @@ def _encode(value: str) -> str:
 
 
 def _apply_platform_headers(request: HttpRequest, context: PlatformContext | None) -> None:
-    """Forward the per-request call ID on an outbound HTTP request when present.
+    """Forward the per-request call ID on an outbound storage request when present.
 
-    On protocol version ``2.0.0`` the container forwards the per-request call ID
-    (``x-agent-foundry-call-id``) on outbound calls to Foundry platform services;
-    the storage service resolves the caller context server-side from it. The
-    ``x-agent-user-id`` header is **not** forwarded — it is not accepted/trusted
-    by 1P services and is used only for container-side state partitioning.
+    On protocol version ``2.0.0`` the storage service binds a response to the
+    ``call_id`` supplied on the originating ``CreateResponse`` call and resolves
+    the caller context server-side from it. That ``call_id`` is captured at
+    response creation and persisted as durable resilient-task input (see
+    :func:`platform_context_from_params`), so every storage operation over the
+    response's lifetime — including reads/updates/deletes after cross-process
+    crash-recovery — replays the SAME value (a mismatched/absent value is
+    rejected: "does not match an active turn").
+
+    The ``x-agent-user-id`` header is **not** forwarded — it is not
+    accepted/trusted by 1P services and is used only for container-side state
+    partitioning (in-process per-user isolation enforcement). It is omitted only
+    when ``None`` (e.g. local development with no platform context).
 
     :param request: The outbound HTTP request to modify.
     :type request: ~azure.core.rest.HttpRequest

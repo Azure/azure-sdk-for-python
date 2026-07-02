@@ -42,6 +42,7 @@ def _make_input(**overrides) -> ResilientResponseInput:
         agent_reference={"name": "a", "version": "1"},
         agent_session_id="sess_1",
         user_id_key="user-key",
+        call_id="call-key",
         client_headers={"client-trace-id": "t-1"},
         query_parameters={"foo": "bar"},
     )
@@ -63,6 +64,7 @@ def test_round_trip_preserves_all_fields() -> None:
     assert restored.disposition == "re-invoke"
     assert restored.agent_session_id == "sess_1"
     assert restored.user_id_key == "user-key"
+    assert restored.call_id == "call-key"
     assert restored.client_headers == {"client-trace-id": "t-1"}
     assert restored.query_parameters == {"foo": "bar"}
     # request carries the input — once.
@@ -135,8 +137,11 @@ def test_from_task_input_non_dict_raises() -> None:
 
 
 def test_isolation_method_and_params_helper_agree() -> None:
-    """The typed ``isolation()`` and the params-based ``platform_context_from_params``
-    produce the same partition keys — the single derivation."""
+    """The typed ``platform_context()`` and the params-based ``platform_context_from_params``
+    produce the same identity pair — the single derivation.
+
+    Both the durable ``user_id_key`` and the ``call_id`` captured at creation are
+    persisted and replayed on recovery (protocol ``2.0.0``)."""
     resilient = _make_input()
     params = resilient.to_task_input()
 
@@ -144,11 +149,11 @@ def test_isolation_method_and_params_helper_agree() -> None:
     iso_params = platform_context_from_params(params)
 
     assert iso_typed.user_id_key == iso_params.user_id_key == "user-key"
-    assert iso_typed.call_id is iso_params.call_id is None
+    assert iso_typed.call_id == iso_params.call_id == "call-key"
 
 
 def test_isolation_absent_keys_default_to_none() -> None:
-    resilient = _make_input(user_id_key=None)
+    resilient = _make_input(user_id_key=None, call_id=None)
     iso = resilient.platform_context()
     assert iso.user_id_key is None
     assert iso.call_id is None
