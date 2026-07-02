@@ -254,14 +254,14 @@ def test_trim_changelog_when_over_limit(temp_arm_package):
     with open(changelog_path, "w") as f:
         f.write(_make_changelog(10, body_per_version="  - " + "x" * 400 + "\n"))
 
-    trimmed = trim_changelog_if_needed(package_path, size_limit=2048)
+    # Trigger at 2048, but cut down to an explicit 1024 target.
+    trimmed = trim_changelog_if_needed(package_path, size_limit=2048, trim_target=1024)
 
     assert trimmed is True
-    with open(changelog_path, "r") as f:
-        content = f.read()
+    content = changelog_path.read_text(encoding="utf-8")
 
-    # File is now under the limit and the header is preserved.
-    assert changelog_path.stat().st_size <= 2048
+    # File is cut down to under the target (which is below the trigger limit) and header kept.
+    assert len(content.encode("utf-8")) <= 1024
     assert content.startswith("# Release History\n")
 
     kept = _version_headers(content)
@@ -273,6 +273,21 @@ def test_trim_changelog_when_over_limit(temp_arm_package):
     assert f"> Changelog entries prior to {oldest_kept} were removed" in content
     assert f"https://pypi.org/project/azure-mgmt-test/{oldest_kept}/" in content
     assert content.count("> Changelog entries prior to") == 1
+
+
+def test_trim_changelog_target_defaults_to_half_limit(temp_arm_package):
+    # When trim_target is not given it defaults to half of size_limit, leaving headroom below the
+    # trigger limit so the file is not immediately re-trimmed on the next release.
+    package_path, changelog_path = temp_arm_package
+    with open(changelog_path, "w") as f:
+        f.write(_make_changelog(20, body_per_version="  - " + "x" * 200 + "\n"))
+
+    trimmed = trim_changelog_if_needed(package_path, size_limit=4096)
+
+    assert trimmed is True
+    content = changelog_path.read_text(encoding="utf-8")
+    # Cut to under half the limit (the default target), not merely under the limit.
+    assert len(content.encode("utf-8")) <= 4096 // 2
 
 
 def test_trim_changelog_noop_when_under_limit(temp_arm_package):
@@ -343,8 +358,9 @@ def test_trim_changelog_preserves_note_when_single_entry(temp_arm_package):
 
 
 def _assert_real_changelog_trim(tmp_path, package_name, newest, oldest):
-    # Real-world fixtures (~210 KB) must be trimmed under the default 192 KB limit, keeping the
-    # newest entries that fit. The expected trimmed output is checked in for easy review.
+    # Real-world fixtures (~210 KB) trigger trimming (over the 192 KB limit) and are cut down to
+    # under the 96 KB target, keeping the newest entries that fit. The expected trimmed output is
+    # checked in for easy review.
     data_dir = Path(__file__).parent / "data"
     fixture = data_dir / f"{package_name}-CHANGELOG.md"
     expected = (data_dir / f"{package_name}-CHANGELOG.trimmed.md").read_text(encoding="utf-8")
@@ -360,9 +376,10 @@ def _assert_real_changelog_trim(tmp_path, package_name, newest, oldest):
 
     # Trimmed output matches the checked-in expected fixture exactly.
     assert content == expected
-    # Under the limit. Measure normalized (LF) bytes so the check matches the pipeline (Linux)
-    # regardless of the local platform's newline translation.
-    assert len(content.encode("utf-8")) <= 192 * 1024
+    # Cut down to under the 96 KB target (which leaves headroom below the 192 KB limit). Measure
+    # normalized (LF) bytes so the check matches the pipeline (Linux) regardless of the local
+    # platform's newline translation.
+    assert len(content.encode("utf-8")) <= 96 * 1024
 
     pkg = package_path.name
     kept = _version_headers(content)
@@ -376,9 +393,12 @@ def _assert_real_changelog_trim(tmp_path, package_name, newest, oldest):
 
 
 def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
-    # The 4.0.0 stable entry alone is ~95 KB, so the newest 38 entries fit under 192 KB.
-    _assert_real_changelog_trim(tmp_path, "azure-mgmt-sql-4.0.0", newest="4.0.0", oldest="0.14.0")
+    # The 4.0.0 stable entry alone is ~95 KB (~half the limit), so trimming to the 96 KB target
+    # keeps only that newest entry.
+    _assert_real_changelog_trim(tmp_path, "azure-mgmt-sql-4.0.0", newest="4.0.0", oldest="4.0.0")
 
 
 def test_trim_changelog_azure_mgmt_network_fixture(tmp_path):
-    _assert_real_changelog_trim(tmp_path, "azure-mgmt-network-31.0.0", newest="31.0.0", oldest="2.4.0")
+    # The 31.0.0 entry (~71 KB) plus the next entry would exceed the 96 KB target, so only the
+    # newest entry is kept.
+    _assert_real_changelog_trim(tmp_path, "azure-mgmt-network-31.0.0", newest="31.0.0", oldest="31.0.0")
