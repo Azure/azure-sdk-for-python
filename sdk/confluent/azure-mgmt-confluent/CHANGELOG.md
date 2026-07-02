@@ -1,5 +1,27 @@
 # Release History
 
+## 3.0.0b2 (2026-07-02)
+
+### Features Added
+
+  - Client `ConfluentManagementClient` added operation group `network_gateway_resources`
+  - Client `ConfluentManagementClient` added operation group `access_point_resources`
+  - Enum `ConnectorClass` added member `AZURECOSMOSV2_SINK`
+  - Enum `ConnectorClass` added member `AZURECOSMOSV2_SOURCE`
+  - Added model `AccessPointProperties`
+  - Added model `AccessPointResource`
+  - Added model `KeyValuePair`
+  - Added model `NetworkGatewayProperties`
+  - Added model `NetworkGatewayResource`
+  - Added model `VnetInjectionDetails`
+  - Added model `AccessPointResourcesOperations`
+  - Added model `NetworkGatewayResourcesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `ConnectorClass.AZURECOSMOSV2SINK`
+  - Deleted or renamed enum value `ConnectorClass.AZURECOSMOSV2SOURCE`
+
 ## 3.0.0b1 (2026-03-16)
 
 ### Features Added
