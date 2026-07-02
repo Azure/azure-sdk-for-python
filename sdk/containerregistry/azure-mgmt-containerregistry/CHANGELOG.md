@@ -19,6 +19,9 @@
 ### Breaking Changes
 
   - Deleted or renamed model `PrivateLinkResource`
+
+### Other Changes
+
   - Method `RegistriesOperations.list_private_link_resources` changed return type from `AsyncItemPaged[_models.PrivateLinkResource]` to `AsyncItemPaged[_models.MyPrivateLinkResource]`
   - Method `RegistriesOperations.get_private_link_resource` changed return type from `PrivateLinkResource` to `MyPrivateLinkResource`
   - Method `RegistriesOperations.list_private_link_resources` changed return type from `ItemPaged[_models.PrivateLinkResource]` to `ItemPaged[_models.MyPrivateLinkResource]`
