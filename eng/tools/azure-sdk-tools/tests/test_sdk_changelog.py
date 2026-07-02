@@ -342,15 +342,14 @@ def test_trim_changelog_preserves_note_when_single_entry(temp_arm_package):
     assert note in content
 
 
-def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
-    # Real-world data: the azure-mgmt-sql 4.0.0 CHANGELOG (~215 KB) must be trimmed under the
-    # default 192 KB limit. The 4.0.0 stable entry alone is ~95 KB, so only the newest entries
-    # that fit are kept. The expected trimmed output is checked in as a fixture for easy review.
+def _assert_real_changelog_trim(tmp_path, package_name, newest, oldest):
+    # Real-world fixtures (~210 KB) must be trimmed under the default 192 KB limit, keeping the
+    # newest entries that fit. The expected trimmed output is checked in for easy review.
     data_dir = Path(__file__).parent / "data"
-    fixture = data_dir / "azure-mgmt-sql-4.0.0-CHANGELOG.md"
-    expected = (data_dir / "azure-mgmt-sql-4.0.0-CHANGELOG.trimmed.md").read_text(encoding="utf-8")
+    fixture = data_dir / f"{package_name}-CHANGELOG.md"
+    expected = (data_dir / f"{package_name}-CHANGELOG.trimmed.md").read_text(encoding="utf-8")
 
-    package_path = tmp_path / "azure-mgmt-sql"
+    package_path = tmp_path / package_name.rsplit("-", 1)[0]
     package_path.mkdir()
     shutil.copy(fixture, package_path / "CHANGELOG.md")
 
@@ -359,16 +358,27 @@ def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
     assert trimmed is True
     content = (package_path / "CHANGELOG.md").read_text(encoding="utf-8")
 
-    # Trimmed output matches the checked-in expected fixture exactly and is under the limit.
+    # Trimmed output matches the checked-in expected fixture exactly.
     assert content == expected
-    assert (package_path / "CHANGELOG.md").stat().st_size <= 192 * 1024
+    # Under the limit. Measure normalized (LF) bytes so the check matches the pipeline (Linux)
+    # regardless of the local platform's newline translation.
+    assert len(content.encode("utf-8")) <= 192 * 1024
 
+    pkg = package_path.name
     kept = _version_headers(content)
     # Newest entries kept; the oldest history is removed completely.
-    assert kept[0] == "4.0.0"
-    assert kept[-1] == "0.14.0"
-    assert "0.1.0" not in kept
+    assert kept[0] == newest
+    assert kept[-1] == oldest
     assert (
-        "> Changelog entries prior to 0.14.0 were removed to reduce file size. "
-        "See https://pypi.org/project/azure-mgmt-sql/0.14.0/ for the older history." in content
+        f"> Changelog entries prior to {oldest} were removed to reduce file size. "
+        f"See https://pypi.org/project/{pkg}/{oldest}/ for the older history." in content
     )
+
+
+def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
+    # The 4.0.0 stable entry alone is ~95 KB, so the newest 38 entries fit under 192 KB.
+    _assert_real_changelog_trim(tmp_path, "azure-mgmt-sql-4.0.0", newest="4.0.0", oldest="0.14.0")
+
+
+def test_trim_changelog_azure_mgmt_network_fixture(tmp_path):
+    _assert_real_changelog_trim(tmp_path, "azure-mgmt-network-31.0.0", newest="31.0.0", oldest="2.4.0")
