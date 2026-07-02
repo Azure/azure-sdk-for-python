@@ -1028,6 +1028,7 @@ class ResilientResponseOrchestrator:
             agent_reference=ctx.agent_reference,
             agent_session_id=ctx.agent_session_id,
             user_id_key=ctx.user_id,
+            call_id=ctx.call_id,
             client_headers=dict(ctx.context.client_headers) if ctx.context is not None else {},
             query_parameters=dict(ctx.context.query_parameters) if ctx.context is not None else {},
         )

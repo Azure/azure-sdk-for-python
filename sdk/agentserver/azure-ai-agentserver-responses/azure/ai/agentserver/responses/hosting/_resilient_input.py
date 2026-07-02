@@ -44,6 +44,7 @@ _K_DISPOSITION = "disposition"
 _K_AGENT_REFERENCE = "agent_reference"
 _K_AGENT_SESSION_ID = "agent_session_id"
 _K_USER_ID_KEY = "user_id_key"
+_K_CALL_ID = "call_id"
 _K_CLIENT_HEADERS = "client_headers"
 _K_QUERY_PARAMETERS = "query_parameters"
 
@@ -55,9 +56,14 @@ def platform_context_from_params(params: dict[str, Any]) -> PlatformContext:
     ``2.0.0``): every recovery reader — full reconstruction and the mark-failed
     path — routes through this one function (directly, or via
     :meth:`ResilientResponseInput.platform_context`) so the partition identity
-    cannot be derived inconsistently. Only the durable ``user_id_key`` is
-    persisted; the per-request ``call_id`` is request-scoped and is ``None`` on a
-    recovered entry (there is no live inbound request to echo it from).
+    cannot be derived inconsistently.
+
+    Both the ``user_id_key`` and the ``call_id`` are captured on the originating
+    ``CreateResponse`` call and persisted here: the storage service binds a
+    response to the ``(user_id, call_id)`` pair used at creation, so every later
+    storage operation over that response's lifetime — including after
+    crash-recovery in a different process — MUST replay the same pair. They are
+    therefore durable task input, not request-scoped values.
 
     :param params: The persisted resilient-task input dict.
     :type params: dict[str, Any]
@@ -66,7 +72,7 @@ def platform_context_from_params(params: dict[str, Any]) -> PlatformContext:
     """
     return PlatformContext(
         user_id_key=params.get(_K_USER_ID_KEY),
-        call_id=None,
+        call_id=params.get(_K_CALL_ID),
     )
 
 
@@ -159,6 +165,7 @@ class ResilientResponseInput:
         agent_reference: Any = None,
         agent_session_id: str | None = None,
         user_id_key: str | None = None,
+        call_id: str | None = None,
         client_headers: dict[str, str] | None = None,
         query_parameters: dict[str, str] | None = None,
     ) -> None:
@@ -170,6 +177,7 @@ class ResilientResponseInput:
         self.agent_reference: dict[str, Any] = _normalize_agent_reference(agent_reference)
         self.agent_session_id = agent_session_id
         self.user_id_key = user_id_key
+        self.call_id = call_id
         self.client_headers: dict[str, str] = dict(client_headers or {})
         self.query_parameters: dict[str, str] = dict(query_parameters or {})
 
@@ -177,12 +185,13 @@ class ResilientResponseInput:
         """Return the platform context — the single derivation site.
 
         :returns: The platform context built from the persisted ``user_id_key``
-            (``call_id`` is request-scoped and ``None`` on a recovered entry).
+            and ``call_id`` — the identity pair captured at response creation and
+            replayed for every storage operation over the response's lifetime.
         :rtype: PlatformContext
         """
         return PlatformContext(
             user_id_key=self.user_id_key,
-            call_id=None,
+            call_id=self.call_id,
         )
 
     def to_task_input(self) -> dict[str, Any]:
@@ -202,6 +211,7 @@ class ResilientResponseInput:
             _K_AGENT_REFERENCE: _normalize_agent_reference(self.agent_reference),
             _K_AGENT_SESSION_ID: self.agent_session_id,
             _K_USER_ID_KEY: self.user_id_key,
+            _K_CALL_ID: self.call_id,
             _K_CLIENT_HEADERS: dict(self.client_headers),
             _K_QUERY_PARAMETERS: dict(self.query_parameters),
         }
@@ -242,6 +252,7 @@ class ResilientResponseInput:
             agent_reference=params.get(_K_AGENT_REFERENCE),
             agent_session_id=params.get(_K_AGENT_SESSION_ID),
             user_id_key=params.get(_K_USER_ID_KEY),
+            call_id=params.get(_K_CALL_ID),
             client_headers=params.get(_K_CLIENT_HEADERS),
             query_parameters=params.get(_K_QUERY_PARAMETERS),
         )

@@ -472,7 +472,7 @@ async def test_create_response__sends_platform_headers(credential: Any, settings
     await provider.create_response(ResponseObject(_RESPONSE_DICT), None, None, context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ID_HEADER] == "u_key_1"  # storage partitions by the durable user id
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
     assert request.headers[_CALL_ID_HEADER] == "c_key_1"
 
 
@@ -484,25 +484,21 @@ async def test_get_response__sends_platform_headers(credential: Any, settings: F
     await provider.get_response("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ID_HEADER] == "u_key_2"  # storage partitions by the durable user id
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
     assert request.headers[_CALL_ID_HEADER] == "c_key_2"
 
 
 @pytest.mark.asyncio
 async def test_update_response__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
-    # Phase-2 terminal/checkpoint write forwards the durable user id (partition
-    # key) but NOT the per-request call id: for background/resilient responses the
-    # write runs after the call id's active turn ended, so a stale call id would be
-    # rejected. The durable user id addresses the correct partition.
     provider = _make_provider(credential, settings, _make_response(200, {}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
-    context = PlatformContext(user_id_key="u_key_3", call_id="c_key_3")
-    await provider.update_response(ResponseObject(_RESPONSE_DICT), context=context)
+    isolation = PlatformContext(user_id_key="u_key_3", call_id="c_key_3")
+    await provider.update_response(ResponseObject(_RESPONSE_DICT), context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ID_HEADER] == "u_key_3"  # storage partitions by the durable user id
-    assert _CALL_ID_HEADER not in request.headers  # call id omitted on the Phase-2 write
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
+    assert request.headers[_CALL_ID_HEADER] == "c_key_3"
 
 
 @pytest.mark.asyncio
@@ -513,7 +509,7 @@ async def test_delete_response__sends_platform_headers(credential: Any, settings
     await provider.delete_response("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ID_HEADER] == "u_key_4"  # storage partitions by the durable user id
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
     assert request.headers[_CALL_ID_HEADER] == "c_key_4"
 
 
@@ -525,7 +521,7 @@ async def test_get_input_items__sends_platform_headers(credential: Any, settings
     await provider.get_input_items("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ID_HEADER] == "u_key_5"  # storage partitions by the durable user id
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
     assert request.headers[_CALL_ID_HEADER] == "c_key_5"
 
 
@@ -537,7 +533,7 @@ async def test_get_items__sends_platform_headers(credential: Any, settings: Foun
     await provider.get_items(["item_out_001"], context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ID_HEADER] == "u_key_6"  # storage partitions by the durable user id
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
     assert request.headers[_CALL_ID_HEADER] == "c_key_6"
 
 
@@ -549,7 +545,7 @@ async def test_get_history_item_ids__sends_platform_headers(credential: Any, set
     await provider.get_history_item_ids(None, None, limit=10, context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ID_HEADER] == "u_key_7"  # storage partitions by the durable user id
+    assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
     assert request.headers[_CALL_ID_HEADER] == "c_key_7"
 
 
@@ -566,20 +562,24 @@ async def test_platform_headers__omitted_when_none(credential: Any, settings: Fo
 
 
 @pytest.mark.asyncio
-async def test_platform_headers__user_id_alone_sends_user_id(credential: Any, settings: FoundryStorageSettings) -> None:
-    """Storage forwards the durable user id even without a call id (e.g. recovery)."""
+async def test_platform_headers__user_id_alone_sends_nothing(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
+    """user_id is never forwarded to 1P; with only user_id_key set, no headers are sent."""
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
-    context = PlatformContext(user_id_key="u_only")
-    await provider.get_response("resp_abc123", context=context)
+    isolation = PlatformContext(user_id_key="u_only")
+    await provider.get_response("resp_abc123", context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
-    assert request.headers[_USER_ID_HEADER] == "u_only"
+    assert _USER_ID_HEADER not in request.headers
     assert _CALL_ID_HEADER not in request.headers
 
 
 @pytest.mark.asyncio
-async def test_platform_headers__call_id_alone_sends_call_id(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_platform_headers__call_id_alone_sends_call_id(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     """With only call_id set, only the call-id header is forwarded."""
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
@@ -689,7 +689,9 @@ async def test_pipeline__does_not_include_content_decode_policy(credential: Any)
                 policies_in_chain = list(chain)
                 break
 
-        assert policies_in_chain, "Could not find policy list on the pipeline; azure-core internals may have changed."
+        assert policies_in_chain, (
+            "Could not find policy list on the pipeline; azure-core internals may have changed."
+        )
 
         # Each chain entry wraps a policy via ``._policy`` or is the policy itself.
         policy_classes = []
@@ -698,7 +700,8 @@ async def test_pipeline__does_not_include_content_decode_policy(credential: Any)
             policy_classes.append(type(policy))
 
         assert ContentDecodePolicy not in policy_classes, (
-            "ContentDecodePolicy must not be in the Foundry storage pipeline; " "it crashes on binary response bodies."
+            "ContentDecodePolicy must not be in the Foundry storage pipeline; "
+            "it crashes on binary response bodies."
         )
     finally:
         await provider.aclose()
