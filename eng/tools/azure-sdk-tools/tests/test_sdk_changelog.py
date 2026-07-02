@@ -310,7 +310,6 @@ def test_trim_changelog_keeps_min_entries_past_target(temp_arm_package):
     assert len(content.encode("utf-8")) <= 16 * 1024
 
 
-
 def test_trim_changelog_noop_when_under_limit(temp_arm_package):
     package_path, changelog_path = temp_arm_package
     original = _make_changelog(6)
@@ -418,16 +417,12 @@ def _assert_real_changelog_trim(tmp_path, package_name, newest, oldest, kept_cou
 def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
     # The 4.0.0 stable entry alone is ~95 KB (~half the limit); min-keep=4 keeps the 4 newest
     # entries (~138 KB), still under the 192 KB limit.
-    _assert_real_changelog_trim(
-        tmp_path, "azure-mgmt-sql-4.0.0", newest="4.0.0", oldest="4.0.0b23", kept_count=4
-    )
+    _assert_real_changelog_trim(tmp_path, "azure-mgmt-sql-4.0.0", newest="4.0.0", oldest="4.0.0b23", kept_count=4)
 
 
 def test_trim_changelog_azure_mgmt_network_fixture(tmp_path):
     # min-keep=4 keeps the 4 newest entries (~121 KB), still under the 192 KB limit.
-    _assert_real_changelog_trim(
-        tmp_path, "azure-mgmt-network-31.0.0", newest="31.0.0", oldest="30.1.0", kept_count=4
-    )
+    _assert_real_changelog_trim(tmp_path, "azure-mgmt-network-31.0.0", newest="31.0.0", oldest="30.1.0", kept_count=4)
 
 
 def test_trim_changelog_azure_mgmt_datafactory_fixture(tmp_path):
