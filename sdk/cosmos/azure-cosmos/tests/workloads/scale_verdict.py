@@ -22,7 +22,9 @@ turns the sweep rows into an explicit verdict per (op, backend):
 
   5. Provenance gate (enforced, exits non-zero). Every point's runtime_backend must
      match its config_backend label, so a "rust" point that fell back to
-     core-python is never reported as a rust ceiling.
+     core-python is never reported as a rust ceiling. Empty reporting windows
+     (count 0/None, e.g. cold-start or idle intervals) carry no engine label and
+     are ignored; a point with no non-empty window at all fails the gate.
 
 USAGE:
   source ./perf_env.sh                        # exports RESULTS_COSMOS_* (incl. key)
@@ -148,8 +150,14 @@ def main():
         key = (op, bk, conc)
         cells.setdefault(key, []).append(r)
         labels.setdefault(key, {})
-        rb = r.get("runtime_backend")
-        labels[key][rb] = labels[key].get(rb, 0) + 1
+        # Only rows that actually executed operations carry a meaningful engine
+        # label. Empty reporting windows (count 0/None) -- e.g. cold-start or idle
+        # intervals -- legitimately record runtime_backend=None; counting them here
+        # would falsely trip the purity gate even though no work ran on a wrong
+        # engine. Attribute the label only when the window did real work.
+        if r.get("count"):
+            rb = r.get("runtime_backend")
+            labels[key][rb] = labels[key].get(rb, 0) + 1
 
     # ---- provenance gate (enforced) ----
     print("\n### GATE: backend purity per (op, backend, concurrency) ###")
@@ -158,6 +166,12 @@ def main():
         op, bk, conc = key
         expected = _EXPECTED_RUNTIME.get(bk)
         seen = labels[key]
+        if not seen:
+            # No non-empty window ran for this point: there is no engine evidence
+            # to trust, which is itself a failure (a ceiling with no real data).
+            gate_fail = True
+            print(f"  FAIL {op} {bk} c{conc}: no non-empty windows -- no runtime_backend evidence")
+            continue
         if expected is None or any(rb not in expected for rb in seen):
             gate_fail = True
             exp = "/".join(sorted(expected)) if expected else "??"
