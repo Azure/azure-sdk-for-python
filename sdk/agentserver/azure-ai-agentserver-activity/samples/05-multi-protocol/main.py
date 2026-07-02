@@ -7,7 +7,6 @@ Python mixin inheritance.
 
 Both protocols share the same server on port 8088:
     POST /activity/messages  - Activity protocol (Teams/M365)
-    POST /api/messages       - Activity protocol (Bot Framework compat)
     POST /invocations        - Invocations protocol (HTTP API)
 """
 

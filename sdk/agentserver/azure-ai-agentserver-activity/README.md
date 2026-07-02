@@ -20,11 +20,11 @@ pip install azure-ai-agentserver-activity
 
 `ActivityAgentServerHost` is an `AgentServerHost` subclass for Activity Protocol traffic. It provides:
 
-- `POST /activity/messages` for inbound activities.
+- `POST /activity/messages` (and the `POST /api/messages` alias) for inbound activities.
 
 ### Usage patterns
 
-**Decorator-based (recommended)** — the host acts as the M365 ``agent_app``:
+**Build the M365 stack (default)** — the host acts as the M365 `AgentApplication`:
 
 ```python
 from azure.ai.agentserver.activity import ActivityAgentServerHost
@@ -42,7 +42,19 @@ async def on_error(context, error):
 app.run()
 ```
 
-**Inject a pre-built ``AgentApplication``** — host an M365 ``AgentApplication`` you built yourself:
+**Build the M365 stack, with overrides** — same default path, but override any
+components you want to control (the host builds the rest from the environment):
+
+```python
+from microsoft_agents.hosting.core import MemoryStorage
+from azure.ai.agentserver.activity import ActivityAgentServerHost
+
+# Override just the storage backend; connection manager / adapter / authorization
+# / config are still built for you. Add digital_worker=True for the blueprint model.
+app = ActivityAgentServerHost(storage=MemoryStorage())
+```
+
+**Inject a pre-built `AgentApplication`** — host an M365 `AgentApplication` you built yourself:
 
 ```python
 from azure.ai.agentserver.activity import ActivityAgentServerHost
@@ -92,17 +104,19 @@ app.run()
   `CONNECTIONS__*` env the M365 connection manager reads from the Foundry-native
   `FOUNDRY_AGENT_*` env. The default constructor calls it for you; call it yourself
   only when you build the `MsalConnectionManager` (or a pre-built
-  `AgentApplication`) manually — see the `self-hosted-agent` sample.
+  `AgentApplication`) manually — see the `03-self-hosted-app` sample.
 - `ActivityAgentServerHost.adapter` — the channel adapter for the underlying
   `AgentApplication`.
 
 ## Examples
 
-See the [samples directory](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-activity/samples) for runnable scenarios:
+See the [samples directory](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-activity/samples) for runnable scenarios, ordered as a learning path:
 
-- `echo-agent` — the simplest agent: register handlers directly on the host and echo the user's message back.
-- `self-hosted-agent` — build the M365 `AgentApplication` yourself and host it with `from_agent_application`.
-- `multi-protocol-agent` — compose the Activity and Invocations protocols on a single server.
+- `01-echo` — the simplest agent: the host builds the M365 stack and you register handlers directly on it to echo the user's message back.
+- `02-custom-components` — override one or more M365 components (storage, connection manager, adapter, authorization, config) while the host builds the rest.
+- `03-self-hosted-app` — build the M365 `AgentApplication` yourself and host it with `from_agent_application`.
+- `04-custom-handler` — own the request pipeline with `from_request_handler` (the M365 SDK is not initialized).
+- `05-multi-protocol` — compose the Activity and Invocations protocols on a single server.
 
 ## Troubleshooting
 

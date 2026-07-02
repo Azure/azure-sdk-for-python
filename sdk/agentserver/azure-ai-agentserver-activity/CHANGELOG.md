@@ -9,14 +9,14 @@
 
 ### Breaking Changes
 
-- Custom handlers and pre-built ``AgentApplication`` injection now use dedicated
-  factory classmethods instead of ``__init__`` keyword arguments, so an invalid
+- Custom handlers and pre-built `AgentApplication` injection now use dedicated
+  factory classmethods instead of `__init__` keyword arguments, so an invalid
   combination of construction options cannot be expressed:
-  - ``ActivityAgentServerHost(handler=fn)`` → ``ActivityAgentServerHost.from_request_handler(fn)``
-  - ``ActivityAgentServerHost(agent_app=app)`` → ``ActivityAgentServerHost.from_agent_application(app)``
+  - `ActivityAgentServerHost(handler=fn)` → `ActivityAgentServerHost.from_request_handler(fn)`
+  - `ActivityAgentServerHost(agent_app=app)` → `ActivityAgentServerHost.from_agent_application(app)`
   The default constructor now accepts only the build-the-M365-stack options
-  (``digital_worker``, ``storage``, ``connection_manager``, ``adapter``,
-  ``authorization``, ``config``). ``ActivityAgentServerHost()`` (simple Teams
+  (`digital_worker`, `storage`, `connection_manager`, `adapter`,
+  `authorization`, `config`). `ActivityAgentServerHost()` (simple Teams
   agent) is unchanged.
 - Removed the lazy M365 initialization and the ``@app.activity(...)`` / ``@app.error`` host decorators in their old form. When constructed directly (no `from_request_handler`), the M365 Agents SDK is now initialized eagerly during `ActivityAgentServerHost(...)` construction and the host acts as the underlying `AgentApplication` itself (via attribute delegation) — register handlers directly on the host with `@app.activity(...)` / `@app.error`, and reach the rest of the M365 surface (`message`/`proactive`/`auth` ...) the same way. The adapter is available via `app.adapter`.
 - Removed the public `apply_msal_patches()` export. The MSAL/FMI patch is now applied internally (digital-worker model only) during construction.

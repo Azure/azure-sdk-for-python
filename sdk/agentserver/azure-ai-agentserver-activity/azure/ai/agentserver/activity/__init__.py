@@ -20,6 +20,15 @@ the full M365 surface directly on the host)::
 
     app.run()
 
+The default path also accepts optional overrides — pass any of ``storage`` /
+``connection_manager`` / ``adapter`` / ``authorization`` / ``config`` (or
+``digital_worker=True``) and the host builds the rest from the environment::
+
+    from microsoft_agents.hosting.core import MemoryStorage
+
+    # Override just the storage backend; the host builds the rest.
+    app = ActivityAgentServerHost(storage=MemoryStorage())
+
 Injected ``AgentApplication`` usage — host a pre-built M365 ``AgentApplication``
 you constructed yourself (the adapter is taken from ``agent_app.adapter``)::
 
