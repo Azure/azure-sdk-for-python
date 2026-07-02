@@ -43,11 +43,14 @@ def is_arm_sdk(package_name: str) -> bool:
 # CHANGELOG.md is embedded into the package long_description (see setup.py template), so an
 # unbounded changelog bloats the PyPI metadata. Trimming uses a high-water/low-water pattern:
 # trimming is *triggered* when the file exceeds CHANGELOG_SIZE_LIMIT_BYTES, but when it runs the
-# file is cut down to CHANGELOG_TRIM_TARGET_BYTES (half the limit). Trimming to a lower target
-# leaves headroom so the file does not immediately exceed the limit again on the next release,
-# avoiding a churny re-trim of the CHANGELOG on almost every generation.
+# file is cut down toward CHANGELOG_TRIM_TARGET_BYTES (half the limit). Trimming to a lower
+# target leaves headroom so the file does not immediately exceed the limit again on the next
+# release, avoiding a churny re-trim of the CHANGELOG on almost every generation. At least
+# CHANGELOG_MIN_KEEP_ENTRIES newest entries are always retained for usefulness (unless even that
+# many entries would exceed the hard size limit, in which case as many as fit are kept).
 CHANGELOG_SIZE_LIMIT_BYTES = 192 * 1024
 CHANGELOG_TRIM_TARGET_BYTES = CHANGELOG_SIZE_LIMIT_BYTES // 2
+CHANGELOG_MIN_KEEP_ENTRIES = 4
 _TRIM_NOTE_PREFIX = "> Changelog entries prior to"
 _VERSION_HEADER_RE = re.compile(r"^##\s+\d+\.\d+")
 
@@ -61,12 +64,15 @@ def trim_changelog_if_needed(
 
     The CHANGELOG is concatenated into the package ``long_description`` uploaded to PyPI, so it
     must not grow without bound. Trimming is triggered when ``CHANGELOG.md`` exceeds
-    ``size_limit`` bytes; when it runs, the file is cut down to ``trim_target`` bytes (defaults
-    to half of ``size_limit``) by keeping the ``# Release History`` header plus as many of the
-    newest version entries as fit under the target, removing all older entries completely, and
-    appending a note pointing to PyPI for the full history. Cutting to the lower target (rather
-    than just under the limit) leaves headroom so the file does not immediately exceed the limit
-    again on the next release.
+    ``size_limit`` bytes; when it runs, the file is cut down toward ``trim_target`` bytes
+    (defaults to half of ``size_limit``) by keeping the ``# Release History`` header plus the
+    newest version entries, removing older entries completely, and appending a note pointing to
+    PyPI for the full history. Cutting toward the lower target (rather than just under the limit)
+    leaves headroom so the file does not immediately exceed the limit again on the next release.
+
+    At least ``CHANGELOG_MIN_KEEP_ENTRIES`` newest entries are always kept for usefulness, even if
+    that exceeds ``trim_target`` -- unless keeping that many would exceed the hard ``size_limit``,
+    in which case only as many newest entries as fit under ``size_limit`` are kept (at least one).
 
     Returns True if the file was trimmed, False otherwise.
     """
@@ -100,23 +106,30 @@ def trim_changelog_if_needed(
         content[:] = [line for line in content if not line.startswith(_TRIM_NOTE_PREFIX)]
 
         # Boundaries of each version section; the header (before the first entry) is always kept.
+        n = len(version_indices)
         bounds = version_indices + [len(content)]
         header_bytes = byte_len(content[: version_indices[0]])
-        # Reserve room for the note line so the trimmed file stays under the target.
+        seg_bytes = [byte_len(content[bounds[j] : bounds[j + 1]]) for j in range(n)]
+        # Reserve room for the note line so the trimmed file stays under the target/limit.
         note_reserve = 256
 
         # Keep the newest entries whose cumulative size fits under the target (always keep >= 1).
         keep_count = 1
-        total = header_bytes + byte_len(content[bounds[0] : bounds[1]])
-        for j in range(1, len(version_indices)):
-            seg_bytes = byte_len(content[bounds[j] : bounds[j + 1]])
-            if total + seg_bytes + note_reserve > trim_target:
+        total = header_bytes + seg_bytes[0]
+        for j in range(1, n):
+            if total + seg_bytes[j] + note_reserve > trim_target:
                 break
-            total += seg_bytes
+            total += seg_bytes[j]
             keep_count = j + 1
 
+        # Always keep at least CHANGELOG_MIN_KEEP_ENTRIES for usefulness, even past the target...
+        keep_count = min(n, max(keep_count, CHANGELOG_MIN_KEEP_ENTRIES))
+        # ...but never exceed the hard size limit: drop the oldest kept entries until it fits.
+        while keep_count > 1 and header_bytes + sum(seg_bytes[:keep_count]) + note_reserve > size_limit:
+            keep_count -= 1
+
         # Everything already fits (should not happen once the file is over the limit, but guard).
-        if keep_count >= len(version_indices):
+        if keep_count >= n:
             return
 
         oldest_kept = content[version_indices[keep_count - 1]].split()[1]
