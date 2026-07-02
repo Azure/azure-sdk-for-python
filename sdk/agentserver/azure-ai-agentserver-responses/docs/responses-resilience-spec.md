@@ -305,7 +305,7 @@ the crash boundary as task input:
 |---|---|
 | `request` — the full create-response request | The recovered handler needs the whole request as `context.request`; it is un-derivable from the response store (the stored response is handler *output*, missing request-only fields). The request carries `.input`, so the conversation input is persisted **once**. |
 | `client_headers`, `query_parameters` | Handler-facing request metadata; request-scoped and un-derivable. They MUST survive recovery so a recovered handler observes the identical metadata as fresh entry (§8). |
-| `user_isolation_key`, `chat_isolation_key` | Partition keys (from request headers); the isolation context is derived from these in exactly one place. |
+| `user_id_key`, `call_id` | Platform identity (protocol `2.0.0`, from `x-agent-user-id` / `x-agent-foundry-call-id`); the platform context is derived from these in exactly one place. `call_id` is captured on the create request and replayed on every outbound storage call for the response's whole lifetime (including cross-process recovery); `user_id_key` is the per-user partition and is never forwarded to storage. |
 | `agent_reference`, `agent_session_id` | Gateway-injected / resolved values that are not functions of the request body. `agent_reference` is normalized to a plain serializable mapping. |
 | `response_id` | The stable response id (identity). |
 | `disposition` | Carried here solely to seed the first-entry `_responses.disposition` stamp (§5.1); the runtime routing source of truth is the metadata namespace thereafter. |
