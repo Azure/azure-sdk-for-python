@@ -79,7 +79,10 @@ def trim_changelog_if_needed(
     changelog_path = package_path / "CHANGELOG.md"
     if not changelog_path.exists():
         return False
-    if changelog_path.stat().st_size <= size_limit:
+    # Use the normalized (LF) UTF-8 byte length rather than stat().st_size: on Windows the file
+    # is stored with CRLF line endings, so st_size would over-count relative to the LF content the
+    # pipeline (Linux) actually ships, causing inconsistent trigger behavior across platforms.
+    if len(changelog_path.read_text(encoding="utf-8").encode("utf-8")) <= size_limit:
         return False
 
     if trim_target is None:
