@@ -1,5 +1,33 @@
 # Release History
 
+## 15.0.0b3 (2026-06-26)
+
+### Features Added
+
+  - Model `DeploymentProperties` added property `speculative_decoding`
+  - Model `ManagedComputeDeploymentProperties` added property `capabilities`
+  - Model `RaiPolicyProperties` added property `egress_policy`
+  - Added model `DeploymentSpeculativeDecoding`
+  - Added enum `RaiEgressDefaultAction`
+  - Added enum `RaiEgressHeaderOperation`
+  - Added model `RaiEgressHeaderTransform`
+  - Added model `RaiEgressHeaderValueRef`
+  - Added model `RaiEgressManagedIdentityRef`
+  - Added enum `RaiEgressMode`
+  - Added model `RaiEgressPolicyConfig`
+  - Added model `RaiEgressRewriteTarget`
+  - Added model `RaiEgressRule`
+  - Added model `RaiEgressRuleAction`
+  - Added enum `RaiEgressRuleActionType`
+  - Added model `RaiEgressRuleMatch`
+  - Added enum `RaiEgressRuleType`
+  - Added enum `RaiEgressScheme`
+  - Added model `RaiEgressSecretRef`
+
+### Breaking Changes
+
+  - Model `ManagedComputeCapacityProperties` deleted or renamed its instance variable `location`
+
 ## 15.0.0b2 (2026-05-22)
 
 ### Features Added

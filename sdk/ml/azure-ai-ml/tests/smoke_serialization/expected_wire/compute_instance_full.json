@@ -1,0 +1,38 @@
+{
+  "identity": {
+    "type": "SystemAssigned"
+  },
+  "properties": {
+    "computeType": "ComputeInstance",
+    "description": "smoke compute instance",
+    "disableLocalAuth": false,
+    "properties": {
+      "applicationSharingPolicy": "Shared",
+      "computeInstanceAuthorizationType": "personal",
+      "enableNodePublicIp": true,
+      "enableOSPatching": false,
+      "enableRootAccess": true,
+      "enableSSO": true,
+      "idleTimeBeforeShutdown": "PT30M",
+      "releaseQuotaOnStop": false,
+      "setupScripts": {
+        "scripts": {
+          "startupScript": {
+            "scriptArguments": "bash setup.sh",
+            "scriptData": "setup.sh",
+            "scriptSource": "workspaceStorage",
+            "timeout": "10m"
+          }
+        }
+      },
+      "sshSettings": {
+        "adminPublicKey": "ssh-rsa AAAAB3Nz smoke",
+        "sshPublicAccess": "Enabled"
+      },
+      "vmSize": "STANDARD_DS3_V2"
+    }
+  },
+  "tags": {
+    "tag1": "value1"
+  }
+}

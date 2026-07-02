@@ -24,7 +24,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperations(AzureMgmtRecordedTestC
         response = self.client.local_network_gateways.get(
             resource_group_name=resource_group.name,
             local_network_gateway_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperations(AzureMgmtRecordedTestC
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -82,7 +82,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             local_network_gateway_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -94,7 +94,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperations(AzureMgmtRecordedTestC
         response = self.client.local_network_gateways.begin_delete(
             resource_group_name=resource_group.name,
             local_network_gateway_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -105,7 +105,7 @@ class TestNetworkManagementLocalNetworkGatewaysOperations(AzureMgmtRecordedTestC
     def test_local_network_gateways_list(self, resource_group):
         response = self.client.local_network_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
