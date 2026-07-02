@@ -494,6 +494,36 @@ def test_servicebus_received_message_from_bytes_raises_for_invalid_payload():
     assert exc_info.value.__cause__ is not None
 
 
+def test_servicebus_received_message_from_bytes_raises_for_truncated_payload():
+    """Test from_bytes wraps a truncated payload in a chained ValueError.
+
+    A partial read from the Functions host or a corrupted persisted message can
+    truncate a valid payload mid-section. That lands inside the fixed-width struct
+    decoders (e.g. ``_decode_ulong_large``), where ``unpack`` on a short slice raises
+    ``struct.error`` -- which derives from ``Exception``, not from ``IndexError``, so
+    a slice past the buffer end returns a truncated result rather than raising.
+    ``from_bytes`` must still surface a clear chained ``ValueError`` instead of leaking
+    the low-level ``struct.error``.
+    """
+    from azure.servicebus._pyamqp._encode import encode_payload as _encode_payload
+    from azure.servicebus._pyamqp.message import Message as PyamqpMessage, Header, Properties
+
+    original = PyamqpMessage(
+        header=Header(durable=True, priority=4, ttl=30000, delivery_count=1),
+        properties=Properties(message_id="test-message-id-123", content_type=b"application/json"),
+        application_properties={b"custom_prop": b"custom_value"},
+        data=[b"hello world"],
+    )
+    output = bytearray()
+    payload = bytes(_encode_payload(output, original))
+
+    # Cut partway through a fixed-width field so unpack sees a short buffer.
+    truncated = payload[:14]
+    with pytest.raises(ValueError, match="not a valid AMQP") as exc_info:
+        ServiceBusReceivedMessage.from_bytes(truncated)
+    assert exc_info.value.__cause__ is not None
+
+
 def test_servicebus_received_message_from_bytes_preserves_broker_metadata():
     """Test from_bytes preserves broker metadata carried in the payload.
 

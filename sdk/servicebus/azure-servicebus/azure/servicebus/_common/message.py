@@ -9,6 +9,7 @@ from __future__ import annotations
 import time
 import warnings
 import datetime
+import struct
 import uuid
 from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TYPE_CHECKING
 
@@ -850,7 +851,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):  # pylint: disable=too-many-
 
         try:
             amqp_message = decode_payload(memoryview(message))
-        except (ValueError, KeyError, IndexError, TypeError, EOFError) as exc:
+        except (ValueError, KeyError, IndexError, TypeError, EOFError, struct.error) as exc:
             raise ValueError("message is not a valid AMQP 1.0 message payload.") from exc
 
         received_msg = cls(
