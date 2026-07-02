@@ -429,3 +429,19 @@ def test_trim_changelog_azure_mgmt_datafactory_fixture(tmp_path):
     _assert_real_changelog_trim(
         tmp_path, "azure-mgmt-datafactory-10.0.0b1", newest="10.0.0b1", oldest="9.1.0", kept_count=4
     )
+
+
+def test_trim_changelog_azure_mgmt_containerservice_fixture(tmp_path):
+    # Many small entries: the 64 KB target keeps the 15 newest entries (~60 KB), well above the
+    # 4-entry floor and under the 128 KB limit.
+    _assert_real_changelog_trim(
+        tmp_path, "azure-mgmt-containerservice-41.4.0b1", newest="41.4.0b1", oldest="39.1.0", kept_count=15
+    )
+
+
+def test_trim_changelog_azure_mgmt_cosmosdb_fixture(tmp_path):
+    # Many small entries: the 64 KB target keeps the 18 newest entries (~63 KB), well above the
+    # 4-entry floor and under the 128 KB limit.
+    _assert_real_changelog_trim(
+        tmp_path, "azure-mgmt-cosmosdb-10.0.0b6", newest="10.0.0b6", oldest="9.1.0b1", kept_count=18
+    )
