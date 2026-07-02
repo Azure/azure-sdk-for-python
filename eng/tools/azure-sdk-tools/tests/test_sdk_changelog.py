@@ -345,8 +345,11 @@ def test_trim_changelog_preserves_note_when_single_entry(temp_arm_package):
 def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
     # Real-world data: the azure-mgmt-sql 4.0.0 CHANGELOG (~215 KB) must be trimmed under the
     # default 128 KB limit. The 4.0.0 stable entry alone is ~95 KB, so only the newest few
-    # entries fit.
-    fixture = Path(__file__).parent / "data" / "azure-mgmt-sql-4.0.0-CHANGELOG.md"
+    # entries fit. The expected trimmed output is checked in as a fixture for easy review.
+    data_dir = Path(__file__).parent / "data"
+    fixture = data_dir / "azure-mgmt-sql-4.0.0-CHANGELOG.md"
+    expected = (data_dir / "azure-mgmt-sql-4.0.0-CHANGELOG.trimmed.md").read_text(encoding="utf-8")
+
     package_path = tmp_path / "azure-mgmt-sql"
     package_path.mkdir()
     shutil.copy(fixture, package_path / "CHANGELOG.md")
@@ -356,7 +359,8 @@ def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
     assert trimmed is True
     content = (package_path / "CHANGELOG.md").read_text(encoding="utf-8")
 
-    # Result is under the default limit.
+    # Trimmed output matches the checked-in expected fixture exactly and is under the limit.
+    assert content == expected
     assert (package_path / "CHANGELOG.md").stat().st_size <= 128 * 1024
 
     kept = _version_headers(content)
