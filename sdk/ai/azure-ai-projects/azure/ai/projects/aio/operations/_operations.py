@@ -1640,7 +1640,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """Create a session.
 
         Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        from ``version_indicator`` and enforces session ownership using the provided user identity for
         session-mutating operations.
 
         :param agent_name: The name of the agent to create a session for. Required.
@@ -1665,7 +1665,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """Create a session.
 
         Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        from ``version_indicator`` and enforces session ownership using the provided user identity for
         session-mutating operations.
 
         :param agent_name: The name of the agent to create a session for. Required.
@@ -1687,7 +1687,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """Create a session.
 
         Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        from ``version_indicator`` and enforces session ownership using the provided user identity for
         session-mutating operations.
 
         :param agent_name: The name of the agent to create a session for. Required.
@@ -1715,7 +1715,7 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
         """Create a session.
 
         Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        from ``version_indicator`` and enforces session ownership using the provided user identity for
         session-mutating operations.
 
         :param agent_name: The name of the agent to create a session for. Required.

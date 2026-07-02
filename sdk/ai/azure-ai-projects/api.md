@@ -129,6 +129,7 @@ namespace azure.ai.projects.aio.operations
                 content_type: str = "application/json", 
                 definition: AgentDefinition, 
                 description: Optional[str] = ..., 
+                draft: Optional[bool] = ..., 
                 metadata: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
@@ -7642,23 +7643,6 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.ai.projects.models.ReminderPreviewTool(Tool, discriminator='reminder_preview'):
-        description: Optional[str]
-        name: Optional[str]
-        type: Literal[ToolType.REMINDER_PREVIEW]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.ai.projects.models.ReminderPreviewToolboxTool(ToolboxTool, discriminator='reminder_preview'):
         description: str
         name: str
@@ -8780,7 +8764,6 @@ namespace azure.ai.projects.models
         MEMORY_SEARCH_PREVIEW = "memory_search_preview"
         NAMESPACE = "namespace"
         OPENAPI = "openapi"
-        REMINDER_PREVIEW = "reminder_preview"
         SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
         SHELL = "shell"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
@@ -9437,6 +9420,7 @@ namespace azure.ai.projects.operations
                 content_type: str = "application/json", 
                 definition: AgentDefinition, 
                 description: Optional[str] = ..., 
+                draft: Optional[bool] = ..., 
                 metadata: Optional[dict[str, str]] = ..., 
                 **kwargs: Any
             ) -> AgentVersionDetails: ...
