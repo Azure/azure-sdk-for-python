@@ -92,7 +92,9 @@ def _encode(value: str) -> str:
     return _url_quote(value, safe="")
 
 
-def _apply_platform_headers(request: HttpRequest, context: PlatformContext | None) -> None:
+def _apply_platform_headers(
+    request: HttpRequest, context: PlatformContext | None, *, include_call_id: bool = True
+) -> None:
     """Forward the platform identity headers on an outbound storage request.
 
     Per the container storage-protocol spec §4, every request to the Foundry
@@ -103,22 +105,31 @@ def _apply_platform_headers(request: HttpRequest, context: PlatformContext | Non
       so it must be forwarded on every read/write (including background/resilient
       Phase-2 writes and crash recovery, which outlive the request turn).
     - ``x-agent-foundry-call-id`` — the per-request call id (protocol ``2.0.0``
-      only), carrying transient caller-identity context.
+      only), carrying transient caller-identity context. Forwarded only when
+      ``include_call_id`` is True.
 
     Omitting the user id when present causes data to be stored in the wrong
     partition or be inaccessible. (Note: this is storage-specific — the toolbox /
     MCP path forwards only the call id, not the user id.)
 
+    ``include_call_id`` is set False for the Phase-2 ``UpdateResponse`` write: for
+    background/resilient responses that write runs after the client connection
+    (and the call id's active turn) has ended, so a stale call id would be
+    rejected ("does not match an active turn"). The durable ``user_id`` still
+    addresses the correct partition, so the terminal/checkpoint write succeeds.
+
     :param request: The outbound HTTP request to modify.
     :type request: ~azure.core.rest.HttpRequest
     :param context: Platform context containing the identity keys, or ``None``.
     :type context: ~azure.ai.agentserver.responses.PlatformContext | None
+    :keyword include_call_id: Whether to forward the per-request call id.
+    :paramtype include_call_id: bool
     """
     if context is None:
         return
     if context.user_id_key is not None:
         request.headers[USER_ID] = context.user_id_key
-    if context.call_id is not None:
+    if include_call_id and context.call_id is not None:
         request.headers[FOUNDRY_CALL_ID] = context.call_id
 
 
@@ -302,7 +313,11 @@ class FoundryStorageProvider:
         body = serialize_response(response)
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
-        _apply_platform_headers(request, context)
+        # Phase-2 terminal/checkpoint write: forward the durable user id (partition
+        # key) but NOT the per-request call id — for background/resilient responses
+        # this write runs after the call id's active turn ended, so a stale call id
+        # would be rejected. See _apply_platform_headers.
+        _apply_platform_headers(request, context, include_call_id=False)
         await self._send_storage_request(request)
 
     async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:

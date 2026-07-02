@@ -490,10 +490,10 @@ async def test_get_response__sends_platform_headers(credential: Any, settings: F
 
 @pytest.mark.asyncio
 async def test_update_response__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
-    # Storage forwards BOTH the durable user id (partition key) and the call id.
-    # The resilient/background path strips the stale call_id UPSTREAM (at the
-    # resilient dispatch boundary) so Phase-2 writes carry user_id only; the
-    # provider itself forwards whatever the context holds.
+    # Phase-2 terminal/checkpoint write forwards the durable user id (partition
+    # key) but NOT the per-request call id: for background/resilient responses the
+    # write runs after the call id's active turn ended, so a stale call id would be
+    # rejected. The durable user id addresses the correct partition.
     provider = _make_provider(credential, settings, _make_response(200, {}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
@@ -502,7 +502,7 @@ async def test_update_response__sends_platform_headers(credential: Any, settings
 
     request = provider._client.send_request.call_args[0][0]
     assert request.headers[_USER_ID_HEADER] == "u_key_3"  # storage partitions by the durable user id
-    assert request.headers[_CALL_ID_HEADER] == "c_key_3"
+    assert _CALL_ID_HEADER not in request.headers  # call id omitted on the Phase-2 write
 
 
 @pytest.mark.asyncio
