@@ -48,7 +48,7 @@ def is_arm_sdk(package_name: str) -> bool:
 # release, avoiding a churny re-trim of the CHANGELOG on almost every generation. At least
 # CHANGELOG_MIN_KEEP_ENTRIES newest entries are always retained for usefulness (unless even that
 # many entries would exceed the hard size limit, in which case as many as fit are kept).
-CHANGELOG_SIZE_LIMIT_BYTES = 192 * 1024
+CHANGELOG_SIZE_LIMIT_BYTES = 128 * 1024
 CHANGELOG_TRIM_TARGET_BYTES = CHANGELOG_SIZE_LIMIT_BYTES // 2
 CHANGELOG_MIN_KEEP_ENTRIES = 4
 _TRIM_NOTE_PREFIX = "> Changelog entries prior to"

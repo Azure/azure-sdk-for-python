@@ -378,10 +378,10 @@ def test_trim_changelog_preserves_note_when_single_entry(temp_arm_package):
 
 
 def _assert_real_changelog_trim(tmp_path, package_name, newest, oldest, kept_count):
-    # Real-world fixtures (~210 KB) trigger trimming (over the 192 KB limit). Trimming aims for the
-    # 96 KB target but always keeps at least CHANGELOG_MIN_KEEP_ENTRIES (4) newest entries for
-    # usefulness, provided they still fit under the 192 KB hard limit. The expected trimmed output
-    # is checked in for easy review.
+    # Real-world fixtures (~210 KB) trigger trimming (over the 128 KB limit). Trimming aims for the
+    # 64 KB target but always keeps at least CHANGELOG_MIN_KEEP_ENTRIES (4) newest entries for
+    # usefulness -- unless keeping 4 would exceed the 128 KB hard limit, in which case only as many
+    # as fit are kept. The expected trimmed output is checked in for easy review.
     data_dir = Path(__file__).parent / "data"
     fixture = data_dir / f"{package_name}-CHANGELOG.md"
     expected = (data_dir / f"{package_name}-CHANGELOG.trimmed.md").read_text(encoding="utf-8")
@@ -397,15 +397,14 @@ def _assert_real_changelog_trim(tmp_path, package_name, newest, oldest, kept_cou
 
     # Trimmed output matches the checked-in expected fixture exactly.
     assert content == expected
-    # Stays under the 192 KB hard limit. Measure normalized (LF) bytes so the check matches the
+    # Stays under the 128 KB hard limit. Measure normalized (LF) bytes so the check matches the
     # pipeline (Linux) regardless of the local platform's newline translation.
-    assert len(content.encode("utf-8")) <= 192 * 1024
+    assert len(content.encode("utf-8")) <= 128 * 1024
 
     pkg = package_path.name
     kept = _version_headers(content)
-    # At least the 4 newest entries kept; the oldest history is removed completely.
+    # The newest entries are kept; the oldest history is removed completely.
     assert len(kept) == kept_count
-    assert kept_count >= 4
     assert kept[0] == newest
     assert kept[-1] == oldest
     assert (
@@ -415,18 +414,18 @@ def _assert_real_changelog_trim(tmp_path, package_name, newest, oldest, kept_cou
 
 
 def test_trim_changelog_azure_mgmt_sql_fixture(tmp_path):
-    # The 4.0.0 stable entry alone is ~95 KB (~half the limit); min-keep=4 keeps the 4 newest
-    # entries (~138 KB), still under the 192 KB limit.
-    _assert_real_changelog_trim(tmp_path, "azure-mgmt-sql-4.0.0", newest="4.0.0", oldest="4.0.0b23", kept_count=4)
+    # The 4.0.0 stable entry alone is ~95 KB, so keeping the 4-entry minimum (~138 KB) would exceed
+    # the 128 KB limit; the hard-limit cap reduces it to the 3 newest entries (~127 KB).
+    _assert_real_changelog_trim(tmp_path, "azure-mgmt-sql-4.0.0", newest="4.0.0", oldest="4.0.0b24", kept_count=3)
 
 
 def test_trim_changelog_azure_mgmt_network_fixture(tmp_path):
-    # min-keep=4 keeps the 4 newest entries (~121 KB), still under the 192 KB limit.
+    # min-keep=4 keeps the 4 newest entries (~121 KB), still under the 128 KB limit.
     _assert_real_changelog_trim(tmp_path, "azure-mgmt-network-31.0.0", newest="31.0.0", oldest="30.1.0", kept_count=4)
 
 
 def test_trim_changelog_azure_mgmt_datafactory_fixture(tmp_path):
-    # min-keep=4 keeps the 4 newest entries (~90 KB), well under the 192 KB limit.
+    # min-keep=4 keeps the 4 newest entries (~90 KB), well under the 128 KB limit.
     _assert_real_changelog_trim(
         tmp_path, "azure-mgmt-datafactory-10.0.0b1", newest="10.0.0b1", oldest="9.1.0", kept_count=4
     )
