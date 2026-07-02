@@ -14,10 +14,10 @@ from azure.ai.agentserver.activity import ActivityAgentServerHost
 
 @pytest.mark.asyncio
 async def test_provided_activity_id_is_used():
-    async def handle(request):  # pylint: disable=unused-argument
+    async def handle(_request):
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -32,10 +32,10 @@ async def test_provided_activity_id_is_used():
 
 @pytest.mark.asyncio
 async def test_missing_activity_id_generates_uuid():
-    async def handle(request):  # pylint: disable=unused-argument
+    async def handle(_request):
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -48,3 +48,43 @@ async def test_missing_activity_id_generates_uuid():
     activity_id = resp.headers["x-agent-activity-id"]
     # Should be a valid UUID
     uuid.UUID(activity_id)
+
+
+@pytest.mark.asyncio
+async def test_oversized_activity_id_falls_back_to_uuid():
+    async def handle(_request):
+        return JSONResponse({"ok": True})
+
+    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/activity/messages",
+            json={"type": "message", "text": "hi", "id": "x" * 300},
+            headers={"Authorization": "Bearer test-token"},
+        )
+
+    assert resp.status_code == 200
+    activity_id = resp.headers["x-agent-activity-id"]
+    assert len(activity_id) < 300
+    uuid.UUID(activity_id)  # fallback UUID
+
+
+@pytest.mark.asyncio
+async def test_malformed_activity_id_falls_back_to_uuid():
+    async def handle(_request):
+        return JSONResponse({"ok": True})
+
+    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
+        resp = await client.post(
+            "/activity/messages",
+            json={"type": "message", "text": "hi", "id": "id with spaces & <script>"},
+            headers={"Authorization": "Bearer test-token"},
+        )
+
+    assert resp.status_code == 200
+    activity_id = resp.headers["x-agent-activity-id"]
+    assert "<script>" not in activity_id
+    uuid.UUID(activity_id)  # fallback UUID

@@ -12,10 +12,10 @@ from azure.ai.agentserver.activity import ActivityAgentServerHost
 
 @pytest.mark.asyncio
 async def test_upstream_handler_error_is_classified_upstream():
-    async def handle(request):  # pylint: disable=unused-argument
+    async def handle(_request):
         raise RuntimeError("handler bug")
 
-    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -31,12 +31,12 @@ async def test_upstream_handler_error_is_classified_upstream():
 
 @pytest.mark.asyncio
 async def test_platform_tagged_error_is_classified_platform_with_detail():
-    async def handle(request):  # pylint: disable=unused-argument
+    async def handle(_request):
         exc = RuntimeError("platform storage failure")
         setattr(exc, PLATFORM_ERROR_TAG, True)
         raise exc
 
-    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(

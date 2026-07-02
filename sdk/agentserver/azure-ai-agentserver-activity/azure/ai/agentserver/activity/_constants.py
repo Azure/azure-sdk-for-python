@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+"""Activity protocol header name constants."""
+
 from azure.ai.agentserver.core._platform_headers import SESSION_ID as _SESSION_ID  # pylint: disable=import-error,no-name-in-module
 
 

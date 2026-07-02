@@ -20,7 +20,18 @@ the full M365 surface directly on the host)::
 
     app.run()
 
+Injected ``AgentApplication`` usage — host a pre-built M365 ``AgentApplication``
+you constructed yourself (the adapter is taken from ``agent_app.adapter``)::
+
+    from azure.ai.agentserver.activity import ActivityAgentServerHost
+
+    # agent_app: a fully-built microsoft_agents AgentApplication (with an adapter)
+    app = ActivityAgentServerHost.from_agent_application(agent_app)
+    app.run()
+
 Custom handler usage — the M365 SDK is not initialized; you own the pipeline::
+
+    from starlette.responses import Response
 
     from azure.ai.agentserver.activity import ActivityAgentServerHost
 
@@ -29,7 +40,7 @@ Custom handler usage — the M365 SDK is not initialized; you own the pipeline::
         # Custom processing...
         return Response(status_code=202)
 
-    app = ActivityAgentServerHost(handler=handle)
+    app = ActivityAgentServerHost.from_request_handler(handle)
     app.run()
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)

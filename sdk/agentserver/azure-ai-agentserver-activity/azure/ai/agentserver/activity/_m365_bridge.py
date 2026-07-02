@@ -8,9 +8,9 @@ environment variables or caller-supplied components, applies the MSAL auth
 patch for the Foundry digital-worker model, and provides the request handler
 that converts inbound activity dicts into M365 SDK turn processing.
 
-Used internally by :class:`ActivityAgentServerHost` when no custom ``handler``
-is supplied. Callers that pass their own ``handler`` bypass this module
-entirely.
+Used internally by :class:`ActivityAgentServerHost` for its default (build the
+stack) and ``from_agent_application`` construction paths. A host created with
+``from_request_handler`` bypasses this module entirely.
 """
 
 from __future__ import annotations
@@ -42,8 +42,8 @@ def _apply_msal_patches() -> None:
     if getattr(MsalAuth, _PATCH_FLAG, False):
         return
 
-    async def _get_token_via_dac(  # pylint: disable=unused-argument
-        self, tenant_id: str, agent_app_instance_id: str
+    async def _get_token_via_dac(
+        self, _tenant_id: str, agent_app_instance_id: str
     ) -> Optional[str]:
         from azure.identity.aio import DefaultAzureCredential
 
@@ -58,7 +58,8 @@ def _apply_msal_patches() -> None:
             agent_app_instance_id,
         )
 
-        client_id = getattr(self._msal_configuration, "CLIENT_ID", None)  # pylint: disable=protected-access
+        msal_configuration = getattr(self, "_msal_configuration", None)
+        client_id = getattr(msal_configuration, "CLIENT_ID", None)
         credential_kwargs: dict[str, Any] = {
             "identity_config": {"fmi_path": agent_app_instance_id},
         }
@@ -79,7 +80,7 @@ def _apply_msal_patches() -> None:
             try:
                 await credential.close()
             except Exception:  # pylint: disable=broad-exception-caught
-                pass
+                logger.debug("Error closing DefaultAzureCredential", exc_info=True)
 
     MsalAuth.get_agentic_application_token = _get_token_via_dac
     setattr(MsalAuth, _PATCH_FLAG, True)
@@ -115,8 +116,8 @@ def build_m365_app(
     :keyword config: Optional configuration mapping (defaults to
         ``load_configuration_from_env(os.environ)``).
     :keyword agent_app: Optional, fully-built ``AgentApplication`` to use as-is.
-        When supplied, the other component arguments are ignored except
-        ``adapter`` (falls back to ``agent_app.adapter``).
+        When supplied, the other component arguments are rejected and the adapter
+        is taken from ``agent_app.adapter``.
     :return: A tuple of ``(agent_app, adapter)``.
     :rtype: tuple
     :raises ImportError: If the M365 Agents SDK is not installed.
@@ -126,14 +127,35 @@ def build_m365_app(
     if digital_worker:
         _apply_msal_patches()
 
-    # Fast path: a fully-built agent_app was injected. No SDK import is needed
-    # to assemble the default stack.
+    # Fast path: a fully-built agent_app was injected. The other component
+    # arguments do not apply to a pre-built app — reject them explicitly rather
+    # than silently ignoring them. The adapter is taken from agent_app.adapter.
     if agent_app is not None:
-        resolved_adapter = adapter if adapter is not None else getattr(agent_app, "adapter", None)
+        conflicting = [
+            name
+            for name, value in (
+                ("storage", storage),
+                ("connection_manager", connection_manager),
+                ("adapter", adapter),
+                ("authorization", authorization),
+                ("config", config),
+            )
+            if value is not None
+        ]
+        if conflicting:
+            raise ValueError(
+                "agent_app= cannot be combined with: " + ", ".join(conflicting) + ". "
+                "Pass these to build the app, or inject a fully-built agent_app."
+            )
+        try:
+            resolved_adapter = agent_app.adapter
+        except Exception:  # pylint: disable=broad-exception-caught
+            # AgentApplication.adapter raises when it was built without one.
+            resolved_adapter = None
         if resolved_adapter is None:
             raise ValueError(
-                "When injecting agent_app=, also pass adapter= "
-                "(or ensure agent_app.adapter is set)."
+                "The injected AgentApplication has no adapter. Build it with an "
+                "adapter: AgentApplication[TurnState](..., adapter=ADAPTER)."
             )
         return agent_app, resolved_adapter
 
@@ -150,13 +172,25 @@ def build_m365_app(
         )
     except ImportError as exc:
         raise ImportError(
-            "ActivityAgentServerHost requires the M365 Agents SDK when no custom "
-            "handler= is provided. Install: pip install microsoft-agents-hosting-core "
-            "microsoft-agents-authentication-msal microsoft-agents-activity azure-identity"
+            "ActivityAgentServerHost requires the M365 Agents SDK for the default "
+            "and from_agent_application construction paths. Install: pip install "
+            "microsoft-agents-hosting-core microsoft-agents-authentication-msal "
+            "microsoft-agents-activity azure-identity. Alternatively, use "
+            "ActivityAgentServerHost.from_request_handler(...)."
         ) from exc
 
     logger.info("Initializing M365 Agents SDK...")
-    resolved_config = config if config is not None else load_configuration_from_env(os.environ)
+    if config is not None:
+        resolved_config = config
+    else:
+        # This is the only place the host reads connection settings from the
+        # environment, so it is the only path that seeds them. Callers who
+        # supply their own config/connection_manager seed themselves (see
+        # ActivityAgentServerHost.seed_connection_env).
+        from ._activity import ActivityAgentServerHost
+
+        ActivityAgentServerHost.seed_connection_env(digital_worker=digital_worker)
+        resolved_config = load_configuration_from_env(os.environ)
     resolved_storage = storage if storage is not None else MemoryStorage()
     resolved_cm = (
         connection_manager
@@ -187,8 +221,11 @@ def make_bridge_handler(agent_app: Any, adapter: Any, *, digital_worker: bool = 
     """Create a request handler bound to a specific AgentApplication + adapter.
 
     :param agent_app: The M365 ``AgentApplication`` used to process each turn.
+    :type agent_app: ~microsoft_agents.hosting.core.AgentApplication
     :param adapter: The channel adapter used for the outbound turn pipeline.
+    :type adapter: ~microsoft_agents.hosting.core.HttpAdapterBase
     :keyword digital_worker: Selects the claims model for the outbound reply.
+    :paramtype digital_worker: bool
     :return: An async Starlette request handler.
     :rtype: callable
     """
@@ -203,8 +240,11 @@ async def _process_turn(agent_app: Any, adapter: Any, digital_worker: bool, requ
     """Process a single inbound activity through the M365 turn pipeline.
 
     :param agent_app: The bound ``AgentApplication``.
+    :type agent_app: ~microsoft_agents.hosting.core.AgentApplication
     :param adapter: The bound channel adapter.
+    :type adapter: ~microsoft_agents.hosting.core.HttpAdapterBase
     :param digital_worker: Whether to use the digital-worker claims model.
+    :type digital_worker: bool
     :param request: The inbound Starlette request carrying the activity on ``state``.
     :type request: ~starlette.requests.Request
     :return: The HTTP response produced by the M365 turn pipeline.
@@ -229,6 +269,16 @@ async def _process_turn(agent_app: Any, adapter: Any, digital_worker: bool, requ
             content={"error": {"code": "invalid_request", "message": "Activity must have type and conversation.id"}},
         )
 
+    # Without a serviceUrl the adapter cannot build a connector client to deliver
+    # an outbound reply. Accept the activity (202) without attempting a turn,
+    # rather than letting the adapter raise mid-pipeline.
+    if not activity.service_url:
+        logger.warning(
+            "Bridge: accepting activity without serviceUrl (no reply possible) | type=%s",
+            activity_type,
+        )
+        return Response(status_code=202)
+
     if digital_worker:
         # Digital-worker model: anonymous claims; the FMI patch supplies the
         # outbound token via the federated-identity exchange.
@@ -247,16 +297,6 @@ async def _process_turn(agent_app: Any, adapter: Any, digital_worker: bool, requ
     except PermissionError:
         logger.error("Permission denied processing activity | type=%s", activity_type)
         return Response(status_code=401)
-    except TypeError as exc:
-        logger.warning(
-            "TypeError processing activity (likely missing serviceUrl) | type=%s | error=%s",
-            activity_type, exc,
-        )
-        return Response(status_code=202)
-    except Exception:  # pylint: disable=try-except-raise
-        # Re-raise so the outer _create_activity_endpoint can classify
-        # the error and return 500 with proper x-platform-error-source.
-        raise
 
     if activity.type == "invoke" or activity.delivery_mode == "expectReplies":
         if invoke_response is not None:

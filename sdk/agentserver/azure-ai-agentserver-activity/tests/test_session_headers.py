@@ -12,10 +12,10 @@ from azure.ai.agentserver.activity import ActivityAgentServerHost
 
 @pytest.mark.asyncio
 async def test_session_resolution_prefers_query_param():
-    async def handle(request):  # pylint: disable=unused-argument
+    async def handle(_request):
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -30,10 +30,10 @@ async def test_session_resolution_prefers_query_param():
 
 @pytest.mark.asyncio
 async def test_session_resolution_uses_header_when_query_missing():
-    async def handle(request):  # pylint: disable=unused-argument
+    async def handle(_request):
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(

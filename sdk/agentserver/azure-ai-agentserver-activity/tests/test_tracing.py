@@ -9,25 +9,17 @@ from starlette.responses import JSONResponse
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
 
-try:
-    from opentelemetry import trace
-    from opentelemetry.baggage import get_baggage
-    from opentelemetry.propagate import inject
-    from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
-
-    _HAS_OTEL = True
-except ImportError:
-    _HAS_OTEL = False
-
-pytestmark = pytest.mark.skipif(not _HAS_OTEL, reason="opentelemetry not installed")
+# opentelemetry-api is a runtime dependency and opentelemetry-sdk is a test
+# dependency, so both are always importable in the test environment.
+from opentelemetry import trace
+from opentelemetry.baggage import get_baggage
+from opentelemetry.propagate import inject
+from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
 
 
 @pytest.fixture(autouse=True)
 def _ensure_real_tracer_provider():
     """Ensure tests run with a real tracer provider (not no-op)."""
-    if not _HAS_OTEL:
-        return
-
     existing = trace.get_tracer_provider()
     if not hasattr(existing, "add_span_processor"):
         trace.set_tracer_provider(SdkTracerProvider())
@@ -35,13 +27,13 @@ def _ensure_real_tracer_provider():
 
 @pytest.mark.asyncio
 async def test_activity_sets_baggage_values_per_request():
-    async def handle(request):  # pylint: disable=unused-argument
+    async def handle(_request):
         return JSONResponse({
             "session": get_baggage("azure.ai.agentserver.session_id") or "",
             "conversation": get_baggage("azure.ai.agentserver.conversation_id") or "",
         })
 
-    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:
         resp = await client.post(
@@ -62,13 +54,13 @@ async def test_traceparent_is_propagated_to_handler_child_span():
 
     observed = {"trace_id": "", "parent_span_id": ""}
 
-    async def handle(request):  # pylint: disable=unused-argument
+    async def handle(_request):
         with handler_tracer.start_as_current_span("activity_handler_child") as span:
             observed["trace_id"] = format(span.context.trace_id, "032x")
             observed["parent_span_id"] = format(span.parent.span_id, "016x") if span.parent else ""
         return JSONResponse({"ok": True})
 
-    app = ActivityAgentServerHost(handler=handle, configure_observability=None)
+    app = ActivityAgentServerHost.from_request_handler(handle, configure_observability=None)
 
     caller_tracer = trace.get_tracer("test.activity.caller")
     with caller_tracer.start_as_current_span("CallerOperation") as caller_span:

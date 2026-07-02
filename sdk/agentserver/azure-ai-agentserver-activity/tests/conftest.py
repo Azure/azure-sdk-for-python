@@ -20,7 +20,7 @@ async def activity_client():
         activity = request.state.activity
         return JSONResponse({"type": "message", "text": f"echo:{activity.get('text', '')}"})
 
-    app = ActivityAgentServerHost(handler=on_message, configure_observability=None)
+    app = ActivityAgentServerHost.from_request_handler(on_message, configure_observability=None)
 
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://testserver") as client:

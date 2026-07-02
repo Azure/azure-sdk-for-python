@@ -1,20 +1,18 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-"""Self-Hosted Activity Agent - Full M365 SDK Control.
+"""Self-Hosted Activity Agent - build the M365 AgentApplication yourself.
 
-The developer owns the full M365 Agents SDK pipeline (``MsalConnectionManager``,
-``HttpAdapterBase``, ``AgentApplication``) and passes a custom ``handler`` to the
-host.
+The developer constructs the full M365 Agents SDK stack (``MsalConnectionManager``,
+``HttpAdapterBase``, ``AgentApplication``) and hands the pre-built app to the host
+via :meth:`ActivityAgentServerHost.from_agent_application`. The host drives it
+through the Foundry activity turn pipeline (claims, parsing, delivery) for you.
 
-Use this pattern when you need:
-- Direct access to M365 SDK features (auth_handlers, regex message matching)
-- Custom error handling or response logic
-- Full control over the activity processing pipeline
+Use this pattern when you need full control over how the ``AgentApplication`` is
+built (custom storage / connection manager / authorization) but still want the
+Activity-protocol host to run it.
 """
 
 from os import environ
-
-from starlette.responses import JSONResponse, Response
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
 
@@ -23,13 +21,17 @@ from microsoft_agents.authentication.msal import MsalConnectionManager
 from microsoft_agents.hosting.core import (
     AgentApplication,
     Authorization,
-    ClaimsIdentity,
     HttpAdapterBase,
     MemoryStorage,
     RestChannelServiceClientFactory,
     TurnContext,
     TurnState,
 )
+
+# Seed the CONNECTIONS__* env the M365 connection manager needs before building
+# it (the default host constructor does this for you; here we build the stack
+# ourselves, so we call the helper first).
+ActivityAgentServerHost.seed_connection_env()
 
 # M365 SDK setup
 config = load_configuration_from_env(environ)
@@ -71,40 +73,9 @@ async def on_error(context: TurnContext, error: Exception):
     await context.send_activity("The agent encountered an error.")
 
 
-# ── Foundry host with custom handler ─────────────────────────────
+# ── Foundry host with the pre-built AgentApplication ─────────────
 
-async def handle(request) -> Response:
-    """Bridge to M365 SDK - parses activity and delegates to agent_app."""
-    activity_dict = request.state.activity
-
-    activity = Activity.model_validate(activity_dict)
-
-    if not activity.type or not activity.conversation or not activity.conversation.id:
-        return JSONResponse(
-            status_code=400,
-            content={"error": {"code": "invalid_request", "message": "Missing type or conversation.id"}},
-        )
-
-    claims = ClaimsIdentity({}, is_authenticated=False, authentication_type="Anonymous")
-
-    try:
-        invoke_response = await adapter.process_activity(claims, activity, agent_app.on_turn)
-    except PermissionError:
-        return Response(status_code=401)
-    except TypeError:
-        return Response(status_code=202)
-    except Exception:
-        return Response(status_code=202)
-
-    if activity.type == "invoke" or activity.delivery_mode == "expectReplies":
-        if invoke_response is not None:
-            return JSONResponse(content=invoke_response.body, status_code=invoke_response.status)
-        return JSONResponse(content={}, status_code=200)
-
-    return Response(status_code=202)
-
-
-app = ActivityAgentServerHost(handler=handle)
+app = ActivityAgentServerHost.from_agent_application(agent_app)
 
 if __name__ == "__main__":
     app.run()
