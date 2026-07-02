@@ -250,8 +250,8 @@ async def _process_turn(agent_app: Any, adapter: Any, digital_worker: bool, requ
     :return: The HTTP response produced by the M365 turn pipeline.
     :rtype: ~starlette.responses.Response
     """
-    from microsoft_agents.activity import Activity
-    from microsoft_agents.hosting.core import ClaimsIdentity
+    from microsoft_agents.activity import Activity  # pylint: disable=import-error,no-name-in-module
+    from microsoft_agents.hosting.core import ClaimsIdentity  # pylint: disable=import-error,no-name-in-module
 
     activity_dict = request.state.activity
     activity_type = activity_dict.get("type", "unknown")
