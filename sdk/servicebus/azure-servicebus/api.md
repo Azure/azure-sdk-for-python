@@ -302,7 +302,6 @@ namespace azure.servicebus
         @classmethod
         def from_bytes(cls, message: bytes) -> ServiceBusReceivedMessage: ...
 
-
     class azure.servicebus.ServiceBusReceiver(BaseHandler, ReceiverMixin): implements ContextManager , Iterator 
         property client_identifier: str    # Read-only
         property session: ServiceBusSession    # Read-only
