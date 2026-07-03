@@ -3024,7 +3024,7 @@ On `TaskManager.startup()`:
      c. If lease.owner == self.owner AND lease.instance_id == self.instance_id:
         skip (would be impossible in a fresh process; defensive).
      d. Otherwise (same-owner different-instance OR expired):
-        — Call self._steering_cleanup_orphan_attachments(task_info)
+        — Call self.steering_cleanup_orphan_attachments(task_info)
           (§58) to clean up any orphan steering_input_* attachments
           left by a partial crash.
         — Call self._reclaim_one(task_info) — PATCH lease to self
@@ -3173,7 +3173,7 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
       steering['active_input'] as the source of truth for the input,
       via the race-recovery contract.
       No output co-clear is needed — the framework does not write
-      payload['output'] / _output attachments on any transition.]
+      payload['output'] / output attachments on any transition.]
 
 Phase 2 — Handler re-entry (in-memory only):
  15. Construct a fresh TaskContext with:
@@ -3264,7 +3264,7 @@ Properties this guarantees:
   the chain enters its next turn; replay-after-crash returns to the
   handler with no output replay path.
 - **Atomic input + steering + attachment clears.** Single PATCH
-  carries the `input` clear, the `_steering.active_input` clear, the
+  carries the `input` clear, the `steering.active_input` clear, the
   `retry_attempt` reset, AND the deletion of the promoted `input`
   attachment (when applicable). There is no crash window where the
   attachment exists without its ref or vice-versa.
@@ -3663,7 +3663,7 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   every turn-start boundary (fresh, resumed, drain re-entry — Phase 1
   of §52). It MUST NOT be re-stamped on crash recovery.
 - **C-TMO-3.** Recovered watchdog MUST compute
-  `remaining = max(0, timeout - (now - _turn_started_at))` and
+  `remaining = max(0, timeout - (now - turn_started_at))` and
   fire immediately if elapsed.
 - **C-TMO-4.** Clock skew MUST be clamped to `[0, timeout]` in
   both directions.
@@ -4173,17 +4173,19 @@ metadata namespaces are populated, framework state slots are set.
     "expiry_count": 0
   },
 
-  "tags":   { "_task_name": "deep_research" },
+  "tags":   { "task_name": "deep_research" },
   "source": {
-    "type":           "agentserver.task",
-    "name":           "deep_research",
-    "server_version": "azure-ai-agentserver-core/2.0.0b6 (python/3.12)"
+    "type":                "agentserver.task",
+    "name":                "deep_research",
+    "server_version":      "azure-ai-agentserver-core/2.0.0b6 (python/3.12)",
+    "hosting_environment": "AzureFoundry"
   },
 
   "payload": {
+    "schema_version": "1",
     "input": {
       "__attachment_ref__": {
-        "key":  "_input",
+        "key":  "input",
         "hash": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       }
     },
@@ -4202,7 +4204,7 @@ metadata namespaces are populated, framework state slots are set.
       "turn_count": 5
     },
 
-    "_steering": {
+    "steering": {
       "pending_inputs": [
         "Quick note: prioritise post-2024 papers",
         {
@@ -4224,13 +4226,13 @@ metadata namespaces are populated, framework state slots are set.
       "active_input":      null
     },
 
-    "_turn_started_at": "2026-06-09T03:50:00.000Z",
-    "_retry_attempt":   0,
-    "_last_input_id":   "msg_abc123"
+    "turn_started_at": "2026-06-09T03:50:00.000Z",
+    "retry_attempt":   0,
+    "last_input_id":   "msg_abc123"
   },
 
   "attachments": {
-    "_input": {
+    "input": {
       "topic":   "deep learning trends 2026",
       "depth":   "comprehensive",
       "context": "<~800 KB of caller-supplied reference material>"
@@ -4261,11 +4263,11 @@ What this single document demonstrates:
 |---|---|
 | Status, identity, timestamps | top-level fields |
 | Lease (§22) | `lease.owner`, `lease.instance_id`, `lease.generation` |
-| Framework-stamped routing (§21) | `tags._task_name`, `source.name` |
-| Input promoted to attachment (§23) | `payload.input` is a ref; `attachments._input` holds the value |
+| Framework-stamped routing (§21) | `tags.task_name`, `source.name` |
+| Input promoted to attachment (§23) | `payload.input` is a ref; `attachments.input` holds the value |
 | Multiple metadata namespaces (§17) | `payload.metadata` + `payload["metadata:session"]` |
-| Steering queue with mixed shapes (§12, §23) | `_steering.pending_inputs[0]` inline; `[1]`, `[2]` refs |
-| Monotonic seq invariant (§23.5) | `next_input_seq: 5` with live keys `_3` + `_4` — one drain consumed `_0`/`_1`/`_2`, no renumbering |
+| Steering queue with mixed shapes (§12, §23) | `steering.pending_inputs[0]` inline; `[1]`, `[2]` refs |
+| Monotonic seq invariant (§23.5) | `next_input_seq: 5` with live keys `steering_input_3` + `steering_input_4` — one drain consumed `steering_input_0/1/2`, no renumbering |
 | Steering mechanism state (§12) | `cancel_requested`, `drain_in_progress`, `active_input` |
 | Per-turn watchdog source of truth (§14) | `turn_started_at` |
 | Resilient retry counter (§15) | `retry_attempt` |
@@ -4312,7 +4314,7 @@ Caller A                Framework                Caller B              Handler
    │                            Phase 1 PATCH: pop B,                 │
    │                            delete steering_input_<seq>,         │
    │                            drain_in_progress=true,               │
-   │                            _turn_started_at refreshed            │
+   │                            turn_started_at refreshed            │
    │                            ↓                                     │
    │                            build new ctx,                        │
    │                            entry_mode=resumed,                   │
@@ -4325,7 +4327,7 @@ Caller A                Framework                Caller B              Handler
    │                                                                  │  → return Y
    │                       _handle_suspend(): write suspended,        │
    │                       clear active_input, clear input,           │
-   │                       delete _input attachment if ref            │
+   │                       delete input attachment if ref            │
    │                                            ─────▶ B's future     │
    │                                                  await run.result()
    │                                                    → Y
