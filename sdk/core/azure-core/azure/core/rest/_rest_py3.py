@@ -161,12 +161,15 @@ class HttpRequest(HttpRequestBackcompatMixin):
         if files:
             default_headers, self._files = set_multipart_body(files)
         if data:
-            # Treat the payload as multipart when explicitly requested, so a multipart
-            # request whose only file part is optional (and omitted) is not encoded as
-            # application/x-www-form-urlencoded.
-            default_headers, self._data = set_urlencoded_body(
-                data, has_files=bool(files) or is_multipart_payload
-            )
+            if is_multipart_payload and not files:
+                # A multipart payload whose only file part is optional (and omitted) must
+                # still be sent as multipart/form-data, not application/x-www-form-urlencoded.
+                # Transports build the multipart body from `files`, so encode the form
+                # fields as file-less parts (name, (None, value)) instead of url-encoding them.
+                default_headers, self._files = set_multipart_body(data)
+                self._data = None
+            else:
+                default_headers, self._data = set_urlencoded_body(data, has_files=bool(files))
         return default_headers
 
     @property

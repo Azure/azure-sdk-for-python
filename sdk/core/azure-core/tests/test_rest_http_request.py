@@ -91,6 +91,8 @@ def test_url_encoded_data():
 def test_multipart_data_without_files():
     # A multipart payload whose file part is optional (and omitted) still must be sent
     # as multipart, not application/x-www-form-urlencoded. See issue #39163.
+    # The transports build a multipart body from `files`, so the form fields are encoded
+    # as file-less parts and `data` is cleared.
     request = HttpRequest(
         "POST",
         "http://example.org",
@@ -99,7 +101,8 @@ def test_multipart_data_without_files():
     )
 
     assert "Content-Type" not in request.headers
-    assert request.content == {"test": "123"}
+    assert request.files == {"test": (None, "123")}
+    assert request.data is None
 
 
 def test_url_encoded_data_when_not_multipart():
