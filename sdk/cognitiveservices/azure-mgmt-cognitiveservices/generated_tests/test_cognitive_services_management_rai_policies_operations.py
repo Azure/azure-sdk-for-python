@@ -54,6 +54,34 @@ class TestCognitiveServicesManagementRaiPoliciesOperations(AzureMgmtRecordedTest
                         }
                     ],
                     "customBlocklists": [{"blocking": bool, "blocklistName": "str", "source": "str"}],
+                    "egressPolicy": {
+                        "defaultAction": "str",
+                        "description": "str",
+                        "mode": "str",
+                        "rules": [
+                            {
+                                "action": {
+                                    "actionType": "str",
+                                    "headers": [
+                                        {
+                                            "name": "str",
+                                            "operation": "str",
+                                            "value": "str",
+                                            "valueRef": {
+                                                "managedIdentityRef": {"resource": "str", "format": "str"},
+                                                "secretRef": {"secretId": "str", "format": "str", "secretKey": "str"},
+                                            },
+                                        }
+                                    ],
+                                    "rewrite": {"host": "str", "path": "str", "scheme": "str"},
+                                },
+                                "name": "str",
+                                "ruleType": "str",
+                                "description": "str",
+                                "match": {"host": "str", "path": "str"},
+                            }
+                        ],
+                    },
                     "mode": "str",
                     "safetyProviders": [{"blocking": bool, "safetyProviderName": "str", "source": "str"}],
                     "type": "str",

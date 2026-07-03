@@ -46,6 +46,7 @@ def main():
                     {"args": "RETENTION_POLICY 20", "name": "RedisTimeSeries"},
                     {"name": "RediSearch"},
                 ],
+                "notifyKeyspaceEvents": "KEA",
                 "persistence": {"aofEnabled": True, "aofFrequency": "1s"},
                 "port": 10000,
             }
@@ -54,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01-preview/RedisEnterpriseDatabasesCreate.json
+# x-ms-original-file: 2026-02-01-preview/RedisEnterpriseDatabasesCreate.json
 if __name__ == "__main__":
     main()

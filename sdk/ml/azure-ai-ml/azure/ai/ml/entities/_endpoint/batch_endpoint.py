@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpoint as BatchEndpointData
+from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpointDefaults as RestBatchEndpointDefaults
 from azure.ai.ml._restclient.arm_ml_service.models import BatchEndpointProperties as RestBatchEndpoint
 from azure.ai.ml._schema._endpoint import BatchEndpointSchema
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_camel
@@ -80,16 +81,30 @@ class BatchEndpoint(Endpoint):
 
     def _to_rest_batch_endpoint(self, location: str) -> BatchEndpointData:
         validate_endpoint_or_deployment_name(self.name)
+        defaults: Optional[RestBatchEndpointDefaults] = None
+        if isinstance(self.defaults, RestBatchEndpointDefaults):
+            defaults = self.defaults
+        elif isinstance(self.defaults, dict) and self.defaults:
+            normalized_defaults = {camel_to_snake(k) or k: v for k, v in self.defaults.items()}
+            defaults = RestBatchEndpointDefaults(**normalized_defaults)
         batch_endpoint = RestBatchEndpoint(
             description=self.description,
             auth_mode=snake_to_camel(self.auth_mode),
             properties=self.properties,
-            defaults=self.defaults,
+            defaults=defaults,
         )
         return BatchEndpointData(location=location, tags=self.tags, properties=batch_endpoint)
 
     @classmethod
     def _from_rest_object(cls, obj: BatchEndpointData) -> "BatchEndpoint":
+        defaults: Optional[Dict[str, str]] = None
+        rest_defaults = obj.properties.defaults
+        if isinstance(rest_defaults, RestBatchEndpointDefaults):
+            if rest_defaults.deployment_name is not None:
+                defaults = {"deployment_name": rest_defaults.deployment_name}
+        elif isinstance(rest_defaults, dict):
+            defaults = dict(rest_defaults) if rest_defaults else None
+
         return BatchEndpoint(
             id=obj.id,
             name=obj.name,
@@ -98,7 +113,7 @@ class BatchEndpoint(Endpoint):
             auth_mode=camel_to_snake(obj.properties.auth_mode),
             description=obj.properties.description,
             location=obj.location,
-            defaults=obj.properties.defaults,
+            defaults=defaults,
             provisioning_state=obj.properties.provisioning_state,
             scoring_uri=obj.properties.scoring_uri,
             openapi_uri=obj.properties.swagger_uri,

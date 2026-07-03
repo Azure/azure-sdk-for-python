@@ -139,5 +139,5 @@
         "azure.mgmt.resource.resources.operations.ProviderResourceTypesOperations.list": "Microsoft.Resources.ProviderResourceTypesOperationGroup.list",
         "azure.mgmt.resource.resources.aio.operations.ProviderResourceTypesOperations.list": "Microsoft.Resources.ProviderResourceTypesOperationGroup.list"
     },
-    "CrossLanguageVersion": "973c3b884529"
+    "CrossLanguageVersion": "27113ddeec4c"
 }
