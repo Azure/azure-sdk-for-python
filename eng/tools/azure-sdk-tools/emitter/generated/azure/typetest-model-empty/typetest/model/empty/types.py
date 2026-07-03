@@ -15,7 +15,3 @@ class EmptyInput(TypedDict, total=False):
 
 class EmptyInputOutput(TypedDict, total=False):
     """Empty model used in both parameter and return type."""
-
-
-class EmptyOutput(TypedDict, total=False):
-    """Empty model used in operation return type."""

@@ -90,20 +90,4 @@ class Sparrow(TypedDict, total=False):
     """Required. Default value is \"sparrow\"."""
 
 
-class TRex(TypedDict, total=False):
-    """The second level legacy model in polymorphic single level inheritance.
-
-    :ivar size: Required.
-    :vartype size: int
-    :ivar kind: Required. Default value is "t-rex".
-    :vartype kind: Literal["t-rex"]
-    """
-
-    size: Required[int]
-    """Required."""
-    kind: Required[Literal["t-rex"]]
-    """Required. Default value is \"t-rex\"."""
-
-
 Bird = Union[Eagle, Goose, SeaGull, Sparrow]
-Dinosaur = Union[TRex]
