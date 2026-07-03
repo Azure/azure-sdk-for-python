@@ -479,8 +479,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :return: The storage provider instance.
         :rtype: TaskProvider
         """
-        import os  # pylint: disable=import-outside-toplevel
-
         backend_override = os.environ.get("AGENTSERVER_TASKS_BACKEND", "").strip().lower()
         if backend_override and backend_override not in ("local", "hosted"):
             raise ValueError(f"AGENTSERVER_TASKS_BACKEND must be 'local' or 'hosted' (got {backend_override!r})")
@@ -561,7 +559,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         """List tasks scoped to a specific task function.
 
         Uses server-side filtering (``agent_name``, ``session_id``,
-        ``_task_name`` tag, ``status``, ``source_type``) to return only
+        ``task_name`` tag, ``status``, ``source_type``) to return only
         tasks created by this framework for the given function.
 
         :keyword fn_name: The task function name (stable identity anchor).
@@ -2945,6 +2943,36 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             ),
         )
 
+    async def _delete_if_pre_schema_legacy(self, task_info: TaskInfo) -> bool:
+        """Delete a pre-Spec-038 legacy task; return True if deleted.
+
+        A task created before the schema-version stamp lacks
+        ``payload.schema_version`` entirely. These are pre-release
+        internal-experimentation records with the old wire schema
+        (underscore-prefixed keys, old task-id format) that cannot be recovered;
+        the one-time cleanup deletes them instead of re-invoking. This is NOT a
+        standing version-mismatch rule — forward migration is out of scope. The
+        recovery scan is already scoped to ``source_type``, so only our tasks are
+        eligible; another caller's tasks are never touched.
+
+        :param task_info: The stale task under consideration.
+        :type task_info: TaskInfo
+        :return: True if the task was a pre-schema legacy record and was deleted.
+        :rtype: bool
+        """
+        if _SCHEMA_VERSION_KEY in (task_info.payload or {}):
+            return False
+        logger.info(
+            "Deleting pre-schema legacy task %s (no payload.%s)",
+            task_info.id,
+            _SCHEMA_VERSION_KEY,
+        )
+        try:
+            await self._provider.delete(task_info.id, force=True)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.warning("Legacy task cleanup delete failed for %s", task_info.id, exc_info=True)
+        return True
+
     async def _recover_stale_tasks(self) -> None:
         """Recover stale in-progress tasks from previous instances."""
         agent_name = self._config.agent_name or "default"
@@ -2972,28 +3000,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             if task_info.id in self._active_tasks:
                 continue
 
-            # (Spec 038) One-time legacy cleanup: a task created before the
-            # schema-version stamp lacks payload.schema_version entirely. These
-            # are pre-release internal-experimentation records with the old wire
-            # schema (underscore-prefixed keys, old task-id format) that we
-            # cannot recover; delete them instead of re-invoking. NOT a standing
-            # version-mismatch rule — forward v1->v2 migration is out of scope.
-            # The scan is already scoped to source_type, so only our tasks are
-            # eligible; we never touch another caller's tasks.
-            if _SCHEMA_VERSION_KEY not in (task_info.payload or {}):
-                logger.info(
-                    "Deleting pre-schema legacy task %s (no payload.%s)",
-                    task_info.id,
-                    _SCHEMA_VERSION_KEY,
-                )
-                try:
-                    await self._provider.delete(task_info.id, force=True)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning(
-                        "Legacy task cleanup delete failed for %s",
-                        task_info.id,
-                        exc_info=True,
-                    )
+            # (Spec 038) One-time legacy cleanup: delete pre-schema tasks
+            # (no payload.schema_version) instead of recovering them.
+            if await self._delete_if_pre_schema_legacy(task_info):
                 continue
 
             #  — opportunistic orphan attachment cleanup. If a prior
