@@ -1,12 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Spec 013 US3 + Spec 036 — `conversation_chain_id` on ResponseContext.
+"""Spec 013 US3 + Spec 036 + Spec 038 — `conversation_chain_id` on ResponseContext.
 
-The chain id is the stable, agent/session-scoped hash of the partition key
-embedded in a chain's response IDs. Because chained response IDs all inherit one
-partition key, every turn resolves to the SAME chain id — the property the
-earlier raw-``previous_response_id`` derivation failed to provide. ``task_id`` is
-the same hash with a fixed prefix.
+The chain id is the stable, agent/session-scoped identity of a conversation
+chain. Since Spec 038 it follows the native IdGenerator convention
+(``cchain_…`` / ``rchain_…``), or is the ``response_id`` verbatim for a
+non-steerable one-shot. Because chained response IDs all inherit one partition
+key, every turn of a chain resolves to the SAME chain id, and
+``task_id == conversation_chain_id`` exactly.
 """
 
 from __future__ import annotations
@@ -109,16 +110,62 @@ def test_chain_id_property_matches_helper() -> None:
     )
 
 
-def test_chain_id_is_opaque_hex() -> None:
-    """The chain id is a fixed-length lowercase hex digest (opaque)."""
-    cid = _make_context(response_id="resp-1").conversation_chain_id
-    assert len(cid) == 32
-    assert all(c in "0123456789abcdef" for c in cid)
+def test_chain_id_native_format_conv_and_resp() -> None:
+    """Chain ids follow the native IdGenerator convention.
+
+    Conversation → ``cchain_{18-char pkey}{32-char scope}``; steerable →
+    ``rchain_…``; both are ~56 chars and within the Task API charset.
+    """
+    import re
+
+    conv_cid = _make_context(response_id="r-1", conversation_id="conv-X").conversation_chain_id
+    resp_cid = _make_context(response_id=IdGenerator.new_response_id("")).conversation_chain_id
+    for cid, prefix in ((conv_cid, "cchain_"), (resp_cid, "rchain_")):
+        assert cid.startswith(prefix)
+        assert len(cid) == len(prefix) + 18 + 32
+        assert re.fullmatch(r"[A-Za-z0-9_-]{1,128}", cid)
 
 
-def test_task_id_is_prefixed_chain_id() -> None:
-    """task_id == 'resilient-resp-' + conversation_chain_id (one shared identity)."""
+def test_chain_id_case3_is_response_id_verbatim() -> None:
+    """Non-steerable (no conversation_id) → the chain id IS the response id."""
+    rid = IdGenerator.new_response_id("")
+    cid = _make_context(response_id=rid, steerable=False).conversation_chain_id
+    assert cid == rid
+
+
+def test_task_id_equals_chain_id() -> None:
+    """task_id == conversation_chain_id (one shared identity; no wrapper)."""
     kw = dict(conversation_id=None, previous_response_id="resp-0", response_id="resp-1", steerable=True)
     chain = _chain_id(**kw)
     task = derive_task_id(agent_name=_AGENT, session_id=_SESSION, **kw)
-    assert task == f"resilient-resp-{chain}"
+    assert task == chain
+
+
+def test_task_id_within_task_api_limits() -> None:
+    """Every case stays within ``^[a-zA-Z0-9_-]{1,128}$`` — incl. a 63-char
+    agent_name, a 128-char session_id, and a full 57-char response_id fork."""
+    import re
+
+    long_agent = "a" * 63
+    long_session = "s" * 128
+    full_resp = IdGenerator.new_response_id("")
+    cases = [
+        dict(conversation_id="conv-1", previous_response_id=None, response_id="r", steerable=True),
+        dict(conversation_id=None, previous_response_id=None, response_id=full_resp, steerable=True),
+        dict(conversation_id=None, previous_response_id=None, response_id=full_resp, steerable=False),
+    ]
+    for kw in cases:
+        tid = derive_task_id(agent_name=long_agent, session_id=long_session, **kw)
+        assert 1 <= len(tid) <= 128
+        assert re.fullmatch(r"[A-Za-z0-9_-]{1,128}", tid)
+
+
+def test_chain_id_steered_turn_shares_first_turn() -> None:
+    """A steered turn (previous_response_id = turn 1) attaches to turn 1's id."""
+    turn1_resp = IdGenerator.new_response_id("")
+    turn1 = _make_context(response_id=turn1_resp).conversation_chain_id
+    turn2 = _make_context(
+        response_id=IdGenerator.new_response_id(turn1_resp),
+        previous_response_id=turn1_resp,
+    ).conversation_chain_id
+    assert turn1 == turn2

@@ -241,8 +241,8 @@ class TestTaskIdRealChain:
         )
         assert id_a != id_b
 
-    def test_task_id_is_prefixed_chain_id(self) -> None:
-        """task_id == 'resilient-resp-' + conversation_chain_id."""
+    def test_task_id_equals_chain_id(self) -> None:
+        """task_id == conversation_chain_id (one shared identity; no wrapper)."""
         kw = dict(
             conversation_id=None,
             previous_response_id=IdGenerator.new_response_id(""),
@@ -253,4 +253,4 @@ class TestTaskIdRealChain:
         )
         chain = derive_conversation_chain_id(**kw)
         task = derive_task_id(**kw)
-        assert task == f"resilient-resp-{chain}"
+        assert task == chain

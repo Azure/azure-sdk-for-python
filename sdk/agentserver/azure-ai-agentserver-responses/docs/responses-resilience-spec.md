@@ -195,29 +195,38 @@ response ID is generated it inherits the partition key of its
 carries the *same* embedded partition key. Extracting it therefore yields a
 value that is stable across every turn of the chain.
 
-The chain id is the agent/session-scoped hash of that partition. The partition
-source is selected in priority order:
+Since Spec 038 the chain id is a **native IdGenerator-convention id** — the
+prefix acts as the discriminator, the embedded partition key co-locates the
+chain with its responses, and a deterministic `(agent, session)` scope fills the
+"entropy" slot. `task_id == conversation_chain_id` exactly (no wrapper prefix).
+The three cases:
 
-1. If the request supplies `conversation_id`, use its embedded partition key
-   (or `conversation_id` itself when it is not in ID format).
-2. Else if `steerable_conversations=true`, use the partition key embedded in
-   `previous_response_id` (or in `response_id` on the first turn). Because
-   chained response IDs share one partition key, every turn resolves to the
-   same value.
-3. Else (non-steerable, or no chain), use the **full** `response_id` — so each
-   concurrent fork keeps a distinct identity.
+1. `conversation_id` present → `cchain_{partition(conversation_id)}{scope}`
+   (partition extracted from the id, or derived deterministically when it is not
+   in ID format).
+2. Else if `steerable_conversations=true` →
+   `rchain_{partition(previous_response_id or response_id)}{scope}`. Because
+   chained response IDs share one partition key, every turn resolves to the same
+   id.
+3. Else (non-steerable, or no chain) → the **`response_id` verbatim** — already
+   globally unique + native, so each request stands alone.
 
 ```
-discriminator, partition = chain_partition(...)   # discriminator ∈ {conv, chain, fork, resp}
-composite = "{agent_name}:{session_id}:{discriminator}:{partition}"
-chain_id  = sha256(composite).hex()[:32]
+scope   = det_alnum32("{agent_name}\x1f{session_id}")   # 32 alnum, deterministic
+case 1  = "cchain_" + partition_key(conversation_id)        + scope
+case 2  = "rchain_" + partition_key(prev_resp or response)  + scope
+case 3  = response_id
 ```
 
-The `agent_name` / `session_id` salt prevents cross-agent and cross-session
-collisions; the `discriminator` namespaces the partition by source type so a
-client-supplied `conversation_id` cannot collide with an extracted partition
-key or a response id. This rule is normative; a port MUST exhibit the same
-priority order and the same steerable / non-steerable disambiguation.
+`scope` is a deterministic 32-char alnum digest; `agent_name` (DNS-style ≤63) and
+`session_id` (any string ≤128) are hashed because they are too long/arbitrary to
+embed. The constrained field is placed first (`agent_name` cannot contain the
+`\x1f` separator), so `(agent, session)` encodes injectively even when
+`session_id` contains arbitrary bytes. The prefix (`cchain_` vs `rchain_` vs the
+response's own `caresp_`) namespaces the two chain kinds so they never collide.
+This rule is normative; a port MUST exhibit the same priority order and the same
+steerable / non-steerable disambiguation. The id stays within the Public Task
+API charset/limit (`^[a-zA-Z0-9_-]{1,128}$`).
 
 ### §4.2 — The `task_id`
 

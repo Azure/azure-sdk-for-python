@@ -1,98 +1,119 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Conversation chain identity.
+"""Conversation chain identity (Spec 038 — native per-case ids).
 
-A conversation's stable identity is the *partition key* embedded in its response
-IDs. IDs have the shape ``{prefix}_{partitionKey}{entropy}``; when a response ID
-is generated it inherits the partition key of its ``previous_response_id`` /
-``conversation_id`` hint (see
-:class:`~azure.ai.agentserver.responses._id_generator.IdGenerator`). So every
-response in a chain carries the *same* embedded partition key, and extracting it
-yields a value that is stable across every turn of the chain.
+The resilient ``task_id`` that backs a response must be **shared** across every
+turn of one conversation chain (so a later / steered turn attaches to the same
+in-flight suspendable task) and **distinct** across unrelated requests. What
+counts as "one chain" is the per-request matrix, giving three cases:
 
-:func:`derive_conversation_chain_id` is the foundational concept here — the
-agent/session-scoped hash of that partition, exposed to handlers as
-``ResponseContext.conversation_chain_id`` and reused (with a fixed prefix) as the
-resilient task id. See :mod:`._task_id`.
+1. ``conversation_id`` present → the chain is the conversation.
+2. steerable, no ``conversation_id`` → the chain is the ``previous_response_id``
+   linkage (chained response ids share one partition key).
+3. everything else → one-shot; each request stands alone.
 
-Known limitation: the chain identity is derived from framework-generated IDs. A
-client that supplies its own ``response_id`` (via the ``x-agent-response-id``
-header or an explicit request field) carrying a mismatched embedded partition can
-shift the chain identity for subsequent turns.
+The id follows the system's :class:`~azure.ai.agentserver.responses._id_generator.IdGenerator`
+convention (``{prefix}_{partitionKey}{trailer}``) so it looks native and embeds
+the chain's partition key for co-location:
+
+* case 1 → ``cchain_{partition(conversation_id)}{scope}``
+* case 2 → ``rchain_{partition(previous_response_id or response_id)}{scope}``
+* case 3 → the ``response_id`` verbatim (already globally unique + native).
+
+``scope`` is a deterministic 32-char alnum digest of ``agent_name`` +
+``session_id`` (both are too long / too arbitrary to embed — ``agent_name`` is
+DNS-style ≤63 chars, ``session_id`` is any string ≤128 chars — so they are
+hashed). The digest fills the native "entropy" slot; because ``agent_name``
+cannot contain the ``\\x1f`` separator, the ``(agent, session)`` pair encodes
+injectively even when ``session_id`` contains arbitrary bytes.
+
+``task_id == conversation_chain_id`` in all three cases, so the resilient task
+and the handler-facing chain identity can never drift.
+
+Known limitation: the chain identity is derived from framework-generated ids. A
+client that supplies its own ``response_id`` / ``conversation_id`` carrying a
+mismatched embedded partition can shift the chain identity for subsequent turns.
 """
 
 from __future__ import annotations
 
+import base64
 import hashlib
 
 from .._id_generator import IdGenerator
 
-#: Length of the hex digest used for the chain id (and therefore the task id).
-_CHAIN_ID_HEX_LENGTH = 32
+#: Prefix for a conversation-scoped chain id (native IdGenerator convention).
+_CONV_CHAIN_PREFIX = "cchain"
+#: Prefix for a steerable response-linkage chain id.
+_RESP_CHAIN_PREFIX = "rchain"
+
+#: Width of the deterministic (agent, session) scope trailer, matching the
+#: native IdGenerator entropy slot.
+_SCOPE_LENGTH = 32
+#: Unit separator — cannot appear in a DNS ``agent_name``, so the constrained
+#: field first makes ``(agent, session)`` an injective encoding.
+_SEP = "\x1f"
 
 
-def _extract_partition_or_raw(id_value: str) -> str:
-    """Extract the embedded partition key from *id_value*, or return it unchanged.
+def _det_alnum(seed: str, length: int) -> str:
+    """Return a deterministic alphanumeric digest of *seed* of *length* chars.
 
-    Framework-generated IDs carry an embedded partition key that is shared across
-    a chain; extracting it gives the stable chain identity. Values not in the ID
-    format (e.g. a raw ``conversation_id``) have no embedded key — they are
-    themselves the stable identity, so they are returned as-is.
+    Mirrors :meth:`IdGenerator._generate_entropy`'s charset (``[A-Za-z0-9]``)
+    but is seeded deterministically (SHA-256 of ``seed:<counter>``) rather than
+    from random bytes, so the resulting id is reproducible across turns and on
+    cross-process recovery.
 
-    :param id_value: An ID (or raw identifier) to reduce to its chain partition.
-    :type id_value: str
-    :returns: The embedded partition key, or *id_value* unchanged.
+    :param seed: The deterministic seed.
+    :type seed: str
+    :param length: The number of alphanumeric characters to return.
+    :type length: int
+    :returns: A deterministic alphanumeric string of the requested length.
+    :rtype: str
+    """
+    out: list[str] = []
+    counter = 0
+    while len(out) < length:
+        block = base64.b64encode(hashlib.sha256(f"{seed}:{counter}".encode("utf-8")).digest()).decode("ascii")
+        out.extend(c for c in block if c.isalnum())
+        counter += 1
+    return "".join(out[:length])
+
+
+def _scope(agent_name: str, session_id: str) -> str:
+    """Return the deterministic (agent, session) scope trailer.
+
+    :param agent_name: Agent identity (DNS-style, ≤63 chars).
+    :type agent_name: str
+    :param session_id: Session identifier (any string, ≤128 chars).
+    :type session_id: str
+    :returns: A deterministic 32-char alphanumeric scope.
+    :rtype: str
+    """
+    return _det_alnum(f"{agent_name}{_SEP}{session_id}", _SCOPE_LENGTH)
+
+
+def _partition_key(source_id: str, agent_name: str, session_id: str) -> str:
+    """Return the 18-char partition key for the chain.
+
+    For a framework-generated id the real embedded partition key is extracted
+    (so the chain/task co-locates with its responses); for a value that is not
+    in id format (e.g. a raw client ``conversation_id``) a partition key is
+    derived deterministically.
+
+    :param source_id: The id the partition is resolved from.
+    :type source_id: str
+    :param agent_name: Agent identity, used in the deterministic fallback seed.
+    :type agent_name: str
+    :param session_id: Session identifier, used in the deterministic fallback seed.
+    :type session_id: str
+    :returns: An 18-character partition key (``{16-hex}00``).
     :rtype: str
     """
     try:
-        return IdGenerator.extract_partition_key(id_value)
+        return IdGenerator.extract_partition_key(source_id)
     except (ValueError, TypeError):
-        return id_value
-
-
-def _chain_partition(
-    *,
-    conversation_id: str | None,
-    previous_response_id: str | None,
-    response_id: str,
-    steerable: bool,
-) -> tuple[str, str]:
-    """Resolve the ``(discriminator, partition)`` that identifies the chain.
-
-    Priority:
-
-    1. ``conversation_id`` — explicit conversation scope (extract its partition
-       key, or use it raw when it is not in ID format).
-    2. ``steerable`` — the sequential chain shares one identity: extract the
-       partition key from ``previous_response_id`` (or ``response_id`` on the
-       first turn). Because chained response IDs inherit one partition key, every
-       turn resolves to the same value.
-    3. otherwise (non-steerable) — each request is its own fork; the FULL
-       ``response_id`` (entropy included) keeps concurrent forks distinct.
-
-    The discriminator namespaces the partition by source type so that, e.g., a
-    client-supplied ``conversation_id`` cannot collide with an extracted
-    partition key or a response id.
-
-    :keyword conversation_id: Explicit conversation scope.
-    :paramtype conversation_id: str | None
-    :keyword previous_response_id: Chain parent.
-    :paramtype previous_response_id: str | None
-    :keyword response_id: This response's unique id.
-    :paramtype response_id: str
-    :keyword steerable: Whether steerable conversations are enabled.
-    :paramtype steerable: bool
-    :returns: A ``(discriminator, partition)`` tuple.
-    :rtype: tuple[str, str]
-    """
-    if conversation_id:
-        return "conv", _extract_partition_or_raw(conversation_id)
-    if steerable:
-        source = previous_response_id or response_id
-        return "chain", _extract_partition_or_raw(source)
-    # Non-steerable: keep parallel forks distinct via the full response_id.
-    discriminator = "fork" if previous_response_id else "resp"
-    return discriminator, response_id
+        seed = f"{agent_name}{_SEP}{session_id}{_SEP}{source_id}"
+        return hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16] + "00"
 
 
 def derive_conversation_chain_id(
@@ -104,17 +125,17 @@ def derive_conversation_chain_id(
     session_id: str,
     steerable: bool = True,
 ) -> str:
-    """Derive the stable, agent/session-scoped conversation chain id.
+    """Derive the stable conversation chain id (== the resilient ``task_id``).
 
-    The id is the same for every turn of a conversation chain (see module
-    docstring). It is a hex digest, so it is opaque and fixed-length — suitable
-    as a handler-side key (upstream SDK session id, per-conversation indexes).
+    The id is the same for every turn of a chain and reconstructable on recovery
+    (a pure function of the persisted inputs). See the module docstring for the
+    per-case id shapes.
 
     :keyword conversation_id: Explicit conversation scope (highest priority).
     :paramtype conversation_id: str | None
     :keyword previous_response_id: Chain parent (used when no conversation_id).
     :paramtype previous_response_id: str | None
-    :keyword response_id: This response's unique id (fallback / fork key).
+    :keyword response_id: This response's unique id (fallback / one-shot key).
     :paramtype response_id: str
     :keyword agent_name: Agent identity, for cross-agent scoping.
     :paramtype agent_name: str
@@ -122,14 +143,16 @@ def derive_conversation_chain_id(
     :paramtype session_id: str
     :keyword steerable: Whether steerable conversations are enabled.
     :paramtype steerable: bool
-    :returns: A stable hex chain id.
+    :returns: The stable conversation chain id.
     :rtype: str
     """
-    discriminator, partition = _chain_partition(
-        conversation_id=conversation_id,
-        previous_response_id=previous_response_id,
-        response_id=response_id,
-        steerable=steerable,
-    )
-    composite = f"{agent_name}:{session_id}:{discriminator}:{partition}"
-    return hashlib.sha256(composite.encode("utf-8")).hexdigest()[:_CHAIN_ID_HEX_LENGTH]
+    if conversation_id:
+        pk = _partition_key(conversation_id, agent_name, session_id)
+        return f"{_CONV_CHAIN_PREFIX}_{pk}{_scope(agent_name, session_id)}"
+    if steerable:
+        source_id = previous_response_id or response_id
+        pk = _partition_key(source_id, agent_name, session_id)
+        return f"{_RESP_CHAIN_PREFIX}_{pk}{_scope(agent_name, session_id)}"
+    # Case 3 — one-shot: no chain to share; the response id is already globally
+    # unique + native, so it IS the task id.
+    return response_id
