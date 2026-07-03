@@ -1521,7 +1521,7 @@ Owned by the underlying task primitive. Holds:
 - `payload.input` (current turn's serialized input — cleared at
   suspend per the core spec's data-retention rule)
 - `payload._responses` (the framework-reserved namespace from §5)
-- `payload._steering` (the primitive's steering-queue state — owned by
+- `payload.steering` (the primitive's steering-queue state — owned by
   the core spec)
 - `payload._framework.last_input_id` (the input-precondition primitive's
   CAS slot from §11.2)
