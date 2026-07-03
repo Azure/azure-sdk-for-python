@@ -133,6 +133,26 @@ def test_chain_id_case3_is_response_id_verbatim() -> None:
     assert cid == rid
 
 
+def test_task_id_rejects_charset_invalid_case3_response_id() -> None:
+    """Case 3 returns response_id verbatim; a charset-invalid one must be
+    rejected (the Task API charset is stricter than upstream response-id
+    validation, which does not check charset)."""
+    import pytest
+
+    # '.' and ':' pass the core primitive's looser _validate_task_id but violate
+    # the Public Task API contract ^[a-zA-Z0-9_-]{1,128}$.
+    for bad in ("caresp_bad.id", "caresp_bad:id", "caresp_bad!id"):
+        with pytest.raises(ValueError):
+            derive_task_id(
+                agent_name=_AGENT,
+                session_id=_SESSION,
+                conversation_id=None,
+                previous_response_id=None,
+                response_id=bad,
+                steerable=False,  # case 3 → response_id verbatim
+            )
+
+
 def test_task_id_equals_chain_id() -> None:
     """task_id == conversation_chain_id (one shared identity; no wrapper)."""
     kw = dict(conversation_id=None, previous_response_id="resp-0", response_id="resp-1", steerable=True)
