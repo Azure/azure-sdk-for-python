@@ -50,6 +50,25 @@ set -euo pipefail
 cd "$(dirname "$0")"
 source ./perf_env.sh
 
+# Phase C scale-out uses the same canonical rig as the single-process Phase C run.
+# Keep caller override support (`SCALE_COSMOS_DATABASE` / `SCALE_COSMOS_CONTAINER`)
+# for controlled what-if runs, but warn if host/target differs from the documented
+# baseline so comparisons are not mislabeled.
+if [[ -n "${SCALE_COSMOS_DATABASE:-}" ]]; then
+  export COSMOS_DATABASE="${SCALE_COSMOS_DATABASE}"
+fi
+if [[ -n "${SCALE_COSMOS_CONTAINER:-}" ]]; then
+  export COSMOS_CONTAINER="${SCALE_COSMOS_CONTAINER}"
+fi
+
+host_name="$(hostname 2>/dev/null || echo unknown)"
+if [[ "${host_name}" != "vm-python-phasec" ]]; then
+  echo "!! WARNING: Phase C scale-out is calibrated for vm-python-phasec; current host=${host_name}" >&2
+fi
+if [[ "${COSMOS_DATABASE}" != "scale_db" || "${COSMOS_CONTAINER}" != "scale_cont" ]]; then
+  echo "!! WARNING: Phase C canonical container is scale_db/scale_cont; current target=${COSMOS_DATABASE}/${COSMOS_CONTAINER}" >&2
+fi
+
 DURATION_SECONDS="${1:-900}"
 shift || true
 if [[ "$#" -gt 0 ]]; then
@@ -71,6 +90,8 @@ write_run_manifest "${LOG_DIR}" "${STAMP}" "C-scaleout-sweep"
 # Rough peak process fan-out, for the reader's situational awareness.
 max_n=0; for n in "${N_LEVELS[@]}"; do (( n > max_n )) && max_n="${n}"; done
 echo "=== Phase C: scale-out sweep ==="
+echo "    host = ${host_name}"
+echo "    target = ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
 echo "    ops = ${OPERATIONS[*]}, pinned concurrency C* = ${CONC}"
 echo "    process ladder N = ${N_LEVELS[*]} (peak ${max_n} parallel processes)"
 echo "    backends = ${BACKENDS[*]}, repeats = ${REPEATS} (ABBA order when >1 backend)"

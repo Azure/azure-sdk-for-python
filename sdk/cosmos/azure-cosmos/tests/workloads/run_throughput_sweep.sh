@@ -41,6 +41,27 @@ set -euo pipefail
 cd "$(dirname "$0")"
 source ./perf_env.sh
 
+# Phase C canonical target for this drill:
+# - VM: vm-python-phasec
+# - Container: scale_db/scale_cont
+# Keep caller override support (`SCALE_COSMOS_DATABASE` / `SCALE_COSMOS_CONTAINER`)
+# for controlled experiments, but warn when running on a different host/target so
+# a mislabeled run is visible in logs.
+if [[ -n "${SCALE_COSMOS_DATABASE:-}" ]]; then
+  export COSMOS_DATABASE="${SCALE_COSMOS_DATABASE}"
+fi
+if [[ -n "${SCALE_COSMOS_CONTAINER:-}" ]]; then
+  export COSMOS_CONTAINER="${SCALE_COSMOS_CONTAINER}"
+fi
+
+host_name="$(hostname 2>/dev/null || echo unknown)"
+if [[ "${host_name}" != "vm-python-phasec" ]]; then
+  echo "!! WARNING: Phase C throughput sweep is calibrated for vm-python-phasec; current host=${host_name}" >&2
+fi
+if [[ "${COSMOS_DATABASE}" != "scale_db" || "${COSMOS_CONTAINER}" != "scale_cont" ]]; then
+  echo "!! WARNING: Phase C canonical container is scale_db/scale_cont; current target=${COSMOS_DATABASE}/${COSMOS_CONTAINER}" >&2
+fi
+
 DURATION_SECONDS="${1:-1800}"
 shift || true
 if [[ "$#" -gt 0 ]]; then
@@ -58,6 +79,8 @@ write_run_manifest "${LOG_DIR}" "${STAMP}" "C-throughput-sweep"
 
 n_points=$(( ${#OPERATIONS[@]} * ${#LEVELS[@]} * ${#BACKENDS[@]} ))
 echo "=== Phase C: throughput / scaling sweep ==="
+echo "    host = ${host_name}"
+echo "    target = ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
 echo "    ops = ${OPERATIONS[*]}, concurrency ladder = ${LEVELS[*]}"
 echo "    backends = ${BACKENDS[*]} (closed-loop; concurrency is the variable)"
 echo "    per-point = ${DURATION_SECONDS}s, points = ${n_points}"

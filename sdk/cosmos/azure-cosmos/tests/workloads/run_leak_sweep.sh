@@ -32,6 +32,27 @@ set -euo pipefail
 cd "$(dirname "$0")"
 source ./perf_env.sh
 
+# Phase B canonical target for this drill:
+# - VM: vm-python-dr-drill
+# - Container: leak_cont
+# Keep caller override support (`LEAK_COSMOS_DATABASE` / `LEAK_COSMOS_CONTAINER`),
+# but if no explicit leak container is provided and we are still on the generic
+# perf default (`scale_cont`), move to `leak_cont` to match the documented Phase B
+# environment.
+if [[ -n "${LEAK_COSMOS_DATABASE:-}" ]]; then
+  export COSMOS_DATABASE="${LEAK_COSMOS_DATABASE}"
+fi
+if [[ -n "${LEAK_COSMOS_CONTAINER:-}" ]]; then
+  export COSMOS_CONTAINER="${LEAK_COSMOS_CONTAINER}"
+elif [[ "${COSMOS_CONTAINER}" == "scale_cont" ]]; then
+  export COSMOS_CONTAINER="leak_cont"
+fi
+
+host_name="$(hostname 2>/dev/null || echo unknown)"
+if [[ "${host_name}" != "vm-python-dr-drill" ]]; then
+  echo "!! WARNING: Phase B is calibrated for vm-python-dr-drill; current host=${host_name}" >&2
+fi
+
 DURATION_SECONDS="${1:-86400}"
 shift || true
 if [[ "$#" -gt 0 ]]; then
@@ -59,6 +80,8 @@ write_run_manifest "${LOG_DIR}" "${STAMP}" "B-leak-sweep"
 
 echo "=== Phase B: memory-leak sweep ==="
 echo "    soak = ${DURATION_SECONDS}s (~$(( DURATION_SECONDS / 3600 )) h) per backend batch"
+echo "    host = ${host_name}"
+echo "    target = ${COSMOS_DATABASE}/${COSMOS_CONTAINER}"
 echo "    backends = ${BACKENDS[*]} (each batch = 6 ops in PARALLEL)"
 echo "    ops = ${OPERATIONS[*]} (closed-loop, one op per process)"
 echo "    logs -> ${LOG_DIR}"
