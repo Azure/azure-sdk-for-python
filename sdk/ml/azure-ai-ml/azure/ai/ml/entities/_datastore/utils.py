@@ -60,11 +60,16 @@ def from_rest_datastore_credentials(
 
 
 def _from_rest_datastore_credentials_preview(
-    rest_credentials: models.DatastoreCredentials,
+    rest_credentials: Any,
 ) -> Optional[Union[KerberosKeytabCredentials, KerberosPasswordCredentials]]:
-    if isinstance(rest_credentials, models.KerberosKeytabCredentials):
+    # ``Kerberos*`` credential models are absent from arm_ml_service; the operation client returns them
+    # as a raw mapping, so dispatch on the ``credentialsType`` wire discriminator.
+    if not rest_credentials:
+        return None
+    credentials_type = rest_credentials.get("credentialsType")
+    if credentials_type == "KerberosKeytab":
         return KerberosKeytabCredentials._from_rest_object(rest_credentials)
-    if isinstance(rest_credentials, models.KerberosPasswordCredentials):
+    if credentials_type == "KerberosPassword":
         return KerberosPasswordCredentials._from_rest_object(rest_credentials)
 
     return None
