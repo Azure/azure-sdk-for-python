@@ -140,7 +140,7 @@ class TestListE2E:
             task_info = await manager.provider.get(task_id)
             assert task_info is not None
             assert task_info.tags is not None
-            assert task_info.tags.get("_task_name") == "e2e_tag_stamp"
+            assert task_info.tags.get("task_name") == "e2e_tag_stamp"
         finally:
             await _ManagerFixture.teardown(manager, mgr_mod)
 

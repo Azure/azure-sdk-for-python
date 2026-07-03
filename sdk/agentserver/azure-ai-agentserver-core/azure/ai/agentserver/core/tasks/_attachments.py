@@ -51,17 +51,17 @@ from ._exceptions import (
 _ATTACHMENT_REF_KEY = "__attachment_ref__"
 
 #: The framework-reserved attachment key for the function input.
-_FUNCTION_INPUT_KEY = "_input"
+_FUNCTION_INPUT_KEY = "input"
 
 #: The framework-reserved attachment-key prefix for queued steering inputs.
 #: The full key is ``f"{prefix}{seq}"`` where ``seq`` is the monotonic
-#: counter from ``payload["_steering"]["next_input_seq"]``.
-_STEERING_INPUT_KEY_PREFIX = "_steering_input_"
+#: counter from ``payload["steering"]["next_input_seq"]``.
+_STEERING_INPUT_KEY_PREFIX = "steering_input_"
 
 #:   — framework-reserved attachment key for the
 #: per-turn output value. Output is ALWAYS stored via this attachment
 #: (no inline threshold) so it never consumes payload budget.
-_OUTPUT_KEY = "_output"
+_OUTPUT_KEY = "output"
 
 #: Hash algorithm prefix (RFC-6920-style namespacing). The value after the
 #: ``:`` is the lowercase-hex digest. Prefix lets us migrate to a different
@@ -73,7 +73,7 @@ _HASH_ALGO_PREFIX = "sha256:"
 # --------------------------------------------------------------------------- #
 
 #: Function input promotion threshold (200 KiB). Inputs whose serialized
-#: form exceeds this are promoted to ``attachments["_input"]``.
+#: form exceeds this are promoted to ``attachments["input"]``.
 _INPUT_THRESHOLD_BYTES = 200 * 1024
 
 #: Steering input promotion threshold (20 KiB). Inputs whose serialized

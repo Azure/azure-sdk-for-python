@@ -65,11 +65,11 @@ async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(tmp_p
         assert info is not None
         assert info.status == "suspended"
         assert info.payload.get("input") is None
-        steering = info.payload.get("_steering", {})
+        steering = info.payload.get("steering", {})
         assert steering.get("active_input") is None
         assert steering.get("previous_input") is None
         # _last_input_id slot persists.
-        assert info.payload["_last_input_id"] == "msg-1"
+        assert info.payload["last_input_id"] == "msg-1"
 
         # Resume with matching predecessor succeeds.
         await _suspend_long_ago.start(
@@ -78,7 +78,7 @@ async def test_suspended_long_ago_resume_with_correct_predecessor_succeeds(tmp_p
         await asyncio.sleep(0.2)
         info = await manager.provider.get("t-suspend-long")
         assert info is not None
-        assert info.payload["_last_input_id"] == "msg-2"
+        assert info.payload["last_input_id"] == "msg-2"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -101,6 +101,6 @@ async def test_suspended_long_ago_resume_with_stale_predecessor_fails(tmp_path: 
         info = await manager.provider.get("t-suspend-long-stale")
         assert info is not None
         assert info.status == "suspended"
-        assert info.payload["_last_input_id"] == "msg-1"
+        assert info.payload["last_input_id"] == "msg-1"
     finally:
         await _teardown_manager(manager, mgr_mod)

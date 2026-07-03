@@ -453,7 +453,7 @@ class TestExitForRecovery:
             assert info.status == "in_progress"
             assert info.payload is not None
             assert info.payload["input"] == "active"
-            assert info.payload["_steering"]["pending_inputs"] == ["queued"]
+            assert info.payload["steering"]["pending_inputs"] == ["queued"]
             assert info.lease is not None
             assert info.lease.expires_at <= info.lease.heartbeat_at
             assert not queued._result_future.done()  # noqa: SLF001
@@ -515,7 +515,7 @@ class TestLeaseExpiryCrash:
                     status="in_progress",
                     payload={
                         "input": "persisted",
-                        "_last_input_id": "persisted",
+                        "last_input_id": "persisted",
                     },
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id=manager._instance_id,  # noqa: SLF001
@@ -700,7 +700,7 @@ class TestQueuedSteererCancel:
             info = await manager.provider.get(task_id)
             assert info is not None
             assert info.payload is not None
-            assert info.payload["_steering"]["pending_inputs"] == ["B"]
+            assert info.payload["steering"]["pending_inputs"] == ["B"]
             release_active.set()
             assert await _result(active) == "active-done"
             assert await _result(queued_b) == "done:B"

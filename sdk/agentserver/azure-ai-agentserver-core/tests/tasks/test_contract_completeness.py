@@ -201,7 +201,7 @@ CONTRACT_CLAUSE_TO_TEST: dict[str, str] = {
     #  (Task.get + TaskSnapshot + output lifecycle) — REMOVED
     # The Task.get + TaskSnapshot surface is deleted, and output is no
     # longer persisted in payload (the framework does not write
-    # payload["output"] nor any "_output" attachment), so the "cleared on
+    # payload["output"] nor any "output" attachment), so the "cleared on
     # resume / drain / failure / always-attachment / null / too-large"
     # contracts that lived in test_output_lifecycle.py and
     # test_output_promotion.py are all vacuous and the files are gone.

@@ -166,7 +166,7 @@ async def test_both_reclaim_sites_carry_if_match(captured_local) -> None:
             status="in_progress",
             title="stale",
             payload={"input": "hi"},
-            tags={"_task_name": "reclaim_etag_task"},
+            tags={"task_name": "reclaim_etag_task"},
             source={"name": "reclaim_etag_task", "type": "agentserver.task"},
             lease_owner="test-agent|session:test-session",
             lease_instance_id="prev-instance",

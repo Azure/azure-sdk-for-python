@@ -5,14 +5,14 @@
 Verifies:
 
 - Small steering input stays inline (raw value in pending_inputs).
-- Large steering input is promoted to ``attachments["_steering_input_<seq>"]``
+- Large steering input is promoted to ``attachments["steering_input_<seq>"]``
   with a ref slot in pending_inputs.
 - Drain of a ref-shaped queue entry deletes the attachment via the
   SAME PATCH (atomicity).
 - The monotonic-seq invariant — drain does NOT renumber other entries.
 - 9-cap raises SteeringQueueFull on the 10th append.
 - Orphan attachment cleanup runs at recovery and deletes
-  unreferenced ``_steering_input_*`` keys.
+  unreferenced ``steering_input_*`` keys.
 """
 
 from __future__ import annotations
@@ -78,7 +78,7 @@ async def manager_local(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
 
 
 @pytest.mark.asyncio
-async def test_small_steering_input_stays_inline(manager_local: TaskManager) -> None:
+async def test_smallsteering_input_stays_inline(manager_local: TaskManager) -> None:
     """SC-4: small steering input is appended as a raw value."""
 
     started = asyncio.Event()
@@ -100,7 +100,7 @@ async def test_small_steering_input_stays_inline(manager_local: TaskManager) -> 
     # Inspect state — pending_inputs has the small value inline.
     info = await manager_local.provider.get("t-steer-small-1")
     assert info is not None
-    pending = info.payload["_steering"]["pending_inputs"]
+    pending = info.payload["steering"]["pending_inputs"]
     assert len(pending) == 1
     assert pending[0] == {"small": "value"}
     assert not _is_ref(pending[0])
@@ -114,7 +114,7 @@ async def test_small_steering_input_stays_inline(manager_local: TaskManager) -> 
 
 
 @pytest.mark.asyncio
-async def test_large_steering_input_promoted(manager_local: TaskManager) -> None:
+async def test_largesteering_input_promoted(manager_local: TaskManager) -> None:
     """SC-5: steering input > 20 KiB is promoted to attachment with ref in queue."""
 
     big = "y" * (_STEERING_THRESHOLD_BYTES + 1024)
@@ -137,7 +137,7 @@ async def test_large_steering_input_promoted(manager_local: TaskManager) -> None
     # Inspect: pending_inputs has a ref; attachments has the value.
     info = await manager_local.provider.get("t-steer-big-1")
     assert info is not None
-    pending = info.payload["_steering"]["pending_inputs"]
+    pending = info.payload["steering"]["pending_inputs"]
     assert len(pending) == 1
     assert _is_ref(pending[0])
     key = _ref_key(pending[0])
@@ -145,7 +145,7 @@ async def test_large_steering_input_promoted(manager_local: TaskManager) -> None
     assert info.attachments is not None
     assert info.attachments[key] == big
     # next_input_seq has advanced.
-    assert info.payload["_steering"]["next_input_seq"] == 1
+    assert info.payload["steering"]["next_input_seq"] == 1
 
     proceed.set()
     await run1.cancel()
@@ -182,20 +182,20 @@ async def test_drain_does_not_renumber_existing_attachments(manager_local: TaskM
     run = await runner.start(task_id="t-monotonic-1", input={"initial": True})
     await asyncio.sleep(0.1)  # let initial turn enter
 
-    # Append A (promoted; key allocated at seq=0 → _steering_input_0).
+    # Append A (promoted; key allocated at seq=0 → steering_input_0).
     await runner.start(task_id="t-monotonic-1", input=a_value)
-    # Append B (promoted; key allocated at seq=1 → _steering_input_1).
+    # Append B (promoted; key allocated at seq=1 → steering_input_1).
     await runner.start(task_id="t-monotonic-1", input=b_value)
 
     # Inspect pre-drain: A and B are both in pending, with their respective keys.
     info_pre = await manager_local.provider.get("t-monotonic-1")
     assert info_pre is not None
-    pending_pre = info_pre.payload["_steering"]["pending_inputs"]
+    pending_pre = info_pre.payload["steering"]["pending_inputs"]
     assert len(pending_pre) == 2
-    assert _ref_key(pending_pre[0]) == "_steering_input_0"
-    assert _ref_key(pending_pre[1]) == "_steering_input_1"
-    assert info_pre.attachments["_steering_input_0"] == a_value
-    assert info_pre.attachments["_steering_input_1"] == b_value
+    assert _ref_key(pending_pre[0]) == "steering_input_0"
+    assert _ref_key(pending_pre[1]) == "steering_input_1"
+    assert info_pre.attachments["steering_input_0"] == a_value
+    assert info_pre.attachments["steering_input_1"] == b_value
 
     # Let the initial turn complete → drain advances A into active_input.
     drain_signal.set()
@@ -204,16 +204,16 @@ async def test_drain_does_not_renumber_existing_attachments(manager_local: TaskM
     # Inspect post-drain: A's attachment is GONE; B's attachment key UNCHANGED.
     info_mid = await manager_local.provider.get("t-monotonic-1")
     assert info_mid is not None
-    pending_mid = info_mid.payload["_steering"]["pending_inputs"]
+    pending_mid = info_mid.payload["steering"]["pending_inputs"]
     # Only B left in the queue.
     assert len(pending_mid) == 1
-    # B's attachment key MUST still be _steering_input_1 (not renamed to _0).
-    assert _ref_key(pending_mid[0]) == "_steering_input_1"
+    # B's attachment key MUST still be steering_input_1 (not renamed to _0).
+    assert _ref_key(pending_mid[0]) == "steering_input_1"
     # A's attachment is gone; B's is unchanged.
-    assert "_steering_input_0" not in (info_mid.attachments or {})
-    assert info_mid.attachments["_steering_input_1"] == b_value
+    assert "steering_input_0" not in (info_mid.attachments or {})
+    assert info_mid.attachments["steering_input_1"] == b_value
     # next_input_seq has not regressed (still at 2; monotonic).
-    assert info_mid.payload["_steering"]["next_input_seq"] == 2
+    assert info_mid.payload["steering"]["next_input_seq"] == 2
 
     # Let B's turn complete too.
     drain_signal.set()
@@ -284,7 +284,7 @@ async def test_drain_co_deletes_attachment(manager_local: TaskManager) -> None:
 
 @pytest.mark.asyncio
 async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(manager_local: TaskManager) -> None:
-    """SC-12: orphaned _steering_input_* attachments are cleaned up on recovery."""
+    """SC-12: orphaned steering_input_* attachments are cleaned up on recovery."""
 
     # Manually plant a task in the local provider with an orphaned
     # steering attachment (a key whose ref is NOT in pending_inputs).
@@ -301,16 +301,16 @@ async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(manager_
         lease_duration_seconds=60,
         payload={
             "input": {"task": "noop"},
-            "_steering": {
+            "steering": {
                 "pending_inputs": [],  # empty — no refs
                 "next_input_seq": 3,
                 "cancel_requested": False,
             },
         },
         attachments={
-            "_steering_input_0": "orphan-A",  # not referenced
-            "_steering_input_1": "orphan-B",  # not referenced
-            "_input": "real input",  # NOT a steering key — must be preserved
+            "steering_input_0": "orphan-A",  # not referenced
+            "steering_input_1": "orphan-B",  # not referenced
+            "input": "real input",  # NOT a steering key — must be preserved
         },
     )
     await manager_local.provider.create(create)
@@ -325,9 +325,9 @@ async def test_orphan_cleanup_deletes_unreferenced_steering_attachments(manager_
     info_after = await manager_local.provider.get("t-orphan-1")
     assert info_after is not None
     keys_after = set(info_after.attachments or {})
-    assert "_steering_input_0" not in keys_after
-    assert "_steering_input_1" not in keys_after
-    assert "_input" in keys_after  # non-steering attachment untouched
+    assert "steering_input_0" not in keys_after
+    assert "steering_input_1" not in keys_after
+    assert "input" in keys_after  # non-steering attachment untouched
 
 
 # --------------------------------------------------------------------------- #
@@ -396,7 +396,7 @@ async def test_drain_inline_entry_leaves_attachments_untouched(manager_local: Ta
 
     info_pre = await manager_local.provider.get("t-mixed-1")
     assert info_pre is not None
-    pending_pre = info_pre.payload["_steering"]["pending_inputs"]
+    pending_pre = info_pre.payload["steering"]["pending_inputs"]
     assert len(pending_pre) == 2
     assert not _is_ref(pending_pre[0])  # inline
     assert _is_ref(pending_pre[1])  # ref
@@ -414,7 +414,7 @@ async def test_drain_inline_entry_leaves_attachments_untouched(manager_local: Ta
     assert big_key in info_mid.attachments
     assert info_mid.attachments[big_key] == big
     # And the queue now has only the ref left.
-    pending_mid = info_mid.payload["_steering"]["pending_inputs"]
+    pending_mid = info_mid.payload["steering"]["pending_inputs"]
     assert len(pending_mid) == 1
     assert _is_ref(pending_mid[0])
     assert _ref_key(pending_mid[0]) == big_key
@@ -437,7 +437,7 @@ async def test_post_drain_new_append_gets_next_seq_not_zero(manager_local: TaskM
 
     Plant a task with ``next_input_seq=5``, empty pending queue, NO
     steering attachments. Append a large input. The new attachment
-    key MUST be ``_steering_input_5`` (NOT ``_steering_input_0``),
+    key MUST be ``steering_input_5`` (NOT ``steering_input_0``),
     proving the seq counter doesn't regress just because the queue is
     momentarily empty.
 
@@ -473,7 +473,8 @@ async def test_post_drain_new_append_gets_next_seq_not_zero(manager_local: TaskM
             payload={
                 "input": {"initial": True},
                 "metadata": {},
-                "_steering": {
+                "schema_version": "1",
+                "steering": {
                     "pending_inputs": [],
                     "next_input_seq": 5,
                     "cancel_requested": False,
@@ -491,19 +492,19 @@ async def test_post_drain_new_append_gets_next_seq_not_zero(manager_local: TaskM
     await manager_local._recover_stale_tasks()
     await asyncio.wait_for(started.wait(), timeout=2.0)
 
-    # Now append a large steering input — it MUST get _steering_input_5.
+    # Now append a large steering input — it MUST get steering_input_5.
     await runner.start(task_id="t-seq-plant-1", input=big)
 
     info = await manager_local.provider.get("t-seq-plant-1")
     assert info is not None
-    pending = info.payload["_steering"]["pending_inputs"]
+    pending = info.payload["steering"]["pending_inputs"]
     assert len(pending) == 1
     assert _is_ref(pending[0])
-    assert _ref_key(pending[0]) == "_steering_input_5", (
-        f"Expected key _steering_input_5 (planted next_input_seq=5); "
+    assert _ref_key(pending[0]) == "steering_input_5", (
+        f"Expected key steering_input_5 (planted next_input_seq=5); "
         f"got {_ref_key(pending[0])!r}. next_input_seq regressed!"
     )
     # And next_input_seq has advanced to 6.
-    assert info.payload["_steering"]["next_input_seq"] == 6
+    assert info.payload["steering"]["next_input_seq"] == 6
 
     block.set()

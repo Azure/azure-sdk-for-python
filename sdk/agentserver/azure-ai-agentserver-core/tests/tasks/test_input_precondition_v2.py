@@ -60,8 +60,8 @@ async def _seed_recoverable_record(provider: Any, *, task_id: str, task_name: st
             session_id="test-session",
             status="in_progress",
             title=task_name,
-            payload={"input": input_value, "_last_input_id": "a"},
-            tags={"_task_name": task_name},
+            payload={"input": input_value, "last_input_id": "a", "schema_version": "1"},
+            tags={"task_name": task_name},
             source={"name": task_name, "type": "agentserver.task"},
             lease_owner=derive_lease_owner("test-agent", "test-session"),
             lease_instance_id="previous-instance",
@@ -87,12 +87,12 @@ class TestLastInputIdRetention:
             assert await handler.run(task_id="fr029-retain", input={"value": "one"}, input_id="a") == "one"
             record = await manager.provider.get("fr029-retain")
             assert record is not None
-            assert record.payload["_last_input_id"] == "a"
+            assert record.payload["last_input_id"] == "a"
 
             assert await handler.run(task_id="fr029-retain", input={"value": "two"}, input_id="b") == "two"
             record = await manager.provider.get("fr029-retain")
             assert record is not None
-            assert record.payload["_last_input_id"] == "b"
+            assert record.payload["last_input_id"] == "b"
         finally:
             await _teardown_manager(manager, mgr_mod)
 
