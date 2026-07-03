@@ -84,3 +84,4 @@ need_azuremgmtcore = true
 sample_link = ""
 exclude_folders = ""
 title = "BillingTrustMgmtClient"
+no_sub = true
