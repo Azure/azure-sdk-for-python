@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.BillingTrust": "2026-03-17-preview"
   },
-  "commit": "bc9c826df3d8a3323990f00c025a8a89048753c9",
+  "commit": "3901ca0e742e846b91f299ea063d92bb23820f30",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/billingtrust/resource-manager/Microsoft.BillingTrust/BillingTrust",
   "emitterVersion": "0.63.2",
