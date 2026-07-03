@@ -72,6 +72,10 @@ class TabularLimitSettings(RestTranslatableMixin):
         # (2025-12) model; preserve it via wire-key assignment.
         if self.max_nodes is not None:
             rest_obj["maxNodes"] = self.max_nodes
+        # ``sweepConcurrentTrials``/``sweepTrials`` were serialized (default 0) by the legacy msrest
+        # model but dropped from the arm_ml_service model; preserve them to keep the wire identical.
+        rest_obj["sweepConcurrentTrials"] = 0
+        rest_obj["sweepTrials"] = 0
         return rest_obj
 
     @classmethod

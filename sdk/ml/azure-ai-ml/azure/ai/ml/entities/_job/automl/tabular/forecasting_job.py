@@ -548,6 +548,7 @@ class ForecastingJob(AutoMLTabular):
 
         properties = RestAutoMLJob(
             display_name=self.display_name,
+            is_archived=False,
             description=self.description,
             experiment_name=self.experiment_name,
             tags=self.tags,

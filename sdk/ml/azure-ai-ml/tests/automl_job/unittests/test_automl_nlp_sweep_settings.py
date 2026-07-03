@@ -10,7 +10,9 @@ from azure.ai.ml._restclient.arm_ml_service.models import SamplingAlgorithmType
 from azure.ai.ml._restclient.arm_ml_service.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
+from azure.ai.ml._restclient.arm_ml_service.models import EarlyTerminationPolicy as RestEarlyTerminationPolicy
 from azure.ai.ml.automl import NlpSweepSettings
+from azure.ai.ml.entities._job._input_output_helpers import to_hybrid_rest_model
 from azure.ai.ml.sweep import BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy
 
 
@@ -91,19 +93,25 @@ class TestNlpSweepSettings:
         sampling_algorithm_name: SamplingAlgorithmType = SamplingAlgorithmType.GRID,
     ) -> dict:
         # ``NlpSweepSettings`` is absent from arm_ml_service -> JSON-direct dict wire body. The
-        # early-termination child is built via the entity policy's ``_to_rest_object`` so the
-        # expected wire matches production exactly (including default fields like delayEvaluation).
+        # early-termination child is built via the entity policy's ``_to_rest_object`` then converted
+        # to the arm hybrid model (as production does) so the expected wire matches exactly.
         early_termination_policy = None
         if early_termination_name == EarlyTerminationPolicyType.BANDIT:
-            early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)._to_rest_object()
+            early_termination_policy = to_hybrid_rest_model(
+                BanditPolicy(evaluation_interval=10, slack_factor=0.2)._to_rest_object(), RestEarlyTerminationPolicy
+            )
         elif early_termination_name == EarlyTerminationPolicyType.MEDIAN_STOPPING:
-            early_termination_policy = MedianStoppingPolicy(
-                delay_evaluation=5, evaluation_interval=1
-            )._to_rest_object()
+            early_termination_policy = to_hybrid_rest_model(
+                MedianStoppingPolicy(delay_evaluation=5, evaluation_interval=1)._to_rest_object(),
+                RestEarlyTerminationPolicy,
+            )
         elif early_termination_name == EarlyTerminationPolicyType.TRUNCATION_SELECTION:
-            early_termination_policy = TruncationSelectionPolicy(
-                evaluation_interval=1, truncation_percentage=20, delay_evaluation=5
-            )._to_rest_object()
+            early_termination_policy = to_hybrid_rest_model(
+                TruncationSelectionPolicy(
+                    evaluation_interval=1, truncation_percentage=20, delay_evaluation=5
+                )._to_rest_object(),
+                RestEarlyTerminationPolicy,
+            )
         rest_obj: dict = {"samplingAlgorithm": sampling_algorithm_name}
         if early_termination_policy is not None:
             rest_obj["earlyTermination"] = early_termination_policy

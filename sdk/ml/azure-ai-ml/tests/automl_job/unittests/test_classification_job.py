@@ -58,7 +58,7 @@ class TestAutoMLClassification:
         assert original_obj.name == "classifier_job", "Name not set correctly"
         assert original_obj.experiment_name == "foo_exp", "Experiment name not set correctly"
         assert original_obj.tags == {"foo_tag": "bar"}, "Tags not set correctly"
-        assert original_obj.properties == {"_automl_internal_some_flag": True}, "Properties not set correctly"
+        assert original_obj.properties == {"_automl_internal_some_flag": "True"}, "Properties not set correctly"
         assert original_obj.identity == identity
         # check if the original job inputs were restored
         assert original_obj.primary_metric == ClassificationPrimaryMetrics.ACCURACY, "Primary metric is not ACCURACY"

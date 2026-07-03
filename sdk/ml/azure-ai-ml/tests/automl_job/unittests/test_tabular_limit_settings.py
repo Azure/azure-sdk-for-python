@@ -72,6 +72,12 @@ class TestLimitSettings:
         )
         # ``maxNodes`` is preserved via wire-key (dropped from the arm_ml_service model).
         max_nodes_rest["maxNodes"] = 4
+        # ``sweepConcurrentTrials``/``sweepTrials`` are preserved via wire-key (default 0) to match
+        # the legacy msrest wire.
+        default_rest["sweepConcurrentTrials"] = 0
+        default_rest["sweepTrials"] = 0
+        max_nodes_rest["sweepConcurrentTrials"] = 0
+        max_nodes_rest["sweepTrials"] = 0
         rest_objs = {
             "default": default_rest,
             "max_nodes": max_nodes_rest,

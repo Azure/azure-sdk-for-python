@@ -7,12 +7,12 @@ from typing import Optional
 
 import pytest
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models import EarlyTerminationPolicyType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models import MedianStoppingPolicy as RestMedianStoppingPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SamplingAlgorithmType
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.arm_ml_service.models import EarlyTerminationPolicyType
+from azure.ai.ml._restclient.arm_ml_service.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.arm_ml_service.models import MedianStoppingPolicy as RestMedianStoppingPolicy
+from azure.ai.ml._restclient.arm_ml_service.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.arm_ml_service.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
 from azure.ai.ml.entities._job.automl.image import ImageSweepSettings
@@ -88,7 +88,9 @@ class TestImageSweepSettings:
         sampling_algorithm_name: SamplingAlgorithmType = SamplingAlgorithmType.GRID,
     ) -> RestImageSweepSettings:
         if early_termination_name == EarlyTerminationPolicyType.BANDIT:
-            rest_early_termination_name = RestBanditPolicy(evaluation_interval=10, slack_factor=0.2)
+            rest_early_termination_name = RestBanditPolicy(
+                evaluation_interval=10, slack_factor=0.2, slack_amount=0, delay_evaluation=0
+            )
         elif early_termination_name == EarlyTerminationPolicyType.MEDIAN_STOPPING:
             rest_early_termination_name = RestMedianStoppingPolicy(delay_evaluation=5, evaluation_interval=1)
         elif early_termination_name == EarlyTerminationPolicyType.TRUNCATION_SELECTION:

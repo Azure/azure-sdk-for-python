@@ -1,29 +1,26 @@
 import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.arm_ml_service.models import (
     JobBase,
     LogVerbosity,
-    NlpFixedParameters,
-    NlpParameterSubspace,
-    NlpSweepSettings,
     NlpVerticalFeaturizationSettings,
     NlpVerticalLimitSettings,
     SamplingAlgorithmType,
     TaskType,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import UserIdentity as RestUserIdentity
-from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_workspaces_enums import (
-    ClassificationPrimaryMetrics,
-)
-from azure.ai.ml._restclient.v2024_01_01_preview.models import MLTableJobInput, TextNer
+from azure.ai.ml._restclient.arm_ml_service.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.arm_ml_service.models import ClassificationPrimaryMetrics
+from azure.ai.ml._restclient.arm_ml_service.models import MLTableJobInput, TextNer
 from azure.ai.ml._utils.utils import to_iso_duration_format_mins
 from azure.ai.ml.automl import text_ner
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl import SearchSpace
+from azure.ai.ml.entities._job.automl.nlp.nlp_fixed_parameters import NlpFixedParameters as EntityNlpFixedParameters
+from azure.ai.ml.entities._job.automl.nlp.nlp_search_space import NlpSearchSpace as EntityNlpSearchSpace
+from azure.ai.ml.entities._job.automl.nlp.nlp_sweep_settings import NlpSweepSettings as EntityNlpSweepSettings
 from azure.ai.ml.entities._job.automl.nlp.text_ner_job import TextNerJob
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
@@ -186,28 +183,36 @@ class TestAutoMLTextNerJob:
                 early_termination=BanditPolicy(slack_factor=0.2, evaluation_interval=2),
             )
             job.extend_search_space([SearchSpace(model_name=Choice(["bert-base-cased", "distilbert-base-cased"]))])
-            rest_sweep = NlpSweepSettings(
+            rest_sweep = EntityNlpSweepSettings(
                 sampling_algorithm=SamplingAlgorithmType.GRID,
-                early_termination=RestBanditPolicy(slack_factor=0.2, evaluation_interval=2),
-            )
-            rest_search_space = [NlpParameterSubspace(model_name="choice('bert-base-cased','distilbert-base-cased')")]
+                early_termination=BanditPolicy(slack_factor=0.2, evaluation_interval=2),
+            )._to_rest_object()
+            rest_search_space = [
+                EntityNlpSearchSpace(model_name=Choice(["bert-base-cased", "distilbert-base-cased"]))._to_rest_object()
+            ]
 
+        expected_limits = NlpVerticalLimitSettings(
+            max_concurrent_trials=max_concurrent_trials,
+            max_trials=max_trials,
+            timeout=to_iso_duration_format_mins(timeout),
+        )
+        # ``maxNodes`` was dropped from the arm_ml_service model; it is carried as a wire-key.
+        expected_limits["maxNodes"] = max_nodes
         expected = TextNer(
             primary_metric=primary_metric,
             log_verbosity=log_verbosity,
             training_data=MLTableJobInput(uri=training_data_uri),
             validation_data=MLTableJobInput(uri=validation_data_uri),
-            limit_settings=NlpVerticalLimitSettings(
-                max_concurrent_trials=max_concurrent_trials,
-                max_trials=max_trials,
-                max_nodes=max_nodes,
-                timeout=to_iso_duration_format_mins(timeout),
-            ),
-            fixed_parameters=NlpFixedParameters(weight_decay=0.01),
-            sweep_settings=rest_sweep,
-            search_space=rest_search_space,
+            limit_settings=expected_limits,
             featurization_settings=NlpVerticalFeaturizationSettings(dataset_language=dataset_language),
         )
+        # ``fixedParameters``/``sweepSettings``/``searchSpace`` were dropped from the arm model and
+        # are carried as wire-keys built from the entity-level JSON-direct models.
+        expected["fixedParameters"] = EntityNlpFixedParameters(weight_decay=0.01)._to_rest_object()
+        if rest_sweep is not None:
+            expected["sweepSettings"] = rest_sweep
+        if rest_search_space is not None:
+            expected["searchSpace"] = rest_search_space
 
         # Test converting Job to REST object
         converted_to_rest_obj = job._to_rest_object()
@@ -221,9 +226,9 @@ class TestAutoMLTextNerJob:
         assert expected.training_data == result.training_data
         assert expected.validation_data == result.validation_data
         assert expected.limit_settings == result.limit_settings
-        assert expected.sweep_settings == result.sweep_settings
-        assert expected.fixed_parameters == result.fixed_parameters
-        assert expected.search_space == result.search_space
+        assert expected.get("sweepSettings") == result.get("sweepSettings")
+        assert expected.get("fixedParameters") == result.get("fixedParameters")
+        assert expected.get("searchSpace") == result.get("searchSpace")
         assert expected.featurization_settings == result.featurization_settings
         assert expected.log_verbosity == result.log_verbosity
 
@@ -275,27 +280,32 @@ class TestAutoMLTextNerJob:
             expected_job.extend_search_space(
                 [SearchSpace(model_name=Choice(["bert-base-cased", "distilbert-base-cased"]))]
             )
-            rest_sweep = NlpSweepSettings(
+            rest_sweep = EntityNlpSweepSettings(
                 sampling_algorithm=SamplingAlgorithmType.GRID,
-                early_termination=RestBanditPolicy(slack_factor=0.2, evaluation_interval=2),
-            )
-            rest_search_space = [NlpParameterSubspace(model_name="choice(bert-base-cased, distilbert-base-cased)")]
+                early_termination=BanditPolicy(slack_factor=0.2, evaluation_interval=2),
+            )._to_rest_object()
+            rest_search_space = [
+                EntityNlpSearchSpace(model_name=Choice(["bert-base-cased", "distilbert-base-cased"]))._to_rest_object()
+            ]
 
+        task_limits = NlpVerticalLimitSettings(
+            max_concurrent_trials=max_concurrent_trials,
+            max_trials=max_trials,
+            timeout=to_iso_duration_format_mins(timeout),
+        )
+        task_limits["maxNodes"] = max_nodes
         task_details = TextNer(
             log_verbosity=log_verbosity,
             training_data=MLTableJobInput(uri=training_data_uri),
             validation_data=MLTableJobInput(uri=validation_data_uri),
-            limit_settings=NlpVerticalLimitSettings(
-                max_concurrent_trials=max_concurrent_trials,
-                max_trials=max_trials,
-                max_nodes=max_nodes,
-                timeout=to_iso_duration_format_mins(timeout),
-            ),
+            limit_settings=task_limits,
             featurization_settings=NlpVerticalFeaturizationSettings(dataset_language=dataset_language),
-            fixed_parameters=NlpFixedParameters(weight_decay=0.01),
-            sweep_settings=rest_sweep,
-            search_space=rest_search_space,
         )
+        task_details["fixedParameters"] = EntityNlpFixedParameters(weight_decay=0.01)._to_rest_object()
+        if rest_sweep is not None:
+            task_details["sweepSettings"] = rest_sweep
+        if rest_search_space is not None:
+            task_details["searchSpace"] = rest_search_space
         job_data = JobBase(properties=RestAutoMLJob(task_details=task_details, identity=identity._to_job_rest_object()))
         # Test converting REST object to Job
         converted_to_job = TextNerJob._from_rest_object(job_data)
