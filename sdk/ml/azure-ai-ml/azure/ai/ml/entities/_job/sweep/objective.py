@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import Optional
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import Objective as RestObjective
+from azure.ai.ml._restclient.arm_ml_service.models import Objective as RestObjective
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -26,7 +26,9 @@ class Objective(RestTranslatableMixin):
             :caption: Assigning an objective to a SweepJob.
     """
 
-    def __init__(self, goal: Optional[str], primary_metric: Optional[str] = None) -> None:
+    def __init__(
+        self, goal: Optional[str], primary_metric: Optional[str] = None
+    ) -> None:
         """Optimization objective.
 
         :param goal: Defines supported metric goals for hyperparameter tuning. Acceptable values

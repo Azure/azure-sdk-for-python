@@ -5,19 +5,19 @@ from abc import ABC
 from collections.abc import Mapping
 from typing import Any, Optional, Union, cast
 
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     GridSamplingAlgorithm as RestGridSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     RandomSamplingAlgorithm as RestRandomSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     SamplingAlgorithm as RestSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.arm_ml_service.models import SamplingAlgorithmType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
@@ -91,11 +91,15 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         self.logbase = logbase
 
     def _to_rest_object(self) -> RestRandomSamplingAlgorithm:
-        return RestRandomSamplingAlgorithm(
+        rest_obj = RestRandomSamplingAlgorithm(
             rule=self.rule,
             seed=self.seed,
-            logbase=self.logbase,
         )
+        # ``logbase`` is not modeled on the shared arm_ml_service RandomSamplingAlgorithm; preserve it
+        # as an unknown wire key on the hybrid (MutableMapping) model so it round-trips to the service.
+        if self.logbase is not None:
+            rest_obj["logbase"] = self.logbase
+        return rest_obj
 
     @classmethod
     def _from_rest_object(
