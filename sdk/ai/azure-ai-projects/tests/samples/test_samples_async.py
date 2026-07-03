@@ -202,10 +202,27 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @additionalSampleTests(
         [
             AdditionalSampleTestDetail(
+                test_id="sample_create_hosted_agent_async",
+                sample_filename="sample_create_hosted_agent_async.py",
+                env_vars={
+                    "SKIP_RBAC": "true",
+                },
+            ),
+            AdditionalSampleTestDetail(
                 test_id="sample_create_hosted_agent_from_remote_build_async",
                 sample_filename="sample_create_hosted_agent_from_code_async.py",
                 env_vars={
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
+                    "ZIP_FILE_PATH": "tests/samples/assets/echo-agent.zip",
+                    "SKIP_RBAC": "true",
+                },
+            ),
+            AdditionalSampleTestDetail(
+                test_id="sample_create_hosted_agent_from_code_async",
+                sample_filename="sample_create_hosted_agent_from_code_async.py",
+                env_vars={
+                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "false",
+                    "SKIP_RBAC": "true",
                 },
             ),
         ]
@@ -214,14 +231,60 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "hosted_agents",
-            samples_to_skip=[],
+            samples_to_skip=[
+                "sample_create_hosted_agent_async.py",  # Specified through AdditionalSampleTestDetail
+                "sample_create_hosted_agent_from_code_async.py",  # Specified through AdditionalSampleTestDetail
+            ],
         ),
     )
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
-        if os.path.basename(sample_path).startswith("sample_create_hosted_agent") and not self.is_live:
-            pytest.skip("sample_create_hosted_agent.py is skipped in replay mode due to RBAC complications.")
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async()
+
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_skills_upload_and_download_async",
+                sample_filename="sample_skills_upload_and_download_async.py",
+                env_vars={
+                    "ZIP_FILE_PATH": "tests/samples/assets/team-status-update.zip",
+                },
+            ),
+        ]
+    )
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "skills",
+            samples_to_skip=[
+                "sample_skills_upload_and_download_async.py",  # Specified through AdditionalSampleTestDetail
+            ],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_skills_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "toolboxes",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_toolboxes_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()

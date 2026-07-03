@@ -3,7 +3,7 @@ from datetime import datetime
 import pytest
 from test_utilities.utils import verify_entity_load_and_dump
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import JobBaseProperties as RestJobBaseProperties
+from azure.ai.ml._restclient.arm_ml_service.models import JobBaseProperties as RestJobBaseProperties
 from azure.ai.ml.constants import TimeZone
 from azure.ai.ml.entities import CronTrigger, JobSchedule, PipelineJob, RecurrencePattern, RecurrenceTrigger
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
@@ -28,18 +28,18 @@ class TestScheduleEntity:
         schedule.properties["test"] = "val"
         actual_dict = schedule._to_rest_object().as_dict()["properties"]
         # Skip job definition
-        actual_dict["action"]["job_definition"] = {}
+        actual_dict["action"]["jobDefinition"] = {}
         expected_dict = {
             "description": "a weekly retrain schedule",
             "properties": {"test": "val"},
             "tags": {},
-            "action": {"action_type": "CreateJob", "job_definition": {}},
-            "display_name": "weekly retrain schedule",
+            "action": {"actionType": "CreateJob", "jobDefinition": {}},
+            "displayName": "weekly retrain schedule",
             "trigger": {
-                "end_time": "2022-06-10 10:15:00",
-                "start_time": "2022-03-10 10:15:00",
-                "time_zone": "Pacific Standard Time",
-                "trigger_type": "Cron",
+                "endTime": "2022-06-10 10:15:00",
+                "startTime": "2022-03-10 10:15:00",
+                "timeZone": "Pacific Standard Time",
+                "triggerType": "Cron",
                 "expression": "15 10 * * 1",
             },
         }
@@ -54,16 +54,16 @@ class TestScheduleEntity:
             "properties": {},
             "tags": {},
             "action": {
-                "action_type": "CreateJob",
-                "job_definition": {
-                    "experiment_name": "",
-                    "is_archived": False,
-                    "job_type": "Pipeline",
-                    "source_job_id": "/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544",
+                "actionType": "CreateJob",
+                "jobDefinition": {
+                    "experimentName": "",
+                    "isArchived": False,
+                    "jobType": "Pipeline",
+                    "sourceJobId": "/subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544",
                 },
             },
-            "display_name": "weekly retrain schedule",
-            "trigger": {"time_zone": "UTC", "trigger_type": "Cron", "expression": "15 10 * * 1"},
+            "displayName": "weekly retrain schedule",
+            "trigger": {"timeZone": "UTC", "triggerType": "Cron", "expression": "15 10 * * 1"},
         }
 
     def test_create_schedule_entity(self):
@@ -92,10 +92,10 @@ class TestScheduleEntity:
         trigger = RecurrenceTrigger(frequency="day", interval=1, start_time=start_time, end_time=end_time)
         assert trigger.schedule is not None
         assert trigger._to_rest_object().as_dict() == {
-            "end_time": "2022-06-10 10:15:00",
-            "start_time": "2022-03-10 10:15:00",
-            "time_zone": "UTC",
-            "trigger_type": "Recurrence",
+            "endTime": "2022-06-10 10:15:00",
+            "startTime": "2022-03-10 10:15:00",
+            "timeZone": "UTC",
+            "triggerType": "Recurrence",
             "frequency": "day",
             "interval": 1,
             "schedule": {"hours": [], "minutes": []},
@@ -110,13 +110,13 @@ class TestScheduleEntity:
         )
         assert trigger.schedule is not None
         assert trigger._to_rest_object().as_dict() == {
-            "end_time": "2022-06-10 10:15:00",
+            "endTime": "2022-06-10 10:15:00",
             "frequency": "day",
             "interval": 1,
-            "schedule": {"hours": [1, 3, 4, 5], "minutes": [0], "week_days": ["tuesday", "thursday"]},
-            "start_time": "2022-03-10 10:15:00",
-            "time_zone": "UTC",
-            "trigger_type": "Recurrence",
+            "schedule": {"hours": [1, 3, 4, 5], "minutes": [0], "weekDays": ["tuesday", "thursday"]},
+            "startTime": "2022-03-10 10:15:00",
+            "timeZone": "UTC",
+            "triggerType": "Recurrence",
         }
 
     @pytest.mark.usefixtures(
@@ -128,26 +128,23 @@ class TestScheduleEntity:
         inner_job_path = "./tests/test_configs/command_job/command_job_test.yml"
         inner_job = load_job(inner_job_path)._to_job()
         schedule = load_schedule(test_path)
-        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
-        # CommandJob builds a shared arm_ml_service hybrid envelope (camelCase as_dict), but the schedule
-        # embeds it as a v2023_06 msrest job_definition; normalize the standalone job the same way so the
-        # snake_case dicts compare equal.
-        loaded_job_dict = RestJobBaseProperties.deserialize(
-            inner_job._to_rest_object().as_dict()["properties"]
-        ).as_dict()
+        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["jobDefinition"]
+        # CommandJob and the schedule envelope both build the shared arm_ml_service hybrid (camelCase
+        # as_dict), so the embedded job_definition matches the standalone job's properties directly.
+        loaded_job_dict = inner_job._to_rest_object().as_dict()["properties"]
         assert rest_schedule_job_dict == loaded_job_dict
         # Test with local file + overwrites
         test_path = "./tests/test_configs/schedule/local_cron_command_job2.yml"
         schedule = load_schedule(test_path)
-        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
+        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["jobDefinition"]
         # assert overwrite values
-        assert rest_schedule_job_dict["environment_variables"] == {"key": "val"}
-        assert rest_schedule_job_dict["resources"] == {"properties": {}, "shm_size": "1g"}
+        assert rest_schedule_job_dict["environmentVariables"] == {"key": "val"}
+        assert rest_schedule_job_dict["resources"] == {"properties": {}, "shmSize": "1g"}
         assert rest_schedule_job_dict["distribution"] == {
-            "distribution_type": "PyTorch",
-            "process_count_per_instance": 1,
+            "distributionType": "PyTorch",
+            "processCountPerInstance": 1,
         }
-        assert rest_schedule_job_dict["limits"] == {"job_limits_type": "Command", "timeout": "PT50M"}
+        assert rest_schedule_job_dict["limits"] == {"jobLimitsType": "Command", "timeout": "PT50M"}
 
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
@@ -158,13 +155,15 @@ class TestScheduleEntity:
         inner_job_path = "./tests/test_configs/spark_job/spark_job_word_count_test.yml"
         inner_job = load_job(inner_job_path)._to_job()
         schedule = load_schedule(test_path)
-        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
-        loaded_job_dict = inner_job._to_rest_object().as_dict()["properties"]
+        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["jobDefinition"]
+        # SparkJob builds a v2023_04 msrest envelope; the schedule embeds it as its camelCase wire dict
+        # (``.serialize()``), so compare against the standalone job serialized the same way.
+        loaded_job_dict = inner_job._to_rest_object().properties.serialize()
         assert rest_schedule_job_dict == loaded_job_dict
         # Test with local file + overwrites
         test_path = "./tests/test_configs/schedule/local_cron_spark_job2.yml"
         schedule = load_schedule(test_path)
-        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
+        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["jobDefinition"]
         # assert overwrite values
         assert rest_schedule_job_dict["conf"] == {
             "spark.driver.cores": "2",
@@ -173,7 +172,7 @@ class TestScheduleEntity:
             "spark.executor.memory": "2g",
             "spark.executor.instances": "2",
         }
-        assert "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04" in rest_schedule_job_dict["environment_id"]
+        assert "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04" in rest_schedule_job_dict["environmentId"]
 
     def test_invalid_date_string(self):
         pipeline_job = load_job(

@@ -31,25 +31,21 @@ def serialize_multipart_data_entry(data_entry: Any) -> Any:
 
 
 def _normalize_multipart_file_entry(field_name: str, entry: Any, index: int) -> Any:
-    """Ensure each multipart file entry carries a filename so that it is encoded
-    as a file part (with ``filename=``) rather than a plain form field.
+    """Ensure a multipart file entry carries a filename for Content-Disposition.
 
-    Servers commonly distinguish multipart file parts from form-data parts by
-    the presence of ``filename=`` in the part's ``Content-Disposition`` header.
-    When callers pass bare bytes / str / IO objects (e.g.
-    ``Path("x.zip").read_bytes()``), the underlying HTTP client emits the part
-    without a filename, which several Foundry endpoints reject with errors like
-    "At least one file must be uploaded". This helper synthesizes a filename
-    from the IO object's ``name`` attribute when available, otherwise falls
-    back to a stable default.
+    Servers distinguish file parts from plain form fields by the presence of
+    ``filename=`` in the ``Content-Disposition`` header.  When callers pass
+    bare bytes/str/IO the HTTP client omits the filename and the server may
+    reject the upload.  This helper wraps bare values into a (filename, content)
+    tuple, deriving the name from IO.name when available.
 
-    :param field_name: The multipart form field name, used as a fallback filename.
-    :type field_name: str
-    :param entry: The file entry to normalize. May be a tuple, bytes, str, or IO object.
+    :param str field_name: The multipart field name used as a filename fallback.
+    :param entry: The user-provided file entry (tuple, bytes, str, or IO).
     :type entry: any
-    :param index: Position of the entry within its field's list, used to disambiguate fallback filenames.
-    :type index: int
-    :return: A ``(filename, entry)`` tuple if ``entry`` was not already a tuple, otherwise ``entry`` unchanged.
+    :param int index: The positional index of the entry within the field, used
+        to disambiguate fallback filenames when multiple entries are provided.
+    :return: Either the original tuple entry, or a ``(filename, content)`` tuple
+        wrapping the bare value.
     :rtype: any
     """
     if isinstance(entry, tuple):
@@ -60,7 +56,14 @@ def _normalize_multipart_file_entry(field_name: str, entry: Any, index: int) -> 
         filename = os.path.basename(name_attr)
     if not filename:
         filename = f"{field_name}_{index}" if index else field_name
-    return (filename, entry)
+
+    # Return a 3-tuple with an explicit "application/octet-stream" content type.
+    # A 2-tuple (filename, content) would leave the part's Content-Type unset, and
+    # the sdk core library only defaults to "application/octet-stream" for bare
+    # (non-tuple) values - a tuple bypasses that default and falls back to the
+    # HTTP "text/plain" default instead. Setting it explicitly preserves the
+    # pre-existing behavior for bare bytes/IO across all transports.
+    return (filename, entry, "application/octet-stream")
 
 
 def prepare_multipart_form_data(
@@ -68,11 +71,8 @@ def prepare_multipart_form_data(
 ) -> list[FileType]:
     files: list[FileType] = []
 
-    # Append data fields first so they appear before file parts in the encoded
-    # multipart body. Some streaming server-side parsers (e.g. the Foundry
-    # hosted-agents `create_agent_version_from_code` endpoint) require small
-    # JSON metadata parts to precede large binary file parts; otherwise they
-    # report the metadata part as missing.
+    # Data fields first so streaming server-side parsers see metadata before
+    # binary file parts.
     for data_field in data_fields:
         data_entry = body.get(data_field)
         if data_entry:
@@ -83,7 +83,7 @@ def prepare_multipart_form_data(
         if isinstance(multipart_entry, list):
             for idx, e in enumerate(multipart_entry):
                 files.append((multipart_field, _normalize_multipart_file_entry(multipart_field, e, idx)))
-        elif multipart_entry:
+        elif multipart_entry is not None:
             files.append((multipart_field, _normalize_multipart_file_entry(multipart_field, multipart_entry, 0)))
 
     return files
