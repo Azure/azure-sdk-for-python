@@ -15,6 +15,10 @@ from azure.ai.ml._restclient.arm_ml_service.models import JobBase
 from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInput
 from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
 from azure.ai.ml._restclient.arm_ml_service.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.arm_ml_service.models import SparkJobEntry as RestSparkJobEntry
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    SparkResourceConfiguration as RestSparkResourceConfiguration,
+)
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
@@ -245,7 +249,10 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             # The shared arm_ml_service SparkJob model defaults ``is_archived`` to None (omitted on
             # the wire); the legacy msrest model serialized ``isArchived=false`` on create.
             is_archived=False,
-            entry=self.entry._to_rest_object() if self.entry is not None and not isinstance(self.entry, dict) else None,
+            entry=to_hybrid_rest_model(
+                (self.entry._to_rest_object() if self.entry is not None and not isinstance(self.entry, dict) else None),
+                RestSparkJobEntry,
+            ),
             py_files=self.py_files,
             jars=self.jars,
             files=self.files,
@@ -267,8 +274,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
             args=self.args,
             compute_id=self.compute,
-            resources=(
-                self.resources._to_rest_object() if self.resources and not isinstance(self.resources, Dict) else None
+            resources=to_hybrid_rest_model(
+                self.resources._to_rest_object() if self.resources and not isinstance(self.resources, Dict) else None,
+                RestSparkResourceConfiguration,
             ),
         )
         result = JobBase(properties=properties)
