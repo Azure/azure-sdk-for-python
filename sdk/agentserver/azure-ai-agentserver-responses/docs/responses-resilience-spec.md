@@ -230,14 +230,15 @@ API charset/limit (`^[a-zA-Z0-9_-]{1,128}$`).
 
 ### §4.2 — The `task_id`
 
-The resilient task is keyed on the chain id with a fixed prefix:
+Since Spec 038 the chain id is itself a native, self-prefixed id, so the
+resilient task is keyed directly on it:
 
 ```
-task_id = "resilient-resp-" + chain_id
+task_id = chain_id      # e.g. "rchain_<partitionKey><scope>" (see §4.1)
 ```
 
 The task that backs a conversation and the handler-facing chain id therefore
-share one identity and can never drift apart.
+**are one and the same identity** and can never drift apart.
 
 ### §4.3 — Public surface
 
@@ -1101,7 +1102,7 @@ The two-phase steerable-conversation accept flow:
        (turn 1, fresh)
 HTTP   ──► POST /v1/responses { input: "...", store, background } ────────┐
                                                                           │
-       framework: derive_task_id → "resilient-resp-AB12..."                 │
+       framework: derive_task_id → "rchain_AB12..."                 │
        framework: task_fn.start(task_id, input=params,                    │
                                 input_id=resp_1,                          │
                                 if_last_input_id=None)                    │
@@ -1114,7 +1115,7 @@ HTTP   ──► POST /v1/responses { input: "...", store, background } ──�
        (turn 2 arrives while turn 1's handler is still running)
 HTTP   ──► POST /v1/responses { input: "...", previous_response_id: resp_1 } ──┐
                                                                                 │
-       framework: derive_task_id → SAME "resilient-resp-AB12..." (chain)         │
+       framework: derive_task_id → SAME "rchain_AB12..." (chain)         │
        framework: task_fn.start(task_id, input=params2,                        │
                                 input_id=resp_2,                               │
                                 if_last_input_id=resp_1)                       │
@@ -1403,13 +1404,13 @@ between them. Numbers are illustrative.
 
 ```
 T=0   POST /v1/responses { input: "Hi", store: true, background: true }
-      → derive_task_id  = "resilient-resp-AB12..."
-      → conversation_chain_id = "AB12..."   (the same hash; standalone first
+      → derive_task_id  = "rchain_AB12..."
+      → conversation_chain_id = "rchain_AB12..."  (== task_id; standalone first
                                               turn, derived from resp_1's
                                               embedded partition key)
 
 T=1   primitive: task_store.create({
-        id: "resilient-resp-AB12...",
+        id: "rchain_AB12...",
         status: "in_progress",
         payload: { input: <serialized>, _responses: {} },
         ...
@@ -1434,7 +1435,7 @@ T=3   handler:   emit response.in_progress (seq=2)
 
 T=4   ═══════ SIGKILL ═══════
       
-T=5   process restarts; lease scanner sees "resilient-resp-AB12..."
+T=5   process restarts; lease scanner sees "rchain_AB12..."
       with status="in_progress" and expired lease
 
 T=6   primitive: re-fire task body with ctx.context.is_recovery=True
@@ -1481,7 +1482,7 @@ T=10  task body returns Suspended (steerable_conversations=true)
 
 T=11  POST /v1/responses { input: "Now this", previous_response_id: resp_1,
                            store: true, background: true }
-      → derive_task_id = SAME "resilient-resp-AB12..." (chain inherits)
+      → derive_task_id = SAME "rchain_AB12..." (chain inherits)
       framework: task_fn.start(task_id, input_id=resp_2,
                                if_last_input_id=resp_1)
       primitive: precondition holds (_framework.last_input_id == resp_1)
