@@ -57,7 +57,6 @@
         "azure.mgmt.containerregistry.models.KeyVaultProperties": "Microsoft.ContainerRegistry.KeyVaultProperties",
         "azure.mgmt.containerregistry.models.LoggingProperties": "Microsoft.ContainerRegistry.LoggingProperties",
         "azure.mgmt.containerregistry.models.LoginServerProperties": "Microsoft.ContainerRegistry.LoginServerProperties",
-        "azure.mgmt.containerregistry.models.MyPrivateLinkResource": "Microsoft.ContainerRegistry.MyPrivateLinkResource",
         "azure.mgmt.containerregistry.models.NetworkRuleSet": "Microsoft.ContainerRegistry.NetworkRuleSet",
         "azure.mgmt.containerregistry.models.OperationDefinition": "Microsoft.ContainerRegistry.OperationDefinition",
         "azure.mgmt.containerregistry.models.OperationDisplayDefinition": "Microsoft.ContainerRegistry.OperationDisplayDefinition",
@@ -80,6 +79,7 @@
         "azure.mgmt.containerregistry.models.PrivateEndpoint": "Microsoft.ContainerRegistry.PrivateEndpoint",
         "azure.mgmt.containerregistry.models.PrivateEndpointConnection": "Microsoft.ContainerRegistry.PrivateEndpointConnection",
         "azure.mgmt.containerregistry.models.PrivateEndpointConnectionProperties": "Microsoft.ContainerRegistry.PrivateEndpointConnectionProperties",
+        "azure.mgmt.containerregistry.models.PrivateLinkResource": "Microsoft.ContainerRegistry.MyPrivateLinkResource",
         "azure.mgmt.containerregistry.models.PrivateLinkResourceProperties": "Azure.ResourceManager.CommonTypes.PrivateLinkResourceProperties",
         "azure.mgmt.containerregistry.models.PrivateLinkServiceConnectionState": "Microsoft.ContainerRegistry.PrivateLinkServiceConnectionState",
         "azure.mgmt.containerregistry.models.ProgressProperties": "Microsoft.ContainerRegistry.ProgressProperties",
@@ -346,5 +346,5 @@
         "azure.mgmt.containerregistry.operations.WebhooksOperations.get_callback_config": "Microsoft.ContainerRegistry.Webhooks.getCallbackConfig",
         "azure.mgmt.containerregistry.aio.operations.WebhooksOperations.get_callback_config": "Microsoft.ContainerRegistry.Webhooks.getCallbackConfig"
     },
-    "CrossLanguageVersion": "139738bd94ea"
+    "CrossLanguageVersion": "e738b4dff530"
 }

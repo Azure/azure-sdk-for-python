@@ -4317,7 +4317,7 @@ class RegistriesOperations:
     @distributed_trace
     def get_private_link_resource(
         self, resource_group_name: str, registry_name: str, group_name: str, **kwargs: Any
-    ) -> _models.MyPrivateLinkResource:
+    ) -> _models.PrivateLinkResource:
         """Gets a private link resource by a specified group name for a container registry.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4327,8 +4327,8 @@ class RegistriesOperations:
         :type registry_name: str
         :param group_name: The name of the private link associated with the Azure resource. Required.
         :type group_name: str
-        :return: MyPrivateLinkResource. The MyPrivateLinkResource is compatible with MutableMapping
-        :rtype: ~azure.mgmt.containerregistry.models.MyPrivateLinkResource
+        :return: PrivateLinkResource. The PrivateLinkResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.containerregistry.models.PrivateLinkResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4342,7 +4342,7 @@ class RegistriesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MyPrivateLinkResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PrivateLinkResource] = kwargs.pop("cls", None)
 
         _request = build_registries_get_private_link_resource_request(
             resource_group_name=resource_group_name,
@@ -4382,7 +4382,7 @@ class RegistriesOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.MyPrivateLinkResource, response.json())
+            deserialized = _deserialize(_models.PrivateLinkResource, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4392,7 +4392,7 @@ class RegistriesOperations:
     @distributed_trace
     def list_private_link_resources(
         self, resource_group_name: str, registry_name: str, **kwargs: Any
-    ) -> ItemPaged["_models.MyPrivateLinkResource"]:
+    ) -> ItemPaged["_models.PrivateLinkResource"]:
         """Lists the private link resources for a container registry.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -4400,15 +4400,14 @@ class RegistriesOperations:
         :type resource_group_name: str
         :param registry_name: The name of the container registry. Required.
         :type registry_name: str
-        :return: An iterator like instance of MyPrivateLinkResource
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.models.MyPrivateLinkResource]
+        :return: An iterator like instance of PrivateLinkResource
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.models.PrivateLinkResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.MyPrivateLinkResource]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.PrivateLinkResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4464,7 +4463,7 @@ class RegistriesOperations:
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.MyPrivateLinkResource],
+                List[_models.PrivateLinkResource],
                 deserialized.get("value", []),
             )
             if cls:

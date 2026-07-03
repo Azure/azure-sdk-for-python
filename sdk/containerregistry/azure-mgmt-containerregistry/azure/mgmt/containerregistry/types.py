@@ -1295,28 +1295,6 @@ class LoginServerProperties(TypedDict, total=False):
     """The TLS properties of the connected registry login server."""
 
 
-class MyPrivateLinkResource(Resource):
-    """A private link resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the private link resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: A resource that supports private link capabilities.
-    :vartype properties: "PrivateLinkResourceProperties"
-    """
-
-    properties: "PrivateLinkResourceProperties"
-    """A resource that supports private link capabilities."""
-
-
 class NetworkRuleSet(TypedDict, total=False):
     """The network rule set for a container registry.
 
@@ -1776,6 +1754,28 @@ class PrivateEndpointConnectionProperties(TypedDict, total=False):
     provisioningState: Union[str, "ProvisioningState"]
     """The provisioning state of private endpoint connection resource. Known values are: \"Creating\",
      \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+
+
+class PrivateLinkResource(Resource):
+    """A private link resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the private link resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar properties: A resource that supports private link capabilities.
+    :vartype properties: "PrivateLinkResourceProperties"
+    """
+
+    properties: "PrivateLinkResourceProperties"
+    """A resource that supports private link capabilities."""
 
 
 class PrivateLinkResourceProperties(TypedDict, total=False):

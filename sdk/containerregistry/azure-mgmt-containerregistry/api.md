@@ -1097,7 +1097,7 @@ namespace azure.mgmt.containerregistry.aio.operations
                 registry_name: str, 
                 group_name: str, 
                 **kwargs: Any
-            ) -> MyPrivateLinkResource: ...
+            ) -> PrivateLinkResource: ...
 
         @distributed_trace
         def list(self, **kwargs: Any) -> AsyncItemPaged[Registry]: ...
@@ -1123,7 +1123,7 @@ namespace azure.mgmt.containerregistry.aio.operations
                 resource_group_name: str, 
                 registry_name: str, 
                 **kwargs: Any
-            ) -> AsyncItemPaged[MyPrivateLinkResource]: ...
+            ) -> AsyncItemPaged[PrivateLinkResource]: ...
 
         @distributed_trace_async
         async def list_usages(
@@ -2753,32 +2753,6 @@ namespace azure.mgmt.containerregistry.models
         ENABLED = "Enabled"
 
 
-    class azure.mgmt.containerregistry.models.MyPrivateLinkResource(Resource):
-        id: str
-        name: str
-        properties: Optional[PrivateLinkResourceProperties]
-        system_data: SystemData
-        type: str
-
-        def __getattr__(self, name: str) -> Any: ...
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[PrivateLinkResourceProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-        def __setattr__(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-
     class azure.mgmt.containerregistry.models.NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_SERVICES = "AzureServices"
         NONE = "None"
@@ -3238,6 +3212,32 @@ namespace azure.mgmt.containerregistry.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerregistry.models.PrivateLinkResource(Resource):
+        id: str
+        name: str
+        properties: Optional[PrivateLinkResourceProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[PrivateLinkResourceProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
 
 
     class azure.mgmt.containerregistry.models.PrivateLinkResourceProperties(_Model):
@@ -5461,7 +5461,7 @@ namespace azure.mgmt.containerregistry.operations
                 registry_name: str, 
                 group_name: str, 
                 **kwargs: Any
-            ) -> MyPrivateLinkResource: ...
+            ) -> PrivateLinkResource: ...
 
         @distributed_trace
         def list(self, **kwargs: Any) -> ItemPaged[Registry]: ...
@@ -5487,7 +5487,7 @@ namespace azure.mgmt.containerregistry.operations
                 resource_group_name: str, 
                 registry_name: str, 
                 **kwargs: Any
-            ) -> ItemPaged[MyPrivateLinkResource]: ...
+            ) -> ItemPaged[PrivateLinkResource]: ...
 
         @distributed_trace
         def list_usages(
@@ -6524,19 +6524,6 @@ namespace azure.mgmt.containerregistry.types
         tls: TlsProperties
 
 
-    class azure.mgmt.containerregistry.types.MyPrivateLinkResource(Resource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        system_data: SystemData
-        type: str
-
-
     class azure.mgmt.containerregistry.types.NetworkRuleSet(TypedDict, total=False):
         key "defaultAction": Required[Union[str, DefaultAction]]
         default_action: Union[str, DefaultAction]
@@ -6746,6 +6733,19 @@ namespace azure.mgmt.containerregistry.types
         private_endpoint: PrivateEndpoint
         private_link_service_connection_state: PrivateLinkServiceConnectionState
         provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.containerregistry.types.PrivateLinkResource(Resource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PrivateLinkResourceProperties
+        system_data: SystemData
+        type: str
 
 
     class azure.mgmt.containerregistry.types.PrivateLinkResourceProperties(TypedDict, total=False):

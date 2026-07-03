@@ -1,6 +1,6 @@
 # Release History
 
-## 15.1.0b2 (2026-07-01)
+## 15.1.0b2 (2026-07-03)
 
 ### Features Added
 
@@ -12,19 +12,8 @@
   - Added model `AdditionalAuthenticationProperties`
   - Added enum `AdditionalAuthenticationType`
   - Added model `GarAuthenticationProperties`
-  - Added model `MyPrivateLinkResource`
   - Added model `VirtualNetworkRule`
   - Added enum `WritableCacheRepos`
-
-### Breaking Changes
-
-  - Deleted or renamed model `PrivateLinkResource`
-
-### Other Changes
-
-  - Method `RegistriesOperations.list_private_link_resources` changed return type from `AsyncItemPaged[_models.PrivateLinkResource]` to `AsyncItemPaged[_models.MyPrivateLinkResource]`
-  - Method `RegistriesOperations.get_private_link_resource` changed return type from `PrivateLinkResource` to `MyPrivateLinkResource`
-  - Method `RegistriesOperations.list_private_link_resources` changed return type from `ItemPaged[_models.PrivateLinkResource]` to `ItemPaged[_models.MyPrivateLinkResource]`
 
 ## 15.1.0b1 (2026-03-20)
 
