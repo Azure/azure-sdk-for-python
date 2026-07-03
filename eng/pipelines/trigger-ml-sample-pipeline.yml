@@ -86,9 +86,10 @@ jobs:
         RepoName: azureml-examples
         RepoOwner: Azure
         PRBranchName: test-ml-sdk-version-${{ parameters.ServiceDirectory }}-$(Build.BuildId)
-        PROwner: Azure
+        PROwner: azure-sdk
         BaseBranchName: main
         CommitMsg: "Update sdk/python/setup.sh to target fresh built azure-ai-ml wheel."
         PRTitle: "SDK Samples Run generated from $(Build.BuildId)"
         WorkingDirectory: $(mlrepo)
         PRBody: "Check azureml samples against azure-sdk build $(Build.BuildId)."
+        OpenAsDraft: true   # optional: avoids notifying code owners until ready
