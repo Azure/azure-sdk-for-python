@@ -12,10 +12,17 @@ handler-facing ``conversation_chain_id`` can never drift.
 
 from __future__ import annotations
 
+import re
+
 from ._chain_id import derive_conversation_chain_id
 
-#: The Public Task API id limit (``^[a-zA-Z0-9_-]{1,128}$``).
-_MAX_TASK_ID_LENGTH = 128
+#: The Public Task API id contract (``^[a-zA-Z0-9_-]{1,128}$``) — stricter than
+#: the core primitive's ``_validate_task_id`` (which also permits ``.``/``:``).
+#: In case 3 the ``task_id`` is a verbatim ``response_id``, which may be
+#: client-supplied via ``x-agent-response-id`` and is only structurally
+#: validated upstream (not charset-validated), so we enforce the strict
+#: contract here.
+_TASK_ID_RE = re.compile(r"^[a-zA-Z0-9_-]{1,128}$")
 
 
 def derive_task_id(
@@ -56,7 +63,10 @@ def derive_task_id(
         session_id=session_id,
         steerable=steerable,
     )
-    # By construction the native id is within the Task API charset/length; assert
-    # to fail fast if an upstream id ever violates the contract.
-    assert len(task_id) <= _MAX_TASK_ID_LENGTH, f"task_id exceeds {_MAX_TASK_ID_LENGTH}: {task_id!r}"
+    # Fail fast on the strict Public Task API contract. In case 3 the id is a
+    # verbatim (possibly client-supplied) ``response_id`` whose charset is not
+    # otherwise validated to this stricter rule, so this is a real check (not an
+    # ``assert``, which ``python -O`` would strip).
+    if not _TASK_ID_RE.match(task_id):
+        raise ValueError(f"derived task_id violates the Task API contract [a-zA-Z0-9_-]{{1,128}}: {task_id!r}")
     return task_id
