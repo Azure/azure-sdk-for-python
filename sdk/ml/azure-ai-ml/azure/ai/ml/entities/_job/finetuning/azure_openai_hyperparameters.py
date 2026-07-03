@@ -4,7 +4,7 @@
 
 from typing import Optional
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml._restclient.v2024_01_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AzureOpenAiHyperParameters as RestAzureOpenAiHyperParameters,
 )
 from azure.ai.ml._utils._experimental import experimental
@@ -116,7 +116,9 @@ class AzureOpenAIHyperparameters(RestTranslatableMixin):
         return not self.__eq__(other)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestAzureOpenAiHyperParameters) -> "AzureOpenAIHyperparameters":
+    def _from_rest_object(
+        cls, obj: RestAzureOpenAiHyperParameters
+    ) -> "AzureOpenAIHyperparameters":
         aoai_hyperparameters = cls(
             batch_size=obj.batch_size,
             learning_rate_multiplier=obj.learning_rate_multiplier,
