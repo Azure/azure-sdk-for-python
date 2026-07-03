@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fixed an replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level.
+- Fixed a replay bug in challenge authentication policy. The original request is now stored at the request level instead of the client level.
 
 ### Other Changes
 
