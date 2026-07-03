@@ -292,7 +292,7 @@ class TestRecoveryPerTurnTimeout:
             info = await manager.provider.get("t086-fresh-1")
             assert info is not None
             assert info.payload is not None
-            assert "_turn_started_at" in info.payload, (
+            assert "turn_started_at" in info.payload, (
                 f": fresh-entry create MUST write "
                 f"_turn_started_at to payload. Got payload keys: "
                 f"{list(info.payload)}"
@@ -321,7 +321,7 @@ class TestRecoveryPerTurnTimeout:
                     session_id="test-session",
                     status="in_progress",
                     title="recover",
-                    payload={"input": '"x"', "_turn_started_at": original_stamp},
+                    payload={"input": '"x"', "turn_started_at": original_stamp},
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id="previous-inst",
                     lease_duration_seconds=60,
@@ -334,7 +334,7 @@ class TestRecoveryPerTurnTimeout:
             assert info is not None
             assert info.payload is not None
             # Recovery MUST preserve the original timestamp.
-            assert info.payload.get("_turn_started_at") == original_stamp, (
+            assert info.payload.get("turn_started_at") == original_stamp, (
                 f": recovery MUST NOT re-stamp "
                 f"_turn_started_at. Expected {original_stamp!r}, "
                 f"got {info.payload.get('_turn_started_at')!r}"
@@ -372,7 +372,7 @@ class TestRecoveryPerTurnTimeout:
                     session_id="test-session",
                     status="in_progress",
                     title="fire",
-                    payload={"input": '"x"', "_turn_started_at": backdated},
+                    payload={"input": '"x"', "turn_started_at": backdated},
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id="previous-inst",
                     lease_duration_seconds=60,
@@ -569,7 +569,7 @@ class TestRecoveryExitForRecoveryExtended:
             # Verify the steering input is in the persisted state.
             info_before = await manager.provider.get("t096-preserve")
             assert info_before is not None
-            steering_before = (info_before.payload or {}).get("_steering", {})
+            steering_before = (info_before.payload or {}).get("steering", {})
             pending_before = steering_before.get("pending_inputs", [])
             assert len(pending_before) >= 1, (
                 f"Test setup: queued steering input should be in " f"pending_inputs. Got {pending_before}"
@@ -584,7 +584,7 @@ class TestRecoveryExitForRecoveryExtended:
             # state across exit_for_recovery — NOT drained.
             info_after = await manager.provider.get("t096-preserve")
             assert info_after is not None
-            steering_after = (info_after.payload or {}).get("_steering", {})
+            steering_after = (info_after.payload or {}).get("steering", {})
             pending_after = steering_after.get("pending_inputs", [])
             assert len(pending_after) >= 1, (
                 f": exit_for_recovery MUST preserve "

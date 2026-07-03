@@ -6,7 +6,7 @@ Drives a fresh ``TaskManager`` + ``LocalFileTaskProvider`` through the
 ``@task`` API to verify:
 
 - Small inputs stay inline (no attachments written).
-- Large inputs are promoted to ``attachments["_input"]`` with a ref
+- Large inputs are promoted to ``attachments["input"]`` with a ref
   slot in ``payload["input"]``.
 - Recovery from both shapes reconstructs the original input value.
 - Suspend deletes the promoted attachment + clears the ref atomically.
@@ -253,7 +253,7 @@ async def test_recovery_surfaces_promoted_input_as_ctx_input(manager_local: Task
             lease_owner=manager_local._lease_owner,
             lease_instance_id="prior-instance-that-died",
             lease_duration_seconds=60,
-            payload={"input": ref, "metadata": {}},
+            payload={"input": ref, "metadata": {}, "schema_version": "1"},
             attachments={_FUNCTION_INPUT_KEY: big},
             tags={"task_name": "t-recovery-capture"},
             source={"name": "t-recovery-capture", "type": "agentserver.task"},

@@ -107,7 +107,7 @@ class TestEntryMode:
                     session_id="test-session",
                     status="in_progress",
                     title="stale-test",
-                    payload={"input": "old-data"},
+                    payload={"input": "old-data", "schema_version": "1"},
                 )
             )
 
@@ -228,7 +228,7 @@ class TestRecoveryRetryAttempt:
                 session_id="test-session",
                 status="in_progress",
                 title="recovered-retry",
-                payload={"input": "x", "_retry_attempt": retry_attempt},
+                payload={"input": "x", "retry_attempt": retry_attempt},
             )
         )
         task_file = Path(str(tmp_path)) / "test-agent" / "test-session" / f"{task_id}.json"
@@ -239,7 +239,7 @@ class TestRecoveryRetryAttempt:
     @pytest.mark.asyncio
     async def test_recovered_handler_sees_persisted_retry_attempt(self, tmp_path) -> None:
         """: a handler entering via ``entry_mode='recovered'`` MUST
-        see ``ctx.retry_attempt`` populated from ``payload["_retry_attempt"]``.
+        see ``ctx.retry_attempt`` populated from ``payload["retry_attempt"]``.
 
         Equivalent to the test in ``test_retry.py`` but asserts the
         entry-mode invariant alongside the counter value, since both must
@@ -352,8 +352,8 @@ class TestEntryModeV2Matrix:
                 session_id="test-session",
                 status="in_progress",
                 title=task_name,
-                payload={"input": input_value, "_last_input_id": "seed-input"},
-                tags={"_task_name": task_name},
+                payload={"input": input_value, "last_input_id": "seed-input", "schema_version": "1"},
+                tags={"task_name": task_name},
                 source={"name": task_name, "type": "agentserver.task"},
                 lease_owner=derive_lease_owner("test-agent", "test-session"),
                 lease_instance_id="previous-instance",

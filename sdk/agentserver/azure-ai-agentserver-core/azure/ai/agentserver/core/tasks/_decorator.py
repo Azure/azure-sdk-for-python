@@ -130,9 +130,11 @@ def _validate_input_id(input_id: str) -> None:
         raise ValueError(f"input_id contains invalid characters: {input_id!r}. Allowed: [a-zA-Z0-9\\-_.:]")
 
 
-#: Prefix for framework-reserved tags. Developer tags with this prefix are
-#: silently stripped to prevent collisions with auto-stamped tags.
-_RESERVED_TAG_PREFIX = "_task_"
+#: Framework-reserved tag keys. Developer tags using these exact keys are
+#: silently stripped to prevent collisions with auto-stamped tags. (Spec 038:
+#: exact-key set replacing the former ``_task_`` prefix, since the reserved tag
+#: is now the un-prefixed ``task_name``.)
+_RESERVED_TAG_KEYS = frozenset({"task_name"})
 
 _logger = _logging.getLogger("azure.ai.agentserver.tasks")
 
@@ -144,22 +146,22 @@ _REGISTERED_DESCRIPTORS: list[tuple[str, Callable[..., Any], "TaskOptions"]] = [
 def _strip_reserved_tags(tags: dict[str, str]) -> dict[str, str]:
     """Remove framework-reserved tags from developer-provided tags.
 
-    Tags prefixed with ``_task_`` are reserved for framework use.
-    If a developer provides them, they are silently dropped with a warning.
+    The exact keys in :data:`_RESERVED_TAG_KEYS` (e.g. ``task_name``) are
+    reserved for framework use. If a developer provides them, they are silently
+    dropped with a warning.
 
     :param tags: Developer-provided tags.
     :type tags: dict[str, str]
     :return: Tags with reserved keys removed.
     :rtype: dict[str, str]
     """
-    reserved = [k for k in tags if k.startswith(_RESERVED_TAG_PREFIX)]
+    reserved = [k for k in tags if k in _RESERVED_TAG_KEYS]
     if reserved:
         _logger.warning(
-            "Ignoring reserved tag(s) %s — tags prefixed with %r are framework-owned and cannot be overridden",
+            "Ignoring reserved tag(s) %s — these keys are framework-owned and cannot be overridden",
             reserved,
-            _RESERVED_TAG_PREFIX,
         )
-        return {k: v for k, v in tags.items() if not k.startswith(_RESERVED_TAG_PREFIX)}
+        return {k: v for k, v in tags.items() if k not in _RESERVED_TAG_KEYS}
     return tags
 
 
@@ -252,13 +254,13 @@ def _deserialize_input(value: Any, input_type: type[Any]) -> Any:
 
 #   — framework-reserved payload slot for the
 # input-precondition primitive. Storage layout: top-level
-# ``payload["_last_input_id"]: str`` (the ``_`` prefix is the framework-
+# ``payload["last_input_id"]: str`` (the ``_`` prefix is the framework-
 # reserved convention; flat layout replaces the prior nested
-# ``payload["_last_input_id"]`` namespace).
+# ``payload["last_input_id"]`` namespace).
 # Callers do not read or write this slot directly — it is managed by the
 # framework on behalf of the ``input_id`` / ``if_last_input_id`` kwargs on
 # :meth:`Task.start`.
-_LAST_INPUT_ID_PAYLOAD_KEY = "_last_input_id"
+_LAST_INPUT_ID_PAYLOAD_KEY = "last_input_id"
 
 #   — these were previously developer-visible
 # @task kwargs (lease_duration_seconds, max_pending) but had no real
@@ -347,7 +349,7 @@ def _check_input_precondition(  # pylint: disable=unused-argument
 
 
 def _build_framework_extras(input_id: str | None) -> dict[str, Any] | None:
-    """Build the top-level ``payload["_last_input_id"]`` seed dict, or ``None``.
+    """Build the top-level ``payload["last_input_id"]`` seed dict, or ``None``.
 
     Used at fresh-create and at suspended-resume to advance the stored
     ``last_input_id`` atomically with the input persist.
@@ -355,7 +357,7 @@ def _build_framework_extras(input_id: str | None) -> dict[str, Any] | None:
     :param input_id: The new input's identity, or ``None`` for callers not
         opting in to chain semantics.
     :type input_id: str | None
-    :returns: ``{"_last_input_id": input_id}`` if ``input_id`` is set,
+    :returns: ``{"last_input_id": input_id}`` if ``input_id`` is set,
         else ``None``.
     :rtype: dict[str, Any] | None
     """
@@ -540,7 +542,7 @@ class Task(Generic[Input, Output]):
         :paramtype input: Input
         :keyword input_id: Optional identifier for the input being accepted. When
             supplied, the framework records it as the task's most-recently-accepted
-            input id in a framework-reserved slot (``payload["_last_input_id"]``).
+            input id in a framework-reserved slot (``payload["last_input_id"]``).
 
             Two modes:
 
@@ -621,7 +623,7 @@ class Task(Generic[Input, Output]):
         :paramtype input: Input
         :keyword input_id: Optional identifier for the input being accepted. When
             supplied, the framework records it as the task's most-recently-accepted
-            input id in a framework-reserved slot (``payload["_last_input_id"]``).
+            input id in a framework-reserved slot (``payload["last_input_id"]``).
 
             Two modes:
 
@@ -791,7 +793,7 @@ class Task(Generic[Input, Output]):
                     first etag attempt; later attempts re-fetch internally).
                 :paramtype existing: Any
         :keyword input_id:  When set, the new input's identity.
-                    Used to advance ``payload["_last_input_id"]``
+                    Used to advance ``payload["last_input_id"]``
                     atomically with the queue append.
                 :paramtype input_id: str | None
         :keyword if_last_input_id:  When set, the precondition
@@ -829,7 +831,7 @@ class Task(Generic[Input, Output]):
                 )
 
             payload = dict(task_info.payload) if task_info.payload else {}
-            steering = dict(payload.get("_steering", {}))
+            steering = dict(payload.get("steering", {}))
             pending: list[Any] = list(steering.get("pending_inputs", []))
 
             if len(pending) >= _DEFAULT_MAX_PENDING_STEERING:
@@ -866,7 +868,7 @@ class Task(Generic[Input, Output]):
             #   SOT: the
             # internal _steering["generation"] payload field is removed
             # alongside the public ctx.steering_generation surface.
-            payload["_steering"] = steering
+            payload["steering"] = steering
 
             #  When the caller opted in via
             # input_id, advance the framework-managed last_input_id slot
@@ -985,7 +987,7 @@ class Task(Generic[Input, Output]):
                 :paramtype input: Input
         :keyword input_id:  When set, the new input's identity
                     recorded in the framework-reserved
-                    ``payload["_last_input_id"]`` slot.
+                    ``payload["last_input_id"]`` slot.
                 :paramtype input_id: str | None
         :keyword if_last_input_id:  Precondition value checked
                     against the stored ``last_input_id`` before any accept path.
@@ -1063,7 +1065,7 @@ class Task(Generic[Input, Output]):
         #  Pre-acceptance check: if the caller supplied an
         # ``if_last_input_id`` precondition, verify the stored last input id
         # matches before proceeding to any accept path. The actual advance
-        # (storing ``input_id`` into ``payload["_last_input_id"]``) is bundled
+        # (storing ``input_id`` into ``payload["last_input_id"]``) is bundled
         # into the create/append/resume code paths below so it lands atomically
         # with the input persist.
         _check_input_precondition(
@@ -1109,7 +1111,7 @@ class Task(Generic[Input, Output]):
             # suspended-resume POSTs race safely instead of silently
             # overwriting each other.
             #  On the same atomic patch, advance the
-            # framework's `payload["_last_input_id"]` slot when the caller
+            # framework's `payload["last_input_id"]` slot when the caller
             # opted in via `input_id`. The precondition check already ran
             # at the top of `_lifecycle_start` against the read existing.
             serialized = _serialize_input(input)
@@ -1124,7 +1126,7 @@ class Task(Generic[Input, Output]):
 
             #  — promotion: route the resume input through the
             # same helper as the create path. Inline stays raw in payload;
-            # > 200 KiB spills into ``attachments["_input"]`` with a ref
+            # > 200 KiB spills into ``attachments["input"]`` with a ref
             # in payload. Single PATCH carries both.
             input_mode, input_value = _resolve_input_storage(
                 serialized,
@@ -1258,7 +1260,7 @@ class Task(Generic[Input, Output]):
 
                 # Stale with steering recovery state — recover via steered path
                 if self._opts.steerable and existing.payload:
-                    steering = existing.payload.get("_steering", {})
+                    steering = existing.payload.get("steering", {})
                     if steering.get("drain_in_progress") or steering.get("pending_inputs"):
                         return await manager._start_existing_task(  # pylint: disable=protected-access
                             fn=self._fn,

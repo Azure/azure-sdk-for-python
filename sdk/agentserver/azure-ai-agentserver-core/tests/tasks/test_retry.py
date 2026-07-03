@@ -362,7 +362,7 @@ class TestRetryIntegration:
 # ``RetryPolicy.max_attempts``:
 #
 #     ``ctx.retry_attempt`` MUST persist across in-process boundaries
-#           via ``payload["_retry_attempt"]`` and MUST be restored verbatim
+#           via ``payload["retry_attempt"]`` and MUST be restored verbatim
 #           on recovery.
 #     ``RetryPolicy.max_attempts`` MUST count failure-retries across
 #           ALL lifetimes — one resilient budget, not a per-lifetime quota.
@@ -409,7 +409,7 @@ class TestRetryAttemptResilience:
     ) -> None:
         """Create a stale ``in_progress`` task that simulates a prior lifetime.
 
-        ``payload["_retry_attempt"]`` is the resilient counter that
+        ``payload["retry_attempt"]`` is the resilient counter that
         promises to restore on recovery.
         """
         import json
@@ -425,7 +425,7 @@ class TestRetryAttemptResilience:
                 title="retry-resilient-test",
                 payload={
                     "input": input_value,
-                    "_retry_attempt": retry_attempt,
+                    "retry_attempt": retry_attempt,
                 },
             )
         )
@@ -443,7 +443,7 @@ class TestRetryAttemptResilience:
         """: a recovered task's handler MUST see the persisted retry_attempt.
 
         Setup simulates a prior lifetime that already burned 2 failure-retries
-        (``payload["_retry_attempt"] == 2``). On recovery the handler MUST
+        (``payload["retry_attempt"] == 2``). On recovery the handler MUST
         observe ``ctx.retry_attempt == 2`` on its very first invocation —
         not the hardcoded 0 the current implementation supplies.
         """

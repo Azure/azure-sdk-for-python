@@ -177,18 +177,19 @@ async def test_chain_id_stable_across_recovery(
 
         # For a standalone response (no conversation_id, no previous_response_id),
         # the chain id is a stable, opaque hex hash derived from the response id's
-        # embedded partition key (Spec 036) — NOT the response id itself. It must
-        # be a 32-char hex digest and identical across recovery attempts.
+        # embedded partition key — NOT necessarily distinct from the response id.
+        # Since Spec 038 the chain id is a native id: a chain-scoped
+        # ``cchain_…`` / ``rchain_…`` id, OR the ``response_id`` verbatim for a
+        # non-steerable one-shot. It must be a valid native id and identical
+        # across recovery attempts.
+        import re as _re
+
         for chain in chain_ids:
-            assert chain != response_id, (
-                "Spec 036: the chain id is an opaque hash, not the raw response id. "
-                f"Got chain={chain!r}, response_id={response_id!r}."
-            )
-            assert len(chain) == 32 and all(c in "0123456789abcdef" for c in chain), (
-                f"Chain id must be a 32-char hex digest. Got chain={chain!r}."
-            )
-        assert len(set(chain_ids)) == 1, (
-            f"context.conversation_chain_id MUST be stable across all observations. Got {chain_ids!r}."
-        )
+            assert (
+                _re.fullmatch(r"[a-z]+_[A-Za-z0-9]+", chain) and len(chain) <= 128
+            ), f"Chain id must be a native id (<=128 chars). Got chain={chain!r}."
+        assert (
+            len(set(chain_ids)) == 1
+        ), f"context.conversation_chain_id MUST be stable across all observations. Got {chain_ids!r}."
     finally:
         await harness.close()

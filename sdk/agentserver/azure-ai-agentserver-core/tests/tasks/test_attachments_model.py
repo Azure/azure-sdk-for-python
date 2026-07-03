@@ -41,7 +41,7 @@ def test_thresholds_match_spec():
     assert _MAX_ATTACHMENT_SIZE_BYTES == 10 * 1024 * 1024
     assert _MAX_ATTACHMENTS == 20
     assert _STEERING_QUEUE_CAP == 9
-    assert _FUNCTION_INPUT_KEY == "_input"
+    assert _FUNCTION_INPUT_KEY == "input"
     assert _ATTACHMENT_REF_KEY == "__attachment_ref__"
     assert _HASH_ALGO_PREFIX == "sha256:"
 
@@ -77,11 +77,11 @@ def test_hash_format():
 
 
 def test_make_ref_shape():
-    ref = _make_ref("_input", {"foo": "bar"})
+    ref = _make_ref("input", {"foo": "bar"})
     assert set(ref.keys()) == {"__attachment_ref__"}
     inner = ref["__attachment_ref__"]
     assert set(inner.keys()) == {"key", "hash"}
-    assert inner["key"] == "_input"
+    assert inner["key"] == "input"
     assert inner["hash"].startswith("sha256:")
 
 
@@ -149,7 +149,7 @@ def test_resolve_steering_threshold_boundary():
     just_under = "x" * (_STEERING_THRESHOLD_BYTES - 2)
     assert _serialized_size_bytes(just_under) == _STEERING_THRESHOLD_BYTES
     mode_at, _ = _resolve_input_storage(
-        just_under, threshold_bytes=_STEERING_THRESHOLD_BYTES, key_for_attachment="_steering_input_0", task_id="t"
+        just_under, threshold_bytes=_STEERING_THRESHOLD_BYTES, key_for_attachment="steering_input_0", task_id="t"
     )
     assert mode_at == "inline"
 
@@ -157,10 +157,10 @@ def test_resolve_steering_threshold_boundary():
     over = "x" * (_STEERING_THRESHOLD_BYTES - 1)  # encoded length = threshold + 1
     assert _serialized_size_bytes(over) > _STEERING_THRESHOLD_BYTES
     mode_over, value_over = _resolve_input_storage(
-        over, threshold_bytes=_STEERING_THRESHOLD_BYTES, key_for_attachment="_steering_input_1", task_id="t"
+        over, threshold_bytes=_STEERING_THRESHOLD_BYTES, key_for_attachment="steering_input_1", task_id="t"
     )
     assert mode_over == "attachment"
-    assert _ref_key(value_over) == "_steering_input_1"
+    assert _ref_key(value_over) == "steering_input_1"
 
 
 # --------------------------------------------------------------------------- #
@@ -176,13 +176,13 @@ def test_read_input_value_inline_raw():
 
 
 def test_read_input_value_ref_resolves_from_attachments():
-    ref = _make_ref("_input", {"actual": "value"})
-    attachments = {"_input": {"actual": "value"}}
+    ref = _make_ref("input", {"actual": "value"})
+    attachments = {"input": {"actual": "value"}}
     assert _read_input_value(ref, attachments) == {"actual": "value"}
 
 
 def test_read_input_value_ref_with_no_attachments_raises():
-    ref = _make_ref("_input", "value")
+    ref = _make_ref("input", "value")
     with pytest.raises(KeyError, match="no attachments are present"):
         _read_input_value(ref, attachments=None)
 
@@ -263,12 +263,12 @@ def test_taskinfo_attachments_round_trip():
         session_id="s",
         status="in_progress",
         payload={"input": "hello"},
-        attachments={"_input": {"big": "value"}},
+        attachments={"input": {"big": "value"}},
     )
     d = info.to_dict()
-    assert d["attachments"] == {"_input": {"big": "value"}}
+    assert d["attachments"] == {"input": {"big": "value"}}
     info2 = TaskInfo.from_dict(d)
-    assert info2.attachments == {"_input": {"big": "value"}}
+    assert info2.attachments == {"input": {"big": "value"}}
 
 
 def test_taskinfo_attachments_absent_when_none():
@@ -280,13 +280,13 @@ def test_taskinfo_attachments_absent_when_none():
 
 
 def test_taskcreaterequest_carries_attachments():
-    req = TaskCreateRequest(agent_name="a", session_id="s", id="t1", title="t", attachments={"_input": {"foo": "bar"}})
-    assert req.attachments == {"_input": {"foo": "bar"}}
+    req = TaskCreateRequest(agent_name="a", session_id="s", id="t1", title="t", attachments={"input": {"foo": "bar"}})
+    assert req.attachments == {"input": {"foo": "bar"}}
 
 
 def test_taskpatchrequest_carries_attachments_including_null():
-    req = TaskPatchRequest(attachments={"_input": None, "_steering_input_3": {"v": 1}})
-    assert req.attachments == {"_input": None, "_steering_input_3": {"v": 1}}
+    req = TaskPatchRequest(attachments={"input": None, "steering_input_3": {"v": 1}})
+    assert req.attachments == {"input": None, "steering_input_3": {"v": 1}}
 
 
 # --------------------------------------------------------------------------- #
@@ -313,14 +313,14 @@ def test_local_create_with_attachments(local_provider: LocalFileTaskProvider):
                 session_id="s",
                 id="t-attach-1",
                 title="x",
-                attachments={"_input": {"k": "v"}, "_steering_input_0": "hello"},
+                attachments={"input": {"k": "v"}, "steering_input_0": "hello"},
             )
         )
-        assert info.attachments == {"_input": {"k": "v"}, "_steering_input_0": "hello"}
+        assert info.attachments == {"input": {"k": "v"}, "steering_input_0": "hello"}
         # Re-read from disk to confirm persistence.
         read_back = await local_provider.get("t-attach-1")
         assert read_back is not None
-        assert read_back.attachments == {"_input": {"k": "v"}, "_steering_input_0": "hello"}
+        assert read_back.attachments == {"input": {"k": "v"}, "steering_input_0": "hello"}
 
     asyncio.run(_go())
 
@@ -333,7 +333,7 @@ def test_local_patch_attachments_null_is_delete(local_provider):
                 session_id="s",
                 id="t-attach-2",
                 title="x",
-                attachments={"_input": "value-A", "_steering_input_0": "value-B"},
+                attachments={"input": "value-A", "steering_input_0": "value-B"},
             )
         )
         # PATCH: null deletes one, new value adds another
@@ -341,17 +341,17 @@ def test_local_patch_attachments_null_is_delete(local_provider):
             "t-attach-2",
             TaskPatchRequest(
                 attachments={
-                    "_input": None,  # delete
-                    "_steering_input_1": "value-C",  # add
-                    "_steering_input_0": "value-B-updated",  # update
+                    "input": None,  # delete
+                    "steering_input_1": "value-C",  # add
+                    "steering_input_0": "value-B-updated",  # update
                 }
             ),
         )
         info = await local_provider.get("t-attach-2")
         assert info is not None
         assert info.attachments == {
-            "_steering_input_0": "value-B-updated",
-            "_steering_input_1": "value-C",
+            "steering_input_0": "value-B-updated",
+            "steering_input_1": "value-C",
         }
 
     asyncio.run(_go())
@@ -385,7 +385,7 @@ def test_local_patch_attachments_unchanged_when_field_absent(local_provider):
     async def _go():
         await local_provider.create(
             TaskCreateRequest(
-                agent_name="a", session_id="s", id="t-untouched", title="x", attachments={"_input": "stays-put"}
+                agent_name="a", session_id="s", id="t-untouched", title="x", attachments={"input": "stays-put"}
             )
         )
         await local_provider.update(
@@ -394,7 +394,7 @@ def test_local_patch_attachments_unchanged_when_field_absent(local_provider):
         )
         info = await local_provider.get("t-untouched")
         assert info is not None
-        assert info.attachments == {"_input": "stays-put"}
+        assert info.attachments == {"input": "stays-put"}
 
     asyncio.run(_go())
 

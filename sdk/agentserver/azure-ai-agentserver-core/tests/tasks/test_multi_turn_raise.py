@@ -214,18 +214,18 @@ class TestMultiTurnRaiseDoesNotKillChain:
             assert record.status == "suspended"
             assert record.suspension_reason == "run_completion"
             assert payload.get("input") is None
-            assert payload.get("_retry_attempt") is None
+            assert payload.get("retry_attempt") is None
             assert "error" not in payload
             assert record.error is None
-            assert payload.get("_last_input_id") == "turn-2"
+            assert payload.get("last_input_id") == "turn-2"
 
             _, failure_patch = _find_suspend_patch(provider, "raise-suspend")
             failure_payload = _patch_payload(failure_patch)
             assert failure_payload.get("input") is None
-            assert failure_payload.get("_retry_attempt") is None
+            assert failure_payload.get("retry_attempt") is None
             assert "error" not in failure_payload
-            if "_steering" in failure_payload:
-                pending = failure_payload["_steering"].get("pending_inputs", [])
+            if "steering" in failure_payload:
+                pending = failure_payload["steering"].get("pending_inputs", [])
                 assert pending, "failure patch must not drop queued steering inputs"
         finally:
             await _teardown_manager(manager, mgr_mod)

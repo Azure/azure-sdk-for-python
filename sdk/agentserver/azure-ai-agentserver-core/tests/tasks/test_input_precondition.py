@@ -114,7 +114,7 @@ async def test_fresh_chain_input_id_only_succeeds(tmp_path: Path) -> None:
         await run.result()
         info = await manager.provider.get("t-fresh-1")
         assert info is not None
-        assert info.payload["_last_input_id"] == "msg-A"
+        assert info.payload["last_input_id"] == "msg-A"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -129,7 +129,7 @@ async def test_precondition_match_advances_last_input_id_on_resume(tmp_path: Pat
         info = await manager.provider.get("t-precond-match")
         assert info is not None
         assert info.status == "suspended"
-        assert info.payload["_last_input_id"] == "msg-1"
+        assert info.payload["last_input_id"] == "msg-1"
 
         run2 = await _steerable_suspending.start(
             task_id="t-precond-match", input={"turn": 2}, input_id="msg-2", if_last_input_id="msg-1"
@@ -137,7 +137,7 @@ async def test_precondition_match_advances_last_input_id_on_resume(tmp_path: Pat
         await asyncio.sleep(0.2)
         info = await manager.provider.get("t-precond-match")
         assert info is not None
-        assert info.payload["_last_input_id"] == "msg-2"
+        assert info.payload["last_input_id"] == "msg-2"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -163,7 +163,7 @@ async def test_precondition_mismatch_raises_on_resume(tmp_path: Path) -> None:
         # State must be untouched.
         info = await manager.provider.get("t-precond-mismatch")
         assert info is not None
-        assert info.payload["_last_input_id"] == "msg-1"
+        assert info.payload["last_input_id"] == "msg-1"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -187,7 +187,7 @@ async def test_input_id_only_advances_chain_head_unconditionally(tmp_path: Path)
 
         info = await manager.provider.get("t-fresh-rejected")
         assert info is not None
-        assert info.payload["_last_input_id"] == "msg-1"
+        assert info.payload["last_input_id"] == "msg-1"
 
         # input_id-only on a task with a stored chain: succeeds and
         # advances the chain head without precondition assertion.
@@ -201,7 +201,7 @@ async def test_input_id_only_advances_chain_head_unconditionally(tmp_path: Path)
 
         info = await manager.provider.get("t-fresh-rejected")
         assert info is not None
-        assert info.payload["_last_input_id"] == "msg-2"
+        assert info.payload["last_input_id"] == "msg-2"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -216,7 +216,7 @@ async def test_legacy_callers_unaffected(tmp_path: Path) -> None:
         info = await manager.provider.get("t-legacy")
         assert info is not None
         # Legacy path doesn't seed the slot at all.
-        assert "_last_input_id" not in info.payload
+        assert "last_input_id" not in info.payload
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -238,7 +238,7 @@ async def test_precondition_match_on_steering_append(tmp_path: Path) -> None:
         await asyncio.sleep(0.3)
         info = await manager.provider.get("t-steer-precond")
         assert info is not None
-        assert info.payload["_last_input_id"] == "msg-2"
+        assert info.payload["last_input_id"] == "msg-2"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -261,7 +261,7 @@ async def test_precondition_mismatch_on_steering_append(tmp_path: Path) -> None:
         # Slot should still hold the original.
         info = await manager.provider.get("t-steer-mismatch")
         assert info is not None
-        assert info.payload["_last_input_id"] == "msg-1"
+        assert info.payload["last_input_id"] == "msg-1"
     finally:
         await _teardown_manager(manager, mgr_mod)
 
@@ -273,14 +273,14 @@ async def test_framework_namespace_isolated_from_user_payload(tmp_path: Path) ->
     # keys like `input` or `metadata`.
     manager, mgr_mod = await _setup_manager(tmp_path)
     try:
-        await _fast_completing.start(task_id="t-ns-iso", input={"_last_input_id": "USER-INJECTED"}, input_id="msg-A")
+        await _fast_completing.start(task_id="t-ns-iso", input={"last_input_id": "USER-INJECTED"}, input_id="msg-A")
         info = await manager.provider.get("t-ns-iso")
         assert info is not None
         # The framework slot should reflect the framework-supplied id,
         # NOT the user-injected value (which lives under payload["input"]).
-        assert info.payload["_last_input_id"] == "msg-A"
+        assert info.payload["last_input_id"] == "msg-A"
         # And the user input is preserved as-is under `input`.
-        assert info.payload["input"] == {"_last_input_id": "USER-INJECTED"}
+        assert info.payload["input"] == {"last_input_id": "USER-INJECTED"}
     finally:
         await _teardown_manager(manager, mgr_mod)
 

@@ -501,7 +501,7 @@ class TestRecoveryThreeLayerRecovery:
                     session_id="test-session",
                     status="in_progress",
                     title="orphan",
-                    payload={"input": '"x"'},
+                    payload={"input": '"x"', "schema_version": "1"},
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id="previous-instance",
                     lease_duration_seconds=60,

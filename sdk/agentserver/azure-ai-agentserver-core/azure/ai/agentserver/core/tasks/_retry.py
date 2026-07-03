@@ -35,7 +35,7 @@ class RetryPolicy:
     :param max_attempts: Total attempts (including the first try). This is a
         single **resilient** budget that counts handler-raised failures across
         ALL lifetimes — the count is persisted to
-        ``payload["_retry_attempt"]`` and restored on recovery. Crash
+        ``payload["retry_attempt"]`` and restored on recovery. Crash
         recovery does NOT consume the budget; only handler-raised exceptions
         do. A steering input resets the counter (a steering input is a new
         logical request).

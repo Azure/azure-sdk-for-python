@@ -122,16 +122,17 @@ async def test_row_1_path_a_polled_response_output_reflects_fresh_handler(
         assert terminal["status"] == "completed", terminal
         text = _final_text_from_snapshot(terminal)
         assert text.startswith("L0_done"), f"Fresh handler must produce L0_done… final text. Got: {text!r}"
-        # Spec 036: the chain id is a stable, opaque hash derived from the
-        # response id's embedded partition key — NOT the raw response id.
+        # Spec 038: the chain id is a stable native id — a chain-scoped
+        # ``cchain_…`` / ``rchain_…`` id, OR the ``response_id`` verbatim for a
+        # non-steerable one-shot.
         import re as _re
 
-        _m = _re.search(r"chain=([0-9a-f]+)", text)
+        _m = _re.search(r"chain=(\S+)", text)
         assert _m is not None, f"final text must carry a chain= segment. Got: {text!r}"
         _chain = _m.group(1)
-        assert len(_chain) == 32 and _chain != response_id, (
-            f"chain= must be a 32-char hex hash distinct from response_id={response_id}. " f"Got chain={_chain!r}."
-        )
+        assert (
+            _re.fullmatch(r"[a-z]+_[A-Za-z0-9]+", _chain) and len(_chain) <= 128
+        ), f"chain= must be a native id (<=128 chars). Got chain={_chain!r}."
     finally:
         await harness.close()
 

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- `ResponseContext.conversation_chain_id` (and the resilient task id it backs) now follows the native id convention: `cchain_<partition><scope>` for conversation-scoped chains, `rchain_<partition><scope>` for steerable response-linkage chains, or the `response_id` verbatim for a non-steerable one-shot. The id embeds the chain's partition key for co-location and carries a deterministic `(agent, session)` scope; `task_id == conversation_chain_id` exactly. Replaces the previous opaque `resilient-resp-<32-hex>` form.
+
 - Container protocol version `2.0.0` support: the per-request call ID (`x-agent-foundry-call-id`) and global user ID (`x-agent-user-id`) are read from inbound requests and exposed on `ResponseContext.platform_context`. The per-request call ID is forwarded on all outbound Foundry Storage calls and bound to the request-scoped platform context so handler/tool code making raw outbound calls can forward it; `x-agent-user-id` is used only for container-side partitioning and is not forwarded to 1P services.
 
 - **Resilient background responses.** `ResponsesServerOptions(resilient_background=True)`

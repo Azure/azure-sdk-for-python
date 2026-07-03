@@ -82,7 +82,7 @@ class TestSteering:
             #: exception.task_id removed
             # Verify queue has the input
             task_info = await manager.provider.get("t1")
-            steering = task_info.payload.get("_steering", {})
+            steering = task_info.payload.get("steering", {})
             assert len(steering["pending_inputs"]) >= 1
             assert steering["cancel_requested"] is True
 
@@ -502,7 +502,7 @@ class TestSteeringRecovery:
         stored.status = "in_progress"
         stored.payload = {
             **(stored.payload or {}),
-            "_steering": {
+            "steering": {
                 "generation": 1,
                 "active_input": {"msg": "B"},
                 "pending_inputs": [],
@@ -810,7 +810,7 @@ class TestSteeringCrossProcessDrainRecovery:
 
             def _is_drain_patch(self, patch):
                 payload = getattr(patch, "payload", None) or {}
-                steering = payload.get("_steering") or {}
+                steering = payload.get("steering") or {}
                 return "active_input" in steering and steering.get("active_input") is not None
 
             async def update(self, task_id, patch):
@@ -903,7 +903,7 @@ class TestSteeringDrainStatusTransition:
             drain_patches = [
                 p
                 for (_tid, p, _im) in provider.update_calls
-                if (getattr(p, "payload", None) or {}).get("_steering", {}).get("active_input") is not None
+                if (getattr(p, "payload", None) or {}).get("steering", {}).get("active_input") is not None
             ]
             assert drain_patches, "no drain PATCH observed"
             assert drain_patches[0].status == "in_progress", (

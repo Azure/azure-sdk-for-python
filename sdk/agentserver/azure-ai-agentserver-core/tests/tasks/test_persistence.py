@@ -142,7 +142,7 @@ def _assert_no_output_storage(record: Any) -> None:
     payload = _payload(record)
     assert "output" not in payload, f"payload['output'] MUST NOT be persisted; payload={payload!r}"
     assert not any(
-        key.startswith("_output") for key in _attachment_keys(record)
+        key.startswith("output") for key in _attachment_keys(record)
     ), f"_output attachment MUST NOT be persisted; attachments={getattr(record, 'attachments', None)!r}"
 
 
@@ -156,7 +156,7 @@ def _assert_no_output_attachment_patches(provider: RecordingProvider, task_id: s
     for _, patch in [call for call in provider.update_calls if call[0] == task_id]:
         attachment_patch = getattr(patch, "attachments", None) or {}
         assert not any(
-            key.startswith("_output") for key in attachment_patch
+            key.startswith("output") for key in attachment_patch
         ), f"_output attachment MUST NOT be written or deleted; patch={patch!r}"
 
 
@@ -204,7 +204,7 @@ class TestNoOutputPersistence:
 
             assert isinstance(provider, RecordingProvider)
             before_delete = provider.before_delete["one-shot-no-output-attachment"]
-            assert not any(key.startswith("_output") for key in _attachment_keys(before_delete))
+            assert not any(key.startswith("output") for key in _attachment_keys(before_delete))
             _assert_no_output_attachment_patches(provider, "one-shot-no-output-attachment")
         finally:
             await _teardown_manager(manager)
@@ -353,7 +353,7 @@ class TestInputClearingRules:
 
 
 class TestLastInputIdRetention:
-    """— payload["_last_input_id"] kept across suspend; NOT used as recovery input source."""
+    """— payload["last_input_id"] kept across suspend; NOT used as recovery input source."""
 
     @pytest.mark.asyncio
     async def test_last_input_id_preserved_across_suspend(self, tmp_path: Path) -> None:
@@ -366,11 +366,11 @@ class TestLastInputIdRetention:
 
             assert await chat.run(task_id="last-input-id", input_id="a", input={"value": "one"}) == "one"
             record = await _wait_for_record(provider, "last-input-id", status="suspended")
-            assert _payload(record).get("_last_input_id") == "a"
+            assert _payload(record).get("last_input_id") == "a"
 
             assert await chat.run(task_id="last-input-id", input_id="b", input={"value": "two"}) == "two"
             record = await _wait_for_record(provider, "last-input-id", status="suspended")
-            assert _payload(record).get("_last_input_id") == "b"
+            assert _payload(record).get("last_input_id") == "b"
         finally:
             await _teardown_manager(manager)
 
@@ -395,7 +395,8 @@ class TestLastInputIdRetention:
                     payload={
                         "input": {"value": "active-in-flight"},
                         "metadata": {},
-                        "_last_input_id": "not-the-input",
+                        "last_input_id": "not-the-input",
+                        "schema_version": "1",
                     },
                     lease_owner=manager._lease_owner,  # noqa: SLF001
                     lease_instance_id="prior-incarnation",
@@ -408,13 +409,13 @@ class TestLastInputIdRetention:
             record = await _wait_for_record(provider, "last-input-id-recovery", status="suspended")
 
             assert observed == [("recovered", {"value": "active-in-flight"})]
-            assert _payload(record).get("_last_input_id") == "not-the-input"
+            assert _payload(record).get("last_input_id") == "not-the-input"
         finally:
             await _teardown_manager(manager)
 
 
 class TestRetryAttemptClearing:
-    """— payload["_retry_attempt"] cleared at suspend/terminal; kept while in_progress."""
+    """— payload["retry_attempt"] cleared at suspend/terminal; kept while in_progress."""
 
     @pytest.mark.asyncio
     async def test_retry_attempt_cleared_at_suspend(self, tmp_path: Path) -> None:
@@ -436,7 +437,7 @@ class TestRetryAttemptClearing:
             assert await chat.run(task_id="retry-cleared", input_id="turn-a", input="x") == "ok:1"
 
             record = await _wait_for_record(provider, "retry-cleared", status="suspended")
-            assert _payload(record).get("_retry_attempt") is None
+            assert _payload(record).get("retry_attempt") is None
         finally:
             await _teardown_manager(manager)
 
@@ -461,7 +462,7 @@ class TestRetryAttemptClearing:
             run = await retrying.start(task_id="retry-kept", input="x")
             await asyncio.wait_for(first_attempt.wait(), timeout=5.0)
 
-            record = await _wait_for_payload_value(provider, "retry-kept", "_retry_attempt", 1)
+            record = await _wait_for_payload_value(provider, "retry-kept", "retry_attempt", 1)
             assert record.status == "in_progress"
 
             release_second_attempt.set()
@@ -499,7 +500,7 @@ class TestRetryAttemptClearing:
 
 
 class TestSteeringQueueLocation:
-    """— steering queue lives in payload["_steering"] (no separate record kind)."""
+    """— steering queue lives in payload["steering"] (no separate record kind)."""
 
     @pytest.mark.asyncio
     async def test_queued_steerer_stored_in_payload_steering(self, tmp_path: Path) -> None:
@@ -521,7 +522,7 @@ class TestSteeringQueueLocation:
             queued_2 = await chat.start(task_id="steering-payload", input_id="c", input={"value": "queued-2"})
 
             record = await _wait_for_record(provider, "steering-payload", status="in_progress")
-            steering = _payload(record).get("_steering") or {}
+            steering = _payload(record).get("steering") or {}
             assert steering.get("pending_inputs") == [{"value": "queued-1"}, {"value": "queued-2"}]
 
             release.set()
@@ -554,7 +555,7 @@ class TestSteeringQueueLocation:
             records = await provider.list(agent_name="test-agent", session_id="test-session")
             assert {record.id for record in records} == {"no-pending-record"}
             assert len(records) == 1
-            assert "_steering" in _payload(records[0])
+            assert "steering" in _payload(records[0])
         finally:
             release.set()
             await _teardown_manager(manager)
