@@ -3,11 +3,11 @@
 
 | id | sdk name | api version | sdk version | pr link | release date | state | refresh link |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 1 | azure-mgmt-resource | 2025-04-01 | 26.0.0b1 | [#47386](https://github.com/Azure/azure-sdk-for-python/pull/47386) | 2026-06-08 | refreshed | [47626](https://github.com/Azure/azure-sdk-for-python/pull/47626) |
-| 2 | azure-mgmt-loganalytics | 2025-07-01 | 14.0.0b1 | [#47335](https://github.com/Azure/azure-sdk-for-python/pull/47335) | 2026-06-04 | refreshed | [47629](https://github.com/Azure/azure-sdk-for-python/pull/47629) |
-| 3 | azure-mgmt-billing | 2024-04-01 | 8.0.0b1 | [#47277](https://github.com/Azure/azure-sdk-for-python/pull/47277) | 2026-06-02 | refreshed | [47630](https://github.com/Azure/azure-sdk-for-python/pull/47630) |
-| 4 | azure-mgmt-kusto | 2025-02-14 | 4.0.0b1 | [#47278](https://github.com/Azure/azure-sdk-for-python/pull/47278) | 2026-06-02 | refreshed | [47628](https://github.com/Azure/azure-sdk-for-python/pull/47628) |
-| 5 | azure-mgmt-sql | 2025-01-01 | 4.0.0b25 | [#47365](https://github.com/Azure/azure-sdk-for-python/pull/47365) | 2026-06-02 | Doing | [47631](https://github.com/Azure/azure-sdk-for-python/pull/47631) |
+| 1 | azure-mgmt-resource | 2025-04-01 | 26.0.0b1 | [#47386](https://github.com/Azure/azure-sdk-for-python/pull/47386) | 2026-06-08 | Done | [47626](https://github.com/Azure/azure-sdk-for-python/pull/47626) |
+| 2 | azure-mgmt-loganalytics | 2025-07-01 | 14.0.0b1 | [#47335](https://github.com/Azure/azure-sdk-for-python/pull/47335) | 2026-06-04 | Done | [47629](https://github.com/Azure/azure-sdk-for-python/pull/47629) |
+| 3 | azure-mgmt-billing | 2024-04-01 | 8.0.0b1 | [#47277](https://github.com/Azure/azure-sdk-for-python/pull/47277) | 2026-06-02 | Done | [47630](https://github.com/Azure/azure-sdk-for-python/pull/47630) |
+| 4 | azure-mgmt-kusto | 2025-02-14 | 4.0.0b1 | [#47278](https://github.com/Azure/azure-sdk-for-python/pull/47278) | 2026-06-02 | Done | [47628](https://github.com/Azure/azure-sdk-for-python/pull/47628) |
+| 5 | azure-mgmt-sql | 2025-01-01 | 4.0.0b25 | [#47365](https://github.com/Azure/azure-sdk-for-python/pull/47365) | 2026-06-02 | Done | [47631](https://github.com/Azure/azure-sdk-for-python/pull/47631) |
 | 6 | azure-mgmt-datafactory | 2018-06-01 | 10.0.0b1 | [#47198](https://github.com/Azure/azure-sdk-for-python/pull/47198) | 2026-05-28 | Not Started |  |
 | 7 | azure-mgmt-resourcehealth | 2025-05-01 | 1.0.0b7 | [#47187](https://github.com/Azure/azure-sdk-for-python/pull/47187) | 2026-05-28 | Not Started |  |
 | 8 | azure-mgmt-appcontainers | 2026-01-01 | 5.0.0b1 | [#47161](https://github.com/Azure/azure-sdk-for-python/pull/47161) | 2026-05-27 | Not Started |  |
@@ -23,12 +23,12 @@
 | 18 | azure-mgmt-resource-deployments | 2025-04-01 | 1.0.0b2 | [#47044](https://github.com/Azure/azure-sdk-for-python/pull/47044) | 2026-05-21 | Not Started |  |
 | 19 | azure-mgmt-resource-subscriptions | 2022-12-01 | 1.0.0b2 | [#47042](https://github.com/Azure/azure-sdk-for-python/pull/47042) | 2026-05-21 | Not Started |  |
 | 20 | azure-mgmt-hybridkubernetes | 2026-05-01 | 2.0.0b1 | [#47018](https://github.com/Azure/azure-sdk-for-python/pull/47018) | 2026-05-20 | Not Started |  |
-| 21 | azure-mgmt-certificateregistration | 2024-11-01 | 1.0.0b1 | [#46569](https://github.com/Azure/azure-sdk-for-python/pull/46569) | 2026-04-28 | Not Started |  |
-| 22 | azure-mgmt-domainregistration | 2024-11-01 | 1.0.0b1 | [#46570](https://github.com/Azure/azure-sdk-for-python/pull/46570) | 2026-04-28 | Doing | [47668](https://github.com/Azure/azure-sdk-for-python/pull/47668) |
-| 23 | azure-mgmt-recoveryservicessiterecovery | 2025-08-01 | 2.0.0b1 | [#46275](https://github.com/Azure/azure-sdk-for-python/pull/46275) | 2026-04-27 | Doing | [47667](https://github.com/Azure/azure-sdk-for-python/pull/47667) |
-| 24 | azure-mgmt-managementgroups | 2023-04-01 | 2.0.0b1 | [#46074](https://github.com/Azure/azure-sdk-for-python/pull/46074) | 2026-04-02 | Refreshed | [47665](https://github.com/Azure/azure-sdk-for-python/pull/47665) |
+| 21 | azure-mgmt-certificateregistration | 2024-11-01 | 1.0.0b1 | [#46569](https://github.com/Azure/azure-sdk-for-python/pull/46569) | 2026-04-28 | Done | [47764](https://github.com/Azure/azure-sdk-for-python/pull/47764) |
+| 22 | azure-mgmt-domainregistration | 2024-11-01 | 1.0.0b1 | [#46570](https://github.com/Azure/azure-sdk-for-python/pull/46570) | 2026-04-28 | Done | [47668](https://github.com/Azure/azure-sdk-for-python/pull/47668) |
+| 23 | azure-mgmt-recoveryservicessiterecovery | 2025-08-01 | 2.0.0b1 | [#46275](https://github.com/Azure/azure-sdk-for-python/pull/46275) | 2026-04-27 | Done | [47667](https://github.com/Azure/azure-sdk-for-python/pull/47667) |
+| 24 | azure-mgmt-managementgroups | 2023-04-01 | 2.0.0b1 | [#46074](https://github.com/Azure/azure-sdk-for-python/pull/46074) | 2026-04-02 | Done | [47665](https://github.com/Azure/azure-sdk-for-python/pull/47665) |
 | 25 | azure-mgmt-networkcloud | 2025-09-01 | 3.0.0b1 | [#46048](https://github.com/Azure/azure-sdk-for-python/pull/46048) | 2026-04-02 | Not Started | |
-| 26 | azure-mgmt-frontdoor | 2025-10-01 | 2.0.0b1 | [#45874](https://github.com/Azure/azure-sdk-for-python/pull/45874) | 2026-03-24 | Doing | [47639](https://github.com/Azure/azure-sdk-for-python/pull/47639) |
-| 27 | azure-mgmt-kubernetesconfiguration-fluxconfigurations | 2025-04-01 | 1.0.0b2 | [#45714](https://github.com/Azure/azure-sdk-for-python/pull/45714) | 2026-03-18 | Doing | [47638](https://github.com/Azure/azure-sdk-for-python/pull/47638) |
+| 26 | azure-mgmt-frontdoor | 2025-10-01 | 2.0.0b1 | [#45874](https://github.com/Azure/azure-sdk-for-python/pull/45874) | 2026-03-24 | Done | [47639](https://github.com/Azure/azure-sdk-for-python/pull/47639) |
+| 27 | azure-mgmt-kubernetesconfiguration-fluxconfigurations | 2025-04-01 | 1.0.0b2 | [#45714](https://github.com/Azure/azure-sdk-for-python/pull/45714) | 2026-03-18 | Done | [47638](https://github.com/Azure/azure-sdk-for-python/pull/47638) |
 | 28 | azure-mgmt-networkfunction | 2022-11-01 | 1.0.0b2 | [#45641](https://github.com/Azure/azure-sdk-for-python/pull/45641) | 2026-03-16 | Doing | [47636](https://github.com/Azure/azure-sdk-for-python/pull/47636) |
 | 29 | azure-mgmt-communication | 2025-09-01 | 3.0.0b1 | [#45767](https://github.com/Azure/azure-sdk-for-python/pull/45767) | 2026-03-10 | Refreshed | [47635](https://github.com/Azure/azure-sdk-for-python/pull/47635) |
