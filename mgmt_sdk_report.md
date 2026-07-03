@@ -31,4 +31,4 @@
 | 26 | azure-mgmt-frontdoor | 2025-10-01 | 2.0.0b1 | [#45874](https://github.com/Azure/azure-sdk-for-python/pull/45874) | 2026-03-24 | Done | [47639](https://github.com/Azure/azure-sdk-for-python/pull/47639) |
 | 27 | azure-mgmt-kubernetesconfiguration-fluxconfigurations | 2025-04-01 | 1.0.0b2 | [#45714](https://github.com/Azure/azure-sdk-for-python/pull/45714) | 2026-03-18 | Done | [47638](https://github.com/Azure/azure-sdk-for-python/pull/47638) |
 | 28 | azure-mgmt-networkfunction | 2022-11-01 | 1.0.0b2 | [#45641](https://github.com/Azure/azure-sdk-for-python/pull/45641) | 2026-03-16 | Doing | [47636](https://github.com/Azure/azure-sdk-for-python/pull/47636) |
-| 29 | azure-mgmt-communication | 2025-09-01 | 3.0.0b1 | [#45767](https://github.com/Azure/azure-sdk-for-python/pull/45767) | 2026-03-10 | Refreshed | [47635](https://github.com/Azure/azure-sdk-for-python/pull/47635) |
+| 29 | azure-mgmt-communication | 2025-09-01 | 3.0.0b1 | [#45767](https://github.com/Azure/azure-sdk-for-python/pull/45767) | 2026-03-10 | Done | [47635](https://github.com/Azure/azure-sdk-for-python/pull/47635) |
