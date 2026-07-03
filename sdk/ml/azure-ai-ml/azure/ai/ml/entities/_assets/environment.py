@@ -225,8 +225,10 @@ class Environment(Asset, LocalizableMixin):
             environment_version.os_type = self.os_type
         if self.tags:
             environment_version.tags = self.tags
-        if self._is_anonymous:
-            environment_version.is_anonymous = self._is_anonymous
+        # The legacy msrest model serialized ``isAnonymous``/``isArchived`` (default False) on the
+        # wire; the arm_ml_service model omits None, so set them explicitly to preserve the wire.
+        environment_version.is_anonymous = self._is_anonymous or False
+        environment_version.is_archived = False
         if self.inference_config:
             environment_version.inference_config = self.inference_config
         if self.description:

@@ -43,14 +43,14 @@ class TestSparkJobEntity:
         )
 
         expected_conf = {
-            "spark.driver.cores": 1,
+            "spark.driver.cores": "1",
             "spark.driver.memory": "2g",
-            "spark.executor.cores": 2,
+            "spark.executor.cores": "2",
             "spark.executor.memory": "2g",
-            "spark.executor.instances": 2,
-            "spark.dynamicAllocation.enabled": True,
-            "spark.dynamicAllocation.minExecutors": 1,
-            "spark.dynamicAllocation.maxExecutors": 3,
+            "spark.executor.instances": "2",
+            "spark.dynamicAllocation.enabled": "True",
+            "spark.dynamicAllocation.minExecutors": "1",
+            "spark.dynamicAllocation.maxExecutors": "3",
         }
         assert node._to_job()._to_rest_object().properties.conf == expected_conf
 
@@ -138,14 +138,14 @@ class TestSparkJobEntity:
         )
 
         expected_conf = {
-            "spark.driver.cores": 1,
+            "spark.driver.cores": "1",
             "spark.driver.memory": "2g",
-            "spark.executor.cores": 2,
+            "spark.executor.cores": "2",
             "spark.executor.memory": "2g",
-            "spark.executor.instances": 2,
-            "spark.dynamicAllocation.enabled": True,
-            "spark.dynamicAllocation.minExecutors": 1,
-            "spark.dynamicAllocation.maxExecutors": 3,
+            "spark.executor.instances": "2",
+            "spark.dynamicAllocation.enabled": "True",
+            "spark.dynamicAllocation.minExecutors": "1",
+            "spark.dynamicAllocation.maxExecutors": "3",
             "spark.jars.excludes": "slf4j:slf4j",
             "spark.jars.packages": "com.microsoft.ml.spark:mmlspark_2.11:0.15",
             "spark.jars.repositories": "https://mmlspark.azureedge.net/maven",
@@ -301,14 +301,14 @@ class TestSparkJobEntity:
         )
 
         expected_conf = {
-            "spark.driver.cores": 1,
+            "spark.driver.cores": "1",
             "spark.driver.memory": "2g",
-            "spark.executor.cores": 2,
+            "spark.executor.cores": "2",
             "spark.executor.memory": "2g",
-            "spark.executor.instances": 2,
-            "spark.dynamicAllocation.enabled": True,
-            "spark.dynamicAllocation.minExecutors": 1,
-            "spark.dynamicAllocation.maxExecutors": 3,
+            "spark.executor.instances": "2",
+            "spark.dynamicAllocation.enabled": "True",
+            "spark.dynamicAllocation.minExecutors": "1",
+            "spark.dynamicAllocation.maxExecutors": "3",
         }
         assert node._to_job()._to_rest_object().properties.conf == expected_conf
 
@@ -384,11 +384,11 @@ class TestSparkJobEntity:
             },
         )
         expected_conf = {
-            "spark.driver.cores": 1,
+            "spark.driver.cores": "1",
             "spark.driver.memory": "2g",
-            "spark.executor.cores": 2,
+            "spark.executor.cores": "2",
             "spark.executor.memory": "2g",
-            "spark.executor.instances": 2,
+            "spark.executor.instances": "2",
             "spark.jars.packages": "com.microsoft.ml.spark:mmlspark_2.11:0.15",
             "spark.jars.repositories": "https://mmlspark.azureedge.net/maven",
             "spark.jars.excludes": "slf4j",

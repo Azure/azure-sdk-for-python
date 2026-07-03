@@ -250,7 +250,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 model_type=self.type,
                 model_uri=self.path,
                 stage=self.stage,
-                is_anonymous=self._is_anonymous,
+                is_anonymous=self._is_anonymous or False,
+                is_archived=False,
             )
             model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
 
@@ -277,7 +278,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             model_type=self.type,
             model_uri=self.path,
             stage=self.stage,
-            is_anonymous=self._is_anonymous,
+            is_anonymous=self._is_anonymous or False,
+            is_archived=False,
         )
         model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
 
