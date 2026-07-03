@@ -1,5 +1,11 @@
 # Release History
 
+## 1.42.0 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed `HttpRequest` setting a `Content-Type` of `application/x-www-form-urlencoded` on multipart requests that carry form data but no file (e.g. when the file part is optional and omitted). Such requests can now be flagged with the internal `is_multipart_payload` keyword so the transport sets the correct multipart `Content-Type`. #39163
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
