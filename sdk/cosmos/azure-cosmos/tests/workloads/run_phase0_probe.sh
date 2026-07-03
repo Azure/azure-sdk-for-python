@@ -8,7 +8,7 @@
 # from the loaded phases are not meaningful as an SLA reference.
 #
 # Backend is selectable so the same probe runs both engines:
-#   ./run_phase0_probe.sh 480                         # core-python (default)
+#   ./run_phase0_probe.sh 480                         # core-python + rust (default)
 #   PHASE0_BACKENDS=rust ./run_phase0_probe.sh 480    # rust
 # Results land in perfdb/perfresults tagged PERF_WORKLOAD_ID=lat0-<op>-<backend>-<stamp>;
 # read them back with phase0_report.py.
@@ -20,9 +20,11 @@ source ~/venvs/perfdrill/bin/activate
 
 DURATION="${1:-480}"
 OPERATIONS=(read create upsert replace delete patch)
-BACKENDS=(${PHASE0_BACKENDS:-core-python})   # override with PHASE0_BACKENDS=rust
+BACKENDS=(${PHASE0_BACKENDS:-core-python rust})
 
-STAMP="$(date +%Y%m%d-%H%M%S)"
+_ns="$(date +%N 2>/dev/null || echo 000000000)"
+[[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
+STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/phase0-${STAMP}"
 mkdir -p "$LOG_DIR"
 
@@ -42,6 +44,7 @@ echo "=== Phase 0: light-load latency probe (conc=1) ==="
 echo "    stamp=${STAMP} dur=${DURATION}s ops=${OPERATIONS[*]} backends=${BACKENDS[*]}"
 echo "    container=lat_probe_db/lat_probe_cont  results -> perfdb/perfresults (workload_id LIKE lat0-%)"
 echo
+overall_rc=0
 
 for op in "${OPERATIONS[@]}"; do
   for bk in "${BACKENDS[@]}"; do
@@ -51,12 +54,28 @@ for op in "${OPERATIONS[@]}"; do
     # timeout sends SIGINT so the workload stops the same way a Ctrl-C would,
     # letting the reporter flush one final row; --kill-after escalates if a cell
     # ever swallows the signal so one wedged cell cannot stall the whole probe.
-    COSMOS_BACKEND="${bk}" WORKLOAD_OPERATIONS="${op}" PERF_WORKLOAD_ID="${wid}" \
+    if COSMOS_BACKEND="${bk}" WORKLOAD_OPERATIONS="${op}" PERF_WORKLOAD_ID="${wid}" \
       timeout --signal=INT --kill-after=120s --preserve-status "${DURATION}s" \
-        python3 workload.py >"${log}" 2>&1 || rc=$?
-    rc="${rc:-0}"
+        python3 workload.py >"${log}" 2>&1; then
+      rc=0
+    else
+      rc=$?
+    fi
     echo "    rc=${rc}  log=${log}"
-    rc=0
+    case "${rc}" in
+      0)   ;;
+      130) echo "    !! run exited 130 (SIGINT fell back to KeyboardInterrupt; data likely OK but handler did not engage)" >&2 ;;
+      137|124) overall_rc=1 ;;
+      *)   overall_rc=1 ;;
+    esac
   done
 done
 echo "=== Phase 0 complete. stamp=${STAMP} ==="
+echo "=== Running post-run integrity gate (Phase 0) ==="
+if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "lat0-"; then
+  echo "=== integrity gate PASSED ==="
+else
+  echo "!! integrity gate FAILED -- inspect rows/logs before trusting Phase 0." >&2
+  overall_rc=1
+fi
+exit "${overall_rc}"

@@ -39,6 +39,8 @@ import argparse
 import os
 import sys
 
+import perf_provenance_gate as _prov
+
 try:
     from azure.cosmos import CosmosClient
 except ImportError:
@@ -232,6 +234,7 @@ def main():
     ap = argparse.ArgumentParser(description="Automated leak verdict (Phase B).")
     ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
     ap.add_argument("--prefix", default="leak-", help="workload_id prefix (default 'leak-')")
+    _prov.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
@@ -298,20 +301,11 @@ def main():
     print("GATE:", "FAIL" if gate_fail else "PASS",
           "(None/blank/mismatched runtime_backend rows indicate provenance not proven)")
 
-    # ---- Rust driver provenance (always surfaced) ----
-    # Record the exact azure-sdk-for-rust commit the soak ran against, so a leak
-    # verdict is tied to a specific driver build. More than one commit means the
-    # soak mixed builds and the RSS trend is not attributable to one driver.
-    driver_commits = sorted({r.get("driver_commit") for r in rows if r.get("driver_commit")})
-    print("\n### Rust driver provenance (azure-sdk-for-rust commit) ###")
-    if not driver_commits:
-        print("  driver_commit not recorded on any row -- rebuild the harness so the exact "
-              "driver commit is persisted before trusting the leak trend.")
-    elif len(driver_commits) == 1:
-        print(f"  commit {driver_commits[0]} -- single driver build across all rows (OK).")
-    else:
-        print(f"  !! MIXED driver builds in one soak: {driver_commits}. Rows came from "
-              "different azure-sdk-for-rust commits; re-run so the trend maps to one build.")
+    # ---- Rust driver provenance gate (enforced; scoped to rust rows) ----
+    prov_ok, prov_lines = _prov.evaluate(rows, strict=_prov.strict_from(args))
+    print()
+    for _l in prov_lines:
+        print(_l)
 
     backends = sorted({k[0] for k in grp})
     ops = sorted({k[1] for k in grp})
@@ -364,7 +358,7 @@ def main():
                 return "n/a"
             print(f"{op:11s} {rrss:8.0f} {crss:8.0f} {fmt(rr):>18s} {fmt(cr):>18s}")
 
-    sys.exit(1 if gate_fail else 0)
+    sys.exit(1 if (gate_fail or not prov_ok) else 0)
 
 
 if __name__ == "__main__":

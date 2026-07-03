@@ -72,7 +72,9 @@ fi
 read -r -a LEVELS <<< "${CONCURRENCY_LEVELS:-1 4 8 16 32 64 128 256 512 1024 2048}"
 BACKENDS=(core-python rust)
 
-STAMP="$(date +%Y%m%d-%H%M%S)"
+_ns="$(date +%N 2>/dev/null || echo 000000000)"
+[[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
+STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/sweep-${STAMP}"
 mkdir -p "${LOG_DIR}"
 write_run_manifest "${LOG_DIR}" "${STAMP}" "C-throughput-sweep"

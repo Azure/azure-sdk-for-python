@@ -37,7 +37,9 @@ BACKENDS=(core-python rust)
 # closed-loop regardless of WORKLOAD_ARRIVAL_RATE.
 OPENLOOP_OK=" read upsert replace patch "
 
-STAMP="$(date +%Y%m%d-%H%M%S)"
+_ns="$(date +%N 2>/dev/null || echo 000000000)"
+[[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
+STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/latency-${STAMP}"
 mkdir -p "${LOG_DIR}"
 write_run_manifest "${LOG_DIR}" "${STAMP}" "A-latency-matrix"
@@ -48,6 +50,7 @@ echo "    backends = ${BACKENDS[*]} (baseline then rust, back-to-back per op)"
 echo "    logs -> ${LOG_DIR}"
 echo "    total sequential time ~= $(( DURATION_SECONDS * ${#OPERATIONS[@]} * ${#BACKENDS[@]} * REPEATS / 3600 )) h"
 echo
+overall_rc=0
 
 for (( r=1; r<=REPEATS; r++ )); do
   for op in "${OPERATIONS[@]}"; do
@@ -94,9 +97,9 @@ for (( r=1; r<=REPEATS; r++ )); do
       case "${rc}" in
         0)   ;;  # graceful clean stop, the expected outcome
         130) echo "    !! run exited 130 (SIGINT fell back to KeyboardInterrupt; graceful handler did not engage -- data OK, check workload.py is current); see ${log}" >&2 ;;
-        137) echo "    !! run KILLED after 120s grace (cell hung on stop); see ${log}" >&2 ;;
-        124) echo "    !! run exited 124 (unexpected with --preserve-status); see ${log}" >&2 ;;
-        *)   echo "    !! run exited rc=${rc}; see ${log}" >&2 ;;
+        137) echo "    !! run KILLED after 120s grace (cell hung on stop); see ${log}" >&2; overall_rc=1 ;;
+        124) echo "    !! run exited 124 (unexpected with --preserve-status); see ${log}" >&2; overall_rc=1 ;;
+        *)   echo "    !! run exited rc=${rc}; see ${log}" >&2; overall_rc=1 ;;
       esac
       unset rc
       echo "    done op=${op} backend=${bk}"
@@ -117,4 +120,11 @@ if python3 perf_validate.py --stamp "${STAMP}" --log-dir "${LOG_DIR}" --prefix "
   echo "=== integrity gate PASSED ==="
 else
   echo "!! integrity gate FAILED -- inspect the rows/logs above before trusting results." >&2
+  overall_rc=1
 fi
+if [[ "${overall_rc}" != "0" ]]; then
+  echo "=== Phase A finished with failures/warnings requiring triage; exit ${overall_rc}. ===" >&2
+else
+  echo "=== Phase A OK (all points clean; integrity gate passed). ==="
+fi
+exit "${overall_rc}"

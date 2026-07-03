@@ -38,6 +38,8 @@ import os
 import sys
 from collections import defaultdict
 
+import perf_provenance_gate as _prov
+
 try:
     from azure.cosmos import CosmosClient
 except ImportError:
@@ -125,7 +127,7 @@ def _aggregate(container, prefix: str, stamp: str):
     rows = list(
         container.query_items(
             "SELECT c.workload_id, c.count, c.errors, c.throttled_429, "
-            "c.window_seconds, c.hist_b64, c.mean_ru, c.p99_9_ms "
+            "c.window_seconds, c.hist_b64, c.mean_ru, c.p99_9_ms, c.driver_commit "
             "FROM c WHERE STARTSWITH(c.workload_id, @prefix) "
             "AND ENDSWITH(c.workload_id, @stamp)",
             parameters=[
@@ -136,11 +138,19 @@ def _aggregate(container, prefix: str, stamp: str):
         )
     )
     agg = {}
+    prov_commits, prov_missing, prov_rust = set(), 0, 0
     for r in rows:
         op, backend, _ = _split_wid(r["workload_id"])
         if op is None:
             continue
         key = (op, backend)
+        if backend and "rust" in backend.lower():
+            prov_rust += 1
+            _dc = str(r.get("driver_commit") or "").strip()
+            if _dc:
+                prov_commits.add(_dc)
+            else:
+                prov_missing += 1
         a = agg.get(key)
         if a is None:
             a = agg[key] = {
@@ -169,7 +179,7 @@ def _aggregate(container, prefix: str, stamp: str):
         else:
             a["no_hist_windows"] += 1
             a["scalar_p999_weighted"] += float(r.get("p99_9_ms", 0.0) or 0.0) * c
-    return agg
+    return agg, (sorted(prov_commits), prov_missing, prov_rust)
 
 
 def _pctile_ms(a, q):
@@ -199,6 +209,7 @@ def main():
     )
     ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
     ap.add_argument("--prefix", default="lat0-", help="workload_id prefix (default lat0-)")
+    _prov.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
@@ -207,7 +218,7 @@ def main():
         print(f"ERROR: no {args.prefix}* runs found in the results container.", file=sys.stderr)
         sys.exit(2)
 
-    agg = _aggregate(container, args.prefix, stamp)
+    agg, prov_info = _aggregate(container, args.prefix, stamp)
     if not agg:
         print(f"ERROR: no result rows found for stamp {stamp}.", file=sys.stderr)
         sys.exit(2)
@@ -246,6 +257,17 @@ def main():
                 f"{d50:>6.2f} {_pctile_ms(py,99):>7.2f} {_pctile_ms(ru,99):>7.2f} "
                 f"{_pctile_ms(py,99.9):>8.2f} {_pctile_ms(ru,99.9):>8.2f}"
             )
+
+    # ---- Rust driver provenance gate (enforced; scoped to rust rows) ----
+    commits, missing, rust_rows = prov_info
+    prov_ok, prov_lines = _prov.decide(
+        commits, missing, rust_rows, strict=_prov.strict_from(args)
+    )
+    print()
+    for _l in prov_lines:
+        print(_l)
+    print("\n### GATE:", "FAIL" if not prov_ok else "PASS", "(rust driver provenance) ###")
+    sys.exit(0 if prov_ok else 1)
 
 
 if __name__ == "__main__":

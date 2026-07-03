@@ -38,6 +38,7 @@ from workload_configs import (
     WORKLOAD_GC_FREEZE,
     WORKLOAD_LOOP_LAG_MONITOR,
     WORKLOAD_MAX_INFLIGHT,
+    WORKLOAD_MIX,
     WORKLOAD_NUM_CLIENTS,
     WORKLOAD_OPERATIONS,
     WORKLOAD_SKIP_CLOSE,
@@ -53,6 +54,7 @@ from workload_utils import (
     delete_item,
     delete_item_concurrently,
     get_user_agent,
+    mixed_wave_concurrently,
     patch_item,
     patch_item_concurrently,
     query_items,
@@ -269,34 +271,43 @@ async def run_workload_async(client_id, client_logger, stats=None, reporter=None
                     try:
                         while not stop_event.is_set():
                             try:
-                                if "create" in ops:
-                                    await create_item_concurrently(
-                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                if WORKLOAD_MIX:
+                                    # Blended wave: one process issues a weighted mix
+                                    # of ops all in flight together (realistic app
+                                    # traffic), instead of one op type per phase.
+                                    await mixed_wave_concurrently(
+                                        cont, REQUEST_EXCLUDED_LOCATIONS,
+                                        CONCURRENT_REQUESTS, WORKLOAD_MIX, stats,
                                     )
-                                if "upsert" in ops:
-                                    await upsert_item_concurrently(
-                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                    )
-                                if "replace" in ops:
-                                    await replace_item_concurrently(
-                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                    )
-                                if "read" in ops:
-                                    await read_item_concurrently(
-                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                    )
-                                if "patch" in ops:
-                                    await patch_item_concurrently(
-                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                    )
-                                if "delete" in ops:
-                                    await delete_item_concurrently(
-                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
-                                    )
-                                if "query" in ops:
-                                    await query_items_concurrently(
-                                        cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
-                                    )
+                                else:
+                                    if "create" in ops:
+                                        await create_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "upsert" in ops:
+                                        await upsert_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "replace" in ops:
+                                        await replace_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "read" in ops:
+                                        await read_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "patch" in ops:
+                                        await patch_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "delete" in ops:
+                                        await delete_item_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_REQUESTS, stats
+                                        )
+                                    if "query" in ops:
+                                        await query_items_concurrently(
+                                            cont, REQUEST_EXCLUDED_LOCATIONS, CONCURRENT_QUERIES, stats
+                                        )
                             except Exception as e:
                                 client_logger.info("Exception in application layer")
                                 client_logger.error(e)
@@ -328,6 +339,16 @@ def run_workload_sync(client_id, client_logger):
         raise RuntimeError("Proxy mode is not supported with sync client. "
                            "Set WORKLOAD_USE_SYNC=false or WORKLOAD_USE_PROXY=false.")
     ops = WORKLOAD_OPERATIONS
+
+    # Blended traffic is an async, concurrent concept; sync mode is fully serial
+    # (real concurrency 1), so a "blend" here would just be per-op phases mislabeled.
+    # Fail fast rather than silently ignore the mix and publish misleading numbers.
+    if WORKLOAD_MIX:
+        raise RuntimeError(
+            "WORKLOAD_MIX (blended traffic) is not supported in sync mode "
+            "(WORKLOAD_USE_SYNC=true); sync mode is fully serial. Run blended "
+            "workloads in async mode (WORKLOAD_USE_SYNC=false)."
+        )
 
     # The sync loop has no event loop, so a signal handler sets a threading flag the
     # loop polls between waves. It does not raise, so a signal cannot interrupt the

@@ -166,9 +166,10 @@ def get_existing_random_item():
 
 
 def create_random_item():
-    # This item serializes to about 730 bytes of JSON, just under the 1 KB point-
-    # operation limit. It is a single fixed shape. To model larger documents,
-    # grow `description`.
+    # "default" serializes to about 730 bytes of JSON (a single fixed flat shape).
+    # "large" grows the body and adds nested objects/arrays (about 8 KB) so a run
+    # can check whether conclusions hold for a bigger, deeper document. Selected by
+    # WORKLOAD_DOC_PROFILE.
     paragraph1 = (
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
         "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
@@ -180,7 +181,7 @@ def create_random_item():
         "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. "
         f" Timestamp: {datetime.utcnow().isoformat()}"
     )
-    return {
+    item = {
         "id": "test-" + str(uuid.uuid4()),
         "pk": "pk-" + str(uuid.uuid4()),
         "value": random.randint(1, 1000000000),
@@ -188,6 +189,18 @@ def create_random_item():
         "flag": random.choice([True, False]),
         "description": paragraph1 + "\n\n" + paragraph2,
     }
+    if WORKLOAD_DOC_PROFILE in ("large", "nested"):
+        filler = (paragraph1 + " " + paragraph2) * 6
+        item["description"] = filler
+        item["details"] = {
+            "attributes": {f"k{i}": i for i in range(20)},
+            "tags": [f"tag-{i}" for i in range(20)],
+            "nested": {"level2": {"level3": {"note": filler[:512]}}},
+        }
+        item["history"] = [
+            {"seq": i, "v": random.randint(1, 1000000000)} for i in range(10)
+        ]
+    return item
 
 
 def _get_upsert_item():
@@ -229,8 +242,10 @@ def create_item(container, excluded_locations, num_creates, stats=None):
         # without bound over a long run.
         try:
             container.delete_item(item["id"], item[PARTITION_KEY], **extra)
-        except Exception:
-            pass
+        except Exception as e:
+            # A failed cleanup delete leaves synthetic documents behind and can
+            # contaminate later runs on shared containers, so surface it explicitly.
+            _record_error(stats, "CreateCleanupDelete", e)
 
 
 def replace_item(container, excluded_locations, num_replaces, stats=None):
@@ -325,7 +340,10 @@ async def create_item_concurrently(container, excluded_locations, num_creates, s
     # Delete the new items again (not timed) so the container does not grow
     # without bound over a long run.
     cleanup = [container.delete_item(it["id"], it[PARTITION_KEY], **extra) for it in created]
-    await asyncio.gather(*cleanup, return_exceptions=True)
+    cleanup_results = await asyncio.gather(*cleanup, return_exceptions=True)
+    for err in cleanup_results:
+        if isinstance(err, Exception):
+            _record_error(stats, "CreateCleanupDelete", err)
 
 
 async def replace_item_concurrently(container, excluded_locations, num_replaces, stats=None):
@@ -390,6 +408,56 @@ async def query_items_concurrently(container, excluded_locations, num_queries, s
 
         tasks.append(_timed_call_async("QueryItems", stats, _do_query))
     await asyncio.gather(*tasks, return_exceptions=True)
+
+
+# ---------------------------------------------------------------------------
+# Blended (mixed) traffic — one process issues a weighted mix of operations
+# ---------------------------------------------------------------------------
+
+_ASYNC_OP_FUNCS = {
+    "read": read_item_concurrently,
+    "create": create_item_concurrently,
+    "upsert": upsert_item_concurrently,
+    "replace": replace_item_concurrently,
+    "delete": delete_item_concurrently,
+    "patch": patch_item_concurrently,
+}
+
+
+def _mix_counts(weights, concurrency):
+    """Split ``concurrency`` op-slots across weighted ops (largest-remainder), so a
+    wave's op proportions match ``weights`` as closely as an integer split allows.
+    ``query`` is not part of a latency blend and is ignored.
+    """
+    w = {op: v for op, v in weights.items() if op in _ASYNC_OP_FUNCS and v > 0}
+    total = sum(w.values())
+    if total <= 0 or concurrency <= 0:
+        return {}
+    raw = {op: concurrency * v / total for op, v in w.items()}
+    counts = {op: int(x) for op, x in raw.items()}
+    rem = concurrency - sum(counts.values())
+    for op, _frac in sorted(raw.items(), key=lambda kv: kv[1] - int(kv[1]), reverse=True):
+        if rem <= 0:
+            break
+        counts[op] += 1
+        rem -= 1
+    return {op: c for op, c in counts.items() if c > 0}
+
+
+async def mixed_wave_concurrently(container, excluded_locations, concurrency, weights, stats=None):
+    """One blended wave: issue ``concurrency`` operations split across ``weights``,
+    all in flight together, so a process models realistic mixed traffic instead of
+    one operation type at a time. Each op keeps its own label, so per-op AND pooled
+    (blended) percentiles are both available from the stored rows.
+    """
+    counts = _mix_counts(weights, concurrency)
+    if not counts:
+        return
+    await asyncio.gather(
+        *[_ASYNC_OP_FUNCS[op](container, excluded_locations, n, stats)
+          for op, n in counts.items()],
+        return_exceptions=True,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -485,6 +553,16 @@ async def run_open_loop(container, excluded_locations, stats, ops, rate, max_inf
     in-flight tasks so their latencies are recorded and the client closes cleanly.
     """
     op_list = [o for o in sorted(ops) if o != "query"]  # query has no latency target
+    if WORKLOAD_MIX:
+        # Weighted round-robin: expand each op to an integer number of slots
+        # proportional to its weight, so open-loop arrivals follow the blend.
+        weighted = []
+        for o, wv in sorted(WORKLOAD_MIX.items()):
+            if o == "query":
+                continue
+            weighted.extend([o] * max(1, int(round(wv))))
+        if weighted:
+            op_list = weighted
     if not op_list:
         return
     for o in op_list:

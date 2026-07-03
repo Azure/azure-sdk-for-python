@@ -261,6 +261,8 @@ class PerfReporter:
         sys_total, sys_used = _get_system_memory()
 
         concurrency = _safe_int_env("COSMOS_CONCURRENT_REQUESTS", 100)
+        target_database = os.environ.get("COSMOS_DATABASE", "")
+        target_container = os.environ.get("COSMOS_CONTAINER", "")
         preferred = os.environ.get("COSMOS_PREFERRED_LOCATIONS", "")
         excluded = os.environ.get("COSMOS_CLIENT_EXCLUDED_LOCATIONS", "")
         # Record the per-op timeout and arrival mode on every row, so two rows can
@@ -289,6 +291,8 @@ class PerfReporter:
         skip_close = (
             os.environ.get("WORKLOAD_SKIP_CLOSE", "false").lower() == "true"
         )
+        workload_mix = os.environ.get("WORKLOAD_MIX", "").strip()
+        doc_profile = os.environ.get("WORKLOAD_DOC_PROFILE", "default").strip().lower()
 
         summaries, errors = self._stats.drain_all()
         # The drain is when these counts stop accumulating, so measure the window
@@ -355,6 +359,10 @@ class PerfReporter:
             retry_calls = max(0, cur_retry_raw - self._last_retry_calls)
             self._last_retry_calls = cur_retry_raw
         runtime_backend = perf_provenance.runtime_backend()
+        # Earliest-N per-op durations since process start (not reset per window), so
+        # a cold-start analyzer can pool the first calls across processes. Same for
+        # every summary row of this flush; keyed per op below.
+        cold_first_map = self._stats.first_ms_snapshot()
         for s in summaries:
             doc = {
                 "id": str(uuid.uuid4()),
@@ -385,6 +393,20 @@ class PerfReporter:
                 # Lets an offline analyzer merge every window of a point for a true
                 # pooled p50/p99/p99.9, which the per-window scalars cannot give.
                 "hist_b64": s.get("hist_b64"),
+                # Cold-start sample: the very first call's latency (ms) for this op
+                # since process start, and the earliest calls as a warm-up curve.
+                # Not reset per window, so short one-flush processes each contribute
+                # one first-call sample the analyzer can pool. Present on every row of
+                # a process but identical across its rows; the curve is capped so this
+                # does not bloat every result document (the analyzer only needs the
+                # first several points to see where latency settles).
+                "cold_first_ms": (
+                    round(cold_first_map[s["operation"]][0], 3)
+                    if cold_first_map.get(s["operation"]) else None
+                ),
+                "cold_first_n_ms": [
+                    round(v, 3) for v in cold_first_map.get(s["operation"], [])[:50]
+                ],
                 # Mean RU charge per successful op, from the x-ms-request-charge
                 # response header. Used to check both backends do the same work.
                 "mean_ru": round(s.get("mean_ru", 0.0), 3),
@@ -442,11 +464,15 @@ class PerfReporter:
                 "attempt_calls": attempt_calls,
                 "retry_calls": retry_calls,
                 "config_concurrency": concurrency,
+                "config_database": target_database,
+                "config_container": target_container,
                 "config_application_region": preferred,
                 "config_excluded_regions": excluded,
                 "config_request_timeout": request_timeout,
                 "config_arrival_rate": arrival_rate,
                 "config_max_inflight": max_inflight,
+                "config_workload_mix": workload_mix,
+                "config_doc_profile": doc_profile,
                 "config_ppcb_enabled": ppcb,
                 "config_multi_write_enabled": multi_write,
                 "config_proxy_enabled": proxy_enabled,
@@ -473,6 +499,10 @@ class PerfReporter:
                 "source_message": err["source_message"][:4000],
                 "sdk_language": "python",
                 "config_backend": backend,
+                "config_database": target_database,
+                "config_container": target_container,
+                "config_workload_mix": workload_mix,
+                "config_doc_profile": doc_profile,
                 "error_status_code": err.get("error_status_code"),
                 "error_sub_status_code": err.get("error_sub_status_code"),
             }
@@ -480,4 +510,3 @@ class PerfReporter:
                 self._container.upsert_item(doc)
             except Exception as e:
                 logger.warning("PerfReporter error upsert failed: %s", e)
-

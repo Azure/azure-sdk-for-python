@@ -63,6 +63,8 @@ __all__ = [
     "WORKLOAD_GC_FREEZE",
     "WORKLOAD_LOOP_LAG_MONITOR",
     "WORKLOAD_SKIP_CLOSE",
+    "WORKLOAD_MIX",
+    "WORKLOAD_DOC_PROFILE",
 ]
 
 
@@ -158,3 +160,51 @@ WORKLOAD_LOOP_LAG_MONITOR = (
 # When true, the client is created without a context manager (no automatic close),
 # to model applications that do not close the Cosmos client.
 WORKLOAD_SKIP_CLOSE = os.environ.get("WORKLOAD_SKIP_CLOSE", "false").lower() == "true"
+
+# Blended traffic. WORKLOAD_MIX="read=70,create=10,upsert=10,replace=5,patch=5"
+# makes one process issue a weighted BLEND of operations (a realistic app mix)
+# instead of running each operation as its own phase, so a run can be gated on a
+# single blended p99. Empty (default) keeps the per-operation phase behaviour.
+# Weights are relative (need not sum to 100). "write" is an alias for "upsert";
+# "query" is not part of a latency blend and is ignored if listed.
+WORKLOAD_MIX = {}
+_raw_mix = os.environ.get("WORKLOAD_MIX", "").strip()
+if _raw_mix:
+    for _pair in _raw_mix.split(","):
+        _pair = _pair.strip()
+        if not _pair:
+            continue
+        _k, _sep, _v = _pair.partition("=")
+        _k = _OPERATION_ALIASES.get(_k.strip().lower(), _k.strip().lower())
+        _w = _safe_float(_v, 0.0)
+        if _k not in _VALID_OPERATIONS:
+            raise ValueError(
+                f"Unknown op in WORKLOAD_MIX: {_k!r}. Valid: {sorted(_VALID_OPERATIONS)} "
+                f"(plus 'write' as an alias for 'upsert')."
+            )
+        if _w > 0:
+            WORKLOAD_MIX[_k] = WORKLOAD_MIX.get(_k, 0.0) + _w
+    # "query" carries no latency target and is not runnable in a blended wave, so a
+    # mix of only query (or only zero-weight entries) has nothing to run. Reject it
+    # up front: otherwise the closed-loop blended path would spin with no work and
+    # record nothing.
+    if _raw_mix and not any(_k != "query" for _k in WORKLOAD_MIX):
+        raise ValueError(
+            f"WORKLOAD_MIX={_raw_mix!r} has no runnable operation (only 'query' or "
+            f"zero weights). Include at least one of read/create/upsert/replace/"
+            f"delete/patch with a positive weight."
+        )
+
+# Document size/shape profile for GENERATED item bodies (create/upsert/replace/
+# patch). "default" is the ~730 B flat document. "large" is a bigger, nested shape
+# (~8 KB with nested objects and arrays) so a run can check whether the latency/RU
+# conclusions hold beyond one document shape. Reads return whatever already exists
+# in the container, so a read-side size test needs the container seeded with that
+# profile separately.
+WORKLOAD_DOC_PROFILE = os.environ.get("WORKLOAD_DOC_PROFILE", "default").strip().lower()
+_VALID_DOC_PROFILES = {"default", "large", "nested"}
+if WORKLOAD_DOC_PROFILE not in _VALID_DOC_PROFILES:
+    raise ValueError(
+        "Unknown WORKLOAD_DOC_PROFILE: "
+        f"{WORKLOAD_DOC_PROFILE!r}. Valid: {sorted(_VALID_DOC_PROFILES)}."
+    )

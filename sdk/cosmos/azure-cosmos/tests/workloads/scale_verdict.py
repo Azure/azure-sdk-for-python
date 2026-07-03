@@ -42,6 +42,8 @@ import math
 import os
 import sys
 
+import perf_provenance_gate as _prov
+
 try:
     from azure.cosmos import CosmosClient
 except ImportError:
@@ -113,6 +115,7 @@ def main():
     ap.add_argument("--warmup", type=float, default=WARMUP_S, help="warmup seconds to drop")
     ap.add_argument("--knee-gain", type=float, default=KNEE_GAIN,
                     help="fractional throughput gain below which a level is a plateau")
+    _prov.add_cli_flag(ap)
     args = ap.parse_args()
 
     container = _connect()
@@ -182,20 +185,11 @@ def main():
     if not gate_fail:
         print("  OK -- every point's runtime_backend matches its config_backend label.")
 
-    # ---- Rust driver provenance (always surfaced) ----
-    # Print the exact azure-sdk-for-rust commit every row was built against. One
-    # commit across the whole run is what we want; more than one means the ladder
-    # mixed driver builds and the scaling numbers are not a like-for-like set.
-    driver_commits = sorted({r.get("driver_commit") for r in rows if r.get("driver_commit")})
-    print("\n### Rust driver provenance (azure-sdk-for-rust commit) ###")
-    if not driver_commits:
-        print("  driver_commit not recorded on any row -- rebuild the harness so the exact "
-              "driver commit is persisted before trusting cross-build comparisons.")
-    elif len(driver_commits) == 1:
-        print(f"  commit {driver_commits[0]} -- single driver build across all rows (OK).")
-    else:
-        print(f"  !! MIXED driver builds in one verdict: {driver_commits}. Rows came from "
-              "different azure-sdk-for-rust commits; re-run so every point shares one build.")
+    # ---- Rust driver provenance gate (enforced; scoped to rust rows) ----
+    prov_ok, prov_lines = _prov.evaluate(rows, strict=_prov.strict_from(args))
+    print()
+    for _l in prov_lines:
+        print(_l)
 
     # Reduce each cell to a pooled point.
     points = {}
@@ -272,9 +266,10 @@ def main():
                 print(f"    -> rust/core throughput: geomean {geomean(sp):.2f}x "
                       f"(range {min(sp):.2f}-{max(sp):.2f}x) across {len(sp)} shared level(s).")
 
-    print("\n### GATE:", "FAIL" if gate_fail else "PASS",
-          "(provenance) ###")
-    sys.exit(1 if gate_fail else 0)
+    overall_fail = gate_fail or not prov_ok
+    print("\n### GATE:", "FAIL" if overall_fail else "PASS",
+          "(backend purity + rust driver provenance) ###")
+    sys.exit(1 if overall_fail else 0)
 
 
 if __name__ == "__main__":

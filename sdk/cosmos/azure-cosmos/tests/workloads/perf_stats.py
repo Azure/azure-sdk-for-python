@@ -17,6 +17,9 @@ except ImportError:
 
 _MIN_VALUE_US = 1
 _MAX_VALUE_US = 60_000_000
+# Number of earliest per-op durations kept for cold-start analysis. Small: only the
+# first calls after process start matter for startup penalty.
+_FIRST_N_CAP = 200
 
 
 class Stats:
@@ -54,6 +57,20 @@ class Stats:
         # wide, not per operation, so it lives outside the per-op histograms. A
         # large value means the loop is the bottleneck, not the SDK.
         self._loop_lag_max_ms: float = 0.0
+        # Earliest per-op durations (ms) since process start, capped at _FIRST_N_CAP.
+        # Unlike the histograms, this is NOT reset on drain, so a cold-start analyzer
+        # can see the very first calls (startup penalty) even after warm windows have
+        # flushed. Reported once, on the final row, via first_ms_snapshot().
+        self._first_ms: dict[str, list] = {}
+
+    def first_ms_snapshot(self):
+        """Return a copy of the earliest-N durations (ms) per op since process start.
+
+        Used by the reporter to emit a cold-start sample (first call and warm-up
+        curve) that survives the per-window histogram resets.
+        """
+        with self._lock:
+            return {op: list(vals) for op, vals in self._first_ms.items()}
 
     def record(self, operation: str, duration_ms: float):
         """Record a successful operation with its duration in milliseconds."""
@@ -66,6 +83,11 @@ class Stats:
             # Clamp to histogram range to prevent crashes on very slow operations
             value_us = max(_MIN_VALUE_US, min(int(duration_ms * 1000), _MAX_VALUE_US))
             self._histograms[operation].record_value(value_us)
+            first = self._first_ms.get(operation)
+            if first is None:
+                first = self._first_ms[operation] = []
+            if len(first) < _FIRST_N_CAP:
+                first.append(duration_ms)
 
     def record_server_ms(self, operation: str, server_ms: float):
         """Record the service-reported processing time of a successful operation.

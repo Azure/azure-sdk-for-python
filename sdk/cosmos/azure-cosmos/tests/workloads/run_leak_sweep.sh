@@ -73,7 +73,9 @@ else
   OPERATIONS=(read create upsert replace delete patch)
 fi
 
-STAMP="$(date +%Y%m%d-%H%M%S)"
+_ns="$(date +%N 2>/dev/null || echo 000000000)"
+[[ "${_ns}" =~ ^[0-9]{9}$ ]] || _ns="000000000"
+STAMP="$(date +%Y%m%d-%H%M%S)${_ns:0:3}"
 LOG_DIR="logs/leak-${STAMP}"
 mkdir -p "${LOG_DIR}"
 write_run_manifest "${LOG_DIR}" "${STAMP}" "B-leak-sweep"
