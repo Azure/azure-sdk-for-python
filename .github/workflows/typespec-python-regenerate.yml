@@ -176,7 +176,7 @@ jobs:
             SOURCE_BRANCH="regen/typespec-python-main"
           fi
           if ! git fetch --no-tags --depth=1 origin "$TARGET_BRANCH" 2>/dev/null; then
-            echo "::error::Branch $TARGET_BRANCH not found. Initialize it from the generated-tests history so eng/tools/azure-sdk-tools/emitter/generated/template/README.md is present before rerunning this workflow."
+            echo "::error::Branch $TARGET_BRANCH not found. Initialize it from the generated-tests history before rerunning this workflow."
             exit 1
           fi
           git checkout -B "$SOURCE_BRANCH" "origin/$TARGET_BRANCH"
@@ -197,23 +197,20 @@ jobs:
             rm -rf "$GENERATED_STAGE_DIR"
           fi
 
-      - name: Apply README template to generated test packages
+      - name: Apply README warning to generated test packages
         run: |
           set -euo pipefail
           TARGET="eng/tools/azure-sdk-tools/emitter/generated"
-          TEMPLATE="$TARGET/template/README.md"
-          if [ ! -f "$TEMPLATE" ]; then
-            echo "::error::Template README not found at $TEMPLATE"
-            exit 1
-          fi
-          # Replace every README.md under generated/ with the template, except:
-          #   - the top-level generated/README.md
-          #   - anything under generated/template/ (the template itself and any
-          #     future siblings)
+          README_WARNING="$(mktemp)"
+          trap 'rm -f "$README_WARNING"' EXIT
+          cat > "$README_WARNING" <<'EOF'
+          # ⚠️ TEST CODE — DO NOT INSTALL FROM PYPI
+
+          This is not a published Azure SDK package; it exists only for testing purposes. Do not install from PyPI.
+          EOF
           find "$TARGET" -type f -name README.md \
             ! -path "$TARGET/README.md" \
-            ! -path "$TARGET/template/*" \
-            -print -exec cp -f "$TEMPLATE" {} \;
+            -print -exec cp -f "$README_WARNING" {} \;
 
       - name: Create or update tracking issue with PR link
         env:
