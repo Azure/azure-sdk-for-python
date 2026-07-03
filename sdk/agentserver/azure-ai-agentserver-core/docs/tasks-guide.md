@@ -347,6 +347,21 @@ from azure.ai.agentserver.core.tasks import RetryPolicy
 async def fetch(ctx: TaskContext[str]) -> bytes: ...
 ```
 
+Retries are **off by default** (no `retry=` ⇒ a single attempt). The
+`RetryPolicy` is validated at construction and **fails fast** on
+misconfiguration (rejected, never silently clamped):
+
+- `max_attempts` must be **1–10** (inclusive; counts the first try);
+  `> 10` raises `ValueError`.
+- `max_delay` must be **0 – 1 hour**; `> 1 hour` raises `ValueError`.
+- `initial_delay` / `max_delay` must be `>= 0`, `backoff_coefficient`
+  must be `>= 1.0`, and `max_delay >= initial_delay` — otherwise
+  `ValueError`.
+
+The delay for attempt *n* is
+`min(initial_delay * backoff_coefficient ** n, max_delay)`, ±25% when
+`jitter=True`.
+
 `ctx.retry_attempt` (0-based) is exposed if your handler wants to
 branch. The retry counter resets at every new turn boundary
 (multi-turn) so a new turn starts with a fresh budget.

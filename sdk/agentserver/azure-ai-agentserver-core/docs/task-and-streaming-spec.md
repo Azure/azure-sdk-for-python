@@ -1102,7 +1102,7 @@ The framework stamps the following `tags` entries on `create`:
 
 | Tag key | Value | Purpose |
 |---|---|---|
-| `task_name` | The decorator's `name` (or `fn.__qualname__` fallback). | Server-side `LIST` filtering by task name. |
+| `task_name` | The decorator's required `name`. | Server-side `LIST` filtering by task name. |
 
 Tag keys starting with `_task_` are RESERVED. Caller-supplied tags
 using this prefix are stripped at the call site with a warning;
@@ -1115,7 +1115,7 @@ The framework stamps `source` on `create`:
 ```
 {
    "type":                "agentserver.task",
-   "name":                "<the decorator's name (or fn.__qualname__)>",
+   "name":                "<the decorator's required name>",
    "server_version":      "<sdk_name>/<sdk_version> (<runtime>/<version>)",
    "hosting_environment": "<FOUNDRY_HOSTING_ENVIRONMENT, or \"\" in local/dev>"
 }
