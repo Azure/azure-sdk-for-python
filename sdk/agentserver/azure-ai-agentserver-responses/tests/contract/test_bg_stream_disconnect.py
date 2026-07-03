@@ -167,8 +167,7 @@ def _build_client(handler: Any) -> _AsyncAsgiClient:
 
 def _build_client_keep_alive(handler: Any, *, keep_alive_seconds: int = 1) -> _AsyncAsgiClient:
     """Build a client with SSE keep-alive ENABLED — mirrors the hosted platform, which
-    runs with ``sse_keepalive_interval`` set and therefore routes streaming through the
-    keep-alive merge path."""
+    runs with ``sse_keepalive_interval`` set."""
     options = ResponsesServerOptions(sse_keep_alive_interval_seconds=keep_alive_seconds)
     app = ResponsesAgentServerHost(options=options)
     app.response_handler(handler)
@@ -465,10 +464,10 @@ async def test_bg_nostream_handler_continues_after_disconnect() -> None:
 async def test_bg_stream_disconnect_handler_completes_all_events_with_keep_alive() -> None:
     """FR-012 with keep-alive ENABLED — the hosted-platform configuration.
 
-    The hosted platform runs with ``sse_keepalive_interval`` set, which routes streaming
-    through the keep-alive merge path. That path must NOT cancel a background handler on
-    client disconnect: the run must complete and GET must return 'completed' with all
-    output items, exactly like the keep-alive-disabled case (T036).
+    Enabling keep-alive must not change background disconnect survival: the run must
+    complete and GET must return 'completed' with all output items, exactly like the
+    keep-alive-disabled case (T036). (Regression: keep-alive previously routed background
+    streams through the merge path, which cancelled the handler on disconnect.)
     """
     total = 10
     disconnect_after = 3
@@ -545,12 +544,15 @@ async def test_bg_stream_disconnect_does_not_cancel_handler_with_keep_alive() ->
         except (asyncio.TimeoutError, Exception):
             pass
 
-        done_events = [handler.handler_completed, handler.handler_cancelled]
-        await asyncio.wait(
-            [asyncio.create_task(e.wait()) for e in done_events],
-            timeout=3.0,
-            return_when=asyncio.FIRST_COMPLETED,
-        )
+        wait_tasks = [
+            asyncio.create_task(e.wait()) for e in (handler.handler_completed, handler.handler_cancelled)
+        ]
+        try:
+            await asyncio.wait(wait_tasks, timeout=3.0, return_when=asyncio.FIRST_COMPLETED)
+        finally:
+            for _t in wait_tasks:
+                _t.cancel()
+            await asyncio.gather(*wait_tasks, return_exceptions=True)
 
         assert handler.handler_completed.is_set(), (
             "FR-013 (keep-alive): handler should complete normally, not be cancelled by SSE disconnect"

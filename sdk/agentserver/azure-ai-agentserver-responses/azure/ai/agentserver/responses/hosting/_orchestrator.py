@@ -1587,7 +1587,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # connection dropped by an intermediary. Comments feed the same queue; the
             # task is stopped from BOTH the producer finally (run done) and the consumer
             # finally (client gone), whichever fires first, so it never outlives the run.
-            if self._runtime_options.sse_keep_alive_enabled:
+            _ka_interval = self._runtime_options.sse_keep_alive_interval_seconds
+            if _ka_interval is not None:  # keep-alive enabled
 
                 async def _bg_keep_alive(interval: int) -> None:
                     try:
@@ -1597,15 +1598,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     except asyncio.CancelledError:
                         return
 
-                bg_keep_alive_task = asyncio.create_task(
-                    _bg_keep_alive(self._runtime_options.sse_keep_alive_interval_seconds)  # type: ignore[arg-type]
-                )
+                bg_keep_alive_task = asyncio.create_task(_bg_keep_alive(_ka_interval))
             try:
                 while True:
                     item = await bg_queue.get()
                     if item is _SENTINEL_BG:
                         break
-                    yield item  # type: ignore[misc]
+                    if isinstance(item, str):
+                        yield item
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # SSE connection dropped; bg_task continues independently
             finally:
