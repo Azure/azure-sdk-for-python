@@ -481,7 +481,7 @@ class Task(Generic[Input, Output]):
     def _resolve_tags(self, input_val: Input, task_id: str) -> dict[str, str]:
         """Resolve decorator-level tags (static dict or callable factory).
 
-        Reserved tags (prefixed with ``_task_``) are stripped to
+        Reserved tags (the exact key ``task_name``) are stripped to
         prevent developer code from colliding with framework-stamped tags.
 
         :param input_val: The task input value.
@@ -748,7 +748,7 @@ class Task(Generic[Input, Output]):
             ``manager.list_tasks(fn_name=...)`` directly.
 
         Automatically scoped to this function's ``name`` via the
-        ``_task_name`` tag (server-side) and ``source.type``
+        ``task_name`` tag (server-side) and ``source.type``
         (client-side). Only returns tasks created by this framework.
 
         :keyword session_id: Session scope override.  Defaults to the
