@@ -299,6 +299,9 @@ namespace azure.servicebus
 
         def __str__(self) -> str: ...
 
+        @classmethod
+        def from_bytes(cls, message: bytes) -> ServiceBusReceivedMessage: ...
+
 
     class azure.servicebus.ServiceBusReceiver(BaseHandler, ReceiverMixin): implements ContextManager , Iterator 
         property client_identifier: str    # Read-only
