@@ -38,6 +38,32 @@ export COSMOS_THROUGHPUT="${COSMOS_THROUGHPUT:-100000}"
 # The VM's region, listed first, so the client prefers the local replica.
 export COSMOS_PREFERRED_LOCATIONS="${COSMOS_PREFERRED_LOCATIONS:-West US 2}"
 
+# ---- Driver provenance (computed ONCE, inherited by every child) ----------
+# The exact azure-sdk-for-rust DRIVER commit the binding was built against. We
+# resolve the sibling clone and export it here so every process in a run -- incl.
+# the N children of a scale-out point -- stamps the SAME driver commit on its rows
+# without each one shelling out to git (and so a mid-run rebuild can't split one
+# run's provenance). perf_config.py falls back to resolving it per process when
+# this is unset. Best-effort: a missing clone/git must never fail a run.
+if [[ -z "${PERF_DRIVER_COMMIT:-}" ]]; then
+  _hdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)"
+  _driver_dir="${AZURE_SDK_FOR_RUST_DIR:-}"
+  if [[ -z "${_driver_dir}" ]]; then
+    # Prefer the git top-level of THIS (azure-sdk-for-python) clone, then its
+    # sibling azure-sdk-for-rust -- robust to cwd and to the exact nesting depth.
+    # Fall back to a fixed-depth relative path if this is not a git checkout.
+    _pyroot="$(git -C "${_hdir}" rev-parse --show-toplevel 2>/dev/null || echo "")"
+    if [[ -n "${_pyroot}" ]]; then
+      _driver_dir="${_pyroot}/../azure-sdk-for-rust"
+    else
+      _driver_dir="${_hdir}/../../../../../../azure-sdk-for-rust"
+    fi
+  fi
+  PERF_DRIVER_COMMIT="$(git -C "${_driver_dir}" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+  export PERF_DRIVER_COMMIT
+  unset _hdir _driver_dir _pyroot
+fi
+
 # ---- Load shape (identical for both backends) -----------------------------
 export WORKLOAD_NUM_CLIENTS="${WORKLOAD_NUM_CLIENTS:-1}"          # one client per process -> clean per-op attribution
 export COSMOS_CONCURRENT_REQUESTS="${COSMOS_CONCURRENT_REQUESTS:-100}"  # point ops in flight per client
@@ -104,9 +130,28 @@ write_run_manifest() {
   # All probes are best-effort: a missing tool must never abort a 22h run.
   local git_sha git_branch git_dirty rustc_ver py_ver cosmos_ver ext_ver ext_path
   local ext_mtime kernel host nproc_n mem_kb vm_sku vm_zone now_utc
+  local driver_dir driver_sha driver_branch driver_dirty _drv_root
   git_sha="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse HEAD 2>/dev/null || echo unknown)"
   git_branch="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
   if git -C "$(dirname "${BASH_SOURCE[0]}")" diff --quiet 2>/dev/null; then git_dirty=false; else git_dirty=true; fi
+  # The azure-sdk-for-rust DRIVER commit. git_sha above is THIS repo (harness +
+  # binding); the driver we build from is a sibling clone (see
+  # azure_cosmos_rust/Cargo.toml path dep). Resolve it via this clone's git
+  # top-level then its sibling (robust to cwd/depth), falling back to a
+  # fixed-depth relative path. AZURE_SDK_FOR_RUST_DIR overrides. Record its HEAD
+  # so the manifest proves which driver the run actually built against.
+  driver_dir="${AZURE_SDK_FOR_RUST_DIR:-}"
+  if [[ -z "${driver_dir}" ]]; then
+    _drv_root="$(git -C "$(dirname "${BASH_SOURCE[0]}")" rev-parse --show-toplevel 2>/dev/null || echo "")"
+    if [[ -n "${_drv_root}" ]]; then
+      driver_dir="${_drv_root}/../azure-sdk-for-rust"
+    else
+      driver_dir="$(dirname "${BASH_SOURCE[0]}")/../../../../../../azure-sdk-for-rust"
+    fi
+  fi
+  driver_sha="$(git -C "${driver_dir}" rev-parse HEAD 2>/dev/null || echo unknown)"
+  driver_branch="$(git -C "${driver_dir}" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+  if git -C "${driver_dir}" diff --quiet 2>/dev/null; then driver_dirty=false; else driver_dirty=true; fi
   rustc_ver="$(rustc --version 2>/dev/null || echo unknown)"
   py_ver="$(python3 -c 'import platform;print(platform.python_version())' 2>/dev/null || echo unknown)"
   cosmos_ver="$(python3 -c 'import azure.cosmos as c;print(getattr(c,"__version__","unknown"))' 2>/dev/null || echo unknown)"
@@ -134,6 +179,9 @@ write_run_manifest() {
     "git_commit": "${git_sha}",
     "git_branch": "${git_branch}",
     "git_dirty": ${git_dirty},
+    "rust_driver_commit": "${driver_sha}",
+    "rust_driver_branch": "${driver_branch}",
+    "rust_driver_dirty": ${driver_dirty},
     "rustc": "${rustc_ver}",
     "python": "${py_ver}",
     "azure_cosmos": "${cosmos_ver}",

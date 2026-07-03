@@ -128,9 +128,12 @@ def main():
         container.query_items(
             "SELECT c.workload_id, c.config_backend, c.operation, c.runtime_backend, "
             "c.elapsed_seconds, c.window_seconds, c.count, c.errors, "
-            "c.ru_sum, c.ru_count, c.system_cpu_percent, c.p99_ms "
-            "FROM c WHERE ENDSWITH(c.workload_id, @s)",
-            parameters=[{"name": "@s", "value": stamp}],
+            "c.ru_sum, c.ru_count, c.system_cpu_percent, c.p99_ms, c.driver_commit "
+            "FROM c WHERE STARTSWITH(c.workload_id, @p) AND ENDSWITH(c.workload_id, @s)",
+            parameters=[
+                {"name": "@p", "value": args.prefix},
+                {"name": "@s", "value": stamp},
+            ],
             enable_cross_partition_query=True,
         )
     )
@@ -178,6 +181,21 @@ def main():
             print(f"  FAIL {op} {bk} c{conc}: runtime_backend={seen} (expected all '{exp}')")
     if not gate_fail:
         print("  OK -- every point's runtime_backend matches its config_backend label.")
+
+    # ---- Rust driver provenance (always surfaced) ----
+    # Print the exact azure-sdk-for-rust commit every row was built against. One
+    # commit across the whole run is what we want; more than one means the ladder
+    # mixed driver builds and the scaling numbers are not a like-for-like set.
+    driver_commits = sorted({r.get("driver_commit") for r in rows if r.get("driver_commit")})
+    print("\n### Rust driver provenance (azure-sdk-for-rust commit) ###")
+    if not driver_commits:
+        print("  driver_commit not recorded on any row -- rebuild the harness so the exact "
+              "driver commit is persisted before trusting cross-build comparisons.")
+    elif len(driver_commits) == 1:
+        print(f"  commit {driver_commits[0]} -- single driver build across all rows (OK).")
+    else:
+        print(f"  !! MIXED driver builds in one verdict: {driver_commits}. Rows came from "
+              "different azure-sdk-for-rust commits; re-run so every point shares one build.")
 
     # Reduce each cell to a pooled point.
     points = {}

@@ -361,6 +361,7 @@ class PerfReporter:
                 "partition_key": str(uuid.uuid4()),
                 "workload_id": self._config["workload_id"],
                 "commit_sha": self._config["commit_sha"],
+                "driver_commit": self._config["driver_commit"],
                 "hostname": self._hostname,
                 "TIMESTAMP": now,  # ALL_CAPS for Rust SDK PerfResults schema compatibility
                 "operation": s["operation"],
@@ -464,6 +465,7 @@ class PerfReporter:
                 "partition_key": str(uuid.uuid4()),
                 "workload_id": self._config["workload_id"],
                 "commit_sha": self._config["commit_sha"],
+                "driver_commit": self._config["driver_commit"],
                 "hostname": self._hostname,
                 "TIMESTAMP": now,  # ALL_CAPS for Rust SDK PerfResults schema compatibility
                 "operation": err["operation"],

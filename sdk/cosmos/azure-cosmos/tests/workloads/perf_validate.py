@@ -94,7 +94,7 @@ def _latest_stamp(container, prefix: str) -> str:
 _MAX_ERROR_FRACTION = 0.01
 
 
-def check_quality(container, stamp: str):
+def check_quality(container, prefix: str, stamp: str):
     """Every cell must have real work (count > 0) and near-zero errors, and every
     operation must have both backends present, before any latency number is
     believed. This runs first: a "fast" p50 means nothing if the cell did nothing.
@@ -106,8 +106,11 @@ def check_quality(container, stamp: str):
     rows = list(
         container.query_items(
             "SELECT c.workload_id, c.operation, c.config_backend, c.count, c.errors "
-            "FROM c WHERE ENDSWITH(c.workload_id, @stamp)",
-            parameters=[{"name": "@stamp", "value": stamp}],
+            "FROM c WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @stamp)",
+            parameters=[
+                {"name": "@prefix", "value": prefix},
+                {"name": "@stamp", "value": stamp},
+            ],
             enable_cross_partition_query=True,
         )
     )
@@ -159,14 +162,17 @@ def check_quality(container, stamp: str):
     return all_ok, lines
 
 
-def check_continuity(container, stamp: str, report_interval_s: float):
+def check_continuity(container, prefix: str, stamp: str, report_interval_s: float):
     """Return (ok, lines) for the row-continuity check across all cells in `stamp`."""
     rows = list(
         container.query_items(
             "SELECT c.workload_id, c.elapsed_seconds, c.window_seconds, c.count, "
             "c.errors, c.operation, c.config_backend FROM c "
-            "WHERE ENDSWITH(c.workload_id, @stamp)",
-            parameters=[{"name": "@stamp", "value": stamp}],
+            "WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @stamp)",
+            parameters=[
+                {"name": "@prefix", "value": prefix},
+                {"name": "@stamp", "value": stamp},
+            ],
             enable_cross_partition_query=True,
         )
     )
@@ -245,7 +251,7 @@ def check_warnings(log_dir: str):
     return False, lines
 
 
-def check_provenance(container, stamp: str):
+def check_provenance(container, prefix: str, stamp: str):
     """Prove every cell ran on the engine its label claims, from counters in the
     rows rather than COSMOS_BACKEND.
 
@@ -266,8 +272,11 @@ def check_provenance(container, stamp: str):
         container.query_items(
             "SELECT c.workload_id, c.config_backend, c.runtime_backend, "
             "c.rust_execute_calls, c.binding_calls, c.count, c.errors "
-            "FROM c WHERE ENDSWITH(c.workload_id, @stamp)",
-            parameters=[{"name": "@stamp", "value": stamp}],
+            "FROM c WHERE STARTSWITH(c.workload_id, @prefix) AND ENDSWITH(c.workload_id, @stamp)",
+            parameters=[
+                {"name": "@prefix", "value": prefix},
+                {"name": "@stamp", "value": stamp},
+            ],
             enable_cross_partition_query=True,
         )
     )
@@ -368,16 +377,16 @@ def main():
 
     print(f"=== integrity gate (prefix {args.prefix}, stamp {stamp}) ===")
     print("-- 0. work-done: count > 0, near-zero errors, both backends present --")
-    qual_ok, qual_lines = check_quality(container, stamp)
+    qual_ok, qual_lines = check_quality(container, args.prefix, stamp)
     print("\n".join(qual_lines))
     print("-- 1. row-continuity (no dropped windows) --")
-    cont_ok, cont_lines = check_continuity(container, stamp, report_interval_s)
+    cont_ok, cont_lines = check_continuity(container, args.prefix, stamp, report_interval_s)
     print("\n".join(cont_lines))
     print("-- 2. reporter dropped-write warnings --")
     warn_ok, warn_lines = check_warnings(args.log_dir)
     print("\n".join(warn_lines))
     print("-- 3. backend provenance: each row ran on the engine it claims --")
-    prov_ok, prov_lines = check_provenance(container, stamp)
+    prov_ok, prov_lines = check_provenance(container, args.prefix, stamp)
     print("\n".join(prov_lines))
 
     ok = qual_ok and cont_ok and warn_ok and prov_ok

@@ -40,7 +40,17 @@ else
   BACKENDS=(rust core-python)
 fi
 
-OPERATIONS=(read create upsert replace delete patch)
+# Which operations to soak. Defaults to all six (the full leak sweep). Override
+# with LEAK_OPERATIONS (space-separated) to soak a SUBSET on the same rig --
+# e.g. LEAK_OPERATIONS="create" for the targeted Create-only settle follow-up
+# that confirms a single op's RSS levels off (Phase B WATCH closure) without
+# paying for all six. Invalid names are left to the harness to reject.
+if [[ -n "${LEAK_OPERATIONS:-}" ]]; then
+  # shellcheck disable=SC2206  # word-splitting is the intended parse here
+  OPERATIONS=(${LEAK_OPERATIONS})
+else
+  OPERATIONS=(read create upsert replace delete patch)
+fi
 
 STAMP="$(date +%Y%m%d-%H%M%S)"
 LOG_DIR="logs/leak-${STAMP}"

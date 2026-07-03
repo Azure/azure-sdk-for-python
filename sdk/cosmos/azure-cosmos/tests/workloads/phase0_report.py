@@ -111,19 +111,27 @@ def _latest_stamp(container, prefix: str) -> str:
     return max(stamps) if stamps else ""
 
 
-def _aggregate(container, stamp: str):
+def _aggregate(container, prefix: str, stamp: str):
     """Merge all windows of each (op, backend) cell into one pooled histogram.
 
     Returns a dict keyed (op, backend) -> stats. ``hist`` is the merged
     HdrHistogram; ``no_hist_windows`` counts windows that had no hist_b64 (older
     runs), which is what makes exact pooling impossible for that cell.
+
+    The query is scoped by BOTH the prefix (STARTSWITH) and the stamp (ENDSWITH):
+    filtering on the stamp alone would mix rows from any other run that happened to
+    land on the same-second stamp under a different prefix.
     """
     rows = list(
         container.query_items(
             "SELECT c.workload_id, c.count, c.errors, c.throttled_429, "
             "c.window_seconds, c.hist_b64, c.mean_ru, c.p99_9_ms "
-            "FROM c WHERE ENDSWITH(c.workload_id, @stamp)",
-            parameters=[{"name": "@stamp", "value": stamp}],
+            "FROM c WHERE STARTSWITH(c.workload_id, @prefix) "
+            "AND ENDSWITH(c.workload_id, @stamp)",
+            parameters=[
+                {"name": "@prefix", "value": prefix},
+                {"name": "@stamp", "value": stamp},
+            ],
             enable_cross_partition_query=True,
         )
     )
@@ -199,7 +207,7 @@ def main():
         print(f"ERROR: no {args.prefix}* runs found in the results container.", file=sys.stderr)
         sys.exit(2)
 
-    agg = _aggregate(container, stamp)
+    agg = _aggregate(container, args.prefix, stamp)
     if not agg:
         print(f"ERROR: no result rows found for stamp {stamp}.", file=sys.stderr)
         sys.exit(2)
