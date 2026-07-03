@@ -121,7 +121,7 @@ def test_input_too_large_remap_from_steering_key() -> None:
     )
     assert dispatcher is not None
 
-    internal = internal_cls(task_id="t", attachment_key="_steering_input_3", size_bytes=3_000_000, max_bytes=2_097_152)
+    internal = internal_cls(task_id="t", attachment_key="steering_input_3", size_bytes=3_000_000, max_bytes=2_097_152)
     with pytest.raises(InputTooLarge):
         raise dispatcher(internal)
 
@@ -141,7 +141,7 @@ def test_output_too_large_remap_from_internal_output_key() -> None:
     )
     assert dispatcher is not None
 
-    internal = internal_cls(task_id="t", attachment_key="_output", size_bytes=3_000_000, max_bytes=2_097_152)
+    internal = internal_cls(task_id="t", attachment_key="output", size_bytes=3_000_000, max_bytes=2_097_152)
     with pytest.raises(OutputTooLarge) as excinfo:
         raise dispatcher(internal)
     #: exception.task_id removed

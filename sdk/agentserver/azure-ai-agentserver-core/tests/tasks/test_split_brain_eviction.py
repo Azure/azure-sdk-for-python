@@ -348,7 +348,7 @@ async def test_input_enqueue_eviction_classified_as_evicted(stubbable_provider_f
                 status="in_progress",
                 title="enqueue-evict",
                 payload={
-                    "_steering": {
+                    "steering": {
                         "generation": 0,
                         "pending_inputs": [],
                         "drain_in_progress": False,
@@ -405,7 +405,7 @@ async def test_invariant_1_eviction_column(stubbable_provider_factory, steerable
                 session_id="test-session",
                 status="in_progress",
                 title="inv1",
-                payload={"_steering": {"generation": 0, "pending_inputs": []}} if steerable else {},
+                payload={"steering": {"generation": 0, "pending_inputs": []}} if steerable else {},
             )
         )
         stub.reject_on("create", task_id="t-inv1")

@@ -447,9 +447,9 @@ The framework persists:
   steering drain, `exit_for_recovery`) and at every explicit
   `metadata.flush()` call.
 - Lifecycle counters: `retry_attempt`, `recovery_count` (the
-  `expiry_count` of the lease record), `_last_input_id` (the
+  `expiry_count` of the lease record), `last_input_id` (the
   optional caller-provided chain head — see §11).
-- A per-turn `_turn_started_at` ISO-8601 UTC timestamp used by the
+- A per-turn `turn_started_at` ISO-8601 UTC timestamp used by the
   watchdog (§14) to compute remaining budget across crashes.
 - Steering state (`pending_inputs` queue, `cancel_requested`,
   `drain_in_progress`, `active_input`, `next_input_seq`) for
@@ -553,11 +553,11 @@ handler. The framework treats this **return-is-implicit-suspend**:
 4. Clears `payload["input"]` (and the corresponding attachment if
    the input was promoted) — the consumed input is no longer needed
    and would inflate the next payload write.
-5. Clears `_steering["active_input"]` (mechanism state lives, but
+5. Clears `steering["active_input"]` (mechanism state lives, but
    the consumed input value goes).
-6. Clears `payload["_retry_attempt"]` so the next turn starts with
+6. Clears `payload["retry_attempt"]` so the next turn starts with
    a fresh retry budget.
-7. Preserves `payload["_last_input_id"]` so the next
+7. Preserves `payload["last_input_id"]` so the next
    `if_last_input_id` precondition can be evaluated.
 
 The caller's `await run.result()` resolves to `X` directly (typed
@@ -605,10 +605,10 @@ that thread caller-supplied chain identity through the persisted
 record:
 
 - **`input_id`** — record-only. The framework writes
-  `payload["_last_input_id"] = input_id` after accepting the input;
+  `payload["last_input_id"] = input_id` after accepting the input;
   no precondition is checked.
 - **`if_last_input_id`** — precondition. The framework requires the
-  stored `_last_input_id` to equal `if_last_input_id` (the
+  stored `last_input_id` to equal `if_last_input_id` (the
   predecessor the caller claims to be extending). Mismatch raises
   `LastInputIdPreconditionFailed(actual_last_input_id=<stored>)`.
 
@@ -783,17 +783,17 @@ The budget is **per-turn** and **wall-clock**:
 - A process crash mid-turn does NOT reset the budget. When the
   recovered handler enters, the watchdog computes
   `remaining = max(0, timeout - (now - turn_started_at))` from the
-  persisted `_turn_started_at` and fires immediately if elapsed.
+  persisted `turn_started_at` and fires immediately if elapsed.
 - Clock skew is clamped to `[0, timeout]` in both directions.
 - **Steering drain re-entry re-arms the watchdog.** The watchdog is
   spawned per turn — initial entry AND every in-place steering drain
   re-entry — so a steered turn gets a fresh full budget rather than
   inheriting whatever remained on the prior turn's watchdog. The
-  persisted `_turn_started_at` is stamped per drain (§52), so both the
+  persisted `turn_started_at` is stamped per drain (§52), so both the
   in-process drain path and a crash-then-recover from a drained turn
   honor the new turn's budget.
 
-The framework MUST persist `payload["_turn_started_at"]` (ISO-8601
+The framework MUST persist `payload["turn_started_at"]` (ISO-8601
 UTC) at every turn-start boundary: fresh entry, suspended -> in_progress
 resume, steering drain re-entry. It is NOT re-stamped on crash
 recovery — that is precisely what allows the watchdog to honor the
@@ -838,7 +838,7 @@ identical zero-argument defaults (mirrored field-for-field by the .NET port) —
 Semantics:
 
 - **`retry_attempt` is the cross-lifetime counter.** Persisted as
-  `payload["_retry_attempt"]`. Re-hydrated on every handler entry
+  `payload["retry_attempt"]`. Re-hydrated on every handler entry
   via `ctx.retry_attempt`. Increments only when the handler raises
   (not on crash). Cleared on every turn-start boundary so each new
   turn (multi-turn) or each new run (one-shot) gets a fresh budget.
@@ -857,7 +857,7 @@ Semantics:
 #### Interim retry persistence
 
 Between every failed attempt and the next retry the framework
-PATCHes only `payload["_retry_attempt"] = <attempt + 1>`. NO
+PATCHes only `payload["retry_attempt"] = <attempt + 1>`. NO
 `payload["error"]` is written between attempts — the per-turn
 failure diagnostic is not projected onto the record. The status
 stays `in_progress` throughout.
@@ -1030,7 +1030,7 @@ Field meanings beyond this table are defined in the protocol spec.
 | `description` | string \| null | caller | `create` (optional). |
 | `lease` | LeaseInfo (§22) | framework | `create`, every renewal, every reclaim. |
 | `payload` | object | framework + developer | almost every transition (§20). |
-| `tags` | map of string -> string | framework + caller | `create` (framework stamps `_task_name`); caller-set tags allowed. |
+| `tags` | map of string -> string | framework + caller | `create` (framework stamps `task_name`); caller-set tags allowed. |
 | `error` | object \| null | framework | on handler raise. |
 | `suspension_reason` | string \| null | framework | on suspend. |
 | `source` | object | framework | `create` (§21). |
@@ -1057,13 +1057,14 @@ the following top-level keys, all starting with `_` or named
 | `input` | any JSON value, or a ref dict (§23) | Set on every `in_progress` transition; cleared at suspend; cleared by drain after consumption. | The current input value (or a ref to its attachment). |
 | `metadata` | object | Persisted at boundaries; auto-flushed. | The DEFAULT user metadata namespace. |
 | `metadata:<ns>` | object | Same as above. | NAMED user metadata namespace `<ns>`. |
-| `_last_input_id` | string \| null | Set when caller supplies `input_id`. | Chain-head tracking (§11). |
-| `_turn_started_at` | ISO-8601 UTC string | Set at every turn-start boundary; NEVER re-stamped on recovery. | Source of truth for the per-turn watchdog (§14). |
-| `_retry_attempt` | integer | Incremented on handler raise; reset to 0 on steering drain. (Not also reset on success in the canonical Python implementation.) | Resilient retry counter (§15). |
-| `_steering` | object (see below) | Only present on steerable tasks. | Steering mechanism state (§12). |
+| `last_input_id` | string \| null | Set when caller supplies `input_id`. | Chain-head tracking (§11). |
+| `turn_started_at` | ISO-8601 UTC string | Set at every turn-start boundary; NEVER re-stamped on recovery. | Source of truth for the per-turn watchdog (§14). |
+| `retry_attempt` | integer | Incremented on handler raise; reset to 0 on steering drain. (Not also reset on success in the canonical Python implementation.) | Resilient retry counter (§15). |
+| `steering` | object (see below) | Only present on steerable tasks. | Steering mechanism state (§12). |
+| `schema_version` | string | Stamped at `create` (currently `"1"`); a future migrator may bump it via a payload PATCH. | Task-document schema version (§38). Its **presence** is required — a stale in-progress task lacking it is treated as pre-schema legacy and **deleted** (not recovered) by the recovery scan. |
 
 The framework does NOT persist the handler's return value in the
-task record. There is no `payload["output"]` key and no `_output`
+task record. There is no `payload["output"]` key and no `output`
 attachment. The handler's return value resolves the in-process
 caller's `TaskRun.result()` future and is then no longer reachable
 from the persisted record. Per-turn outputs that need to survive
@@ -1076,7 +1077,7 @@ framework emits a structured ERROR log (named
 `resilient_task_handler_failure`) on every handler raise, but the
 chain record itself does not carry the per-turn diagnostic.
 
-`_steering` object shape:
+`steering` object shape:
 
 | Sub-key | Type | Meaning |
 |---|---|---|
@@ -1101,7 +1102,7 @@ The framework stamps the following `tags` entries on `create`:
 
 | Tag key | Value | Purpose |
 |---|---|---|
-| `_task_name` | The decorator's `name` (or `fn.__qualname__` fallback). | Server-side `LIST` filtering by task name. |
+| `task_name` | The decorator's `name` (or `fn.__qualname__` fallback). | Server-side `LIST` filtering by task name. |
 
 Tag keys starting with `_task_` are RESERVED. Caller-supplied tags
 using this prefix are stripped at the call site with a warning;
@@ -1113,9 +1114,10 @@ The framework stamps `source` on `create`:
 
 ```
 {
-   "type":           "agentserver.task",
-   "name":           "<the decorator's name (or fn.__qualname__)>",
-   "server_version": "<sdk_name>/<sdk_version> (<runtime>/<version>)"
+   "type":                "agentserver.task",
+   "name":                "<the decorator's name (or fn.__qualname__)>",
+   "server_version":      "<sdk_name>/<sdk_version> (<runtime>/<version>)",
+   "hosting_environment": "<FOUNDRY_HOSTING_ENVIRONMENT, or \"\" in local/dev>"
 }
 ```
 
@@ -1123,7 +1125,12 @@ The framework stamps `source` on `create`:
 routing — the framework looks up the registered handler callback
 by matching `source.name` against the decorator-supplied names.
 `source.type` is currently a single fixed string but is reserved
-for future namespacing.
+for future namespacing. `hosting_environment` is immutable creation
+provenance stamped from the `FOUNDRY_HOSTING_ENVIRONMENT` env var
+(always written; `""` when unset/empty). The **schema version**
+lives in `payload` (not `source`) because `source` is immutable per
+the Task API — a future migrator must be able to bump it via a
+payload PATCH.
 
 ### §22. Lease structure and ownership semantics
 
@@ -1238,8 +1245,8 @@ no inline shape).
 
 | Channel | Promotion rule | Attachment key |
 |---|---|---|
-| Function input (`payload["input"]`) | > 200 KiB serialized → ref; otherwise inline. | `_input` |
-| Each steering input (entry in `_steering["pending_inputs"]`) | > 20 KiB serialized → ref; otherwise inline. | `_steering_input_<seq>` |
+| Function input (`payload["input"]`) | > 200 KiB serialized → ref; otherwise inline. | `input` |
+| Each steering input (entry in `steering["pending_inputs"]`) | > 20 KiB serialized → ref; otherwise inline. | `steering_input_<seq>` |
 
 Different rules because:
 
@@ -1249,7 +1256,7 @@ Different rules because:
   threshold caps the worst-case inline payload contribution from
   steering at ~180 KiB even when the queue is full.
 
-There is no `_output` channel and no output promotion. The
+There is no `output` channel and no output promotion. The
 framework does not persist handler return values; outputs resolve
 the in-process caller's `TaskRun.result()` future directly and are
 never projected onto the task record.
@@ -1258,14 +1265,14 @@ Sizes are measured in bytes of canonical JSON
 (`sort_keys=True`, separators `(",", ":")`).
 
 Worst-case framework attachment usage:
-`_input` (1) + `_steering_input_*` (up to 9) =
+`input` (1) + `steering_input_*` (up to 9) =
 **10 of 20** per-task attachment slots. Leaves 10 slots free for
 future use.
 
 #### 23.3 Wire shapes — two only
 
 A slot that would hold an input (`payload["input"]`, an entry in
-`_steering["pending_inputs"]`) is represented in exactly one of two
+`steering["pending_inputs"]`) is represented in exactly one of two
 shapes:
 
 **Inline** (size <= threshold): the raw JSON value, verbatim.
@@ -1300,8 +1307,8 @@ no version-skew compatibility to maintain.
 
 #### 23.5 Sequence number invariants (steering)
 
-`payload["_steering"]["next_input_seq"]` is the monotonic counter
-the framework uses to derive `_steering_input_<seq>` keys. Critical
+`payload["steering"]["next_input_seq"]` is the monotonic counter
+the framework uses to derive `steering_input_<seq>` keys. Critical
 invariants:
 
 - **Advances ONLY on promotion.** Inline steering appends do not
@@ -1311,7 +1318,7 @@ invariants:
   `next_input_seq`, then `next_input_seq += 1`.
 - **Stable for surviving entries.** A drain pops the head of
   `pending_inputs` and (if it was a ref) deletes the corresponding
-  `_steering_input_<seq>` attachment. It does NOT renumber any
+  `steering_input_<seq>` attachment. It does NOT renumber any
   other entry. A queue of `[ref_3, ref_4]` becomes `[ref_4]` after
   one drain; `ref_4` keeps its key.
 
@@ -1353,8 +1360,8 @@ exceptions based on which channel the violation occurs on:
 
 | Cap | Where enforced | Developer-facing exception |
 |---|---|---|
-| Per-value (10 MiB) on `_input` | Create + PATCH, both providers | `InputTooLarge` (the framework remaps an internal `_AttachmentTooLarge` based on attachment-key prefix) |
-| Per-value (10 MiB) on `_steering_input_<seq>` | Steering append site (always reads state first to count) | `InputTooLarge` |
+| Per-value (10 MiB) on `input` | Create + PATCH, both providers | `InputTooLarge` (the framework remaps an internal `_AttachmentTooLarge` based on attachment-key prefix) |
+| Per-value (10 MiB) on `steering_input_<seq>` | Steering append site (always reads state first to count) | `InputTooLarge` |
 
 | Per-task count (20) on `create` | Create path | `_AttachmentLimitExceeded` (internal) — reachable only via direct provider use, which is unsupported |
 | Per-task count (20) on `patch` | Local provider (cheap count); hosted PATCH relies on server-side check | `_AttachmentLimitExceeded` (internal) |
@@ -1363,8 +1370,8 @@ Internal exceptions `_AttachmentTooLarge` and
 `_AttachmentLimitExceeded` are **provider-internal** — they are
 NOT exported from `tasks/__init__.py`. The framework catches
 `_AttachmentTooLarge` and re-raises the appropriate developer-
-facing exception based on the attachment key prefix (`_input` /
-`_steering_input_*` → `InputTooLarge`).
+facing exception based on the attachment key prefix (`input` /
+`steering_input_*` → `InputTooLarge`).
 `_AttachmentLimitExceeded` is unreachable in normal framework
 operation (worst case is 11 of 20 slots; see §23.2) and if it ever
 propagates indicates a framework bug — caught at the boundary and
@@ -1375,22 +1382,22 @@ converted to `RuntimeError`.
 These transitions MUST be single PATCHes carrying BOTH `payload` and
 `attachments`:
 
-1. **Promote on `.start()` (fresh)**: `attachments["_input"] = <value>`
+1. **Promote on `.start()` (fresh)**: `attachments["input"] = <value>`
    + `payload["input"] = {ref}` (CREATE on the hosted store).
 2. **Promote on resume**: same fields, but PATCH.
 3. **Suspend (multi-turn turn-end via `return X`)**:
    - `payload["input"] = null`
-   - `payload["_steering"]["active_input"] = null`
-   - `payload["_retry_attempt"] = null` (fresh budget for the next turn)
-   - `attachments["_input"] = null` (delete) IF the input was a ref
-4. **Steering append (promoted)**: `payload["_steering"]["pending_inputs"]
-   += [{ref}]`, `attachments["_steering_input_<seq>"] = <value>`,
-   `payload["_steering"]["next_input_seq"] += 1`,
-   `payload["_steering"]["cancel_requested"] = true`.
+   - `payload["steering"]["active_input"] = null`
+   - `payload["retry_attempt"] = null` (fresh budget for the next turn)
+   - `attachments["input"] = null` (delete) IF the input was a ref
+4. **Steering append (promoted)**: `payload["steering"]["pending_inputs"]
+   += [{ref}]`, `attachments["steering_input_<seq>"] = <value>`,
+   `payload["steering"]["next_input_seq"] += 1`,
+   `payload["steering"]["cancel_requested"] = true`.
 5. **Steering drain (promoted entry, Phase 1)**:
-   `payload["_steering"]["pending_inputs"]` without the popped
-   head, `attachments["_steering_input_<seq>"] = null`,
-   plus the new turn's `_turn_started_at`.
+   `payload["steering"]["pending_inputs"]` without the popped
+   head, `attachments["steering_input_<seq>"] = null`,
+   plus the new turn's `turn_started_at`.
 6. **One-shot completion**: the record is deleted (one-shot is
    always ephemeral).
 7. **Failure**: one-shot → record deleted; multi-turn → status="suspended"
@@ -1399,7 +1406,7 @@ These transitions MUST be single PATCHes carrying BOTH `payload` and
    `TaskFailed(error=...)` and via the structured log
    `resilient_task_handler_failure`.
 8. **Resume (suspended → in_progress)**: status="in_progress",
-   `_turn_started_at` re-stamped, `_retry_attempt` reset to 0.
+   `turn_started_at` re-stamped, `retry_attempt` reset to 0.
    New input written (inline or as ref + attachment per §23.2).
 
 Splitting any of these into multiple PATCHes opens a crash window
@@ -1410,7 +1417,7 @@ framework treats this as a single-PATCH invariant.
 
 Attachment keys MUST match the regex `^[a-zA-Z0-9_.\-]{1,64}$` and
 MUST NOT be empty after trimming whitespace. Both providers enforce
-this on every CREATE / PATCH write. The framework's reserved keys (`_input`, `_steering_input_<seq>`) all conform.
+this on every CREATE / PATCH write. The framework's reserved keys (`input`, `steering_input_<seq>`) all conform.
 Developer-supplied attachment keys (none exist today — attachments
 are framework-owned per §23.7) would also be validated against this
 regex if the surface is ever expanded.
@@ -1597,8 +1604,8 @@ depends on the operation's INTENT. There is no single retry rule:
 | Operation | On 412, do what |
 |---|---|
 | Metadata flush | re-read state, overwrite the addressed namespace with local value (last-write-wins), retry (up to 5 attempts). |
-| Steering append | re-read `_steering`, append to the NEW state's `pending_inputs`, bump `next_input_seq` from the NEW state, retry (up to 5 attempts). Idempotent when `input_id` is supplied. |
-| Steering drain (Phase 1) | re-read `_steering`, drain the NEW head, retry (up to 5 attempts). |
+| Steering append | re-read `steering`, append to the NEW state's `pending_inputs`, bump `next_input_seq` from the NEW state, retry (up to 5 attempts). Idempotent when `input_id` is supplied. |
+| Steering drain (Phase 1) | re-read `steering`, drain the NEW head, retry (up to 5 attempts). |
 | Steering drain (Phase 3) | re-read, retry (up to 5 attempts). |
 | Lease renewal heartbeat | re-read lease; if still ours, retry; otherwise signal eviction. |
 | Suspend / complete / fail terminal writes | **RE-READ + decide.** A 412 here means our etag is stale — that's all we know on its own. Re-read the record, then choose: (a) if the lease is **no longer ours** (`lease.owner` differs OR `lease.instance_id` differs OR `lease.expiry_count` bumped past our cached value) → ABANDON and signal awaiters via the eviction path (C-LSE-4 / C-ERR-2); the new owner is authoritative and our terminal would clobber their in-flight recovery. (b) If `status` is already terminal (`completed`) → ABANDON; another actor already wrote the terminal. (c) Otherwise (lease still ours, status still `in_progress`) → retry the terminal PATCH against the new etag, up to 5 attempts. Steering inputs that another process appended between our read and our retry are silently superseded by the terminal write — that is correct behavior because the steerer's `.result()` MUST then raise `TaskConflictError(current_status="completed")` per C-STR-6, which is how cross-process steering-after-terminate is supposed to surface. |
@@ -1988,7 +1995,7 @@ The periodic recovery loop additionally:
 - Passes `source_type=_SOURCE_TYPE` to `provider.list(...)` so the
   scan returns only framework-owned tasks. Foreign-typed records
   in the same `(agent_name, session_id)` scope are not picked up.
-- Walks `task_info.attachments` for `_steering_input_*` keys whose
+- Walks `task_info.attachments` for `steering_input_*` keys whose
   ref slot is no longer present in `pending_inputs` and PATCHes
   them away (orphan cleanup — defense in depth against a partial
   crash between an attachment add and the queue append).
@@ -2081,7 +2088,7 @@ Per-decorator kwarg semantics:
 
 | Kwarg | Meaning |
 |---|---|
-| `name` | **Required.** Stable identity for recovery routing — written to `source.name` and the `_task_name` tag. Must be an explicit non-empty string; there is no function-derived default (deriving it from `func.__qualname__` would silently rebind identity on rename/move and strand in-flight tasks). Changing it strands existing tasks. |
+| `name` | **Required.** Stable identity for recovery routing — written to `source.name` and the `task_name` tag. Must be an explicit non-empty string; there is no function-derived default (deriving it from `func.__qualname__` would silently rebind identity on rename/move and strand in-flight tasks). Changing it strands existing tasks. |
 | `title` | Human-readable title written to `TaskInfo.title`. |
 | `timeout` | **Per-turn** cooperative wall-clock watchdog (§14). Defaults to **1 day** when unset; a supplied value may lower the budget but **1 day is a hard ceiling** — a larger or negative value is rejected at registration (`ValueError`, fail-fast, not clamped). This caps a single uninterrupted handler invocation only; it is **not** a task-lifetime bound (a multi-turn chain lives indefinitely — the budget resets every turn; the task's overall lifetime is governed by the platform's 30-day sliding-TTL inactivity cleanup). When elapsed, the framework sets `ctx.timeout_exceeded` then `ctx.cancel`. |
 | `retry` | `RetryPolicy` for handler-raised exceptions (§15). `None` (default) = no retry. |
@@ -3018,7 +3025,7 @@ On `TaskManager.startup()`:
         skip (would be impossible in a fresh process; defensive).
      d. Otherwise (same-owner different-instance OR expired):
         — Call self._steering_cleanup_orphan_attachments(task_info)
-          (§58) to clean up any orphan _steering_input_* attachments
+          (§58) to clean up any orphan steering_input_* attachments
           left by a partial crash.
         — Call self._reclaim_one(task_info) — PATCH lease to self
           with if_match=etag, then invoke the registered resume
@@ -3063,8 +3070,8 @@ The framework's most-complex decision tree. On `Task.start(task_id, input, ...)`
    For RESUME, the PATCH MUST be a single co-PATCH carrying:
      - status: 'in_progress'
      - payload['input']: new serialized input (inline or ref)
-     - payload['_turn_started_at']: utc_now_iso()
-     - payload['_retry_attempt']: 0   (fresh retry budget for the resumed turn)
+     - payload['turn_started_at']: utc_now_iso()
+     - payload['retry_attempt']: 0   (fresh retry budget for the resumed turn)
      - attachments['_input']: new value (or absent if inline)
 5. If action ∈ {CREATE, ADOPT, RESUME, RECLAIM-AND-INVOKE}:
      Spawn lease_renewal_loop, watchdog (if timeout configured), execute_task_loop.
@@ -3089,13 +3096,13 @@ executes this PATCH as a single round-trip:
 
 ```
 1. Read current payload (already in memory from the lifecycle GET).
-2. steering   = payload.get('_steering', {})
+2. steering   = payload.get('steering', {})
 3. pending   = list(steering.get('pending_inputs', []))
 4. If len(pending) >= 9: raise SteeringQueueFull.
 5. serialized = canonical_json(input)
 6. If size(serialized) > 20 KiB:
      next_seq = steering.get('next_input_seq', 0)
-     key      = f'_steering_input_{next_seq}'
+     key      = f'steering_input_{next_seq}'
      ref      = {'__attachment_ref__': {'key': key, 'hash': sha256(serialized)}}
      pending.append(ref)
      steering['next_input_seq'] = next_seq + 1
@@ -3105,8 +3112,8 @@ executes this PATCH as a single round-trip:
      attachments_patch = None
 7. steering['pending_inputs']   = pending
    steering['cancel_requested'] = True
-8. payload_patch = {'_steering': steering}
-   if input_id provided: payload_patch['_last_input_id'] = input_id
+8. payload_patch = {'steering': steering}
+   if input_id provided: payload_patch['last_input_id'] = input_id
 9. PATCH(task_id, payload=payload_patch, attachments=attachments_patch,
         lease_owner=self.owner, lease_instance_id=self.instance_id,
         lease_duration_seconds=60, if_match=etag)
@@ -3130,7 +3137,7 @@ the breadcrumb recovery uses to know "we are mid-drain":
 ```
 Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
   1. Read current task record (we need etag, payload, attachments).
-  2. steering = dict(payload['_steering'])
+  2. steering = dict(payload['steering'])
   3. pending  = list(steering['pending_inputs'])
   4. If pending is empty: return None (no drain happens; caller
      proceeds to suspend/complete normally).
@@ -3145,8 +3152,8 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
   9. steering['pending_inputs']    = pending
  10. steering['drain_in_progress'] = True
  11. steering['cancel_requested']  = len(pending) > 0     # more pending => keep advisory
- 12. payload['_steering']          = steering
- 13. payload['_turn_started_at']   = utc_now_iso()        # fresh turn-start boundary
+ 12. payload['steering']          = steering
+ 13. payload['turn_started_at']   = utc_now_iso()        # fresh turn-start boundary
  14. PATCH(task_id, status='in_progress', payload=payload,
         attachments=attachments_patch, lease piggyback, if_match=etag)
 
@@ -3163,7 +3170,7 @@ Phase 1 — "Drain start" PATCH (atomic across payload + attachments):
      [NB: Phase 1 does NOT set payload['input'] or write a ref/attachment
       for active_input. Only the in-memory ctx receives the value (Phase 2).
       Recovery from a crash BETWEEN Phase 1 and Phase 3 reads
-      _steering['active_input'] as the source of truth for the input,
+      steering['active_input'] as the source of truth for the input,
       via the race-recovery contract.
       No output co-clear is needed — the framework does not write
       payload['output'] / _output attachments on any transition.]
@@ -3180,8 +3187,8 @@ Phase 2 — Handler re-entry (in-memory only):
 
 Phase 3 — "Drain end" PATCH (after handler re-entered):
  18. steering['drain_in_progress'] = False
- 19. payload['_steering']          = steering
- 20. payload['_retry_attempt']     = 0     # Drain resets retry budget
+ 19. payload['steering']          = steering
+ 20. payload['retry_attempt']     = 0     # Drain resets retry budget
  21. PATCH(task_id, payload=payload, lease piggyback)
      (No attachments touched in Phase 3.)
 
@@ -3218,7 +3225,7 @@ to the caller.
 every turn-start boundary — initial entry AND steering drain re-entry
 (via `_spawn_watchdog_for_turn` inside the drain loop) — so a steered
 turn gets a fresh full per-turn budget (§14, §57) rather than sharing
-the prior turn's watchdog. The persisted `_turn_started_at` (stamped
+the prior turn's watchdog. The persisted `turn_started_at` (stamped
 per drain) additionally backs the RECOVERY path.
 
 ### §53. Suspend write
@@ -3230,12 +3237,12 @@ When a multi-turn handler ends a turn with `return X`:
 2. payload_patch = {
        'metadata': metadata.to_dict(),  # auto-flush of touched namespaces
        'input': null,                   # consumed input goes away
-       '_retry_attempt': null,          # fresh retry budget for next turn
+       'retry_attempt': null,          # fresh retry budget for next turn
    }
-3. If task.payload['_steering'] is set:
-       steering = dict(task.payload['_steering'])
+3. If task.payload['steering'] is set:
+       steering = dict(task.payload['steering'])
        steering['active_input'] = null
-       payload_patch['_steering'] = steering
+       payload_patch['steering'] = steering
 4. # NB: The framework does NOT persist X anywhere on the task record
    # (§11, §20, C-OUT). The handler's return value is delivered to
    # the in-process awaiter of TaskRun.result() ONLY. No payload['output']
@@ -3258,10 +3265,10 @@ Properties this guarantees:
   handler with no output replay path.
 - **Atomic input + steering + attachment clears.** Single PATCH
   carries the `input` clear, the `_steering.active_input` clear, the
-  `_retry_attempt` reset, AND the deletion of the promoted `_input`
+  `retry_attempt` reset, AND the deletion of the promoted `input`
   attachment (when applicable). There is no crash window where the
   attachment exists without its ref or vice-versa.
-- **`_last_input_id` preserved.** Not touched here so the
+- **`last_input_id` preserved.** Not touched here so the
   `if_last_input_id` precondition on the next `start()` still resolves.
 
 ### §54. Recovery + reclaim
@@ -3426,12 +3433,12 @@ async def _steering_cleanup_orphan_attachments(task_info):
     if not task_info.attachments:
         return
     steering_keys = {k for k in task_info.attachments
-                       if k.startswith('_steering_input_')}
+                       if k.startswith('steering_input_')}
     if not steering_keys:
         return
-    pending = task_info.payload.get('_steering', {}).get('pending_inputs', [])
+    pending = task_info.payload.get('steering', {}).get('pending_inputs', [])
     referenced = {ref_key(e) for e in pending if is_ref(e)
-                                              and ref_key(e).startswith('_steering_input_')}
+                                              and ref_key(e).startswith('steering_input_')}
     orphans = steering_keys - referenced
     if not orphans:
         return
@@ -3574,7 +3581,7 @@ Items are grouped by area. Each item is identified `C-AREA-N`
 ### C-INP (input + chain)
 
 - **C-INP-1.** `input_id` provided without `if_last_input_id` MUST
-  succeed; the framework records the id in `_last_input_id`.
+  succeed; the framework records the id in `last_input_id`.
 - **C-INP-2.** `if_last_input_id` provided without `input_id` MUST
   raise `TypeError` at the call site.
 - **C-INP-3.** `if_last_input_id` mismatch MUST raise
@@ -3584,7 +3591,7 @@ Items are grouped by area. Each item is identified `C-AREA-N`
 ### C-SUS (suspend / resume)
 
 - **C-SUS-1.** A multi-turn handler's `return X` MUST clear
-  `payload["input"]` AND `payload["_steering"]["active_input"]`
+  `payload["input"]` AND `payload["steering"]["active_input"]`
   AND any promoted input attachment, in a single PATCH that also
   transitions the chain to `suspended`.
 - **C-SUS-2.** The next `.run()` / `.start()` against a `suspended`
@@ -3596,27 +3603,27 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   resolves the future and is then no longer reachable from the
   persisted record (the framework does NOT write `payload["output"]`).
 - **C-SUS-4.** The framework MUST NOT write `payload["output"]`
-  and MUST NOT use the `_output` attachment slot. The suspend
+  and MUST NOT use the `output` attachment slot. The suspend
   PATCH writes `status="suspended"`, `suspension_reason="run_completion"`,
-  clears `payload["input"]` and `payload["_retry_attempt"]`, and
-  preserves `payload["_last_input_id"]`. No output / error
+  clears `payload["input"]` and `payload["retry_attempt"]`, and
+  preserves `payload["last_input_id"]`. No output / error
   projection onto the chain record.
 
 ### C-STR (steering)
 
 - **C-STR-1.** Steering queue cap MUST be 9; appending past it
   MUST raise `SteeringQueueFull` from `.start()`.
-- **C-STR-2.** Append MUST set `_steering["cancel_requested"]=True`
+- **C-STR-2.** Append MUST set `steering["cancel_requested"]=True`
   and signal `ctx.cancel` on the in-process active execution.
 - **C-STR-3.** `next_input_seq` MUST be monotonic and advance ONLY
   on promotion (inline appends do NOT bump it).
 - **C-STR-4.** A drain MUST NOT renumber any other queue entry's
   attachment key. Surviving promoted entries keep their
-  original `_steering_input_<seq>` keys.
+  original `steering_input_<seq>` keys.
 - **C-STR-5.** A drain MUST be carried in a single PATCH that
   removes the head from `pending_inputs`, deletes the
   corresponding attachment (if any), and sets the new turn's
-  input / `_turn_started_at`.
+  input / `turn_started_at`.
 - **C-STR-6.** Multi-turn handler ending a turn with `return X`
   MUST transition the chain to `suspended` and promote the next
   queued steering input as the next turn's input. The queued
@@ -3652,7 +3659,7 @@ Items are grouped by area. Each item is identified `C-AREA-N`
 ### C-TMO (timeout watchdog)
 
 - **C-TMO-1.** Timeout is **per-turn** and **wall-clock**.
-- **C-TMO-2.** `payload["_turn_started_at"]` MUST be re-stamped at
+- **C-TMO-2.** `payload["turn_started_at"]` MUST be re-stamped at
   every turn-start boundary (fresh, resumed, drain re-entry — Phase 1
   of §52). It MUST NOT be re-stamped on crash recovery.
 - **C-TMO-3.** Recovered watchdog MUST compute
@@ -3677,13 +3684,13 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   raise propagates directly to the caller as `TaskFailed`).
 - **C-RET-2.** `retry_attempt` MUST be exposed on
   `TaskContext.retry_attempt` and persisted as
-  `payload["_retry_attempt"]`. Cleared at every turn-start
+  `payload["retry_attempt"]`. Cleared at every turn-start
   boundary.
 - **C-RET-3.** Crash recovery MUST NOT consume retry budget. A
   lifetime that died before the handler raised MUST NOT advance
-  `_retry_attempt`.
+  `retry_attempt`.
 - **C-RET-4.** Between attempts, the framework MUST PATCH only
-  `payload["_retry_attempt"]` (the counter advance). NO
+  `payload["retry_attempt"]` (the counter advance). NO
   `payload["error"]` is written between attempts.
 - **C-RET-5.** When `retry_attempt >= max_attempts`, the framework
   MUST raise `TaskFailed(error=TaskExhaustedRetriesErrorDict(...))`
@@ -3717,9 +3724,9 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   with both `key` and `hash`.
 - **C-ATT-3.** Promotion thresholds: function input > 200 KiB;
   steering input > 20 KiB. Outputs are not persisted at all
-  (§11, §20, C-OUT) — there is no `_output` attachment. Measured
+  (§11, §20, C-OUT) — there is no `output` attachment. Measured
   in canonical-JSON bytes. Framework-reserved attachment keys:
-  `_input`, `_steering_input_<seq>`.
+  `input`, `steering_input_<seq>`.
   Worst-case framework attachment usage: 1 + 9 = 10 of 20 slots;
   10 slots remain free.
 - **C-ATT-4.** Per-attachment cap: 10 MiB serialized. Per-task
@@ -3728,8 +3735,8 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   providers. Provider-level violations MUST surface as the
   internal `_AttachmentTooLarge` / `_AttachmentLimitExceeded`
   (underscore-prefixed; NOT exported). The framework MUST
-  re-raise as the developer-facing `InputTooLarge` (for `_input`
-  / `_steering_input_*` keys).
+  re-raise as the developer-facing `InputTooLarge` (for `input`
+  / `steering_input_*` keys).
   Per-task count cap MUST be enforced on `create` and SHOULD be
   enforced on `patch` when current state is cheaply available;
   the canonical Python implementation enforces count on
@@ -3744,7 +3751,7 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   JSON bytes (`sort_keys=True`, separators `(",", ":")`), formatted
   as `sha256:<64 lowercase hex chars>`.
 - **C-ATT-7.** Orphan attachment cleanup (§58) MUST run on
-  recovery for tasks with `_steering_input_*` keys not referenced
+  recovery for tasks with `steering_input_*` keys not referenced
   in `pending_inputs`.
 - **C-ATT-8.** Attachment keys MUST match `^[a-zA-Z0-9_.\-]{1,64}$`
   and MUST be non-empty after trim. Validated on every CREATE and
@@ -3986,7 +3993,7 @@ Items are grouped by area. Each item is identified `C-AREA-N`
 ### C-OUT (output persistence) — *removed*
 
 The framework does NOT persist handler outputs. There is no
-`payload["output"]` key, no `_output` attachment, and no
+`payload["output"]` key, no `output` attachment, and no
 `OutputTooLarge` exception. A multi-turn handler's `return X`
 resolves the in-process caller's `TaskRun.result()` future
 directly; a one-shot handler's `return X` does the same and the
@@ -4200,13 +4207,13 @@ metadata namespaces are populated, framework state slots are set.
         "Quick note: prioritise post-2024 papers",
         {
           "__attachment_ref__": {
-            "key":  "_steering_input_3",
+            "key":  "steering_input_3",
             "hash": "sha256:a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2"
           }
         },
         {
           "__attachment_ref__": {
-            "key":  "_steering_input_4",
+            "key":  "steering_input_4",
             "hash": "sha256:f0e1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d"
           }
         }
@@ -4228,11 +4235,11 @@ metadata namespaces are populated, framework state slots are set.
       "depth":   "comprehensive",
       "context": "<~800 KB of caller-supplied reference material>"
     },
-    "_steering_input_3": {
+    "steering_input_3": {
       "instruction": "refocus on transformer architectures",
       "context":     "<~600 KB of caller-supplied reference material>"
     },
-    "_steering_input_4": {
+    "steering_input_4": {
       "instruction": "include reinforcement learning hybrids",
       "context":     "<~500 KB of caller-supplied reference material>"
     }
@@ -4260,9 +4267,9 @@ What this single document demonstrates:
 | Steering queue with mixed shapes (§12, §23) | `_steering.pending_inputs[0]` inline; `[1]`, `[2]` refs |
 | Monotonic seq invariant (§23.5) | `next_input_seq: 5` with live keys `_3` + `_4` — one drain consumed `_0`/`_1`/`_2`, no renumbering |
 | Steering mechanism state (§12) | `cancel_requested`, `drain_in_progress`, `active_input` |
-| Per-turn watchdog source of truth (§14) | `_turn_started_at` |
-| Resilient retry counter (§15) | `_retry_attempt` |
-| Last-input-id chain (§11) | `_last_input_id` |
+| Per-turn watchdog source of truth (§14) | `turn_started_at` |
+| Resilient retry counter (§15) | `retry_attempt` |
+| Last-input-id chain (§11) | `last_input_id` |
 | ETag CAS (§25) | `etag` |
 | Worst-case attachment count (§23.2) | 4 of 20 slots used here; framework reserves at most 11 (1 + 9 + 1) |
 
@@ -4272,12 +4279,12 @@ Simpler scenarios drop fields:
   `pending_inputs` is all raw values; `attachments` is absent
   (no output is ever persisted; §11/§20/C-OUT).
 - **Handler returned `X` from a turn (multi-turn implicit suspend)**:
-  `payload` has no `output` key; `attachments` has no `_output`
+  `payload` has no `output` key; `attachments` has no `output`
   entry. The handler's return value is delivered to the in-process
   awaiter of `TaskRun.result()` only.
 - **Just-after-resume**: `payload.input` holds the new input
   (inline or ref); no `output` key on the record (and never was).
-- **Cold start, no steering**: `_steering` absent; `next_input_seq`
+- **Cold start, no steering**: `steering` absent; `next_input_seq`
   doesn't appear.
 
 ### §C. Steering sequence (append → cancel → drain → result)
@@ -4303,7 +4310,7 @@ Caller A                Framework                Caller B              Handler
    │                            _try_drain_steering()                 │
    │                            ↓                                     │
    │                            Phase 1 PATCH: pop B,                 │
-   │                            delete _steering_input_<seq>,         │
+   │                            delete steering_input_<seq>,         │
    │                            drain_in_progress=true,               │
    │                            _turn_started_at refreshed            │
    │                            ↓                                     │

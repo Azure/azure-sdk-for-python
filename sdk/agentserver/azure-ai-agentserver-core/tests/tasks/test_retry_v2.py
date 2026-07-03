@@ -120,7 +120,7 @@ async def _seed_stale_task(
             session_id="test-session",
             status="in_progress",
             title="retry-v2-stale",
-            payload={"input": input_value, "_retry_attempt": retry_attempt},
+            payload={"input": input_value, "retry_attempt": retry_attempt},
         )
     )
     task_file = store_dir / "test-agent" / "test-session" / f"{task_id}.json"
@@ -223,7 +223,7 @@ class TestPerHandlerRetryBudget:
             run = await chat.start(task_id=task_id, input_id="turn-1", input="hello")
             assert await asyncio.wait_for(run.result(), timeout=5.0) == "suspended:hello"
             record = await _wait_for_record(manager, task_id, status="suspended")
-            assert (record.payload or {}).get("_retry_attempt") is None
+            assert (record.payload or {}).get("retry_attempt") is None
             assert observed == [0]
         finally:
             await _teardown_manager(manager, mgr_mod, store_dir)
@@ -335,7 +335,7 @@ class TestMultiTurnPostExhaustion:
             with pytest.raises(TaskFailed):
                 await asyncio.wait_for(run.result(), timeout=5.0)
             record = await _wait_for_record(manager, task_id, status="suspended")
-            assert (record.payload or {}).get("_retry_attempt") is None
+            assert (record.payload or {}).get("retry_attempt") is None
         finally:
             await _teardown_manager(manager, mgr_mod, store_dir)
 
@@ -377,7 +377,7 @@ class TestSC012RetryConformance:
             run = await chat.start(task_id=task_id, input_id="turn-1", input="payload")
             assert await asyncio.wait_for(run.result(), timeout=5.0) == "suspended-after-retry"
             record = await _wait_for_record(manager, task_id, status="suspended")
-            assert (record.payload or {}).get("_retry_attempt") is None
+            assert (record.payload or {}).get("retry_attempt") is None
         finally:
             await _teardown_manager(manager, mgr_mod, store_dir)
 

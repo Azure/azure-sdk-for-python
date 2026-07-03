@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
+import os
 import traceback
 from collections.abc import Awaitable, Callable
 from typing import Any, Optional, TypeVar
@@ -51,7 +52,7 @@ logger = logging.getLogger("azure.ai.agentserver.tasks")
 _SOURCE_TYPE = "agentserver.task"
 
 #: Reserved tag key for task name filtering via the LIST API.
-_TAG_TASK_NAME = "_task_name"
+_TAG_TASK_NAME = "task_name"
 
 #:   — default lease TTL. The per-task
 #: ``lease_duration_seconds`` knob was demoted (no developer use case justified
@@ -60,6 +61,16 @@ _DEFAULT_LEASE_SECONDS = 60
 
 #: Pre-computed server version segment for source stamps.
 _SOURCE_SERVER_VERSION = _build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
+
+#: (Spec 038) Hosting-environment env var, stamped into ``source`` at create as
+#: immutable creation provenance (``""`` when unset/empty).
+_ENV_HOSTING = "FOUNDRY_HOSTING_ENVIRONMENT"
+
+#: (Spec 038) Task-document schema version, stamped into ``payload`` at create.
+#: Lives in ``payload`` (not ``source``) because ``source`` is immutable per the
+#: Task API — a future migrator must be able to bump this via a payload PATCH.
+_SCHEMA_VERSION = "1"
+_SCHEMA_VERSION_KEY = "schema_version"
 
 Input = TypeVar("Input")
 Output = TypeVar("Output")
@@ -106,7 +117,7 @@ _RECLAIM_BACKOFF_BASE_SECONDS: float = 0.2
 # suspended-to-in_progress resume, steering drain re-entry); NOT
 # re-stamped on crash recovery so the watchdog can compute remaining
 # budget = max(0, opts.timeout - (now - _turn_started_at)).
-_TURN_STARTED_AT_KEY: str = "_turn_started_at"
+_TURN_STARTED_AT_KEY: str = "turn_started_at"
 
 
 def _utc_now_iso() -> str:
@@ -434,6 +445,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             "type": _SOURCE_TYPE,
             "name": fn_name,
             "server_version": _SOURCE_SERVER_VERSION,
+            # (Spec 038) Immutable creation provenance: which hosting environment
+            # created this task. Always written; "" when unset/empty (local dev).
+            "hosting_environment": os.environ.get(_ENV_HOSTING, "") or "",
         }
 
     @staticmethod
@@ -607,7 +621,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         Invoked by :meth:`TaskRun.cancel` when called on a handle bound to
         a queued (not-yet-promoted) steering input. The associated entry
-        in ``payload["_steering"]["pending_inputs"]`` is removed, the
+        in ``payload["steering"]["pending_inputs"]`` is removed, the
         corresponding ``_steering_input_<seq>`` attachment (if any) is
         deleted, and the queued steerer's future is resolved with
         ``TaskCancelled``. The active turn (if any) is not affected.
@@ -633,7 +647,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 if not future.done():
                     future.set_exception(TaskCancelled())
                 return
-            steering = dict(task_info.payload.get("_steering") or {})
+            steering = dict(task_info.payload.get("steering") or {})
             pending = list(steering.get("pending_inputs") or [])
             attachments_patch: dict[str, Any] = {}
             # Drop the first queue entry whose raw value matches ``input_val``.
@@ -661,7 +675,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 return
             steering["pending_inputs"] = new_pending
             steering["cancel_requested"] = len(new_pending) > 0
-            payload_patch: dict[str, Any] = {"_steering": steering}
+            payload_patch: dict[str, Any] = {"steering": steering}
             try:
                 # Spec 031 / FR-005a+b: the outer lock is already held, so use
                 # the lock-held update primitive (avoids re-entrant lock
@@ -950,7 +964,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 :paramtype entry_mode: EntryMode
         :keyword initial_payload_extras:
                     Framework-reserved top-level payload slots (e.g.,
-                    ``{"_last_input_id": "msg-1"}``) merged into the initial
+                    ``{"last_input_id": "msg-1"}``) merged into the initial
                     payload alongside ``input`` and ``metadata``. Reserved keys
                     ``input`` and ``metadata`` cannot be overridden via this
                     channel.
@@ -964,7 +978,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # Build payload — input is always persisted (:
         # the per-task `store_input` knob is dropped).: route the
         # input through the promotion helper so > 200 KiB inputs spill into
-        # ``attachments["_input"]`` and ``payload["input"]`` becomes a ref
+        # ``attachments["input"]`` and ``payload["input"]`` becomes a ref
         # slot. The single create-PATCH carries payload + attachments
         # together (atomic).
         serialized_input = _serialize_input(input_val)
@@ -987,8 +1001,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # ISO-8601 UTC with Z suffix.
         payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
 
+        # (Spec 038) Stamp the task-document schema version at create. Lives in
+        # payload (mutable) so a future migrator can bump it via a payload PATCH;
+        # its presence is also the signal the one-time legacy cleanup keys on.
+        payload[_SCHEMA_VERSION_KEY] = _SCHEMA_VERSION
+
         #  Framework-reserved top-level slots
-        # (e.g., `_last_input_id`) supplied by `Task.start(input_id=...)`.
+        # (e.g., `last_input_id`) supplied by `Task.start(input_id=...)`.
         # Merged shallowly so callers cannot clobber `input` or `metadata`.
         if initial_payload_extras:
             for k, v in initial_payload_extras.items():
@@ -1065,7 +1084,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             shutdown=self._shutdown_event,
             entry_mode=entry_mode,
             pending_count_provider=self._make_pending_count_provider(task_id),
-            input_id=(initial_payload_extras or {}).get("_last_input_id"),
+            input_id=(initial_payload_extras or {}).get("last_input_id"),
         )
         loop = asyncio.get_event_loop()
         result_future: asyncio.Future[Any] = loop.create_future()
@@ -1084,7 +1103,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 info = await self._provider_get_tracked(task_id)
                 if info is None or not info.payload:
                     return
-                st = info.payload.get("_steering", {})
+                st = info.payload.get("steering", {})
                 pending = st.get("pending_inputs") or []
                 if pending:
                     # Spec 031 / FR-002 + SOT §13: record the cross-process
@@ -1447,7 +1466,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         lease_gen = task_info.lease.generation if task_info.lease else 0
 
         # Extract steering context from payload
-        steering = (task_info.payload or {}).get("_steering", {})
+        steering = (task_info.payload or {}).get("steering", {})
         #: is_steered_turn is True if and only if
         # THIS invocation was constructed by the steering-drain code
         # path. For initial entry from a recovered drain (the
@@ -1476,7 +1495,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # written by ``_execute_task_loop`` on every handler-raised exception
         # and cleared by the steering-drain path; default 0 covers fresh and
         # never-failed tasks.
-        persisted_retry_attempt = (task_info.payload or {}).get("_retry_attempt") or 0
+        persisted_retry_attempt = (task_info.payload or {}).get("retry_attempt") or 0
 
         ctx: TaskContext[Any] = TaskContext(
             task_id=task_id,
@@ -1490,7 +1509,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             entry_mode=entry_mode,
             is_steered_turn=is_steered_turn,
             pending_count_provider=self._make_pending_count_provider(task_id),
-            input_id=(task_info.payload or {}).get("_last_input_id"),
+            input_id=(task_info.payload or {}).get("last_input_id"),
         )
 
         loop = asyncio.get_event_loop()
@@ -1510,7 +1529,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 info = await self._provider_get_tracked(task_id)
                 if info is None or not info.payload:
                     return
-                st = info.payload.get("_steering", {})
+                st = info.payload.get("steering", {})
                 pending = st.get("pending_inputs") or []
                 if pending:
                     # Spec 031 / FR-002 + SOT §13: record the cross-process
@@ -1841,7 +1860,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         #: honor the persisted retry_attempt so the
         # cross-lifetime budget is respected. ``_start_existing_task`` and
         # ``create_and_start`` populate ``ctx.retry_attempt`` from
-        # ``payload["_retry_attempt"]`` (default 0 for fresh tasks).
+        # ``payload["retry_attempt"]`` (default 0 for fresh tasks).
         attempt = ctx.retry_attempt
         # Mutable ref: steering drain may swap the active result_future
         current_result_future = result_future
@@ -2165,7 +2184,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                         await self._provider_update_locked(
                             task_id,
                             TaskPatchRequest(
-                                payload={"_retry_attempt": attempt + 1},
+                                payload={"retry_attempt": attempt + 1},
                             ),
                         )
                     except Exception:  # pylint: disable=broad-exception-caught
@@ -2326,7 +2345,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                 return None
 
             payload = dict(task_info.payload) if task_info.payload else {}
-            steering = dict(payload.get("_steering", {}))
+            steering = dict(payload.get("steering", {}))
             pending = list(steering.get("pending_inputs", []))
 
             if not pending:
@@ -2357,7 +2376,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             # turn-start boundary — write a fresh _turn_started_at so the
             # respawned watchdog computes a full per-turn budget.
             payload[_TURN_STARTED_AT_KEY] = _utc_now_iso()
-            payload["_steering"] = steering
+            payload["steering"] = steering
             # SOT §11/§20: the framework does not write payload["output"];
             # no clear is needed at the drain transition.
 
@@ -2475,7 +2494,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             entry_mode="resumed",
             is_steered_turn=True,
             pending_count_provider=self._make_pending_count_provider(task_id),
-            input_id=(task_info.payload or {}).get("_last_input_id"),
+            input_id=(task_info.payload or {}).get("last_input_id"),
         )
 
         # Update active task tracking
@@ -2486,12 +2505,12 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
 
         # Clear drain_in_progress
         steering["drain_in_progress"] = False
-        payload["_steering"] = steering
+        payload["steering"] = steering
         #: a steering input is a new logical request
         # from the developer; the retry budget resets. Persist the reset so a
         # subsequent crash does not resurrect the prior counter from
-        # ``payload["_retry_attempt"]``.
-        payload["_retry_attempt"] = 0
+        # ``payload["retry_attempt"]``.
+        payload["retry_attempt"] = 0
         try:
             await self._provider_update_locked(
                 task_id,
@@ -2523,8 +2542,8 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
                   ``suspended`` (NOT ``completed``) so it accepts the next input.
                 - NO ``payload["output"]`` is written.
                 - ``payload["input"]`` cleared at the transition.
-                - ``payload["_retry_attempt"]`` cleared too.
-                - ``payload["_last_input_id"]`` preserved  for the
+                - ``payload["retry_attempt"]`` cleared too.
+                - ``payload["last_input_id"]`` preserved  for the
                   ``if_last_input_id`` precondition.
                 - ``suspension_reason="run_completion"`` stamped internally.
 
@@ -2552,9 +2571,9 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             )
 
         # SOT §23.8 item #3 — the turn-end PATCH MUST atomically clear ALL of:
-        #   payload["input"], payload["_steering"]["active_input"],
-        #   payload["_retry_attempt"], and (if input was promoted) the
-        #   attachments["_input"] entry. Splitting any of these into
+        #   payload["input"], payload["steering"]["active_input"],
+        #   payload["retry_attempt"], and (if input was promoted) the
+        #   attachments["input"] entry. Splitting any of these into
         #   multiple PATCHes opens a crash window where the attachment
         #   exists without its ref (or vice versa).
         task_info = await self._provider_get_tracked(task_id)
@@ -2563,7 +2582,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         steering_patch: dict[str, Any] = {}
         attachments_patch: dict[str, Any] = {}
         if task_info is not None and task_info.payload:
-            existing_steering = task_info.payload.get("_steering") or {}
+            existing_steering = task_info.payload.get("steering") or {}
             if existing_steering:
                 steering_patch = dict(existing_steering)
                 steering_patch["active_input"] = None
@@ -2574,11 +2593,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         payload_patch: dict[str, Any] = {
             "metadata": metadata.to_dict(),
             "input": None,
-            "_retry_attempt": None,
+            "retry_attempt": None,
             # NO "output", NO "error"
         }
         if steering_patch:
-            payload_patch["_steering"] = steering_patch
+            payload_patch["steering"] = steering_patch
 
         try:
             await self._terminal_write_locked(
@@ -2676,10 +2695,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         Per   7-step ordering:
         1. (caller) Run the failure handler (this method).
         2. Auto-flush ctx.metadata BEFORE the chain-PATCH (load-bearing).
-        3. Clear payload["input"] and payload["_retry_attempt"].
+        3. Clear payload["input"] and payload["retry_attempt"].
         4. PATCH chain record to ``suspended`` (NOT ``completed``) with
            ``suspension_reason="run_completion"``. No ``payload["error"]``
-           is written. ``payload["_last_input_id"]`` MUST be
+           is written. ``payload["last_input_id"]`` MUST be
            preserved. Steering queue MUST be preserved.
         5. (caller) Resolve current caller's.result future:
            ``CancelledError`` → bare ``TaskCancelled()`` else
@@ -2721,7 +2740,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         steering_patch: dict[str, Any] = {}
         attachments_patch: dict[str, Any] = {}
         if task_info is not None and task_info.payload:
-            existing_steering = task_info.payload.get("_steering") or {}
+            existing_steering = task_info.payload.get("steering") or {}
             if existing_steering:
                 steering_patch = dict(existing_steering)
                 steering_patch["active_input"] = None
@@ -2732,11 +2751,11 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         payload_patch: dict[str, Any] = {
             "metadata": metadata.to_dict(),
             "input": None,
-            "_retry_attempt": None,
+            "retry_attempt": None,
             # NO "output", NO "error"
         }
         if steering_patch:
-            payload_patch["_steering"] = steering_patch
+            payload_patch["steering"] = steering_patch
 
         try:
             await self._terminal_write_locked(
@@ -2810,7 +2829,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         to ``suspended`` (chain stays alive) on raise, NOT ``completed``.
         Per  NO ``payload["error"]`` is written for multi-turn
         failures. Per  ``payload["input"]`` and
-        ``payload["_retry_attempt"]`` are cleared.
+        ``payload["retry_attempt"]`` are cleared.
 
         Legacy one-shot (ephemeral) and non-ephemeral-non-multi-turn paths
         keep their existing behavior during the transition window.
@@ -2903,7 +2922,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         steering_keys = {k for k in task_info.attachments if k.startswith(_STEERING_INPUT_KEY_PREFIX)}
         if not steering_keys:
             return None
-        pending: list[Any] = (task_info.payload or {}).get("_steering", {}).get("pending_inputs", [])
+        pending: list[Any] = (task_info.payload or {}).get("steering", {}).get("pending_inputs", [])
         referenced = {
             _ref_key(entry)
             for entry in pending
@@ -2951,6 +2970,30 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         for task_info in stale_tasks:
             # Skip if we're already tracking this task
             if task_info.id in self._active_tasks:
+                continue
+
+            # (Spec 038) One-time legacy cleanup: a task created before the
+            # schema-version stamp lacks payload.schema_version entirely. These
+            # are pre-release internal-experimentation records with the old wire
+            # schema (underscore-prefixed keys, old task-id format) that we
+            # cannot recover; delete them instead of re-invoking. NOT a standing
+            # version-mismatch rule — forward v1->v2 migration is out of scope.
+            # The scan is already scoped to source_type, so only our tasks are
+            # eligible; we never touch another caller's tasks.
+            if _SCHEMA_VERSION_KEY not in (task_info.payload or {}):
+                logger.info(
+                    "Deleting pre-schema legacy task %s (no payload.%s)",
+                    task_info.id,
+                    _SCHEMA_VERSION_KEY,
+                )
+                try:
+                    await self._provider.delete(task_info.id, force=True)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning(
+                        "Legacy task cleanup delete failed for %s",
+                        task_info.id,
+                        exc_info=True,
+                    )
                 continue
 
             #  — opportunistic orphan attachment cleanup. If a prior

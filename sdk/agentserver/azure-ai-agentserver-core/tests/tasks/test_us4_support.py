@@ -75,7 +75,7 @@ def test_drain_does_not_read_payload_input() -> None:
     from azure.ai.agentserver.core.tasks._manager import TaskManager
 
     src = inspect.getsource(TaskManager._try_drain_steering)
-    # Drain reads `payload.get("_steering", ...)` but never indexes
+    # Drain reads `payload.get("steering", ...)` but never indexes
     # `payload["input"]` or `payload.get("input", ...)`.
     assert 'payload["input"]' not in src
     assert 'payload.get("input"' not in src
@@ -213,7 +213,7 @@ def test_no_source_reference_to_generation_results() -> None:
             if content.startswith(("#", '"""', "'''", "*")):
                 continue
             # Skip embedded references inside docstring continuations.
-            if "``" in content and "_steering" in content and "removed" in content.lower():
+            if "``" in content and "steering" in content and "removed" in content.lower():
                 continue
             actual_use_lines.append(line)
         assert not actual_use_lines, (
