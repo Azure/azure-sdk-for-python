@@ -1499,8 +1499,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         async def _finalize() -> None:
             await self._finalize_stream(ctx, state)
 
-        # --- Fast path: no keep-alive ---
-        if not self._runtime_options.sse_keep_alive_enabled:
+        # Fast path when keep-alive is disabled; ALSO always take this path for
+        # background+store streams so the handler runs as a shielded, independent task
+        # that survives client disconnect (FR-013) — keep-alive comments are still
+        # emitted below when configured. The hosted platform enables keep-alive, and the
+        # keep-alive merge path further down cancels the handler on client disconnect,
+        # which would kill an in-flight background run and break
+        # GET ?stream=true&starting_after=N reconnect.
+        if not self._runtime_options.sse_keep_alive_enabled or (ctx.background and ctx.store):
             if not (ctx.background and ctx.store):
                 # Simple fast path for non-background streaming.
                 _stream_completed = False
@@ -1522,7 +1528,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     await _finalize()
                 return
 
-            # Background+stream without keep-alive: run the handler as an independent
+            # Background+stream (store): run the handler as an independent
             # asyncio.Task so that finalization (including subject.complete()) is
             # guaranteed to run even when the original SSE connection is dropped before
             # all events are delivered.  Without this, _live_stream can be abandoned
@@ -1530,6 +1536,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # promptly), leaving GET-replay subscribers blocked on await q.get() forever.
             _SENTINEL_BG = object()
             bg_queue: asyncio.Queue[object] = asyncio.Queue()
+            # Optional keep-alive companion (assigned below when enabled). Declared here
+            # so the producer's own finally can stop it even if the consumer generator's
+            # finalizer is delayed — preventing a leaked task / unbounded bg_queue growth.
+            bg_keep_alive_task: "asyncio.Task[None] | None" = None
 
             async def _bg_producer_inner() -> None:
                 try:
@@ -1548,6 +1558,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     )
                     state.captured_error = exc
                 finally:
+                    # Stop keep-alive the moment the run finishes — even if the consumer
+                    # generator's finalizer is delayed — so it can't keep enqueueing into
+                    # an unconsumed bg_queue.
+                    if bg_keep_alive_task is not None and not bg_keep_alive_task.done():
+                        bg_keep_alive_task.cancel()
                     # Always finalize (includes subject.complete()) — this runs even if
                     # the original POST SSE connection was dropped and _live_stream is
                     # never properly closed by Starlette.
@@ -1566,6 +1581,25 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     pass  # outer task cancelled by scope; inner task continues
 
             bg_task = asyncio.create_task(_bg_producer())
+
+            # Emit periodic keep-alive comments while the client is still connected (only
+            # when configured) so an idle background handler doesn't get its live SSE
+            # connection dropped by an intermediary. Comments feed the same queue; the
+            # task is stopped from BOTH the producer finally (run done) and the consumer
+            # finally (client gone), whichever fires first, so it never outlives the run.
+            if self._runtime_options.sse_keep_alive_enabled:
+
+                async def _bg_keep_alive(interval: int) -> None:
+                    try:
+                        while True:
+                            await asyncio.sleep(interval)
+                            await bg_queue.put(encode_keep_alive_comment())
+                    except asyncio.CancelledError:
+                        return
+
+                bg_keep_alive_task = asyncio.create_task(
+                    _bg_keep_alive(self._runtime_options.sse_keep_alive_interval_seconds)  # type: ignore[arg-type]
+                )
             try:
                 while True:
                     item = await bg_queue.get()
@@ -1575,6 +1609,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # SSE connection dropped; bg_task continues independently
             finally:
+                # Stop keep-alive first — there is no client left to keep alive.
+                if bg_keep_alive_task is not None and not bg_keep_alive_task.done():
+                    bg_keep_alive_task.cancel()
+                    try:
+                        await bg_keep_alive_task
+                    except asyncio.CancelledError:
+                        pass
                 # Wait for the handler task so _finalize() has run before we exit.
                 # Do NOT cancel it — background+stream must reach a terminal state
                 # regardless of client connectivity.

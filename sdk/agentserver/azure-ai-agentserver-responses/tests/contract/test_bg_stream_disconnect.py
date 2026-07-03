@@ -21,6 +21,7 @@ import pytest
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 # ════════════════════════════════════════════════════════════
@@ -160,6 +161,16 @@ class _AsyncAsgiClient:
 
 def _build_client(handler: Any) -> _AsyncAsgiClient:
     app = ResponsesAgentServerHost()
+    app.response_handler(handler)
+    return _AsyncAsgiClient(app)
+
+
+def _build_client_keep_alive(handler: Any, *, keep_alive_seconds: int = 1) -> _AsyncAsgiClient:
+    """Build a client with SSE keep-alive ENABLED — mirrors the hosted platform, which
+    runs with ``sse_keepalive_interval`` set and therefore routes streaming through the
+    keep-alive merge path."""
+    options = ResponsesServerOptions(sse_keep_alive_interval_seconds=keep_alive_seconds)
+    app = ResponsesAgentServerHost(options=options)
     app.response_handler(handler)
     return _AsyncAsgiClient(app)
 
@@ -441,3 +452,111 @@ async def test_bg_nostream_handler_continues_after_disconnect() -> None:
     get_resp = await client.get(f"/responses/{response_id}")
     assert get_resp.status_code == 200
     assert get_resp.json()["status"] == "completed"
+
+
+# ════════════════════════════════════════════════════════════
+# Keep-alive ENABLED (hosted-platform config): the same disconnect
+# invariants must hold. Regression for the keep-alive merge path
+# cancelling the background handler on client disconnect.
+# ════════════════════════════════════════════════════════════
+
+
+@pytest.mark.asyncio
+async def test_bg_stream_disconnect_handler_completes_all_events_with_keep_alive() -> None:
+    """FR-012 with keep-alive ENABLED — the hosted-platform configuration.
+
+    The hosted platform runs with ``sse_keepalive_interval`` set, which routes streaming
+    through the keep-alive merge path. That path must NOT cancel a background handler on
+    client disconnect: the run must complete and GET must return 'completed' with all
+    output items, exactly like the keep-alive-disabled case (T036).
+    """
+    total = 10
+    disconnect_after = 3
+    handler = _make_multi_output_handler(total, disconnect_after)
+    client = _build_client_keep_alive(handler, keep_alive_seconds=1)
+    response_id = IdGenerator.new_response_id()
+
+    disconnect = asyncio.Event()
+    post_task = asyncio.create_task(
+        client.request_with_disconnect(
+            "POST",
+            "/responses",
+            json_body={
+                "response_id": response_id,
+                "model": "test",
+                "background": True,
+                "stream": True,
+                "store": True,
+            },
+            disconnect_event=disconnect,
+        )
+    )
+    try:
+        await asyncio.wait_for(handler.ready_for_disconnect.wait(), timeout=5.0)
+
+        disconnect.set()
+        try:
+            await asyncio.wait_for(post_task, timeout=2.0)
+        except (asyncio.TimeoutError, Exception):
+            pass
+
+        await asyncio.wait_for(handler.handler_completed.wait(), timeout=5.0)
+        await _wait_for_background_completion(client, response_id)
+
+        get_resp = await client.get(f"/responses/{response_id}")
+        assert get_resp.status_code == 200
+        doc = get_resp.json()
+        assert doc["status"] == "completed", (
+            f"FR-012 (keep-alive): bg+stream handler should complete after disconnect, got '{doc['status']}'"
+        )
+    finally:
+        await _ensure_task_done(post_task, handler)
+
+
+@pytest.mark.asyncio
+async def test_bg_stream_disconnect_does_not_cancel_handler_with_keep_alive() -> None:
+    """FR-013 with keep-alive ENABLED — the keep-alive merge path must not cancel the
+    background handler on client disconnect; it should complete normally."""
+    handler = _make_cancellation_tracking_handler()
+    client = _build_client_keep_alive(handler, keep_alive_seconds=1)
+    response_id = IdGenerator.new_response_id()
+
+    disconnect = asyncio.Event()
+    post_task = asyncio.create_task(
+        client.request_with_disconnect(
+            "POST",
+            "/responses",
+            json_body={
+                "response_id": response_id,
+                "model": "test",
+                "background": True,
+                "stream": True,
+                "store": True,
+            },
+            disconnect_event=disconnect,
+        )
+    )
+    try:
+        await asyncio.wait_for(handler.ready_for_disconnect.wait(), timeout=5.0)
+
+        disconnect.set()
+        try:
+            await asyncio.wait_for(post_task, timeout=2.0)
+        except (asyncio.TimeoutError, Exception):
+            pass
+
+        done_events = [handler.handler_completed, handler.handler_cancelled]
+        await asyncio.wait(
+            [asyncio.create_task(e.wait()) for e in done_events],
+            timeout=3.0,
+            return_when=asyncio.FIRST_COMPLETED,
+        )
+
+        assert handler.handler_completed.is_set(), (
+            "FR-013 (keep-alive): handler should complete normally, not be cancelled by SSE disconnect"
+        )
+        assert not handler.handler_cancelled.is_set(), (
+            "FR-013 (keep-alive): handler CT should NOT be cancelled by SSE disconnect"
+        )
+    finally:
+        await _ensure_task_done(post_task, handler)
