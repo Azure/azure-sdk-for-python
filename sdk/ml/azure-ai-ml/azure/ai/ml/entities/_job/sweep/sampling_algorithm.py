@@ -2,14 +2,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from abc import ABC
+from collections.abc import Mapping
 from typing import Any, Optional, Union, cast
 
 from azure.ai.ml._restclient.v2023_08_01_preview.models import (
     BayesianSamplingAlgorithm as RestBayesianSamplingAlgorithm,
 )
-from azure.ai.ml._restclient.v2023_08_01_preview.models import GridSamplingAlgorithm as RestGridSamplingAlgorithm
-from azure.ai.ml._restclient.v2023_08_01_preview.models import RandomSamplingAlgorithm as RestRandomSamplingAlgorithm
-from azure.ai.ml._restclient.v2023_08_01_preview.models import SamplingAlgorithm as RestSamplingAlgorithm
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    GridSamplingAlgorithm as RestGridSamplingAlgorithm,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    RandomSamplingAlgorithm as RestRandomSamplingAlgorithm,
+)
+from azure.ai.ml._restclient.v2023_08_01_preview.models import (
+    SamplingAlgorithm as RestSamplingAlgorithm,
+)
 from azure.ai.ml._restclient.v2023_08_01_preview.models import SamplingAlgorithmType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -24,19 +31,27 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
         self.type = None
 
     @classmethod
-    def _from_rest_object(cls, obj: RestSamplingAlgorithm) -> Optional["SamplingAlgorithm"]:
+    def _from_rest_object(
+        cls, obj: RestSamplingAlgorithm
+    ) -> Optional["SamplingAlgorithm"]:
         if not obj:
             return None
 
         sampling_algorithm: Any = None
         if obj.sampling_algorithm_type == SamplingAlgorithmType.RANDOM:
-            sampling_algorithm = RandomSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
+            sampling_algorithm = RandomSamplingAlgorithm._from_rest_object(
+                obj
+            )  # pylint: disable=protected-access
 
         if obj.sampling_algorithm_type == SamplingAlgorithmType.GRID:
-            sampling_algorithm = GridSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
+            sampling_algorithm = GridSamplingAlgorithm._from_rest_object(
+                obj
+            )  # pylint: disable=protected-access
 
         if obj.sampling_algorithm_type == SamplingAlgorithmType.BAYESIAN:
-            sampling_algorithm = BayesianSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
+            sampling_algorithm = BayesianSamplingAlgorithm._from_rest_object(
+                obj
+            )  # pylint: disable=protected-access
 
         return cast(Optional["SamplingAlgorithm"], sampling_algorithm)
 
@@ -83,11 +98,20 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: RestRandomSamplingAlgorithm) -> "RandomSamplingAlgorithm":
+    def _from_rest_object(
+        cls, obj: RestRandomSamplingAlgorithm
+    ) -> "RandomSamplingAlgorithm":
+        # ``logbase`` is not modeled on the shared arm_ml_service RandomSamplingAlgorithm; it is
+        # preserved as an unknown wire key on the hybrid model (a MutableMapping, not a dict subclass),
+        # so read it from the mapping when present, otherwise fall back to attribute access for msrest.
+        if getattr(obj, "_is_model", False) or isinstance(obj, Mapping):
+            logbase = obj.get("logbase")
+        else:
+            logbase = getattr(obj, "logbase", None)
         return cls(
             rule=obj.rule,
             seed=obj.seed,
-            logbase=obj.logbase,
+            logbase=logbase,
         )
 
 
@@ -112,7 +136,9 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
         return RestGridSamplingAlgorithm()
 
     @classmethod
-    def _from_rest_object(cls, obj: RestGridSamplingAlgorithm) -> "GridSamplingAlgorithm":
+    def _from_rest_object(
+        cls, obj: RestGridSamplingAlgorithm
+    ) -> "GridSamplingAlgorithm":
         return cls()
 
 
@@ -137,5 +163,7 @@ class BayesianSamplingAlgorithm(SamplingAlgorithm):
         return RestBayesianSamplingAlgorithm()
 
     @classmethod
-    def _from_rest_object(cls, obj: RestBayesianSamplingAlgorithm) -> "BayesianSamplingAlgorithm":
+    def _from_rest_object(
+        cls, obj: RestBayesianSamplingAlgorithm
+    ) -> "BayesianSamplingAlgorithm":
         return cls()

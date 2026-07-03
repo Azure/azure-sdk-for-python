@@ -19,7 +19,11 @@ from azure.ai.ml import (
     spark,
 )
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration, QueueSettings
+from azure.ai.ml.entities import (
+    CommandJobLimits,
+    JobResourceConfiguration,
+    QueueSettings,
+)
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job_service import (
     JobService,
@@ -28,7 +32,9 @@ from azure.ai.ml.entities._job.job_service import (
     TensorBoardJobService,
     VsCodeJobService,
 )
-from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+from azure.ai.ml.entities._job.pipeline._component_translatable import (
+    ComponentTranslatableMixin,
+)
 from azure.ai.ml.exceptions import JobException, ValidationException
 
 from .._util import _DSL_TIMEOUT_SECOND
@@ -60,8 +66,16 @@ class TestCommandFunction:
                 "integer": 1,
                 "string": "str",
                 "boolean": False,
-                "uri_folder": Input(type="uri_folder", path="https://my-blob/path/to/data", mode="ro_mount"),
-                "uri_file": dict(type="uri_file", path="https://my-blob/path/to/data", mode="download"),
+                "uri_folder": Input(
+                    type="uri_folder",
+                    path="https://my-blob/path/to/data",
+                    mode="ro_mount",
+                ),
+                "uri_file": dict(
+                    type="uri_file",
+                    path="https://my-blob/path/to/data",
+                    mode="download",
+                ),
             },
             outputs={"my_model": Output(type="mlflow_model", mode="rw_mount")},
         )
@@ -96,8 +110,16 @@ class TestCommandFunction:
                 "integer": Input(type="integer", default=2, min=-1, max=4),
                 "string": Input(type="string", default="default_str"),
                 "boolean": Input(type="boolean", default=False),
-                "uri_folder": Input(type="uri_folder", path="https://my-blob/path/to/data", mode="ro_mount"),
-                "uri_file": Input(type="uri_file", path="https://my-blob/path/to/data", mode="download"),
+                "uri_folder": Input(
+                    type="uri_folder",
+                    path="https://my-blob/path/to/data",
+                    mode="ro_mount",
+                ),
+                "uri_file": Input(
+                    type="uri_file",
+                    path="https://my-blob/path/to/data",
+                    mode="download",
+                ),
             },
             outputs={"my_model": Output(type="mlflow_model")},
         )
@@ -114,14 +136,21 @@ class TestCommandFunction:
             "_source": "BUILDER",
             "computeId": "cpu-cluster",
             "display_name": "my-fancy-job",
-            "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
+            "distribution": {
+                "distribution_type": "Mpi",
+                "process_count_per_instance": 4,
+            },
             "environment_variables": {"foo": "bar"},
             "inputs": {
                 "boolean": {"job_input_type": "literal", "value": "False"},
                 "float": {"job_input_type": "literal", "value": "0.01"},
                 "integer": {"job_input_type": "literal", "value": "1"},
                 "string": {"job_input_type": "literal", "value": "str"},
-                "uri_file": {"job_input_type": "uri_file", "mode": "Download", "uri": "https://my-blob/path/to/data"},
+                "uri_file": {
+                    "job_input_type": "uri_file",
+                    "mode": "Download",
+                    "uri": "https://my-blob/path/to/data",
+                },
                 "uri_folder": {
                     "job_input_type": "uri_folder",
                     "mode": "ReadOnlyMount",
@@ -129,7 +158,12 @@ class TestCommandFunction:
                 },
             },
             "name": "my_job",
-            "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
+            "outputs": {
+                "my_model": {
+                    "job_output_type": "mlflow_model",
+                    "mode": "ReadWriteMount",
+                }
+            },
             "type": "command",
         }
         actual_command = pydash.omit(
@@ -147,7 +181,9 @@ class TestCommandFunction:
                     "_source": "BUILDER",
                     "code": parse_local_path("./tests"),
                     "description": "This is a fancy job",
-                    "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
+                    "command": "python train.py --input-data "
+                    "${{inputs.uri_folder}} --lr "
+                    "${{inputs.float}}",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
                     "environment": "azureml:my-env:1",
@@ -160,7 +196,9 @@ class TestCommandFunction:
                         "uri_folder": {"type": "uri_folder", "mode": "ro_mount"},
                     },
                     "is_deterministic": True,
-                    "outputs": {"my_model": {"type": "mlflow_model", "mode": "rw_mount"}},
+                    "outputs": {
+                        "my_model": {"type": "mlflow_model", "mode": "rw_mount"}
+                    },
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -188,7 +226,9 @@ class TestCommandFunction:
                     "_source": "BUILDER",
                     "code": parse_local_path("./tests"),
                     "description": "This is a fancy job",
-                    "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
+                    "command": "python train.py --input-data "
+                    "${{inputs.uri_folder}} --lr "
+                    "${{inputs.float}}",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
                     "environment": "azureml:my-env:1",
@@ -201,7 +241,9 @@ class TestCommandFunction:
                         "uri_folder": {"type": "uri_folder", "mode": "ro_mount"},
                     },
                     "is_deterministic": False,
-                    "outputs": {"my_model": {"type": "mlflow_model", "mode": "rw_mount"}},
+                    "outputs": {
+                        "my_model": {"type": "mlflow_model", "mode": "rw_mount"}
+                    },
                     "type": "command",
                 },
                 "description": "This is a fancy job",
@@ -220,7 +262,9 @@ class TestCommandFunction:
         assert actual_component == expected_component
 
     def test_command_function_set_inputs(self, test_command):
-        test_data = Input(type="uri_folder", path="https://my-blob/path/to/data", mode="download")
+        test_data = Input(
+            type="uri_folder", path="https://my-blob/path/to/data", mode="download"
+        )
         # Command can be called as a function, returning a new Component instance
         node1 = test_command(uri_folder=test_data, float=0.02)
         node2 = test_command(uri_folder=test_data, float=0.02)
@@ -245,21 +289,33 @@ class TestCommandFunction:
             "_source": "BUILDER",
             "computeId": "cpu-cluster",
             "display_name": "my-fancy-job",
-            "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
+            "distribution": {
+                "distribution_type": "Mpi",
+                "process_count_per_instance": 4,
+            },
             "environment_variables": {"foo": "bar"},
             "inputs": {
                 "boolean": {"job_input_type": "literal", "value": "False"},
                 "float": {"job_input_type": "literal", "value": "0.02"},
                 "integer": {"job_input_type": "literal", "value": "1"},
                 "string": {"job_input_type": "literal", "value": "str"},
-                "uri_file": {"job_input_type": "uri_file", "mode": "Download", "uri": "https://my-blob/path/to/data"},
+                "uri_file": {
+                    "job_input_type": "uri_file",
+                    "mode": "Download",
+                    "uri": "https://my-blob/path/to/data",
+                },
                 "uri_folder": {
                     "job_input_type": "uri_folder",
                     "mode": "Download",
                     "uri": "https://my-blob/path/to/data",
                 },
             },
-            "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
+            "outputs": {
+                "my_model": {
+                    "job_output_type": "mlflow_model",
+                    "mode": "ReadWriteMount",
+                }
+            },
             "type": "command",
         }
         actual_dict = pydash.omit(node1_dict, "componentId", "properties")
@@ -273,21 +329,33 @@ class TestCommandFunction:
             "type": "command",
             "computeId": "cpu-cluster",
             "display_name": "my-fancy-job",
-            "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
+            "distribution": {
+                "distribution_type": "Mpi",
+                "process_count_per_instance": 4,
+            },
             "environment_variables": {"foo": "bar"},
             "inputs": {
                 "boolean": {"job_input_type": "literal", "value": "False"},
                 "float": {"job_input_type": "literal", "value": "0.01"},
                 "integer": {"job_input_type": "literal", "value": "1"},
                 "string": {"job_input_type": "literal", "value": "str"},
-                "uri_file": {"job_input_type": "uri_file", "mode": "Download", "uri": "https://my-blob/path/to/data"},
+                "uri_file": {
+                    "job_input_type": "uri_file",
+                    "mode": "Download",
+                    "uri": "https://my-blob/path/to/data",
+                },
                 "uri_folder": {
                     "job_input_type": "uri_folder",
                     "mode": "ReadOnlyMount",
                     "uri": "https://my-blob/path/to/data",
                 },
             },
-            "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
+            "outputs": {
+                "my_model": {
+                    "job_output_type": "mlflow_model",
+                    "mode": "ReadWriteMount",
+                }
+            },
         }
         # node1 copies test_command's dict
         assert node1_dict == expected_dict
@@ -302,14 +370,21 @@ class TestCommandFunction:
             "type": "command",
             "computeId": "new-cluster",
             "display_name": "my-fancy-job",
-            "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
+            "distribution": {
+                "distribution_type": "Mpi",
+                "process_count_per_instance": 4,
+            },
             "environment_variables": {"foo": "bar"},
             "inputs": {
                 "boolean": {"job_input_type": "literal", "value": "False"},
                 "float": {"job_input_type": "literal", "value": "0.02"},
                 "integer": {"job_input_type": "literal", "value": "1"},
                 "string": {"job_input_type": "literal", "value": "str"},
-                "uri_file": {"job_input_type": "uri_file", "mode": "Download", "uri": "https://my-blob/path/to/data"},
+                "uri_file": {
+                    "job_input_type": "uri_file",
+                    "mode": "Download",
+                    "uri": "https://my-blob/path/to/data",
+                },
                 "uri_folder": {
                     "job_input_type": "uri_folder",
                     "mode": "ReadOnlyMount",
@@ -317,7 +392,12 @@ class TestCommandFunction:
                 },
             },
             "limits": {"job_limits_type": "Command", "timeout": "PT10S"},
-            "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
+            "outputs": {
+                "my_model": {
+                    "job_output_type": "mlflow_model",
+                    "mode": "ReadWriteMount",
+                }
+            },
         }
         # node3 copies node2's property
         assert node3_dict == expected_dict
@@ -336,7 +416,7 @@ class TestCommandFunction:
         nodes = [node1, node2, node3]
         for node in nodes:
             node.set_limits(timeout=10)
-            expected_limits = {"job_limits_type": "Command", "timeout": "PT10S"}
+            expected_limits = {"jobLimitsType": "Command", "timeout": "PT10S"}
             actual_limits = node1.limits._to_rest_object().as_dict()
             assert actual_limits == expected_limits
 
@@ -352,10 +432,17 @@ class TestCommandFunction:
             "type": "command",
             "computeId": "cpu-cluster",
             "display_name": "my-fancy-job",
-            "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
+            "distribution": {
+                "distribution_type": "Mpi",
+                "process_count_per_instance": 4,
+            },
             "environment_variables": {"foo": "bar"},
             "inputs": {
-                "uri_file": {"job_input_type": "uri_file", "mode": "Download", "uri": "https://my-blob/path/to/data"},
+                "uri_file": {
+                    "job_input_type": "uri_file",
+                    "mode": "Download",
+                    "uri": "https://my-blob/path/to/data",
+                },
                 "uri_folder": {
                     "job_input_type": "uri_folder",
                     "mode": "ReadOnlyMount",
@@ -379,14 +466,26 @@ class TestCommandFunction:
                     "_source": "BUILDER",
                     "description": "This is a fancy job",
                     "code": parse_local_path("./tests"),
-                    "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
+                    "command": "python train.py --input-data "
+                    "${{inputs.uri_folder}} --lr "
+                    "${{inputs.float}}",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
                     "environment": "azureml:my-env:1",
                     "inputs": {
                         "boolean": {"default": "False", "type": "boolean"},
-                        "float": {"default": "1.1", "max": "5.0", "min": "0.0", "type": "number"},
-                        "integer": {"default": "2", "max": "4", "min": "-1", "type": "integer"},
+                        "float": {
+                            "default": "1.1",
+                            "max": "5.0",
+                            "min": "0.0",
+                            "type": "number",
+                        },
+                        "integer": {
+                            "default": "2",
+                            "max": "4",
+                            "min": "-1",
+                            "type": "integer",
+                        },
                         "string": {"default": "default_str", "type": "string"},
                         "uri_file": {"type": "uri_file", "mode": "download"},
                         "uri_folder": {"type": "uri_folder", "mode": "ro_mount"},
@@ -452,7 +551,9 @@ class TestCommandFunction:
     def test_inputs_binding(self, test_command):
         node1 = test_command()
         node2 = test_command()
-        node3 = test_command(uri_file=node1.outputs.my_model, uri_folder=node2.outputs.my_model)
+        node3 = test_command(
+            uri_file=node1.outputs.my_model, uri_folder=node2.outputs.my_model
+        )
         node1.name = "new_name1"
         node2.name = "new_name2"
 
@@ -465,13 +566,23 @@ class TestCommandFunction:
             "float": 0.01,
             "integer": 1,
             "string": "str",
-            "uri_file": Input(path="${{parent.jobs.new_name1.outputs.my_model}}", type="uri_folder", mode=None),
-            "uri_folder": Input(path="${{parent.jobs.new_name2.outputs.my_model}}", type="uri_folder", mode=None),
+            "uri_file": Input(
+                path="${{parent.jobs.new_name1.outputs.my_model}}",
+                type="uri_folder",
+                mode=None,
+            ),
+            "uri_folder": Input(
+                path="${{parent.jobs.new_name2.outputs.my_model}}",
+                type="uri_folder",
+                mode=None,
+            ),
         }
 
         node1 = test_command()
         node2 = node1()
-        node3 = node2(uri_file=node1.outputs.my_model, uri_folder=node2.outputs.my_model)
+        node3 = node2(
+            uri_file=node1.outputs.my_model, uri_folder=node2.outputs.my_model
+        )
         node1.name = "new_node1"
         node2.name = "new_node2"
 
@@ -483,8 +594,16 @@ class TestCommandFunction:
             "float": 0.01,
             "integer": 1,
             "string": "str",
-            "uri_file": Input(path="${{parent.jobs.new_node1.outputs.my_model}}", type="uri_folder", mode=None),
-            "uri_folder": Input(path="${{parent.jobs.new_node2.outputs.my_model}}", type="uri_folder", mode=None),
+            "uri_file": Input(
+                path="${{parent.jobs.new_node1.outputs.my_model}}",
+                type="uri_folder",
+                mode=None,
+            ),
+            "uri_folder": Input(
+                path="${{parent.jobs.new_node2.outputs.my_model}}",
+                type="uri_folder",
+                mode=None,
+            ),
         }
 
         node4 = node3()
@@ -499,8 +618,16 @@ class TestCommandFunction:
             "float": 0.01,
             "integer": 1,
             "string": "str",
-            "uri_file": Input(path="${{parent.jobs.new_node2.outputs.my_model}}", type="uri_folder", mode=None),
-            "uri_folder": Input(path="${{parent.jobs.new_node2.outputs.my_model}}", type="uri_folder", mode=None),
+            "uri_file": Input(
+                path="${{parent.jobs.new_node2.outputs.my_model}}",
+                type="uri_folder",
+                mode=None,
+            ),
+            "uri_folder": Input(
+                path="${{parent.jobs.new_node2.outputs.my_model}}",
+                type="uri_folder",
+                mode=None,
+            ),
         }
 
     def test_copy_distribution_resources(self, test_command):
@@ -517,7 +644,12 @@ class TestCommandFunction:
         node4 = node3()
 
         # node2 and node1 has different distribution object with same value
-        attrs_to_check = ["distribution", "limits", "resources", "environment_variables"]
+        attrs_to_check = [
+            "distribution",
+            "limits",
+            "resources",
+            "environment_variables",
+        ]
         for attr in attrs_to_check:
             attr1 = getattr(node1, attr)
             attr2 = getattr(node2, attr)
@@ -541,7 +673,9 @@ class TestCommandFunction:
             assert re.match(pattern, str(e.value)), str(e.value)
 
     def test_command_unprovided_inputs_outputs(self, test_command_params):
-        test_command_params.update({"inputs": None, "outputs": None, "command": "echo hello"})
+        test_command_params.update(
+            {"inputs": None, "outputs": None, "command": "echo hello"}
+        )
         node1 = command(**test_command_params)
 
         actual_component = pydash.omit(
@@ -580,7 +714,10 @@ class TestCommandFunction:
             "_source": "BUILDER",
             "computeId": "cpu-cluster",
             "display_name": "my-fancy-job",
-            "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
+            "distribution": {
+                "distribution_type": "Mpi",
+                "process_count_per_instance": 4,
+            },
             "environment_variables": {"foo": "bar"},
             "name": "my_job",
             "type": "command",
@@ -594,17 +731,26 @@ class TestCommandFunction:
         node1.distribution = {"type": "Pytorch", "process_count_per_instance": 4}
         assert isinstance(node1.distribution, PyTorchDistribution)
         rest_dist = node1._to_rest_object()["distribution"]
-        assert rest_dist == {"distribution_type": "PyTorch", "process_count_per_instance": 4}
+        assert rest_dist == {
+            "distribution_type": "PyTorch",
+            "process_count_per_instance": 4,
+        }
 
         node1.distribution = {"type": "TensorFlow", "parameter_server_count": 1}
         assert isinstance(node1.distribution, TensorFlowDistribution)
         rest_dist = node1._to_rest_object()["distribution"]
-        assert rest_dist == {"distribution_type": "TensorFlow", "parameter_server_count": 1}
+        assert rest_dist == {
+            "distribution_type": "TensorFlow",
+            "parameter_server_count": 1,
+        }
 
         node1.distribution = {"type": "mpi", "process_count_per_instance": 1}
         assert isinstance(node1.distribution, MpiDistribution)
         rest_dist = node1._to_rest_object()["distribution"]
-        assert rest_dist == {"distribution_type": "Mpi", "process_count_per_instance": 1}
+        assert rest_dist == {
+            "distribution_type": "Mpi",
+            "process_count_per_instance": 1,
+        }
 
         node1.distribution = {
             "type": "ray",
@@ -639,7 +785,10 @@ class TestCommandFunction:
             {
                 "distribution": MpiDistribution(process_count_per_instance=2),
                 "resources": JobResourceConfiguration(
-                    instance_count=2, instance_type="STANDARD_D2", docker_args="test command", shm_size="3g"
+                    instance_count=2,
+                    instance_type="STANDARD_D2",
+                    docker_args="test command",
+                    shm_size="3g",
                 ),
             }
         )
@@ -651,7 +800,10 @@ class TestCommandFunction:
         node1.resources.instance_count = 4
         rest_dict = node1._to_rest_object()
 
-        assert rest_dict["distribution"] == {"distribution_type": "Mpi", "process_count_per_instance": 4}
+        assert rest_dict["distribution"] == {
+            "distribution_type": "Mpi",
+            "process_count_per_instance": 4,
+        }
         assert rest_dict["resources"] == {
             "instance_count": 4,
             "instance_type": "STANDARD_D2",
@@ -663,7 +815,9 @@ class TestCommandFunction:
         test_command_params.update(
             {
                 "distribution": MpiDistribution(process_count_per_instance=2),
-                "resources": JobResourceConfiguration(instance_count=2, instance_type="STANDARD_D2"),
+                "resources": JobResourceConfiguration(
+                    instance_count=2, instance_type="STANDARD_D2"
+                ),
             }
         )
         command_func = command(**test_command_params)
@@ -674,14 +828,22 @@ class TestCommandFunction:
         node1.resources.instance_count = 4
         rest_dict = node1._to_rest_object()
 
-        assert rest_dict["distribution"] == {"distribution_type": "Mpi", "process_count_per_instance": 4}
-        assert rest_dict["resources"] == {"instance_count": 4, "instance_type": "STANDARD_D2"}
+        assert rest_dict["distribution"] == {
+            "distribution_type": "Mpi",
+            "process_count_per_instance": 4,
+        }
+        assert rest_dict["resources"] == {
+            "instance_count": 4,
+            "instance_type": "STANDARD_D2",
+        }
 
     def test_resources_from_dict(self, test_command_params):
         expected_resources = {"instance_count": 4, "instance_type": "STANDARD_D2"}
         test_command_params.update(
             {
-                "resources": JobResourceConfiguration(instance_count=4, instance_type="STANDARD_D2"),
+                "resources": JobResourceConfiguration(
+                    instance_count=4, instance_type="STANDARD_D2"
+                ),
             }
         )
         command_node = command(**test_command_params)
@@ -699,7 +861,9 @@ class TestCommandFunction:
 
         test_command_params.update(
             {
-                "resources": dict(instance_count=4, instance_type="STANDARD_D2", unknown_field=1),
+                "resources": dict(
+                    instance_count=4, instance_type="STANDARD_D2", unknown_field=1
+                ),
             }
         )
         command_node = command(**test_command_params)
@@ -753,16 +917,19 @@ class TestCommandFunction:
             "str": {"default": "str", "type": "string"},
         }
         for job_input, input_type in literal_input_2_expected_type.items():
-            assert ComponentTranslatableMixin._to_input(job_input, {})._to_dict() == input_type
+            assert (
+                ComponentTranslatableMixin._to_input(job_input, {})._to_dict()
+                == input_type
+            )
 
         with pytest.raises(JobException) as err_info:
             ComponentTranslatableMixin._to_input(None, {})
-        assert "'<class 'NoneType'>' is not supported as component input" in str(err_info.value)
+        assert "'<class 'NoneType'>' is not supported as component input" in str(
+            err_info.value
+        )
 
         # test input binding
-        test_path = (
-            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_inputs_outputs.yml"
-        )
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_command_job_with_inputs_outputs.yml"
         job_dict = load_job(source=test_path)._to_dict()
         binding_2_expected_type = {
             "${{parent.inputs.job_data}}": {"type": "uri_folder"},
@@ -771,18 +938,27 @@ class TestCommandFunction:
         }
 
         for job_input, input_type in binding_2_expected_type.items():
-            assert ComponentTranslatableMixin._to_input(job_input, job_dict)._to_dict() == input_type
+            assert (
+                ComponentTranslatableMixin._to_input(job_input, job_dict)._to_dict()
+                == input_type
+            )
 
     def test_to_component_output(self):
         # test output binding
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_tabular_input_e2e.yml"
         job_dict = load_job(source=test_path)._to_dict()
         binding_2_expected_type = {
-            "${{parent.outputs.job_out_file}}": {"type": "uri_file", "mode": "rw_mount"},
+            "${{parent.outputs.job_out_file}}": {
+                "type": "uri_file",
+                "mode": "rw_mount",
+            },
         }
 
         for job_output, input_type in binding_2_expected_type.items():
-            assert ComponentTranslatableMixin._to_output(job_output, job_dict)._to_dict() == input_type
+            assert (
+                ComponentTranslatableMixin._to_output(job_output, job_dict)._to_dict()
+                == input_type
+            )
 
     def test_spark_job_with_dynamic_allocation_disabled(self):
         node = spark(
@@ -799,7 +975,9 @@ class TestCommandFunction:
         )
         result = node._validate()
         message = "Should not specify min or max executors when dynamic allocation is disabled."
-        assert "conf" in result.error_messages and message == result.error_messages["conf"]
+        assert (
+            "conf" in result.error_messages and message == result.error_messages["conf"]
+        )
 
     def test_executor_instances_is_mandatory_when_dynamic_allocation_disabled(self):
         node = spark(
@@ -816,7 +994,9 @@ class TestCommandFunction:
             "spark.driver.cores, spark.driver.memory, spark.executor.cores, spark.executor.memory and "
             "spark.executor.instances are mandatory fields."
         )
-        assert "conf" in result.error_messages and message == result.error_messages["conf"]
+        assert (
+            "conf" in result.error_messages and message == result.error_messages["conf"]
+        )
 
     def test_executor_instances_is_specified_as_min_executor_if_unset(self):
         node = spark(
@@ -853,7 +1033,9 @@ class TestCommandFunction:
             "Executor instances must be a valid non-negative integer and must be between "
             "spark.dynamicAllocation.minExecutors and spark.dynamicAllocation.maxExecutors"
         )
-        assert "conf" in result.error_messages and message == result.error_messages["conf"]
+        assert (
+            "conf" in result.error_messages and message == result.error_messages["conf"]
+        )
 
     def test_spark_job_with_additional_conf(self):
         node = spark(
@@ -903,10 +1085,14 @@ class TestCommandFunction:
         )
 
         rest_obj = command_obj._to_rest_object()
-        assert rest_obj["services"]["my_jupyterlab"].get("nodes") == {"nodes_value_type": "All"}
+        assert rest_obj["services"]["my_jupyterlab"].get("nodes") == {
+            "nodes_value_type": "All"
+        }
         assert rest_obj["services"]["my_tensorboard"].get("nodes") == None
 
-        with pytest.raises(ValidationException, match="nodes should be either 'all' or None"):
+        with pytest.raises(
+            ValidationException, match="nodes should be either 'all' or None"
+        ):
             services_invalid_nodes = {"my_service": JobService(nodes="All")}
 
     def test_command_services(self) -> None:
@@ -963,7 +1149,10 @@ class TestCommandFunction:
             assert node
 
         invalid_services_1 = {"my_service": 3}
-        with pytest.raises(ValidationException, match="Service value for key 'my_service' must be a dict"):
+        with pytest.raises(
+            ValidationException,
+            match="Service value for key 'my_service' must be a dict",
+        ):
             node = command(
                 name="interactive-command-job",
                 description="description",
@@ -1021,8 +1210,12 @@ class TestCommandFunction:
 
         command_job_services = node._to_job().services
         assert isinstance(command_job_services.get("my_ssh"), SshJobService)
-        assert isinstance(command_job_services.get("my_tensorboard"), TensorBoardJobService)
-        assert isinstance(command_job_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(
+            command_job_services.get("my_tensorboard"), TensorBoardJobService
+        )
+        assert isinstance(
+            command_job_services.get("my_jupyterlab"), JupyterLabJobService
+        )
         assert isinstance(command_job_services.get("my_vscode"), VsCodeJobService)
 
         node_rest_obj = node._to_rest_object()
@@ -1034,7 +1227,9 @@ class TestCommandFunction:
         assert hash(node1) == hash(node2)
         assert node1 == node2
 
-        component_func = load_component("./tests/test_configs/components/helloworld_component_no_paths.yml")
+        component_func = load_component(
+            "./tests/test_configs/components/helloworld_component_no_paths.yml"
+        )
         node3 = component_func()
         node4 = component_func()
         assert hash(node3) == hash(node4)
@@ -1055,13 +1250,18 @@ class TestCommandFunction:
 
         pipeline_job = my_pipeline()
         omit_fields = ["jobs.*.componentId", "jobs.*._source"]
-        actual_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields)
+        actual_dict = omit_with_wildcard(
+            pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields
+        )
 
         assert actual_dict["jobs"] == {
             "my_job": {
                 "computeId": "cpu-cluster",
                 "display_name": "my-fancy-job",
-                "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
+                "distribution": {
+                    "distribution_type": "Mpi",
+                    "process_count_per_instance": 4,
+                },
                 "environment_variables": {"foo": "bar"},
                 "identity": {"identity_type": "UserIdentity"},
                 "inputs": {
@@ -1081,7 +1281,12 @@ class TestCommandFunction:
                     },
                 },
                 "name": "my_job",
-                "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
+                "outputs": {
+                    "my_model": {
+                        "job_output_type": "mlflow_model",
+                        "mode": "ReadWriteMount",
+                    }
+                },
                 "type": "command",
             }
         }
@@ -1106,7 +1311,9 @@ class TestCommandFunction:
             goal="maximize",
             sampling_algorithm="random",
         )
-        sweep_node_1.search_space = {"batch_size": {"type": "choice", "values": [25, 35]}}
+        sweep_node_1.search_space = {
+            "batch_size": {"type": "choice", "values": [25, 35]}
+        }
 
         command_node_to_sweep_2 = node1()
         sweep_node_2 = command_node_to_sweep_2.sweep(
