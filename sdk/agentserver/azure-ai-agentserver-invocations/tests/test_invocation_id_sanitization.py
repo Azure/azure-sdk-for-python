@@ -5,6 +5,8 @@
 reflected into the ``x-agent-invocation-id`` response header. Both
 ``GET /invocations/{id}`` and ``POST /invocations/{id}/cancel`` run through
 the same traced endpoint, so each scenario is exercised on both routes."""
+import uuid
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 from starlette.requests import Request
@@ -12,7 +14,6 @@ from starlette.responses import Response
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from azure.ai.agentserver.invocations._constants import InvocationConstants
-from azure.ai.agentserver.invocations._invocation import _MAX_ID_LENGTH, _VALID_ID_RE
 
 _HEADER = InvocationConstants.INVOCATION_ID_HEADER
 
@@ -21,6 +22,17 @@ _ENDPOINTS = [
     ("GET", "/invocations/{id}"),
     ("POST", "/invocations/{id}/cancel"),
 ]
+
+
+def _is_uuid(value: str) -> bool:
+    """A rejected id falls back to a freshly generated UUID, so the safe
+    replacement is observable from the header alone without reaching into
+    the package internals."""
+    try:
+        uuid.UUID(value)
+        return True
+    except ValueError:
+        return False
 
 
 def _build_app() -> InvocationAgentServerHost:
@@ -59,16 +71,17 @@ async def test_invalid_char_id_not_reflected_in_header(method, template):
     safe fallback rather than echoed back verbatim."""
     echoed = await _echoed_id(method, template.format(id="bad~id"))
     assert echoed != "bad~id"
-    assert _VALID_ID_RE.match(echoed)
+    assert _is_uuid(echoed)
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("method,template", _ENDPOINTS)
 async def test_overlong_id_not_reflected_in_header(method, template):
-    """An over-length path id does not bypass the ``_MAX_ID_LENGTH`` cap."""
-    echoed = await _echoed_id(method, template.format(id="a" * (_MAX_ID_LENGTH + 50)))
-    assert len(echoed) <= _MAX_ID_LENGTH
-    assert _VALID_ID_RE.match(echoed)
+    """An over-length path id is dropped in favour of the safe fallback."""
+    long_id = "a" * 300
+    echoed = await _echoed_id(method, template.format(id=long_id))
+    assert echoed != long_id
+    assert _is_uuid(echoed)
 
 
 @pytest.mark.asyncio
