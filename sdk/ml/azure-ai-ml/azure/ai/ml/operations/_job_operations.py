@@ -1053,6 +1053,16 @@ class JobOperations(_ScopeDependentOperations):
                 destination = download_path / artifact_directory_name
             else:
                 destination = download_path / output_directory_name / item_name
+                # item_name is an output name taken from the run's service response; an entry
+                # containing ".." or an absolute path would resolve outside download_path.
+                try:
+                    destination.resolve().relative_to(download_path.resolve())
+                except ValueError:
+                    module_logger.warning(
+                        "Skipping output '%s': resolved path is outside the download directory.",
+                        item_name,
+                    )
+                    continue
 
             module_logger.info("Downloading artifact %s to %s", uri, destination)
             download_artifact_from_aml_uri(
