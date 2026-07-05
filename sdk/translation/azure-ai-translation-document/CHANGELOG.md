@@ -1,10 +1,30 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.2.0b1 (Unreleased)
 
 ### Features Added
 
+- Added support for the `2026-03-01` service API version, which is now the default.
+- Added image translation support: the `translate_text_within_image` keyword on `begin_translation`
+  for batch requests, and a `translate_text_within_image` keyword on `SingleDocumentTranslationClient.translate`
+  for single document requests. When enabled, each document's status also reports image scan usage.
+- Added the `deployment_name` property to `TranslationTarget` and the `deployment_name` keyword to
+  `begin_translation` to specify the deployment name of the custom translation model for a batch
+  translation request.
+- Added the `deployment_name` keyword to `SingleDocumentTranslationClient.translate` for single
+  document translation requests.
+- Added the `deployment_name` property to `DocumentStatus`, exposing the deployment name of the
+  custom translation model used for the translation.
+- Added image scan reporting to `DocumentStatus`: `image_characters_detected`, `images_charged`,
+  `total_image_scans_succeeded`, and `total_image_scans_failed`.
+- Added image scan totals to `TranslationStatusSummary`: `total_image_scans_succeeded`,
+  `total_image_scans_failed`, and `total_images_charged`.
+- Added the `BatchOptions` model for specifying batch translation options.
+
 ### Breaking Changes
+
+- Changed the default service API version from `2024-05-01` to `2026-03-01`. To keep the previous
+  behavior, pass `api_version="2024-05-01"` when constructing the client.
 
 ### Bugs Fixed
 

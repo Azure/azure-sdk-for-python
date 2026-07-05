@@ -48,7 +48,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-05-01".
+    :keyword api_version: The API version to use for this operation. Default value is "2026-03-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -132,6 +132,8 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         storage_type: Optional[Union[str, StorageInputType]] = None,
         category_id: Optional[str] = None,
         glossaries: Optional[List[TranslationGlossary]] = None,
+        deployment_name: Optional[str] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -162,6 +164,10 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :keyword str category_id: Category / custom model ID for using custom translation.
         :keyword glossaries: Glossaries to apply to translation.
         :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
+        :keyword str deployment_name: Deployment name of the custom translation model for the
+            translation request.
+        :keyword bool translate_text_within_image: Whether to translate text embedded within images
+            in the documents.
         :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.

@@ -11,6 +11,8 @@ from azure.ai.translation.document.models import (
     TranslationStatusSummary,
     TranslationGlossary,
     TranslationStatus,
+    BatchOptions,
+    StartTranslationDetails,
 )
 from testcase import DocumentTranslationTest
 from preparer import (
@@ -207,6 +209,52 @@ class TestModelUpdates(DocumentTranslationTest):
         }
         translation_status_dict = TranslationStatus(**params)
         self.validate_translation_status(translation_status_dict)
+
+    def test_translation_target_deployment_name(self):
+        # deployment_name is exposed publicly and serialized to the wire property "deploymentName".
+        target = TranslationTarget(
+            target_url="https://t7d8641d8f25ec940prim.blob.core.windows.net/target-67890",
+            language="es",
+            deployment_name="my-deployment",
+        )
+        assert target.deployment_name == "my-deployment"
+
+        wire = target.as_dict()
+        assert wire["deploymentName"] == "my-deployment"
+
+    def test_start_translation_details_translate_text_within_image(self):
+        # translate_text_within_image is carried on BatchOptions via StartTranslationDetails.options.
+        options = BatchOptions(translate_text_within_image=True)
+        assert options.translate_text_within_image is True
+
+        details = StartTranslationDetails(inputs=[], options=options)
+        wire = details.as_dict()
+        assert wire["options"]["translateTextWithinImage"] is True
+
+    def test_document_status_deserializes_new_fields(self):
+        # DocumentStatus exposes the deployment name and image scan usage returned by the service.
+        payload = {
+            "path": "https://target/doc.txt",
+            "sourcePath": "https://source/doc.txt",
+            "createdDateTimeUtc": "2026-03-01T00:00:00Z",
+            "lastActionDateTimeUtc": "2026-03-01T00:05:00Z",
+            "status": "Succeeded",
+            "to": "es",
+            "progress": 1.0,
+            "id": "doc-1",
+            "characterCharged": 100,
+            "deploymentName": "my-deployment",
+            "totalImageScansSucceeded": 6,
+            "totalImageScansFailed": 1,
+            "imageCharged": 3,
+            "imageCharacterDetected": 1257,
+        }
+        status = DocumentStatus(payload)
+        assert status.deployment_name == "my-deployment"
+        assert status.total_image_scans_succeeded == 6
+        assert status.total_image_scans_failed == 1
+        assert status.images_charged == 3
+        assert status.image_characters_detected == 1257
 
     def validate_translation_target(self, translation_target):
         assert translation_target is not None

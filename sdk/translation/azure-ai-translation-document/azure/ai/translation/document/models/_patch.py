@@ -149,6 +149,9 @@ class TranslationTarget(GeneratedTranslationTarget):
     :vartype target_url: str
     :ivar category_id: Category / custom system for translation request.
     :vartype category_id: str
+    :ivar deployment_name: Deployment name of the custom translation model for the translation
+     request.
+    :vartype deployment_name: str
     :ivar language: Target Language. Required.
     :vartype language: str
     :ivar glossaries: List of Glossary.
@@ -161,6 +164,8 @@ class TranslationTarget(GeneratedTranslationTarget):
     """Location of the folder / container with your documents. Required."""
     category_id: Optional[str]
     """Category / custom system for translation request."""
+    deployment_name: Optional[str]
+    """Deployment name of the custom translation model for the translation request."""
     language: str
     """Target Language. Required."""
     glossaries: Optional[List["TranslationGlossary"]]
@@ -175,6 +180,7 @@ class TranslationTarget(GeneratedTranslationTarget):
         language: str,
         *,
         category_id: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         glossaries: Optional[List["TranslationGlossary"]] = None,
         storage_source: Optional[Union[str, "_models.TranslationStorageSource"]] = None,
     ): ...
@@ -281,6 +287,17 @@ class DocumentStatus(GeneratedDocumentStatus):
     :vartype id: str
     :ivar characters_charged: Character charged by the API.
     :vartype characters_charged: int
+    :ivar total_image_scans_succeeded: Total image scans succeeded.
+    :vartype total_image_scans_succeeded: int
+    :ivar total_image_scans_failed: Total image scans failed.
+    :vartype total_image_scans_failed: int
+    :ivar images_charged: Images charged by the API.
+    :vartype images_charged: int
+    :ivar image_characters_detected: Characters detected within images.
+    :vartype image_characters_detected: int
+    :ivar deployment_name: Deployment name of the custom translation model used for the
+     translation.
+    :vartype deployment_name: str
     """
 
     translated_document_url: Optional[str]
@@ -306,6 +323,16 @@ class DocumentStatus(GeneratedDocumentStatus):
     """Document Id. Required."""
     characters_charged: Optional[int]
     """Character charged by the API."""
+    total_image_scans_succeeded: Optional[int]
+    """Total image scans succeeded."""
+    total_image_scans_failed: Optional[int]
+    """Total image scans failed."""
+    images_charged: Optional[int]
+    """Images charged by the API."""
+    image_characters_detected: Optional[int]
+    """Characters detected within images."""
+    deployment_name: Optional[str]
+    """Deployment name of the custom translation model used for the translation."""
 
     @overload
     def __init__(
@@ -321,6 +348,11 @@ class DocumentStatus(GeneratedDocumentStatus):
         translated_document_url: Optional[str] = None,
         error: Optional["_models.DocumentTranslationError"] = None,
         characters_charged: Optional[int] = None,
+        total_image_scans_succeeded: Optional[int] = None,
+        total_image_scans_failed: Optional[int] = None,
+        images_charged: Optional[int] = None,
+        image_characters_detected: Optional[int] = None,
+        deployment_name: Optional[str] = None,
     ): ...
 
     @overload

@@ -59,6 +59,34 @@ class DocumentBatch(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
+class BatchOptions(_model_base.Model):
+    """Translation job submission options.
+
+    :ivar translate_text_within_image: Translate text embedded within images in the documents.
+    :vartype translate_text_within_image: bool
+    """
+
+    translate_text_within_image: Optional[bool] = rest_field(name="translateTextWithinImage")
+    """Translate text embedded within images in the documents."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        translate_text_within_image: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class DocumentFilter(_model_base.Model):
     """Document filter.
 
@@ -129,6 +157,17 @@ class DocumentStatus(_model_base.Model):
     :vartype id: str
     :ivar characters_charged: Character charged by the API.
     :vartype characters_charged: int
+    :ivar total_image_scans_succeeded: Total image scans succeeded.
+    :vartype total_image_scans_succeeded: int
+    :ivar total_image_scans_failed: Total image scans failed.
+    :vartype total_image_scans_failed: int
+    :ivar images_charged: Images charged by the API.
+    :vartype images_charged: int
+    :ivar image_characters_detected: Characters detected within images.
+    :vartype image_characters_detected: int
+    :ivar deployment_name: Deployment name of the custom translation model used for the
+     translation.
+    :vartype deployment_name: str
     """
 
     translated_document_url: Optional[str] = rest_field(name="path")
@@ -154,6 +193,16 @@ class DocumentStatus(_model_base.Model):
     """Document Id. Required."""
     characters_charged: Optional[int] = rest_field(name="characterCharged")
     """Character charged by the API."""
+    total_image_scans_succeeded: Optional[int] = rest_field(name="totalImageScansSucceeded")
+    """Total image scans succeeded."""
+    total_image_scans_failed: Optional[int] = rest_field(name="totalImageScansFailed")
+    """Total image scans failed."""
+    images_charged: Optional[int] = rest_field(name="imageCharged")
+    """Images charged by the API."""
+    image_characters_detected: Optional[int] = rest_field(name="imageCharacterDetected")
+    """Characters detected within images."""
+    deployment_name: Optional[str] = rest_field(name="deploymentName")
+    """Deployment name of the custom translation model used for the translation."""
 
     @overload
     def __init__(
@@ -169,6 +218,11 @@ class DocumentStatus(_model_base.Model):
         translated_document_url: Optional[str] = None,
         error: Optional["_models.DocumentTranslationError"] = None,
         characters_charged: Optional[int] = None,
+        total_image_scans_succeeded: Optional[int] = None,
+        total_image_scans_failed: Optional[int] = None,
+        images_charged: Optional[int] = None,
+        image_characters_detected: Optional[int] = None,
+        deployment_name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -454,16 +508,21 @@ class StartTranslationDetails(_model_base.Model):
 
     :ivar inputs: The input list of documents or folders containing documents. Required.
     :vartype inputs: list[~azure.ai.translation.document.models.DocumentBatch]
+    :ivar options: Translation job submission options.
+    :vartype options: ~azure.ai.translation.document.models.BatchOptions
     """
 
     inputs: List["_models.DocumentBatch"] = rest_field()
     """The input list of documents or folders containing documents. Required."""
+    options: Optional["_models.BatchOptions"] = rest_field()
+    """Translation job submission options."""
 
     @overload
     def __init__(
         self,
         *,
         inputs: List["_models.DocumentBatch"],
+        options: Optional["_models.BatchOptions"] = None,
     ) -> None: ...
 
     @overload
@@ -657,6 +716,12 @@ class TranslationStatusSummary(_model_base.Model):
     :vartype canceled: int
     :ivar total_characters_charged: Total characters charged by the API. Required.
     :vartype total_characters_charged: int
+    :ivar total_image_scans_succeeded: Total image scans succeeded.
+    :vartype total_image_scans_succeeded: int
+    :ivar total_image_scans_failed: Total image scans failed.
+    :vartype total_image_scans_failed: int
+    :ivar total_images_charged: Total images charged by the API.
+    :vartype total_images_charged: int
     """
 
     total: int = rest_field()
@@ -673,6 +738,12 @@ class TranslationStatusSummary(_model_base.Model):
     """Number of cancelled. Required."""
     total_characters_charged: int = rest_field(name="totalCharacterCharged")
     """Total characters charged by the API. Required."""
+    total_image_scans_succeeded: Optional[int] = rest_field(name="totalImageScansSucceeded")
+    """Total image scans succeeded."""
+    total_image_scans_failed: Optional[int] = rest_field(name="totalImageScansFailed")
+    """Total image scans failed."""
+    total_images_charged: Optional[int] = rest_field(name="totalImageCharged")
+    """Total images charged by the API."""
 
     @overload
     def __init__(
@@ -685,6 +756,9 @@ class TranslationStatusSummary(_model_base.Model):
         not_yet_started: int,
         canceled: int,
         total_characters_charged: int,
+        total_image_scans_succeeded: Optional[int] = None,
+        total_image_scans_failed: Optional[int] = None,
+        total_images_charged: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -707,6 +781,9 @@ class TranslationTarget(_model_base.Model):
     :vartype target_url: str
     :ivar category_id: Category / custom system for translation request.
     :vartype category_id: str
+    :ivar deployment_name: Deployment name of the custom translation model for the translation
+     request.
+    :vartype deployment_name: str
     :ivar language: Target Language. Required.
     :vartype language: str
     :ivar glossaries: List of Glossary.
@@ -719,6 +796,8 @@ class TranslationTarget(_model_base.Model):
     """Location of the folder / container with your documents. Required."""
     category_id: Optional[str] = rest_field(name="category")
     """Category / custom system for translation request."""
+    deployment_name: Optional[str] = rest_field(name="deploymentName")
+    """Deployment name of the custom translation model for the translation request."""
     language: str = rest_field()
     """Target Language. Required."""
     glossaries: Optional[List["_models.TranslationGlossary"]] = rest_field()
@@ -733,6 +812,7 @@ class TranslationTarget(_model_base.Model):
         target_url: str,
         language: str,
         category_id: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         glossaries: Optional[List["_models.TranslationGlossary"]] = None,
         storage_source: Optional[Union[str, "_models.TranslationStorageSource"]] = None,
     ) -> None: ...

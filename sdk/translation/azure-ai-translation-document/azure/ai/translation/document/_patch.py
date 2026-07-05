@@ -30,6 +30,7 @@ from .models import (
     TranslationStatus,
     DocumentTranslationError,
     DocumentTranslationInput,
+    BatchOptions,
 )
 from .models._patch import convert_status
 
@@ -61,8 +62,10 @@ def convert_order_by(orderby: Optional[List[str]]) -> Optional[List[str]]:
 class DocumentTranslationApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Document Translation API versions supported by this package"""
 
-    #: This is the default version
     V2024_05_01 = "2024-05-01"
+
+    #: This is the default version
+    V2026_03_01 = "2026-03-01"
 
 
 def get_translation_input(args, kwargs, continuation_token):
@@ -102,6 +105,8 @@ def get_translation_input(args, kwargs, continuation_token):
             suffix = kwargs.pop("suffix", None)
             storage_type = kwargs.pop("storage_type", None)
             category_id = kwargs.pop("category_id", None)
+            deployment_name = kwargs.pop("deployment_name", None)
+            translate_text_within_image = kwargs.pop("translate_text_within_image", None)
             glossaries = kwargs.pop("glossaries", None)
 
             request = StartTranslationDetails(
@@ -118,11 +123,17 @@ def get_translation_input(args, kwargs, continuation_token):
                                 language=target_language,
                                 glossaries=glossaries,
                                 category_id=category_id,
+                                deployment_name=deployment_name,
                             )
                         ],
                         storage_type=storage_type,
                     )
-                ]
+                ],
+                options=(
+                    BatchOptions(translate_text_within_image=translate_text_within_image)
+                    if translate_text_within_image is not None
+                    else None
+                ),
             )
         except (AttributeError, TypeError, IndexError) as exc:
             raise ValueError(
@@ -235,6 +246,8 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         storage_type: Optional[Union[str, StorageInputType]] = None,
         category_id: Optional[str] = None,
         glossaries: Optional[List[TranslationGlossary]] = None,
+        deployment_name: Optional[str] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> DocumentTranslationLROPoller[ItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -265,6 +278,10 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :keyword str category_id: Category / custom model ID for using custom translation.
         :keyword glossaries: Glossaries to apply to translation.
         :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
+        :keyword str deployment_name: Deployment name of the custom translation model for the
+            translation request.
+        :keyword bool translate_text_within_image: Whether to translate text embedded within images
+            in the documents.
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.

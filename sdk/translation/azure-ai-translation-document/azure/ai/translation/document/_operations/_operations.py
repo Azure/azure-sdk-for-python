@@ -59,7 +59,7 @@ def build_document_translation__begin_translation_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -91,7 +91,7 @@ def build_document_translation_list_translation_statuses_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +132,7 @@ def build_document_translation_get_document_status_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -159,7 +159,7 @@ def build_document_translation_get_translation_status_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -185,7 +185,7 @@ def build_document_translation_cancel_translation_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -221,7 +221,7 @@ def build_document_translation_list_document_statuses_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,7 +267,7 @@ def build_document_translation_get_supported_formats_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -289,13 +289,15 @@ def build_single_document_translation_translate_request(  # pylint: disable=name
     target_language: str,
     source_language: Optional[str] = None,
     category: Optional[str] = None,
+    deployment_name: Optional[str] = None,
     allow_fallback: Optional[bool] = None,
+    translate_text_within_image: Optional[bool] = None,
     **kwargs: Any,
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01"))
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
@@ -308,8 +310,14 @@ def build_single_document_translation_translate_request(  # pylint: disable=name
     _params["targetLanguage"] = _SERIALIZER.query("target_language", target_language, "str")
     if category is not None:
         _params["category"] = _SERIALIZER.query("category", category, "str")
+    if deployment_name is not None:
+        _params["deploymentName"] = _SERIALIZER.query("deployment_name", deployment_name, "str")
     if allow_fallback is not None:
         _params["allowFallback"] = _SERIALIZER.query("allow_fallback", allow_fallback, "bool")
+    if translate_text_within_image is not None:
+        _params["translateTextWithinImage"] = _SERIALIZER.query(
+            "translate_text_within_image", translate_text_within_image, "bool"
+        )
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")

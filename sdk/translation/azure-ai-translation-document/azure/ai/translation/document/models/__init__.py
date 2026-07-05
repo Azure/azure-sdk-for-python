@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from ._models import DocumentBatch
+from ._models import BatchOptions
 from ._models import DocumentFilter
 from ._patch import DocumentStatus
 from ._models import DocumentTranslateContent
@@ -31,6 +32,7 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "DocumentBatch",
+    "BatchOptions",
     "DocumentFilter",
     "DocumentStatus",
     "DocumentTranslateContent",

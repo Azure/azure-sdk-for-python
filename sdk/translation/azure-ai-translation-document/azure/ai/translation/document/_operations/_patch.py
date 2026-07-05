@@ -344,7 +344,9 @@ class SingleDocumentTranslationClientOperationsMixin(
         target_language: str,
         source_language: Optional[str] = None,
         category: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
@@ -371,10 +373,16 @@ class SingleDocumentTranslationClientOperationsMixin(
          project details to this parameter to use your deployed customized system. Default value is:
          general. Default value is None.
         :paramtype category: str
+        :keyword deployment_name: Deployment name of the custom translation model for the translation
+         request. Default value is None.
+        :paramtype deployment_name: str
         :keyword allow_fallback: Specifies that the service is allowed to fall back to a general system
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -397,7 +405,9 @@ class SingleDocumentTranslationClientOperationsMixin(
         target_language: str,
         source_language: Optional[str] = None,
         category: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
@@ -424,10 +434,16 @@ class SingleDocumentTranslationClientOperationsMixin(
          project details to this parameter to use your deployed customized system. Default value is:
          general. Default value is None.
         :paramtype category: str
+        :keyword deployment_name: Deployment name of the custom translation model for the translation
+         request. Default value is None.
+        :paramtype deployment_name: str
         :keyword allow_fallback: Specifies that the service is allowed to fall back to a general system
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -441,7 +457,9 @@ class SingleDocumentTranslationClientOperationsMixin(
         target_language: str,
         source_language: Optional[str] = None,
         category: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
@@ -468,10 +486,16 @@ class SingleDocumentTranslationClientOperationsMixin(
          project details to this parameter to use your deployed customized system. Default value is:
          general. Default value is None.
         :paramtype category: str
+        :keyword deployment_name: Deployment name of the custom translation model for the translation
+         request. Default value is None.
+        :paramtype deployment_name: str
         :keyword allow_fallback: Specifies that the service is allowed to fall back to a general system
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: Iterator[bytes]
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -507,7 +531,9 @@ class SingleDocumentTranslationClientOperationsMixin(
             target_language=target_language,
             source_language=source_language,
             category=category,
+            deployment_name=deployment_name,
             allow_fallback=allow_fallback,
+            translate_text_within_image=translate_text_within_image,
             api_version=self._config.api_version,
             files=_files,
             data=_data,

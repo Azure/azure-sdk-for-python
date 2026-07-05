@@ -33,7 +33,7 @@ class DocumentTranslationClient(DocumentTranslationClientOperationsMixin):
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-05-01".
+    :keyword api_version: The API version to use for this operation. Default value is "2026-03-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -117,7 +117,7 @@ class SingleDocumentTranslationClient(SingleDocumentTranslationClientOperationsM
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-05-01".
+    :keyword api_version: The API version to use for this operation. Default value is "2026-03-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
