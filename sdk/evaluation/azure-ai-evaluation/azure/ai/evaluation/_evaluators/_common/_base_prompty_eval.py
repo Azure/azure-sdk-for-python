@@ -369,6 +369,19 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         built_in_definitions = self._get_needed_built_in_tool_definitions(tool_calls)
         needed_tool_definitions.extend(built_in_definitions)
 
+        # An OpenAPI tool is a collection of functions. When an OpenAPI tool
+        # definition exposes its nested functions, expand it into those functions
+        # so tool calls referencing a nested function name can be matched. If an
+        # OpenAPI tool definition has no nested functions, keep the OpenAPI tool
+        # definition as is for backward compatibility.
+        tool_definitions_expanded = []
+        for tool in needed_tool_definitions:
+            openapi_functions = tool.get("functions") if tool.get("type") == "openapi" else None
+            if openapi_functions:
+                tool_definitions_expanded.extend(openapi_functions)
+            else:
+                tool_definitions_expanded.append(tool)
+
         # Validate that all tool calls have corresponding definitions
         for tool_call in tool_calls:
             if isinstance(tool_call, dict):
@@ -381,7 +394,9 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                         continue
                     elif tool_name:
                         # This is a regular function tool from converter
-                        tool_definition_exists = any(tool.get("name") == tool_name for tool in needed_tool_definitions)
+                        tool_definition_exists = any(
+                            tool.get("name") == tool_name for tool in tool_definitions_expanded
+                        )
                         if not tool_definition_exists:
                             raise EvaluationException(
                                 message=f"Tool definition for {tool_name} not found",

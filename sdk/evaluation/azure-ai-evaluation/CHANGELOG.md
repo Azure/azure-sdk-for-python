@@ -10,6 +10,11 @@
   `QAEvaluator`, `RougeScoreEvaluator`, `DocumentRetrievalEvaluator`, the task navigation efficiency
   evaluator, and the shared evaluator base (conversation/tool-call input validation).
 
+- Fixed OpenAPI tool-call validation in tool evaluators (e.g. `ToolCallAccuracyEvaluator`). OpenAPI
+  tool definitions are expanded into their nested functions when present, so tool calls referencing a
+  nested function name validate correctly, while OpenAPI tool definitions without nested functions are
+  kept as is so tool calls referencing the top-level tool name continue to validate.
+
 - Fixed `RedTeam.scan()` storing decoded plaintext instead of the actual
   encoded payload for converter-based attack strategies (Base64, Flip,
   Morse, ROT13, etc.) in `evaluation_results.json` / `results.json`. The
