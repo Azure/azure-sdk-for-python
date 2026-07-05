@@ -1,34 +1,24 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Cold-start report: the latency an application pays on its FIRST calls.
+"""Cold-start report: latency on a process's first calls.
 
-Why this exists
-  Every other phase reports WARM latency — numbers taken after the client, the
-  connection pool, TLS sessions, and (for Rust) the Tokio runtime have all been
-  paid for. But a real service also pays a one-time STARTUP penalty: the very
-  first call after a process starts (or after a long idle) is slower because that
-  setup happens on the critical path. Warm windows hide it. If a customer runs
-  many short-lived workers, that first-call cost is what they actually feel.
+Other reports measure warm latency, taken after the client, connection pool, TLS
+sessions, and (for Rust) the Tokio runtime are set up. The first call after a
+process starts is slower because that setup runs on the critical path. This
+matters for applications that run many short-lived workers.
 
-  This reader answers: "how slow is the FIRST call, and how many calls until the
-  latency settles?" — separately for core-python and Rust, so we can say whether
-  one engine has a heavier startup tail than the other.
+The launcher starts many short processes, each doing a few operations before
+exiting, all tagged with one shared workload_id (``cold-<op>-<backend>-<stamp>``).
+Each process writes one final row carrying:
+  * ``cold_first_ms``    -- that process's first-call latency, and
+  * ``cold_first_n_ms``  -- its earliest-N durations (the warm-up curve).
+These are not reset on a window drain, so they survive to the final flush.
 
-How the data is produced
-  The cold-start launcher starts MANY short processes, each doing only a handful
-  of operations before exiting, all tagged with ONE shared workload_id
-  (``cold-<op>-<backend>-<stamp>``). Each process contributes exactly one final
-  row carrying:
-    * ``cold_first_ms``    — that process's very first call latency, and
-    * ``cold_first_n_ms``  — its earliest-N durations (the warm-up curve).
-  The Stats object never resets these on a window drain (see perf_stats.py), so
-  they survive to the final flush.
-
-What it prints
-  1. First-call distribution: pool every process's ``cold_first_ms`` into a
-     p50/p90/p99 of "the first call after start".
+This script prints, per operation and backend:
+  1. First-call distribution: p50/p90/p99 pooled over every process's
+     ``cold_first_ms``.
   2. Warm-up curve: element-wise mean of ``cold_first_n_ms`` across processes, so
-     you can see call #1 vs #2 vs #10 and where it flattens to warm latency.
+     call #1 vs #2 vs #10 shows where latency settles.
 
 USAGE:
   source ./perf_env.sh

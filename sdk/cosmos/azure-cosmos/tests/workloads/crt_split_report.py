@@ -1,27 +1,22 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Client-vs-server latency split report (localizes where a tail is spent).
+"""Client-vs-server latency split report: which layer owns a latency tail.
 
-Motivation (plain English):
-  A point operation's wall-clock latency at the caller ("client" time) is the sum
-  of network + transport + the pyo3<->tokio binding hop + the time the service
-  itself spends processing the request ("server" time). When one backend shows a
-  higher tail than another for the SAME operation against the SAME account, we
-  need to know WHICH layer owns the extra time. The service reports its own
-  processing time in the ``x-ms-request-duration-ms`` response header, which BOTH
-  the core-python and the Rust backend surface. So:
+A point operation's client-side latency (wall clock at the caller) is network +
+transport + the Python-to-Rust binding + the time the service spends processing
+the request (server time). When one backend has a higher tail than another for the
+same operation and account, this report shows which layer owns the extra time. The
+service reports its own processing time in the ``x-ms-request-duration-ms``
+response header, which both backends surface, so:
 
-      client_tail - server_tail  =  everything OUTSIDE the service
-                                    (network + transport + binding bridge)
+    client_tail - server_tail = everything outside the service
+                                (network + transport + binding)
 
-  If the Rust create tail is high in CLIENT time but its SERVER time matches
-  core-python's, the extra time is client-side (transport/binding), not the
-  service. If the SERVER tail is also high, it is service variance and would hit
-  both backends. This script pools per-window histograms across the whole run and
-  prints both tails side by side so the answer is read directly off the numbers.
-
-This complements phase0_report.py (which pools only the client histogram): here we
-pool client ``hist_b64`` AND server ``server_hist_b64`` and show the gap.
+If the Rust create tail is high in client time but its server time matches
+core-python's, the extra time is client-side, not the service. If the server tail
+is also high, it is service variance and hits both backends. This script pools the
+client histogram (``hist_b64``) and the server histogram (``server_hist_b64``) per
+window across the run and prints both tails side by side.
 
 USAGE:
   source ./perf_env.sh                 # exports RESULTS_COSMOS_* (incl. the key)

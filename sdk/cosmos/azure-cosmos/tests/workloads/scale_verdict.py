@@ -109,7 +109,7 @@ def _latest_stamp(container, prefix: str) -> str:
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Automated scaling verdict (Phase C).")
+    ap = argparse.ArgumentParser(description="Automated scaling verdict.")
     ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
     ap.add_argument("--prefix", default="sweep-", help="workload_id prefix (default 'sweep-')")
     ap.add_argument("--warmup", type=float, default=WARMUP_S, help="warmup seconds to drop")

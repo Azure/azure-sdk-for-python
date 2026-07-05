@@ -361,9 +361,8 @@ def main():
     ap.add_argument(
         "--prefix",
         default="lat-",
-        help="workload_id prefix identifying the phase (lat- = Phase A, "
-        "sweep- = Phase C, leak- = Phase B). Used to find the latest stamp and "
-        "to label the report.",
+        help="workload_id prefix identifying the run. Used to find the latest "
+        "stamp and to label the report.",
     )
     args = ap.parse_args()
 

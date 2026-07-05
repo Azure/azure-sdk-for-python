@@ -44,7 +44,9 @@ mkdir -p "$LOG_DIR"
 export COSMOS_DATABASE="${COLD_COSMOS_DATABASE:-lat_probe_db}"
 export COSMOS_CONTAINER="${COLD_COSMOS_CONTAINER:-lat_probe_cont}"
 # Low concurrency so the first call is a clean single round trip, not queued.
-export COSMOS_CONCURRENT_REQUESTS="${COSMOS_CONCURRENT_REQUESTS:-1}"
+# Use a dedicated override var so perf_env's default (100) does not silently
+# leak into cold-start runs.
+export COSMOS_CONCURRENT_REQUESTS="${COLD_CONCURRENT_REQUESTS:-1}"
 export WORKLOAD_NUM_CLIENTS=1
 export WORKLOAD_ARRIVAL_RATE=0
 export WORKLOAD_USE_PROXY=false
@@ -81,5 +83,14 @@ for op in "${OPERATIONS[@]}"; do
   done
 done
 echo "=== Cold-start run complete. stamp=${STAMP} ==="
-echo "    Read back: python3 coldstart_report.py --stamp ${STAMP}"
+echo
+echo "=== Running cold-start report + provenance gate ==="
+# Lightweight post-run gate for this mini-phase: validate Rust driver provenance
+# and print first-call pooled distributions for this stamp.
+if python3 coldstart_report.py --prefix "cold-" --stamp "${STAMP}"; then
+  echo "=== cold-start report provenance gate PASSED ==="
+else
+  echo "!! cold-start report provenance gate FAILED -- inspect rows before trusting cold metrics." >&2
+  overall_rc=1
+fi
 exit "${overall_rc}"

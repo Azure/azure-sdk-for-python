@@ -34,14 +34,13 @@ class Stats:
         self._lock = threading.Lock()
         # min 1 microsecond, max 60 seconds (in microseconds), 3 significant digits
         self._histograms: dict[str, HdrHistogram] = {}
-        # Parallel histogram of SERVER-reported processing time (the
+        # Histogram of server-reported processing time (the
         # x-ms-request-duration-ms response header) for the same ops. The client
-        # histogram above measures wall-clock at the caller (network + transport +
-        # binding bridge + service); this one measures only the time the service
-        # itself reports spending. Client minus server localizes a tail: if the
-        # client tail is high but the server tail is not, the cost is client-side
-        # (transport/bridge), not the service. The header is emitted by BOTH the
-        # core-python and the Rust backend, so the split is comparable across them.
+        # histogram above measures wall clock at the caller (network + transport +
+        # binding + service); this one measures only the service's own time.
+        # Client minus server shows where a tail is spent: a high client tail with
+        # a normal server tail is client-side cost, not the service. Both backends
+        # set the header, so the split is comparable across them.
         self._server_histograms: dict[str, HdrHistogram] = {}
         self._error_counts: dict[str, int] = {}
         # Running RU charge per operation: sum and sample count, so drain can
@@ -93,10 +92,10 @@ class Stats:
         """Record the service-reported processing time of a successful operation.
 
         Fed from the SDK ``response_hook`` (the ``x-ms-request-duration-ms``
-        header), which both backends set. Stored in a histogram parallel to the
-        client-latency one so an offline analyzer can pool it per point and
-        compare the SERVER tail against the CLIENT tail: a client tail that is
-        not matched by a server tail is client-side (transport/bridge) overhead.
+        header), which both backends set. Stored in a separate histogram from the
+        client latency, so an analyzer can compare the server tail against the
+        client tail: a high client tail with a normal server tail is client-side
+        cost, not the service.
         """
         if server_ms < 0:
             return
@@ -126,7 +125,7 @@ class Stats:
         """Record one event-loop scheduling-delay sample (milliseconds).
 
         Keeps only the worst sample of the interval -- a single bad stall is what
-        flags loop saturation, and an average would wash it out. Drained and reset
+        flags loop saturation, and an average would hide it. Drained and reset
         by ``drain_loop_lag`` each flush.
         """
         with self._lock:

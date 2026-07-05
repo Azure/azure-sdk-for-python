@@ -129,8 +129,8 @@ def theil_sen(pts):
 def settled_tail(pts, tail_seconds=TAIL_S):
     """OLS fit over only the final `tail_seconds` of the series.
 
-    Whole-run regression spans a step and fabricates a trend; the honest
-    'is it growing *now*' signal is the slope of the final plateau. Returns a
+    A whole-run regression spans a step and shows a misleading trend; the
+    'is it growing now' signal is the slope of the final plateau. Returns a
     dict with slope, se, ci half-width, ci_lo/ci_hi, theil-sen, r2, n.
     """
     if not pts:
@@ -179,7 +179,19 @@ def verdict(tail, n_steps):
     return "WATCH"                  # CI straddles -- not yet conclusive.
 
 
-_SPARK = "\u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588"
+def _glyph_or_fallback(glyph: str, fallback: str) -> str:
+    """Return a display glyph only when stdout encoding can represent it."""
+    enc = getattr(sys.stdout, "encoding", None) or "utf-8"
+    try:
+        glyph.encode(enc)
+    except UnicodeEncodeError:
+        return fallback
+    return glyph
+
+
+_SPARK = _glyph_or_fallback("\u2581\u2582\u2583\u2584\u2585\u2586\u2587\u2588", "..::--==")
+# Keep this ASCII so output is stable across mixed Windows terminal encodings.
+_PLUS_MINUS = "+/-"
 
 
 def spark(ys):
@@ -231,7 +243,7 @@ def _latest_stamp(container, prefix: str) -> str:
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Automated leak verdict (Phase B).")
+    ap = argparse.ArgumentParser(description="Automated leak verdict.")
     ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
     ap.add_argument("--prefix", default="leak-", help="workload_id prefix (default 'leak-')")
     _prov.add_cli_flag(ap)
@@ -313,7 +325,7 @@ def main():
     for bk in backends:
         print(f"\n### {bk} ###")
         print(f"{'op':11s} {'pts':>4s} {'first':>6s} {'last':>6s} {'grow':>6s} "
-              f"{'steps':>5s} {'tailSlope±95%CI(MB/h)':>22s} {'theil':>7s} "
+              f"{'steps':>5s} {f'tailSlope{_PLUS_MINUS}95%CI(MB/h)':>22s} {'theil':>7s} "
               f"{'verdict':>11s}  trajectory")
         for op in ops:
             pts = sorted([(e, m / 1e6) for e, m in grp.get((bk, op), [])
@@ -329,8 +341,8 @@ def main():
             v = verdict(tail, n_steps)
             if tail and tail.get("slope") is not None:
                 hw = tail["half"]
-                ci = (f"{tail['slope']:+.2f}\u00b1{hw:.2f}" if hw is not None
-                      else f"{tail['slope']:+.2f}\u00b1n/a")
+                ci = (f"{tail['slope']:+.2f}{_PLUS_MINUS}{hw:.2f}" if hw is not None
+                      else f"{tail['slope']:+.2f}{_PLUS_MINUS}n/a")
                 th = f"{tail['theil']:+.2f}" if tail.get("theil") is not None else "n/a"
             else:
                 ci, th = "n/a", "n/a"
@@ -339,7 +351,7 @@ def main():
                   f"{v:>11s}  {ys[0]:.0f}{spark(ys[::step])}{ys[-1]:.0f}")
 
     if 'rust' in backends and 'core-python' in backends:
-        print("\n### RUST vs CORE (final RSS + recent slope \u00b195% CI) ###")
+        print(f"\n### RUST vs CORE (final RSS + recent slope {_PLUS_MINUS}95% CI) ###")
         print(f"{'op':11s} {'rustRSS':>8s} {'coreRSS':>8s} {'rustRecent':>18s} "
               f"{'coreRecent':>18s}")
         for op in ops:
@@ -354,7 +366,7 @@ def main():
 
             def fmt(d):
                 if d and d.get("slope") is not None and d.get("half") is not None:
-                    return f"{d['slope']:+.2f}\u00b1{d['half']:.2f}"
+                    return f"{d['slope']:+.2f}{_PLUS_MINUS}{d['half']:.2f}"
                 return "n/a"
             print(f"{op:11s} {rrss:8.0f} {crss:8.0f} {fmt(rr):>18s} {fmt(cr):>18s}")
 

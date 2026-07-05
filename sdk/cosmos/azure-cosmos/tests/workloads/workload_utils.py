@@ -650,7 +650,6 @@ def create_logger(file_name):
 
 def create_inner_logger(file_name="internal_logger_tues"):
     logger = logging.getLogger("internal_requests")
-    prefix = os.path.splitext(file_name)[0] + "-" + str(os.getpid())
     handler = RotatingFileHandler(
         "log-" + file_name + ".log",
         maxBytes=1024 * 1024 * 10,  # 10 mb

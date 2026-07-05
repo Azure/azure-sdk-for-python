@@ -1,30 +1,24 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Mixed (blended) workload report: per-operation AND blended pooled percentiles.
+"""Mixed (blended) workload report: per-operation and blended pooled percentiles.
 
-Why this exists
-  A single-operation phase answers "how fast is a read?" or "how fast is an
-  upsert?" in isolation. Real applications do not send one operation type at a
-  time; they send a MIX (mostly reads, some creates/upserts, a few
-  replaces/patches). The blended run (WORKLOAD_MIX) issues that mix from one
-  process so we can gate on a single BLENDED p99 — the number a customer's SLA
-  actually feels — instead of pretending every call is the fastest operation.
+A single-operation run measures one operation type in isolation. Real applications
+send a mix (mostly reads, some creates/upserts, a few replaces/patches). A blended
+run (WORKLOAD_MIX) issues that mix from one process, so a run can be gated on one
+blended p99 instead of the fastest operation's p99.
 
-  This reader turns the stored rows into two things:
-    1. a per-operation table (each op's own pooled p50/p90/p99/p99.9), and
-    2. a BLENDED distribution that pools every operation together, which is the
-       headline SLA number for the mix.
+This script prints two things:
+  1. a per-operation table (each op's pooled p50/p90/p99/p99.9), and
+  2. a blended distribution that pools every operation together, the headline SLA
+     number for the mix.
 
-How pooling works (same rigor as phase0_report.py)
-  Each results row stores ``hist_b64`` — the full HdrHistogram for that window.
-  Percentiles from different windows cannot be averaged, so this script decodes
-  and MERGES the histograms: per operation for the per-op table, and across ALL
-  operations of a backend for the blended distribution. The percentiles printed
-  are therefore mathematically exact for the whole run.
-
-  Grouping is by the row's ``operation`` field (the real op executed), NOT by the
-  workload_id — in a blended run every row shares one workload_id
-  (``mixed-blend-<backend>-<stamp>``), so the operation must come from the row.
+Pooling: each row stores ``hist_b64``, the full histogram for that window.
+Percentiles cannot be averaged across windows, so this script merges the
+histograms -- per operation for the per-op table, and across all operations of a
+backend for the blended distribution -- and the printed values are exact for the
+whole run. Grouping is by the row's ``operation`` field (the op actually run), not
+the workload_id: a blended run shares one workload_id
+(``mixed-blend-<backend>-<stamp>``), so the operation must come from the row.
 
 USAGE:
   source ./perf_env.sh

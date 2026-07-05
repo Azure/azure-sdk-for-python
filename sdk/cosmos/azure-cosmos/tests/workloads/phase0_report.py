@@ -1,42 +1,28 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Phase 0 latency-baseline report: exact pooled percentiles per operation.
+"""Low-load latency report: pooled percentiles per operation.
 
-Phase 0 is the light-load probe (concurrency=1, arrival=0, one client, no proxy)
-whose only job is to answer "is this test environment good enough to trust?" — a
-point-op baseline should land near p99 10 ms in-region. It is deliberately NOT a
-throughput test: at one request in flight there is no client-side queue, so the
-number measured is a single round trip (service latency), not the saturated
-closed-loop residence time a fixed-100-in-flight run reports.
+Reads the low-load probe rows (concurrency 1, one client, no proxy) and prints a
+latency table per operation and backend. At one request in flight each number is a
+single round trip, not a throughput figure.
 
-Why this script exists (and is separate from perf_validate.py):
-  perf_validate.py is the integrity GATE (did every cell do real work, on the
-  engine it claims, with no dropped windows?). This script is the RESULT READER:
-  it turns the stored rows into the latency table you actually quote.
-
-The key correctness point is percentile POOLING. Each results row stores a
-per-window scalar p50/p99/p99.9, but percentiles from different windows cannot be
-averaged into a true run-wide percentile. Each row ALSO stores ``hist_b64`` — the
-full HdrHistogram for that window (see perf_stats.py). This script decodes and
-MERGES those histograms across all windows of a cell, then reads the percentile
-off the merged distribution, so the p50/p90/p99/p99.9 it prints are mathematically
-exact for the whole run — not an approximation.
-
-If a run predates ``hist_b64`` (older stamps stored None), exact pooling is
-impossible; the script says so per cell and falls back to a count-weighted
-average of the per-window scalars, which slightly understates the tail.
+Percentiles are pooled correctly. A per-window scalar percentile cannot be
+averaged across windows, so each row also stores the full histogram for its window
+(``hist_b64``). This script merges those histograms per cell and reads the
+percentile off the merged result, so the printed values are exact for the whole
+run. When a row has no ``hist_b64`` (an older run) the script says so per cell and
+falls back to a count-weighted average, which understates the tail.
 
 USAGE:
   source ./perf_env.sh                 # exports RESULTS_COSMOS_* (incl. the key)
   python3 phase0_report.py [--stamp YYYYMMDD-HHMMSS] [--prefix lat0-]
       --stamp   which run to read; default = the most recent lat0- stamp.
-      --prefix  workload_id prefix identifying the phase (default lat0-).
+      --prefix  workload_id prefix identifying the run (default lat0-).
 """
 
 import argparse
 import os
 import sys
-from collections import defaultdict
 
 import perf_provenance_gate as _prov
 
@@ -56,10 +42,9 @@ except ImportError:
     )
     sys.exit(2)
 
-# Match perf_stats.py's histogram range exactly so a merged histogram is
-# bucket-compatible with the ones the workload encoded: 1 microsecond floor,
-# 60 seconds ceiling, 3 significant digits. Import the constants when available
-# so the two files can never drift apart; fall back to the literals otherwise.
+# Use the same histogram range as perf_stats.py (1 us floor, 60 s ceiling, 3
+# significant digits) so a merged histogram matches the ones the workload
+# encoded. Import the constants when available; fall back to the literals.
 try:
     from perf_stats import _MIN_VALUE_US as MIN_US, _MAX_VALUE_US as MAX_US
 except Exception:  # pragma: no cover - perf_stats import is best-effort
@@ -205,7 +190,7 @@ def _fmt_cell(op, backend, a):
 
 def main():
     ap = argparse.ArgumentParser(
-        description="Phase 0 latency-baseline report (exact pooled percentiles)."
+        description="Low-load latency report (pooled percentiles)."
     )
     ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
     ap.add_argument("--prefix", default="lat0-", help="workload_id prefix (default lat0-)")
@@ -224,7 +209,7 @@ def main():
         sys.exit(2)
 
     backends = sorted({b for (_, b) in agg})
-    print(f"=== Phase 0 latency baseline (prefix {args.prefix}, stamp {stamp}) ===")
+    print(f"=== Low-load latency baseline (prefix {args.prefix}, stamp {stamp}) ===")
     print("    conc=1, arrival=0, 1 client, no proxy -> latency = one round trip.")
     print("    Percentiles are POOLED across windows from merged HdrHistograms (exact).")
     print()

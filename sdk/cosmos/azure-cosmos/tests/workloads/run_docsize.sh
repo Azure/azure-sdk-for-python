@@ -85,5 +85,14 @@ for prof in "${PROFILES[@]}"; do
   done
 done
 echo "=== Doc-size run complete. stamp=${STAMP} ==="
-echo "    Read back: python3 phase0_report.py --prefix docsize- --stamp ${STAMP}"
+echo
+echo "=== Running doc-size report + provenance gate ==="
+# Lightweight post-run gate for this mini-phase: validate Rust driver provenance
+# and print pooled create latency per backend/profile for this stamp.
+if python3 phase0_report.py --prefix "docsize-" --stamp "${STAMP}"; then
+  echo "=== doc-size report provenance gate PASSED ==="
+else
+  echo "!! doc-size report provenance gate FAILED -- inspect rows before trusting payload-size metrics." >&2
+  overall_rc=1
+fi
 exit "${overall_rc}"

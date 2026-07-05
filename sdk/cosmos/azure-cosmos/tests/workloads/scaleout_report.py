@@ -1,40 +1,33 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Scale-out report for the Phase C scale-out sweep.
+"""Scale-out report: how far throughput scales past one process.
 
-The single-process throughput sweep (scale_verdict.py) finds each engine's
-per-process ceiling and knee concurrency C*. This script answers the NEXT
-question: how far does the account scale PAST one process? We run N copies of the
-workload at the fixed knee concurrency C* and SUM their achieved req/s; this tool
-pools those rows into an honest per-N throughput curve.
-
-What it does, and why this shape:
+The single-process sweep (scale_verdict.py) finds each engine's per-process
+ceiling and knee concurrency C*. This script runs N copies of the workload at C*
+and sums their achieved req/s into a per-N throughput curve.
 
   1. Per-process throughput = SUM(count)/SUM(window_seconds) over that process's
-     post-warmup windows -- never a single window's max/last. Each of the N
-     processes writes its own rows (unique PERF_WORKLOAD_ID ...-pI-...), so the
-     N are pooled per point, not averaged into one.
+     post-warmup windows, never a single window's max or last. Each of the N
+     processes writes its own rows (unique workload_id ...-pI-...), pooled per
+     point rather than averaged.
 
-  2. Point throughput at N = SUM of the N processes' throughputs. The processes
-     run concurrently for the same wall-clock window, so summing per-process
-     rates is the achieved aggregate req/s of the account under that fan-out.
+  2. Point throughput at N = sum of the N processes' throughputs. They run
+     concurrently over the same wall-clock window, so the sum is the account's
+     achieved aggregate req/s at that fan-out.
 
-  3. Scaling efficiency = thr(N) / (N * thr(1)). 1.0 = perfect linear scaling;
-     below 1.0 the account/host is starting to bottleneck. Achieved RU/s (to
-     compare against the container's provisioned RU), terminal error % (429s that
-     exhausted retries surface here), and system CPU are all surfaced so a plateau
-     is attributed to the right cause -- RU ceiling vs host CPU vs the SDK.
-     (A per-window "throttled 429" counter is deliberately NOT used: the Rust
-     driver retries throttles internally, so they are invisible to this Python
-     layer; achieved RU/s vs provisioned is the trustworthy ceiling signal.)
+  3. Scaling efficiency = thr(N) / (N * thr(1)). 1.0 is perfect linear scaling;
+     below 1.0 the account or host is bottlenecking. Achieved RU/s, terminal
+     error %, and system CPU are printed so a plateau can be attributed to the RU
+     ceiling, host CPU, or the SDK. A per-window 429 counter is not used because
+     the Rust driver retries throttles internally; achieved RU/s vs provisioned is
+     the ceiling signal instead.
 
   4. Repeatability. Reruns of the same point (...-rR-...) are pooled and their
-     spread (min..max) printed, so a headline number is shown to be stable, not
-     a single lucky sample.
+     spread (min..max) printed.
 
   5. Provenance gate (enforced, exits non-zero). Every row's runtime_backend must
-     match its config_backend label, and the exact azure-sdk-for-rust driver
-     commit is printed -- a mixed-build curve is called out, not silently pooled.
+     match its config_backend label, and the azure-sdk-for-rust driver commit is
+     printed; a mixed-build curve is called out, not silently pooled.
 
 USAGE:
   source ./perf_env.sh                        # exports RESULTS_COSMOS_* (incl. key)
@@ -117,7 +110,7 @@ def _latest_stamp(container, prefix):
 
 
 def main():
-    ap = argparse.ArgumentParser(description="Phase C scale-out report.")
+    ap = argparse.ArgumentParser(description="Scale-out report.")
     ap.add_argument("--stamp", default=None, help="run stamp YYYYMMDD-HHMMSS (default: latest)")
     ap.add_argument("--prefix", default="scaleout-", help="workload_id prefix (default scaleout-)")
     ap.add_argument("--warmup", type=float, default=WARMUP_S,

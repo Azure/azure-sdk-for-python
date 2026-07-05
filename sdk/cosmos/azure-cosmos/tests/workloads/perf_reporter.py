@@ -297,7 +297,7 @@ class PerfReporter:
         summaries, errors = self._stats.drain_all()
         # The drain is when these counts stop accumulating, so measure the window
         # here. It is normally the configured interval, but longer when a previous
-        # flush was skipped; storing it keeps count / window_seconds honest.
+        # flush was skipped; storing it keeps count / window_seconds accurate.
         now_monotonic = time.monotonic()
         window_seconds = round(now_monotonic - self._last_flush_monotonic, 3)
         self._last_flush_monotonic = now_monotonic
