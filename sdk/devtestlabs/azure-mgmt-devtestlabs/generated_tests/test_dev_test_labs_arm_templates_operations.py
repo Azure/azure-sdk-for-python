@@ -20,7 +20,7 @@ class TestDevTestLabsArmTemplatesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_arm_templates_list(self, resource_group):
         response = self.client.arm_templates.list(
             resource_group_name=resource_group.name,
             lab_name="str",
@@ -33,7 +33,7 @@ class TestDevTestLabsArmTemplatesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_arm_templates_get(self, resource_group):
         response = self.client.arm_templates.get(
             resource_group_name=resource_group.name,
             lab_name="str",

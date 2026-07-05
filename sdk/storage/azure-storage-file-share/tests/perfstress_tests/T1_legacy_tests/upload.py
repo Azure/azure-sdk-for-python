@@ -5,7 +5,7 @@
 
 import uuid
 
-from devtools_testutils.perfstress_tests import RandomStream, get_random_bytes
+from devtools_testutils.perfstress_tests import RandomStream
 
 from ._test_base import _LegacyShareTest
 
@@ -24,7 +24,8 @@ class LegacyUploadTest(_LegacyShareTest):
             file_name=self.file_name,
             stream=self.upload_stream,
             count=self.args.size,
-            max_connections=self.args.max_concurrency)
+            max_connections=self.args.max_concurrency,
+        )
 
     async def run_async(self):
         raise NotImplementedError("Async not supported for legacy T1 tests.")

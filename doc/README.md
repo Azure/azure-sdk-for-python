@@ -13,6 +13,7 @@ This folder contains documentation for the Azure SDK for Python repository.
 - [Send Request](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/send_request.md) - Send request pattern documentation
 - [Analyze Check Versions](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/analyze_check_versions.md) - Check version analysis
 - [Tool Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md) - How to use the `azpysdk` CLI tool
+- [SDK and AI](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/sdk_and_ai.md) - AI-assisted SDK development guidance
 
 ## Developer Documentation
 
@@ -47,7 +48,6 @@ See the [dev](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/) 
 - [Customize Long Running Operations](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/customize_long_running_operation.md) - LRO customization
 - [CredScan Process](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/credscan_process.md) - Credential scanning
 - [Recording Migration Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/recording_migration_guide.md) - Migrating test recordings
-- [Engineering Assumptions](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/engineering_assumptions.md) - SDK engineering assumptions
 - [Conda Builds](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/conda-builds.md) / [Release](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/conda-release.md) / [Dev Release](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/conda-release-dev.md) - Conda packaging
 
 ## Sphinx Reference Documentation

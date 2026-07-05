@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-12-15-preview/CheckFilePathAvailability.json
+# x-ms-original-file: 2026-04-15-preview/CheckFilePathAvailability.json
 if __name__ == "__main__":
     main()

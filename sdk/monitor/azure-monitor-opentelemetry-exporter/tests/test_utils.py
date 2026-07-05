@@ -11,8 +11,6 @@ from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._constants import _GEN_AI_ATTRIBUTES
-from opentelemetry.sdk.resources import Resource
-from unittest.mock import patch
 
 
 TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
@@ -731,6 +729,7 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     def test_attach_enabled(self, mock_isdir):
         self.assertEqual(_utils._is_attach_enabled(), True)
@@ -742,6 +741,7 @@ class TestUtils(unittest.TestCase):
     @patch.dict(
         "azure.monitor.opentelemetry.exporter._utils.environ",
         {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
     )
     def test_attach_app_service_disabled(self, mock_isdir):
         self.assertEqual(_utils._is_attach_enabled(), False)
@@ -778,6 +778,198 @@ class TestUtils(unittest.TestCase):
         # This is not an expected scenario and just tests the default
         self.assertFalse(_utils._is_attach_enabled())
 
+    # Attach with APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE env var
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_app_service(self):
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_app_service_not_called(self, mock_isdir):
+        self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "integratedauto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_app_service_lower(self, mock_isdir):
+        self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "INTEGRATEDAUTO",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_app_service_upper(self, mock_isdir):
+        self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=True,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "Manual",
+        },
+        clear=True,
+    )
+    def test_attach_type_manual_app_service(self, mock_isdir):
+        self.assertFalse(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_functions(self):
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "true",
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "Manual",
+        },
+        clear=True,
+    )
+    def test_attach_type_manual_functions(self):
+        self.assertFalse(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+            "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_aks(self):
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+            "AKS_ARM_NAMESPACE_ID": TEST_AKS_ARM_NAMESPACE_ID,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "Manual",
+        },
+        clear=True,
+    )
+    def test_attach_type_manual_aks(self):
+        self.assertFalse(_utils._is_attach_enabled())
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=False,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+    )
+    def test_attach_type_integrated_auto_app_service_no_isdir_check(self, mock_isdir):
+        # APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE overrides the legacy isdir gate.
+        self.assertTrue(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.isdir",
+        return_value=False,
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "manual",
+        },
+    )
+    def test_attach_type_manual_app_service_no_isdir_check(self, mock_isdir):
+        # APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE overrides the legacy isdir gate.
+        self.assertFalse(_utils._is_attach_enabled())
+        mock_isdir.assert_not_called()
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY": "false",
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_functions_enable_telemetry_false(self):
+        # APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE overrides the legacy PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY check.
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_functions_no_enable_telemetry(self):
+        # IntegratedAuto but ENABLE_TELEMETRY not set. Should be true. Env var overwrites other factors.
+        self.assertTrue(_utils._is_attach_enabled())
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST,
+            "APPLICATIONINSIGHTS_PYTHON_ATTACHTYPE": "IntegratedAuto",
+        },
+        clear=True,
+    )
+    def test_attach_type_integrated_auto_aks_no_arm_namespace(self):
+        # IntegratedAuto but AKS_ARM_NAMESPACE_ID not set. Should be true. Env var overwrites other factors.
+        self.assertTrue(_utils._is_attach_enabled())
+
     # Synthetic
 
     def test_is_synthetic_source_bot(self):
@@ -787,6 +979,99 @@ class TestUtils(unittest.TestCase):
     def test_is_synthetic_source_test(self):
         properties = {"user_agent.synthetic.type": "test"}
         self.assertTrue(_utils._is_synthetic_source(properties))
+
+    # SDK Version
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.ext_version",
+        "1.0.0b21",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {},
+        clear=True,
+    )
+    def test_get_sdk_version_default(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:ext1.0.0b21")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"AZURE_MONITOR_DISTRO_VERSION": "1.8.8"},
+        clear=True,
+    )
+    def test_get_sdk_version_distro(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:dst1.8.8")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"MICROSOFT_OPENTELEMETRY_VERSION": "2.0.0"},
+        clear=True,
+    )
+    def test_get_sdk_version_microsoft_opentelemetry(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:mot2.0.0")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._get_sdk_version_prefix",
+        return_value="uum_",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.platform.python_version",
+        return_value="3.11.0",
+    )
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils.opentelemetry_version",
+        "1.20.0",
+    )
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "AZURE_MONITOR_DISTRO_VERSION": "1.8.8",
+            "MICROSOFT_OPENTELEMETRY_VERSION": "2.0.0",
+        },
+        clear=True,
+    )
+    def test_get_sdk_version_microsoft_opentelemetry_takes_priority(self, mock_python_version, mock_prefix):
+        result = _utils._get_sdk_version()
+        self.assertEqual(result, "uum_py3.11.0:otel1.20.0:mot2.0.0")
 
     def test_is_synthetic_source_none(self):
         properties = {}

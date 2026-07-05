@@ -4,7 +4,52 @@
 
 ### Other Changes
 
-- This is the GA release of the features introduced in the 15.0.0 and 15.1.0 beta versions, including LRO support, job-level FIFO scheduling, CMK support on pools, IPv6 support, metadata security protocol support, IP tag support, and confidential VM enhancements. No additional changes were made from the last beta release.
+- This is the GA release of the features introduced in the 15.0.0 and 15.1.0 beta versions, including LRO support, job-level FIFO scheduling, CMK support on pools, IPv6 support, metadata security protocol support, IP tag support, and confidential VM enhancements.
+
+### Breaking Changes
+
+- Renamed `BatchNodeUserUpdateOptions` to `BatchNodeUserReplaceOptions`.
+- Renamed `OutputFileUploadConfig` to `OutputFileUploadConfiguration`.
+
+- Removed Models:
+  - Removed `AuthenticationTokenSettings`
+
+- NameSpace changed `azure.batch.models._models`:
+  - `BatchJobTerminateOptions`
+  - `BatchNodeDeallocateOptions`
+  - `BatchNodeRebootOptions`
+  - `BatchNodeReimageOptions`
+
+- Removed Enums:
+  - Removed `BatchAccessScope`
+
+- NameSpace changed `azure.batch.models._enums`:
+  - `BatchNodeDeallocateOption`
+  - `BatchNodeRebootKind`
+  - `BatchNodeReimageOption`
+
+- Renamed public methods:
+  - `list_sub_tasks` -> `list_subtasks`
+  - `get_task_file` -> `download_task_file`
+  - `get_node_file` -> `download_node_file`
+  
+- Renamed parameters across all operation methods:
+  - `timeout` -> `service_timeout`
+  - `ocpdate` -> `ocp_date`
+  - `starttime` -> `start_time`
+  - `endtime` -> `end_time`
+  - `concurrencies` -> `max_concurrency`
+
+- Renamed properties in models:
+  - `e_tag` -> `etag` in `BatchJob`, `BatchJobSchedule`, `BatchPool`, `BatchTask`, and `BatchTaskCreateResult`
+  - `values_property` -> `error_values` in `AutoScaleRunError`, `BatchError`, and `ResizeError`
+  - `values_property` -> `result_values` in `CollectionResult`
+  - `values_property` -> `task_values` in `BatchTaskGroup`
+  - `avg_memory_gi_b` -> `avg_memory_gib`, `peak_memory_gi_b` -> `peak_memory_gib`, `avg_disk_gi_b` -> `avg_disk_gib`, `peak_disk_gi_b` -> `peak_disk_gib`, `disk_read_gi_b` -> `disk_read_gib`, `disk_write_gi_b` -> `disk_write_gib`, `network_read_gi_b` -> `network_read_gib`, `network_write_gi_b` -> `network_write_gib` in `BatchPoolResourceStatistics`
+
+- Removed Properties:
+  - Removed `authentication_token_settings` from `BatchJobManagerTask`, `BatchStartTask`, and `BatchTask`
+  - Removed `access` from `AuthenticationTokenSettings`
 
 ## 15.1.0b3 (2026-02-05)
 

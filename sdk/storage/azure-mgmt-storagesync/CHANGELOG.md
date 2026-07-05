@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.1 (2026-05-14)
+
+### Other Changes
+
+  - Regenerated with latest code generator tool
+
 ## 2.0.0b1 (2022-10-31)
 
 ### Features Added

@@ -22,6 +22,7 @@ import os
 import pytest
 from devtools_testutils import recorded_by_proxy
 from testpreparer import ContentUnderstandingPreparer, ContentUnderstandingClientTestBase
+from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding.models import AnalysisInput, DocumentContent
 
 
@@ -236,5 +237,17 @@ class TestSampleAnalyzeInvoice(ContentUnderstandingClientTestBase):
                 assert count > 0, f"Token count for {model} should be positive"
                 print(f"[INFO] Token usage: {model} = {count}")
             print(f"[PASS] Token usage reported for {len(usage.tokens)} model(s)")
+
+        # Test to_llm_input conversion (mirrors sample's [START invoice_to_llm_input] block).
+        # Invoice analysis returns extracted fields (VendorName, Items, AmountDue, etc.)
+        # which to_llm_input renders as YAML front matter alongside the markdown body.
+        text = to_llm_input(result)
+        assert isinstance(text, str) and text.strip(), "to_llm_input should return a non-empty string"
+        assert text.startswith("---"), "to_llm_input output should start with YAML front matter delimiter"
+        assert "\n---\n" in text, "to_llm_input output should contain YAML front matter closing delimiter"
+        assert "contentType: document" in text, "YAML front matter should declare 'contentType: document'"
+        # Invoice fields should appear in the rendered front matter
+        assert "fields:" in text, "Invoice to_llm_input output should include a 'fields:' block"
+        print(f"[PASS] to_llm_input output validated ({len(text)} characters, includes invoice fields)")
 
         print("\n[SUCCESS] All test_sample_analyze_invoice assertions passed")

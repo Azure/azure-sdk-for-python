@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -43,6 +43,7 @@ from .operations import (
     GalleryScriptsOperations,
     GallerySharingProfileOperations,
     ImagesOperations,
+    InterconnectBlocksOperations,
     LogAnalyticsOperations,
     Operations,
     ProximityPlacementGroupsOperations,
@@ -62,6 +63,7 @@ from .operations import (
     VirtualMachineImagesOperations,
     VirtualMachineRunCommandsOperations,
     VirtualMachineScaleSetExtensionsOperations,
+    VirtualMachineScaleSetLifeCycleHookEventsOperations,
     VirtualMachineScaleSetRollingUpgradesOperations,
     VirtualMachineScaleSetVMExtensionsOperations,
     VirtualMachineScaleSetVMRunCommandsOperations,
@@ -70,6 +72,11 @@ from .operations import (
     VirtualMachineSizesOperations,
     VirtualMachinesOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -88,6 +95,10 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
      operations
     :vartype virtual_machine_scale_set_extensions:
      azure.mgmt.compute.operations.VirtualMachineScaleSetExtensionsOperations
+    :ivar virtual_machine_scale_set_life_cycle_hook_events:
+     VirtualMachineScaleSetLifeCycleHookEventsOperations operations
+    :vartype virtual_machine_scale_set_life_cycle_hook_events:
+     azure.mgmt.compute.operations.VirtualMachineScaleSetLifeCycleHookEventsOperations
     :ivar virtual_machine_scale_set_vm_extensions: VirtualMachineScaleSetVMExtensionsOperations
      operations
     :vartype virtual_machine_scale_set_vm_extensions:
@@ -121,6 +132,8 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
      azure.mgmt.compute.operations.CapacityReservationGroupsOperations
     :ivar capacity_reservations: CapacityReservationsOperations operations
     :vartype capacity_reservations: azure.mgmt.compute.operations.CapacityReservationsOperations
+    :ivar interconnect_blocks: InterconnectBlocksOperations operations
+    :vartype interconnect_blocks: azure.mgmt.compute.operations.InterconnectBlocksOperations
     :ivar virtual_machine_run_commands: VirtualMachineRunCommandsOperations operations
     :vartype virtual_machine_run_commands:
      azure.mgmt.compute.operations.VirtualMachineRunCommandsOperations
@@ -269,6 +282,9 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self.virtual_machine_scale_set_extensions = VirtualMachineScaleSetExtensionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.virtual_machine_scale_set_life_cycle_hook_events = VirtualMachineScaleSetLifeCycleHookEventsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.virtual_machine_scale_set_vm_extensions = VirtualMachineScaleSetVMExtensionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -300,6 +316,9 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.capacity_reservations = CapacityReservationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.interconnect_blocks = InterconnectBlocksOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
