@@ -10935,6 +10935,18 @@ namespace azure.ai.ml.operations
         def stream(self, name: str) -> None: ...
 
         @distributed_trace
+        @monitor_with_telemetry_mixin(ops_logger, 'Job.Update', ActivityType.PUBLICAPI)
+        def update(
+                self, 
+                name: str, 
+                *, 
+                display_name: Optional[str] = None, 
+                description: Optional[str] = None, 
+                tags: Optional[Dict[str, str]] = None, 
+                properties: Optional[Dict[str, str]] = None
+            ) -> Job: ...
+
+        @distributed_trace
         @monitor_with_telemetry_mixin(ops_logger, 'Job.Validate', ActivityType.PUBLICAPI)
         def validate(
                 self, 

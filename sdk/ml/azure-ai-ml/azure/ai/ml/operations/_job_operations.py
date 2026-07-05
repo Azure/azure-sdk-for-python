@@ -654,7 +654,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_telemetry_mixin(ops_logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
-    def create_or_update(
+    def create_or_update(  # pylint: disable=too-many-branches
         self,
         job: Job,
         *,
@@ -739,12 +739,8 @@ class JobOperations(_ScopeDependentOperations):
         #     are not supported by the shortcut and were rejected by MFE anyway).
         # Any failure inside the shortcut falls through to the original path so
         # brand-new job creation behavior is preserved bit-for-bit.
-        if (
-            getattr(job, "id", None)
-            and getattr(job, "name", None)
-            and compute is None
-            and experiment_name is None
-        ):
+        if getattr(job, "id", None) and getattr(job, "name", None) and compute is None and experiment_name is None:
+            patch_succeeded = False
             try:
                 job_object = self._get_job(job.name)
                 if job_object.properties.job_type == RestJobType.PIPELINE:
@@ -767,17 +763,24 @@ class JobOperations(_ScopeDependentOperations):
                         properties=getattr(job, "properties", None),
                     ),
                 )
+                patch_succeeded = True
+            except PipelineChildJobError:
+                raise
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Only failures BEFORE and INCLUDING the RunHistory PATCH are swallowed
+                # (job not found, transient RunHistory error, etc.) so we can fall
+                # through to the original code path without regressing creation.
+                pass
 
+            if patch_succeeded:
+                # PATCH already persisted the metadata change server-side. Any failure
+                # in the refresh/resolve below must surface directly — falling back to
+                # the original MFE PUT path would re-execute the very round-trip this
+                # hotfix exists to avoid and would surface a misleading error.
                 refreshed = self._get_job(job.name)
                 if refreshed.properties.job_type == RestJobType.PIPELINE:
                     refreshed = self._get_job_2401(job.name)
                 return self._resolve_azureml_id(Job._from_rest_object(refreshed))
-            except PipelineChildJobError:
-                raise
-            except Exception:  # noqa: BLE001 - deliberate broad catch; fall through
-                # Any failure (job not found, transient RunHistory error, etc.) falls
-                # through to the original code path so we never regress creation.
-                pass
         # ------------------ END TEMPORARY HOTFIX --------------------------------
 
         if job.compute == LOCAL_COMPUTE_TARGET:
@@ -907,8 +910,34 @@ class JobOperations(_ScopeDependentOperations):
             job_object = self._get_job_2401(name)
         if _is_pipeline_child_job(job_object):
             raise PipelineChildJobError(job_id=job_object.id)
-        job_object.properties.is_archived = is_archived
 
+        # ---------------- TEMPORARY HOTFIX (archive/restore shortcut) ----------------
+        # The legacy _create_or_update_with_different_version_api PUT round-trip fails
+        # on AutoML, Command, Sweep, and Spark jobs for the same serializer/comparator
+        # reasons as create_or_update (see the shortcut in create_or_update above).
+        # RunHistory's "hidden" flag is the same server-side field surfaced by MFE as
+        # properties.isArchived (verified via probe_runhistory_hidden.py), so we can
+        # PATCH it directly - which is what ML Studio's portal does for the Archive
+        # button. Any failure falls through to the original path so behavior is
+        # preserved for Pipeline (which already works via _get_job_2401).
+        try:
+            from azure.ai.ml._restclient.runhistory.models import CreateRun
+
+            self._runs_operations._operation.add_or_modify_by_experiment_name(
+                subscription_id=self._operation_scope.subscription_id,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                experiment_name=job_object.properties.experiment_name,
+                run_id=name,
+                body=CreateRun(hidden=is_archived),
+            )
+            return
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Fall through to the original code path on any RunHistory error.
+            pass
+        # ------------------ END TEMPORARY HOTFIX --------------------------------
+
+        job_object.properties.is_archived = is_archived
         self._create_or_update_with_different_version_api(rest_job_resource=job_object)
 
     @distributed_trace

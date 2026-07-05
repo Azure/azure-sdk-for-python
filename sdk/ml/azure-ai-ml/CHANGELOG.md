@@ -3,8 +3,10 @@
 ## 1.35.0 (unreleased)
 
 ### Features Added
+- Added `MLClient.jobs.update(name, *, display_name=None, description=None, tags=None, properties=None)` to partially update a job's mutable metadata (display name, description, tags, properties) without a full `create_or_update` round-trip.
 
 ### Bugs Fixed
+- Fixed `MLClient.jobs.create_or_update(job)` and `MLClient.jobs.archive`/`restore` failing for jobs previously fetched via `get(name)` across AutoML, Command, Pipeline, Sweep, Spark, and Parallel job types. These operations now route metadata-only changes through the RunHistory PATCH endpoint used by Azure ML Studio's portal, avoiding the MFE PUT round-trip that produced serializer / comparator errors (e.g. `queueSettings.jobTier` enum errors on Sweep, `The Uri field is required` on AutoML, InputBindings errors on Pipeline).
 
 ### Other Changes
 
