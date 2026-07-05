@@ -10940,10 +10940,10 @@ namespace azure.ai.ml.operations
                 self, 
                 name: str, 
                 *, 
-                display_name: Optional[str] = None, 
-                description: Optional[str] = None, 
-                tags: Optional[Dict[str, str]] = None, 
-                properties: Optional[Dict[str, str]] = None
+                description: Optional[str] = ..., 
+                display_name: Optional[str] = ..., 
+                properties: Optional[Dict[str, str]] = ..., 
+                tags: Optional[Dict[str, str]] = ...
             ) -> Job: ...
 
         @distributed_trace

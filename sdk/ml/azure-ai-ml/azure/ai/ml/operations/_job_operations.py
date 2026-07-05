@@ -740,11 +740,12 @@ class JobOperations(_ScopeDependentOperations):
         # Any failure inside the shortcut falls through to the original path so
         # brand-new job creation behavior is preserved bit-for-bit.
         if getattr(job, "id", None) and getattr(job, "name", None) and compute is None and experiment_name is None:
+            job_name: str = cast(str, job.name)
             patch_succeeded = False
             try:
-                job_object = self._get_job(job.name)
+                job_object = self._get_job(job_name)
                 if job_object.properties.job_type == RestJobType.PIPELINE:
-                    job_object = self._get_job_2401(job.name)
+                    job_object = self._get_job_2401(job_name)
                 if _is_pipeline_child_job(job_object):
                     raise PipelineChildJobError(job_id=job_object.id)
 
@@ -755,7 +756,7 @@ class JobOperations(_ScopeDependentOperations):
                     resource_group_name=self._operation_scope.resource_group_name,
                     workspace_name=self._workspace_name,
                     experiment_name=job_object.properties.experiment_name,
-                    run_id=job.name,
+                    run_id=job_name,
                     body=CreateRun(
                         display_name=getattr(job, "display_name", None),
                         description=getattr(job, "description", None),
@@ -777,9 +778,9 @@ class JobOperations(_ScopeDependentOperations):
                 # in the refresh/resolve below must surface directly — falling back to
                 # the original MFE PUT path would re-execute the very round-trip this
                 # hotfix exists to avoid and would surface a misleading error.
-                refreshed = self._get_job(job.name)
+                refreshed = self._get_job(job_name)
                 if refreshed.properties.job_type == RestJobType.PIPELINE:
-                    refreshed = self._get_job_2401(job.name)
+                    refreshed = self._get_job_2401(job_name)
                 return self._resolve_azureml_id(Job._from_rest_object(refreshed))
         # ------------------ END TEMPORARY HOTFIX --------------------------------
 
