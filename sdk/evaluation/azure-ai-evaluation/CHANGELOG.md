@@ -10,6 +10,11 @@
   `QAEvaluator`, `RougeScoreEvaluator`, `DocumentRetrievalEvaluator`, the task navigation efficiency
   evaluator, and the shared evaluator base (conversation/tool-call input validation).
 
+- Fixed OpenAPI tool-call validation in tool evaluators (e.g. `ToolCallAccuracyEvaluator`). OpenAPI
+  tool definitions are expanded into their nested functions when present, so tool calls referencing a
+  nested function name validate correctly, while OpenAPI tool definitions without nested functions are
+  kept as is so tool calls referencing the top-level tool name continue to validate.
+
 - Fixed `RedTeam.scan()` storing decoded plaintext instead of the actual
   encoded payload for converter-based attack strategies (Base64, Flip,
   Morse, ROT13, etc.) in `evaluation_results.json` / `results.json`. The
@@ -21,6 +26,19 @@
   which continues to expose only `role`/`content`/`name`). Baseline
   (non-encoded) strategies are unaffected.
   Resolves [#47228](https://github.com/Azure/azure-sdk-for-python/issues/47228).
+
+### Other Changes
+
+- Conversation/tool message preprocessing now normalizes `openapi_call` / `openapi_call_output` content
+  items to `tool_call` / `tool_result` (previously only `function_call` / `function_call_output` were
+  normalized), so evaluators correctly handle OpenAPI-tool agent transcripts.
+- Tool results are now serialized as JSON when rendering agent responses for LLM-judge evaluators, so
+  list/dict outputs from grounding tools (Azure AI Search, SharePoint, Fabric) are readable instead of a
+  Python `repr`. Plain string tool results are unchanged.
+- Evaluators no longer log raw customer payloads in fallback/debug paths. `reformat_agent_response`,
+  `reformat_conversation_history`, `reformat_tool_definitions`, the tool-call-success reformat helpers,
+  and Groundedness context extraction now emit structural summaries only (via `_log_safe_summary`),
+  never raw query/response/tool payloads.
 
 ## 1.17.0 (2026-06-03)
 
