@@ -82,7 +82,7 @@ Agents modifying service-specific logic should be aware of the following behavio
 
 ### Azure Files (File Share)
 
-- **Share hierarchy**: The resource hierarchy is Account → Share → Directory (nested) → File. Directory creation is not recursive by default; parent directories must exist before creating a subdirectory.
+- **Share hierarchy**: The resource hierarchy is Account → Share → Directory (nested) → File. The `create_directory` API does not support recursive creation; each parent directory must be created individually before creating a subdirectory. There is no built-in `mkdir -p` equivalent in the SDK.
 - **Lease semantics**: Files (but not directories) support leases. A lease must be acquired before exclusive write access. Shares support snapshot-level leases for backup scenarios.
 
 ### Data Lake Storage Gen2
@@ -130,7 +130,7 @@ azurite --silent --location /tmp/azurite --debug /tmp/azurite/debug.log
 Then point the SDK at the local emulator using the well-known Azurite connection string:
 
 ```bash
-export AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;"
+export AZURE_STORAGE_CONNECTION_STRING="DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
 pytest tests/ -v --live
 ```
 
