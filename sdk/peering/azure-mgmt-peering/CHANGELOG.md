@@ -2,7 +2,15 @@
 
 ## 2.0.0b3 (2026-07-06)
 
-tool can't generate changelog for this release, please update manually.
+### Features Added
+
+  - Supported API version `2025-05-01`.
+  - Regenerated with the latest code generator after migrating the service definition to TypeSpec.
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
 
 ## 1.0.1 (2026-05-19)
 
