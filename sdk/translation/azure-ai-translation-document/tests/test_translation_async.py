@@ -23,6 +23,8 @@ from azure.ai.translation.document.aio import DocumentTranslationClient
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
 GLOSSARY_FILE_NAME = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./glossaries-valid.csv"))
+# A document that embeds an image containing legible text, used to exercise image translation.
+IMAGE_DOC_FILE_NAME = os.path.abspath(os.path.join(os.path.dirname(__file__), "TestData", "test-doc-image.docx"))
 
 
 class TestTranslation(AsyncDocumentTranslationTest):
@@ -510,6 +512,62 @@ class TestTranslation(AsyncDocumentTranslationTest):
                 self._validate_doc_status(doc, target_language="fr")
         return variables
 
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    @recorded_by_proxy_async
+    async def test_single_source_single_target_with_deployment_name(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
+        # prepare containers and test data
+        blob_data = b"This is some text"
+        source_container_sas_url = self.create_source_container(data=Document(data=blob_data), variables=variables)
+        target_container_sas_url = self.create_target_container(variables=variables)
+
+        # "general" routes to the default NMT model, so no custom model deployment is required.
+        translation_inputs = [
+            DocumentTranslationInput(
+                source_url=source_container_sas_url,
+                targets=[
+                    TranslationTarget(target_url=target_container_sas_url, language="fr", deployment_name="general")
+                ],
+            )
+        ]
+
+        # The service accepts the deployment name and translates successfully. The document status does
+        # not echo the deployment name back for the default ("general") model, so request-side
+        # serialization of deployment_name is verified separately in the model tests.
+        await self._begin_and_validate_translation_async(client, translation_inputs, 1, "fr")
+        return variables
+
+    @DocumentTranslationPreparer()
+    @DocumentTranslationClientPreparer()
+    @recorded_by_proxy_async
+    async def test_single_source_single_target_with_image_translation(self, **kwargs):
+        client = kwargs.pop("client")
+        variables = kwargs.pop("variables", {})
+        # The document must contain an image with legible text so image scanning has something to translate.
+        with open(IMAGE_DOC_FILE_NAME, "rb") as fd:
+            image_doc_data = fd.read()
+        source_container_sas_url = self.create_source_container(
+            data=Document(name="test-doc-image", suffix=".docx", data=image_doc_data), variables=variables
+        )
+        target_container_sas_url = self.create_target_container(variables=variables)
+
+        async with client:
+            # Enable translation of text embedded within images for the batch.
+            poller = await client.begin_translation(
+                source_container_sas_url, target_container_sas_url, "fr", translate_text_within_image=True
+            )
+            result = await poller.result()
+
+            self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
+            async for doc in result:
+                # The request enables image translation (verified on the wire) and the document translates
+                # successfully. Image scan usage is only reported by the service when images are actually
+                # scanned, so it is not asserted here.
+                self._validate_doc_status(doc, target_language="fr")
+        return variables
+
     @pytest.mark.skip("Flaky test")
     @pytest.mark.live_test_only
     @DocumentTranslationPreparer()
@@ -520,12 +578,13 @@ class TestTranslation(AsyncDocumentTranslationTest):
         source_container_sas_url = self.create_source_container(data=[doc])
         target_container_sas_url = self.create_target_container()
 
-        container_client = ContainerClient(self.storage_endpoint, self.source_container_name, self.storage_key)
+        container_client = ContainerClient(
+            self.storage_endpoint, self.source_container_name, credential=self.get_storage_credential()
+        )
         with open(GLOSSARY_FILE_NAME, "rb") as fd:
             container_client.upload_blob(name=GLOSSARY_FILE_NAME, data=fd.read())
 
-        prefix, suffix = source_container_sas_url.split("?")
-        glossary_file_sas_url = prefix + "/" + GLOSSARY_FILE_NAME + "?" + suffix
+        glossary_file_sas_url = source_container_sas_url + "/" + GLOSSARY_FILE_NAME
         async with client:
             poller = await client.begin_translation(
                 source_container_sas_url,
@@ -535,7 +594,9 @@ class TestTranslation(AsyncDocumentTranslationTest):
             )
             result = await poller.result()
 
-        container_client = ContainerClient(self.storage_endpoint, self.target_container_name, self.storage_key)
+        container_client = ContainerClient(
+            self.storage_endpoint, self.target_container_name, credential=self.get_storage_credential()
+        )
 
         # download translated file and assert that translation reflects glossary changes
         document = doc.name + doc.suffix
