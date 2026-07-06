@@ -14,6 +14,7 @@ from azure.ai.evaluation._exceptions import (
 )
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
+from azure.ai.evaluation._common.utils import _log_safe_summary, _stringify_tool_result
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import _get_tool_calls_results, _reformat_tool_calls_results
 
@@ -272,6 +273,78 @@ def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
         return tool_definitions
 
 
+<<<<<<< HEAD
+=======
+def _get_tool_calls_results(agent_response_msgs):
+    """Extract formatted agent tool calls and results from response."""
+    agent_response_text = []
+    tool_results = {}
+
+    # First pass: collect tool results
+
+    for msg in agent_response_msgs:
+        if msg.get("role") == "tool" and "tool_call_id" in msg:
+            for content in msg.get("content", []):
+                if content.get("type") == "tool_result":
+                    result = content.get("tool_result")
+                    tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {_stringify_tool_result(result)}"
+
+    # Second pass: parse assistant messages and tool calls
+    for msg in agent_response_msgs:
+        if "role" in msg and msg.get("role") == "assistant" and "content" in msg:
+
+            for content in msg.get("content", []):
+
+                if content.get("type") == "tool_call":
+                    if "tool_call" in content and "function" in content.get("tool_call", {}):
+                        tc = content.get("tool_call", {})
+                        func_name = tc.get("function", {}).get("name", "")
+                        args = tc.get("function", {}).get("arguments", {})
+                        tool_call_id = tc.get("id")
+                    else:
+                        tool_call_id = content.get("tool_call_id")
+                        func_name = content.get("name", "")
+                        args = content.get("arguments", {})
+                    args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
+                    call_line = f"[TOOL_CALL] {func_name}({args_str})"
+                    agent_response_text.append(call_line)
+                    if tool_call_id in tool_results:
+                        agent_response_text.append(tool_results[tool_call_id])
+
+    return agent_response_text
+
+
+def _reformat_tool_calls_results(response, logger=None):
+    try:
+        if response is None or response == []:
+            return ""
+        agent_response = _get_tool_calls_results(response)
+        if agent_response == []:
+            # If no message could be extracted, likely the format changed,
+            # fallback to the original response in that case
+            if logger:
+                logger.warning(
+                    "Empty agent response extracted, likely due to input schema change. "
+                    "Falling back to using the original response. %s",
+                    _log_safe_summary(response),
+                )
+            return response
+        return "\n".join(agent_response)
+    except Exception as e:  # pylint: disable=broad-except
+        # If the agent response cannot be parsed for whatever
+        # reason (e.g. the converter format changed), the original response is returned
+        # This is a fallback to ensure that the evaluation can still proceed.
+        # See comments on reformat_conversation_history for more details.
+        if logger:
+            logger.warning(
+                "Agent response could not be parsed, falling back to original response. Error: %s. %s",
+                e,
+                _log_safe_summary(response),
+            )
+        return response
+
+
+>>>>>>> origin/main
 def _reformat_tool_definitions(tool_definitions, logger=None):
     try:
         output_lines = ["TOOL_DEFINITIONS:"]
@@ -282,12 +355,14 @@ def _reformat_tool_definitions(tool_definitions, logger=None):
             param_names = ", ".join(params.keys()) if params else "no parameters"
             output_lines.append(f"- {name}: {desc} (inputs: {param_names})")
         return "\n".join(output_lines)
-    except Exception:
+    except Exception as e:  # pylint: disable=broad-except
         # If the tool definitions cannot be parsed for whatever reason, the original tool definitions are returned
         # This is a fallback to ensure that the evaluation can still proceed.
         # See comments on reformat_conversation_history for more details.
         if logger:
             logger.warning(
-                f"Tool definitions could not be parsed, falling back to original definitions: {tool_definitions}"
+                "Tool definitions could not be parsed; falling back to raw definitions. Input shape: %s. Error: %s",
+                _log_safe_summary(tool_definitions),
+                e,
             )
         return tool_definitions

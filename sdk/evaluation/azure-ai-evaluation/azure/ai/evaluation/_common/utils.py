@@ -650,7 +650,11 @@ def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
         return tool_definitions
 
 
-def _get_conversation_history(query, include_system_messages=False, include_tool_messages=False):
+def _get_conversation_history(
+    query, include_system_messages=False, include_tool_messages=False, include_tool_calls=False
+):
+    if include_tool_calls:
+        return _get_conversation_history_with_tool_calls(query, include_system_messages=include_system_messages)
     all_user_queries, all_agent_responses = [], []
     cur_user_query, cur_agent_response = [], []
     system_message = None
@@ -729,16 +733,19 @@ def _pretty_format_conversation_history(conversation_history):
     return formatted_history
 
 
-def reformat_conversation_history(query, logger=None, include_system_messages=False, include_tool_messages=False):
+def reformat_conversation_history(
+    query, logger=None, include_system_messages=False, include_tool_messages=False, include_tool_calls=False
+):
     """Reformats the conversation history to a more compact representation."""
     try:
         conversation_history = _get_conversation_history(
             query,
             include_system_messages=include_system_messages,
             include_tool_messages=include_tool_messages,
+            include_tool_calls=include_tool_calls,
         )
         return _pretty_format_conversation_history(conversation_history)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         # If the conversation history cannot be parsed for whatever reason (e.g. the converter format changed), the original query is returned
         # This is a fallback to ensure that the evaluation can still proceed. However the accuracy of the evaluation will be affected.
         # From our tests the negative impact on IntentResolution is:
@@ -747,7 +754,12 @@ def reformat_conversation_history(query, logger=None, include_system_messages=Fa
         #   Lower percentage of mode in Likert scale (73.4% vs 75.4%)
         #   Lower pairwise agreement between LLMs (85% vs 90% at the pass/fail level with threshold of 3)
         if logger:
-            logger.warning("Conversation history could not be parsed, falling back to original query")
+            logger.warning(
+                "Conversation history could not be parsed; falling back to raw input. "
+                "Evaluator accuracy will degrade. Input shape: %s. Error: %s",
+                _log_safe_summary(query),
+                e,
+            )
         return query
 
 
@@ -771,7 +783,7 @@ def _get_agent_response(agent_response_msgs, include_tool_messages=False):
                 for content in msg.get("content", []):
                     if content.get("type") == "tool_result":
                         result = content.get("tool_result")
-                        tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {result}"
+                        tool_results[msg["tool_call_id"]] = f"[TOOL_RESULT] {_stringify_tool_result(result)}"
 
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
@@ -809,16 +821,22 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
         if agent_response == []:
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
             if logger:
-                logger.debug(
-                    "Empty agent response extracted, likely due to input schema change. Falling back to original response"
+                logger.warning(
+                    "Empty agent response extracted, likely due to input schema change. "
+                    "Falling back to original response. %s",
+                    _log_safe_summary(response),
                 )
             return response
         return "\n".join(agent_response)
-    except Exception:
+    except Exception as e:  # pylint: disable=broad-except
         # If the agent response cannot be parsed for whatever reason (e.g. the converter format changed), the original response is returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
         if logger:
-            logger.debug("Agent response could not be parsed, falling back to original response")
+            logger.warning(
+                "Agent response could not be parsed, falling back to original response. Error: %s. %s",
+                e,
+                _log_safe_summary(response),
+            )
         return response
 
 
@@ -832,11 +850,15 @@ def reformat_tool_definitions(tool_definitions, logger=None):
             param_names = ", ".join(params.keys()) if params else "no parameters"
             output_lines.append(f"- {name}: {desc} (inputs: {param_names})")
         return "\n".join(output_lines)
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-except
         # If the tool definitions cannot be parsed for whatever reason, the original tool definitions are returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
         if logger:
-            logger.debug("Tool definitions could not be parsed, falling back to original definitions")
+            logger.warning(
+                "Tool definitions could not be parsed; falling back to raw definitions. " "Input shape: %s. Error: %s",
+                _log_safe_summary(tool_definitions),
+                e,
+            )
         return tool_definitions
 
 
@@ -908,6 +930,13 @@ def simplify_messages(messages, drop_system=True, drop_tool_calls=False, logger=
         return messages
 
 
+<<<<<<< HEAD
+=======
+# Runtime tool-call statuses that indicate a failed or incomplete execution.
+_FAILED_RUNTIME_STATUSES = frozenset({"failed", "incomplete"})
+
+
+>>>>>>> origin/main
 def _stringify_tool_result(result):
     """Render a tool_result value as a string the LLM judge can read.
 
@@ -968,6 +997,127 @@ def _log_safe_summary(obj):
         return f"type={type(obj).__name__} (summary unavailable)"
 
 
+<<<<<<< HEAD
+=======
+def _coerce_bool(value) -> Optional[bool]:
+    """Coerce an LLM output value to bool or None.
+
+    Handles Python booleans and string variants like 'true', 'false'.
+
+    :param value: The value to coerce.
+    :type value: Any
+    :return: The coerced boolean, or None if it cannot be interpreted.
+    :rtype: Optional[bool]
+    """
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return None
+    if isinstance(value, str):
+        lower = value.strip().lower()
+        if lower == "true":
+            return True
+        if lower == "false":
+            return False
+    return None
+
+
+def _coerce_number(value) -> Optional[float]:
+    """Coerce an LLM output value to a number or None.
+
+    Handles Python ints/floats and string variants like '3', '2.5', 'null'.
+
+    :param value: The value to coerce.
+    :type value: Any
+    :return: The coerced number, or None if it cannot be interpreted.
+    :rtype: Optional[float]
+    """
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return value
+    if value is None:
+        return None
+    if isinstance(value, str):
+        stripped = value.strip()
+        if stripped.lower() in ("null", "none", ""):
+            return None
+        try:
+            return float(stripped)
+        except ValueError:
+            return None
+    return None
+
+
+def _collect_failed_tool_calls(messages):
+    """Return ordered, unique tool names whose runtime status indicates failure.
+
+    A tool call is treated as a runtime failure when either its assistant ``tool_call`` content
+    block or its matched tool ``tool_result`` content block carries a ``status`` field in
+    ``{failed, incomplete}``. This lets callers short-circuit deterministically and skip the LLM
+    judge on the failure path. When the failing block carries no resolvable function name, the
+    tool ``tool_call_id`` is used as a stable identifier instead.
+
+    :param messages: The list of conversation messages to scan.
+    :type messages: Any
+    :return: Ordered, de-duplicated list of failed tool names (or ids).
+    :rtype: List
+    """
+    if not isinstance(messages, list):
+        return []
+
+    id_to_name = {}
+    failed_ids = []
+    failed_names_without_id = []
+
+    for msg in messages:
+        if not isinstance(msg, dict) or msg.get("role") != "assistant":
+            continue
+        for content in msg.get("content", []) or []:
+            if not isinstance(content, dict) or content.get("type") != "tool_call":
+                continue
+            if "tool_call" in content and "function" in content.get("tool_call", {}):
+                tc = content["tool_call"]
+                name = tc.get("function", {}).get("name", "") or ""
+                call_id = tc.get("id")
+            else:
+                name = content.get("name", "") or ""
+                call_id = content.get("tool_call_id")
+            if call_id is not None:
+                id_to_name[call_id] = name
+            status = content.get("status")
+            if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES:
+                if call_id is not None:
+                    failed_ids.append(call_id)
+                elif name:
+                    failed_names_without_id.append(name)
+
+    for msg in messages:
+        if not isinstance(msg, dict) or msg.get("role") != "tool":
+            continue
+        call_id = msg.get("tool_call_id")
+        for content in msg.get("content", []) or []:
+            if not isinstance(content, dict) or content.get("type") != "tool_result":
+                continue
+            status = content.get("status")
+            if isinstance(status, str) and status in _FAILED_RUNTIME_STATUSES and call_id is not None:
+                failed_ids.append(call_id)
+
+    ordered = []
+    seen = set()
+    for call_id in failed_ids:
+        label = id_to_name.get(call_id) or call_id
+        if label and label not in seen:
+            seen.add(label)
+            ordered.append(label)
+    for name in failed_names_without_id:
+        if name and name not in seen:
+            seen.add(name)
+            ordered.append(name)
+    return ordered
+
+
+>>>>>>> origin/main
 def _get_tool_calls_results(agent_response_msgs):
     """Extract formatted agent tool calls and results from a response.
 
@@ -1044,6 +1194,99 @@ def _reformat_tool_calls_results(response, logger=None):
         return response
 
 
+<<<<<<< HEAD
+=======
+def _get_conversation_history_with_tool_calls(query, include_system_messages=False):
+    """Parse conversation history, rendering tool calls/results inline within agent turns.
+
+    This is the ``include_tool_calls=True`` variant used by tool-focused evaluators. Unlike the
+    default path, tool calls and their matched results are flattened into ``[TOOL_CALL]`` /
+    ``[TOOL_RESULT]`` lines within each agent turn.
+
+    :param query: The list of conversation messages.
+    :type query: List[dict]
+    :param include_system_messages: Whether to capture the system message.
+    :type include_system_messages: bool
+    :return: Dict with ``user_queries``, ``agent_responses`` and optionally ``system_message``.
+    :rtype: Dict
+    :raises EvaluationException: If the conversation history is malformed.
+    """
+    all_user_queries = []
+    cur_user_query = []
+    all_agent_responses = []
+    cur_agent_response = []
+    system_message = None
+
+    tool_results = {}
+    for msg in query:
+        if msg.get("role") == "tool" and "tool_call_id" in msg:
+            tool_call_id = msg["tool_call_id"]
+            for content in msg.get("content", []):
+                if content.get("type") == "tool_result":
+                    result = content.get("tool_result")
+                    tool_results[tool_call_id] = f"[TOOL_RESULT] {_stringify_tool_result(result)}"
+
+    for msg in query:
+        if "role" not in msg:
+            continue
+
+        if include_system_messages and msg["role"] == "system" and "content" in msg:
+            system_message = msg.get("content", "")
+
+        if msg["role"] == "user" and "content" in msg:
+            if cur_agent_response != []:
+                all_agent_responses.append(cur_agent_response)
+                cur_agent_response = []
+            text_in_msg = _extract_text_from_content(msg["content"])
+            if text_in_msg:
+                cur_user_query.append(text_in_msg)
+
+        if msg["role"] == "assistant" and "content" in msg:
+            if cur_user_query != []:
+                all_user_queries.append(cur_user_query)
+                cur_user_query = []
+
+            text_in_msg = _extract_text_from_content(msg["content"])
+            if text_in_msg:
+                cur_agent_response.append(text_in_msg)
+
+            for content in msg.get("content", []):
+                if content.get("type") == "tool_call":
+                    tool_call_id = content.get("tool_call_id")
+                    func_name = content.get("name", "")
+                    args = content.get("arguments", {})
+                    if "tool_call" in content and "function" in content.get("tool_call", {}):
+                        tc = content.get("tool_call", {})
+                        func_name = tc.get("function", {}).get("name", "")
+                        args = tc.get("function", {}).get("arguments", {})
+                        tool_call_id = tc.get("id")
+                    args_str = ", ".join(f"{k}={_format_value(v)}" for k, v in args.items())
+                    tool_call_text = f"[TOOL_CALL] {func_name}({args_str})"
+                    cur_agent_response.append(tool_call_text)
+                    if tool_call_id and tool_call_id in tool_results:
+                        cur_agent_response.append(tool_results[tool_call_id])
+
+    if cur_user_query != []:
+        all_user_queries.append(cur_user_query)
+    if cur_agent_response != []:
+        all_agent_responses.append(cur_agent_response)
+
+    if len(all_user_queries) != len(all_agent_responses) + 1:
+        raise EvaluationException(
+            message=ErrorMessage.MALFORMED_CONVERSATION_HISTORY,
+            internal_message=ErrorMessage.MALFORMED_CONVERSATION_HISTORY,
+            target=ErrorTarget.CONVERSATION_HISTORY_PARSING,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.USER_ERROR,
+        )
+
+    result = {"user_queries": all_user_queries, "agent_responses": all_agent_responses}
+    if include_system_messages:
+        result["system_message"] = system_message
+    return result
+
+
+>>>>>>> origin/main
 def upload(path: str, container_client: ContainerClient, logger=None):
     """Upload files or directories to Azure Blob Storage using a container client.
 
