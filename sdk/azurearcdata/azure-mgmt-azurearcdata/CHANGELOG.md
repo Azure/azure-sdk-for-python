@@ -266,7 +266,7 @@
 ### Breaking Changes
 
   - Renamed method `DataControllersOperations.patch_data_controller` to `begin_patch_data_controller`
-  - Deleted or renamed method `SqlServerInstancesOperations.update` to `begin_update`
+  - Renamed method `SqlServerInstancesOperations.update` to `begin_update`
 
 ### Other Changes
 
