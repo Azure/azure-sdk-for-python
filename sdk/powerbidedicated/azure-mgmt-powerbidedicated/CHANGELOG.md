@@ -4,36 +4,23 @@
 
 ### Features Added
 
-  - Model `AutoScaleVCore` added property `properties`
-  - Model `AutoScaleVCoreUpdateParameters` added property `properties`
-  - Model `DedicatedCapacity` added property `properties`
-  - Model `DedicatedCapacityUpdateParameters` added property `properties`
-  - Added enum `CreatedByType`
   - Added model `TrackedResource`
 
 ### Breaking Changes
 
-  - Deleted or renamed model `PowerBIDedicated`
-  - Model `AutoScaleVCore` deleted or renamed its instance variable `capacity_limit`
-  - Model `AutoScaleVCore` deleted or renamed its instance variable `capacity_object_id`
-  - Model `AutoScaleVCore` deleted or renamed its instance variable `provisioning_state`
-  - Model `AutoScaleVCoreUpdateParameters` deleted or renamed its instance variable `capacity_limit`
-  - Model `DedicatedCapacity` deleted or renamed its instance variable `administration`
-  - Model `DedicatedCapacity` deleted or renamed its instance variable `mode`
-  - Model `DedicatedCapacity` deleted or renamed its instance variable `tenant_id`
-  - Model `DedicatedCapacity` deleted or renamed its instance variable `friendly_name`
-  - Model `DedicatedCapacity` deleted or renamed its instance variable `state`
-  - Model `DedicatedCapacity` deleted or renamed its instance variable `provisioning_state`
-  - Model `DedicatedCapacityUpdateParameters` deleted or renamed its instance variable `administration`
-  - Model `DedicatedCapacityUpdateParameters` deleted or renamed its instance variable `mode`
-  - Model `DedicatedCapacityUpdateParameters` deleted or renamed its instance variable `tenant_id`
-  - Model `DedicatedCapacityUpdateParameters` deleted or renamed its instance variable `friendly_name`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Deleted or renamed client `PowerBIDedicated`
+  - Model `AutoScaleVCore` moved instance variable `capacity_limit`, `capacity_object_id` and `provisioning_state` under property `properties` whose type is `AutoScaleVCoreProperties`
+  - Model `AutoScaleVCoreUpdateParameters` moved instance variable `capacity_limit` under property `properties` whose type is `AutoScaleVCoreMutableProperties`
+  - Model `DedicatedCapacity` moved instance variable `administration`, `mode`, `tenant_id`, `friendly_name`, `state` and `provisioning_state` under property `properties` whose type is `DedicatedCapacityProperties`
+  - Model `DedicatedCapacityUpdateParameters` moved instance variable `administration`, `mode`, `tenant_id` and `friendly_name` under property `properties` whose type is `DedicatedCapacityMutableProperties`
   - Model `Resource` deleted or renamed its instance variable `location`
   - Model `Resource` deleted or renamed its instance variable `tags`
-  - Deleted or renamed model `AutoScaleVCoreListResult`
-  - Deleted or renamed model `DedicatedCapacities`
-  - Deleted or renamed model `IdentityType`
-  - Deleted or renamed model `OperationListResult`
+  - Renamed enum `IdentityType` to `CreatedByType`
+
+### Other Changes
+
+  - Deleted model `AutoScaleVCoreListResult`/`DedicatedCapacities`/`OperationListResult` which actually were not used by SDK users
 
 ## 1.0.1 (2026-05-19)
 
