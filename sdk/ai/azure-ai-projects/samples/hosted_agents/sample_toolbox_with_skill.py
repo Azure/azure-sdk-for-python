@@ -8,7 +8,7 @@
 DESCRIPTION:
     Demonstrates deploying a code-based Hosted Agent that discovers and uses
     skills from a Foundry Toolbox MCP endpoint via Agent Framework
-    ``SkillsProvider(MCPSkillsSource(...))``.
+    `FoundryToolbox()`.
 
     The sample:
     1. Creates a shipping-cost skill.
@@ -146,17 +146,18 @@ def main() -> None:
                         "FOUNDRY_MODEL_NAME": model_name,
                         "MCP_SERVER_URL": toolbox_mcp_url,
                     },
-                    protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
+                    protocol_versions=[ProtocolVersionRecord(protocol="responses", version="2.0.0")],
                 ),
                 code=code_stream,
             )
         print(f"Created hosted agent version: {created.version}")
 
-        wait_for_agent_version_active(
-            project_client=project_client,
-            agent_name=agent_name,
-            agent_version=created.version,
-        )
+        if created.status != "active":
+            wait_for_agent_version_active(
+                project_client=project_client,
+                agent_name=agent_name,
+                agent_version=created.version,
+            )
 
         ensure_agent_identity_rbac(
             agent=created,
