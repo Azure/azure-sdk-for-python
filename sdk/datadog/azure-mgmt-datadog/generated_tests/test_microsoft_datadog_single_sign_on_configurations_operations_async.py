@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.datadog.aio import DatadogClient
+from azure.mgmt.datadog.aio import MicrosoftDatadogClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDatadogTagRulesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestMicrosoftDatadogSingleSignOnConfigurationsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DatadogClient, is_async=True)
+        self.client = self.create_mgmt_client(MicrosoftDatadogClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_tag_rules_get(self, resource_group):
-        response = await self.client.tag_rules.get(
+    async def test_single_sign_on_configurations_get(self, resource_group):
+        response = await self.client.single_sign_on_configurations.get(
             resource_group_name=resource_group.name,
             monitor_name="str",
-            rule_set_name="str",
+            configuration_name="str",
         )
 
         # please add some check logic here by yourself
@@ -33,20 +33,22 @@ class TestDatadogTagRulesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_tag_rules_create_or_update(self, resource_group):
-        response = await self.client.tag_rules.create_or_update(
-            resource_group_name=resource_group.name,
-            monitor_name="str",
-            rule_set_name="str",
-        )
+    async def test_single_sign_on_configurations_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.single_sign_on_configurations.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                monitor_name="str",
+                configuration_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_tag_rules_list(self, resource_group):
-        response = self.client.tag_rules.list(
+    async def test_single_sign_on_configurations_list(self, resource_group):
+        response = self.client.single_sign_on_configurations.list(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )

@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.datadog import DatadogClient
+from azure.mgmt.datadog import MicrosoftDatadogClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.datadog import DatadogClient
 
 
 def main():
-    client = DatadogClient(
+    client = MicrosoftDatadogClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

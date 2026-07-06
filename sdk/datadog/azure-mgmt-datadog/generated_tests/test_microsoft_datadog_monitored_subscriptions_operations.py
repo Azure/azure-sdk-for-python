@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.datadog import DatadogClient
+from azure.mgmt.datadog import MicrosoftDatadogClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDatadogSingleSignOnConfigurationsOperations(AzureMgmtRecordedTestCase):
+class TestMicrosoftDatadogMonitoredSubscriptionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DatadogClient)
+        self.client = self.create_mgmt_client(MicrosoftDatadogClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_single_sign_on_configurations_get(self, resource_group):
-        response = self.client.single_sign_on_configurations.get(
+    def test_monitored_subscriptions_get(self, resource_group):
+        response = self.client.monitored_subscriptions.get(
             resource_group_name=resource_group.name,
             monitor_name="str",
             configuration_name="str",
@@ -32,8 +32,8 @@ class TestDatadogSingleSignOnConfigurationsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_single_sign_on_configurations_begin_create_or_update(self, resource_group):
-        response = self.client.single_sign_on_configurations.begin_create_or_update(
+    def test_monitored_subscriptions_begin_createor_update(self, resource_group):
+        response = self.client.monitored_subscriptions.begin_createor_update(
             resource_group_name=resource_group.name,
             monitor_name="str",
             configuration_name="str",
@@ -44,8 +44,32 @@ class TestDatadogSingleSignOnConfigurationsOperations(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_single_sign_on_configurations_list(self, resource_group):
-        response = self.client.single_sign_on_configurations.list(
+    def test_monitored_subscriptions_begin_update(self, resource_group):
+        response = self.client.monitored_subscriptions.begin_update(
+            resource_group_name=resource_group.name,
+            monitor_name="str",
+            configuration_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_monitored_subscriptions_begin_delete(self, resource_group):
+        response = self.client.monitored_subscriptions.begin_delete(
+            resource_group_name=resource_group.name,
+            monitor_name="str",
+            configuration_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_monitored_subscriptions_list(self, resource_group):
+        response = self.client.monitored_subscriptions.list(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )

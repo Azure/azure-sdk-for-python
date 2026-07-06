@@ -138,5 +138,5 @@
         "azure.mgmt.datadog.operations.CreationSupportedOperations.get": "Microsoft.Datadog.CreationSupportedOperationGroup.get",
         "azure.mgmt.datadog.aio.operations.CreationSupportedOperations.get": "Microsoft.Datadog.CreationSupportedOperationGroup.get"
     },
-    "CrossLanguageVersion": "03fcf23e0efd"
+    "CrossLanguageVersion": "e5801c1dee11"
 }

@@ -1,9 +1,15 @@
 # Release History
 
-## 3.0.0b1 (2026-07-03)
+## 3.0.0b1 (2026-07-06)
 
 ### Features Added
 
+  - Client `MicrosoftDatadogClient` added parameter `cloud_setting` in method `__init__`
+  - Client `MicrosoftDatadogClient` added method `send_request`
+  - Client `MicrosoftDatadogClient` added operation group `datadog_monitor_resources`
+  - Client `MicrosoftDatadogClient` added operation group `saa_soperation_group`
+  - Client `MicrosoftDatadogClient` added operation group `billing_info`
+  - Client `MicrosoftDatadogClient` added operation group `organizations`
   - Model `DatadogOrganizationProperties` added property `resource_collection`
   - Model `LinkedResource` added property `location`
   - Model `MonitorProperties` added property `saa_s_data`
@@ -31,23 +37,28 @@
   - Added model `SreAgentConfigurationListResponse`
   - Added model `SreAgentConnectorRequest`
   - Added model `TrackedResource`
-  - Operation group `MonitorsOperations` added method `get_default_application_key`
-  - Operation group `MonitorsOperations` added method `manage_sre_agent_connectors`
-  - Added operation group `BillingInfoOperations`
-  - Added operation group `DatadogMonitorResourcesOperations`
-  - Added operation group `OrganizationsOperations`
-  - Added operation group `SaaSOperationGroupOperations`
+  - Model `MonitorsOperations` added method `get_default_application_key`
+  - Model `MonitorsOperations` added method `manage_sre_agent_connectors`
+  - Added model `BillingInfoOperations`
+  - Added model `DatadogMonitorResourcesOperations`
+  - Added model `OrganizationsOperations`
+  - Added model `SaaSOperationGroupOperations`
 
 ### Breaking Changes
 
-  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Deleted or renamed client `MicrosoftDatadogClient`
+  - Deleted or renamed model `CreateResourceSupportedResponseList`
+  - Deleted or renamed model `DatadogAgreementResourceListResponse`
+  - Deleted or renamed model `DatadogApiKeyListResponse`
+  - Deleted or renamed model `DatadogHostListResponse`
+  - Deleted or renamed model `DatadogMonitorResourceListResponse`
+  - Deleted or renamed model `DatadogSingleSignOnResourceListResponse`
+  - Deleted or renamed model `LinkedResourceListResponse`
+  - Deleted or renamed model `MonitoredResourceListResponse`
+  - Deleted or renamed model `MonitoredSubscriptionPropertiesList`
+  - Deleted or renamed model `MonitoringTagRulesListResponse`
+  - Deleted or renamed model `OperationListResult`
   - Method `CreationSupportedOperations.get` changed its parameter `datadog_organization_id` from `positional_or_keyword` to `keyword_only`
   - Method `CreationSupportedOperations.list` changed its parameter `datadog_organization_id` from `positional_or_keyword` to `keyword_only`
-
-### Other Changes
-
-  - Deleted model `CreateResourceSupportedResponseList`/`DatadogAgreementResourceListResponse`/`DatadogApiKeyListResponse`/`DatadogHostListResponse`/`DatadogMonitorResourceListResponse`/`DatadogSingleSignOnResourceListResponse`/`LinkedResourceListResponse`/`MonitoredResourceListResponse`/`MonitoredSubscriptionPropertiesList`/`MonitoringTagRulesListResponse`/`OperationListResult` which actually were not used by SDK users
 
 ## 2.1.0 (2023-10-23)
 

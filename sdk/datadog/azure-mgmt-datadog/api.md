@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.datadog
 
-    class azure.mgmt.datadog.DatadogClient: implements ContextManager 
+    class azure.mgmt.datadog.MicrosoftDatadogClient: implements ContextManager 
         billing_info: BillingInfoOperations
         creation_supported: CreationSupportedOperations
         datadog_monitor_resources: DatadogMonitorResourcesOperations
@@ -39,7 +39,7 @@ namespace azure.mgmt.datadog
 
 namespace azure.mgmt.datadog.aio
 
-    class azure.mgmt.datadog.aio.DatadogClient: implements AsyncContextManager 
+    class azure.mgmt.datadog.aio.MicrosoftDatadogClient: implements AsyncContextManager 
         billing_info: BillingInfoOperations
         creation_supported: CreationSupportedOperations
         datadog_monitor_resources: DatadogMonitorResourcesOperations

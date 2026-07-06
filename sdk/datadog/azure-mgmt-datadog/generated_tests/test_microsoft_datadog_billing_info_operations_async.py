@@ -6,25 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.datadog import DatadogClient
+from azure.mgmt.datadog.aio import MicrosoftDatadogClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDatadogOrganizationsOperations(AzureMgmtRecordedTestCase):
+class TestMicrosoftDatadogBillingInfoOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DatadogClient)
+        self.client = self.create_mgmt_client(MicrosoftDatadogClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_organizations_begin_resubscribe(self, resource_group):
-        response = self.client.organizations.begin_resubscribe(
+    @recorded_by_proxy_async
+    async def test_billing_info_get(self, resource_group):
+        response = await self.client.billing_info.get(
             resource_group_name=resource_group.name,
             monitor_name="str",
-        ).result()  # call '.result()' to poll until service return final result
+        )
 
         # please add some check logic here by yourself
         # ...

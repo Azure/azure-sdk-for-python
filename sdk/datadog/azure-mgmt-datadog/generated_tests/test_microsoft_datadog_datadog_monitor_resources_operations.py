@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.datadog import DatadogClient
+from azure.mgmt.datadog import MicrosoftDatadogClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,26 +14,29 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDatadogCreationSupportedOperations(AzureMgmtRecordedTestCase):
+class TestMicrosoftDatadogDatadogMonitorResourcesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DatadogClient)
+        self.client = self.create_mgmt_client(MicrosoftDatadogClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_creation_supported_list(self, resource_group):
-        response = self.client.creation_supported.list(
-            datadog_organization_id="str",
+    def test_datadog_monitor_resources_latest_linked_saa_s(self, resource_group):
+        response = self.client.datadog_monitor_resources.latest_linked_saa_s(
+            resource_group_name=resource_group.name,
+            monitor_name="str",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_creation_supported_get(self, resource_group):
-        response = self.client.creation_supported.get(
-            datadog_organization_id="str",
-        )
+    def test_datadog_monitor_resources_begin_link_saa_s(self, resource_group):
+        response = self.client.datadog_monitor_resources.begin_link_saa_s(
+            resource_group_name=resource_group.name,
+            monitor_name="str",
+            body={"saaSResourceId": "str"},
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Datadog": "2025-12-26-preview"
   },
-  "commit": "9d8bde686b46fed801a67c10b5590e2121a300c3",
+  "commit": "6c19e3347d60ee62bccec0b56680ca79a162b99b",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/datadog/Datadog.Management",
   "emitterVersion": "0.63.2",

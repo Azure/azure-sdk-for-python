@@ -6,23 +6,22 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.datadog.aio import DatadogClient
+from azure.mgmt.datadog import MicrosoftDatadogClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDatadogMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestMicrosoftDatadogMonitorsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DatadogClient, is_async=True)
+        self.client = self.create_mgmt_client(MicrosoftDatadogClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_get(self, resource_group):
-        response = await self.client.monitors.get(
+    @recorded_by_proxy
+    def test_monitors_get(self, resource_group):
+        response = self.client.monitors.get(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )
@@ -31,66 +30,60 @@ class TestDatadogMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_begin_create(self, resource_group):
-        response = await (
-            await self.client.monitors.begin_create(
-                resource_group_name=resource_group.name,
-                monitor_name="str",
-            )
+    @recorded_by_proxy
+    def test_monitors_begin_create(self, resource_group):
+        response = self.client.monitors.begin_create(
+            resource_group_name=resource_group.name,
+            monitor_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_begin_update(self, resource_group):
-        response = await (
-            await self.client.monitors.begin_update(
-                resource_group_name=resource_group.name,
-                monitor_name="str",
-            )
+    @recorded_by_proxy
+    def test_monitors_begin_update(self, resource_group):
+        response = self.client.monitors.begin_update(
+            resource_group_name=resource_group.name,
+            monitor_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_begin_delete(self, resource_group):
-        response = await (
-            await self.client.monitors.begin_delete(
-                resource_group_name=resource_group.name,
-                monitor_name="str",
-            )
+    @recorded_by_proxy
+    def test_monitors_begin_delete(self, resource_group):
+        response = self.client.monitors.begin_delete(
+            resource_group_name=resource_group.name,
+            monitor_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_list_by_resource_group(self, resource_group):
+    @recorded_by_proxy
+    def test_monitors_list_by_resource_group(self, resource_group):
         response = self.client.monitors.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_list(self, resource_group):
+    @recorded_by_proxy
+    def test_monitors_list(self, resource_group):
         response = self.client.monitors.list()
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_manage_sre_agent_connectors(self, resource_group):
-        response = await self.client.monitors.manage_sre_agent_connectors(
+    @recorded_by_proxy
+    def test_monitors_manage_sre_agent_connectors(self, resource_group):
+        response = self.client.monitors.manage_sre_agent_connectors(
             resource_group_name=resource_group.name,
             monitor_name="str",
             request={"action": "str", "mcpConnectorResourceIdList": [{"mcpConnectorResourceId": "str"}]},
@@ -100,9 +93,9 @@ class TestDatadogMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_get_default_application_key(self, resource_group):
-        response = await self.client.monitors.get_default_application_key(
+    @recorded_by_proxy
+    def test_monitors_get_default_application_key(self, resource_group):
+        response = self.client.monitors.get_default_application_key(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )
@@ -111,20 +104,20 @@ class TestDatadogMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_list_api_keys(self, resource_group):
+    @recorded_by_proxy
+    def test_monitors_list_api_keys(self, resource_group):
         response = self.client.monitors.list_api_keys(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_get_default_key(self, resource_group):
-        response = await self.client.monitors.get_default_key(
+    @recorded_by_proxy
+    def test_monitors_get_default_key(self, resource_group):
+        response = self.client.monitors.get_default_key(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )
@@ -133,9 +126,9 @@ class TestDatadogMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_set_default_key(self, resource_group):
-        response = await self.client.monitors.set_default_key(
+    @recorded_by_proxy
+    def test_monitors_set_default_key(self, resource_group):
+        response = self.client.monitors.set_default_key(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )
@@ -144,42 +137,42 @@ class TestDatadogMonitorsOperationsAsync(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_list_hosts(self, resource_group):
+    @recorded_by_proxy
+    def test_monitors_list_hosts(self, resource_group):
         response = self.client.monitors.list_hosts(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_list_linked_resources(self, resource_group):
+    @recorded_by_proxy
+    def test_monitors_list_linked_resources(self, resource_group):
         response = self.client.monitors.list_linked_resources(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_list_monitored_resources(self, resource_group):
+    @recorded_by_proxy
+    def test_monitors_list_monitored_resources(self, resource_group):
         response = self.client.monitors.list_monitored_resources(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )
-        result = [r async for r in response]
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_monitors_refresh_set_password_link(self, resource_group):
-        response = await self.client.monitors.refresh_set_password_link(
+    @recorded_by_proxy
+    def test_monitors_refresh_set_password_link(self, resource_group):
+        response = self.client.monitors.refresh_set_password_link(
             resource_group_name=resource_group.name,
             monitor_name="str",
         )

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.datadog import DatadogClient
+from azure.mgmt.datadog import MicrosoftDatadogClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,16 +14,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDatadogDatadogMonitorResourcesOperations(AzureMgmtRecordedTestCase):
+class TestMicrosoftDatadogSingleSignOnConfigurationsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DatadogClient)
+        self.client = self.create_mgmt_client(MicrosoftDatadogClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_datadog_monitor_resources_latest_linked_saa_s(self, resource_group):
-        response = self.client.datadog_monitor_resources.latest_linked_saa_s(
+    def test_single_sign_on_configurations_get(self, resource_group):
+        response = self.client.single_sign_on_configurations.get(
             resource_group_name=resource_group.name,
             monitor_name="str",
+            configuration_name="str",
         )
 
         # please add some check logic here by yourself
@@ -31,12 +32,23 @@ class TestDatadogDatadogMonitorResourcesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_datadog_monitor_resources_begin_link_saa_s(self, resource_group):
-        response = self.client.datadog_monitor_resources.begin_link_saa_s(
+    def test_single_sign_on_configurations_begin_create_or_update(self, resource_group):
+        response = self.client.single_sign_on_configurations.begin_create_or_update(
             resource_group_name=resource_group.name,
             monitor_name="str",
-            body={"saaSResourceId": "str"},
+            configuration_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_single_sign_on_configurations_list(self, resource_group):
+        response = self.client.single_sign_on_configurations.list(
+            resource_group_name=resource_group.name,
+            monitor_name="str",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

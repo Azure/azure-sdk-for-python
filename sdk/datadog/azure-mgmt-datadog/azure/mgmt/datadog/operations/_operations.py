@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models, types as _types
-from .._configuration import DatadogClientConfiguration
+from .._configuration import MicrosoftDatadogClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._validation import api_version_validation
@@ -1067,14 +1067,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1179,14 +1179,14 @@ class DatadogMonitorResourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`datadog_monitor_resources` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1559,14 +1559,14 @@ class TagRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`tag_rules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1953,14 +1953,14 @@ class MonitoredSubscriptionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`monitored_subscriptions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2826,14 +2826,14 @@ class SaaSOperationGroupOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`saa_soperation_group` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2982,14 +2982,14 @@ class MonitorsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`monitors` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4893,14 +4893,14 @@ class BillingInfoOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`billing_info` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4983,14 +4983,14 @@ class OrganizationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`organizations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5257,14 +5257,14 @@ class SingleSignOnConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`single_sign_on_configurations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5726,14 +5726,14 @@ class MarketplaceAgreementsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`marketplace_agreements` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5992,14 +5992,14 @@ class CreationSupportedOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.datadog.DatadogClient`'s
+        :class:`~azure.mgmt.datadog.MicrosoftDatadogClient`'s
         :attr:`creation_supported` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: MicrosoftDatadogClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
