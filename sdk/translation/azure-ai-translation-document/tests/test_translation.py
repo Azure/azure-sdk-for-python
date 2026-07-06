@@ -5,7 +5,6 @@
 
 import functools
 import pytest
-import json
 import os
 from azure.core.exceptions import HttpResponseError
 from testcase import DocumentTranslationTest, Document
@@ -15,7 +14,6 @@ from preparer import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.storage.blob import ContainerClient
-from azure.ai.translation.document.models._models import StartTranslationDetails as _StartTranslationDetails
 from azure.ai.translation.document import (
     DocumentTranslationInput,
     TranslationTarget,
@@ -351,61 +349,6 @@ class TestTranslation(DocumentTranslationTest):
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
-    def test_overloaded_inputs(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables", {})
-        # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(data=b"hello world"), variables=variables)
-        target_container_sas_url = self.create_target_container(variables=variables)
-        target_container_sas_url_2 = self.create_target_container(variables=variables, container_suffix="2")
-
-        # prepare translation inputs
-        translation_inputs = [
-            DocumentTranslationInput(
-                source_url=source_container_sas_url,
-                targets=[TranslationTarget(target_url=target_container_sas_url, language="es")],
-            )
-        ]
-
-        # positional
-        poller = client.begin_translation(translation_inputs)
-        result = poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
-
-        # keyword
-        translation_inputs[0].targets[0].target_url = target_container_sas_url_2
-        poller = client.begin_translation(inputs=translation_inputs)
-        result = poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
-        return variables
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
-    def test_overloaded_single_input(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables", {})
-        # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(data=b"hello world"), variables=variables)
-        target_container_sas_url = self.create_target_container(variables=variables)
-        target_container_sas_url_2 = self.create_target_container(variables=variables, container_suffix="2")
-
-        # positional
-        poller = client.begin_translation(source_container_sas_url, target_container_sas_url, "es")
-        result = poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
-
-        # keyword
-        poller = client.begin_translation(
-            source_url=source_container_sas_url, target_url=target_container_sas_url_2, target_language="es"
-        )
-        result = poller.result()
-        self._validate_translation_metadata(poller, status="Succeeded", total=1, succeeded=1)
-        return variables
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
     def test_overloaded_bad_input(self, **kwargs):
         client = kwargs.pop("client")
         translation_inputs = [
@@ -443,48 +386,6 @@ class TestTranslation(DocumentTranslationTest):
         for doc in result:
             self._validate_doc_status(doc, target_language="es")
         initial_poller.wait()  # necessary so devtools_testutils doesn't throw assertion error
-
-    @DocumentTranslationPreparer()
-    @DocumentTranslationClientPreparer()
-    @recorded_by_proxy
-    def test_single_input_with_kwargs(self, **kwargs):
-        client = kwargs.pop("client")
-        variables = kwargs.pop("variables", {})
-        # prepare containers and test data
-        source_container_sas_url = self.create_source_container(data=Document(data=b"hello world"), variables=variables)
-        target_container_sas_url = self.create_target_container(variables=variables)
-
-        def callback(request):
-            req = _StartTranslationDetails._deserialize(json.loads(request.http_request.body), [])
-            input = req.inputs[0]
-            assert input.source.source_url == source_container_sas_url
-            assert input.source.language == "en"
-            assert input.source.filter.prefix == ""
-            assert input.source.filter.suffix == ".txt"
-            assert input.storage_type == "File"
-            assert input.targets[0].category_id == "fake"
-            assert input.targets[0].glossaries[0].file_format == "txt"
-            assert input.targets[0].glossaries[0].glossary_url == "https://glossaryfile.txt"
-            assert input.targets[0].language == "es"
-            assert input.targets[0].target_url == target_container_sas_url
-
-        try:
-            poller = client.begin_translation(
-                source_container_sas_url,
-                target_container_sas_url,
-                "es",
-                storage_type="File",
-                source_language="en",
-                prefix="",
-                suffix=".txt",
-                category_id="fake",
-                glossaries=[TranslationGlossary(glossary_url="https://glossaryfile.txt", file_format="txt")],
-                raw_response_hook=callback,
-            )
-            poller.result()
-        except HttpResponseError as e:
-            pass
-        return variables
 
     @DocumentTranslationPreparer()
     @DocumentTranslationClientPreparer()

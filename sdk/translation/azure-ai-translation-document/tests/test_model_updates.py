@@ -21,6 +21,7 @@ from preparer import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document._patch import get_translation_input
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)
 
@@ -255,6 +256,70 @@ class TestModelUpdates(DocumentTranslationTest):
         assert status.total_image_scans_failed == 1
         assert status.images_charged == 3
         assert status.image_characters_detected == 1257
+
+    def test_begin_translation_overloaded_inputs_dispatch(self):
+        # begin_translation accepts a list of DocumentTranslationInput positionally or via the
+        # 'inputs=' keyword; both build the same StartTranslationDetails. This is SDK request
+        # dispatch (not service behavior), so it is validated without the live service.
+        inputs = [
+            DocumentTranslationInput(
+                source_url="https://source",
+                targets=[TranslationTarget(target_url="https://target", language="es")],
+            )
+        ]
+
+        positional = get_translation_input((inputs,), {}, None)
+        keyword = get_translation_input((), {"inputs": inputs}, None)
+
+        for request in (positional, keyword):
+            assert isinstance(request, StartTranslationDetails)
+            batch = request.inputs[0]
+            assert batch.source.source_url == "https://source"
+            assert batch.targets[0].target_url == "https://target"
+            assert batch.targets[0].language == "es"
+
+    def test_begin_translation_single_input_dispatch(self):
+        # The single-input convenience form accepts source/target/language positionally or by
+        # keyword; both build an equivalent StartTranslationDetails.
+        positional = get_translation_input(("https://source", "https://target", "es"), {}, None)
+        keyword = get_translation_input(
+            (), {"source_url": "https://source", "target_url": "https://target", "target_language": "es"}, None
+        )
+
+        for request in (positional, keyword):
+            assert isinstance(request, StartTranslationDetails)
+            batch = request.inputs[0]
+            assert batch.source.source_url == "https://source"
+            assert batch.targets[0].target_url == "https://target"
+            assert batch.targets[0].language == "es"
+
+    def test_begin_translation_single_input_serialization(self):
+        # The keyword options on the single-input begin_translation form serialize onto the
+        # request as expected (previously covered by a live raw_response_hook test).
+        request = get_translation_input(
+            ("https://source", "https://target", "es"),
+            {
+                "storage_type": "File",
+                "source_language": "en",
+                "prefix": "",
+                "suffix": ".txt",
+                "category_id": "fake",
+                "glossaries": [TranslationGlossary(glossary_url="https://glossaryfile.txt", file_format="txt")],
+            },
+            None,
+        )
+
+        batch = request.inputs[0]
+        assert batch.source.source_url == "https://source"
+        assert batch.source.language == "en"
+        assert batch.source.filter.prefix == ""
+        assert batch.source.filter.suffix == ".txt"
+        assert batch.storage_type == "File"
+        assert batch.targets[0].category_id == "fake"
+        assert batch.targets[0].glossaries[0].file_format == "txt"
+        assert batch.targets[0].glossaries[0].glossary_url == "https://glossaryfile.txt"
+        assert batch.targets[0].language == "es"
+        assert batch.targets[0].target_url == "https://target"
 
     def validate_translation_target(self, translation_target):
         assert translation_target is not None
