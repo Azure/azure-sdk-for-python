@@ -1,5 +1,85 @@
 # Release History
 
+## 2.0.0b2 (2026-07-06)
+
+### Features Added
+
+  - Model `AuthorizationRule` added property `properties`
+  - Model `HybridConnection` added property `properties`
+  - Model `NetworkRuleSet` added property `properties`
+  - Model `Operation` added property `action_type`
+  - Model `PrivateEndpointConnection` added property `properties`
+  - Model `PrivateLinkResource` added property `properties`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `RelayNamespace` added property `properties`
+  - Model `RelayUpdateParameters` added property `properties`
+  - Model `RelayUpdateParameters` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceNamespacePatch` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Model `WcfRelay` added property `properties`
+  - Added enum `ActionType`
+  - Added model `AuthorizationRuleProperties`
+  - Added model `HybridConnectionProperties`
+  - Added model `NetworkRuleSetProperties`
+  - Added enum `Origin`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `RelayNamespaceProperties`
+  - Added model `WcfRelayProperties`
+
+### Breaking Changes
+
+  - Deleted or renamed model `RelayAPI`
+  - Model `AuthorizationRule` deleted or renamed its instance variable `rights`
+  - Model `HybridConnection` deleted or renamed its instance variable `created_at`
+  - Model `HybridConnection` deleted or renamed its instance variable `updated_at`
+  - Model `HybridConnection` deleted or renamed its instance variable `listener_count`
+  - Model `HybridConnection` deleted or renamed its instance variable `requires_client_authorization`
+  - Model `HybridConnection` deleted or renamed its instance variable `user_metadata`
+  - Model `NetworkRuleSet` deleted or renamed its instance variable `default_action`
+  - Model `NetworkRuleSet` deleted or renamed its instance variable `public_network_access`
+  - Model `NetworkRuleSet` deleted or renamed its instance variable `ip_rules`
+  - Model `Operation` deleted or renamed its instance variable `properties`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
+  - Model `ProxyResource` deleted or renamed its instance variable `location`
+  - Model `RelayNamespace` deleted or renamed its instance variable `provisioning_state`
+  - Model `RelayNamespace` deleted or renamed its instance variable `status`
+  - Model `RelayNamespace` deleted or renamed its instance variable `created_at`
+  - Model `RelayNamespace` deleted or renamed its instance variable `updated_at`
+  - Model `RelayNamespace` deleted or renamed its instance variable `service_bus_endpoint`
+  - Model `RelayNamespace` deleted or renamed its instance variable `metric_id`
+  - Model `RelayNamespace` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `RelayNamespace` deleted or renamed its instance variable `public_network_access`
+  - Model `RelayUpdateParameters` deleted or renamed its instance variable `provisioning_state`
+  - Model `RelayUpdateParameters` deleted or renamed its instance variable `status`
+  - Model `RelayUpdateParameters` deleted or renamed its instance variable `created_at`
+  - Model `RelayUpdateParameters` deleted or renamed its instance variable `updated_at`
+  - Model `RelayUpdateParameters` deleted or renamed its instance variable `service_bus_endpoint`
+  - Model `RelayUpdateParameters` deleted or renamed its instance variable `metric_id`
+  - Model `RelayUpdateParameters` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `RelayUpdateParameters` deleted or renamed its instance variable `public_network_access`
+  - Model `WcfRelay` deleted or renamed its instance variable `is_dynamic`
+  - Model `WcfRelay` deleted or renamed its instance variable `created_at`
+  - Model `WcfRelay` deleted or renamed its instance variable `updated_at`
+  - Model `WcfRelay` deleted or renamed its instance variable `listener_count`
+  - Model `WcfRelay` deleted or renamed its instance variable `relay_type`
+  - Model `WcfRelay` deleted or renamed its instance variable `requires_client_authorization`
+  - Model `WcfRelay` deleted or renamed its instance variable `requires_transport_security`
+  - Model `WcfRelay` deleted or renamed its instance variable `user_metadata`
+  - Deleted or renamed model `AuthorizationRuleListResult`
+  - Deleted or renamed model `HybridConnectionListResult`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `PrivateEndpointConnectionListResult`
+  - Deleted or renamed model `RelayNamespaceListResult`
+  - Deleted or renamed model `WcfRelaysListResult`
+
 ## 1.1.1 (2026-05-09)
 
 ### Other Changes
