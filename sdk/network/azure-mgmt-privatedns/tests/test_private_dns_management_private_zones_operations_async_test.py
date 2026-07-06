@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.privatedns.aio import PrivateDnsManagementClient
+from azure.mgmt.privatedns.aio import NetworkClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,9 +15,9 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
-class TestPrivateDnsManagementPrivateZonesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestNetworkPrivateZonesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(PrivateDnsManagementClient, is_async=True)
+        self.client = self.create_mgmt_client(NetworkClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
